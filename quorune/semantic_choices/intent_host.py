@@ -1267,7 +1267,7 @@ class SemanticChoiceIntentHostMixin:
         allowed = [seat for seat in intent.players if seat not in restrictions.loss_prohibited]
         self._eliminate_players(allowed, reason=intent.reason)
 
-    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str:
+    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str | None:
         return execute_stack_copy(self, intent)
 
     def retarget_stack_item_intent(

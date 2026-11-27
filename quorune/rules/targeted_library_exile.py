@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from ..replacement.immutable import FrozenMap
 from ..errors import GameRuleError
-from ..library_search_model import TARGET_NAME_MULTIZONE_EXILE_VERSION
+from ..library_search_model import TARGET_NAME_MULTIZONE_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION
 
 
 class TargetedLibrarySearchError(GameRuleError, ValueError):
@@ -11,6 +11,7 @@ class TargetedLibrarySearchError(GameRuleError, ValueError):
 
 TARGET_LIBRARY_EXILE_CAPABILITY = 'library.search.targeted_fixed_exile'
 TARGET_LIBRARY_EXILE_VERSION = 9
+PRIVATE_TARGET_LIBRARY_PLAY_CAPABILITY = "library.search.target_opponent_private_exile_play"
 TARGET_NAME_MULTIZONE_EXILE_CAPABILITY = "library.search.target_name_multizone_exile"
 TARGET_NAME_MULTIZONE_CAPTURE = "_target_name_exile_capture"
 _TARGET_NAME_MULTIZONE_MATCHES = "_target_name_exile_matches"
@@ -171,6 +172,8 @@ def bind_target_name_multizone_search(host, actor, effect, stack_ref):
 def bind_resolving_targeted_library_search(host, item, effect, *, actor):
     """Bind the applicable version without sharing its original actor authority."""
     if effect.get("schema_version") != TARGET_NAME_MULTIZONE_EXILE_VERSION:
+        if effect.get("schema_version") == TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION:
+            require_private_target_library_play(host, item, effect, actor)
         return bind_targeted_library_exile(host, actor, effect)
     if actor != item.controller:
         raise GameRuleError("The private name search changed its resolving controller")
@@ -207,17 +210,25 @@ class TargetLibraryExileSpec:
     schema_version: int = TARGET_LIBRARY_EXILE_VERSION
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version != TARGET_LIBRARY_EXILE_VERSION
-                or type(self.count) is not int or self.count < 1):
-            raise ValueError('Target-library exile requires a positive fixed count and explicit version nine')
+        if (type(self.schema_version) is not int
+                or self.schema_version not in {TARGET_LIBRARY_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION}
+                or type(self.count) is not int or self.count < 1 or self.private_play and self.count != 1):
+            raise ValueError("Target-library exile requires its exact version and fixed count")
+
+    @property
+    def private_play(self):
+        return self.schema_version == TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION
 
     def target_schema(self):
-        return {'zones': ['player'], 'categories': ['player'], 'count': 1}
+        schema = {'zones': ['player'], 'categories': ['player'], 'count': 1}
+        if self.private_play:
+            schema["player_relation"] = "opponent"
+        return schema
 
     def effect(self, *, searching_player='$controller', library_player='$target.0'):
         if any(type(value) is not str or not value for value in (searching_player, library_player)):
             raise ValueError('Target-library search requires separate explicit searching and library players')
-        return {'op': 'search', 'schema_version': TARGET_LIBRARY_EXILE_VERSION,
+        return {'op': 'search', 'schema_version': self.schema_version,
             'searching_player': searching_player, 'library_player': library_player,
             'zone': 'library', 'selector': {},
             'count': {'minimum': self.count, 'maximum': self.count},
@@ -252,7 +263,26 @@ def bound_target_library_exile(effect, actor):
         spec = TargetLibraryExileSpec.from_effect(base, searching_player=actor, library_player=owner)
     except (ValueError, TypeError, KeyError) as exc:
         raise TargetedLibrarySearchError(str(exc)) from exc
+    if spec.private_play and owner == actor:
+        raise TargetedLibrarySearchError("Private play search requires a distinct opponent library")
     return spec, owner
+
+
+def require_private_target_library_play(host, item, effect, actor):
+    spec, owner = bound_target_library_exile(effect, actor)
+    program = host.semantics.get(item.semantic_key)
+    if (
+        not spec.private_play or item.controller != actor or item.kind not in {"spell", "spell_copy"}
+        or item.context.get("targets_revalidated") is not True or tuple(item.targets) != (owner,)
+        or item.context.get("currently_resolving") is not True or program is None
+        or (program.event, program.active_zone) != ("resolve", "stack")
+        or not host.semantic_program_is_current_trusted(program)
+        or PRIVATE_TARGET_LIBRARY_PLAY_CAPABILITY not in program.capability_dependencies
+        or PRIVATE_TARGET_LIBRARY_PLAY_CAPABILITY not in targeted_library_exile_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema,
+        )
+    ):
+        raise TargetedLibrarySearchError("Private play requires its exact trusted resolving opponent search")
 
 
 def target_library_entries(host, actor, effect):
@@ -346,6 +376,17 @@ def move_targeted_library_exile(host, context, values, replacement_selections=()
         cards = targeted_library_exile_cards(host, context.seat, context.effect, values)
     if not cards:
         return []
+    if context.effect.get("schema_version") == TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION:
+        from ..private_opponent_library_cast_model import PrivateLibrarySearchPlaySource
+
+        require_private_target_library_play(host, context.item, context.effect, context.seat)
+        card, = cards
+        source = PrivateLibrarySearchPlaySource(context.stack_ref, card.owner, card.logical_object_id)
+        return [ZoneTransitionOwner(host).move_card(
+            card.object_id, "exile", reason=context.item.label + " search", log=False,
+            private_library_exile_viewer=context.seat, private_library_cast_source=source,
+            private_replacement_journal=True, replacement_selections=replacement_selections,
+        )]
     return ZoneTransitionOwner(host).move_cards_simultaneously(
         tuple((card.object_id, 'exile') for card in cards),
         reason=context.item.label + ' search', log=False,
@@ -365,9 +406,9 @@ def targeted_library_exile_payload_dependencies(effect):
     version = effect.get('schema_version')
     if type(version) is int and version == TARGET_NAME_MULTIZONE_EXILE_VERSION:
         return TargetNameMultizoneExileSpec.from_effect(effect).capabilities()
-    if type(version) is int and version == TARGET_LIBRARY_EXILE_VERSION:
-        TargetLibraryExileSpec.from_effect(effect)
-        return TARGET_LIBRARY_EXILE_DEPENDENCIES
+    if type(version) is int and version in {TARGET_LIBRARY_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION}:
+        spec = TargetLibraryExileSpec.from_effect(effect)
+        return (*TARGET_LIBRARY_EXILE_DEPENDENCIES, *((PRIVATE_TARGET_LIBRARY_PLAY_CAPABILITY,) if spec.private_play else ()))
     if 'library_player' in effect or TARGET_LIBRARY_IDENTITIES in effect:
         raise TargetedLibrarySearchError('Legacy search cannot declare targeted-library authority')
     return ()
@@ -383,4 +424,4 @@ def targeted_library_exile_node_capabilities(*, effects, target_schema, mechanic
         return ()
     if FrozenMap(target_schema or {}) != FrozenMap(spec.target_schema()):
         return ()
-    return spec.capabilities() if named else TARGET_LIBRARY_EXILE_DEPENDENCIES
+    return spec.capabilities() if named else targeted_library_exile_payload_dependencies(effects[0])

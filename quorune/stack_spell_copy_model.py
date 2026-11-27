@@ -63,7 +63,7 @@ class FixedQualifiedStackCopySpec:
                 or type(self.target_kind) is not str
                 or self.target_kind not in {'permanent_spell', 'activated_or_triggered_ability', 'triggered_ability'}
                 or self.source_filter is not None and type(self.source_filter) is not str
-                or self.source_filter not in {None, 'artifact', 'colorless'}
+                or self.source_filter not in {None, 'artifact', 'colorless', 'legendary_noncommander'}
                 or self.source_filter is not None and self.target_kind != 'activated_or_triggered_ability'):
             raise ValueError('Qualified stack copies require one represented controlled target kind')
         if (type(self.copy_count) is not int
@@ -100,8 +100,14 @@ class FixedQualifiedStackCopySpec:
         elif self.target_kind == 'triggered_ability':
             schema['predicate'] = 'triggered_ability'
         else:
-            schema['predicate'] = ('artifact_ability_source' if self.source_filter == 'artifact' else
-                'colorless_ability_source' if self.source_filter == 'colorless' else 'activated_or_triggered_ability')
+            from .ability_source_information import DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER
+
+            schema['predicate'] = {
+                'artifact': 'artifact_ability_source',
+                'colorless': 'colorless_ability_source',
+                'legendary_noncommander': DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER,
+                None: 'activated_or_triggered_ability',
+            }[self.source_filter]
         return schema
 
     @property
@@ -111,7 +117,7 @@ class FixedQualifiedStackCopySpec:
 
 def qualified_stack_copy_specs():
     return (FixedQualifiedStackCopySpec('permanent_spell'), FixedQualifiedStackCopySpec('triggered_ability'),
-        *(FixedQualifiedStackCopySpec('activated_or_triggered_ability', source) for source in (None, 'artifact', 'colorless')))
+        *(FixedQualifiedStackCopySpec('activated_or_triggered_ability', source) for source in (None, 'artifact', 'colorless', 'legendary_noncommander')))
 
 
 

@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from .ascend_nodes import ascend_keyword_node
 from .day_night_nodes import day_night_keyword_node
+from .commander_companion_nodes import commander_companion_role_node
 
 
 def face_keyword_node(**values):
+    if values["mechanics"] == ("companion",):
+        return commander_companion_role_node(**values)
     if values['mechanics']==('ascend',):return ascend_keyword_node(**values)
     if values["mechanics"] == ("living metal",):
         return living_metal_keyword_node(**{

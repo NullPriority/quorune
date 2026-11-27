@@ -75,7 +75,10 @@ def bind_source_bound_return(effect, item):
 
 
 def source_bound_return_runtime_dependencies(program):
+    from .source_death_delayed_hand_return import source_death_hand_runtime_dependencies
     from .effect_shape_walkers import nested_effects
+    if required := source_death_hand_runtime_dependencies(program):
+        return required
 
     if not any(is_source_bound_creature_return(effect) for effect in nested_effects((program.effects, program.handlers))):
         return ()

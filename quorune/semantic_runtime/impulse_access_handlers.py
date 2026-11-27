@@ -11,7 +11,8 @@ from ..compiler.impulse_access_templates import IMPULSE_ACCESS_CAPABILITY_ID
 from ..defending_player_library_exile import DEFENDING_PLAYER_EXILE_VERSION, validate_defending_player_exile
 from ..impulse_access_model import (
     IMPULSE_ACCESS_DECLARED_COUNT_VERSION, SHUFFLED_TOP_FREE_PLAY_VERSION, ImpulseAccessDuration,
-    impulse_access_count_is_legal, validate_shuffled_top_free_play,
+    TOP_FREE_INSTANT_SORCERY_VERSION, impulse_access_count_is_legal,
+    validate_shuffled_top_free_play, validate_top_free_instant_sorcery,
 )
 from ..opponent_library_top_model import (
     OPPONENT_HALF_TOP_EXILE_VERSION, OPPONENT_TOP_EXILE_VERSION, OpponentLibraryTopSpec,
@@ -59,9 +60,11 @@ class FixedImpulseAccessHandler:
             )
         count = effect.get("count")
         version = effect.get("schema_version", 1)
-        if version == SHUFFLED_TOP_FREE_PLAY_VERSION:
+        if version in {SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION}:
+            validate = (validate_top_free_instant_sorcery if version == TOP_FREE_INSTANT_SORCERY_VERSION
+                        else validate_shuffled_top_free_play)
             try:
-                validate_shuffled_top_free_play(
+                validate(
                     {key: value for key, value in effect.items() if key != "reason"}, actor=context.actor,
                 )
             except ValueError as exc:

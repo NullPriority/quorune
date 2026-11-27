@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .private_opponent_library_cast_model import PrivateLibrarySearchPlaySource
+
 """Authoritative zone membership and logical-incarnation transitions.
 
 The rules engine remains the transaction facade and supplies typed replacement,
@@ -35,6 +37,7 @@ from .rules.graveyard_arrival_order import place_ordered_graveyard_arrivals, val
 from .rules.entry_subtype_grants import EntrySubtypeGrant, with_resolution_entry_subtype
 from .rules.library_partition import (
     commit_ordered_library_arrivals, publish_library_search_reveal, validate_ordered_library_destination,
+    validated_library_search_results,
 )
 from .life_state import (
     LifeStateError,
@@ -371,7 +374,7 @@ class ZoneTransitionOwner:
         private_library_exile_viewer: str | None = None,
         unviewed_library_exile: bool = False,
         private_replacement_journal: bool = False,
-        private_library_cast_source: str | None = None,
+        private_library_cast_source: str | PrivateLibrarySearchPlaySource | None = None,
         resolution_entry_subtype: EntrySubtypeGrant | None = None,
     ) -> CardInstance:
         if type(defer_control_sync) is not bool:
@@ -707,7 +710,7 @@ class ZoneTransitionOwner:
         already_detached: bool = False,
         private_library_exile_viewer: str | None = None,
         unviewed_library_exile: bool = False,
-        private_library_cast_source: str | None = None,
+        private_library_cast_source: str | PrivateLibrarySearchPlaySource | None = None,
     ) -> None:
         card = plan.card
         shared_type_doors = self._prepared_entry_doors(plan, enter_face)
@@ -1137,7 +1140,12 @@ class ZoneTransitionOwner:
         discard_effect_origin: DiscardEffectOrigin | None = None,
         putting_players: Mapping[str, str] | None = None,
         private_top_exile=None,
+        simultaneous_life=None,
     ) -> list[CardInstance]:
+        if simultaneous_life is not None:
+            from .life_change import validate_life_change_batch
+
+            validate_life_change_batch(self.host, simultaneous_life)
         if private_top_exile is not None:
             from .rules.private_opponent_top_exile import PrivateTopExileBatch
 
@@ -1193,7 +1201,12 @@ class ZoneTransitionOwner:
             from .damage_results import clear_damage_for_permanents
 
             clear_damage_for_permanents(self.host, damage_clears)
-        if not changes:return []
+        if not changes:
+            if simultaneous_life is not None:
+                from .effect_runtime.life_effects import commit_prepared_life_effect_changes
+
+                commit_prepared_life_effect_changes(self.host, simultaneous_life)
+            return []
         snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,
             source_snapshot,reason=reason,log=log,entry_players=entry_players,private_top_exile=private_top_exile)
         if library_order is not None:
@@ -1207,7 +1220,8 @@ class ZoneTransitionOwner:
                 graveyard[:] = place_ordered_graveyard_arrivals(graveyard, group, refs)
         entry_results.commit_entry_characteristic_additions(self.host, entry_additions)
         return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,
-            publish_events=publish_events,attacking_entries=attacking_entries, discard_effect_origin=discard_effect_origin)
+            publish_events=publish_events,attacking_entries=attacking_entries, discard_effect_origin=discard_effect_origin,
+            simultaneous_life=simultaneous_life)
 
     def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None,entry_players=None,private_top_exile=None):
         """Commit an already validated group without publishing partial facts."""
@@ -1252,9 +1266,13 @@ class ZoneTransitionOwner:
 
     def _publish_simultaneous_zone_batch(
         self, snapshots, prepared, kinds, *, reason, publish_events=True,
-        attacking_entries=None, discard_effect_origin=None,
+        attacking_entries=None, discard_effect_origin=None, simultaneous_life=None,
     ):
         """Seal history and discover triggers after every group member commits."""
+        if simultaneous_life is not None:
+            from .life_change import commit_life_change_batch
+
+            commit_life_change_batch(self.host, simultaneous_life, dispatch_events=False)
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
         from .rules.city_blessing import synchronize_citys_blessing
@@ -1283,7 +1301,8 @@ class ZoneTransitionOwner:
                 read_ahead_chapter=prepared[
                     card.object_id
                 ].read_ahead_chapter,
-                discard_effect_origin=discard_effect_origin,
+                discard_effect_origin=(discard_effect_origin
+                    if kinds.get(card.object_id) is ZoneTransitionKind.DISCARD else None),
             )
             for card, departure in snapshots
         )
@@ -1302,6 +1321,11 @@ class ZoneTransitionOwner:
         from .rules.state_triggers import observe_public_state_triggers
         observe_public_state_triggers(self.host,trigger_batch=trigger_batch)
         enqueue_trigger_batch(self.host, trigger_batch)
+        if simultaneous_life is not None:
+            from .player_result_events import dispatch_life_gain_records, dispatch_life_loss_records
+
+            dispatch_life_loss_records(self.host, simultaneous_life.records)
+            dispatch_life_gain_records(self.host, simultaneous_life.records)
         from .conditional_exile_return import return_from_departure_snapshots
         return_from_departure_snapshots(self.host, snapshots)
         return [card for card, _departure in snapshots]
@@ -1463,23 +1487,8 @@ class ZoneTransitionOwner:
     ) -> None:
         """Retain found-card knowledge before a search's shuffle or placement."""
         self.host._require_seat(seat)
-        if (type(public) is not bool or expected_zone not in {LIBRARY_ZONE, "hand"}
-                or type(announce_public_results) is not bool or (announce_public_results and not public)):
-            raise GameRuleError("Search-result visibility is malformed")
-        if any(
-            type(object_id) is not str or object_id not in self.state.cards
-            for object_id in object_ids
-        ):
-            raise GameRuleError("Search-result identities are unavailable")
-        if len(object_ids) != len(set(object_ids)):
-            raise GameRuleError("Search-result identities must be unique")
-        cards = [self.state.cards[object_id] for object_id in object_ids]
-        if any(
-            card.owner != seat or card.zone != expected_zone
-            or card.object_id not in self.state.players[seat].zones[expected_zone]
-            for card in cards
-        ):
-            raise GameRuleError("Search-result visibility requires the expected owned zone")
+        cards = validated_library_search_results(self.state, seat, object_ids, public=public,
+            expected_zone=expected_zone, announce=announce_public_results)
         viewers = set(self.host.seats) if public else {seat}
         for card in cards:
             card.known_to = sorted(set(card.known_to).union(viewers))
@@ -1492,8 +1501,11 @@ class ZoneTransitionOwner:
         self, seat: str, *, reason: str = "shuffle",
         excluded_object_ids: Sequence[str] = (),
         actor: str | None = None,
+        shuffling_player: str | None = None,
     ) -> None:
         self.host._require_seat(seat)
+        if shuffling_player not in (None, seat, actor):
+            self.host._require_seat(shuffling_player)
         if actor is None:
             actor = seat
         elif actor != seat:
@@ -1534,6 +1546,10 @@ class ZoneTransitionOwner:
             importance=0,
             changed_players=[seat],
         )
+        from .rules.opponent_library_shuffle import dispatch_committed_library_shuffle
+
+        if shuffling_player in (None, seat):
+            dispatch_committed_library_shuffle(self.host, seat, count)
 
 
 __all__ = [

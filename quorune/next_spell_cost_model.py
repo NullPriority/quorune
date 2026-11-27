@@ -14,6 +14,7 @@ OPERATION='grant_next_spell_cost_reduction'
 MECHANIC='next-eligible-spell-cost-reduction'
 CAPABILITY='casting.cost.next_eligible_spell_reduction'
 EFFECT_KIND='resolution_next_spell_cost_reduction'
+NEXT_TURN_SPELL_COST_VERSION = 3
 RULES=('118.7a','601.2f','601.2h','601.2i','611.2a')
 
 
@@ -42,7 +43,20 @@ def _validate_recurring_spell_cost_instruction(value):
     return query, (CAPABILITY,)
 
 
+def next_turn_spell_cost_effect():
+    return {
+        "op": OPERATION, "schema_version": NEXT_TURN_SPELL_COST_VERSION,
+        "spell_query": recurring_spell_cost_query(False).to_dict(), "amount": 1,
+    }
+
+
 def validate_next_spell_cost_instruction(value,*,resolved=False):
+    if isinstance(value, Mapping) and value.get("schema_version") == NEXT_TURN_SPELL_COST_VERSION:
+        query = recurring_spell_cost_query(False)
+        if (type(value["schema_version"]) is not int or type(value.get("amount")) is not int
+                or immutable_fingerprint(value) != immutable_fingerprint(next_turn_spell_cost_effect())):
+            raise ValueError("Next-turn spell costs require the exact recurring instant and sorcery reduction")
+        return query, (CAPABILITY,)
     if isinstance(value, Mapping) and value.get("schema_version") == 2:
         return _validate_recurring_spell_cost_instruction(value)
     if (not isinstance(value,Mapping) or set(value)!={'op','schema_version','spell_query','amount'}
@@ -79,19 +93,23 @@ class ResolvedNextSpellCostReduction:
     duration: ContinuousEffectDuration=ContinuousEffectDuration.UNTIL_END_OF_TURN
     schema_version: int=1
     face_down_only: bool=False
+    expires_on_next_turn_of: str | None = None
 
     def __post_init__(self):
         if (any(type(v) is not str or not v for v in (self.effect_id,self.source_id,self.controller))
                 or type(self.timestamp) is not int or self.timestamp<0
                 or type(self.amount) is not int or self.amount<0
-                or type(self.schema_version) is not int or self.schema_version not in {1, 2}
+                or type(self.schema_version) is not int or self.schema_version not in {1, 2, NEXT_TURN_SPELL_COST_VERSION}
                 or type(self.face_down_only) is not bool
-                or self.schema_version == 1 and self.face_down_only
-                or self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
+                or self.schema_version != 2 and self.face_down_only
+                or self.duration is not (ContinuousEffectDuration.UNTIL_NEXT_TURN
+                    if self.schema_version == NEXT_TURN_SPELL_COST_VERSION else ContinuousEffectDuration.UNTIL_END_OF_TURN)
+                or self.expires_on_next_turn_of != (self.controller
+                    if self.schema_version == NEXT_TURN_SPELL_COST_VERSION else None)
                 or not isinstance(self.spell_query,ObjectQuerySpec)):
             raise ContinuousEffectError('Pending next-spell reduction has invalid identity, amount or duration')
         validate_spell_query(self.spell_query.to_dict())
-        if self.schema_version == 2 and (
+        if self.schema_version in {2, NEXT_TURN_SPELL_COST_VERSION} and (
             self.amount != 1 or self.spell_query != recurring_spell_cost_query(self.face_down_only)
         ):
             raise ContinuousEffectError("Recurring cost rule requires its exact spell scope")
@@ -102,6 +120,8 @@ class ResolvedNextSpellCostReduction:
             'spell_query':self.spell_query.to_dict(),'amount':self.amount,'duration':self.duration.value}
         if self.schema_version == 2:
             value['face_down_only'] = self.face_down_only
+        if self.schema_version == NEXT_TURN_SPELL_COST_VERSION:
+            value['expires_on_next_turn_of'] = self.expires_on_next_turn_of
         return value
 
     @classmethod
@@ -110,12 +130,14 @@ class ResolvedNextSpellCostReduction:
                   'spell_query','amount','duration'}
         if isinstance(value, Mapping) and value.get('schema_version') == 2:
             fields.add('face_down_only')
+        if isinstance(value, Mapping) and value.get('schema_version') == NEXT_TURN_SPELL_COST_VERSION:
+            fields.add('expires_on_next_turn_of')
         if not isinstance(value, Mapping) or set(value) != fields or value['effect_kind'] != EFFECT_KIND:
             raise ContinuousEffectError('Pending spell reduction fields are incomplete or unknown')
         pending = cls(value['effect_id'],value['source_id'],value['timestamp'],value['controller'],
             validate_spell_query(value['spell_query']),value['amount'],ContinuousEffectDuration(value['duration']),
-            value['schema_version'],value.get('face_down_only',False))
-        if pending.schema_version == 2 and pending.to_dict() != value:
+            value['schema_version'],value.get('face_down_only',False),value.get('expires_on_next_turn_of'))
+        if pending.schema_version in {2, NEXT_TURN_SPELL_COST_VERSION} and pending.to_dict() != value:
             raise ContinuousEffectError("Recurring spell cost journal must use its exact canonical fields")
         return pending
 
@@ -125,5 +147,6 @@ class ResolvedNextSpellCostReduction:
 
 def next_spell_cost_node_capabilities(*,effects,target_schema,mechanic_ids,**kwargs):
     if MECHANIC not in mechanic_ids or target_schema is not None or len(effects)!=1:return ()
+    if effects[0].get('schema_version') == NEXT_TURN_SPELL_COST_VERSION:return ()
     try:return validate_next_spell_cost_instruction(effects[0])[1]
     except (TypeError,ValueError):return ()

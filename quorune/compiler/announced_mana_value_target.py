@@ -6,8 +6,8 @@ from dataclasses import replace
 
 from ..rules.announced_mana_value_target import (
     announced_mana_value_capability,
-    declare_activation_mana_value_equality,
-    exact_artifact_destruction_price,
+    declare_activation_mana_value_equality, declare_activation_graveyard_mana_value_limit,
+    exact_artifact_destruction_price, exact_land_return_x_activation_price,
     declare_announced_mana_value_limit,
     declare_own_graveyard_mana_value_limit,
     distinct_graveyard_reanimation_effect,
@@ -79,7 +79,27 @@ def announced_mana_value_target_template(text: str, *, has_cast_x: bool):
     )
 
 
+def _activation_graveyard_return_template(ability, text):
+    if (ability.zones != ("battlefield",) or not ability.sorcery_speed or ability.activation_conditions
+            or re.fullmatch(r"Return target artifact or enchantment card with mana value X or less "
+                            r"from your graveyard to the battlefield[.]?", text.strip(), re.I) is None):
+        return None
+    from .activated_costs import activated_ability_cost
+    from .reanimation_templates import fixed_target_reanimation_effect_template
+
+    if not exact_land_return_x_activation_price(activated_ability_cost(ability)):
+        return None
+    template = fixed_target_reanimation_effect_template(
+        "Return target artifact or enchantment card with mana value 1 or less from your graveyard to the battlefield.")
+    if template is None:
+        return None
+    name, effects, target, mechanics = template.compiled()
+    return _TEMPLATE_PREFIX + name, effects, declare_activation_graveyard_mana_value_limit(target), mechanics
+
+
 def announced_activation_mana_value_target_template(ability, text: str):
+    if graveyard := _activation_graveyard_return_template(ability, text):
+        return graveyard
     if (ability.zones != ("battlefield",) or ability.sorcery_speed or ability.activation_conditions
             or re.fullmatch(r"Destroy target noncreature artifact with mana value X[.]?", text.strip(), re.I) is None):
         return None

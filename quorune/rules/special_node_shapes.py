@@ -80,10 +80,12 @@ def special_result_trigger_runtime_dependencies(program):
     validate_manifest_result_envelope(program)
     from .third_life_shapes import third_life_program_dependencies
     from .event_subscriptions import grouped_zone_event_dependencies
+    from .cast_coin_transform import coin_runtime_dependencies
 
     third=third_life_program_dependencies(program)
     required=set(third);manifest=False;half=bool(third)
     required.update(grouped_zone_event_dependencies(program))
+    required.update(coin_runtime_dependencies(program))
     for effect in program.effects:
         if effect.get('op')=='manifest_card':
             if uses_target_recipient_manifest(effect):
@@ -191,6 +193,16 @@ def _early_source_and_choice_capabilities(effects, target_schema, mechanics, cos
     )
     if exile_trigger is not None:
         return exile_trigger
+    from .repeated_apnap_payment import payment_round_node_capabilities
+
+    payment_round = payment_round_node_capabilities(effects, target_schema, cost_schema, mechanics)
+    if payment_round is not None:
+        return payment_round
+    from .private_search_play import private_search_play_node_capabilities
+
+    private_search = private_search_play_node_capabilities(effects, target_schema, mechanics, cost_schema)
+    if private_search is not None:
+        return private_search
     from .opposing_owner_entry_life import opposing_owner_entry_node_capabilities
 
     owned_entry = opposing_owner_entry_node_capabilities(effects, target_schema, cost_schema, mechanics)
@@ -408,11 +420,28 @@ def _event_draw_shape_capabilities(effects, target_schema, mechanics):
     return None
 
 
+def _multi_zone_search_shape_capabilities(effects, target_schema, mechanics):
+    from ..cast_x_search_model import CAST_X_ZONE_SEARCH_MECHANIC, CAST_X_ZONE_SEARCH_OPERATION
+    from ..named_search_model import NAMED_ZONE_SEARCH_OPERATION
+
+    if CAST_X_ZONE_SEARCH_MECHANIC in mechanics or any(
+        effect.get("op") == CAST_X_ZONE_SEARCH_OPERATION for effect in effects
+    ):
+        from .cast_x_zone_searches import cast_x_zone_search_node_capabilities
+
+        return cast_x_zone_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if any(effect.get("op") == NAMED_ZONE_SEARCH_OPERATION for effect in effects):
+        from .named_searches import named_zone_search_node_capabilities
+
+        return named_zone_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    return None
+
+
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
-    from .die_roll_draw import declared_die_draw_node_capabilities
-    if (dice := declared_die_draw_node_capabilities(effects, target_schema, mechanics, cost_schema)) is not None:
-        return dice
+    from .cast_coin_transform import random_result_node_capabilities
+    if (random_result := random_result_node_capabilities(effects, target_schema, mechanics, cost_schema)) is not None:
+        return random_result
     owned=_shared_and_source_result_capabilities(
         effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
     if owned is not None:return owned
@@ -437,9 +466,8 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if any(effect.get('op') == 'inspect_target_library' for effect in effects):
         from .target_library_inspection import target_library_inspection_node_capabilities
         return target_library_inspection_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
-    if any(effect.get('op') == 'search_named_library_or_graveyard' for effect in effects):
-        from .named_searches import named_zone_search_node_capabilities
-        return named_zone_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if (zone_search := _multi_zone_search_shape_capabilities(effects, target_schema, mechanics)) is not None:
+        return zone_search
     if 'conditional-target-power-preparation' in mechanics or any(e.get('op') == 'apply_if_public_condition' and e.get('schema_version') == 16 for e in effects):
         from .conditional_target_preparation import conditional_prepared_power_capabilities
         return conditional_prepared_power_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
@@ -582,6 +610,7 @@ def special_node_covered_mechanics(supplied):
     from .next_personal_turn_protection import CAST_ENTRY_PROTECTION_CAPABILITY, CAST_ENTRY_PROTECTION_MECHANIC
     from .die_roll_draw import CAPABILITY as DIE_DRAW_CAPABILITY, MECHANIC as DIE_DRAW_HAND_SIZE_MECHANIC
     from .paid_sacrifice_copy import CAPABILITY as PAID_SACRIFICE_COPY_CAPABILITY, MECHANIC as PAID_SACRIFICE_COPY_MECHANIC
+    from .cast_coin_transform import CAPABILITY as CAST_COIN_CAPABILITY, MECHANIC as CAST_COIN_MECHANIC
 
     from .opposing_owner_entry_life import OPPOSING_OWNER_ENTRY_LIFE_CAPABILITY, OPPOSING_OWNER_ENTRY_LIFE_MECHANIC
     from .owned_commander_amount import OWNED_COMMANDER_AMOUNT_CAPABILITY, OWNED_COMMANDER_AMOUNT_MECHANIC
@@ -595,6 +624,7 @@ def special_node_covered_mechanics(supplied):
         OWNED_COMMANDER_AMOUNT_CAPABILITY: OWNED_COMMANDER_AMOUNT_MECHANIC,
         DRAW_STEP_SETTLEMENT_CAPABILITY: DRAW_STEP_SETTLEMENT_MECHANIC,
         DIE_DRAW_CAPABILITY: DIE_DRAW_HAND_SIZE_MECHANIC,
+        CAST_COIN_CAPABILITY: CAST_COIN_MECHANIC,
         COMBAT_PREVENTION_DRAW_CAPABILITY: TEMPORARY_QUOTED_GRANT_MECHANIC,
         "continuous.ability.temporary_each_color_protection": TEMPORARY_QUOTED_GRANT_MECHANIC,
         "continuous.ability.temporary_commander_lifelink": TEMPORARY_QUOTED_GRANT_MECHANIC,

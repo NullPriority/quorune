@@ -35,6 +35,18 @@ class EntryCharacteristicsQuery(Protocol):
 
 
 def _current_history_entry_value(host: Any, source: DynamicEntryCounterValueSource, controller: str) -> int:
+    if source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS:
+        from .public_history_query_model import PublicHistoryQuerySpec, public_history_query_value
+
+        query = PublicHistoryQuerySpec("spell_cast", types_any=("instant", "sorcery"))
+        value = public_history_query_value(host.state, controller, query)
+        if value is None:
+            raise EntryCounterError("Entry loyalty requires the current turn's typed cast history")
+        return value
+    if source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT:
+        from .commander_cast_counts import controller_commander_cast_count
+
+        return controller_commander_cast_count(host.state, controller)
     history = host.state.turn_history
     if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
         raise EntryCounterError("Entry turn history is unavailable")
@@ -207,6 +219,8 @@ def dynamic_entry_counter_amount(
             amount_spec.quantity,
         )
     elif source in {
+        DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT,
+        DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS,
         DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT,
         DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
         DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,

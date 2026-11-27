@@ -7927,6 +7927,28 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The threshold mana witness registers the printed original."
+    },
+    {
+      "source": "tests/test_announced_mana_value_targets.py",
+      "symbol": "AnnouncedManaValueTargetTests.test_land_return_activation_and_departure_limit_require_their_closed_authorities",
+      "card_names": [
+        "Tameshi, Reality Architect"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The activation authority check registers the printed land-return source."
+    },
+    {
+      "source": "tests/test_destroy_original_controller_tokens.py",
+      "symbol": "DestroyOriginalControllerTokenTests.test_optional_artifact_draw_binds_only_the_closed_attack_and_current_target_controller",
+      "card_names": [
+        "Kellan, Inquisitive Prodigy // Tail the Suspect"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The optional attack result check registers the printed Adventure original."
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
@@ -8092,6 +8114,7 @@
     "tests/fixtures/cast-creature-set-copy-cards.json",
     "tests/fixtures/cast-creature-targets.json",
     "tests/fixtures/cast-event-counter-and-mana-value-tokens-cards.json",
+    "tests/fixtures/cast-optional-coin-transform-cards.json",
     "tests/fixtures/cast-participant-opponent-sacrifice-draw-cards.json",
     "tests/fixtures/cast-participant-optional-opponent-draw-cards.json",
     "tests/fixtures/cast-source-power-cards.json",
@@ -8171,6 +8194,7 @@
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-complement-protection-cards.json",
     "tests/fixtures/commander-entry-mana-cards.json",
+    "tests/fixtures/commander-identity-life-draw-cards.json",
     "tests/fixtures/commander-identity-mana-cards.json",
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/commander-permanent-keyword-cards.json",
@@ -8438,6 +8462,7 @@
     "tests/fixtures/equipped-modal-stats-cards.json",
     "tests/fixtures/equipped-myriad-cards.json",
     "tests/fixtures/equipped-optional-transform-cards.json",
+    "tests/fixtures/equipped-planeswalker-cards.json",
     "tests/fixtures/equipped-temporary-hexproof-cards.json",
     "tests/fixtures/escalate-tap-cards.json",
     "tests/fixtures/escaped-entry-counter-cards.json",
@@ -8586,6 +8611,7 @@
     "tests/fixtures/global-unbounded-cleanup-limit-cards.json",
     "tests/fixtures/glorious-sunrise-cards.json",
     "tests/fixtures/goblin-welder-zones-cards.json",
+    "tests/fixtures/gogo-master-of-mimicry-cards.json",
     "tests/fixtures/gonti-native-cards.json",
     "tests/fixtures/graft-cards.json",
     "tests/fixtures/granted-death-return-cards.json",
@@ -8654,6 +8680,7 @@
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/hybrid-resolution-payment-cards.json",
+    "tests/fixtures/impact-resonance-cards.json",
     "tests/fixtures/impending-cards.json",
     "tests/fixtures/in-garruks-wake-cards.json",
     "tests/fixtures/inactive-life-effect-cards.json",
@@ -8771,6 +8798,7 @@
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/mikaeus-unhallowed-cards.json",
     "tests/fixtures/mill-committed-adventure-cards.json",
+    "tests/fixtures/mill-committed-battlefield-cards.json",
     "tests/fixtures/mill-library-activation-cost-cards.json",
     "tests/fixtures/miracle-cards.json",
     "tests/fixtures/mixed-counter-recipient-replacement-cards.json",
@@ -8896,6 +8924,7 @@
     "tests/fixtures/other-equipment-equip-reduction-cards.json",
     "tests/fixtures/other-spell-cast-this-turn-cards.json",
     "tests/fixtures/own-combat-entwine-cards.json",
+    "tests/fixtures/own-commander-battlefield-return-cards.json",
     "tests/fixtures/own-death-random-damage-cards.json",
     "tests/fixtures/own-graveyard-mana-value-target-cards.json",
     "tests/fixtures/own-graveyard-power-return-cards.json",
@@ -8931,6 +8960,7 @@
     "tests/fixtures/per-player-query-life-cards.json",
     "tests/fixtures/per-player-target-cards.json",
     "tests/fixtures/per-player-trigger-composition-cards.json",
+    "tests/fixtures/peregrine-dynamo-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
     "tests/fixtures/permanent-control-exchange-cards.json",
     "tests/fixtures/permanent-subtype-hand-entry-cards.json",
@@ -8974,6 +9004,7 @@
     "tests/fixtures/prototype-cards.json",
     "tests/fixtures/provoke-cards.json",
     "tests/fixtures/prowess-cards.json",
+    "tests/fixtures/psychic-surgery-cards.json",
     "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/public-any-counter-cards.json",
     "tests/fixtures/public-collection-quantity-cards.json",
@@ -9281,6 +9312,7 @@
     "tests/fixtures/target-library-inspection-cards.json",
     "tests/fixtures/target-library-shuffle-cards.json",
     "tests/fixtures/target-opponent-counter-choice-cards.json",
+    "tests/fixtures/target-opponent-private-library-play-cards.json",
     "tests/fixtures/target-owner-shuffle-and-draw-cards.json",
     "tests/fixtures/target-owner-shuffle-top-cards.json",
     "tests/fixtures/target-player-basic-land-search-cards.json",

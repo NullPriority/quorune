@@ -588,7 +588,7 @@ class ActionPermissionRegistry(
 
 @lru_cache(maxsize=1)
 def default_action_permission_registry() -> ActionPermissionRegistry:
-    from .library_search_rules import LibrarySearchRuleHandler
+    from .library_search_rules import LibrarySearchRuleHandler, SEARCH_CONTROL_CAPABILITY, SEARCH_CONTROL_HANDLER
     from .hand_visibility import StaticHandVisibilityHandler
     from .mana_spending import (
         TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY, mana_spending_handlers, tap_mana_multiplier_handlers,
@@ -607,6 +607,10 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
+            LibrarySearchRuleHandler(handler_id=SEARCH_CONTROL_HANDLER,
+                family="permission.action.library-search-control",
+                rule_references=("611.3b", "616.1", "701.23a", "701.23b", "701.23f", "723.4", "723.5"),
+                capability_dependencies=(SEARCH_CONTROL_CAPABILITY,)),
             StaticHandVisibilityHandler(),
             *mana_spending_handlers(),
             *(tap_mana_multiplier_handlers() if capabilities.capability(TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY) is not None else ()),

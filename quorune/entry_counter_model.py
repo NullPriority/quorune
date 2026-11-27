@@ -23,6 +23,7 @@ DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT = "dynamic_self_entry_counter_amounts"
 PAID_GREEN_PAIRS_ENTRY_CAPABILITY = "counter.producer.paid_green_pairs_self_entry"
 PAID_COLOR_ENTRY_CAPABILITY = 'counter.producer.paid_color_self_entry'
 CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY = "counter.producer.current_life_self_entry"
+COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY = "counter.producer.commander_cast_history_self_entry_loyalty"
 
 
 class DynamicEntryCounterValueSource(str, Enum):
@@ -32,6 +33,8 @@ class DynamicEntryCounterValueSource(str, Enum):
     CONTROLLER_ATTACKED = "controller_attacked"
     CONTROLLER_OTHER_SPELLS_CAST = "controller_other_spells_cast"
     CONTROLLER_SPELLS_CAST = "controller_spells_cast"
+    CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
+    CONTROLLER_INSTANT_SORCERY_CASTS = "controller_instant_sorcery_casts"
     CREATURES_DIED = "creatures_died"
     OTHER_SPELLS_CAST = "other_spells_cast"
     OPPONENTS_LIFE_LOST = "opponents_life_lost"
@@ -55,6 +58,7 @@ class DynamicEntryCounterValueSource(str, Enum):
 
 PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY = "counter.producer.public_maximum_self_entry"
 EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY = "counter.producer.exiled_mana_value_self_entry"
+INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY = "counter.producer.instant_sorcery_cast_loyalty_entry"
 PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES = {
     DynamicEntryCounterValueSource.MAX_PLAYER_CREATURES: "suspect",
     DynamicEntryCounterValueSource.MAX_OPPONENT_DRAWS: "+1/+1",
@@ -185,12 +189,19 @@ class DynamicEntryCounterAmountSpec:
             or self.coefficient != 1 or self.offset != 0
         ):
             raise EntryCounterError("Entry creature values require one unmodified public aggregate")
-        if self.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL and (
+        if self.value_source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT and (
+            self.calculation is not DynamicEntryCounterCalculation.MULTIPLY or self.coefficient != 1 or self.offset
+        ):
+            raise EntryCounterError("Commander history entry uses the unmodified lifetime command-zone cast count")
+        if self.value_source in {
+            DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL,
+            DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS,
+        } and (
             self.calculation is not DynamicEntryCounterCalculation.MULTIPLY
             or self.coefficient != 1
             or self.offset != 0
         ):
-            raise EntryCounterError("Life-total entry counters require exactly the entering controller's life")
+            raise EntryCounterError("Entry counters require the exact unscaled entering-controller fact")
         if self.value_source in {
             DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
             DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,

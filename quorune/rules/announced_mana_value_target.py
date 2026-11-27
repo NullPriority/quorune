@@ -7,7 +7,9 @@ from copy import deepcopy
 from dataclasses import replace
 from typing import Any
 
-from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
+from ..activation_x import (
+    ANNOUNCED_ACTIVATION_X_CAPABILITY, CONTROLLED_LAND_RETURN_X_COST, controlled_land_return_x_choice,
+)
 from ..replacement.immutable import thaw_value
 from ..target_cardinality import ANY_NUMBER_TARGET_CAPABILITY, selected_target_count_descriptor, validate_selected_target_count
 from ..targets import target_plan
@@ -18,6 +20,7 @@ ANNOUNCED_MANA_VALUE_TARGET_CAPABILITY = "target.mana_value.announced_cast_x"
 OWN_GRAVEYARD_MANA_VALUE_CAPABILITY = "target.mana_value.announced_own_graveyard_x"
 DISTINCT_GRAVEYARD_MANA_VALUE_CAPABILITY = "target.mana_value.announced_distinct_own_graveyard_x"
 DISTINCT_REANIMATION_RESULT_VERSION = 2
+ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY = "target.mana_value.announced_activation_own_graveyard_x"
 _CAST_X_LIMIT = {"schema_version": 1, "parameter": "x", "comparison": "at_most"}
 _OWN_GRAVEYARD_X_LIMIT = {"schema_version": 2, "parameter": "x", "comparison": "at_most",
                           "scope": "own_graveyard_creature"}
@@ -30,6 +33,8 @@ _DISTINCT_OWN_GRAVEYARD_X_LIMIT = {
 _OWN_GRAVEYARD_CREATURE_GROUP = {
     "zones": ["graveyard"], "categories": ["card"], "owner_relation": "you", "types_any": ["creature"],
 }
+_ACTIVATION_GRAVEYARD_X_LIMIT = {"schema_version": 4, "parameter": "x", "comparison": "at_most",
+                                 "scope": "own_graveyard_artifact_or_enchantment"}
 _FIXED_LIMIT_FIELDS = {"mana_value", "mana_value_min", "mana_value_max", "mana_value_equal"}
 _ARTIFACT_DESTROY_PRICE = {
     "text": "{X}{X}{1}", "mana": {"GENERIC": 1, **dict.fromkeys("WUBRGC", 0)},
@@ -48,6 +53,33 @@ def exact_artifact_destruction_price(cost_schema) -> bool:
         and all(type(value[key]) is type(expected) for key, expected in _ARTIFACT_DESTROY_PRICE.items())
         and all(type(amount) is int for amount in value["mana"].values())
     )
+
+
+def exact_land_return_x_activation_price(cost_schema) -> bool:
+    from ..activation_condition_model import PUBLIC_ACTIVATION_FIELD, PublicActivationTiming, public_activation_descriptor
+
+    value = thaw_value(cost_schema)
+    if not isinstance(value, dict):
+        return False
+    timing = value.pop(PUBLIC_ACTIVATION_FIELD, None)
+    if timing is not None and (timing != public_activation_descriptor(PublicActivationTiming.SORCERY)
+                               or type(timing.get("schema_version")) is not int):
+        return False
+    expected = {**_ARTIFACT_DESTROY_PRICE, "text": CONTROLLED_LAND_RETURN_X_COST,
+                "mana": {**dict.fromkeys(("GENERIC", *"WUBRGC"), 0), "W": 1},
+                "choices": [controlled_land_return_x_choice().compact()], "announced_x_symbols": 1}
+    return (value == expected and all(type(value[key]) is type(part) for key, part in expected.items())
+            and all(type(amount) is int for amount in value["mana"].values()))
+
+
+def has_activation_graveyard_mana_value_limit(schema) -> bool:
+    descriptor = schema.get(ANNOUNCED_MANA_VALUE_LIMIT) if isinstance(schema, Mapping) else None
+    return (isinstance(descriptor, Mapping) and dict(descriptor) == _ACTIVATION_GRAVEYARD_X_LIMIT
+            and type(descriptor["schema_version"]) is int)
+
+
+def has_activation_mana_value_target(schema) -> bool:
+    return has_activation_mana_value_equality(schema) or has_activation_graveyard_mana_value_limit(schema)
 
 
 def has_activation_mana_value_equality(schema) -> bool:
@@ -74,7 +106,7 @@ def bind_announced_mana_value_limit(
     if ANNOUNCED_MANA_VALUE_LIMIT not in bound:
         return bound
     limit = bound.pop(ANNOUNCED_MANA_VALUE_LIMIT)
-    supported = (_ACTIVATION_X_EQUAL,) if activation else (
+    supported = (_ACTIVATION_X_EQUAL, _ACTIVATION_GRAVEYARD_X_LIMIT) if activation else (
         _CAST_X_LIMIT, _OWN_GRAVEYARD_X_LIMIT, _DISTINCT_OWN_GRAVEYARD_X_LIMIT,
     )
     if (not isinstance(limit, Mapping) or dict(limit) not in supported
@@ -84,7 +116,7 @@ def bind_announced_mana_value_limit(
             or {"groups", "modes", "count_parameter"}.intersection(bound)):
         raise ValueError("Invalid announced X mana-value target")
 
-    if activation:
+    if dict(limit) == _ACTIVATION_X_EQUAL:
         from ..compiler.direct_target import DirectPermanentTargetSpec
 
         expected = DirectPermanentTargetSpec(types_any=("artifact",), types_none=("creature",)).to_target_schema()
@@ -104,11 +136,13 @@ def bind_announced_mana_value_limit(
     target, = plan.groups
     if (target.min_targets, target.max_targets) != (1, 1):
         raise ValueError("Announced mana-value limit requires exactly one mandatory target")
-    if limit["schema_version"] == 2:
+    if limit["schema_version"] in {2, 4}:
+        supported_types = ("creature",) if limit["schema_version"] == 2 else ("artifact", "enchantment")
         if (set(bound) != {"zones", "categories", "count", "owner_relation", "types_any", "mana_value_max"}
+                or type(bound["count"]) is not int
                 or target.zones != ("graveyard",) or target.categories != ("card",)
-                or target.owner_relation != "you" or target.types_any != ("creature",)):
-            raise ValueError("The announced upper bound requires one owned graveyard creature card")
+                or target.owner_relation != "you" or target.types_any != supported_types):
+            raise ValueError("The announced upper bound requires its exact owned graveyard target")
     elif target.zones != ("battlefield",) or target.categories != ("permanent",):
         raise ValueError("Announced mana-value limit requires a permanent target")
     return bound
@@ -137,6 +171,16 @@ def declare_own_graveyard_mana_value_limit(fixed_schema: Mapping[str, Any]):
     return target
 
 
+def declare_activation_graveyard_mana_value_limit(fixed_schema: Mapping[str, Any]) -> dict[str, Any]:
+    target = deepcopy(dict(fixed_schema))
+    amount = target.pop("mana_value_max", None)
+    if ANNOUNCED_MANA_VALUE_LIMIT in target or type(amount) is not int or amount < 0:
+        raise ValueError("An announced graveyard limit requires a closed fixed upper bound")
+    target[ANNOUNCED_MANA_VALUE_LIMIT] = dict(_ACTIVATION_GRAVEYARD_X_LIMIT)
+    bind_announced_mana_value_limit(target, amount, activation=True)
+    return target
+
+
 def declare_activation_mana_value_equality(fixed_schema: Mapping[str, Any]) -> dict[str, Any]:
     declared = deepcopy(dict(fixed_schema))
     sample = declared.pop("mana_value", None)
@@ -154,6 +198,8 @@ def has_announced_mana_value_limit(schema: Any) -> bool:
 def announced_mana_value_capability(schema: Mapping[str, Any]) -> str:
     if has_distinct_own_graveyard_mana_value_limit(schema):
         return DISTINCT_GRAVEYARD_MANA_VALUE_CAPABILITY
+    if has_activation_graveyard_mana_value_limit(schema):
+        return ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY
     if has_activation_mana_value_equality(schema):
         return ANNOUNCED_ACTIVATION_X_CAPABILITY
     limit = schema.get(ANNOUNCED_MANA_VALUE_LIMIT)
@@ -207,17 +253,23 @@ def project_announced_mana_value_target(effects, schema, mechanics):
         raise ValueError("The announced mana-value target requires one represented result")
     if has_distinct_own_graveyard_mana_value_limit(schema):
         return _project_distinct_graveyard_reanimation(effects, schema, mechanics)[1]
-    activation = has_activation_mana_value_equality(schema)
+    activation = has_activation_mana_value_target(schema)
     bound = bind_announced_mana_value_limit(schema, 0, activation=activation)
-    if activation:
+    if has_activation_mana_value_equality(schema):
         from .node_capability_shapes import targeted_destruction_node_capabilities
 
         if effects[0] != {"op": "destroy", "card": "$target.0"}:
             raise ValueError("The announced activation target needs its exact artifact destruction result")
         owns_result = targeted_destruction_node_capabilities
-    elif announced_mana_value_capability(schema) == OWN_GRAVEYARD_MANA_VALUE_CAPABILITY:
+    elif announced_mana_value_capability(schema) in {
+        OWN_GRAVEYARD_MANA_VALUE_CAPABILITY, ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY,
+    }:
         from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
 
+        if has_activation_graveyard_mana_value_limit(schema) and dict(effects[0]) != {
+            "op": "reanimate", "card": "$target.0", "controller": "$controller", "tapped": False,
+        }:
+            raise ValueError("Announced activation X requires its ordinary graveyard return")
         owns_result = fixed_target_reanimation_node_capabilities
     else:
         from .control_capability_shapes import fixed_control_node_capabilities
@@ -244,20 +296,24 @@ def _activation_catalog_matches_declared_target(program) -> bool:
             or program.handlers[0].get("requires_complete_card_program") is not True):
         return False
     ability, = activated_abilities_from_descriptors(program.handlers)
-    return (ability.zones == ("battlefield",) and not ability.mana_ability and not ability.sorcery_speed
+    graveyard = has_activation_graveyard_mana_value_limit(program.target_schema)
+    price_is_closed = exact_land_return_x_activation_price if graveyard else exact_artifact_destruction_price
+    return (ability.zones == ("battlefield",) and not ability.mana_ability and ability.sorcery_speed is graveyard
             and not ability.activation_conditions and ability.builtin_semantic_key == program.key
             and ability.generic_reduction_per_legendary_creature == 0 and not ability.library_search_types
             and thaw_value(ability.target_schema) == thaw_value(program.target_schema)
-            and exact_artifact_destruction_price(activated_ability_cost(ability)))
+            and price_is_closed(activated_ability_cost(ability)))
 
 
 def project_announced_target_program(program):
     """Expose the existing fixed shape for admission and runtime dependency inference."""
-    if has_activation_mana_value_equality(program.target_schema):
+    if has_activation_mana_value_target(program.target_schema):
+        price_is_closed = (exact_land_return_x_activation_price if has_activation_graveyard_mana_value_limit(program.target_schema)
+                           else exact_artifact_destruction_price)
         if ((program.event, program.active_zone) != ("activate", "battlefield")
                 or not program.ability_id.startswith("ability:") or not _activation_catalog_matches_declared_target(program)
                 or program.event_condition is not None or program.destination is not None
-                or not exact_artifact_destruction_price(program.cost_schema)):
+                or not price_is_closed(program.cost_schema)):
             raise ValueError("Announced activation targets require their exact ordinary battlefield price")
     elif (program.event != "resolve" or program.active_zone != "stack"
           or not program.ability_id.startswith("spell:")):
@@ -277,6 +333,8 @@ def announced_mana_value_node_capabilities(*, effects, target_schema, mechanics,
     from .capabilities import capability_dependencies_for_node
 
     if has_activation_mana_value_equality(target_schema) and not exact_artifact_destruction_price(cost_schema):
+        return ()
+    if has_activation_graveyard_mana_value_limit(target_schema) and not exact_land_return_x_activation_price(cost_schema):
         return ()
     try:
         if has_distinct_own_graveyard_mana_value_limit(target_schema):

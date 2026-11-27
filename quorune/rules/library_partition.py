@@ -99,6 +99,21 @@ def commit_ordered_library_partition(
     library[:] = [*bottom, *untouched, *reversed(top)]
 
 
+def validated_library_search_results(state, seat, object_ids, *, public, expected_zone, announce):
+    if (type(public) is not bool or expected_zone not in {"library", "hand"}
+            or type(announce) is not bool or (announce and not public)):
+        raise GameRuleError("Search-result visibility is malformed")
+    if any(type(object_id) is not str or object_id not in state.cards for object_id in object_ids):
+        raise GameRuleError("Search-result identities are unavailable")
+    if len(object_ids) != len(set(object_ids)):
+        raise GameRuleError("Search-result identities must be unique")
+    cards = [state.cards[object_id] for object_id in object_ids]
+    if any(card.owner != seat or card.zone != expected_zone
+            or card.object_id not in state.players[seat].zones[expected_zone] for card in cards):
+        raise GameRuleError("Search-result visibility requires the expected owned zone")
+    return cards
+
+
 def publish_library_search_reveal(host, seat, cards, *, announce):
     shown = sorted(cards, key=lambda card: card.ref) if announce else cards
     public_details = {"objects": [card.ref for card in shown]}

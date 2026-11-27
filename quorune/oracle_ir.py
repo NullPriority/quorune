@@ -179,7 +179,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1232"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1233"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of|at end of combat)\b",
@@ -895,14 +895,12 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        from .compiler.source_self_effect_templates import compile_source_self_zone_effect
+        from .compiler.source_self_effect_templates import (
+            compile_source_self_zone_effect, normalized_source_self_zone_event,
+        )
         template,effects,target_schema,mechanics,event_condition=compile_source_self_zone_effect(
             trigger.group('body'),card_name=card_name,event_phrase=event_phrase,effect_template=effect_template)
-        event = {
-            "enters": "permanent.enter.self",
-            "dies": "creature.dies.self",
-            "leaves the battlefield": "permanent.leave.self",
-        }[event_phrase]
+        event = normalized_source_self_zone_event(event_phrase, template)
         recognized = True
     diagnostic_binding = None
     if not recognized:

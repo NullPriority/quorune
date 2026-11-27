@@ -26,7 +26,29 @@ _EXTRA_COMBAT_AFTER_DAMAGE = re.compile(
 )
 
 
+def _cast_coin_result(binding, body, *, card_name):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.cast_coin_transform import MECHANIC, TEMPLATE, coin_instruction, original_cast_condition
+
+    if ((binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+            or binding.event_condition is None
+            or FrozenMap(binding.event_condition) != FrozenMap(original_cast_condition())):
+        return None
+    match = re.fullmatch(
+        r"flip a coin\. If you lose the flip, (?P<dealer>.+?) deals 1 damage to you\. "
+        r"If you win the flip, you may exile (?P<source>.+?)\. If you do, return (?:it|him|her) "
+        r"to the battlefield transformed under (?:its|his|her) owner['’]s control\.",
+        body, re.IGNORECASE,
+    )
+    reference = SourceReferenceSpec(card_name)
+    if match is None or not all(reference.matches(match[role]) for role in ("dealer", "source")):
+        return None
+    return TEMPLATE, (coin_instruction(),), None, (MECHANIC,)
+
+
 def bound_trigger_effect_template(binding, body, *, card_name, effect_template, source_counter_variants):
+    if coin := _cast_coin_result(binding, body, card_name=card_name):
+        return coin, True
     from .trigger_event_vocabulary import FixedCounterTriggerEvent
 
     if binding.event is FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER and body == binding.body:
@@ -62,6 +84,19 @@ def bound_trigger_effect_template(binding, body, *, card_name, effect_template, 
                 body = (f"This permanent gets {pump_and_damage['stats']} until end of turn. "
                         f"{card_name} deals {pump_and_damage['damage']} damage to each opponent.")
                 binding = replace(binding, body=body)
+
+    if (binding.event is FixedCounterTriggerEvent.SOURCE_ATTACKS
+            and binding.variant == "source_attacks" and body == binding.body):
+        from .target_recipient_results import controlled_artifact_draw_template
+
+        result = controlled_artifact_draw_template(body, compile_component=lambda text: effect_template(text, card_name=card_name))
+        if result is not None:
+            return result.compiled(), False
+
+    from .opponent_library_shuffle_templates import opponent_library_shuffle_result
+
+    if shuffle_result := opponent_library_shuffle_result(binding, body):
+        return shuffle_result, False
     from .cast_trigger_life_payment_templates import binding_with_cast_life_payment
 
     return binding_with_cast_life_payment(

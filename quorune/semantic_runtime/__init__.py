@@ -370,6 +370,7 @@ from .random_discard import RandomDiscardHandler
 from .random_graveyard_returns import RandomGraveyardReturnHandler
 from .temporary_cast_restrictions import TemporaryCastRestrictionHandler
 from .temporary_draw_redirect import TemporaryDrawRedirectHandler
+from .target_combat_damage_multiplier import TargetCombatDamageMultiplierHandler
 from .game_hand_size import NoMaximumForGameHandler
 from .scheduled_next_draw import ScheduledNextDrawResultHandler
 from .protected_attack_payments import ProtectedAttackPaymentHandler
@@ -443,6 +444,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             RandomDiscardHandler(),
             RandomGraveyardReturnHandler(),
             TemporaryCastRestrictionHandler(), TemporaryDrawRedirectHandler(), ProtectedAttackPaymentHandler(),
+            TargetCombatDamageMultiplierHandler(),
             NextTurnAttackRestrictionHandler(),
             ScheduledNextDrawResultHandler(),
             NoMaximumForGameHandler(),

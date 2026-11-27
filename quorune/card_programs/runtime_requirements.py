@@ -226,6 +226,9 @@ def _event_subscription_runtime_requirements(program):
         required.update(counter_placement_event_dependencies(program, subscriptions))
         required.update(player_result_runtime_dependencies(program, subscriptions))
         required.update(spell_cast_event_runtime_dependencies(program, subscriptions))
+        from ..rules.opponent_library_shuffle import opponent_shuffle_runtime_dependencies
+
+        required.update(opponent_shuffle_runtime_dependencies(program))
         required.update(physical_card_play_runtime_dependencies(program))
         required.update(graveyard_creature_transition_runtime_dependencies(program, subscriptions))
         required.update(entrant_land_advantage_runtime_dependencies(program))
@@ -680,6 +683,11 @@ def _value_runtime_requirements(program):
     except (TypeError, ValueError) as exc:
         blockers.add(f"runtime_stack_counter_followup:invalid:{exc}")
     from ..rules.fixed_dual_damage import fixed_dual_damage_runtime_dependencies
+    from ..rules.loyalty_damage import loyalty_damage_runtime_dependencies
+    try:
+        required.update(loyalty_damage_runtime_dependencies(program))
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_loyalty_damage:invalid:{exc}")
     try:
         required.update(fixed_dual_damage_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
@@ -1112,6 +1120,8 @@ def _declaration_rule_runtime_requirements(program, required, blockers):
     from ..rules.third_resolved_source_trigger import third_source_trigger_runtime_dependencies
     from ..rules.temporary_all_blockers import temporary_all_blocker_runtime_dependencies
     from ..rules.match_outcome_restrictions import match_outcome_restriction_runtime_dependencies
+    from ..rules.equipped_planeswalker import equipped_damage_runtime_dependencies
+    from ..rules.loyalty_attachment import loyalty_attachment_runtime_dependencies
     from ..rules.upkeep_game_win import upkeep_game_win_runtime_dependencies
     from ..rules.variable_library_selection_shapes import devotion_library_win_runtime_dependencies
     from ..rules.temporary_attack_requirements import temporary_attack_requirement_runtime_dependencies
@@ -1134,6 +1144,8 @@ def _declaration_rule_runtime_requirements(program, required, blockers):
         (attack_counter_unblockable_runtime_dependencies, 'attack_counter_unblockable'),
         (fixed_blocker_runtime_dependencies, 'fixed_blocker'),
         (match_outcome_restriction_runtime_dependencies, "match_outcome_restriction"),
+        (equipped_damage_runtime_dependencies, "equipped_planeswalker_combat_loyalty"),
+        (loyalty_attachment_runtime_dependencies, "loyalty_attachment"),
         (upkeep_game_win_runtime_dependencies, "upkeep_game_win"),
         (devotion_library_win_runtime_dependencies, "devotion_library_win"),
         (temporary_all_blocker_runtime_dependencies, 'temporary_all_blocker'),
@@ -1221,12 +1233,14 @@ def _dynamic_reference_runtime_requirements(program):
     from ..rules.defending_player_top_exile import defending_player_top_exile_program_dependencies
     from ..rules.impulse_access_capability_shapes import shuffled_top_free_play_runtime_dependencies
     from ..rules.land_entry_library_exile import land_entry_top_exile_program_dependencies
+    from ..rules.loyalty_spell_results import loyalty_spell_result_runtime_dependencies
 
     for owner, resolver in (
         ("defending_player_top_exile", defending_player_top_exile_program_dependencies),
         ("land_entry_top_exile", land_entry_top_exile_program_dependencies),
         ("combat_damage_library_access", combat_damage_library_program_dependencies),
         ("shuffled_top_free_play", shuffled_top_free_play_runtime_dependencies),
+        ("fixed_loyalty_spell_result", loyalty_spell_result_runtime_dependencies),
     ):
         try:
             required.update(resolver(program))

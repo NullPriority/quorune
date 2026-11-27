@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol
 
 from .carddb import CardDatabase
 from .commander_pairing import validated_commander_counts
+from .rules.commander_companion_roles import validate_commander_companion_roles
 from .deck import DeckDefinition
 from .commander_damage_identity_model import PhysicalCommanderDamageIdentity,PhysicalCommanderDamageIdentities
 from .model import (
@@ -261,6 +262,7 @@ def initial_commander_state(
 
     for seat in all_seats:
         deck = decks[seat]
+        validate_commander_companion_roles(card_db, deck)
         commander_remaining = validated_commander_counts(
             card_db, semantics, deck,
             strict_profile=config.review_profile if config.semantic_policy == "trusted_only" else None,

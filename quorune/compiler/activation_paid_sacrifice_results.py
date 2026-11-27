@@ -27,6 +27,7 @@ from .paid_sacrifice_amount_templates import _paid_sacrifice_stat_template
 from .loot_transform_graveyard_templates import loot_transform_and_graveyard_cast_gate, loot_transform_or_graveyard_cast
 from .void_counter_play_templates import void_counter_play_activation_gate, void_counter_play_activation_result
 from .controller_top_exile_activation import controller_top_exile_activation, controller_top_exile_activation_gate
+from .loyalty_spell_results import fixed_loyalty_spell_result, fixed_loyalty_spell_result_gate
 
 
 def compile_activation_result(ability, *, source_name, text, compile_fixed, public_timing=None):
@@ -35,6 +36,9 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
 
     if mutation_damage := source_mutation_damage_activation(ability, text, public_timing=public_timing):
         return mutation_damage
+
+    if loyalty := fixed_loyalty_spell_result(ability, source_name=source_name, text=text, public_timing=public_timing):
+        return loyalty
     from ..rules.chosen_color_draw_price import chosen_color_draw_text, draw_effect
     from ..rules.commander_lifelink import commander_lifelink_activation_matches, commander_lifelink_instruction
     from ..rules.temporary_ability_grant import TEMPORARY_QUOTED_GRANT_MECHANIC
@@ -47,6 +51,11 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
         return TEMPLATE, (paid_type_instruction(),), None, (
             MECHANIC, RESOLUTION_CONDITION_MECHANIC, *DEPENDENCY_MECHANICS,
         )
+
+    from .loyalty_damage_templates import loyalty_damage_activation_template
+
+    if damage := loyalty_damage_activation_template(ability, text, source_name=source_name, public_timing=public_timing):
+        return damage
 
     if public_timing is None and ability.zones == ("battlefield",) and not ability.mana_ability:
         from ..rules.next_personal_turn_protection import (
@@ -160,6 +169,10 @@ def compile_activation_result(ability, *, source_name, text, compile_fixed, publ
 
 
 def commander_return_activation_result(ability, text, *, public_timing):
+    from ..rules.owned_commander_battlefield_return import own_commander_return_activation_result
+
+    if result := own_commander_return_activation_result(ability, text, public_timing=public_timing):
+        return result
     if (text.strip().casefold() != "put your commander into your hand from the command zone."
             or ability.zones != ("battlefield",) or ability.mana_ability
             or not commander_return_price_is_closed(activated_ability_cost(ability, public_timing=public_timing))):
@@ -176,6 +189,14 @@ def activation_result_dependency_gate(**scope):
     from .proliferate_templates import controlled_arrival_proliferate_activation_gate
 
     from ..rules.next_personal_turn_protection import activated_protection_node_capabilities
+    from ..rules.loyalty_damage import loyalty_damage_capabilities
+
+    if loyalty_damage := loyalty_damage_capabilities(**{
+        key: scope[key] for key in ("effects", "target_schema", "mechanics", "active_zone", "cost_schema")
+    }):
+        return explicit_capabilities_gate(
+            loyalty_damage, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
 
     required = activated_protection_node_capabilities(
         effects=scope["effects"], target_schema=scope["target_schema"], mechanics=scope["mechanics"],
@@ -195,13 +216,13 @@ def activation_result_dependency_gate(**scope):
         return explicit_capabilities_gate(
             required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
         )
-    return (paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
+    return (fixed_loyalty_spell_result_gate(**scope) or paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
             or loot_transform_and_graveyard_cast_gate(**scope)
             or controller_top_exile_activation_gate(**scope)
             or draw_then_opponent_exile_activation_gate(**scope)
             or shuffled_top_free_play_activation_gate(**scope)
             or draw_source_owner_top_activation_gate(**scope) or linked_loyalty_activation_gate(**scope)
-            or finite_damage_redirection_gate(**scope) or commander_return_activation_gate(**scope)
+            or finite_damage_redirection_gate(**scope) or either_commander_return_gate(**scope)
             or source_sacrifice_power_life_gate(**scope)
             or target_death_return_activation_gate(**scope) or controlled_arrival_proliferate_activation_gate(**scope)
             or void_counter_play_activation_gate(**scope) or artifact_sacrifice_return_activation_gate(**scope))
@@ -220,6 +241,19 @@ def paid_type_activation_gate(*, effects, target_schema, mechanics, active_zone,
     return explicit_capabilities_gate(
         required, capability_registry=capability_registry, capability_profile=capability_profile,
     )
+
+def either_commander_return_gate(**scope):
+    from ..rules.owned_commander_battlefield_return import own_commander_return_node_capabilities
+
+    required = own_commander_return_node_capabilities(
+        effects=scope["effects"], active_zone=scope["active_zone"], target_schema=scope["target_schema"],
+        mechanics=scope["mechanics"], cost_schema=scope["cost_schema"],
+    )
+    if required:
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
+    return commander_return_activation_gate(**scope)
 
 
 def commander_lifelink_gate(**scope):

@@ -1,5 +1,6 @@
 """Consume one complete mandatory search/exile/shuffle targeted-player clause."""
 from . import regex_working_set as re
+from ..library_search_model import TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION
 from ..rules.targeted_library_exile import TargetLibraryExileSpec, TargetNameMultizoneExileSpec
 from .fixed_numbers import fixed_number
 
@@ -14,9 +15,17 @@ _TARGETED = re.compile(
     r"Search target player['’]s library for (?P<count>a|one|two|three|four|five|six|seven|eight|nine|[1-9][0-9]*) "
     r"card(?P<plural>s)? and exile (?P<pronoun>it|them)\. Then that player shuffles\.", re.I)
 
+_PRIVATE_PLAY = re.compile(
+    r"Search target opponent['’]s library for a card and exile it face down\. Then that player shuffles\. "
+    r"You may play that card for as long as it remains exiled\.", re.I,
+)
+
 
 def targeted_library_exile_spec(text):
-    match = _TARGETED.fullmatch(' '.join(text.strip().split()))
+    normalized = ' '.join(text.strip().split())
+    if _PRIVATE_PLAY.fullmatch(normalized):
+        return TargetLibraryExileSpec(1, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION)
+    match = _TARGETED.fullmatch(normalized)
     if match is None:
         return None
     count = 1 if match['count'].casefold() == 'a' else fixed_number(match['count'])
@@ -34,7 +43,9 @@ class TargetedLibraryExileTemplate:
 
     def compiled(self):
         from ..rules.targeted_library_exile import TARGET_LIBRARY_EXILE_MECHANIC
-        return ('targeted-fixed-library-exile-v1', (self.spec.effect(),),
+        template = ('targeted-private-library-exile-play-v1' if self.spec.private_play
+                    else 'targeted-fixed-library-exile-v1')
+        return (template, (self.spec.effect(),),
             self.spec.target_schema(), (TARGET_LIBRARY_EXILE_MECHANIC,))
 
 class TargetNameMultizoneExileTemplate:

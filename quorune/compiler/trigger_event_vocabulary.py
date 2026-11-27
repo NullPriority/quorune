@@ -81,6 +81,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_DISCARDED = "card.discarded"
     TARGET_ANNOUNCED = 'object.became_target'
     PERMANENT_LEAVE = "permanent.leave"
+    OPPONENT_LIBRARY_SHUFFLE = "library.shuffled"
     PERMANENT_SACRIFICED = "permanent.sacrificed"
     SOURCE_SACRIFICED = "permanent.sacrificed.self"
     PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"

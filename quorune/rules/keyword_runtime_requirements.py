@@ -176,6 +176,9 @@ def _granted_evolve_dependencies(program):
 def keyword_runtime_dependencies(program):
     from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    from .commander_companion_roles import companion_role_runtime_dependencies
+
+    required.update(companion_role_runtime_dependencies(program))
     required.update(_granted_evolve_dependencies(program))
     from .recover import recover_program_dependencies
     required.update(recover_program_dependencies(program))

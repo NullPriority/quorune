@@ -459,4 +459,208 @@ class NamedZoneSearchRuntimeTests(unittest.TestCase):
             with self.assertRaises(AssertionError):self.assertFalse(result.ok)
 
 
+
+class CastXZoneSearchModelTests(unittest.TestCase):
+    def test_cast_x_search_codecs_reject_crossed_and_mutated_payloads(self):
+        from copy import deepcopy
+        from quorune.cast_x_search_model import (
+            CastXZoneSearchSelection, cast_x_zone_search_effect, decode_cast_x_zone_search,
+        )
+        from quorune.named_search_model import NamedZoneSearchSpec, decode_named_zone_selection
+        from quorune.replacement.immutable import FrozenMap
+        from quorune.selection.searching import HiddenSearchOwnerMixin
+
+        source = cast_x_zone_search_effect()
+        self.assertIsInstance(decode_cast_x_zone_search(FrozenMap(source)), FrozenMap)
+        self.assertEqual(0, decode_cast_x_zone_search(cast_x_zone_search_effect(maximum=0, player="A"), actor="A"))
+        with self.assertRaises(ValueError):
+            decode_cast_x_zone_search(cast_x_zone_search_effect(maximum=True, player="A"), actor="A")
+        selection = CastXZoneSearchSelection(("library", "graveyard"), 10)
+        valid = selection.effect()
+        self.assertEqual(selection, CastXZoneSearchSelection.from_effect(FrozenMap(valid)))
+        HiddenSearchOwnerMixin._validate_counted_search_effect(valid)
+        for field, wrong in (
+            ("destination", "hand"), ("zone", ["graveyard", "library"]), ("shuffle_after", False),
+            ("selector", {"types": ["creature"], "mana_value": {"maximum": True}}),
+            ("count", {"minimum": True, "maximum": 1}), ("schema_version", 28.0),
+        ):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                CastXZoneSearchSelection.from_effect({**deepcopy(valid), field: wrong})
+        named = NamedZoneSearchSpec("Generic Bound Commander", False).search_instruction("both")
+        with self.assertRaises(ValueError):
+            CastXZoneSearchSelection.from_effect({**named, "schema_version": 28})
+        with self.assertRaises(ValueError):
+            decode_named_zone_selection({**valid, "schema_version": 6})
+
+    def test_cast_x_search_requires_the_complete_announced_spell(self):
+        from quorune.cast_x_search_model import CAST_X_ZONE_SEARCH_OPERATION
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        cards = json.loads((ROOT / "tests/fixtures/scryfall-exact-lists.json").read_text(encoding="utf-8"))["cards"]
+        original = next(row for row in cards if row["name"] == "Finale of Devastation")
+        card = replace(witnesses.record(original["oracle_text"]), mana_cost=original["mana_cost"])
+        registry = load_default_capability_registry()
+
+        def compile_card(source, caps=registry):
+            return compile_oracle_card(source, capability_registry=caps, capability_profile="commander_review")
+
+        ir = compile_card(card)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(CAST_X_ZONE_SEARCH_OPERATION, node.effects[0]["op"])
+        self.assertEqual(card.oracle_text[node.span.start:node.span.end], node.text)
+        for candidate in (
+            replace(card, mana_cost="{G}{G}"),
+            replace(card, oracle_text=card.oracle_text.replace("your library and/or graveyard", "your library")),
+            replace(card, oracle_text=card.oracle_text.replace("gain haste", "gain vigilance")),
+            replace(card, oracle_text=card.oracle_text + " Then choose an unrepresented object."),
+        ):
+            self.assertNotEqual("exact", compile_card(candidate).status)
+        with patch("quorune.rules.cast_x_zone_searches.cast_x_zone_search_node_capabilities", return_value=()):
+            self.assertNotEqual("exact", compile_card(card).status)
+        for missing in ("quantity_expression.declared_effect_amount", "library.search.restriction.static",
+                        "zone.change.destination_replacement"):
+            source = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+            next(row for row in source["capabilities"] if row["id"] == missing).update(
+                status="blocked", blockers=["search dependency withdrawn"])
+            withdrawn = CapabilityRegistry(source)
+            withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+            with self.subTest(missing=missing):
+                self.assertNotEqual("exact", compile_card(card, withdrawn).status)
+
+
+class CastXZoneSearchRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = NamedZoneSearchRuntimeTests.session
+    add = NamedZoneSearchRuntimeTests.add
+    prepare = NamedZoneSearchRuntimeTests.prepare
+    closed = NamedZoneSearchRuntimeTests.closed
+    actions = NamedZoneSearchRuntimeTests.actions
+    checkpoint = NamedZoneSearchRuntimeTests.checkpoint
+    resolve = NamedZoneSearchRuntimeTests.resolve
+    replay = NamedZoneSearchRuntimeTests.replay
+    choose_zone = NamedZoneSearchRuntimeTests.choose_zone
+    take = NamedZoneSearchRuntimeTests.take
+    packet = NamedZoneSearchRuntimeTests.packet
+    reject = NamedZoneSearchRuntimeTests.reject
+    shuffles = NamedZoneSearchRuntimeTests.shuffles
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "cast-x-zone-search.sqlite3"
+        named = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        named["cards"] = [row for row in named["cards"] if row["name"] == "Mindlock Orb"]
+        mindlock_id = named["cards"][0]["oracle_id"]
+        named["rulings"] = [row for row in named["rulings"] if row["oracle_id"] == mindlock_id]
+        restricted_fixture = Path(cls.temporary.name) / "search-restriction.json"
+        restricted_fixture.write_text(json.dumps(named), encoding="utf-8")
+        build_fixture_database(
+            [ROOT / "tests/fixtures/bound-effect-program-cards.json",
+             ROOT / "tests/fixtures/scryfall-exact-lists.json", restricted_fixture], database,
+        )
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Search witnesses", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def open_spell(self, seed, *, x, restricted=False):
+        game = self.session(seed)
+        game.state.config.semantic_policy = "trusted_only"
+        spell = self.add(game.engine, "Finale of Devastation", zone="hand")
+        yours = self.add(game.engine, "Generic Bound Body", ref="cast-x-existing-body")
+        theirs = self.add(game.engine, "Generic Bound Body", seat="B", ref="cast-x-opposing-body")
+        library = self.add(game.engine, "Generic Bound Body", zone="library", ref="cast-x-secret-result")
+        grave = self.add(game.engine, "Bloodghast", zone="graveyard", ref="cast-x-public-result")
+        extra = self.add(game.engine, "Sol Ring", zone="library", ref="cast-x-secret-noncreature")
+        for hidden in (library, extra):
+            hidden.known_to = []
+            hidden.revealed_to = []
+        if restricted:
+            self.closed(game, self.add(game.engine, "Mindlock Orb", seat="B"))
+        self.prepare(game, spell, {"C": x, "G": 2})
+        self.checkpoint(game)
+        action = "cast:" + spell.ref
+        self.assertIn(action, {row["id"] for row in self.actions(game)})
+        result = game.act("pilot:A", {"action_id": action, "x": x, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(x, game.state.stack[-1].x_value)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        for seat in "ABCD":
+            packet = str(game.packet("pilot:" + seat, full=True))
+            self.assertNotIn(library.ref, packet)
+            self.assertNotIn(extra.ref, packet)
+        return game, spell, yours, theirs, library, grave, extra
+
+    def stats(self, game, card):
+        return tuple(game.engine._numeric_stat(card.object_id, name) for name in ("power", "toughness"))
+
+    def test_cast_x_search_requires_public_match_and_pumps_post_search_creature_set(self):
+        game, spell, yours, theirs, library, grave, extra = self.open_spell(125111, x=10)
+        self.reject(game, "pilot:B", {"action_id": "choose", "choice": "both"})
+        game = self.replay(game, load=True)
+        self.choose_zone(game, "both")
+        options = self.packet(game)["legal_actions"][0]["choice_schema"]
+        self.assertEqual((1, 1), (options["minimum"], options["maximum"]))
+        self.assertEqual({library.ref, grave.ref}, set(options["legal_refs"]))
+        for seat in "BCD":
+            packet = str(game.packet("pilot:" + seat, full=True))
+            self.assertNotIn(library.ref, packet)
+            self.assertNotIn(extra.ref, packet)
+        for illegal_refs in ([], [extra.ref], [grave.ref, library.ref]):
+            self.reject(game, "pilot:A", {"action_id": "choose", "search_cards": illegal_refs})
+        bases = {card.object_id: self.stats(game, card) for card in (grave, library, yours, theirs)}
+        before = self.shuffles(game)
+        game = self.replay(game, load=True)
+        self.take(game, [library.ref])
+        self.assertEqual(before + 1, self.shuffles(game))
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[library.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[grave.object_id].zone)
+        for card in (library, yours):
+            self.assertEqual(tuple(value + 10 for value in bases[card.object_id]), self.stats(game, card))
+            self.assertIn("haste", game.engine._combat_keywords(game.state.cards[card.object_id]))
+        self.assertEqual(bases[theirs.object_id], self.stats(game, theirs))
+        self.replay(game, load=True)
+        game.engine.move_card(grave.object_id, "battlefield", controller="A")
+        self.assertEqual(bases[grave.object_id], self.stats(game, grave))
+
+    def test_cast_x_search_keeps_conditional_shuffle_and_applies_bonus_without_a_find(self):
+        for i, (zone, x, restricted) in enumerate((("library", 10, False), ("graveyard", 9, True), ("graveyard", 0, False))):
+            with self.subTest(zone=zone):
+                game, _, yours, _, library, grave, _ = self.open_spell(125120 + i, x=x, restricted=restricted)
+                stats = self.stats(game, yours)
+                before = self.shuffles(game)
+                if restricted:
+                    for invalid in ("library", "both", "decline"):
+                        self.reject(game, "pilot:A", {"action_id": "choose", "choice": invalid})
+                self.choose_zone(game, zone)
+                options = self.packet(game)["legal_actions"][0]["choice_schema"]
+                if zone == "library":
+                    self.assertEqual(0, options["minimum"])
+                    self.assertEqual([library.ref], options["legal_refs"])
+                    self.take(game, [])
+                elif x == 0:
+                    self.assertEqual(0, options["minimum"])
+                    self.assertEqual([], options["legal_refs"])
+                    self.take(game, [])
+                else:
+                    self.assertEqual(1, options["minimum"])
+                    self.assertEqual([grave.ref], options["legal_refs"])
+                    self.assertNotIn(library.ref, str(self.packet(game)))
+                    self.take(game, [grave.ref])
+                self.assertEqual(before + int(zone == "library"), self.shuffles(game))
+                bonus = x if x >= 10 else 0
+                self.assertEqual(tuple(stat + bonus for stat in stats), self.stats(game, yours))
+                self.assertEqual(bool(bonus), "haste" in game.engine._combat_keywords(game.state.cards[yours.object_id]))
+                self.replay(game, load=True)
+
 if __name__ == "__main__":unittest.main()

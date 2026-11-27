@@ -78,7 +78,9 @@ class StackResolutionCompletionHost(Protocol):
         **kwargs: Any,
     ) -> CardInstance: ...
 
-    def shuffle_library(self, seat: str, *, reason: str, actor: str | None = None) -> None: ...
+    def shuffle_library(
+        self, seat: str, *, reason: str, actor: str | None = None, shuffling_player: str | None = None,
+    ) -> None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
@@ -305,7 +307,8 @@ def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackI
         _complete_stack_resolution(host, item=item, destination=destination,
             prepared_replacement=prepared_replacement, library_position=library_position)
         if shuffle_owner is not None:
-            host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library", actor=item.controller)
+            host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library",
+                                 actor=item.controller, shuffling_player=item.controller)
         from .spell_resolution_names import finish_spell_resolution_names
         finish_spell_resolution_names(host, item)
 
@@ -416,7 +419,8 @@ def _complete_stack_resolution(
     from .adventure import complete_adventure_resolution
     complete_adventure_resolution(item,card)
     if final_destination == "library" and omen_resolution_binding(item) is not None:
-        host.shuffle_library(card.owner, reason="Omen resolved", actor=item.controller)
+        host.shuffle_library(card.owner, reason="Omen resolved", actor=item.controller,
+                             shuffling_player=item.controller)
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)
 

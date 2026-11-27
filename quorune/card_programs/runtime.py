@@ -887,7 +887,11 @@ def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
     from ..semantic_runtime.shared_type_anthems import SHARED_NAME_ANTHEM_HANDLER, SHARED_TYPE_ANTHEM_HANDLER
 
     from ..semantic_runtime.attached_combat_strike import EQUIPPED_COMBAT_STRIKE_HANDLER, equipped_block_counterpart_facts
+    from ..rules.equipped_planeswalker import EQUIPPED_PLANESWALKER_HANDLER, current_equipped_creature
 
+    if descriptor.get("handler_id") == EQUIPPED_PLANESWALKER_HANDLER:
+        recipient = current_equipped_creature(state, source, resolver._public_object)
+        return () if recipient is None else (recipient,)
     if descriptor.get("handler_id") == EQUIPPED_COMBAT_STRIKE_HANDLER:
         return equipped_block_counterpart_facts(state, source, resolver._public_object)
     if descriptor.get("handler_id") == CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID:

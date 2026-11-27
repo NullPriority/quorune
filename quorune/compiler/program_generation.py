@@ -1191,6 +1191,7 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
+    from ..rules.loyalty_spell_results import is_closed_loyalty_spell_result_program
     from ..rules.noted_mana import is_closed_noted_mana_charge_program
     from ..rules.extra_turn_shapes import is_closed_fixed_end_turn_program, is_closed_fixed_next_turn_control_program
     from ..rules.chosen_color_target_shapes import is_closed_chosen_color_target_program
@@ -1225,7 +1226,7 @@ def _closed_effect_recognizers():
         _is_closed_variable_library_selection_program,
     )
     return (
-        is_closed_activated_preparation_program,
+        is_closed_activated_preparation_program, is_closed_loyalty_spell_result_program,
         is_closed_noted_mana_charge_program,
         is_closed_fixed_end_turn_program,
         is_closed_fixed_next_turn_control_program,

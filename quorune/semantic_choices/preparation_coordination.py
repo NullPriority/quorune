@@ -103,17 +103,21 @@ def issue_semantic_choice(
     *,
     allowed_actions: Sequence[str] = ("choose",),
 ) -> None:
+    from ..selection.controlled_search import is_registered_library_search, search_control_payload
+
+    scope = {}
+    if is_registered_library_search(continuation.effect):
+        item = next(candidate for candidate in host.state.stack if candidate.ref == continuation.stack_ref)
+        scope = search_control_payload(host, item, actor, ("library",))
     decision = host.permissions.issue(
         kind="semantic.choice",
         role=_PILOT_ROLE,
         actors=[actor],
         allowed_actions=list(allowed_actions),
         payload_by_actor={actor: dict(payload)},
-        continuation=continuation.to_dict(),
+        continuation={**continuation.to_dict(), **scope},
     )
-    decision.continuation = continuation.with_pending_choice(
-        decision.decision_id
-    ).to_dict()
+    decision.continuation = {**continuation.with_pending_choice(decision.decision_id).to_dict(), **scope}
 
 
 def _finish_preparation(

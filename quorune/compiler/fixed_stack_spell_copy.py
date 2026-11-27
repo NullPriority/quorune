@@ -35,6 +35,12 @@ def fixed_qualified_stack_copy_template(text):
         spec = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
     elif re.fullmatch(r'Copy target permanent spell you control\.', text.strip(), re.I):
         spec = FixedQualifiedStackCopySpec('permanent_spell')
+    elif re.fullmatch(
+        r"Copy target activated or triggered ability you control from another legendary source that's not a commander\. "
+        r"You may choose new targets for the copy\.(?: \(Mana abilities can't be targeted\.\))?",
+        text.strip(), re.I,
+    ):
+        spec = FixedQualifiedStackCopySpec('activated_or_triggered_ability', 'legendary_noncommander')
     else:
         match = re.fullmatch(r'Copy target (?P<kind>activated or triggered ability|triggered ability) you control'
             r'(?: from (?P<source>an artifact|a colorless) source)?\. '

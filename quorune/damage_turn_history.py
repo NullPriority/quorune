@@ -51,9 +51,19 @@ def record_damage_turn_history(
     )
 
 
+def maximum_committed_damage_this_turn(state: Any) -> int | None:
+    """Read the largest single dealt-damage result in the current public journal."""
+    history = state.turn_history
+    if history is None or history.schema_version != 1 or history.turn_sequence != state.turn_sequence:
+        return None
+    return max((event.amount for event in history.events
+                if event.kind in ("player_damaged", "permanent_damaged")), default=0)
+
+
 __all__ = [
     "COMBAT_DAMAGE_HISTORY_MARKER",
     "COMMANDER_DAMAGE_HISTORY_MARKER",
     "DamageTurnHistoryHost",
+    "maximum_committed_damage_this_turn",
     "record_damage_turn_history",
 ]

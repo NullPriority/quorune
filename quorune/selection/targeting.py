@@ -323,6 +323,26 @@ class TargetSelectionOwnerMixin:
         return value is not None and value != controller
 
     @characteristic_read_method
+    def _stack_ability_source_predicate_fields(self, item, predicate):
+        from ..ability_source_information import (
+            ABILITY_SOURCE_FILTERS, complete_ability_source_information,
+            DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER, retains_ability_source_commander_status,
+        )
+
+        if predicate not in ABILITY_SOURCE_FILTERS:
+            return {}
+        needs_legendary = predicate == DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER
+        facts = None
+        if (item.kind in {"activated_ability", "triggered_ability"}
+                and complete_ability_source_information(self.state)):
+            facts = stack_targeting_source(self, item, phased_out_lki=needs_legendary)
+        fields = {"ability_source_types": facts.card_types if facts is not None else None}
+        if predicate == "colorless_ability_source":
+            fields["ability_source_colors"] = facts.colors if facts is not None else None
+        if needs_legendary and retains_ability_source_commander_status(self.state):
+            fields["ability_source_identity"] = facts
+        return fields
+
     def _target_candidate_rows(
         self,
         controller: str,
@@ -357,14 +377,6 @@ class TargetSelectionOwnerMixin:
                 stack_source_types, _, _ = self._type_parts(
                     str(source_data.get("type_line") or "")
                 )
-                ability_source_types = None
-                ability_source_colors = None
-                from ..ability_source_information import ABILITY_SOURCE_FILTERS, complete_ability_source_information
-                if group.predicate in ABILITY_SOURCE_FILTERS and item.kind in {'activated_ability','triggered_ability'}:
-                    if complete_ability_source_information(self.state):
-                        source_facts = stack_targeting_source(self,item)
-                        ability_source_types = source_facts.card_types
-                        ability_source_colors = source_facts.colors
                 characteristics = _target_characteristic_row_values(data, card=card)
                 if item.kind in {"spell", "spell_copy"}:
                     from .exile_cast import mana_value_of_cost
@@ -385,8 +397,7 @@ class TargetSelectionOwnerMixin:
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
-                        **({'ability_source_types':ability_source_types} if group.predicate in ABILITY_SOURCE_FILTERS else {}),
-                        **({'ability_source_colors':ability_source_colors} if group.predicate == 'colorless_ability_source' else {}),
+                        **self._stack_ability_source_predicate_fields(item, group.predicate),
                     }
                 )
         for zone in (

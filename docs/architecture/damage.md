@@ -46,6 +46,16 @@ that point. Each effect applies once and expires at cleanup if unused. It
 cannot affect a returned incarnation of either permanent. When damage from one
 occurrence reconverges, result processing deals it together.
 
+The cast-announced greatest-damage amount reads the largest committed
+current-turn result for one source and one recipient. It includes players
+and permanents and reads the positive amount after replacement and
+prevention. Other occurrences and direct life loss never add to it.
+The casting pipeline seals the resulting total and the selected creature
+shares before payment. A current journal without damage permits a
+zero-target cast. Missing or stale history is unavailable. Later damage
+does not change the total. A target that becomes illegal loses only its
+own share, and copies retain the original share slots.
+
 Current execution also seals typed public permanent state from the canonical
 object query. Singular source-qualified damage subscriptions distinguish
 enchanted, equipped, modified, tapped and combat state without reading the

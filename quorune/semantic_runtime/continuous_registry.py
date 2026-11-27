@@ -42,6 +42,7 @@ def default_continuous_effect_component_registry(
     )
     from .attached_control import AttachedControlHandler
     from .attached_combat_strike import EquippedCombatStrikeHandler
+    from .equipped_planeswalker import EquippedPlaneswalkerHandler
     from .combat_metadata import CombatCounterpartLifelinkHandler
     from .battlefield_cascade_grants import ConditionalStackCascadeHandler
     from .counter_placement_keyword_grants import CounterPlacementKeywordGrantHandler
@@ -89,6 +90,7 @@ def default_continuous_effect_component_registry(
             FixedQueryKeywordGrantHandler(),
             CombatCounterpartLifelinkHandler(),
             EquippedCombatStrikeHandler(),
+            EquippedPlaneswalkerHandler(),
             CounterPlacementKeywordGrantHandler(),
             CommanderKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),

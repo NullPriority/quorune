@@ -24,6 +24,7 @@ from ..target_land_type_model import TargetLandTypeSettingIntent
 from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..target_combat_damage_multiplier_model import TargetCombatDamageMultiplierIntent
 from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
 from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
@@ -1579,7 +1580,7 @@ SemanticIntent: TypeAlias = (
     | GraveyardRecyclingIntent
     | TargetLandTypeSettingIntent
     | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | ScheduleNextDrawResultIntent | NoMaximumForGameIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | TargetCombatDamageMultiplierIntent | ScheduleNextDrawResultIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
     | NextTurnAttackRestrictionIntent
     | ScheduleTurnSkipIntent

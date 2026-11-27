@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "name": "Ral, Monsoon Mage // Ral, Leyline Prodigy",
+      "mana_cost": "{1}{R} // ",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Wizard // Legendary Planeswalker — Ral",
+      "oracle_text": "Ral, Monsoon Mage: Instant and sorcery spells you cast cost {1} less to cast.\nWhenever you cast an instant or sorcery spell during your turn, flip a coin. If you lose the flip, Ral deals 1 damage to you. If you win the flip, you may exile Ral. If you do, return him to the battlefield transformed under his owner's control.\n//\nRal, Leyline Prodigy: Ral enters with an additional loyalty counter on him for each instant and sorcery spell you've cast this turn.\n+1: Until your next turn, instant and sorcery spells you cast cost {1} less to cast.\n−2: Ral deals 2 damage divided as you choose among one or two targets. Draw a card if you control a blue permanent other than Ral.\n−8: Exile the top eight cards of your library. You may cast instant and sorcery spells from among them this turn without paying their mana costs.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Transform"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Ral, Monsoon Mage",
+          "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nWhenever you cast an instant or sorcery spell during your turn, flip a coin. If you lose the flip, Ral deals 1 damage to you. If you win the flip, you may exile Ral. If you do, return him to the battlefield transformed under his owner's control.",
+          "power": "1",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Human Wizard"
+        },
+        {
+          "colors": [
+            "R",
+            "U"
+          ],
+          "defense": null,
+          "loyalty": "2",
+          "mana_cost": "",
+          "name": "Ral, Leyline Prodigy",
+          "oracle_text": "Ral enters with an additional loyalty counter on him for each instant and sorcery spell you've cast this turn.\n+1: Until your next turn, instant and sorcery spells you cast cost {1} less to cast.\n−2: Ral deals 2 damage divided as you choose among one or two targets. Draw a card if you control a blue permanent other than Ral.\n−8: Exile the top eight cards of your library. You may cast instant and sorcery spells from among them this turn without paying their mana costs.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Ral"
+        }
+      ]
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "In some rare cases, a spell or ability may cause Ral, Monsoon Mage to transform while he's a creature (front face up) on the battlefield. If this happens, Ral, Leyline Prodigy won't have any loyalty counters on him and will subsequently be put into his owner's graveyard."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast with its front face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs, those must be paid to cast it."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color. Colorless back faces, such as lands, do not."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If some of the targets are illegal as Ral, Leyline Prodigy's second loyalty ability tries to resolve, the original division of damage still applies and the damage that would have been dealt to the illegal targets is lost. It won't be dealt instead to a legal target. If all of the targets are illegal, the ability won't resolve and none of its effects will happen. You won't draw a card."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or allows you to cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You can activate one of Ral, Leyline Prodigy's loyalty abilities the turn he enters the battlefield. However, you may do so only during one of your main phases when the stack is empty. For example, if Ral, Leyline Prodigy enters the battlefield during combat, there will be an opportunity for your opponent to remove him before you can activate one of his abilities."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You choose how many targets Ral, Leyline Prodigy's second loyalty ability has and how the damage is divided as you activate the ability. Each target must receive at least 1 damage."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Ral, Monsoon Mage, choosing to exile that permanent during the resolution of its triggered ability will cause it to remain in exile."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered. For example, Ral, Monsoon Mage's color identity is blue and red, since its front face is red and its back face has a blue and red color indicator."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You flip a coin as Ral, Monsoon Mage's triggered ability resolves. No player may take actions between seeing the result of the flip and the effects that occur based on the result of the flip."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You follow all normal timing rules for spells cast with the permission granted by Ral, Leyline Prodigy's last ability. For example, if one of the exiled cards is a sorcery, you can cast it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If one of the exiled cards has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If Ral, Monsoon Mage is exiled and returns transformed while one or more instances of his triggered ability are still on the stack, those abilities will still resolve. However, if the controller of one of those abilities wins the flip, nothing will happen since the object that ability refers to is no longer on the battlefield."
+    },
+    {
+      "oracle_id": "16d40f56-691b-42a7-a5ab-157568921e03",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The first ability of Ral, Leyline Prodigy will count any instant and sorcery spells you've cast that turn, including ones that were countered, didn't resolve for other reasons, or are still on the stack."
+    }
+  ]
+}

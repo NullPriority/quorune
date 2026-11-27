@@ -19,6 +19,7 @@ from ..rules.incubate_capability_shapes import is_closed_incubate_program
 from ..rules.discover_capability_shapes import is_closed_discover_program
 from ..rules.milled_creature_tokens import is_closed_milled_creature_token_program
 from ..rules.committed_mill_cards import is_closed_committed_mill_card_program
+from ..rules.milled_permanent_battlefield import is_closed_milled_permanent_battlefield_program
 from ..rules.ordered_type_sacrifice import is_closed_ordered_type_sacrifice_program
 from ..rules.targeted_discard_spell_copy import is_closed_targeted_discard_copy_program
 from ..rules.variable_library_selection_shapes import is_closed_variable_library_selection_program
@@ -79,6 +80,7 @@ def is_closed_fixed_instruction_program(program):
     from ..rules.graveyard_recycling import is_closed_graveyard_recycling_program
     from ..rules.target_library_inspection import is_closed_target_library_inspection_program
     from ..rules.fixed_damage_roles import is_closed_fixed_damage_role_program
+    from ..rules.loyalty_damage import is_closed_loyalty_damage_program
     from ..rules.optional_source_damage import is_closed_optional_source_damage_program
     from ..rules.collective_source_damage import is_closed_collective_source_damage_program
     from ..rules.protected_attack_payments import is_closed_protected_attack_payment_program
@@ -102,6 +104,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_graveyard_recycling_program,
         is_closed_target_library_inspection_program,
         is_closed_fixed_damage_role_program,
+        is_closed_loyalty_damage_program,
         is_closed_optional_source_damage_program,
         is_closed_collective_source_damage_program,
         is_closed_protected_attack_payment_program,
@@ -128,6 +131,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_discover_program,
         is_closed_milled_creature_token_program,
         is_closed_committed_mill_card_program,
+        is_closed_milled_permanent_battlefield_program,
         is_closed_ordered_type_sacrifice_program,
         is_closed_permanent_action_prohibition_program,
         is_closed_variable_library_selection_program,

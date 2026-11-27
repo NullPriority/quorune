@@ -31,6 +31,8 @@ def apply_next_turn_attack_restriction(host, intent: NextTurnAttackRestrictionIn
 
 
 def attack_declaration_targets(host, attacker, planeswalkers, battles) -> list[str]:
+    from .equipped_planeswalker import equipped_planeswalker_cannot_be_attacked
+
     protected = {
         effect.protected_player for effect in host.state.continuous_effects or ()
         if isinstance(effect, ResolvedNextTurnAttackRestriction) and effect.applies(host.state, attacker)
@@ -41,4 +43,8 @@ def attack_declaration_targets(host, attacker, planeswalkers, battles) -> list[s
         *((walker["id"], walker["controller"]) for walker in planeswalkers),
         *((battle["id"], battle["controller"]) for battle in battles if battle["id"] not in walker_ids),
     ]
-    return [reference for reference, controller in recipients if controller not in protected]
+    return [
+        reference for reference, controller in recipients
+        if controller not in protected
+        and (reference in host.active_seats or not equipped_planeswalker_cannot_be_attacked(host, reference))
+    ]

@@ -13,9 +13,9 @@ def cast_mana_spend_context(host, seat, card, type_line):
     """Bind spend permission while the offered or announced cast is still in its origin zone."""
     context = host._spell_mana_spend_context(type_line)
     if card.zone == "exile":
-        from ...private_opponent_library_cast_model import has_private_opponent_library_cast_access
+        from ...private_opponent_library_cast_model import has_private_opponent_library_mana_waiver
 
-        if has_private_opponent_library_cast_access(host, actor=seat, card=card):
+        if has_private_opponent_library_mana_waiver(host, actor=seat, card=card):
             return bind_exiled_spell_mana_spending(context, payer=seat)
     return context
 

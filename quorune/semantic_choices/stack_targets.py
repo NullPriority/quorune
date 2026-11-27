@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
 from ..rules.cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD
+from ..rules.announced_ability_copies import COPY_FIELD, REMAINING_FIELD, choice_copy_count
 from ..rules.cast_source_spell_copy import SOURCE_CAST_COPY_FIELD
 from ..rules.source_directed_redirect_model import is_source_directed_redirect
 from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_accepted_copy_instruction
@@ -24,6 +25,34 @@ from .model import (
     SemanticChoiceRequest,
     TargetAssignmentChoice,
 )
+
+
+def _prepare_without_target_choices(effect, context, target, *, mode, copies, permanent_copy):
+    intents = ()
+    if mode == "copy":
+        intents = (
+            CopyStackItemIntent(
+                actor=context.actor,
+                controller=context.actor,
+                target_stack_ref=target.ref,
+                targets=tuple(
+                    value for value in target.targets if value is not None
+                ),
+                target_groups=target.target_groups,
+                reason=context.stack_label,
+                target_snapshots=target.target_snapshots,
+                copy_source=target.copy_source,
+                permanent_copy=permanent_copy,
+            ),
+        ) * copies
+    return SemanticChoicePreparation(
+        request=None,
+        continuation_effect=FrozenMap(effect),
+        preparation_intents=intents,
+        auto_continue=AutoContinue(
+            reason="stack object has no target choice"
+        ),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +78,7 @@ class StackTargetChoiceHandler:
         "copy_source",
         "retain_targets_only",
         FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD,
+        COPY_FIELD, REMAINING_FIELD,
         "_redirect_slots",
         SOURCE_CAST_COPY_FIELD,
         RESOLVING_COPY_FIELD,
@@ -118,6 +148,20 @@ class StackTargetChoiceHandler:
                     reason="target stack object no longer exists"
                 ),
             )
+        if self.mode == "copy" and target.copy_prohibited:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason="the targeted ability cannot be copied"),
+            )
+        variable = COPY_FIELD in effect
+        if variable:
+            if self.mode != "copy" or target.kind not in {"activated_ability", "triggered_ability"} or target.controller != context.actor:
+                raise SemanticChoiceError("Announced copies require a controlled stack ability")
+            try:
+                copies = choice_copy_count(effect, query=context.query, producer_ref=context.stack_ref,
+                                           actor=context.actor, target_ref=target.ref)
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         if permanent_copy is not None:
             if permanent_copy.kind == "artifact" and target.copy_source is None:
                 raise SemanticChoiceError("Artifact spell copy requires its retained cast source")
@@ -135,30 +179,8 @@ class StackTargetChoiceHandler:
             actor=validation_actor,
         )
         if bundle is None or not target.targets or effect.get('retain_targets_only') is True:
-            intents = ()
-            if self.mode == "copy":
-                intents = (
-                    CopyStackItemIntent(
-                        actor=context.actor,
-                        controller=context.actor,
-                        target_stack_ref=target.ref,
-                        targets=tuple(
-                            value for value in target.targets if value is not None
-                        ),
-                        target_groups=target.target_groups,
-                        reason=context.stack_label,
-                        target_snapshots=target.target_snapshots,
-                        copy_source=target.copy_source,
-                        permanent_copy=permanent_copy,
-                    ),
-                ) * copies
-            return SemanticChoicePreparation(
-                request=None,
-                continuation_effect=FrozenMap(effect),
-                preparation_intents=intents,
-                auto_continue=AutoContinue(
-                    reason="stack object has no target choice"
-                ),
+            return _prepare_without_target_choices(
+                effect, context, target, mode=self.mode, copies=copies, permanent_copy=permanent_copy,
             )
         authoritative = bundle.get("authoritative")
         public = bundle.get("public")
@@ -175,6 +197,7 @@ class StackTargetChoiceHandler:
             {
                 **dict(effect),
                 **({'copy_source':target.copy_source} if target.copy_source is not None else {}),
+                **({REMAINING_FIELD: copies} if variable else {}),
                 "_target_stack_ref": target.ref,
                 "_target_schema": dict(authoritative),
                 "_default_targets": defaults,
@@ -305,7 +328,17 @@ class StackTargetChoiceHandler:
                 collect_single_target_ward=mandatory,
                 target_snapshots=snapshots,
             )
-        return SemanticChoiceCompletion(intents=(intent,))
+        following = ()
+        if COPY_FIELD in effect:
+            try:
+                copies = choice_copy_count(effect, query=query, producer_ref=continuation.stack_ref,
+                                           actor=actor, target_ref=target_ref, continuation=True)
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if copies > 1:
+                following = (FrozenMap({"op": self.operation, "stack": target_ref,
+                                        COPY_FIELD: 1, REMAINING_FIELD: copies - 1}),)
+        return SemanticChoiceCompletion(intents=(intent,), prepend_effects=following)
 
 
 STACK_TARGET_CHOICE_HANDLERS = (

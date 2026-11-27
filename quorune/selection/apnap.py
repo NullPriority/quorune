@@ -196,6 +196,13 @@ class ApnapChoiceOwnerMixin:
             raise GameRuleError(str(exc)) from exc
 
     def _issue_apnap_choice(self, *, effect: Mapping[str, Any], continuation: Mapping[str, Any]) -> None:
+        from ..rules.repeated_apnap_payment import is_payment_round
+
+        if is_payment_round(effect):
+            from .repeated_apnap_payment import begin_payment_round
+
+            begin_payment_round(self, effect, continuation)
+            return
         effect = bind_most_lands_sacrifice_players(self, effect, continuation)
         players_spec = effect.get("players", "all")
         greatest_players = greatest_power_sacrifice_players(self, effect, continuation)
@@ -308,6 +315,11 @@ class ApnapChoiceOwnerMixin:
     def _complete_apnap_choice(self, decision: Any) -> None:
         seat = decision.actors[0]
         raw_continuation = decision.continuation
+        from .repeated_apnap_payment import OPERATION as repeated_payment_operation, complete_payment_round_choice
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == repeated_payment_operation:
+            complete_payment_round_choice(self, decision)
+            return
         legacy_state = dict(raw_continuation.get("choice_state") or {})
         legacy = SelectionContinuation(
             contract=SelectionContract.NONTARGET_CHOICE,

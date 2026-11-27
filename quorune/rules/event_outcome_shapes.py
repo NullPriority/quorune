@@ -311,6 +311,14 @@ def event_outcome_runtime_dependencies(program):
 
     if (grouped := controlled_subtype_damage_runtime_dependencies(program)) is not None:
         return grouped
+    from .repeated_apnap_payment import payment_round_program_dependencies
+
+    if dependencies := payment_round_program_dependencies(program):
+        return dependencies
+    from .private_search_play import private_search_play_program_dependencies
+
+    if dependencies := private_search_play_program_dependencies(program):
+        return dependencies
     from .bargain_search import bargain_search_program_dependencies
 
     if dependencies := bargain_search_program_dependencies(program):

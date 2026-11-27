@@ -23,6 +23,17 @@ DELAYED_SOURCE_CONVERT_VERSION = 10
 ARTIFACT_GRAVEYARD_RETURN_VERSION = 11
 ARTIFACT_GRAVEYARD_RETURN_EVENT = "artifact.graveyard"
 ARTIFACT_GRAVEYARD_COMPOSITION_FIELD = "delayed_artifact_graveyard_arrivals"
+DEATH_BATTLEFIELD_ARRIVALS = "death_battlefield_arrivals"
+SOURCE_DEATH_HAND_VERSION = 12
+SOURCE_DEATH_HAND_ACTION = "return_source_death_to_owner_hand"
+SOURCE_DEATH_HAND_TEMPLATE = "source-death-return-owner-hand-next-end-step-v1"
+SOURCE_DEATH_HAND_CAPABILITY = "trigger.delayed.source_death_owner_hand"
+SOURCE_DEATH_HAND_EVENT = "permanent.graveyard.self"
+SOURCE_DEATH_HAND_DEPENDENCIES = (
+    SOURCE_DEATH_HAND_CAPABILITY, DELAYED_OBJECT_CAPABILITY, "trigger.effect.fixed_event",
+    "trigger.event.normalized_zone_change", "trigger.placement.apnap",
+    "zone.change.destination_replacement",
+)
 ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES = (
     DELAYED_OBJECT_CAPABILITY, "trigger.event.normalized_zone_change", "trigger.placement.apnap",
     "zone.change.destination_replacement", "zone.return.fixed_event_battlefield",
@@ -107,8 +118,45 @@ def validate_forced_block_status_effect(effect: Mapping[str, Any], *, compiled: 
         raise ValueError("A resolved blocked-status effect requires its exact attacking incarnation")
 
 
+def source_death_hand_return_effect():
+    return {
+        "op": SCHEDULE_OBJECT_ACTION, "schema_version": SOURCE_DEATH_HAND_VERSION,
+        "object": "$context." + DEATH_BATTLEFIELD_ARRIVALS, "action": SOURCE_DEATH_HAND_ACTION,
+        "timing": "next_end_step",
+    }
+
+
+def uses_source_death_hand_return(effect):
+    return (effect.get("op") in {SCHEDULE_OBJECT_ACTION, RESOLVE_OBJECT_ACTION}
+            and (effect.get("schema_version") == SOURCE_DEATH_HAND_VERSION
+                 or effect.get("action") == SOURCE_DEATH_HAND_ACTION))
+
+
+def validate_source_death_hand_return(effect, *, compiled=False):
+    if not isinstance(effect, Mapping) or type(effect.get("schema_version")) is not int:
+        raise ValueError("Delayed owner-hand return requires its exact instruction version")
+    expected = source_death_hand_return_effect()
+    if compiled:
+        if dict(effect) != expected:
+            raise ValueError("Delayed owner-hand return requires the original self-death instruction")
+        return
+    values = dict(effect)
+    if values.get("op") == RESOLVE_OBJECT_ACTION:
+        expected["op"] = RESOLVE_OBJECT_ACTION
+        expected.pop("timing")
+        selections = values.pop("_replacement_selections", ())
+        if not isinstance(selections, (tuple, list)):
+            raise ValueError("Delayed owner-hand replacement selections require a sequence")
+    if (not isinstance(values.get("object"), (tuple, list))
+            or {**values, "object": expected["object"]} != expected):
+        raise ValueError("The materialized owner-hand instruction changed")
+
+
 def validate_delayed_object_instruction(effect,*,compiled=False):
     if not isinstance(effect,Mapping):raise ValueError('Delayed object instruction must be a mapping')
+    if uses_source_death_hand_return(effect):
+        validate_source_death_hand_return(effect, compiled=compiled)
+        return effect
     if is_artifact_graveyard_return(effect):
         return validate_artifact_graveyard_return(effect, compiled=compiled)
     if is_source_bound_creature_return(effect):
@@ -261,6 +309,8 @@ def delayed_object_node_capabilities(*,effects,target_schema,mechanic_ids):
         return SOURCE_BOUND_CREATURE_RETURN_DEPENDENCIES
     try:effect=validate_delayed_object_instruction(effects[0],compiled=True)
     except (ValueError,TypeError,KeyError):return ()
+    if uses_source_death_hand_return(effect):
+        return SOURCE_DEATH_HAND_DEPENDENCIES
     if is_artifact_graveyard_return(effect):
         return ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES
     if effect["schema_version"] == CONTROLLED_ATTACKER_PHASE_OUT_VERSION:

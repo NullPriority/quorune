@@ -311,8 +311,11 @@ def commit_library_selection(
             reason=reason, source_stack_ref=source_stack_ref,
         )
     if arrangement.selected_destination=='library_top':
-        return _commit_top_exile_selection(host,actor=actor,player=player,arrangement=arrangement,cards=cards,
-            reason=reason,replacement_selections=replacement_selections)
+        return _commit_top_exile_selection(
+            host, actor=actor, player=player, arrangement=arrangement, cards=cards, reason=reason,
+            source_stack_ref=source_stack_ref, looked_are_public=looked_are_public,
+            selected_are_public=selected_are_public, replacement_selections=replacement_selections,
+        )
     if arrangement.selected_destination=='battlefield':
         from .library_battlefield_entry import commit_library_battlefield_selection
         return commit_library_battlefield_selection(host,actor=actor,player=player,arrangement=arrangement,
@@ -420,9 +423,23 @@ def _commit_private_top_bottom_selection(host, *, actor, player, arrangement, ca
     return tuple(value.ref for value in arrangement.looked)
 
 
-def _commit_top_exile_selection(host,*,actor,player,arrangement,cards,reason,replacement_selections):
+def _commit_top_exile_selection(
+    host, *, actor, player, arrangement, cards, reason, source_stack_ref, looked_are_public,
+    selected_are_public, replacement_selections,
+):
     """Keep the selected current objects on top and exile the exact remainder."""
     from ..zone_transitions import ZoneTransitionOwner
+
+    if actor != player:
+        from .opponent_library_shuffle import validate_opponent_shuffle_partition_commit
+
+        try:
+            validate_opponent_shuffle_partition_commit(
+                host, actor=actor, player=player, arrangement=arrangement, source_stack_ref=source_stack_ref,
+                looked_are_public=looked_are_public, selected_are_public=selected_are_public,
+            )
+        except ValueError as exc:
+            raise LibrarySelectionError(str(exc)) from exc
     changes=[(cards[ref].object_id,'exile') for ref in arrangement.remainder_refs]
     if changes:ZoneTransitionOwner(host).move_cards_simultaneously(changes,reason=reason,log=False,
         replacement_selections=replacement_selections)
@@ -431,10 +448,10 @@ def _commit_top_exile_selection(host,*,actor,player,arrangement,cards,reason,rep
     if any(oid not in library for oid in top):raise LibrarySelectionError('A selected top card left the library')
     try:commit_ordered_library_partition(library,top_top_first=top)
     except LibraryPartitionError as exc:raise LibrarySelectionError(str(exc)) from exc
-    host._log(actor,'library.selection',f'{player} kept {len(top)} looked-at card(s) on top and exiled the remainder.',
+    host._log(actor,'library.selection',f'{actor} kept {len(top)} looked-at card(s) on top and exiled the remainder.',
         {'player':player,'looked_count':len(arrangement.looked),'selected_count':len(top),
             'remainder_count':len(changes),'selected_destination':'library_top','remainder_destination':'exile','reason':reason},
-        visibility=[player,'analyst'],importance=1,changed_objects=[v.object_id for v in arrangement.looked],changed_players=[player])
+        visibility=[actor,'analyst'],importance=1,changed_objects=[v.object_id for v in arrangement.looked],changed_players=[player])
     return tuple(v.ref for v in arrangement.looked)
 
 

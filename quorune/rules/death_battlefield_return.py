@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from ..characteristic_evaluation import type_parts
 from ..continuous_effect_state import ResolutionEffectSource
+from ..delayed_object_model import DEATH_BATTLEFIELD_ARRIVALS, SOURCE_DEATH_HAND_CAPABILITY, SOURCE_DEATH_HAND_EVENT
 from ..entry_counter_model import EffectEntryCounter
 from ..errors import GameRuleError
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
@@ -16,7 +17,6 @@ from ..replacement.immutable import FrozenMap
 FLYING_EVENT_BATTLEFIELD_RETURN_VERSION = 9
 DEATH_BATTLEFIELD_RETURN_CAPABILITY = "zone.return.fixed_controlled_death_battlefield"
 DEATH_BATTLEFIELD_RETURN_MECHANIC = "fixed-controlled-death-battlefield-return"
-DEATH_BATTLEFIELD_ARRIVALS = "death_battlefield_arrivals"
 DEATH_BATTLEFIELD_RETURN_DEPENDENCIES = (
     DEATH_BATTLEFIELD_RETURN_CAPABILITY, "trigger.event.qualified_zone_change",
     "counter.characteristic.keyword", "counter.producer.effect_entry", "zone.change.destination_replacement",
@@ -86,7 +86,10 @@ def death_battlefield_return_context(host, context, occurrence, parts, *, perman
     from .opposing_death_delayed_return import OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY
     from .granted_death_role_return import GRANTED_DEATH_ROLE_RETURN_CAPABILITY, has_granted_self_death_return
 
-    if permanent_graveyard and not has_granted_self_death_return(host, occurrence.previous_characteristics):
+    if permanent_graveyard and not (
+        has_granted_self_death_return(host, occurrence.previous_characteristics)
+        or event_has_capability_subscriber(host, SOURCE_DEATH_HAND_EVENT, SOURCE_DEATH_HAND_CAPABILITY)
+    ):
         return context
     watched = (
         ("creature.dies", DEATH_BATTLEFIELD_RETURN_CAPABILITY),

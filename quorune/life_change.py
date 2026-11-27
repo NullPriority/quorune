@@ -496,6 +496,7 @@ def commit_life_change_batch(
     *,
     log_replacements: bool = True,
     radiation_counter_plan=None,
+    dispatch_events: bool = True,
 ) -> LifeChangeCommit:
     """Commit one replay-validated life batch through the typed state owner."""
 
@@ -537,9 +538,10 @@ def commit_life_change_batch(
                 importance=2,
                 changed_players=[str(event.affected_player)],
             )
-    from .player_result_events import dispatch_life_loss_records
+    if dispatch_events:
+        from .player_result_events import dispatch_life_loss_records
 
-    dispatch_life_loss_records(host, prepared.records)
+        dispatch_life_loss_records(host, prepared.records)
     return LifeChangeCommit(
         records=prepared.records,
         changed_players=tuple(

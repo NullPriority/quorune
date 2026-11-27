@@ -865,6 +865,15 @@ def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span
         capability_profile,residuals,compile_inner,trigger_node,keyword_node_compiler,
         effect_template,trigger_effect_template,material_line_for):
     """Route complete quoted children after ordinary keywords and source costs."""
+    if source_attachment_relation is AttachmentReferenceKind.EQUIPPED and "planeswalker" in printed_card_types:
+        from .equipped_planeswalker_nodes import equipped_planeswalker_nodes
+        planeswalker = equipped_planeswalker_nodes(
+            record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+            source_name=source_name, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals,
+        )
+        if planeswalker is not None:
+            return planeswalker
     from .entry_copy_ability_nodes import entry_copy_ability_nodes
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,

@@ -1101,6 +1101,12 @@ def fixed_counter_trigger_binding(
             intervening, card_name=card_name, compile_binding=fixed_counter_trigger_binding,
             compile_source_binding=_public_state_source_self_trigger_binding,
         )
+    from .opponent_library_shuffle_templates import opponent_library_shuffle_binding_spec
+
+    shuffled = opponent_library_shuffle_binding_spec(material_line)
+    if shuffled is not None:
+        return public_binding_from_spec(shuffled,
+            binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
     public = _public_trigger_binding(
         material_line,
         card_name=card_name,

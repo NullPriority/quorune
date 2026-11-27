@@ -33,6 +33,7 @@ from .revealed_creature_statistics import RevealedCreatureStatisticsHandler
 from .extort import ExtortChoiceHandler
 from .mana_contribution_draw import ManaContributionDrawHandler
 from .target_permanent_shuffle_reveal import TargetPermanentShuffleRevealHandler
+from .opponent_library_shuffle import OpponentShuffleTopPartitionHandler
 from .fame_fortune import FameFortuneChoiceHandler
 from .target_controller_library_reveal import TargetControllerLibraryRevealHandler
 from .actual_life_transfer import ActualLifeTransferHandler
@@ -41,6 +42,7 @@ from .temporary_copy_subject import TemporaryCopySubjectChoiceHandler
 from .temporary_occurrence_copy import TemporaryOccurrenceCopyChoiceHandler
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .hand_entry_collections import PrivateHandCollectionHandler
+from .cast_x_search_choice import CastXZoneSearchChoiceHandler
 from .named_zone_search import NamedZoneSearchChoiceHandler
 from .target_library_inspection import TargetLibraryInspectionHandler
 from .shared_type_library import SharedTypeLibraryHandler
@@ -119,6 +121,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             ManaContributionDrawHandler(),
             FixedAttackingTokenDestinationHandler(),
             TargetPermanentShuffleRevealHandler(),
+            OpponentShuffleTopPartitionHandler(),
             FameFortuneChoiceHandler(),
             TargetControllerLibraryRevealHandler(),
             CompositionOrderHandler(),
@@ -186,6 +189,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *OBJECT_SELECTION_HANDLERS,
             PrivateHandCollectionHandler(),
             NamedZoneSearchChoiceHandler(),
+            CastXZoneSearchChoiceHandler(),
             TargetLibraryInspectionHandler(),
             SharedTypeLibraryHandler(),
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,

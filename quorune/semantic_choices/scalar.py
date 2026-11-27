@@ -19,6 +19,7 @@ from ..rules.draw_step_drawing_settlement import (
     DRAW_STEP_SETTLEMENT_VERSION_FIELD, draw_step_settlement_can_draw,
 )
 from ..rules.graveyard_return_choices import is_paired_graveyard_return
+from ..rules.milled_permanent_battlefield import MILL_PERMANENT_CHOICE
 from ..semantic_runtime.intents import (
     AddManaIntent,
     RecordChoiceIntent,
@@ -566,6 +567,10 @@ class ChooseOptionHandler:
             from .graveyard_return import prepare_paired_graveyard_return
 
             return prepare_paired_graveyard_return(effect, context)
+        if MILL_PERMANENT_CHOICE in effect:
+            from .milled_permanent_battlefield import prepare_milled_permanent_battlefield
+
+            return prepare_milled_permanent_battlefield(effect, context)
         if "venture" in effect or "take_initiative" in effect:
             from .venture import prepare_dungeon_choice
 
@@ -629,6 +634,10 @@ class ChooseOptionHandler:
             from .graveyard_return import complete_paired_graveyard_return
 
             return complete_paired_graveyard_return(continuation, response, query)
+        if MILL_PERMANENT_CHOICE in continuation.effect:
+            from .milled_permanent_battlefield import complete_milled_permanent_battlefield
+
+            return complete_milled_permanent_battlefield(continuation, response, query)
         if "venture" in continuation.effect:
             from .venture import complete_venture_choice
 

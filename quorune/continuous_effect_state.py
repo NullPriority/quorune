@@ -28,6 +28,7 @@ from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import ResolvedBlockCapacityRule
 from .temporary_cast_rule_model import ResolvedCastRestriction, ResolvedNextTurnSorceryTiming
 from .draw_redirect_model import ResolvedDrawRedirect
+from .target_combat_damage_multiplier_model import ResolvedTargetCombatDamageMultiplier
 from .next_draw_replacement_model import ResolvedNextDrawReplacement
 from .next_spell_cost_model import ResolvedNextSpellCostReduction
 from .protected_attack_payment_model import ResolvedProtectedAttackPayment
@@ -212,7 +213,7 @@ def commit_continuous_effect(
          ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition, ResolvedProtectedAttackPayment, ResolvedDrawRedirect,
          ResolvedActivationProhibition, ResolvedNextDrawReplacement, ResolvedTurnMatchOutcomeProtection,
          ResolvedAllPlayerTurnRule, ResolvedSacrificeProhibition, ResolvedNoMaximumHandSize,
-         ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction),
+         ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction, ResolvedTargetCombatDamageMultiplier),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"

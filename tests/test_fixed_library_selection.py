@@ -9,6 +9,7 @@ import uuid
 from unittest.mock import patch
 
 from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardRecord
 from quorune.compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_CAPABILITY,
@@ -889,6 +890,189 @@ class FixedLibrarySelectionRuntimeTests(unittest.TestCase):
         )
         self.assertEqual("exile", remainder.zone)
         self.assertEqual(1, remainder.counters["void"])
+
+
+class PsychicShuffleNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixture_dir = ROOT / "tests" / "fixtures"
+        path = Path(cls.temporary.name) / "psychic-surgery.sqlite3"
+        build_fixture_database([fixture_dir / name for name in (
+            "bound-effect-program-cards.json", "scryfall-exact-lists.json",
+            "announced-x-library-search-cards.json", "psychic-surgery-cards.json", "targeted-spell-control-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Private shuffle", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def prepared_zenith(self, seed, seat, *, empty=False):
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(seed)
+        surgery = self.add(game.engine, "Psychic Surgery")
+        zenith = self.add(game.engine, "Green Sun's Zenith", seat=seat, zone="hand")
+        if empty:
+            library = game.state.players[seat].zones["library"]
+            ZoneTransitionOwner(game.engine).move_cards_simultaneously(
+                [(oid, "graveyard") for oid in tuple(library)], reason="Prepare empty library", log=False,
+            )
+        self.assert_closed(game, surgery)
+        self.assert_closed(game, zenith)
+        self.prepare(game, actor=seat, active=seat, mana={"G": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        action = self.action(game, seat, zenith)
+        cast = game.act("pilot:" + seat, {"action_id": action["id"], "x": 0, "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("semantic.search", self.resolve(game).kind)
+        baseline = game.state.players[seat].stats.get("shuffle_count", 0)
+        self.choose(game, seat, search_cards=[])
+        return game, surgery, zenith, baseline
+
+    def choose(self, game, actor="A", **payload):
+        result = game.act("pilot:" + actor, {"action_id": "choose", **payload})
+        self.assertTrue(result.ok, result.summary)
+
+    def order_triggers(self, game, source, baseline):
+        self.assertEqual("trigger.order", game.state.pending_decision.kind)
+        triggers = {item.event_facts["shuffle_count"]: item for batch in game.state.pending_trigger_batches
+                    for item in batch.items if item.source_object_id == source.object_id}
+        self.assertEqual({baseline + 1, baseline + 2}, set(triggers))
+        self.assertEqual({"B"}, {item.event_facts["player"] for item in triggers.values()})
+        result = game.act("pilot:A", {"action_id": "order", "triggers":
+                                      [item.ref for item in triggers.values()]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, self.trigger_count(game, source))
+
+    def assert_look_choice(self, game):
+        decision = self.resolve(game)
+        summary = (None if decision is None else (decision.kind, decision.actors),
+                   game.state.stack[-1].to_dict() if game.state.stack else None,
+                   game.packet("pilot:A", full=True).get("decision"))
+        self.assertIsNotNone(decision, summary)
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors), summary)
+
+    @staticmethod
+    def top_objects(game, seat="B"):
+        return tuple(game.state.cards[oid] for oid in reversed(game.state.players[seat].zones["library"][-2:]))
+
+    def test_actual_zenith_two_shuffles_offer_separate_current_private_top_choices(self):
+        game, source, _, baseline = self.prepared_zenith(70120011, "B")
+        self.order_triggers(game, source, baseline)
+        self.assert_look_choice(game)
+        top = self.top_objects(game)
+        refs = [card.ref for card in top]
+        for seat in "ABCD":
+            self.assertTrue(all(ref not in json.dumps(game.packet("pilot:" + seat, full=True)) for ref in refs))
+        game = self.replay(game, load=True)
+        self.choose(game, choice="look")
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertTrue(all(ref in json.dumps(packet) for ref in refs))
+        for seat in "BCD":
+            self.assertTrue(all(ref not in json.dumps(game.packet("pilot:" + seat, full=True)) for ref in refs))
+        stable = authoritative_state_hash(game.state)
+        for seat, cards in (("B", {"top": refs, "exile": []}), ("A", {"top": [], "exile": refs})):
+            result = game.act("pilot:" + seat, {"action_id": "choose", "cards": cards})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(stable, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self.choose(game, cards={"top": refs[::-1], "exile": []})
+        self.assertEqual(refs[::-1], [card.ref for card in self.top_objects(game)])
+        self.assert_look_choice(game)
+        self.choose(game, choice="look")
+        current = game.packet("pilot:A", full=True)["decision"]
+        legal = current["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertEqual(refs[::-1], legal)
+        self.choose(game, cards={"top": refs[:1], "exile": refs[1:]})
+        exiled = game.state.cards[top[1].object_id]
+        self.assertEqual("exile", exiled.zone)
+        self.assertFalse(exiled.face_down)
+        self.assertEqual(refs[0], self.top_objects(game)[0].ref)
+        for seat in "ABCD":
+            self.assertIn(exiled.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_zenith_empty_to_one_card_shuffles_and_ignores_the_controller(self):
+        own, source, _, baseline = self.prepared_zenith(70120012, "A")
+        self.settle(own)
+        self.assertEqual(0, self.trigger_count(own, source))
+        self.assertEqual(baseline + 2, own.state.players["A"].stats["shuffle_count"])
+        self.replay(own, load=True)
+        game, source, zenith, baseline = self.prepared_zenith(70120013, "B", empty=True)
+        self.order_triggers(game, source, baseline)
+        self.assert_look_choice(game)
+        (only,) = self.top_objects(game)
+        self.assertEqual(zenith.object_id, only.object_id)
+        before = {seat: tuple(game.state.players[seat].zones["library"]) for seat in "ABCD"}
+        self.choose(game, choice="decline")
+        self.assertEqual(before, {seat: tuple(game.state.players[seat].zones["library"]) for seat in "ABCD"})
+        self.assert_look_choice(game)
+        self.choose(game, choice="look")
+        self.choose(game, cards={"top": [], "exile": [only.ref]})
+        self.assertEqual([], game.state.players["B"].zones["library"])
+        self.assertEqual("exile", game.state.cards[only.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_foreign_controlled_zenith_shuffles_the_owners_library_without_triggering_for_it(self):
+        game = self.session(70120015)
+        surgery = self.add(game.engine, "Psychic Surgery")
+        zenith = self.add(game.engine, "Green Sun's Zenith", seat="B", zone="hand")
+        snatch = self.add(game.engine, "Aethersnatch", seat="C", zone="hand")
+        for card in (surgery, zenith, snatch):
+            self.assert_closed(game, card)
+        self.prepare(game, actor="B", active="B", mana={"G": 1})
+        game.state.players["C"].mana_pool.update({"C": 4, "U": 2})
+        game.state.config.semantic_policy = "trusted_only"
+        counts = {seat: game.state.players[seat].stats.get("shuffle_count", 0) for seat in "BC"}
+        self.checkpoint(game)
+        action = self.action(game, "B", zenith)
+        cast = game.act("pilot:B", {"action_id": action["id"], "x": 0, "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        subject = game.state.stack[-1]
+        self.cast(game, "C", snatch, [subject.ref])
+        self.resolve_top(game)
+        self.assertEqual("C", game.state.stack[-1].controller)
+        self.assertEqual("semantic.search", self.resolve(game).kind)
+        self.choose(game, "C", search_cards=[])
+        self.assertEqual(1, self.trigger_count(game, surgery))
+        triggered, = game.state.stack
+        self.assertEqual("C", triggered.context["player"])
+        self.assertEqual(counts["C"] + 1, triggered.context["shuffle_count"])
+        self.assertEqual(counts["B"] + 1, game.state.players["B"].stats["shuffle_count"])
+        self.assertEqual("library", game.state.cards[zenith.object_id].zone)
+        game = self.replay(game, load=True)
+        self.assert_look_choice(game)
+        self.choose(game, choice="decline")
+        self.replay(game, load=True)
+
+    def test_exact_psychic_shuffle_withdrawal_and_modified_authority_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.opponent_library_shuffle import OPPONENT_SHUFFLE_CAPABILITIES
+
+        game = self.session(70120014)
+        card = self.add(game.engine, "Psychic Surgery")
+        self.assert_closed(game, card)
+        (program,) = game.engine.semantics.programs_for_oracle(card.oracle_id)
+        for missing in OPPONENT_SHUFFLE_CAPABILITIES:
+            deps = tuple(cap for cap in program.capability_dependencies if cap != missing)
+            changed = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+            self.assertIn("capability:undeclared_runtime_dependency:" + missing, bound["blockers"])
+        record = self.db.by_oracle_id(card.oracle_id)
+        for stale in (record.oracle_text.replace("an opponent", "you"),
+                      record.oracle_text.replace("top two", "top three"),
+                      record.oracle_text.replace("may exile one", "exile two")):
+            ir = compile_oracle_card(replace(record, oracle_text=stale), capability_registry=self.registry)
+            self.assertNotEqual("exact", ir.status)
+        invalid = replace(program, effects=[{**program.effects[0], "library_owner": "$controller"}])
+        self.assertFalse(bind_semantic_program_runtime(
+            invalid, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
 
 
 if __name__ == "__main__":

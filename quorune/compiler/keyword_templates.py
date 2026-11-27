@@ -49,6 +49,11 @@ def keyword_mechanics(
     """Recognize a complete Oracle line made only of printed keywords."""
 
     known = {keyword.casefold() for keyword in card_keywords}
+    if "companion" in known:
+        from ..rules.commander_companion_roles import SINGLETON_COMPANION_CLAUSE
+
+        if " ".join(text.split()).casefold() == SINGLETON_COMPANION_CLAUSE:
+            return ("companion",)
     if 'partner' in known:
         pairing_kind = pairing_kind_for_material_line(text.strip())
         if pairing_kind in TAGGED_PARTNER_KINDS:

@@ -1,13 +1,46 @@
 {
   "cards": [
     {
-      "cmc": 5.0,
-      "color_identity": ["B"],
-      "colors": ["B"],
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{R}",
+      "name": "Angrath's Rampage",
+      "oracle_id": "850a8369-94ab-43b6-8cfe-286e3623b19d",
+      "oracle_text": "Choose one \u2014\n\u2022 Target player sacrifices an artifact of their choice.\n\u2022 Target player sacrifices a creature of their choice.\n\u2022 Target player sacrifices a planeswalker of their choice.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{4}{B}",
       "name": "Bellowing Mauler",
@@ -17,16 +50,47 @@
       "produced_mana": [],
       "released_at": "2022-04-29",
       "toughness": "6",
-      "type_line": "Creature — Ogre Warrior"
+      "type_line": "Creature \u2014 Ogre Warrior"
     },
     {
-      "cmc": 2.0,
-      "color_identity": ["B"],
-      "colors": ["B"],
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Blighted Fen",
+      "oracle_id": "b8f3da11-7c8f-4846-98a6-204bfd8d572b",
+      "oracle_text": "{T}: Add {C}.\n{4}{B}, {T}, Sacrifice this land: Target opponent sacrifices a creature of their choice.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2015-10-02",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{1}{B}",
       "name": "Diabolic Edict",
@@ -40,12 +104,18 @@
     },
     {
       "cmc": 1.0,
-      "color_identity": ["B"],
-      "colors": ["B"],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{B}",
       "name": "Innocent Blood",
@@ -59,17 +129,23 @@
     },
     {
       "cmc": 2.0,
-      "color_identity": ["B"],
-      "colors": ["B"],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
       "defense": null,
       "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
+      "legalities": {
+        "commander": "legal"
+      },
       "loyalty": null,
       "mana_cost": "{1}{B}",
       "name": "Sheoldred's Edict",
       "oracle_id": "217062f5-96f1-454c-9507-17f34ef37070",
-      "oracle_text": "Choose one —\n• Each opponent sacrifices a nontoken creature of their choice.\n• Each opponent sacrifices a creature token of their choice.\n• Each opponent sacrifices a planeswalker of their choice.",
+      "oracle_text": "Choose one \u2014\n\u2022 Each opponent sacrifices a nontoken creature of their choice.\n\u2022 Each opponent sacrifices a creature token of their choice.\n\u2022 Each opponent sacrifices a planeswalker of their choice.",
       "power": null,
       "produced_mana": [],
       "released_at": "2023-02-10",
@@ -77,46 +153,93 @@
       "type_line": "Instant"
     },
     {
-      "cmc": 2.0,
-      "color_identity": ["B", "R"],
-      "colors": ["B", "R"],
-      "defense": null,
-      "keywords": [],
-      "layout": "normal",
-      "legalities": {"commander": "legal"},
-      "loyalty": null,
-      "mana_cost": "{B}{R}",
-      "name": "Angrath's Rampage",
-      "oracle_id": "850a8369-94ab-43b6-8cfe-286e3623b19d",
-      "oracle_text": "Choose one —\n• Target player sacrifices an artifact of their choice.\n• Target player sacrifices a creature of their choice.\n• Target player sacrifices a planeswalker of their choice.",
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "name": "Torment of Hailfire",
+      "mana_cost": "{X}{B}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Repeat the following process X times. Each opponent loses 3 life unless that player sacrifices a nonland permanent of their choice or discards a card.",
       "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
       "produced_mana": [],
-      "released_at": "2019-05-03",
-      "toughness": null,
-      "type_line": "Sorcery"
-    },
-    {
-      "cmc": 0.0,
-      "color_identity": ["B"],
-      "colors": [],
-      "defense": null,
-      "keywords": [],
       "layout": "normal",
-      "legalities": {"commander": "legal"},
-      "loyalty": null,
-      "mana_cost": "",
-      "name": "Blighted Fen",
-      "oracle_id": "b8f3da11-7c8f-4846-98a6-204bfd8d572b",
-      "oracle_text": "{T}: Add {C}.\n{4}{B}, {T}, Sacrifice this land: Target opponent sacrifices a creature of their choice.",
-      "power": null,
-      "produced_mana": ["C"],
-      "released_at": "2015-10-02",
-      "toughness": null,
-      "type_line": "Land"
+      "released_at": "2017-07-14",
+      "faces": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
     }
   ],
   "fixture_kind": "focused_fixed_affected_player_sacrifice_cards",
-  "rulings": [],
+  "rulings": [
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Each repetition through this process is done separately. If an opponent sacrifices a creature with an ability that triggers when another creature dies, for example, it will see creatures that are sacrificed before it, but not those are sacrificed after it."
+    },
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If X is 0, Torment of Hailfire resolves with no effect."
+    },
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, Torment of Hailfire causes both opponents to sacrifice a nonland permanent, discard a card, or lose 3 life X times. Your opponents can choose the same torment or different ones each time."
+    },
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "In a multiplayer game, each opponent in turn order makes their choice once, then all of the actions occur simultaneously, then they repeat this process if it hasn\u2019t been done X times yet. Opponents will know choices made by earlier opponents when making their choices, although a card chosen to be discarded this way isn\u2019t revealed until it\u2019s discarded."
+    },
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "State-based actions aren\u2019t checked in between repetitions of this process, so the game state may be a little unusual while making the choice. For example, a player may sacrifice a creature and then later sacrifice an Aura that was attached to that creature."
+    },
+    {
+      "oracle_id": "30a0a6c2-1fbb-4784-ab96-22611d57e62c",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "While resolving Torment of Hailfire, your opponent chooses a card to be discarded without revealing it, chooses a nonland permanent to be sacrificed, or chooses to do neither. Then that player discards that card, sacrifices that permanent, or loses 3 life, then repeats this process if it hasn\u2019t been done X times yet. Your opponent can always choose to lose 3 life, even if they have cards to discard or nonland permanents to sacrifice."
+    }
+  ],
   "schema_version": 1,
   "source": "Pinned Scryfall witnesses for affected-player sacrifice tests"
 }

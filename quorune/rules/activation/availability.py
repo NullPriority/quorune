@@ -20,6 +20,7 @@ from ...semantic_runtime.activation_restrictions import (
     current_activation_prohibitions,
 )
 from .conditions import activation_condition_status
+from .commander_identity_life import current_commander_identity_life
 
 
 class ActivationAvailabilityHost(Protocol):
@@ -100,7 +101,10 @@ def activation_availability(
     source_status = _source_cost_availability(host, seat, card, ability)
     if source_status is not None:
         return source_status
-    if ability.life_payment and available_life_for_payment(host, seat) < ability.life_payment:
+    life_payment = current_commander_identity_life(host, seat, ability)
+    if life_payment is None:
+        return "unavailable", "commander_identity_life_unavailable"
+    if life_payment and available_life_for_payment(host, seat) < life_payment:
         return "unpayable", "insufficient_life"
     if ability.energy_payment and player.energy < ability.energy_payment:
         return "unpayable", "insufficient_energy"

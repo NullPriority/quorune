@@ -18,6 +18,10 @@ from .ir_model import OracleNode, append_residual
 
 _LIMIT = re.compile(r"(?P<body>.+) This ability triggers only once each turn\.", re.IGNORECASE)
 _RESOLUTION_LIMIT = re.compile(r"(?P<body>.+) Do this only once each turn\.", re.IGNORECASE)
+_NONCREATURE_HAND_RETURN_GROUP = re.compile(
+    r"Whenever one or more noncreature permanents are returned to hand, (?P<body>draw a card\.)",
+    re.IGNORECASE,
+)
 _SACRIFICE_GROUP = re.compile(
     r"(?P<head>(?:When|Whenever) you sacrifice) one or more (?P<other>other )?"
     r"(?P<subject>[^,]+?)(?P<turn> during your turn)?, (?P<result>.+)",
@@ -49,6 +53,9 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         material = f"{group['head']} {article} {subject}{group['turn'] or ''}, {group['result']}"
     if graveyard_group is not None:
         material = f"Whenever a creature card is put into your graveyard from anywhere, {graveyard_group['result']}"
+    hand_return_group = _NONCREATURE_HAND_RETURN_GROUP.fullmatch(material) if resolution_match is None else None
+    if hand_return_group is not None:
+        material = f"Whenever a noncreature permanent is returned to hand, {hand_return_group['body']}"
     inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
     if (node is None or not node.exact or node.kind != "triggered_ability"
@@ -71,6 +78,13 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         # result does not depend on which card or how many cards moved.
         if (node.event != "card.enter_graveyard" or node.target_schema is not None or len(node.effects) != 1
                 or node.effects[0].get("op") != "choose_option" or DUNGEON_VENTURE_FIELD not in node.effects[0]):
+            return None
+    if hand_return_group is not None:
+        from .qualified_zone_event_bindings import noncreature_hand_return_condition
+
+        if (node.event != "permanent.leave" or node.event_condition != noncreature_hand_return_condition()
+                or node.target_schema is not None
+                or tuple(node.effects) != ({"op": "draw", "player": "$controller", "count": 1, "private": True},)):
             return None
     if resolution_match is not None:
         if not supported_trigger_limit_subscriptions(node.event, node.event_condition):

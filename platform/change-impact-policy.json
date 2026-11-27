@@ -34370,6 +34370,375 @@
         "test_temporary_creature_copy_sets",
         "test_graveyard_exile_replacements"
       ]
+    },
+    {
+      "id": "cast-announced-turn-damage-maximum",
+      "patterns": [
+        "quorune/announced_damage.py",
+        "quorune/compiler/announced_damage_templates.py",
+        "quorune/damage_turn_history.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "tests/fixtures/impact-resonance-cards.json",
+        "tests/test_impact_resonance.py"
+      ],
+      "test_modules": [
+        "test_announced_damage",
+        "test_compound_damage_recipients",
+        "test_impact_resonance"
+      ]
+    },
+    {
+      "id": "attached-planeswalker-loyalty-contract",
+      "patterns": [
+        "quorune/card_programs/binding.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/equipped_planeswalker_nodes.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/equipped_planeswalker.py",
+        "quorune/rules/loyalty_attachment.py",
+        "quorune/rules/next_turn_attack_restrictions.py",
+        "quorune/semantic_runtime/continuous_registry.py",
+        "quorune/semantic_runtime/equipped_planeswalker.py",
+        "tests/fixtures/equipped-planeswalker-cards.json",
+        "tests/test_equipped_planeswalker.py"
+      ],
+      "test_modules": [
+        "test_equipped_planeswalker",
+        "test_card_program_trust",
+        "test_fixed_attachment_actions",
+        "test_optional_draw_attack_restriction",
+        "test_resolution_mana_choices"
+      ]
+    },
+    {
+      "id": "committed-mill-permanent-battlefield-choice",
+      "patterns": [
+        "docs/architecture/library-ordering.md",
+        "quorune/compiler/fixed_instruction_program_closure.py",
+        "quorune/compiler/mill_templates.py",
+        "quorune/rules/mill_capability_shapes.py",
+        "quorune/rules/milled_permanent_battlefield.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/milled_permanent_battlefield.py",
+        "quorune/semantic_choices/scalar.py",
+        "quorune/semantic_runtime/generic.py",
+        "quorune/semantic_runtime/zone_move_intent.py",
+        "tests/fixtures/mill-committed-battlefield-cards.json",
+        "tests/test_committed_mill_battlefield.py",
+        "quorune/milling.py"
+      ],
+      "test_modules": [
+        "test_committed_mill_battlefield",
+        "test_committed_mill_adventures",
+        "test_committed_milled_creature_tokens",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "optional-artifact-destruction-controller-draw",
+      "patterns": [
+        "quorune/compiler/target_recipient_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/controlled_artifact_token_result.py",
+        "tests/fixtures/destroy-original-controller-tokens-cards.json",
+        "tests/test_destroy_original_controller_tokens.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_destroy_original_controller_tokens"
+      ]
+    },
+    {
+      "id": "controlled-land-activation-x-graveyard-return",
+      "patterns": [
+        "docs/architecture/target-legality.md",
+        "quorune/activation_x.py",
+        "quorune/compiler/activation_x_costs.py",
+        "quorune/compiler/announced_mana_value_target.py",
+        "quorune/compiler/qualified_zone_event_bindings.py",
+        "quorune/compiler/trigger_limit_nodes.py",
+        "quorune/rules/activation/graveyard_copy.py",
+        "quorune/rules/announced_mana_value_target.py",
+        "tests/fixtures/announced-mana-value-target-cards.json",
+        "tests/test_announced_mana_value_targets.py"
+      ],
+      "test_modules": [
+        "test_announced_artifact_copy",
+        "test_announced_mana_value_targets",
+        "test_card_program_trust",
+        "test_qualified_return_costs"
+      ]
+    },
+    {
+      "id": "source-death-delayed-owner-hand-return",
+      "patterns": [
+        "docs/architecture/runtime-components.md",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/delayed_object_actions.py",
+        "quorune/delayed_object_model.py",
+        "quorune/oracle_ir.py",
+        "quorune/rules/death_battlefield_return.py",
+        "quorune/rules/source_bound_delayed_return.py",
+        "quorune/rules/source_death_delayed_hand_return.py",
+        "tests/test_source_death_delayed_hand_return.py",
+        "quorune/trigger_processing.py",
+        "quorune/zone_trigger_processing.py"
+      ],
+      "test_modules": [
+        "test_source_death_delayed_hand_return",
+        "test_flying_counter_death_return",
+        "test_attachment_source_return"
+      ]
+    },
+    {
+      "id": "target-opponent-private-library-play",
+      "patterns": [
+        "docs/architecture/rules-kernel.md",
+        "quorune/compiler/targeted_library_exile_templates.py",
+        "quorune/library_search_model.py",
+        "quorune/private_opponent_library_cast_model.py",
+        "quorune/rules/casting/spell_mana_payments.py",
+        "quorune/rules/targeted_library_exile.py",
+        "quorune/selection/search_descriptor_validation.py",
+        "quorune/selection/searching.py",
+        "quorune/zone_object_state.py",
+        "quorune/zone_transitions.py",
+        "tests/fixtures/target-opponent-private-library-play-cards.json",
+        "tests/test_private_targeted_library_play.py"
+      ],
+      "test_modules": [
+        "test_private_targeted_library_play",
+        "test_targeted_library_exile",
+        "test_private_damage_library_cast",
+        "test_private_opponent_library_cast_compiler"
+      ]
+    },
+    {
+      "id": "opponent-library-shuffle-private-partition",
+      "patterns": [
+        "quorune/compiler/opponent_library_shuffle_templates.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/rules/opponent_library_shuffle.py",
+        "quorune/rules/library_selection.py",
+        "quorune/semantic_choices/opponent_library_shuffle.py",
+        "quorune/zone_transitions.py",
+        "docs/architecture/library-ordering.md",
+        "tests/fixtures/psychic-surgery-cards.json",
+        "tests/test_fixed_library_selection.py"
+      ],
+      "test_modules": [
+        "test_announced_x_library_search",
+        "test_card_program_trust",
+        "test_fixed_library_selection"
+      ]
+    },
+    {
+      "id": "different-legendary-noncommander-ability-source",
+      "patterns": [
+        "quorune/ability_source_information.py",
+        "quorune/target_source.py",
+        "quorune/target_predicates.py",
+        "quorune/selection/targeting.py",
+        "quorune/compiler/fixed_stack_spell_copy.py",
+        "quorune/stack_spell_copy_model.py",
+        "tests/test_fixed_qualified_stack_copy.py",
+        "tests/test_ability_source_counter_targets.py",
+        "docs/architecture/target-legality.md",
+        "tests/fixtures/peregrine-dynamo-cards.json"
+      ],
+      "test_modules": [
+        "test_ability_source_counter_targets",
+        "test_fixed_qualified_stack_copy",
+        "test_ordinary_cycling",
+        "test_target_restrictions"
+      ]
+    },
+    {
+      "id": "owned-commander-battlefield-return",
+      "patterns": [
+        "docs/architecture/target-legality.md",
+        "quorune/compiler/activation_paid_sacrifice_results.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/owned_commander_battlefield_return.py",
+        "quorune/semantic_runtime/activated_abilities.py",
+        "tests/fixtures/own-commander-battlefield-return-cards.json",
+        "tests/test_own_commander_battlefield_return.py",
+        "quorune/selection/targeting.py",
+        "quorune/return_to_hand.py",
+        "quorune/rules/activation/conditions.py"
+      ],
+      "test_modules": [
+        "test_own_commander_battlefield_return",
+        "test_paid_commander_lifelink",
+        "test_command_zone_commander_return"
+      ]
+    },
+    {
+      "id": "commander-identity-life-draw",
+      "patterns": [
+        "docs/architecture/rules-kernel.md",
+        "quorune/compiler/activated_costs.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/rules/activation/commander_identity_life.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/activation/offer_payload.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/semantic_runtime/activated_abilities.py",
+        "tests/fixtures/commander-identity-life-draw-cards.json",
+        "tests/test_commander_identity_life_draw.py"
+      ],
+      "test_modules": [
+        "test_commander_identity_life_draw",
+        "test_commander_pairing",
+        "test_mill_library_activation_cost"
+      ]
+    },
+    {
+      "id": "cast-x-library-graveyard-creature-search",
+      "patterns": [
+        "quorune/cast_x_search_model.py",
+        "quorune/compiler/cast_x_search_templates.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/rules/cast_x_zone_searches.py",
+        "quorune/semantic_choices/cast_x_search_choice.py"
+      ],
+      "test_modules": [
+        "test_named_zone_searches",
+        "test_semantic_searches",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "repeated-opponent-apnap-payments",
+      "patterns": [
+        "quorune/rules/repeated_apnap_payment.py",
+        "quorune/selection/repeated_apnap_payment.py",
+        "quorune/selection/repeated_payment_physical_order.py",
+        "quorune/composition_departure_batch.py"
+      ],
+      "test_modules": [
+        "test_fixed_affected_player_sacrifices",
+        "test_self_graveyard_reveal_and_owner_shuffle",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "owned-library-search-control-and-private-play",
+      "patterns": [
+        "quorune/library_search_control.py",
+        "quorune/selection/controlled_search.py",
+        "quorune/rules/private_search_play.py",
+        "quorune/semantic_runtime/library_search_rules.py"
+      ],
+      "test_modules": [
+        "test_bargain_private_search",
+        "test_named_zone_searches",
+        "test_semantic_searches",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "cast-coin-owner-transform-and-loyalty-entry",
+      "patterns": [
+        "docs/architecture/runtime-components.md",
+        "quorune/compiler/spell_cast_predicates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/rules/random_selection.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/rules/cast_coin_transform.py",
+        "quorune/entry_counter_model.py",
+        "quorune/entry_counters.py",
+        "quorune/compiler/fixed_self_entry_counter_templates.py",
+        "quorune/semantic_runtime/self_entry_counters.py",
+        "tests/fixtures/cast-optional-coin-transform-cards.json",
+        "tests/test_cast_coin_owner_transform.py",
+        "quorune/linked_exile_return.py"
+      ],
+      "test_modules": [
+        "test_cast_coin_owner_transform",
+        "test_fixed_optional_effect_choices",
+        "test_activated_self_transform"
+      ]
+    },
+    {
+      "id": "fixed-loyalty-spell-results",
+      "patterns": [
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/activation_paid_sacrifice_results.py",
+        "quorune/compiler/loyalty_spell_results.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/engine.py",
+        "quorune/impulse_access.py",
+        "quorune/impulse_access_model.py",
+        "quorune/next_spell_cost_model.py",
+        "quorune/next_spell_costs.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/impulse_access_capability_shapes.py",
+        "quorune/rules/loyalty_spell_results.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_runtime/impulse_access_handlers.py",
+        "tests/test_loyalty_spell_results.py"
+      ],
+      "test_modules": [
+        "test_loyalty_spell_results",
+        "test_announced_damage",
+        "test_repeated_source_attack_cast_cost_reduction",
+        "test_void_counter_play"
+      ]
+    },
+    {
+      "id": "commander-companion-role-ban",
+      "patterns": [
+        "docs/architecture/card-programs.md",
+        "quorune/commander.py",
+        "quorune/compiler/commander_companion_nodes.py",
+        "quorune/compiler/face_keyword_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/deck.py",
+        "quorune/rules/commander-companion-bans.json",
+        "quorune/rules/commander_companion_roles.py",
+        "quorune/rules/keyword_runtime_requirements.py",
+        "tests/test_commander_companion_role.py"
+      ],
+      "test_modules": [
+        "test_commander_companion_role",
+        "test_commander_pairing",
+        "test_fixed_stack_spell_copy"
+      ]
+    },
+    {
+      "id": "announced-controlled-ability-copies",
+      "patterns": [
+        "quorune/activation_x.py",
+        "quorune/activated_ability_descriptor.py",
+        "quorune/abilities.py",
+        "quorune/compiler/activation_x_costs.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/rules/activation/pricing.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/rules/activation/offer_payload.py",
+        "quorune/rules/announced_ability_copies.py",
+        "quorune/rules/stack_spell_copy_shapes.py",
+        "quorune/semantic_choices/stack_targets.py",
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_runtime/stack_execution.py",
+        "quorune/semantic_runtime/executor.py",
+        "docs/architecture/runtime-components.md",
+        "tests/test_fixed_three_controlled_permanent_spell_copies.py",
+        "tests/fixtures/gogo-master-of-mimicry-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_activation_x",
+        "test_fixed_qualified_stack_copy",
+        "test_fixed_three_controlled_permanent_spell_copies"
+      ]
     }
   ],
   "risk_rules": [

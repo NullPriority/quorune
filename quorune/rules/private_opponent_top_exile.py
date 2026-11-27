@@ -21,8 +21,9 @@ def current_private_top_exile_permission(state, seat, card):
     player = state.players.get(seat)
     if (card.zone != "exile" or not card.is_card_object
             or not isinstance(raw, Mapping) or set(raw) != {"schema_version", "viewer", "identity"}
-            or type(raw["schema_version"]) is not int or raw["schema_version"] not in {1, 2}
+            or type(raw["schema_version"]) is not int or raw["schema_version"] not in {1, 2, 4}
             or raw["schema_version"] == 1 and card.owner == seat
+            or raw["schema_version"] == 4 and card.owner != seat
             or raw["viewer"] != seat or raw["identity"] != card.logical_object_id
             or player is None or not player.in_game
             or card.face_down and tuple(card.known_to) != (seat,)):
@@ -32,6 +33,14 @@ def current_private_top_exile_permission(state, seat, card):
     if raw["schema_version"] == 2:
         permission["allow_any_mana_type"] = True
     return permission
+
+
+def grant_private_library_search_play(card, *, viewer):
+    if card.zone != "exile":
+        return
+    if not card.is_card_object or card.owner != viewer or not card.face_down or tuple(card.known_to) != (viewer,):
+        raise GameRuleError("Private search play requires the committed face-down exile incarnation")
+    card.annotations[FIELD] = {"schema_version": 4, "viewer": viewer, "identity": card.logical_object_id}
 
 
 def _controller_top_exile_designation(state, card):

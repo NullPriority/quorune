@@ -39,6 +39,15 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+An attached Equipment planeswalker uses its current reciprocal creature
+attachment for two independent decisions. Its live static ability removes it
+from the normal attack destination offer and commit validator. An attack that
+was already declared retains its defender. A layer-six component supplies the
+printed combat-damage trigger to the planeswalker itself. The trigger tests
+the source controller's turn, reads the normalized damage amount, and places
+loyalty on the same source incarnation. The CardProgram binder requires that
+exact granted child before it admits the parent.
+
 Compiler-generated source-self damage predicates pair the source reference with
 `$source.logical_object_id`. Damage from an old incarnation cannot trigger a
 returned object's ability. A control change preserves identity, and an already
@@ -791,6 +800,13 @@ apply counter replacements and remove only the counters still available;
 resolution does not turn the removal effect into a cost. A blinked source's
 new counters are unaffected. Counter actions on other event recipients remain
 unfinished. Schema 1 retains its movement-action encoding.
+
+A self-death return to hand carries the source's committed physical graveyard
+arrivals. It uses the first end step that begins after scheduling, including
+when the source dies during an end step already in progress. The delayed
+trigger keeps its original controller and checks each captured incarnation
+before returning it to its owner's hand. The ordinary movement and
+replacement owners handle the result.
 
 A targeted death return checks for a creature with at least one counter when
 the ability is announced and when it resolves. Its resolution registers a
@@ -1943,6 +1959,26 @@ current type and subtype values. Each grant binds the source incarnation to the 
 so printed Unearth and concurrent grants retain separate activation choices. The
 compiled child fixes the price and the existing Unearth result. Once paid, the stack
 ability retains the graveyard card's identity if the granting source leaves.
+
+A cast-triggered coin flip uses the resolving stack reference and the original
+controller as its deterministic seed inputs. The recorded outcome survives
+choices and replacement resumptions. Losing deals damage through the
+current-or-last-known source owner. Winning offers the resolving player one
+choice over the original battlefield incarnation, followed by its linked
+owner-controlled transformed return. Entry loyalty adds the entering
+controller's current-turn instant-or-sorcery cast count to the intrinsic
+loyalty through the ordinary entry counter replacement tree.
+
+
+## Announced copies of one controlled ability
+
+The positive announced X activation binds its exact double-X tap price to
+the existing quote and payment owner. Its selected stack ability remains a
+normal target. The existing copy owner creates each copy from the same
+original ability, preserving its source and announced facts. Each optional
+retarget decision completes independently before priority returns. This
+activation itself remains targetable by a copy effect, and the copy owner
+suppresses creation when the producer is the selected occurrence.
 
 
 ## Turn-retained mana from a source attack

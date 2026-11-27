@@ -50,6 +50,9 @@ BARGAIN_SEARCH_VERSION = 24
 PAID_ARTIFACT_SEARCH_VERSION = 25
 PAID_CREATURE_SEARCH_VERSION = 26
 DRAGON_GRAVEYARD_COPY_SEARCH_VERSION = 27
+CAST_X_ZONE_SEARCH_VERSION = 28
+PRIVATE_SEARCH_PLAY_VERSION = 29
+TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION = 30
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_CAPABILITY = "library.search.fixed_creature_battlefield_group"
 TARGET_NAME_SEARCH_SNAPSHOT = "_target_name_search_snapshot"
 TARGET_NAME_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
@@ -181,7 +184,7 @@ def project_semantic_search_result_publication(
         "revealed": reveal,
     }
     name_multizone = effect.get("schema_version") == TARGET_NAME_MULTIZONE_EXILE_VERSION
-    if effect.get("schema_version") == 6 or name_multizone:
+    if effect.get("schema_version") in (6, CAST_X_ZONE_SEARCH_VERSION) or name_multizone:
         public_details["searched_zones"] = list(effect["zone"])
     if reveal:
         public_details.update(allocation_details)
@@ -205,11 +208,13 @@ def project_semantic_search_result_publication(
             COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
             TARGET_NAME_MULTIZONE_EXILE_VERSION,
             DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
+            TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
             TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
             LINKED_ARTIFACT_SEARCH_VERSION,
-            BARGAIN_SEARCH_VERSION,
+            BARGAIN_SEARCH_VERSION, PRIVATE_SEARCH_PLAY_VERSION,
             PAID_ARTIFACT_SEARCH_VERSION,
             PAID_CREATURE_SEARCH_VERSION,
+            CAST_X_ZONE_SEARCH_VERSION,
         }
     )
     public_cards = public_order
@@ -224,7 +229,7 @@ def project_semantic_search_result_publication(
 
     restrict_public_results = nonrevealing_printed_cost_search or (
         public_choice and (name_multizone or effect.get("schema_version") in {
-            PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
+            PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION, CAST_X_ZONE_SEARCH_VERSION,
         })
     )
     public_count = len(moved)
@@ -238,12 +243,12 @@ def project_semantic_search_result_publication(
 
     public_changed_objects = public_cards if (
         restrict_public_results or (public_choice and is_bargain_search_effect(effect))
-        or effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION
+        or effect.get("schema_version") in (DRAGON_GRAVEYARD_COPY_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION)
     ) else public_order
     private_details = {
         **public_details,
         **allocation_details,
-        **({"count": len(moved)} if name_multizone or nonrevealing_printed_cost_search else {}),
+        **({"count": len(moved)} if name_multizone or nonrevealing_printed_cost_search or effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION else {}),
         "objects": [card.ref for card in moved],
     }
     return SemanticSearchResultPublication(
@@ -313,7 +318,9 @@ class LibrarySearchRuleSpec:
     top_count:int|None=None
 
     def __post_init__(self):
-        if self.mode not in {'prohibit','top'} or self.player_scope not in {'all','opponents'}:
+        if (self.mode not in {'prohibit','top','control_opponent','exile_opponent_found'}
+                or self.player_scope not in {'all','opponents'}
+                or self.mode in {'control_opponent','exile_opponent_found'} and self.player_scope != 'opponents'):
             raise ValueError('Library search rule mode or player scope is unsupported')
         if self.mode=='top':
             if type(self.top_count) is not int or self.top_count<1:raise ValueError('Library search window must be a positive fixed integer')

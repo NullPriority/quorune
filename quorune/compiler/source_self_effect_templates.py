@@ -49,13 +49,36 @@ def _optional_entry_phase_out(body):
     return ("optional-single-creature-entry-phase-out-v1", (optional_entry_phase_out_effect(),),
             optional_entry_phase_out_schema(), (PHASE_OUT_MECHANIC, "cr-115-targets"), None)
 
+def source_death_hand_return_template(body):
+    from ..delayed_object_model import (
+        DELAYED_OBJECT_MECHANIC, SOURCE_DEATH_HAND_TEMPLATE, source_death_hand_return_effect,
+    )
+
+    if re.fullmatch(
+        r"return (?:it|this card) to its owner['’]s hand at the beginning of the next end step\.?",
+        body.strip(), re.I,
+    ):
+        return (SOURCE_DEATH_HAND_TEMPLATE, (source_death_hand_return_effect(),),
+                None, (DELAYED_OBJECT_MECHANIC,), None)
+    return None
+
 
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if event_phrase == "enters" and " ".join(body.casefold().split()) == (
+        "search your library for a card, exile it face down, then shuffle. "
+        "for as long as that card remains exiled, you may play it."
+    ):
+        from ..rules.private_search_play import PRIVATE_SEARCH_PLAY_MECHANIC, private_search_play_effect
+
+        return ("entry-private-search-play-v1", (private_search_play_effect(),), None,
+                (PRIVATE_SEARCH_PLAY_MECHANIC,), None)
     if event_phrase == "enters" and (phasing := _optional_entry_phase_out(body)) is not None:
         return phasing
     if event_phrase == "dies":
         from .library_search_templates import creature_subset_mana_value_search_template
 
+        if delayed_hand := source_death_hand_return_template(body):
+            return delayed_hand
         if search := creature_subset_mana_value_search_template(body):
             return (*search, None)
         random_damage = _RANDOM_OPPONENT_CREATURE_DAMAGE.fullmatch(body.strip())
@@ -155,6 +178,18 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     if condition is not None:mechanics=tuple(dict.fromkeys((*mechanics,SOURCE_ENTRY_CAST_MECHANIC)))
     if condition is not None and condition.get('origin')=='hand':mechanics=(*mechanics,SOURCE_ENTRY_CAST_HAND_MECHANIC)
     return template,effects,schema,mechanics,condition
+
+
+def normalized_source_self_zone_event(event_phrase, template):
+    from ..delayed_object_model import SOURCE_DEATH_HAND_EVENT, SOURCE_DEATH_HAND_TEMPLATE
+
+    if template == SOURCE_DEATH_HAND_TEMPLATE:
+        return SOURCE_DEATH_HAND_EVENT
+    return {
+        "enters": "permanent.enter.self",
+        "dies": "creature.dies.self",
+        "leaves the battlefield": "permanent.leave.self",
+    }[event_phrase]
 
 
 def _source_self_reflexive_payment(body, *, card_name, event_phrase, effect_template):

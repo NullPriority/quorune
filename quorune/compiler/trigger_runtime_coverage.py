@@ -36,13 +36,14 @@ def fixed_typed_result_requires_current_ability(binding, template, required):
     from .bounded_hand_cast_templates import LEGENDARY_WIZARD_HAND_CAST_TEMPLATE
     from .fixed_source_combat_growth import FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
     from ..rules.attached_copy_payment import TEMPLATE as ATTACHED_COPY_PAYMENT_TEMPLATE
+    from ..rules.cast_coin_transform import TEMPLATE as CAST_COIN_TRANSFORM_TEMPLATE
 
     return required and (
         template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
         or binding.variant == "fixed_entry_return_requirement"
         or template in {
             LEGENDARY_WIZARD_HAND_CAST_TEMPLATE, COUNTER_PLACEMENT_BLOCKING_TEMPLATE, COUNTER_RECIPIENT_CONTROL_TEMPLATE,
-            SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE,
+            SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, CAST_COIN_TRANSFORM_TEMPLATE,
             "scheduled-player-hand-difference-v1", "linked-entry-opponent-upkeep-damage-v1",
             "fixed-counter-upkeep-target-hand-life-v1", "upkeep-fixed-other-controlled-creature-damage-v1",
             CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, ATTACK_SACRIFICE_STAT_TEMPLATE,

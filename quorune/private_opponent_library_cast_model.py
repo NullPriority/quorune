@@ -1,6 +1,7 @@
 """Closed private opponent-library selection and incarnation-bound cast access."""
 
 from collections.abc import Mapping
+from dataclasses import dataclass
 
 from .linked_library_imprint_model import library_imprint_selection_effect
 from .replacement.immutable import FrozenMap, thaw_value
@@ -23,6 +24,30 @@ _PERMISSION_FIELDS = {
     "schema_version", "duration", "player", "zone", "source", "logical_object_id",
     "without_mana_cost", "allow_spell", "allow_land",
 }
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateLibrarySearchPlaySource:
+    """The exact selected library card and resolving search that authorize play."""
+
+    stack_ref: str
+    library_owner: str
+    logical_object_id: str
+
+    def __post_init__(self):
+        if any(type(value) is not str or not value or value.startswith("$")
+               for value in (self.stack_ref, self.library_owner, self.logical_object_id)):
+            raise ValueError("Private library play requires the resolving search and selected incarnation")
+
+    def permits_move(self, *, card, viewer, stack):
+        item = next((item for item in stack if item.ref == self.stack_ref), None)
+        return bool(
+            viewer is not None and viewer != self.library_owner and self.library_owner == card.owner
+            and card.logical_object_id == self.logical_object_id and item is not None
+            and item.kind in {"spell", "spell_copy"} and item.controller == viewer
+            and item.context.get("currently_resolving") is True
+            and item.context.get("targets_revalidated") is True and tuple(item.targets) == (self.library_owner,)
+        )
 
 
 def private_opponent_library_cast_selection(player="$target.0"):
@@ -69,12 +94,13 @@ def validate_private_opponent_library_cast_selection(effect, *, player="$target.
     return effect
 
 
-def private_opponent_library_cast_permission(card, *, actor, source_stack_ref):
+def private_opponent_library_cast_permission(card, *, actor, source_stack_ref, normal_play=False):
     if (card.zone != "exile" or not card.is_card_object or type(actor) is not str or not actor
-            or actor == card.owner or type(source_stack_ref) is not str or not source_stack_ref):
+            or actor == card.owner or type(source_stack_ref) is not str or not source_stack_ref
+            or type(normal_play) is not bool):
         raise ValueError("Private library cast permission requires the resolving viewer and actual exile")
-    return {
-        "schema_version": 1,
+    fields = {
+        "schema_version": 2 if normal_play else 1,
         "duration": PRIVATE_OPPONENT_LIBRARY_CAST_DURATION,
         "player": actor,
         "zone": "exile",
@@ -82,8 +108,11 @@ def private_opponent_library_cast_permission(card, *, actor, source_stack_ref):
         "logical_object_id": card.logical_object_id,
         "without_mana_cost": False,
         "allow_spell": True,
-        "allow_land": False,
+        "allow_land": normal_play,
     }
+    if normal_play:
+        fields["permission_kind"] = "private_targeted_library_search"
+    return fields
 
 
 def has_private_opponent_library_cast_designation(card):
@@ -93,8 +122,10 @@ def has_private_opponent_library_cast_designation(card):
 
 
 def private_opponent_library_cast_is_current(state, actor, card, permission):
-    if (not isinstance(permission, Mapping) or set(permission) != _PERMISSION_FIELDS
-            or type(permission["schema_version"]) is not int or permission["schema_version"] != 1
+    if (not isinstance(permission, Mapping) or "schema_version" not in permission
+            or type(permission["schema_version"]) is not int or permission["schema_version"] not in {1, 2}
+            or set(permission) != (_PERMISSION_FIELDS | {"permission_kind"} if permission["schema_version"] == 2
+                                   else _PERMISSION_FIELDS)
             or permission["duration"] != PRIVATE_OPPONENT_LIBRARY_CAST_DURATION
             or permission["logical_object_id"] != card.logical_object_id
             or permission["player"] != actor or actor not in state.players
@@ -105,15 +136,24 @@ def private_opponent_library_cast_is_current(state, actor, card, permission):
             or physical.annotations.get(_PERMISSION_FIELD) != permission):
         return False
     try:
-        expected = private_opponent_library_cast_permission(physical, actor=actor, source_stack_ref=permission["source"])
+        expected = private_opponent_library_cast_permission(
+            physical, actor=actor, source_stack_ref=permission["source"],
+            normal_play=permission["schema_version"] == 2,
+        )
     except ValueError:
         return False
     return (permission == expected and permission["without_mana_cost"] is False
-            and permission["allow_spell"] is True and permission["allow_land"] is False)
+            and permission["allow_spell"] is True and permission["allow_land"] is expected["allow_land"])
 
 
 def has_private_opponent_library_cast_access(host, *, actor, card):
     return private_opponent_library_cast_is_current(host.state, actor, card, card.annotations.get(_PERMISSION_FIELD))
+
+
+def has_private_opponent_library_mana_waiver(host, *, actor, card):
+    permission = card.annotations.get(_PERMISSION_FIELD)
+    return (private_opponent_library_cast_is_current(host.state, actor, card, permission)
+            and permission["schema_version"] == 1)
 
 
 def private_opponent_library_exile_viewer(state, card):

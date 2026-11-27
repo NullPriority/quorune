@@ -77,6 +77,29 @@ def _semantic_program_requirements(program):
     return required, blockers
 
 
+def _add_program_specific_dependencies(program, required, blockers):
+    from ..activation_x import source_discard_activation_x_program_dependencies
+    try:required.update(source_discard_activation_x_program_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_hand_activation_x:invalid:{exc}')
+    from ..colored_hand_reveal_model import variable_colored_reveal_program_dependencies
+    try:
+        required.update(variable_colored_reveal_program_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f"runtime_variable_colored_reveal:invalid:{exc}")
+    from ..rules.cast_x_zone_searches import cast_x_zone_search_program_dependencies
+    try:
+        required.update(cast_x_zone_search_program_dependencies(program))
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_cast_x_zone_search:invalid:{exc}")
+    if getattr(program, "trigger_limit", None) is not None:
+        from ..rules.trigger_limits import validate_program_trigger_limit,trigger_limit_capabilities
+        try:
+            required.update(trigger_limit_capabilities(program.trigger_limit))
+            validate_program_trigger_limit(program)
+        except (TypeError, ValueError) as exc:
+            blockers.add(f"runtime_trigger_limit:invalid:{exc}")
+
+
 def bind_semantic_program_runtime(
     program: Any,
     *,
@@ -91,23 +114,9 @@ def bind_semantic_program_runtime(
     }
     semantic_identities: list[dict[str, Any]] = []
     component_identities: list[dict[str, Any]] = []
-    required,blockers=_semantic_program_requirements(program)
-    from ..activation_x import source_discard_activation_x_program_dependencies
-    try:required.update(source_discard_activation_x_program_dependencies(program))
-    except (TypeError,ValueError) as exc:blockers.add(f'runtime_hand_activation_x:invalid:{exc}')
-    from ..colored_hand_reveal_model import variable_colored_reveal_program_dependencies
-    try:
-        required.update(variable_colored_reveal_program_dependencies(program))
-    except (TypeError, ValueError) as exc:
-        blockers.add(f"runtime_variable_colored_reveal:invalid:{exc}")
+    required, blockers = _semantic_program_requirements(program)
+    _add_program_specific_dependencies(program, required, blockers)
     unregistered_operations: set[str] = set()
-    if getattr(program, "trigger_limit", None) is not None:
-        from ..rules.trigger_limits import validate_program_trigger_limit,trigger_limit_capabilities
-        try:
-            required.update(trigger_limit_capabilities(program.trigger_limit))
-            validate_program_trigger_limit(program)
-        except (TypeError, ValueError) as exc:
-            blockers.add(f"runtime_trigger_limit:invalid:{exc}")
     for effect in program.effects:
         operation = str(effect.get("op") or "")
         if operation == 'inspect_target_library':
@@ -154,10 +163,11 @@ def bind_semantic_program_runtime(
             from ..power_up_model import POWER_UP_CAPABILITY
             required.add(POWER_UP_CAPABILITY)
         if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('announced_x_symbols') is not None:
-            from ..activation_x import activation_x_capabilities
+            from ..activation_x import CONTROLLED_LAND_RETURN_X_COST, activation_x_capabilities
             ability = descriptor['ability']
             required.update(activation_x_capabilities(symbols=ability['announced_x_symbols'],
-                sacrifice_source=ability.get('sacrifice_source', False), discard_cards=bool(ability.get('choices')),
+                sacrifice_source=ability.get('sacrifice_source', False),
+                discard_cards=bool(ability.get('choices')) and ability.get('cost_text') != CONTROLLED_LAND_RETURN_X_COST,
                 discard_source=ability.get('discard_source', False)))
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
@@ -236,6 +246,7 @@ def bind_card_program_runtime(
     from ..rules.temporary_ability_grant import (
         validate_life_loss_self_death_grant_child, validate_temporary_combat_draw_unblockable_child,
     )
+    from ..rules.equipped_planeswalker import validate_equipped_planeswalker_child
 
     ability_bindings = [
         bind_semantic_program_runtime(
@@ -262,6 +273,10 @@ def bind_card_program_runtime(
             validate_life_loss_self_death_grant_child(ability, abilities_by_key.get)
         except (TypeError, ValueError, KeyError) as exc:
             blockers.add(f"ability:{ability.ability_id}:runtime_temporary_self_death_child:invalid:{exc}")
+        try:
+            validate_equipped_planeswalker_child(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_equipped_planeswalker_child:invalid:{exc}")
     from ..rules.linked_color_cast_exile import validate_linked_color_cast_card_group
 
     try:

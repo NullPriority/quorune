@@ -12,7 +12,7 @@ STACK_INTENT_TYPES = (CounterStackIntent, CopyStackItemIntent, RetargetStackItem
                       QueueReflexiveTriggerIntent, QueueRevealUntilReflexiveIntent)
 
 
-def execute_stack_copy(host, intent: CopyStackItemIntent) -> str:
+def execute_stack_copy(host, intent: CopyStackItemIntent) -> str | None:
     from ..rules.event_spell_copy import resolve_event_spell_copy_source
     from ..rules.exile_spell_copy_grant import resolving_exile_spell_copy_grant
 
@@ -24,6 +24,10 @@ def execute_stack_copy(host, intent: CopyStackItemIntent) -> str:
     )
     if target is None:
         raise GameRuleError("The stack object selected for copying no longer exists")
+    from ..rules.announced_ability_copies import copy_prohibited
+
+    if copy_prohibited(host, target):
+        return None
     characteristics = thaw_value(bound.characteristics) if bound is not None else None
     if intent.permanent_copy is not None and intent.permanent_copy.kind != "exile_cast_grant":
         from ..rules.stack_spell_copy_shapes import apply_permanent_spell_copy_exception

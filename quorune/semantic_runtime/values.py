@@ -598,6 +598,13 @@ def _resolve_wrapped_effect(host, value, item):
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+    from ..rules.loyalty_damage import LOYALTY_X_DAMAGE_FIELD, bind_loyalty_x_target_damage
+
+    if LOYALTY_X_DAMAGE_FIELD in value:
+        try:
+            value = bind_loyalty_x_target_damage(host, value, item)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     token = _bind_conditional_exile_token(value, item)
     return token if token is not None else _resolve_effect_mapping(host, value, item)
 

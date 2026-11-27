@@ -16,6 +16,9 @@ from ..errors import GameRuleError
 from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
 from .optional_effect import optional_choice_uses_draw_permission
 from ..rules.target_library_inspection import scoped_target_library_inspection_libraries
+from ..rules.opponent_library_shuffle import (
+    admitted_opponent_shuffle_scope, scoped_opponent_shuffle_library,
+)
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
@@ -95,6 +98,8 @@ class SemanticChoiceCoordinationMixin:
         from ..rules.target_library_inspection import scoped_target_library_inspection_refs
         from ..sacrifice_prohibition_model import sacrifice_is_prohibited
         inspected_library_refs = set(scoped_target_library_inspection_refs(self, actor, choice_effect))
+        for refs in scoped_opponent_shuffle_library(self, stack_item, actor, choice_effect).values():
+            inspected_library_refs.update(refs)
         from ..discover_casting import resolving_exile_library_refs
         scan_refs = {ref for refs in resolving_exile_library_refs(self, actor=actor, effect=choice_effect).values()
                      for ref in refs}
@@ -186,6 +191,7 @@ class SemanticChoiceCoordinationMixin:
     def _semantic_choice_stack_rows(self,effect=None) -> tuple[ChoiceStackView, ...]:
         from ..rules.event_spell_copy import capture_event_spell_copy_source, resolve_event_spell_copy_source
         from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_closed_targeted_discard_copy_program
+
         source=resolve_event_spell_copy_source(self,effect or {})
         if source is None and RESOLVING_COPY_FIELD in (effect or {}):
             item = next((value for value in self.state.stack if value.ref == effect.get("stack")), None)
@@ -208,8 +214,13 @@ class SemanticChoiceCoordinationMixin:
                 target_snapshots=dict(item.context.get("target_snapshots") or {}),
                 copy_source=source.to_dict() if source is not None and item.ref==referenced.ref else None,
                 upkeep_player=item.context.get("player") if (item.context.get("event"), item.context.get("step")) == ("step.begin", "upkeep") else None,
+                library_shuffle=admitted_opponent_shuffle_scope(self, item),
+                kind=item.kind,
+                copy_prohibited=protected,
+                announced_copy_scope=active_copy_scope(self, item, protected=protected),
             )
             for item in items
+            for protected in (copy_prohibited(self, item),)
         )
 
     def _semantic_choice_damage_source_candidates(
@@ -316,6 +327,12 @@ class SemanticChoiceCoordinationMixin:
         if is_paired_graveyard_return(effect):
             return tuple(sorted(card.ref for card in self.state.cards.values()
                                 if card.zone == "graveyard" and card.is_card_object))
+        from ..rules.milled_permanent_battlefield import MILL_PERMANENT_CHOICE, mill_battlefield_choice_candidates
+        if effect.get("op") == "choose_option" and MILL_PERMANENT_CHOICE in effect:
+            try:
+                return tuple(row.ref for row in mill_battlefield_choice_candidates(effect, actor=actor))
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_candidates
         if effect.get('op') == 'choose_target_player_graveyard_exile':
             try:return targeted_graveyard_exile_candidates(self, actor, effect)
@@ -666,12 +683,12 @@ class SemanticChoiceCoordinationMixin:
 
     _semantic_choice_token_creation_preview = semantic_choice_token_creation_preview
 
-    def _semantic_choice_resolution_condition_facts(self,actor,choice_effect):
+    def _semantic_choice_resolution_condition_facts(self,actor,choice_effect,stack_item):
         """Snapshot a resolution condition through its existing rules owner."""
         from ..ability_resolution_ordinal import is_ability_resolution_ordinal
         from ..other_spell_history_model import is_other_spell_draw
         from ..rules.entrant_power_branch import uses_entrant_power_branch
-        from ..rules.controlled_artifact_token_result import uses_controlled_artifact_token_branch
+        from ..rules.controlled_artifact_token_result import uses_controlled_artifact_result_branch
         from ..rules.counter_recipient_control import uses_counter_recipient_control
         from ..rules.named_cast_win import uses_named_cast_win
 
@@ -681,7 +698,7 @@ class SemanticChoiceCoordinationMixin:
         if uses_point_game_loss(choice_effect):
             return condition_facts
         if (is_ability_resolution_ordinal(choice_effect) or is_other_spell_draw(choice_effect)
-                or uses_entrant_power_branch(choice_effect) or uses_controlled_artifact_token_branch(choice_effect)
+                or uses_entrant_power_branch(choice_effect) or uses_controlled_artifact_result_branch(choice_effect)
                 or uses_named_cast_win(choice_effect) or uses_counter_recipient_control(choice_effect)):
             return condition_facts
         if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,18,PAID_SACRIFICE_CONDITION_VERSION,*CAST_REPLACEMENT_VERSIONS}:
@@ -695,7 +712,15 @@ class SemanticChoiceCoordinationMixin:
                     from ..conditional_target_preparation import preparation_condition_matches
                     matched = preparation_condition_matches(self, actor, choice_effect)
                 else:
-                    matched = self._fixed_public_state_condition_holds(ResolutionConditionBinding(controller=actor), condition, require_available=True)
+                    from ..resolution_conditions import is_other_blue_permanent_draw
+
+                    source_ref = None
+                    if is_other_blue_permanent_draw(choice_effect):
+                        source = self.state.cards.get(stack_item.source_object_id) if stack_item is not None else None
+                        if source is not None and source.logical_object_id == stack_item.context.get("source_logical_object_id"):
+                            source_ref = source.ref
+                    binding = ResolutionConditionBinding(controller=actor, ref=source_ref)
+                    matched = self._fixed_public_state_condition_holds(binding, condition, require_available=True)
                 condition_facts[stable_json(condition.to_dict())] = matched
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
@@ -736,6 +761,28 @@ class SemanticChoiceCoordinationMixin:
             )
         return search_permissions, search_refs
 
+    def _semantic_choice_opponent_cast_colors(self, actor, effect):
+        from ..public_history_query_model import current_opponent_spell_colors, uses_sealed_opponent_cast_colors
+
+        if uses_sealed_opponent_cast_colors(effect):
+            colors = current_opponent_spell_colors(self.state, actor, include_departed=True)
+            if colors is None:
+                raise GameRuleError("Current opposing spell-color facts are unavailable")
+            return {actor: tuple(sorted(colors))}
+        return {
+            seat: tuple(sorted({
+                str(color).upper()
+                for event in self.state.events
+                if event.turn_sequence == self.state.turn_sequence
+                and event.code == "stack.cast"
+                and event.actor in self.active_seats
+                and event.actor != seat
+                for color in event.details.get("colors", [])
+                if str(color).upper() in {"W", "U", "B", "R", "G"}
+            }))
+            for seat in self.seats
+        }
+
     def _semantic_choice_query(
         self,
         actor: str,
@@ -771,14 +818,6 @@ class SemanticChoiceCoordinationMixin:
         from ..semantic_runtime.life_prohibitions import life_permissions_for_choice
         from ..semantic_runtime.explore import materialize_explore_source_types
         from ..rules.shared_type_library import materialize_shared_type_library_source
-        from ..public_history_query_model import current_opponent_spell_colors, uses_sealed_opponent_cast_colors
-
-        sealed_cast_colors = None
-        if uses_sealed_opponent_cast_colors(choice_effect):
-
-            sealed_cast_colors = current_opponent_spell_colors(self.state, actor, include_departed=True)
-            if sealed_cast_colors is None:
-                raise GameRuleError("Current opposing spell-color facts are unavailable")
         search_permissions, search_refs = self._semantic_choice_library_search_facts(actor, choice_effect)
         return SnapshotSemanticChoiceQuery(
             resolution_source_is_physical_card=(
@@ -821,6 +860,7 @@ class SemanticChoiceCoordinationMixin:
                 ],
                 **resolving_exile_library_refs(self, actor=actor, effect=choice_effect),
                 **scoped_target_library_inspection_libraries(self, actor, choice_effect),
+                **scoped_opponent_shuffle_library(self, stack_item, actor, choice_effect),
             },
             mana_by_seat={
                 actor: dict(self.state.players[actor].mana_pool)
@@ -841,24 +881,7 @@ class SemanticChoiceCoordinationMixin:
             target_schemas=target_schemas,
             validated_targets=validated_targets,
             **self._semantic_choice_draw_history(actor),
-            opponent_cast_colors_by_seat={actor: tuple(sorted(sealed_cast_colors))}
-            if sealed_cast_colors is not None else {
-                seat: tuple(
-                    sorted(
-                        {
-                            str(color).upper()
-                            for event in self.state.events
-                            if event.turn_sequence == self.state.turn_sequence
-                            and event.code == "stack.cast"
-                            and event.actor in self.active_seats
-                            and event.actor != seat
-                            for color in event.details.get("colors", [])
-                            if str(color).upper() in {"W", "U", "B", "R", "G"}
-                        }
-                    )
-                )
-                for seat in self.seats
-            },
+            opponent_cast_colors_by_seat=self._semantic_choice_opponent_cast_colors(actor, choice_effect),
             draw_permissions_by_seat=(
                 {
                     seat: current_draw_permission(self, seat).to_dict()
@@ -888,7 +911,7 @@ class SemanticChoiceCoordinationMixin:
                 connive_discard_characteristic_ids(self, actor, choice_effect)
                 if choice_effect.get('op') == 'connive' else ()
             ),
-            resolution_condition_facts=self._semantic_choice_resolution_condition_facts(actor,choice_effect),
+            resolution_condition_facts=self._semantic_choice_resolution_condition_facts(actor,choice_effect,stack_item),
         )
     def _semantic_choice_context(
         self,
@@ -1065,12 +1088,15 @@ class SemanticChoiceCoordinationMixin:
             raise GameRuleError(str(exc)) from exc
 
     def _complete_registered_semantic_choice(self, decision: Any) -> None:
+        from ..library_search_control import CONTROL_FIELD
+        from ..selection.controlled_search import is_registered_library_search, resolve_controlled_finds
+
         seat = decision.actors[0]
         response = decision.responses[seat]
         registry = default_semantic_choice_registry()
         try:
             handler, continuation = registry.decode_continuation(
-                decision.continuation
+                {key: value for key, value in decision.continuation.items() if key != CONTROL_FIELD}
             )
         except SemanticChoiceError as exc:
             raise GameRuleError(str(exc)) from exc
@@ -1115,30 +1141,25 @@ class SemanticChoiceCoordinationMixin:
             from ..rules.combat_damage_entry_history import bind_entry_exempt_draw_discard
             bind_collective_source_damage(self, item, continuation.effect, resuming_actor=seat)
             bind_entry_exempt_draw_discard(self, item, continuation.effect, resuming_actor=seat)
-            completion = handler.complete(
-                continuation,
-                response,
-                self._semantic_choice_query(
-                    seat,
-                    response=response,
-                    effect=continuation.effect,
-                    stack_item=item,
-                    source_ref=(
-                        self.state.cards[
-                            item.source_object_id
-                            or item.card_object_id
-                            or ""
-                        ].ref
-                        if (
-                            item.source_object_id
-                            or item.card_object_id
-                            or ""
-                        )
-                        in self.state.cards
-                        else None
-                    ),
-                ),
-            )
+            def query_for(answer):
+                source = self.state.cards.get(item.source_object_id or item.card_object_id or "")
+                return self._semantic_choice_query(
+                    seat, response=answer, effect=continuation.effect, stack_item=item,
+                    source_ref=source.ref if source is not None else None,
+                )
+
+            completion = handler.complete(continuation, response, query_for(response))
+            if is_registered_library_search(continuation.effect):
+                ref = response.get("card")
+                control_result = resolve_controlled_finds(
+                    self, decision, item=item, actor=seat, zones=("library",),
+                    refs=(ref,) if ref else (),
+                )
+                if control_result == "pending":
+                    return
+                if control_result == "applied":
+                    response = {key: value for key, value in response.items() if key != "card"}
+                    completion = handler.complete(continuation, response, query_for(response))
         except SemanticChoiceError as exc:
             raise GameRuleError(str(exc)) from exc
         if continuation.effect.get('op') == 'offer_optional_effect' and completion.prepend_effects:

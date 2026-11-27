@@ -686,3 +686,189 @@ class QualifiedStackCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
         with patch('quorune.selection.targeting.target_predicate_matches', omitted):
             with self.assertRaises(AssertionError):
                 self.test_actual_archaic_excludes_colored_source_and_copies_colorless_damage()
+
+
+
+class PeregrineDynamoNativeTests(InheritedNativeFixture, unittest.TestCase):
+    reject = recipients.TargetRecipientNativeTests.reject
+    activate_target = QualifiedStackCopyNativeTests.activate_target
+    choose_targets = QualifiedStackCopyNativeTests.choose_targets
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "peregrine-dynamo.sqlite3"
+        build_fixture_database([*FIXTURES, ROOT / "tests/fixtures/peregrine-dynamo-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Dynamo", [
+            DeckEntry("Sliver Hivelord", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Sliver Hivelord"])
+
+    def offers(self, game, source):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return tuple(row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+
+    def test_dynamo_retargets_a_copy_of_a_departed_legendary_source_ability(self):
+        game = self.session(11570710)
+        dynamo = self.add(game.engine, "The Peregrine Dynamo")
+        legend = self.add(game.engine, "Tawnos, Urza's Apprentice")
+        first = self.add(game.engine, "Rod of Ruin", ref="dynamo-first-rod")
+        second = self.add(game.engine, "Rod of Ruin", ref="dynamo-second-rod")
+        removal = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        private = self.add(game.engine, "Counterspell", seat="D", zone="hand", ref="dynamo-private-unrelated")
+        self.add(game.engine, "Fervor")
+        self.assert_closed(game, dynamo)
+        self.assert_closed(game, legend)
+        self.prepare(game, mana={"C": 7, "U": 1, "R": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.activate_target(game, first, "B", reserve={"U": 1, "R": 1})
+        first_ability = game.state.stack[-1]
+        self.activate_target(game, second, "C", reserve={"U": 1, "R": 1})
+        second_ability = game.state.stack[-1]
+        self.activate_target(game, legend, first_ability.ref)
+        original = game.state.stack[-1]
+        (offer,) = self.offers(game, dynamo)
+        self.assertEqual([original.ref], offer["target_schema"]["legal_refs"])
+        self.reject(game, "A", {"action_id": offer["id"], "targets": [first_ability.ref], "pay": "auto"})
+        self.activate_target(game, dynamo, original.ref)
+        self.assertTrue(game.state.cards[dynamo.object_id].tapped)
+        self.cast(game, "B", removal, [legend.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[legend.object_id].zone)
+        decision = self.resolve(game)
+        self.assertIsNotNone(decision)
+        self.assertEqual("semantic.choice", decision.kind)
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        game = self.replay(game, load=True)
+        self.choose_targets(game, [second_ability.ref])
+        original, copied = game.state.stack[-2:]
+        self.assertEqual(legend.object_id, copied.source_object_id)
+        self.assertEqual([first_ability.ref], original.targets)
+        self.assertEqual([second_ability.ref], copied.targets)
+        self.choose_targets(game, ["D"])
+        self.choose_targets(game, ["D"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40, 39, 39, 38], [game.state.players[seat].life for seat in "ABCD"])
+        self.replay(game, load=True)
+
+    def test_dynamo_excludes_its_own_source_and_designated_commander(self):
+        game = self.session(11570711)
+        dynamo = self.add(game.engine, "The Peregrine Dynamo")
+        legend = self.add(game.engine, "Tawnos, Urza's Apprentice")
+        rod = self.add(game.engine, "Rod of Ruin")
+        untap = self.add(game.engine, "Twiddle", seat="B", zone="hand")
+        self.add(game.engine, "Fervor")
+        self.prepare(game, mana={"C": 5, "U": 1, "R": 1})
+        game.state.players["B"].mana_pool["U"] = 1
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.activate_target(game, rod, "B", reserve={"U": 1, "R": 1})
+        self.activate_target(game, legend, game.state.stack[-1].ref)
+        legend_ability = game.state.stack[-1].ref
+        self.activate_target(game, dynamo, legend_ability)
+        own_ability = game.state.stack[-1].ref
+        self.cast(game, "B", untap, [dynamo.ref])
+        decision = self.resolve(game)
+        self.assertEqual("semantic.choice", decision.kind)
+        result = game.act("pilot:B", {"action_id": "choose", "choice": "untap"})
+        self.assertTrue(result.ok, result.summary)
+        (offer,) = self.offers(game, dynamo)
+        self.assertEqual([legend_ability], offer["target_schema"]["legal_refs"])
+        self.reject(game, "A", {"action_id": offer["id"], "targets": [own_ability], "pay": "auto"})
+        self.assertFalse(game.state.cards[dynamo.object_id].tapped)
+        self.replay(game, load=True)
+
+        self.deck = DeckDefinition("Commander source", [
+            DeckEntry("Tawnos, Urza's Apprentice", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Tawnos, Urza's Apprentice"])
+        game = self.session(11570712)
+        dynamo = self.add(game.engine, "The Peregrine Dynamo")
+        rod = self.add(game.engine, "Rod of Ruin")
+        self.add(game.engine, "Fervor")
+        (legend,) = (game.state.cards[oid] for oid in game.state.players["A"].zones["command"]
+                     if game.state.cards[oid].is_commander)
+        game.engine.move_card(legend.object_id, "battlefield", reason="Prepare commander source", log=False)
+        self.prepare(game, mana={"C": 4, "U": 1, "R": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.activate_target(game, rod, "B", reserve={"U": 1, "R": 1})
+        self.activate_target(game, legend, game.state.stack[-1].ref)
+        self.assertFalse(self.offers(game, dynamo))
+        self.reject(game, "A", {"action_id": "activate:" + dynamo.ref + ":ab2",
+                                "targets": [game.state.stack[-1].ref], "pay": "auto"})
+        self.replay(game, load=True)
+
+    def test_dynamo_copies_a_legendary_cycling_ability_but_legacy_source_cannot_supply_commander_facts(self):
+        from quorune.target_source import TARGETING_SOURCE_CONTEXT
+
+        for version in (3, 2):
+            with self.subTest(version=version):
+                game = self.session(11570715 + version)
+                dynamo = self.add(game.engine, "The Peregrine Dynamo")
+                cycling = self.add(game.engine, "Ozolith, the Shattered Spire", zone="hand")
+                private = self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="dynamo-private-cycle")
+                self.assert_closed(game, dynamo)
+                self.assert_closed(game, cycling)
+                self.prepare(game, mana={"C": 3})
+                game.state.ability_source_information_version = version
+                game.state.config.semantic_policy = "trusted_only"
+                self.checkpoint(game)
+                (offer,) = self.offers(game, cycling)
+                paid = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+                self.assertTrue(paid.ok, paid.summary)
+                self.assertEqual("graveyard", game.state.cards[cycling.object_id].zone)
+                original = game.state.stack[-1]
+                binding = original.context[TARGETING_SOURCE_CONTEXT]
+                self.assertEqual("hand", binding["zone"])
+                self.assertIs(False if version == 3 else None, binding.get("is_commander"))
+                hand = len(game.state.players["A"].zones["hand"])
+                if version == 3:
+                    self.activate_target(game, dynamo, original.ref)
+                else:
+                    self.assertFalse(self.offers(game, dynamo))
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(hand + (2 if version == 3 else 1), len(game.state.players["A"].zones["hand"]))
+                self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+                self.replay(game, load=True)
+
+    def test_dynamo_exact_predicate_and_binding_require_complete_facts(self):
+        from quorune.ability_source_information import DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_CAPABILITY as CAP
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.target_source import TargetingSource, TargetingSourceBinding
+
+        game = self.session(11570720)
+        source = self.add(game.engine, "The Peregrine Dynamo")
+        self.assert_closed(game, source)
+        (program,) = game.engine.semantics.programs_for_oracle(source.oracle_id, event="activate")
+        deps = tuple(value for value in program.capability_dependencies if value != CAP)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + CAP, binding["blockers"])
+        group = target_plan(program.target_schema).groups[0]
+        original = TargetingSourceBinding("subject", "ref", "subject-incarnation", "hand", "A",
+                                          "Legendary Artifact", (), is_commander=False)
+        self.assertEqual(original, TargetingSourceBinding.from_dict(original.to_dict()))
+        for malformed in (None, 0, "False"):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                TargetingSourceBinding.from_dict({**original.to_dict(), "is_commander": malformed})
+        for kind in ("activated_ability", "triggered_ability"):
+            item = StackItem(stack_id="subject", ref="S-subject", kind=kind, controller="A", label="Source")
+            facts = original.facts()
+            for current, expected in (
+                (facts, True), (replace(facts, supertypes=frozenset()), False),
+                (replace(facts, is_commander=True), False), (replace(facts, is_commander=None), False),
+                (replace(facts, logical_object_id="acting"), False), (TargetingSource("ability"), False),
+            ):
+                row = {"zone": "stack", "category": "ability", "stack_item": item,
+                       "ability_source_types": current.card_types, "ability_source_identity": current}
+                self.assertEqual(expected, target_predicate_matches(
+                    SimpleNamespace(), group, row, types=set(), supertypes=set(), colors=set(),
+                    derived={}, source_incarnation="acting",
+                ))

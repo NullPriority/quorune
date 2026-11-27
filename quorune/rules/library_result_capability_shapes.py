@@ -105,6 +105,13 @@ def library_result_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 
 def library_result_payload_dependencies(value):
+    from .private_search_play import (
+        PRIVATE_SEARCH_PLAY_DEPENDENCIES, uses_private_search_play, validate_private_search_play,
+    )
+
+    if uses_private_search_play(value):
+        validate_private_search_play(value)
+        return PRIVATE_SEARCH_PLAY_DEPENDENCIES
     from .paid_creature_library_search import (
         CAPABILITY as PAID_CREATURE_SEARCH_CAPABILITY, is_paid_creature_search, validate_paid_creature_search,
     )

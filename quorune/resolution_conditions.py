@@ -20,7 +20,7 @@ from .continuous_conditions import (
 from .damage_prevention_scope import public_combat_prevention_replacement_side
 from .monarch_counter_doubling_condition import MONARCH_COUNTER_DOUBLING_VERSION, validate_monarch_counter_doubling
 from .object_predicate import ObjectQuerySpec
-from .replacement.immutable import FrozenMap
+from .replacement.immutable import FrozenMap, immutable_fingerprint
 from .spell_mana_conditions import ManaSpentCondition, PAID_MANA_CONDITION_CAPABILITY, PAID_MANA_CONDITION_MECHANIC
 from .declared_cost_conditions import DeclaredCastCostCondition
 from .paid_sacrifice_conditions import (
@@ -38,6 +38,7 @@ RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
 CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
 GREATEST_POWER_TARGET_DISCARD_VERSION = 19
 MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION = 33
+OTHER_BLUE_PERMANENT_DRAW_VERSION = 38
 MONARCH_KNIGHT_DAMAGE_MECHANICS = ("declared-effect-amount", "cr-120-damage", "public-query-effect-amount")
 MONARCH_KNIGHT_PREFIX_MECHANICS = ("cr-111-tokens",)
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
@@ -221,6 +222,7 @@ class ResolutionConditionBinding:
     object_id: str = "resolution-controller"
     counters: FrozenMap = field(default_factory=FrozenMap)
     entered_battlefield_turn_sequence: int = 0
+    ref: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -367,6 +369,36 @@ def _validate_monarch_knight_damage(effect):
 
 
 
+def other_blue_permanent_draw_effect(*, player="$controller"):
+    condition = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=1, schema_version=2,
+        quantity=CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), colors_any=("U",)),
+            exclude_source=True, schema_version=2,
+        ),
+    )
+    return {
+        "op": RESOLUTION_CONDITION_OPERATION, "schema_version": OTHER_BLUE_PERMANENT_DRAW_VERSION,
+        "player": player, "condition": condition.to_dict(),
+        "effects": [{"op": "draw", "player": player, "count": 1}],
+        "mechanic_ids": ["cr-121-drawing-a-card"], "prefix_mechanic_ids": ["cr-120-damage", "cr-115-targets"],
+    }
+
+
+def is_other_blue_permanent_draw(effect):
+    return (effect.get("op") == RESOLUTION_CONDITION_OPERATION
+            and effect.get("schema_version") == OTHER_BLUE_PERMANENT_DRAW_VERSION)
+
+
+def _validate_other_blue_permanent_draw(effect):
+    player = effect.get("player")
+    if (type(player) is not str or not player or player.startswith("$") and player != "$controller"
+            or immutable_fingerprint(effect) != immutable_fingerprint(other_blue_permanent_draw_effect(player=player))):
+        raise ValueError("This resolution condition requires exactly one draw and a current other blue permanent")
+    return FixedPublicStateConditionSpec.from_dict(effect["condition"]), tuple(effect["effects"])
+
+
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition | CastOriginCondition, tuple[Mapping[str, Any], ...]]:
@@ -378,6 +410,9 @@ def validate_resolution_condition_instruction(
         from .temporary_all_blocker_model import validate_blocker_protection_condition
 
         return validate_blocker_protection_condition(effect)
+
+    if is_other_blue_permanent_draw(effect):
+        return _validate_other_blue_permanent_draw(effect)
     if effect.get("schema_version") in {MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION, MONARCH_COUNTER_DOUBLING_VERSION}:
         validator = _validate_monarch_knight_damage if effect["schema_version"] == MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION else validate_monarch_counter_doubling
         return validator(effect)

@@ -1370,6 +1370,10 @@ departure/death events with an event-incarnation usage promise. It derives
 ordinary and departure usage capabilities independently of body capabilities;
 the old descriptor cannot acquire the new authority. See
 [ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
+A fixed draw triggered by one or more noncreature permanents returning to
+hand uses the committed destination and the previous permanent type. The
+source's schema-two usage limit admits only the first matching departure
+in the turn, including when several permanents leave in the same batch.
 A printed optional result limited to once each turn uses schema three. The
 compiler closes the trigger and its optional instruction before admitting the
 limit. Draw, life gain, discover, spell copying and a required discard with a

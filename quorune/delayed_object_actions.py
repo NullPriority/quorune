@@ -7,7 +7,8 @@ from .delayed_object_model import (
     CONTROLLED_ATTACKER_PHASE_OUT_VERSION, DELAYED_SOURCE_CONVERT_VERSION, GRAVEYARD_COUNTER_RETURN_VERSION, GRAVEYARD_RETURN_VERSION,
     OBJECT_TIMINGS, RESOLVE_OBJECT_ACTION, SCHEDULE_OBJECT_ACTION,
     TARGET_DEATH_RETURN_CONDITION, TARGET_DEATH_RETURN_EVENT, is_target_death_return_effect,
-    target_death_return_arrivals, target_death_return_resolution_effect, validate_delayed_object_instruction,
+    target_death_return_arrivals, target_death_return_resolution_effect, uses_source_death_hand_return,
+    validate_delayed_object_instruction,
 )
 from .discard_effect_origin import OPPONENT_SOURCE_DISCARD_EVENT
 from .errors import GameRuleError
@@ -126,6 +127,10 @@ def _resolve_target_death_return(host, effect, instruction, actor, reason):
 
 def bind_delayed_object_instruction(host,effect,item):
     validate_delayed_object_instruction(effect,compiled=True)
+    if uses_source_death_hand_return(effect):
+        from .rules.source_death_delayed_hand_return import bind_source_death_hand_return
+
+        return bind_source_death_hand_return(effect, item)
     from .delayed_object_model import is_artifact_graveyard_return
     if is_artifact_graveyard_return(effect):
         return _bind_artifact_graveyard_return(host, effect, item)
@@ -185,6 +190,10 @@ def apply_delayed_object_action(host,effect,*,actor,operation,reason):
     try:validate_delayed_object_instruction(instruction)
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     if instruction['op']!=operation:raise GameRuleError('Delayed action operation changed')
+    if uses_source_death_hand_return(instruction):
+        from .rules.source_death_delayed_hand_return import apply_source_death_hand_return
+
+        return apply_source_death_hand_return(host, effect, instruction, actor=actor, reason=reason)
     from .delayed_object_model import is_artifact_graveyard_return
     if is_artifact_graveyard_return(instruction):
         if operation == SCHEDULE_OBJECT_ACTION:

@@ -321,6 +321,30 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         and all(symbol=='X' or re.fullmatch(r'[WUBRG]/[WUBRG]',symbol) for symbol in symbols))
     if not available and 'X' not in symbols and is_spell and not record.faces and re.search(r'\bX\b',oracle_text,re.I):
         available=_additional_price_declares_x(oracle_text)
+    from .cast_x_search_templates import cast_x_zone_search_template
+
+    if available and symbols.count("X") == 1:
+        repeated = re.fullmatch(
+            r"repeat the following process x times\. each opponent loses (?P<loss>[1-9][0-9]*) life "
+            r"unless that player sacrifices a nonland permanent(?: of their choice)? or discards a card\.",
+            " ".join(oracle_text.split()), re.IGNORECASE,
+        )
+        if repeated is not None:
+            from ..rules.repeated_apnap_payment import MECHANIC, payment_round_effect
+
+            def compile_repeated_payment(text, **context):
+                if " ".join(text.casefold().split()) == " ".join(oracle_text.casefold().split()):
+                    return ("announced-x-mixed-apnap-payment-v1", (payment_round_effect(int(repeated["loss"])),),
+                            None, (MECHANIC,))
+                return compile_effect(text, **context)
+
+            return compile_repeated_payment
+    if available and "X" in symbols and cast_x_zone_search_template(oracle_text, cast_x_available=True):
+        def compile_zone_search(text, **context):
+            return cast_x_zone_search_template(text, cast_x_available=True) or compile_effect(text, **context)
+
+        return compile_zone_search
+
     selected = partial(compile_effect,
         cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text,re.I) is None,
         forbid_public_x=available,

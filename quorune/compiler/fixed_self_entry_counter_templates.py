@@ -6,8 +6,11 @@ from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
 
+from ..commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
 from ..entry_counter_model import (
+    COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY,
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
+    INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY,
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterCalculation,
     DynamicEntryCounterValueSource,
@@ -179,10 +182,12 @@ def _dynamic_compiled(
     counter_name: str,
     amount_spec: DynamicEntryCounterAmountSpec,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]]:
+    uses_commander_history = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT
     uses_current_life = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
     uses_public_maximum = amount_spec.value_source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES
     uses_creature_values = amount_spec.value_source in ENTRY_CREATURE_VALUE_SOURCES
     uses_exile = amount_spec.value_source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE
+    uses_cast_loyalty = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS
     return (
         DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE,
         {
@@ -192,7 +197,8 @@ def _dynamic_compiled(
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
             **({"requires_complete_card_program": True}
-               if amount_spec.mana_color is not None or uses_current_life or uses_public_maximum or uses_creature_values or uses_exile else {}),
+               if (amount_spec.mana_color is not None or uses_current_life or uses_public_maximum
+                   or uses_creature_values or uses_exile or uses_commander_history) else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -203,9 +209,13 @@ def _dynamic_compiled(
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
             *characteristic_quantity_capabilities(amount_spec.quantity),
             *((CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,) if uses_current_life else ()),
+            *((COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY, COMMANDER_CAST_COUNT_CAPABILITY)
+              if uses_commander_history else ()),
             *((PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,) if uses_public_maximum else ()),
             *((ENTRY_CREATURE_VALUE_CAPABILITY,) if uses_creature_values else ()),
             *((EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,) if uses_exile else ()),
+            *((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query")
+              if uses_cast_loyalty else ()),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
             *((PAID_GREEN_PAIRS_ENTRY_CAPABILITY,)
               if amount_spec.calculation is DynamicEntryCounterCalculation.PAID_GREEN_PAIRS else ()),
@@ -273,6 +283,16 @@ def _counted_dynamic_amount_body(
     *,
     source_name: str,
 ) -> tuple[str, DynamicEntryCounterAmountSpec] | None:
+
+    normalized_body = " ".join(body.casefold().replace("’", "'").split())
+    if re.fullmatch(
+        r"a loyalty counter on (?:it|him|her) for each time you've cast a commander from the command zone this game",
+        normalized_body,
+    ):
+        return "loyalty", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
 
     counted = re.fullmatch(
         rf"(?P<count>a|an|{FIXED_COUNT_PATTERN}) "
@@ -488,6 +508,13 @@ def _dynamic_amount_body(
     ):
         return "+1/+1", DynamicEntryCounterAmountSpec(
             value_source=DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    if body.casefold().replace("’", "'") == (
+        "an additional loyalty counter on him for each instant and sorcery spell you've cast this turn"
+    ):
+        return "loyalty", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS,
             calculation=DynamicEntryCounterCalculation.MULTIPLY,
         )
     current_creatures = _ENTRY_CREATURE_VALUE_BODIES.get(body.casefold())

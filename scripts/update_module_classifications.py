@@ -175,7 +175,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == 'quorune/target_library_inspection_model.py':return 'domain'
     if relative in {'quorune/declare_attack_cast_model.py', 'quorune/target_replacement_model.py', 'quorune/temporary_attack_requirement_model.py', 'quorune/protected_attack_payment_model.py'}:return 'domain'
     if relative == 'quorune/qualified_library_search_model.py':return 'domain'
-    if relative == 'quorune/named_search_model.py':return 'domain'
+    if relative in {'quorune/named_search_model.py', 'quorune/cast_x_search_model.py',
+                    'quorune/library_search_control.py'}:
+        return 'domain'
     if relative == 'quorune/activation_paid_characteristic_model.py':return 'domain'
     if relative == "quorune/private_hand_entry_model.py":
         return "rules"
@@ -397,6 +399,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/temporary_cast_rule_model.py",
         "quorune/damage_prevention_scope.py",
         "quorune/draw_redirect_model.py",
+        "quorune/target_combat_damage_multiplier_model.py",
         "quorune/game_hand_size_model.py",
         "quorune/next_draw_replacement_model.py",
         "quorune/prototype_model.py",
@@ -927,6 +930,8 @@ def _owner(relative: str, layer: str) -> str:
     if relative == 'quorune/characteristic_read_frames.py':return 'card_characteristics'
     if relative == 'quorune/rules/granted_characteristic_shapes.py':return 'continuous_effects'
     if relative in {'quorune/damage_prevention_permission.py', 'quorune/source_prevention.py', 'quorune/combat_prevention_draw_model.py'}:return 'damage'
+    if relative in {"quorune/rules/loyalty_damage.py", "quorune/target_combat_damage_multiplier_model.py"}:
+        return "damage"
     if relative=="quorune/designation_prevention.py":return "damage"
     if relative=="quorune/attached_prevention_model.py":return "damage"
     if relative=="quorune/attachment_information.py":return "attachments"
@@ -986,7 +991,7 @@ def _owner(relative: str, layer: str) -> str:
         return "semantic_choices"
     if relative.startswith("quorune/selection/"):
         return "search_target_and_choice"
-    if relative in {"quorune/library_search_model.py", "quorune/stack_spell_copy_model.py"}:
+    if relative in {"quorune/library_search_model.py", "quorune/cast_x_search_model.py", "quorune/stack_spell_copy_model.py"}:
         return "search_target_and_choice"
     if relative.startswith("quorune/effect_runtime/"):
         return "effect_runtime"

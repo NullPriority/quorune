@@ -106,6 +106,13 @@ the selected order, then uses the existing resolution cursor. Owner, retained
 controller and spell controller remain independent. Multi-object resolving
 instructions and cost continuations retain their separate guards.
 
+An announced-X payment instruction can collect one choice from each opponent
+per repetition. The legal sets are one controlled nonland permanent, one
+private hand card, and life loss. Later choosers see the earlier modes and
+public sacrifices. The current round prepares its zone and life changes before
+publishing either result. Fresh choices follow the commit, and state-based
+actions wait until the entire spell finishes.
+
 Collected APNAP object choices prepare all replacement events together before
 ordering any physical arrivals. The resolving controller supplies the effect
 actor. The destination determines which player orders each group. Ordinary
@@ -3410,3 +3417,23 @@ when a replacement redirected it to exile. The copy affects only the
 source's original battlefield incarnation and is committed before the
 library shuffle. The shuffle still resolves after an empty search or
 the source's departure.
+
+### Targeted private library search
+
+The resolving player searches only the targeted opponent's permitted library
+window. A nonempty unqualified window requires one selected card. The target
+shuffles through the existing search transaction after the move.
+
+When the selected card reaches face-down exile, only the searcher can look at
+it. That same exile incarnation grants the searcher ordinary spell and land
+play from exile. Normal costs, timing, and land-play limits apply. Older
+opponent-library designs keep their existing grants and payment behavior.
+
+### Life payment from designated commander colors
+
+The activation price counts distinct colors from the payer's pregame
+commander designations. The ordinary activation owner quotes and rechecks
+the amount before committing the mana, tap, and life costs. A designated
+colorless commander gives a zero-life price. A player with no commander
+cannot pay this cost. The ordinary private draw resolves on the stack
+after payment.

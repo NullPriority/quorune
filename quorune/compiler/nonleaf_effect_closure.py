@@ -38,16 +38,26 @@ def direct_effect_program_is_closed(program):
     from ..rules.paid_sacrifice_copy import is_closed_paid_sacrifice_copy_program
     if is_closed_paid_sacrifice_copy_program(program):
         return True
+    from ..rules.repeated_apnap_payment import payment_round_program_dependencies
+
+    try:
+        if payment_round_program_dependencies(program):
+            return True
+    except (TypeError, ValueError, KeyError):
+        pass
+    from ..rules.cast_x_zone_searches import is_closed_cast_x_zone_search_program
     from ..rules.named_searches import is_closed_named_zone_search_program
-    from ..rules.commander_return_choice import is_closed_commander_return_program
+    from ..rules.owned_commander_battlefield_return import generated_commander_return_is_closed
     from ..rules.owned_commander_amount import is_closed_owned_commander_amount_program
     from ..rules.void_counter_play import is_closed_void_counter_play_program
     from ..rules.target_graveyard_escape import is_closed_target_graveyard_escape_program
     from ..rules.paid_artifact_library_search import is_closed_paid_artifact_search_program
+    from ..rules.loyalty_attachment import is_closed_loyalty_attachment_program
     from ..rules.paid_creature_library_search import is_closed_paid_creature_search_program
-    if is_closed_paid_artifact_search_program(program) or is_closed_paid_creature_search_program(program):
+    if (is_closed_paid_artifact_search_program(program) or is_closed_paid_creature_search_program(program)
+            or is_closed_cast_x_zone_search_program(program) or is_closed_loyalty_attachment_program(program)):
         return True
-    if (is_closed_named_zone_search_program(program) or is_closed_commander_return_program(program)
+    if (is_closed_named_zone_search_program(program) or generated_commander_return_is_closed(program)
             or is_closed_void_counter_play_program(program) or is_closed_target_graveyard_escape_program(program)
             or is_closed_owned_commander_amount_program(program)):
         return True

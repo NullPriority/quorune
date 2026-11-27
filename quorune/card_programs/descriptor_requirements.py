@@ -304,6 +304,13 @@ def _damage_payload_dependencies(value, mechanics):
 
 
 def _zone_choice_payload_dependencies(value):
+    from ..rules.repeated_apnap_payment import MECHANIC, is_payment_round, payment_round_node_capabilities
+
+    if is_payment_round(value):
+        required = payment_round_node_capabilities((value,), None, None, (MECHANIC,))
+        if not required:
+            raise ValueError("Malformed repeated APNAP payment descriptor")
+        return required
     from ..apnap_object_payment import APNAP_OBJECT_PAYMENT_CAPABILITY, apnap_object_payment_dependencies
     from ..rules.opponent_caster_discard_payment import (
         CASTER_DISCARD_PAYMENT_CAPABILITY, uses_caster_discard_payment, validate_caster_discard_payment,

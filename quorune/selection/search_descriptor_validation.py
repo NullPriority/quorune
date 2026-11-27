@@ -6,15 +6,17 @@ from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
 from ..rules.targeted_library_exile import (
-    validate_bound_target_name_multizone_search,
+    TARGET_LIBRARY_EXILE_VERSION, validate_bound_target_name_multizone_search,
 )
 from ..library_search_model import (
     ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION,
+    CAST_X_ZONE_SEARCH_VERSION,
     EXILED_TARGET_SEARCH_VERSION,
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
     RECRUITING_LIBRARY_SEARCH_VERSION,
     TARGET_NAME_LIBRARY_SEARCH_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
+    TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
     PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
     DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
@@ -56,6 +58,8 @@ def semantic_search_actor(
     item: Any, effect: Mapping[str, Any], *, decision_actor: str | None = None,
 ) -> str:
     actor = str(effect.get("searching_player") or item.controller)
+    if effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION and decision_actor not in (None, item.controller):
+        raise GameRuleError("Announced-X search belongs to the resolving controller")
     if effect.get("schema_version") == TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION:
         if len(item.targets) != 1 or item.targets[0] != actor:
             raise GameRuleError("The basic-land search lost its original targeted player")
@@ -70,10 +74,13 @@ def validate_semantic_search_response(effect: Mapping[str, Any], response: Mappi
         or ("search_cards" in response and response["search_cards"] is None)
     ):
         raise GameRuleError("The Dragon search accepts only its offered search_cards field")
-    if effect.get("schema_version") == TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION and (
+    version = effect.get("schema_version")
+    if version in (TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION) and (
         set(response) - {"action", "choice_schema", "search_cards"}
         or ("search_cards" in response and response["search_cards"] is None)
     ):
+        if version == TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION:
+            raise GameRuleError("The private opponent search accepts only its offered search_cards field")
         raise GameRuleError("A targeted basic-land search accepts only the chosen card or an empty selection")
 
 
@@ -131,6 +138,16 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
 
     retained = {key: value for key, value in effect.items()
                 if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}} if moving else effect
+    if effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION:
+        from ..rules.cast_x_zone_searches import verify_resolving_cast_x_zone_search
+
+        verify_resolving_cast_x_zone_search(host, item, retained)
+        return effect
+    from ..rules.private_search_play import uses_private_search_play, verify_resolving_private_search_play
+
+    if uses_private_search_play(effect):
+        verify_resolving_private_search_play(host, item, retained)
+        return effect
     if is_paid_artifact_search(effect):
         return materialize_paid_artifact_search(host, item, retained, already_materialized=saved_options or moving)
     from ..rules.paid_creature_library_search import is_paid_creature_search, materialize_paid_creature_search
@@ -144,7 +161,33 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
     return effect
 
 
+def _validate_private_or_cast_x_search(effect: Mapping[str, Any]) -> bool:
+    from ..rules.private_search_play import uses_private_search_play, validate_private_search_play
+
+    if uses_private_search_play(effect):
+        retained = {key: value for key, value in effect.items()
+                    if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
+        try:
+            validate_private_search_play(retained)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return True
+    if effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION:
+        from ..cast_x_search_model import CastXZoneSearchSelection
+
+        retained = {key: value for key, value in effect.items()
+                    if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
+        try:
+            CastXZoneSearchSelection.from_effect(retained)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return True
+    return False
+
+
 def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
+    if _validate_private_or_cast_x_search(effect):
+        return
     if _validate_linked_and_paid_search(effect):
         return
     if effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION:
@@ -186,7 +229,8 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
         except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
         return
-    if type(effect.get('schema_version')) is int and effect['schema_version'] == 9:
+    if (type(effect.get("schema_version")) is int and effect["schema_version"]
+            in (TARGET_LIBRARY_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION)):
         from ..rules.targeted_library_exile import bound_target_library_exile
         bound_target_library_exile(effect, effect.get('searching_player'))
         raw = effect.get('_target_library_identities')

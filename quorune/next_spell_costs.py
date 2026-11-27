@@ -1,7 +1,10 @@
 """Resolution-created next-spell rules using the shared journal and cost query."""
 from __future__ import annotations
 
-from .next_spell_cost_model import ResolvedNextSpellCostReduction,validate_next_spell_cost_instruction
+from .continuous_effect_model import ContinuousEffectDuration
+from .next_spell_cost_model import (
+    NEXT_TURN_SPELL_COST_VERSION, ResolvedNextSpellCostReduction, validate_next_spell_cost_instruction,
+)
 from .cast_cost_modifiers import CastCostAffectedController,PublicCastCostModifierSpec
 from .object_query import object_matches_query,object_query_result
 
@@ -12,11 +15,17 @@ def apply_next_spell_cost_reduction(host,effect,*,actor,reason,operation=None):
     query,_=validate_next_spell_cost_instruction(public,resolved=True)
     host._require_seat(actor,in_game=True)
     source=resolution_effect_source(host,effect)
+    next_turn = public['schema_version'] == NEXT_TURN_SPELL_COST_VERSION
     pending=ResolvedNextSpellCostReduction(host._next_ref('NC'),source.stack_ref,
         host._next_zone_timestamp(),actor,query,public['amount'],schema_version=public['schema_version'],
-        face_down_only=public.get('face_down_only',False))
+        face_down_only=public.get('face_down_only',False),
+        duration=ContinuousEffectDuration.UNTIL_NEXT_TURN if next_turn else ContinuousEffectDuration.UNTIL_END_OF_TURN,
+        expires_on_next_turn_of=actor if next_turn else None)
     commit_continuous_effect(host.state,pending)
-    if pending.schema_version == 2:
+    if next_turn:
+        host._log(actor, 'casting.next_turn_cost.created', 'A casting cost reduction applies until your next turn.',
+            {'effect_id': pending.effect_id, 'amount': pending.amount, 'spell_query': query.to_dict()}, importance=1)
+    elif pending.schema_version == 2:
         host._log(actor,'casting.turn_cost.created','A casting cost reduction applies this turn.',
             {'effect_id':pending.effect_id,'amount':pending.amount,'spell_query':query.to_dict(),
              'face_down_only':pending.face_down_only},importance=1)

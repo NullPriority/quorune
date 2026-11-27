@@ -630,6 +630,7 @@ def _spell_cast_base_predicate(
         "spell": FixedSpellCastQuality.ANY,
         "creature spell": FixedSpellCastQuality.CREATURE,
         "artifact spell": FixedSpellCastQuality.ARTIFACT,
+        "instant or sorcery spell": FixedSpellCastQuality.INSTANT_OR_SORCERY,
         "noncreature spell": FixedSpellCastQuality.NONCREATURE,
     }.get(normalized)
     if ordinary is not None:
@@ -937,7 +938,7 @@ def _turn_spell_cast_binding(
             body=controller_main_phase.group("body"),
         )
     turn_relative = re.fullmatch(
-        r"Whenever you cast (?:a )?(?P<descriptor>spell|creature spell) "
+        r"Whenever you cast (?:an? )?(?P<descriptor>spell|creature spell|instant or sorcery spell) "
         r"during (?P<turn>an opponent's|your) turn, (?P<body>.+)",
         material_line,
         re.IGNORECASE,

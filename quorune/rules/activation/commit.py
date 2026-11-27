@@ -186,6 +186,13 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    from .commander_identity_life import ACTIVATION_COMMANDER_LIFE_FIELD, commander_identity_life_details
+
+    current_life_price = commander_identity_life_details(host, proposal.seat, ability)
+    if current_life_price or ACTIVATION_COMMANDER_LIFE_FIELD in details:
+        quoted_life = details.get(ACTIVATION_COMMANDER_LIFE_FIELD)
+        if not current_life_price or type(quoted_life) is not int or quoted_life != current_life_price[ACTIVATION_COMMANDER_LIFE_FIELD]:
+            raise ActivationProposalError("Commander-identity life price changed after proposal", reason="stale_commander_life_price")
     if ability.variable_colored_reveal_price is not None:
         from .variable_colored_reveal import revalidate_variable_colored_reveal_payment
 
@@ -332,7 +339,9 @@ def _commit_resource_costs(
             raise ActivationProposalError(
                 str(exc), reason="loyalty_cost_placement"
             ) from exc
-    life_payment = ability.life_payment + (
+    from .commander_identity_life import activation_life_from_proposal
+
+    life_payment = activation_life_from_proposal(ability, proposal.details) + (
         mana_option.life_payment if mana_option is not None else 0
     )
     if life_payment:
@@ -951,6 +960,8 @@ def _publish_activation_stack_placement(host, proposal, source, ability, item, *
 
 def _log_committed_activation(host, proposal, source, item, ability, *, origin,
                               spent, activations, paid_objects, mana_option):
+    from .commander_identity_life import activation_life_from_proposal
+
     host._log(
         proposal.seat,
         "stack.activate",
@@ -974,7 +985,7 @@ def _log_committed_activation(host, proposal, source, item, ability, *, origin,
             ],
             "targets": item.targets,
             "modes": item.modes,
-            "life_paid": ability.life_payment + (
+            "life_paid": activation_life_from_proposal(ability, proposal.details) + (
                 mana_option.life_payment if mana_option is not None else 0
             ),
             "energy_paid": ability.energy_payment,

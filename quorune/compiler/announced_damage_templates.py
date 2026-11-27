@@ -5,6 +5,7 @@ from . import regex_working_set as re
 from ..announced_damage import (
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
     DAMAGE_ALLOCATION_FIELD,
+    TURN_DAMAGE_MAXIMUM,
     DamageAllocationSpec,
     VariableDamageAllocationSpec,
 )
@@ -23,7 +24,8 @@ _DIVIDED_DAMAGE = re.compile(
 _VARIABLE_DIVIDED_DAMAGE = re.compile(
     r"(?P<source>.+?) deals (?P<amount>X(?: plus 1)?) damage divided as you choose among "
     r"(?P<count>any number of|up to two) (?P<domain>[^.]+?)"
-    r"(?:, where X is (?P<quantity>[^.]+?) as you cast this spell)?\."
+    r"(?:, where X is (?:(?P<quantity>[^.]+?) as you cast this spell|"
+    r"(?P<turn_damage>the greatest amount of damage dealt by a source to a permanent or player this turn)))?\."
     r"(?: If X is (?P<double_from>6) or more, (?P=source) deals twice X damage divided as you choose among them instead\.)?",
     re.IGNORECASE,
 )
@@ -91,7 +93,11 @@ def variable_announced_damage_template(text: str, *, card_name: str, has_cast_x:
     if not isinstance(direct, FixedDamageEffectTemplate) or direct.target_schema is None:
         return None
     quantity = None
-    if match["quantity"] is not None:
+    if match["turn_damage"] is not None:
+        if has_cast_x or match["count"].casefold() != "any number of" or recipient != "target creature":
+            return None
+        quantity = TURN_DAMAGE_MAXIMUM
+    elif match["quantity"] is not None:
         if has_cast_x:
             return None
         from .live_battlefield_quantities import resolution_quantity

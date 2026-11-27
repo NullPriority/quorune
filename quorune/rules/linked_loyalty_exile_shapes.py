@@ -54,7 +54,9 @@ def _linked_loyalty_cost_is_closed(cost_schema, phase):
         return False
     cost_text = cost_schema.get("text")
     expected = {**_LOYALTY_COST_DEFAULTS, "text": cost_text}
-    if phase == "target_top" and cost_text == "+2":
+    if phase == "zero" and cost_text == "0":
+        expected["loyalty_delta"] = 0
+    elif phase == "target_top" and cost_text == "+2":
         expected["loyalty_delta"] = 2
     elif phase == "opponent_zones" and cost_text in ("-10", "\u221210"):
         expected["loyalty_delta"] = -10
@@ -99,6 +101,11 @@ def linked_loyalty_activation_capabilities(*, effects, target_schema, active_zon
 
 
 def linked_loyalty_exile_runtime_dependencies(program):
+    from .loyalty_damage import LOYALTY_X_DAMAGE_FIELD, loyalty_damage_runtime_dependencies
+
+    if (len(program.effects) == 1 and LOYALTY_X_DAMAGE_FIELD in program.effects[0]
+            and loyalty_damage_runtime_dependencies(program)):
+        return ()  # The ordinary damage result owns its complete price and allocation scope.
     claimed = set(getattr(program, "capability_dependencies", ()))
     if (
         claimed.isdisjoint((
@@ -109,29 +116,34 @@ def linked_loyalty_exile_runtime_dependencies(program):
         and not contains_nested_key(program.handlers, LOYALTY_X_FIELD)
     ):
         return ()
-    from ..compiler.activated_costs import activated_ability_cost
-    from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
-
     required = linked_loyalty_activation_capabilities(
         effects=program.effects, target_schema=program.target_schema,
         active_zone=program.active_zone, cost_schema=program.cost_schema,
     )
-    abilities = activated_abilities_from_descriptors(program.handlers)
-    if (not required or program.event != "activate" or program.event_condition is not None
-            or program.trigger_limit is not None or len(program.handlers) != 1 or len(abilities) != 1):
+    if not required or not has_plain_loyalty_catalog(program):
         raise ValueError("Linked loyalty requires one ordinary battlefield activation and its original price")
+    return required
+
+
+def has_plain_loyalty_catalog(program, *, require_semantic_key=False):
+    from ..compiler.activated_costs import activated_ability_cost
+    from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+
+    abilities = activated_abilities_from_descriptors(program.handlers)
+    if (program.event != "activate" or program.event_condition is not None
+            or program.trigger_limit is not None or len(program.handlers) != 1 or len(abilities) != 1):
+        return False
     ability, = abilities
-    if (
-        program.ability_id != f"ability:{ability.ability_id}"
-        or ability.zones != ("battlefield",) or ability.mana_ability or ability.sorcery_speed
-        or ability.activation_conditions
-        or ability.target_schema != (
+    return (
+        program.ability_id == f"ability:{ability.ability_id}"
+        and (not require_semantic_key or ability.builtin_semantic_key == program.key)
+        and ability.zones == ("battlefield",) and not ability.mana_ability and not ability.sorcery_speed
+        and not ability.activation_conditions
+        and ability.target_schema == (
             FrozenMap(program.target_schema) if program.target_schema is not None else None
         )
-        or activated_ability_cost(ability) != thaw_value(program.cost_schema)
-    ):
-        raise ValueError("The linked loyalty result has the wrong activation catalog")
-    return required
+        and activated_ability_cost(ability) == thaw_value(program.cost_schema)
+    )
 
 
 def is_closed_linked_loyalty_activation_program(program):

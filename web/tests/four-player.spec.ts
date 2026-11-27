@@ -920,7 +920,7 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     expect(stackBounds!.y + stackBounds!.height).toBeLessThan(1080);
 
     await openGameMenu(host);
-    await host.getByTestId("table-settings").locator("summary").click();
+    await host.getByTestId("table-settings").locator(":scope > summary").click();
     await host.getByLabel("Hand panel height").fill("360");
     await host.getByLabel("Right rail width").fill("420");
     await host.getByLabel("Right rail first").selectOption("activity");

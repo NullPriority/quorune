@@ -180,7 +180,7 @@ from .selection.storm import SPELL_COPY_TRIGGER_KEYS, StormTargetChoiceOwnerMixi
 from .selection.exile_cast import OneShotExileCastChoiceOwnerMixin
 from .selection.public_choice import PublicChoiceOwnerMixin
 from . import turn_counter_coordination
-from .impulse_access import current_temporary_play_permission
+from .impulse_access import temporary_play_permission_for_view
 from .opponent_library_exile import current_opponent_library_exile_play_permission, opponent_library_exile_spend_context
 from . import untap_step_coordination
 from . import haste
@@ -1342,10 +1342,12 @@ class CommanderEngine(
             putting_players=putting_players,
         )
 
-    def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:
-        """Compatibility facade for canonical library membership mutation."""
+    def shuffle_library(
+        self, seat: str, *, reason: str = "shuffle", actor: str | None = None, shuffling_player: str | None = None,
+    ) -> None:
+        """Delegate library movement and keep the acting seat separate from log attribution."""
 
-        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason, actor=actor)
+        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason, actor=actor, shuffling_player=shuffling_player)
 
     def draw(
         self,
@@ -2398,7 +2400,7 @@ class CommanderEngine(
         seat: str,
         card: CardInstance,
     ) -> Mapping[str, Any] | None:
-        permission = current_temporary_play_permission(self.state, seat, card)
+        permission = temporary_play_permission_for_view(self, seat, card)
         opponent_library_permission = current_opponent_library_exile_play_permission(self.state, seat, card)
         if opponent_library_permission is None:
             from .rules.private_opponent_top_exile import controller_private_top_exile_play_permission

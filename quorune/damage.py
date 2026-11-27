@@ -782,6 +782,7 @@ def prepare_damage_batch(
         collect_damage_replacement_effects,
     )
     from .rules.combat_prevention_draw import combat_prevention_draw_replacements
+    from .semantic_runtime.target_combat_damage_multiplier import collect_target_combat_damage_multipliers
 
     permission = collect_damage_prevention_permissions(host,sources=sources,source_zones=source_zones)
     nonzero = tuple(replace(proposal,unpreventable=proposal.unpreventable or permission.unpreventable(
@@ -795,6 +796,7 @@ def prepare_damage_batch(
         *collect_damage_modifier_effects(host, snapshot=current_modifiers),
         *collect_shield_counter_effects(host),
         *combat_prevention_draw_replacements(host, nonzero),
+        *collect_target_combat_damage_multipliers(host),
     )
     effects = (*effects, *_protection_prevention_effects(host, protection_proposals_for_redirection(host, nonzero, effects)))
     events = tuple(proposal.event() for proposal in nonzero)

@@ -79,6 +79,12 @@ def apply_each_opponent_top_exile(host, effect, *, actor, operation, reason):
     return len(exiled)
 
 
+def grant_controlled_search_exile_play(card, player):
+    if card.zone != "exile" or card.face_down or not card.is_card_object or card.owner == player:
+        raise GameRuleError("Search permission requires the found public exile incarnation")
+    card.annotations[INCARNATION_PLAY_FIELD] = (player, card.logical_object_id)
+
+
 def _existing_permissions(card):
     raw = card.annotations.get(PLAY_PERMISSIONS_FIELD)
     return raw if isinstance(raw, Mapping) else {}

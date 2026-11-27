@@ -218,13 +218,24 @@ def _designation_target_matches(predicate, row, types, colors, chosen_type, chos
     return chosen_type is not None and "creature" in types and chosen_type in row.get("subtypes", ())
 
 
-def _ability_source_target_matches(predicate: str, row: Mapping[str, Any]) -> bool:
+def _ability_source_target_matches(predicate: str, row: Mapping[str, Any], source_incarnation: str | None) -> bool:
     item=row.get('stack_item');source_types=row.get('ability_source_types')
     if (row.get('zone')!='stack' or row.get('category')!='ability'
             or not isinstance(item,StackItem) or source_types is None):
         return False
-    from .ability_source_information import ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER, ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES
+    from .ability_source_information import (
+        ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER, ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES,
+        DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER,
+    )
 
+    if predicate == DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER:
+        from .target_source import TargetingSource
+
+        other = row.get("ability_source_identity")
+        return bool(item.kind in {"activated_ability", "triggered_ability"} and isinstance(other, TargetingSource)
+                    and other.is_commander is False and other.supertypes is not None and "legendary" in other.supertypes
+                    and other.logical_object_id is not None and source_incarnation is not None
+                    and other.logical_object_id != source_incarnation)
     if predicate == ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER:
         return item.kind == "activated_ability" and bool(ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES.intersection(source_types))
     if predicate=='activated_artifact_source':
@@ -321,7 +332,7 @@ def target_predicate_matches(
         )
     from .ability_source_information import ABILITY_SOURCE_FILTERS
     if predicate in ABILITY_SOURCE_FILTERS:
-        return _ability_source_target_matches(predicate, row)
+        return _ability_source_target_matches(predicate, row, source_incarnation)
     if predicate == 'activated_or_triggered_ability':
         item = row.get('stack_item')
         return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}

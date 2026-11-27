@@ -18,10 +18,10 @@ from ..named_search_model import (
 )
 from ..library_search_model import (
     ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION,
-    BARGAIN_SEARCH_VERSION, is_bargain_search_effect,
+    BARGAIN_SEARCH_VERSION, PRIVATE_SEARCH_PLAY_VERSION, is_bargain_search_effect,
     EXILED_TARGET_SEARCH_VERSION,
     FETCH_ENTRY_PLACEMENT_VERSION, QUERY_BOUND_SEARCH_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
-    COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, LINKED_ARTIFACT_SEARCH_VERSION,
+    CAST_X_ZONE_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, LINKED_ARTIFACT_SEARCH_VERSION,
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     RECRUITING_LIBRARY_SEARCH_VERSION,
     SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
@@ -33,9 +33,10 @@ from ..library_search_model import (
     decode_fixed_tapped_battlefield_search,
     SEARCH_ALTERNATIVES, SEARCH_SUBTYPES, is_counted_library_search,
 )
-from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
+from ..rules.library_search_rules import library_search_constraint, library_search_object_ids, semantic_search_public_minimum
+from .controlled_search import resolve_controlled_finds, search_control_payload
 from ..rules.targeted_library_exile import (
-    TARGET_LIBRARY_EXILE_VERSION, TARGET_NAME_MULTIZONE_CAPTURE,
+    TARGET_LIBRARY_EXILE_VERSION, TARGET_NAME_MULTIZONE_CAPTURE, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
     bind_resolving_targeted_library_search, continue_departed_target_search, move_targeted_library_exile,
     prepare_target_name_multizone_exile, target_name_multizone_search_view, targeted_library_departed,
     targeted_library_owner, targeted_library_search_options,
@@ -82,8 +83,13 @@ _SEARCH_COMPLETION_FIELD = "_search_completion"
 _SEARCH_COMPLETION_FIELDS = {"actor", "choice_id", "selected_refs"}
 _ENTRY_LIFE_CHOICE = "entry_pay_life"
 _REPLACEMENT_SELECTIONS_FIELD = "_replacement_selections"
-_TARGETED_EXILE_SEARCH_VERSIONS = (TARGET_LIBRARY_EXILE_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION)
-_REPLACEMENT_EXILE_SEARCH_VERSIONS = (*_TARGETED_EXILE_SEARCH_VERSIONS, LINKED_ARTIFACT_SEARCH_VERSION, BARGAIN_SEARCH_VERSION)
+_TARGETED_EXILE_SEARCH_VERSIONS = (
+    TARGET_LIBRARY_EXILE_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION, TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
+)
+_REPLACEMENT_EXILE_SEARCH_VERSIONS = (
+    *_TARGETED_EXILE_SEARCH_VERSIONS, LINKED_ARTIFACT_SEARCH_VERSION,
+    BARGAIN_SEARCH_VERSION, PRIVATE_SEARCH_PLAY_VERSION,
+)
 _REPLACEMENT_BATTLEFIELD_SEARCH_VERSIONS = (
     QUERY_BOUND_SEARCH_VERSION,
     TARGET_NAME_LIBRARY_SEARCH_VERSION,
@@ -91,7 +97,7 @@ _REPLACEMENT_BATTLEFIELD_SEARCH_VERSIONS = (
     *SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
     COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
-    PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
+    PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION, CAST_X_ZONE_SEARCH_VERSION,
 )
 
 
@@ -320,10 +326,8 @@ class HiddenSearchOwnerMixin:
                 }
             },
             continuation={
-                "selection": self._fetch_selection_continuation(
-                    item=item,
-                    legal_refs=legal_refs,
-                ).to_dict()
+                "selection": self._fetch_selection_continuation(item=item, legal_refs=legal_refs).to_dict(),
+                **search_control_payload(self, item, item.controller, ("library",)),
             },
         )
 
@@ -396,10 +400,15 @@ class HiddenSearchOwnerMixin:
             raise GameRuleError(
                 "Selected fetchland result is no longer a legal library card"
             )
-        finish_fetch_selection(
-            self, item, selected=str(selected) if selected is not None else None,
-            pay_life=_search_entry_life_choice(response),
+        control_result = resolve_controlled_finds(
+            self, decision, item=item, actor=seat, zones=("library",),
+            refs=(str(selected),) if selected is not None else (),
         )
+        if control_result != "pending":
+            finish_fetch_selection(
+                self, item, selected=str(selected) if selected is not None and control_result == "unchanged" else None,
+                pay_life=_search_entry_life_choice(response) if control_result == "unchanged" else False,
+            )
 
     def _resolve_fetch_land(self, item: StackItem, *, replacement_selections=()) -> None:
         seat = item.controller
@@ -707,10 +716,8 @@ class HiddenSearchOwnerMixin:
             and self._search_is_restrictive(selector)
         )
         minimum_choice = 0 if rules_may_fail else min(minimum, len(options))
-        if effect.get('schema_version') == 6:
-            from ..rules.named_searches import named_zone_search_minimum
-            minimum_choice = named_zone_search_minimum(self, seat, effect, options)
-            rules_may_fail = minimum_choice == 0
+        if (public_minimum := semantic_search_public_minimum(self, seat, effect, options)) is not None:
+            minimum_choice, rules_may_fail = public_minimum, public_minimum == 0
         choice_schema = semantic_search_choice_schema(
             self, seat=seat,
             effect=effect,
@@ -770,7 +777,9 @@ class HiddenSearchOwnerMixin:
                     ],
                 }
             },
-            continuation={'selection':selection.to_dict()},
+            continuation={"selection": selection.to_dict(), **search_control_payload(
+                self, item, seat, search_zones, library_owner=effect.get("library_player"),
+            )},
         )
         frame["pending_choice_id"] = decision.decision_id
         decision.continuation['selection'] = replace(selection,
@@ -953,10 +962,8 @@ class HiddenSearchOwnerMixin:
             and self._search_is_restrictive(selector)
         )
         required = 0 if rules_may_fail else min(minimum, len(options))
-        if effect.get('schema_version') == 6:
-            from ..rules.named_searches import named_zone_search_minimum
-            required = named_zone_search_minimum(self, seat,
-                {key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD}, options)
+        if (public_minimum := semantic_search_public_minimum(self, seat, effect, options)) is not None:
+            required = public_minimum
         if not required <= len(values) <= maximum:
             raise GameRuleError(f"Search requires between {required} and {maximum} selection(s)")
         if (total_constraint := selector.get("mana_value_total")) is not None:
@@ -999,10 +1006,19 @@ class HiddenSearchOwnerMixin:
         validate_search_different_names(self, effect, selected_cards)
         validate_shared_land_type_search(self, effect, selected_cards)
         owner = ZoneTransitionOwner(self)
-        if is_bargain_search_effect(effect):
-            from .bargain_search import move_bargain_search_result
+        from ..rules.private_search_play import uses_private_search_play
 
-            return move_bargain_search_result(owner, context, selected_cards, replacement_selections)
+        private_search_play = uses_private_search_play(effect)
+        if private_search_play or is_bargain_search_effect(effect):
+            from .bargain_search import move_private_face_down_search_result
+
+            moved = move_private_face_down_search_result(owner, context, selected_cards, replacement_selections)
+            if private_search_play:
+                from ..rules.private_opponent_top_exile import grant_private_library_search_play
+
+                for card in moved:
+                    grant_private_library_search_play(card, viewer=seat)
+            return moved
         if effect.get('schema_version') == 5:
             from ..search_allocation import move_allocated_search_results
             return move_allocated_search_results(self, context, selected_cards, replacement_selections)
@@ -1418,6 +1434,14 @@ class HiddenSearchOwnerMixin:
             continue_departed_target_search(self, context)
             return
         values, search_zones = self._semantic_search_selected_values(context)
+        control_result = resolve_controlled_finds(
+            self, decision, item=context.item, actor=context.seat, zones=search_zones, refs=values,
+            library_owner=context.effect.get("library_player"),
+        )
+        if control_result == "pending":
+            return
+        if control_result == "applied":
+            values = []
         if is_up_to_two_forest_search(context.effect) and begin_forest_entry_payment_choice(
             self, context, values, choice_id=decision.decision_id,
         ):

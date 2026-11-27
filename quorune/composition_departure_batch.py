@@ -4,6 +4,7 @@ from dataclasses import dataclass,replace
 from .composition_batch_order_model import CompositionDepartureSubject,CompositionDepartureBatchRequest
 from .composition_departure import CompositionZoneFact,CompositionZoneRole
 from .errors import GameRuleError
+from .discard_effect_origin import DiscardEffectOrigin
 from .replacement.immutable import FrozenMap
 from .zone_trigger_events import ZoneTransitionKind
 from .composition_storage import PermanentCompositionStorage
@@ -18,6 +19,7 @@ class PreparedCompositionDepartureGroup:
     storage: PermanentCompositionStorage | None
     departure: ZoneDepartureSnapshot
     actor: str
+    discard_effect_origin: DiscardEffectOrigin | None = None
 
     def __post_init__(self):
         if (not isinstance(self.subject,CompositionDepartureSubject) or not isinstance(self.plan,ZoneMovePlan)
@@ -28,7 +30,11 @@ class PreparedCompositionDepartureGroup:
                 or self.subject.requested_destination!=self.plan.requested_destination
                 or self.subject.destination!=self.plan.destination
                 or self.subject.transition_kind!=self.plan.prepared_replacement.transition_kind.value
-                or self.plan.card.permanent_composition!=self.storage):
+                or self.plan.card.permanent_composition != self.storage
+                or self.discard_effect_origin is not None and (
+                    not isinstance(self.discard_effect_origin, DiscardEffectOrigin)
+                    or self.subject.transition_kind != "discard"
+                )):
             raise ValueError('Prepared physical group does not match its typed source and destination')
 
 
@@ -60,13 +66,13 @@ class PreparedCompositionDepartureBatch:
             before=group.subject.card_state
             current=owner.state.cards.get(before['object_id'])
             if (current is None or current.logical_object_id!=group.departure.logical_object_id
-                    or current.zone!='battlefield' or current.controller!=before['controller']
+                    or current.zone != before["zone"] or current.controller != before["controller"]
                     or current.owner!=before['owner'] or current.permanent_composition!=group.storage):
                 raise GameRuleError('A prepared physical batch changed its current incarnation or physical store')
 
 
 def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=None,
-        prepared_replacements=None,actor=None,position='top',replacement_selections=()):
+        prepared_replacements=None,actor=None,position='top',replacement_selections=(),discard_effect_origin=None):
     """Read all destinations, physical stores and LKI before offering any order."""
     from .composition_departure_commit import _prepare
     from .composition_replacements import composition_ordering_principal
@@ -81,10 +87,13 @@ def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=
     groups=[]
     for object_id,destination in changes:
         root=owner.state.cards.get(object_id)
-        if root is None or root.zone!='battlefield':raise GameRuleError('Physical departure requires current battlefield membership')
+        kind = kinds.get(object_id, ZoneTransitionKind.ORDINARY)
+        expected_zone = "hand" if kind is ZoneTransitionKind.DISCARD else "battlefield"
+        if root is None or root.zone != expected_zone:
+            raise GameRuleError("Physical batch departures must be in their original zones")
         current_actor=actor or root.controller
         owner.host._require_seat(current_actor,in_game=True)
-        kind=kinds.get(object_id,ZoneTransitionKind.ORDINARY)
+        discard_origin = discard_effect_origin if kind is ZoneTransitionKind.DISCARD else None
         storage=root.permanent_composition
         if storage is not None:
             _root,_storage,plan=_prepare(owner,object_id,destination,storage.topology.physical_object_ids,
@@ -93,7 +102,8 @@ def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=
             plan=owner._prepare_move(root,destination,controller=None,tapped=None,entry_pay_life=False,
                 enter_face=None,battle_protector=None,aura_target_ref=None,resolving_as_aura_spell=False,
                 aura_enchant_spec=None,position=position,reason=reason,log=False,
-                replacement_selections=replacement_selections,prepared_replacement=prepared.get(object_id),transition_kind=kind)
+                replacement_selections=replacement_selections,prepared_replacement=prepared.get(object_id),
+                transition_kind=kind, discard_effect_origin=discard_origin)
         if plan is None or isinstance(plan,CardInstance) or plan.destination=='battlefield' or plan.prepared_life_payment is not None:
             raise GameRuleError('Physical batch requires represented departures without entry or life-payment side effects')
         chooser=composition_ordering_principal(owner.host,root,plan.prepared_replacement,current_actor)
@@ -105,7 +115,7 @@ def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=
         redirects,actors=composition_component_destinations(owner.host,root,plan.prepared_replacement,current_actor)
         subject=CompositionDepartureSubject(FrozenMap(root.to_dict()),destination,plan.destination,chooser,
             plan.library_position or 'top',kind.value,redirects,actors)
-        groups.append(PreparedCompositionDepartureGroup(subject,plan,storage,departure,current_actor))
+        groups.append(PreparedCompositionDepartureGroup(subject, plan, storage, departure, current_actor, discard_origin))
     request=CompositionDepartureBatchRequest(tuple(group.subject for group in groups),tuple(owner.host.apnap_order()))
     return PreparedCompositionDepartureBatch(request,tuple(groups),reason)
 
@@ -116,7 +126,8 @@ def _group_facts(owner,group,cards,departures,order,reason):
     if group.storage is None:
         card=group.plan.card
         return ((owner._zone_change_occurrence(card,departure=group.departure,destination=card.zone,
-            reason=reason,transition_kind=kind,read_ahead_chapter=group.plan.prepared_replacement.read_ahead_chapter),card),)
+            reason=reason, transition_kind=kind, read_ahead_chapter=group.plan.prepared_replacement.read_ahead_chapter,
+            discard_effect_origin=group.discard_effect_origin), card),)
     root=group.plan.card
     parent=replace(_parent_occurrence(root,group.departure,group.plan,len(cards),reason),transition_kind=kind)
     facts=[(parent,cards.get(root.object_id,root))]

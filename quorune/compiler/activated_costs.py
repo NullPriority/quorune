@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from ..activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD
 
 from . import regex_working_set as re
@@ -73,7 +75,20 @@ def _parse_compiled_activation_material(material, *, card_name, keywords):
 
     from .announced_reinforce_nodes import parse_reinforce_activation_material
     abilities = parse_reinforce_activation_material(material, card_name=card_name, keywords=keywords)
-    return tuple(compile_ability_local_mana_reduction(ability, source_name=card_name) for ability in abilities)
+    return tuple(
+        compile_ability_local_mana_reduction(_compile_commander_identity_life_cost(ability), source_name=card_name)
+        for ability in abilities
+    )
+
+
+def _compile_commander_identity_life_cost(ability: ActivatedAbility) -> ActivatedAbility:
+    from ..rules.activation.commander_identity_life import PRICE_CLAUSE, uses_commander_identity_life
+
+    if not uses_commander_identity_life(ability):
+        return ability
+    remaining = tuple(" ".join(clause.casefold().replace("’", "'").split())
+                      for clause in ability.uncompiled_costs)
+    return replace(ability, uncompiled_costs=()) if remaining == (PRICE_CLAUSE,) else ability
 
 
 def activated_ability_cost_capabilities(
@@ -90,6 +105,10 @@ def activated_ability_cost_capabilities(
 
     if chosen_color_draw_text(ability.cost_text, ability.effect_text):
         additional.append(CHOSEN_COLOR_DRAW_CAPABILITY)
+    from ..rules.activation.commander_identity_life import ACTIVATION_COMMANDER_LIFE_CAPABILITY, uses_commander_identity_life
+
+    if uses_commander_identity_life(ability) and ability.compiled_cost:
+        additional.append(ACTIVATION_COMMANDER_LIFE_CAPABILITY)
     if ability.loyalty_x:
         from ..rules.linked_loyalty_exile_model import LOYALTY_X_CAPABILITY
 
@@ -122,9 +141,10 @@ def activated_ability_cost_capabilities(
     if announced_subtype_sacrifice_choice(ability) is not None:
         additional.append(ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY)
     if ability.announced_x_symbols is not None:
-        from ..activation_x import activation_x_capabilities
+        from ..activation_x import activation_x_capabilities, has_controlled_land_return_x_price
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,
-            sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
+            sacrifice_source=ability.sacrifice_source,
+            discard_cards=bool(ability.choices) and not has_controlled_land_return_x_price(ability),
             discard_source=ability.discard_source))
     if ability.waterbend is not None:
         from ..waterbend import WATERBEND_CAPABILITY
@@ -224,8 +244,13 @@ def activated_ability_cost(
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.announced_x_minimum:result['announced_x_minimum']=ability.announced_x_minimum
     if ability.loyalty_x:
         result["loyalty_x"] = True
+    from ..rules.activation.commander_identity_life import ACTIVATION_COMMANDER_LIFE_FIELD, uses_commander_identity_life
+
+    if uses_commander_identity_life(ability) and ability.compiled_cost:
+        result[ACTIVATION_COMMANDER_LIFE_FIELD] = 1
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
 

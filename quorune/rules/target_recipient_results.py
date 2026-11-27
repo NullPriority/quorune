@@ -240,11 +240,11 @@ def target_recipient_result_runtime_dependencies(program):
             effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
         )
 
-    from .controlled_artifact_token_result import controlled_artifact_token_program_dependencies
+    from .controlled_artifact_token_result import controlled_artifact_result_program_dependencies
     from .target_destruction_mana_value_tokens import target_destruction_mana_token_program_dependencies
 
-    if controlled_tokens := controlled_artifact_token_program_dependencies(program):
-        return controlled_tokens
+    if controlled_result := controlled_artifact_result_program_dependencies(program):
+        return controlled_result
     if mana_tokens := target_destruction_mana_token_program_dependencies(program):
         return mana_tokens
     if sacrifice := _target_sacrifice_power_dependencies(program):

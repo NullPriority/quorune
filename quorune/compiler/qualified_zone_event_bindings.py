@@ -16,6 +16,29 @@ from ..object_predicate import PermanentStatePredicateSpec
 QUALIFIED_ZONE_CAPABILITY = "trigger.event.qualified_zone_change"
 COUNTER_QUALIFIED_ZONE_CAPABILITY = "trigger.event.counter_qualified_zone_change"
 QUALIFIED_ZONE_VARIANT = "qualified_public_zone_query"
+_NONCREATURE_HAND_RETURN = re.compile(
+    r"Whenever a noncreature permanent is returned to hand, (?P<body>draw a card\.)", re.IGNORECASE,
+)
+
+
+def noncreature_hand_return_condition():
+    return {"all": [
+        {"field": "to", "op": "eq", "value": "hand"},
+        {"not": {"field": "types", "op": "contains_any", "value": ["creature"]}},
+    ]}
+
+
+def _noncreature_hand_return_binding(material_line):
+    match = _NONCREATURE_HAND_RETURN.fullmatch(material_line)
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event="permanent.leave", variant=QUALIFIED_ZONE_VARIANT, body=match["body"],
+        template_id="fixed-counter-public-zone-trigger-v1", mechanic="trigger-event-normalized-zone-change",
+        condition=noncreature_hand_return_condition(), capabilities=(QUALIFIED_ZONE_CAPABILITY,),
+    )
+
+
 _ZONE_EVENT = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) "
     r"(?P<verb>enters(?: from your graveyard)?|dies|leaves the battlefield|"
@@ -115,6 +138,8 @@ def qualified_public_zone_event_binding_spec(
     Existing productions retain precedence and serialized descriptors.
     """
 
+    if return_to_hand := _noncreature_hand_return_binding(material_line):
+        return return_to_hand
     match = _ZONE_EVENT.fullmatch(material_line)
     if match is None:
         return None

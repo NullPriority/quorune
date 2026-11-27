@@ -101,7 +101,12 @@ def fixed_mill_node_capabilities(
     if "followup" in effect:
         from .committed_mill_cards import committed_mill_card_node_capabilities, uses_committed_mill_result
         from .milled_creature_tokens import milled_creature_token_node_capabilities
+        from .milled_permanent_battlefield import (
+            milled_permanent_battlefield_node_capabilities, uses_milled_permanent_battlefield,
+        )
 
+        if uses_milled_permanent_battlefield(effect):
+            return milled_permanent_battlefield_node_capabilities(effects, target_schema)
         if uses_committed_mill_result(effect):
             return committed_mill_card_node_capabilities(effects, target_schema)
         return milled_creature_token_node_capabilities(effects, target_schema)
@@ -222,9 +227,11 @@ def mill_covered_mechanics(supplied):
 def committed_mill_followup_program_dependencies(program):
     from .committed_mill_cards import committed_mill_card_program_dependencies
     from .milled_creature_tokens import milled_creature_token_program_dependencies
+    from .milled_permanent_battlefield import milled_permanent_battlefield_program_dependencies
 
     return (
-        committed_mill_card_program_dependencies(program)
+        milled_permanent_battlefield_program_dependencies(program)
+        or committed_mill_card_program_dependencies(program)
         or milled_creature_token_program_dependencies(program)
     )
 

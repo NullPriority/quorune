@@ -8,9 +8,9 @@ from ..rules.bargain_search import BARGAIN_SEARCH_CAST_OPERATION, bargain_search
 from ..rules.library_selection import LibrarySelectionObjectIdentity
 
 
-def move_bargain_search_result(owner, context, cards, replacement_selections):
+def move_private_face_down_search_result(owner, context, cards, replacement_selections):
     if context.seat != context.item.controller or len(cards) > 1:
-        raise GameRuleError("Bargain search requires its controller's single library result")
+        raise GameRuleError("Private search requires its controller's single library result")
     return [
         owner.move_card(
             card.object_id, "exile", private_library_exile_viewer=context.seat,

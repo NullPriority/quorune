@@ -11,7 +11,10 @@ from common import ROOT
 import test_qualified_hexproof as native
 import test_splice as splice_tests
 from test_controller_creature_keyword_absence import register_card
-from quorune.rules.announced_mana_value_target import ANNOUNCED_MANA_VALUE_TARGET_CAPABILITY
+from quorune.rules.announced_mana_value_target import (
+    ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY, ANNOUNCED_MANA_VALUE_TARGET_CAPABILITY,
+)
+from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -25,6 +28,7 @@ from scripts.update_capability_evidence import build_index, discover_tests
 
 EXILE = "Vault Passage"
 CONTROL = "River Claim"
+LAND_RETURN_ARCHITECT = "Tameshi, Reality Architect"
 PROFILE = "commander_review"
 FIXTURES = ROOT / "tests" / "fixtures"
 
@@ -463,3 +467,142 @@ class AnnouncedManaValueTargetTests(unittest.TestCase):
         with patch("quorune.compiler.announced_mana_value_target.announced_mana_value_target_template", return_value=None):
             result = compile_oracle_card(source, capability_registry=self.registry, capability_profile=PROFILE)
             self.assertNotEqual("exact", result.status)
+
+
+    def legal_activation(self, game, source):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+
+    def unchanged_rejection(self, game, actor, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_land_return_activation_binds_zero_and_overpaid_x_and_draws_only_once(self):
+        game = self.session(60210704)
+        source = self.add(game.engine, LAND_RETURN_ARCHITECT)
+        borrowed = self.add(game.engine, "Plains", seat="B", ref="return-borrowed-land")
+        borrowed.controller = "A"
+        game.state.players["B"].zones["battlefield"].remove(borrowed.object_id)
+        game.state.players["A"].zones["battlefield"].append(borrowed.object_id)
+        owned = self.add(game.engine, "Plains", ref="return-owned-land")
+        foreign = self.add(game.engine, "Plains", seat="B", ref="return-uncontrolled-land")
+        borrowed.tapped = owned.tapped = foreign.tapped = True
+        zero = self.add(game.engine, "Ornithopter", zone="graveyard")
+        low = self.add(game.engine, "Sol Ring", zone="graveyard", ref="return-owned-artifact")
+        enchantment = self.add(game.engine, "Seal of Cleansing", zone="graveyard")
+        opponent = self.add(game.engine, "Sol Ring", seat="C", zone="graveyard", ref="return-foreign-artifact")
+        other = self.add(game.engine, "Grizzly Bears", zone="graveyard")
+        self.prepare(game, mana={"W": 2, "C": 3})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+
+        offer = self.legal_activation(game, source)
+        bounds = offer["target_schema"]["x_bounds_by_ref"]
+        self.assertEqual({zero.ref: {"minimum": 0, "maximum": 4},
+                          low.ref: {"minimum": 1, "maximum": 4},
+                          enchantment.ref: {"minimum": 2, "maximum": 4}}, bounds)
+        self.assertNotIn(opponent.ref, bounds)
+        self.assertNotIn(other.ref, bounds)
+        command = {"action_id": offer["id"], "targets": [zero.ref], "x": 0,
+                   "cost_cards": [borrowed.ref], "pay": "auto"}
+        self.unchanged_rejection(game, "B", command)
+        self.unchanged_rejection(game, "A", {**command, "cost_cards": [foreign.ref]})
+        self.unchanged_rejection(game, "A", {**command, "targets": [enchantment.ref]})
+        self.unchanged_rejection(game, "A", {**command, "x": 5})
+        top = game.state.players["A"].zones["library"][-1]
+        before_hand = set(game.state.players["A"].zones["hand"])
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIn(borrowed.object_id, game.state.players["B"].zones["hand"])
+        activated, draw = game.state.stack
+        self.assertEqual(0, activated.x_value)
+        self.assertEqual(0, activated.context["target_schema_override"]["mana_value_max"])
+        self.assertEqual(("triggered_ability", source.object_id), (draw.kind, draw.source_object_id))
+        self.unchanged_rejection(game, "A", command)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({top}, set(game.state.players["A"].zones["hand"]) - before_hand)
+        self.assertEqual("battlefield", game.state.cards[zero.object_id].zone)
+        private_ref = game.state.cards[top].ref
+        for viewer in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            self.assertNotIn(private_ref, json.dumps(game.packet(viewer, full=True)))
+
+        second = self.legal_activation(game, source)
+        self.assertEqual({"minimum": 2, "maximum": 3}, second["target_schema"]["x_bounds_by_ref"][enchantment.ref])
+        result = game.act("pilot:A", {"action_id": second["id"], "targets": [enchantment.ref],
+                                     "cost_cards": [owned.ref], "x": 3, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        activated, = game.state.stack
+        self.assertEqual(3, activated.x_value)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({"A"}, {game.state.cards[card.object_id].controller for card in (zero, enchantment)})
+        self.assertEqual("battlefield", game.state.cards[enchantment.object_id].zone)
+        self.assertEqual({top, owned.object_id}, set(game.state.players["A"].zones["hand"]) - before_hand)
+        self.replay(game, load=True)
+
+    def test_hand_return_trigger_ignores_other_zones_and_keeps_the_simultaneous_departure_source(self):
+        game = self.session(60210705)
+        source = self.add(game.engine, LAND_RETURN_ARCHITECT)
+        targets = [self.add(game.engine, "Sol Ring", ref=f"mass-return-artifact-{i}") for i in range(2)]
+        creature = self.add(game.engine, "Grizzly Bears")
+        regrowth = self.add(game.engine, "Regrowth", seat="B", zone="hand")
+        from_graveyard = self.add(game.engine, "Sol Ring", seat="B", zone="graveyard", ref="return-from-graveyard")
+        normal = self.add(game.engine, "Cyclonic Rift", seat="B", zone="hand", ref="return-only-creature")
+        overload = self.add(game.engine, "Cyclonic Rift", seat="B", zone="hand", ref="return-multiple-permanents")
+        self.prepare(game, actor="B", active="B", mana={"C": 8, "U": 2, "G": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        library = tuple(game.state.players["A"].zones["library"])
+
+        for spell, target in ((regrowth, from_graveyard), (normal, creature)):
+            self.priority(game, "B")
+            result = game.act("pilot:B", {"action_id": "cast:" + spell.ref, "targets": [target.ref], "pay": "auto"})
+            self.assertTrue(result.ok, result.summary)
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual("hand", game.state.cards[target.object_id].zone)
+            self.assertEqual(library, tuple(game.state.players["A"].zones["library"]))
+
+        self.priority(game, "B")
+        result = game.act("pilot:B", {"action_id": "cast:" + overload.ref, "cost_option": "overload",
+                                     "targets": [], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "hand" for card in (source, *targets)))
+        self.assertEqual(library[:-1], tuple(game.state.players["A"].zones["library"]))
+        private_ref = game.state.cards[library[-1]].ref
+        for seat in "BCD":
+            self.assertNotIn(private_ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_land_return_activation_and_departure_limit_require_their_closed_authorities(self):
+        card = self.db.lookup(LAND_RETURN_ARCHITECT, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, LAND_RETURN_ARCHITECT)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = semantics.programs_for_oracle(card.oracle_id)
+        activated, = (program for program in programs if program.event == "activate"
+                      and ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY in program.capability_dependencies)
+        trigger, = (program for program in programs if program.event == "permanent.leave")
+        self.assertEqual(2, trigger.trigger_limit["schema_version"])
+        self.assertEqual(1, activated.cost_schema["announced_x_symbols"])
+        cap = ACTIVATION_GRAVEYARD_MANA_VALUE_CAPABILITY
+        dependencies = tuple(value for value in activated.capability_dependencies if value != cap)
+        altered = replace(activated, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile=PROFILE).to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + cap, binding["blockers"])
+        dependencies = tuple(value for value in trigger.capability_dependencies
+                             if value != "trigger.usage.departure_incarnation")
+        with self.assertRaisesRegex(ValueError, "Trigger limits require their usage capability dependency"):
+            replace(trigger, capability_dependencies=dependencies,
+                    capability_closure=self.registry.closure(dependencies, profile=PROFILE).to_dict())
+        for before, after in (("land you control", "creature you control"), ("your graveyard", "a graveyard"),
+                              ("X or less", "equal to X"), ("Activate only as a sorcery.", ""),
+                              ("noncreature permanents", "noncreature cards")):
+            changed = replace(card, oracle_text=card.oracle_text.replace(before, after))
+            ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile=PROFILE)
+            self.assertNotEqual("exact", ir.status)

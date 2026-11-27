@@ -391,6 +391,14 @@ counts retain the ordinary current-top identity validation and simultaneous,
 replacement-aware zone transaction. Declared spell-cost or public-definition
 amounts require their separate numeric capability, not runtime Oracle parsing.
 
+A fixed Mill can require its resolving controller to choose one creature,
+enchantment, or land from that instruction's committed public cards. The
+choice preserves their top-first order and exact post-move incarnations. It
+does not reveal hidden replacement destinations or admit preexisting cards
+from the same zone. With no eligible card, resolution continues immediately.
+The selected card uses the ordinary battlefield entry and Aura attachment
+owners, including replacement choices and save/load.
+
 ## Fixed Surveil
 
 `library.surveil.fixed_controller` owns one mandatory positive fixed-count
@@ -630,6 +638,30 @@ resumed validation use the same bound when a replacement redirects the paid
 creature. The search shuffles once whether a card is found, then the terminal
 instruction exiles the resolving physical spell. Copies retain the paid value
 and resolve the search for their controller.
+
+An announced-X creature search across a caster's library and graveyard asks
+which zones to search before opening the library. When the chosen zones
+include an eligible graveyard card, the caster must find one card across the
+chosen zones. A qualifying library search may fail to find, and only a searched
+library is shuffled. The same stack X bounds the search and determines the
+following conditional team bonus. It affects the creatures the caster controls
+after the search, including any creature that entered in the search, until end
+of turn. The bonus is independent of whether a card was found. This current
+search transport preserves the existing named and historical search codecs.
+
+An unqualified self-entry library search for a face-down play result uses the
+ordinary mandatory search and shuffle. The movement owner grants the resolving
+controller access to the committed exile incarnation. Ordinary land and spell
+timing and costs apply. Control of the source can change separately from the
+private access to the exiled card.
+
+An opponent's own library search can be delegated to a different authenticated
+principal for the duration of the search. The original searcher retains their
+zones, restrictions, and shuffle. A controlled find may replace the original
+destination with public exile. When effects compete, the authorized chooser
+elects the applicable exile effect for each found object. The winner receives
+ordinary play access until that exile incarnation changes. Historical private
+events remain with their original viewers.
 
 ## Searches with a public query maximum
 
@@ -911,3 +943,19 @@ and the canonical result owner checks it again on the current cards.
 The two entries share one tapped movement event, followed by the printed
 shuffle. The same forced shuffle runs when the search is prohibited or finds
 no cards.
+
+## Opponent shuffle and private top partition
+
+The canonical shuffle owner emits a single normalized public occurrence per
+completed owner shuffle when an admitted ability subscribes to it. Terminal
+spells and Omens distinguish their controller from the library owner. The
+occurrence contains the owner seat and its shuffle count. It carries no
+card identities, and two shuffles in one resolution remain separate.
+
+The bounded opponent-shuffle trigger uses that exact seat and occurrence.
+Its controller may decline before inspecting cards. If they accept, the owner
+reads up to two cards from that library's current top and makes both destination
+groups part of one private decision. The controller may exile at most one
+card face up and must order the remaining cards on top. Both continuation and
+commit require the same admitted, still-resolving trigger. Mismatched source,
+view, or current object identities fail closed.

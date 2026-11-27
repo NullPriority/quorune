@@ -117,12 +117,12 @@ def normalized_transition_kind_map(
         raise GameRuleError(
             "Simultaneous transition kinds must be typed and name changed objects"
         )
-    if discard_effect_origin is not None and (
-        not isinstance(discard_effect_origin, DiscardEffectOrigin) or not changes
-        or any(result.get(object_id) is not ZoneTransitionKind.DISCARD or dest != "graveyard"
-               for object_id, dest in changes)
-    ):
-        raise GameRuleError("Discard effect provenance requires one committed discard batch")
+    if discard_effect_origin is not None:
+        discard_destinations = [dest for object_id, dest in changes
+                                if result.get(object_id) is ZoneTransitionKind.DISCARD]
+        if (not isinstance(discard_effect_origin, DiscardEffectOrigin)
+                or not discard_destinations or any(dest != "graveyard" for dest in discard_destinations)):
+            raise GameRuleError("Discard effect provenance requires a committed discard in the batch")
     return result
 
 

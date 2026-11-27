@@ -5,8 +5,11 @@ from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face, prospective_face_view
+from ..commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
 from ..entry_counter_model import (
+    COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY,
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
+    INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
@@ -268,6 +271,10 @@ def typed_dynamic_entry_counter_runtime_dependencies(program):
         if descriptor.get("handler_id") != DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID:
             continue
         source = handler.validate(descriptor).amount_spec.value_source
+        if source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT:
+            required.update((COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY, COMMANDER_CAST_COUNT_CAPABILITY))
+        if source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS:
+            required.update((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query"))
         if source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
             required.add(CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY)
         if source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES:
@@ -363,8 +370,16 @@ class DynamicSelfEntryCounterHandler:
             )
         except (EntryCounterError, TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS and (
+            descriptor["counter_name"] != "loyalty" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Spell-cast entry counts require the additional-loyalty instruction")
         if amount_spec.mana_color is not None and not complete:
             raise SemanticNodeError('Paid-color entry counters require complete-card admission')
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT and (
+            not complete or descriptor["counter_name"] != "loyalty" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Commander history entry requires the complete loyalty counter instruction")
         if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL and (
             not complete or descriptor["counter_name"] != "charge" or descriptor["rule_id"] != "614.1c"
         ):

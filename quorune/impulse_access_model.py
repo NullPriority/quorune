@@ -15,6 +15,7 @@ from .land_entry_library_exile_model import LAND_ENTRY_TOP_EXILE_COUNT, LAND_ENT
 
 IMPULSE_ACCESS_DECLARED_COUNT_VERSION = 2
 SHUFFLED_TOP_FREE_PLAY_VERSION = 9
+TOP_FREE_INSTANT_SORCERY_VERSION = 10
 IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY = "zone.impulse_access.declared_count"
 IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY = "zone.impulse_access.next_end_step"
 
@@ -34,6 +35,8 @@ def impulse_access_count_is_legal(count, version) -> bool:
         return count == COMBAT_DAMAGE_EXILE_COUNT
     if version in {COMBAT_DAMAGE_CAST_EXILE_VERSION, SHUFFLED_TOP_FREE_PLAY_VERSION}:
         return count == 1
+    if version == TOP_FREE_INSTANT_SORCERY_VERSION:
+        return count == 8
     return version == 1 and 1 <= count <= 10
 
 
@@ -68,8 +71,24 @@ def validate_shuffled_top_free_play(effect: Mapping[str, Any], *, actor: str | N
         raise ValueError("Shuffled top free play requires one controller card until end of turn")
 
 
+def top_free_instant_sorcery_effect():
+    return {
+        "op": "fixed_impulse_access", "schema_version": TOP_FREE_INSTANT_SORCERY_VERSION,
+        "player": "$controller", "count": 8, "duration": ImpulseAccessDuration.END_OF_TURN.value,
+    }
+
+
+def validate_top_free_instant_sorcery(effect: Mapping[str, Any], *, actor: str | None = None) -> None:
+    expected = top_free_instant_sorcery_effect()
+    if actor is not None:
+        expected["player"] = actor
+    if (not isinstance(effect, Mapping) or dict(effect) != expected
+            or type(effect["schema_version"]) is not int or type(effect["count"]) is not int):
+        raise ValueError("Free instant or sorcery access requires exactly the controller's top eight until end of turn")
+
+
 def impulse_access_play_policy_is_legal(actor, supplier, duration, version):
-    if version == SHUFFLED_TOP_FREE_PLAY_VERSION:
+    if version in {SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION}:
         return actor == supplier and duration is ImpulseAccessDuration.END_OF_TURN
     if version == OPPONENT_TOP_EXILE_VERSION:
         return actor != supplier and (duration is None or duration is ImpulseAccessDuration.END_OF_TURN)

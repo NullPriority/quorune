@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .private_opponent_library_cast_model import PrivateLibrarySearchPlaySource
+
 """Object-local state reset for CR 400.7 zone transitions."""
 
 from collections.abc import Mapping
@@ -251,7 +253,7 @@ def validate_library_face_down_exile_move(
     reveal_to: Sequence[str] | None,
     unviewed_library_exile: bool,
     private_library_exile_viewer: str | None,
-    private_library_cast_source: str | None,
+    private_library_cast_source: str | PrivateLibrarySearchPlaySource | None,
     active_seats: Sequence[str],
     stack: Sequence[StackItem],
     private_replacement_journal: bool = False,
@@ -270,7 +272,11 @@ def validate_library_face_down_exile_move(
             or private_library_exile_viewer not in active_seats
         ):
             raise GameRuleError("Viewed library exile requires its actual owner")
-    if private_library_cast_source is not None:
+    search_play = isinstance(private_library_cast_source, PrivateLibrarySearchPlaySource)
+    if search_play:
+        if not private_library_cast_source.permits_move(card=card, viewer=private_library_exile_viewer, stack=stack):
+            raise GameRuleError("Private library play requires the selected card and its resolving opponent search")
+    elif private_library_cast_source is not None:
         from .rules.private_damage_library_cast import damage_library_exile_move_is_bound
 
         source = next((item for item in stack if item.ref == private_library_cast_source), None)
@@ -283,21 +289,25 @@ def validate_library_face_down_exile_move(
 
     if type(private_replacement_journal) is not bool or (
         private_replacement_journal and (
-            private_library_exile_viewer is None or private_library_cast_source is not None
+            private_library_exile_viewer is None or (private_library_cast_source is not None and not search_play)
         )
     ):
         raise GameRuleError("A private replacement journal requires private library exile")
 
 
-def mark_library_card_exiled_face_down(card: CardInstance, *, viewer: str | None, cast_source: str | None = None) -> None:
+def mark_library_card_exiled_face_down(
+    card: CardInstance, *, viewer: str | None, cast_source: str | PrivateLibrarySearchPlaySource | None = None,
+) -> None:
     """Keep the authorized viewer on the actual face-down exile incarnation."""
     if card.zone != "exile" or card.object_kind != "card" or cast_source is None and viewer not in (None, card.owner):
         raise ZoneObjectStateError("Face-down library exile requires its actual card and authorized viewer")
     if cast_source is not None:
         from .private_opponent_library_cast_model import private_opponent_library_cast_permission
 
+        normal_play = isinstance(cast_source, PrivateLibrarySearchPlaySource)
         card.annotations["temporary_play_permission"] = private_opponent_library_cast_permission(
-            card, actor=viewer, source_stack_ref=cast_source,
+            card, actor=viewer, source_stack_ref=cast_source.stack_ref if normal_play else cast_source,
+            normal_play=normal_play,
         )
     card.face_down = True
     card.known_to = [viewer] if viewer is not None else []
@@ -305,7 +315,8 @@ def mark_library_card_exiled_face_down(card: CardInstance, *, viewer: str | None
 
 
 def apply_library_exile_visibility(
-    card: CardInstance, destination: str, *, viewer: str | None, unviewed: bool, cast_source: str | None,
+    card: CardInstance, destination: str, *, viewer: str | None, unviewed: bool,
+    cast_source: str | PrivateLibrarySearchPlaySource | None,
 ) -> None:
     if destination == "exile" and (unviewed or viewer is not None):
         mark_library_card_exiled_face_down(card, viewer=viewer, cast_source=cast_source)

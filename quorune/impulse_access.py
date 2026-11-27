@@ -11,6 +11,7 @@ from .fractional_quantity_model import HalfQuantitySpec
 from .impulse_access_model import (
     ImpulseAccessDuration,
     SHUFFLED_TOP_FREE_PLAY_VERSION,
+    TOP_FREE_INSTANT_SORCERY_VERSION,
     TemporaryCastPermissionGrant,
     impulse_access_count_is_legal,
     impulse_access_request_count_is_legal,
@@ -194,12 +195,13 @@ def _play_permission(
 ) -> dict[str, Any] | None:
     if request.duration is None:
         return None
-    free_play = request.schema_version in {COMBAT_DAMAGE_EXILE_VERSION, SHUFFLED_TOP_FREE_PLAY_VERSION}
+    spell_types_only = request.schema_version == TOP_FREE_INSTANT_SORCERY_VERSION
+    free_play = spell_types_only or request.schema_version in {COMBAT_DAMAGE_EXILE_VERSION, SHUFFLED_TOP_FREE_PLAY_VERSION}
     permission: dict[str, Any] = {
         "player": request.beneficiary,
         "zone": "exile",
         "without_mana_cost": free_play,
-        "allow_land": request.schema_version != COMBAT_DAMAGE_CAST_EXILE_VERSION,
+        "allow_land": not spell_types_only and request.schema_version != COMBAT_DAMAGE_CAST_EXILE_VERSION,
         "allow_spell": True,
         "duration": request.duration.value,
         "granted_turn_sequence": host.state.turn_sequence,
@@ -241,7 +243,11 @@ def commit_fixed_impulse_access(
         if card.zone != "exile":
             continue
         if permission is not None:
-            card.annotations["temporary_play_permission"] = dict(permission)
+            card.annotations["temporary_play_permission"] = {
+                **permission,
+                **({"instant_sorcery_incarnation": card.logical_object_id}
+                   if plan.request.schema_version == TOP_FREE_INSTANT_SORCERY_VERSION else {}),
+            }
         exiled.append(card)
     changed_players = [plan.request.player]
     if exiled and permission is not None and plan.request.beneficiary != plan.request.player:
@@ -405,6 +411,17 @@ def grant_void_counter_play_permission(host, effect, *, actor, reason):
     return card.ref
 
 
+def temporary_play_permission_for_view(host, seat, card):
+    """Check the spell face actually proposed or announced for a restricted grant."""
+    permission = current_temporary_play_permission(host.state, seat, card)
+    if permission is not None and "instant_sorcery_incarnation" in permission:
+        type_line = str(host._effective_card_data(card).get("type_line") or "")
+        types, _, _ = host._type_parts(type_line)
+        if not types.intersection(("instant", "sorcery")):
+            return None
+    return permission
+
+
 def current_temporary_play_permission(state, seat, card):
     """Read concurrent exile grants and the historical single-grant wire format."""
     from .rules.void_counter_play import PERMISSIONS_FIELD
@@ -463,6 +480,14 @@ def temporary_play_permission_is_current(
     if (
         str(permission.get("player") or "") != seat
         or str(permission.get("zone") or "") != card.zone
+    ):
+        return False
+    if "instant_sorcery_incarnation" in permission and (
+        permission["instant_sorcery_incarnation"] != card.logical_object_id
+        or card.zone != "exile" or card.face_down or permission.get("allow_land") is not False
+        or permission.get("allow_spell") is not True or permission.get("without_mana_cost") is not True
+        or permission.get("allows_other_spell_costs") is not False
+        or permission.get("duration") != ImpulseAccessDuration.END_OF_TURN.value
     ):
         return False
     duration = permission.get("duration")

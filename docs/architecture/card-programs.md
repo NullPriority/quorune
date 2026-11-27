@@ -35,6 +35,11 @@ membership, and capability closure before assigning one physical command-zone
 identity. Deck-format legality and two-commander pairing retain their existing
 authorities.
 
+The pinned Commander companion-role restriction is a setup declaration. The
+deck validator and game setup reject a banned companion. The source compiler
+can close the exact outside-game clause for an otherwise legal starting-deck
+card under the Commander profiles. The declaration supplies no gameplay action.
+
 ## Ownership and flow
 
 `quorune/card_programs/` owns validation, deterministic
@@ -82,6 +87,12 @@ limit, and target meaning. Closed scalar event conjunctions may reorder their
 leaves; only `creature.dies` aliases its sealed previous controller to its
 controller field. A single positional destroy target may use the existing flat
 or one-group target codec, and its textual reason remains reporting metadata.
+An optional artifact target on a source-attack trigger uses the existing
+destruction and target-controller information owners. Its draw compares the
+trigger controller to the original target's effective controller during
+resolution, including the departure information captured by destruction.
+A legal artifact that survives the attempt can still satisfy the condition.
+Choosing zero targets produces no draw.
 Fixed graveyard-card exile may compare through its complete typed target and
 result owner. An optional artifact search into the controller's graveyard may
 compare through the counted-search owner while retaining the outer decline

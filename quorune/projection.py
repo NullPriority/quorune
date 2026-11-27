@@ -117,7 +117,7 @@ class StateProjector:
     def seat_for(principal: str) -> str | None:
         return principal.split(":", 1)[1] if principal.startswith("pilot:") else None
 
-    def _view_seats_for(self, principal: str) -> set[str]:
+    def _view_seats_for(self, principal: str, *, include_search_scope: bool = True) -> set[str]:
         """Return every seat whose private information this principal may see.
 
         A pilot keeps access for their authenticated seat while controlling
@@ -136,7 +136,11 @@ class StateProjector:
             )
         capability = CapabilityManager(self.state).capability_for(principal)
         if capability is not None and capability.actor in self.state.players:
-            seats.add(capability.actor)
+            from .library_search_control import pending_library_search_control
+
+            if (include_search_scope or pending_library_search_control(
+                    self.state, self.state.pending_decision, capability.actor) is None):
+                seats.add(capability.actor)
         return seats
 
     def _event_visible(self, event: Event, principal: str, seats: set[str] | None = None) -> bool:
@@ -153,7 +157,7 @@ class StateProjector:
                 self.state.players
             ).issubset(event.visibility)
         if seats is None:
-            seats = self._view_seats_for(principal)
+            seats = self._view_seats_for(principal, include_search_scope=False)
         return principal in event.visibility or any(
             seat in event.visibility for seat in seats
         )
@@ -912,7 +916,7 @@ class StateProjector:
 
     def _events(self, principal: str, after: int) -> list[dict[str, Any]]:
         result = []
-        seats = self._view_seats_for(principal)
+        seats = self._view_seats_for(principal, include_search_scope=False)
         for event in reversed(self.state.events):
             if event.event_id <= after:
                 break

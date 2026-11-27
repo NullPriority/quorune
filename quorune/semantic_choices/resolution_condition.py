@@ -43,10 +43,10 @@ def _prepare_counter_recipient_control(effect, context):
 
 
 def _prepare_controlled_artifact_token_branch(effect, context):
-    from ..rules.controlled_artifact_token_result import controlled_artifact_token_effects
+    from ..rules.controlled_artifact_token_result import controlled_artifact_result_effects
 
     try:
-        effects = controlled_artifact_token_effects(effect, actor=context.actor, stack_controller=context.stack_controller)
+        effects = controlled_artifact_result_effects(effect, actor=context.actor, stack_controller=context.stack_controller)
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
     return SemanticChoicePreparation(
@@ -78,8 +78,8 @@ class PublicResolutionConditionHandler:
         from ..rules.named_cast_win import uses_named_cast_win
         if uses_named_cast_win(effect):
             return _prepare_named_cast_win(effect, context)
-        from ..rules.controlled_artifact_token_result import uses_controlled_artifact_token_branch
-        if uses_controlled_artifact_token_branch(effect):
+        from ..rules.controlled_artifact_token_result import uses_controlled_artifact_result_branch
+        if uses_controlled_artifact_result_branch(effect):
             return _prepare_controlled_artifact_token_branch(effect, context)
         from ..rules.counter_recipient_control import uses_counter_recipient_control
         if uses_counter_recipient_control(effect):

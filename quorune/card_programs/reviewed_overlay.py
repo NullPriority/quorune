@@ -217,6 +217,25 @@ def _same_announced_x_search(generated, reviewed):
     return {**actual, "selector": selector} == expected
 
 
+def _same_cast_x_zone_search(generated, reviewed):
+    from ..replacement.immutable import thaw_value
+    from ..rules.cast_x_zone_searches import is_closed_cast_x_zone_search_program
+
+    if (not is_closed_cast_x_zone_search_program(generated) or len(reviewed.effects) != 2
+            or generated.destination != reviewed.destination
+            or not _same_search_cost(generated.cost_schema, reviewed.cost_schema)):
+        return False
+    old_search, old_pump = map(thaw_value, reviewed.effects)
+    expected_search = {
+        "op": "search", "searching_player": "$controller", "zone": ["library", "graveyard"],
+        "selector": {"types": ["Creature"], "mana_value": {"maximum": "$x"}},
+        "count": {"minimum": 0, "maximum": 1}, "destination": "battlefield",
+        "reveal": False, "shuffle_after": True, "optional": True,
+    }
+    expected_pump = {**thaw_value(generated.effects[1]), "amount": "$x"}
+    return old_search == expected_search and old_pump == expected_pump
+
+
 def shadowed_reviewed_counted_search_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -228,14 +247,17 @@ def shadowed_reviewed_counted_search_keys(
     applies while assembling current programs, with matching source hashes,
     events, targets, costs and effect semantics rather than a card identity.
     """
+    from ..cast_x_search_model import CAST_X_ZONE_SEARCH_CAPABILITY
+
     reviewed = {program.key: program for program in reviewed_programs}
     shadowed = set()
+    search_capabilities = {FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, CAST_X_ZONE_SEARCH_CAPABILITY}
     for generated in generated_programs:
         old = reviewed.get(generated.key)
         if (
             old is None or generated.trust_level != "trusted"
             or old.trust_level != "trusted"
-            or FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID not in generated.capability_dependencies
+            or not search_capabilities.intersection(generated.capability_dependencies)
         ):
             continue
         if not generated.capability_closure or generated.capability_closure.get("trusted") is not True:
@@ -253,6 +275,10 @@ def shadowed_reviewed_counted_search_keys(
             or generated.provenance[field] != old.provenance.get(field)
             for field in ("source_oracle_hash", "source_rulings_hash")
         ):
+            continue
+        if CAST_X_ZONE_SEARCH_CAPABILITY in generated.capability_dependencies:
+            if _same_cast_x_zone_search(generated, old):
+                shadowed.add(old.key)
             continue
         if _same_announced_x_search(generated, old):
             shadowed.add(old.key)

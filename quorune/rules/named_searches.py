@@ -18,9 +18,9 @@ def named_zone_search_instruction_capabilities(effect):
 def named_zone_search_minimum(host, seat, effect, options):
     """CR 701.23b's Splinter example: a public match cannot be hidden failure."""
     _spec, zones = decode_named_zone_selection(effect)
-    refs = {row if isinstance(row, str) else row["id"] for row in options}
-    return int("graveyard" in zones and any(host.state.cards[oid].ref in refs
-        for oid in host.state.players[seat].zones["graveyard"]))
+    from .library_search_rules import public_graveyard_search_minimum
+
+    return public_graveyard_search_minimum(host, seat, zones, options)
 
 
 def named_zone_search_node_capabilities(*, effects, target_schema, mechanic_ids):

@@ -79,6 +79,7 @@ class ActivationProposalHost(Protocol):
         acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
         announcing_targets: bool = False,
+        record_optimization: bool = True,
     ) -> tuple[list[str], Any]: ...
 
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
@@ -364,11 +365,13 @@ def _collect_activation_payment(host, actor, source, ability, response, targets)
         requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
     from .variable_colored_reveal import variable_colored_reveal_proposal_details
     from .announced_subtype_sacrifice import announced_subtype_sacrifice_proposal_details
+    from .commander_identity_life import commander_identity_life_details
 
     details = {
         **waterbend_details,
         **variable_colored_reveal_proposal_details(host, actor, ability, announced_x, response),
         **announced_subtype_sacrifice_proposal_details(host, actor, source, ability, announced_x, response),
+        **commander_identity_life_details(host, actor, ability),
     }
     return requirements, announced_x, mana_option, details
 
@@ -376,8 +379,10 @@ def _collect_activation_payment(host, actor, source, ability, response, targets)
 def build_activation_proposal(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
+    *,
+    record_optimization: bool = True,
 ) -> ActivationProposal:
-    """Build a complete immutable activation plan without mutation."""
+    """Build an immutable activation plan, optionally counting target evaluation metrics."""
 
     host._check_priority(request.actor)
     response = request.response()
@@ -452,6 +457,7 @@ def build_activation_proposal(
         acting_source=ability_targeting_source(host,source), source_ref=source.ref,
         target_schema=target_schema,
         announcing_targets=True,
+        record_optimization=record_optimization,
     )
     effective_target_schema = (
         target_schema
@@ -763,6 +769,8 @@ def build_activation_offer(
         from .graveyard_copy import announced_activation_choice
 
         x_choice = announced_activation_choice(public_schema)
+        if selected.announced_x_minimum:
+            x_choice.update(minimum=selected.announced_x_minimum, default=selected.announced_x_minimum)
         if selected.loyalty_x:
             x_choice["maximum"] = source.counters.get("loyalty", 0)
         choice_schema = {**(choice_schema or {}), "x": x_choice}

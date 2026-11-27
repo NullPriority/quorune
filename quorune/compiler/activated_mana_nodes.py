@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..rules.announced_mana_value_target import has_activation_mana_value_equality
+from ..rules.announced_mana_value_target import has_activation_mana_value_target
 
 """Closed Oracle-IR lowering for fixed-output activated mana abilities."""
 
@@ -522,6 +522,19 @@ def _selected_graveyard_mill_activation_capabilities(effects, cost_schema):
 def _targeted_activation_result_gate(
     *, effects, target_schema, mechanics, active_zone, cost_schema, capability_registry, capability_profile,
 ):
+    from ..rules.loyalty_attachment import (
+        LOYALTY_ATTACHMENT_CAPABILITY, LOYALTY_ATTACHMENT_MECHANIC, loyalty_attachment_dependencies,
+    )
+
+    if LOYALTY_ATTACHMENT_MECHANIC in mechanics:
+        required = loyalty_attachment_dependencies(
+            effects=effects, target_schema=target_schema, active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{LOYALTY_ATTACHMENT_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
     from ..rules.source_directed_redirect_shapes import source_directed_redirect_node_capabilities
     from ..rules.source_directed_redirect_model import SOURCE_DIRECTED_REDIRECT_CAPABILITY, is_source_directed_redirect
 
@@ -687,9 +700,11 @@ def _activated_effect_dependency_gate(
         )
     )
     if (
-        capability_shaped_effect or has_activation_mana_value_equality(target_schema)
+        capability_shaped_effect or has_activation_mana_value_target(target_schema)
         or closed_prevention_effect
         or closed_target_sequence
+        or (target_schema is None and type(cost_schema.get("loyalty_delta")) is int
+            and "fixed-resolution-mana" in mechanics)
         or (active_zone == "battlefield" and any(uses_source_graveyard_recycling(effect) for effect in effects))
         or FIXED_NONREPEATING_MODAL_MECHANIC in mechanics
     ) and capability_registry is not None:
@@ -700,7 +715,7 @@ def _activated_effect_dependency_gate(
             trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
-            cost_schema=cost_schema if has_activation_mana_value_equality(target_schema) or any(
+            cost_schema=cost_schema if has_activation_mana_value_target(target_schema) or any(
                 is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in effects
             ) else None,
             explicit_capabilities=_selected_graveyard_mill_activation_capabilities(effects, cost_schema),
@@ -888,12 +903,15 @@ def _compiled_activated_effect(
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
     from .finite_damage_redirection_nodes import finite_damage_redirection_template
     from .library_search_templates import dragon_graveyard_copy_search_template, target_player_basic_land_search_template
+    from .equipped_planeswalker_nodes import loyalty_attachment_template
 
     from .temporary_self_copy_templates import temporary_self_copy_template
     from .fixed_effect_clause_sequences import fixed_proliferate_sequence_template
 
     if dragon_search := dragon_graveyard_copy_search_template(text, source_name=card_name):
         return dragon_search
+    if attachment := loyalty_attachment_template(text, source_name=card_name):
+        return attachment
     if player_search := target_player_basic_land_search_template(text):
         return player_search
     if proliferate := fixed_proliferate_sequence_template(text):

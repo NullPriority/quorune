@@ -699,6 +699,11 @@ def _resume_semantic_replacement(
 
 
 def _scope_replayed_event_choice(host, restored, pending, selection):
+    from .rules.repeated_apnap_payment import is_payment_round
+
+    if restored.resume_kind == "semantic" and is_payment_round(restored.thaw_effect()):
+        fields = {"effect_id": selection} if isinstance(selection, str) else dict(selection)
+        return {**fields, "event_id": fields.get("event_id", pending.event_id)}
     if (restored.resume_kind == 'semantic_intent_completion'
             and restored.semantic_intent_kind == 'graveyard_library_cost_batch'):
         fields = {'effect_id': selection} if isinstance(selection, str) else dict(selection)

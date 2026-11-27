@@ -1,0 +1,193 @@
+{
+  "cards": [
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "name": "The Peregrine Dynamo",
+      "mana_cost": "{3}",
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "Haste\n{1}, {T}: Copy target activated or triggered ability you control from another legendary source that's not a commander. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "5",
+      "type_line": "Legendary Artifact Creature — Construct",
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "41fed659-237c-4d8e-ad31-d17fa0d3f764",
+      "name": "Ozolith, the Shattered Spire",
+      "mana_cost": "{1}{G}",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Cycling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "If one or more +1/+1 counters would be put on an artifact or creature you control, that many plus one +1/+1 counters are put on it instead.\n{1}{G}, {T}: Put a +1/+1 counter on target artifact or creature you control. Activate only as a sorcery.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Legendary Artifact",
+      "cmc": 2.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "A “legendary source” is a permanent, spell, or card in any zone with the supertype “legendary.” For example, The Peregrine Dynamo’s ability can target a cycling ability you’ve activated if the discarded card is a legendary card."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "If the ability is modal (that is, if it says, “Choose one —” or similar), the mode is copied and can’t be changed."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "If the ability divides damage or distributes counters among a number of targets, the division and number of targets can’t be changed. If you choose new targets, you must choose the same number of targets."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They’re generally written “[Cost]: [Effect].” Some keyword abilities (such as equip) are activated abilities and will have colons in their reminder text. An activated mana ability is one that produces mana as it resolves, not one that costs mana to activate."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Triggered abilities use the word “when,” “whenever,” or “at.” They’re often written as “[Trigger condition], [effect].” Some keyword abilities are triggered abilities and will have “when,” “whenever,” or “at the beginning of” in their reminder text."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "The source of the copy is the same as the source of the original ability."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Any choices made when the ability resolves won’t have been made yet when it’s copied. Any such choices will be made separately when the copy resolves. If a triggered ability asks you to pay a cost, you pay that cost for the copy separately."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "In some cases involving linked abilities, an ability requires information about “the exiled card.” When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. If an ability attempts to create a token that is a copy of “the exiled card,” it creates a token for each card exiled this way that is a copy of that card."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "If an ability is linked to a second ability, copies of that ability are also linked to that second ability. If the second ability refers to “the exiled card,” it refers to all cards exiled by the ability and the copy. For example, if Tidehollow Sculler’s enters-the-battlefield ability is copied and two cards are exiled, they both return when Tidehollow Sculler leaves the battlefield."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "The Peregrine Dynamo’s ability targets an ability that is on the stack and creates another instance of that ability on the stack. It doesn’t cause any object to gain an ability."
+    },
+    {
+      "oracle_id": "da21f1a7-65d0-46d0-8ad1-f84a387ba753",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "If the activated ability’s cost contains a choice, such as a creature to sacrifice or a number of counters to remove, the copy uses that same information. You can’t pay the cost again, even if you want to."
+    },
+    {
+      "oracle_id": "41fed659-237c-4d8e-ad31-d17fa0d3f764",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "However, if Ozolith, the Shattered Spire somehow enters the battlefield with +1/+1 counters it, its first ability won't apply to itself."
+    },
+    {
+      "oracle_id": "41fed659-237c-4d8e-ad31-d17fa0d3f764",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If another artifact or creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead."
+    },
+    {
+      "oracle_id": "41fed659-237c-4d8e-ad31-d17fa0d3f764",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If you somehow control two copies of Ozolith, the Shattered Spire, the number of +1/+1 counters put on an artifact or creature you control is two plus the original number. Three Ozoliths add three, and so on."
+    },
+    {
+      "oracle_id": "41fed659-237c-4d8e-ad31-d17fa0d3f764",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If two or more effects attempt to modify how many counters would be put onto a permanent you control, you choose the order to apply those effects, no matter who controls the sources of those effects."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

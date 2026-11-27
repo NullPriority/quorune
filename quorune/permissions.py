@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Collection, Iterable, Iterator
 
 from .model import Capability, DecisionGroup, GameState
+from .library_search_control import pending_library_search_control
 
 
 class PermissionDenied(RuntimeError):
@@ -90,6 +91,10 @@ class CapabilityManager:
             yield decision.role, None if actor == decision.role else actor, decision.allowed_actions
             return
         own_principal = self.pilot_principal(actor)
+        search = pending_library_search_control(self.state, decision, actor)
+        if search is not None and search.controller is not None:
+            yield self.pilot_principal(search.controller.controller), actor, ["choose"]
+            return
         controller = current_turn_controller(self.state, actor)
         principal = self.pilot_principal(controller) if controller else own_principal
         actions = decision.allowed_actions
@@ -135,6 +140,9 @@ class CapabilityManager:
         player = self.state.players.get(actor) if actor is not None else None
         if player is None or not player.in_game:
             return False
+        search = pending_library_search_control(self.state, self.state.pending_decision, player.seat)
+        if search is not None and search.controller is not None:
+            return capability.principal == self.pilot_principal(search.controller.controller)
         if capability.principal == self.pilot_principal(player.seat):
             return True
         controller = current_turn_controller(self.state, player.seat)

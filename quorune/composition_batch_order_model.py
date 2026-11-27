@@ -21,7 +21,7 @@ class CompositionDepartureSubject:
         zones={'graveyard','library','hand','exile','command','outside'}
         if (not isinstance(self.card_state,Mapping) or self.requested_destination not in zones
                 or self.destination not in zones or type(self.ordering_actor) is not str or not self.ordering_actor
-                or self.transition_kind not in {'ordinary','sacrifice'}
+                or self.transition_kind not in {'ordinary','sacrifice','discard'}
                 or type(self.position) not in {str,int}
                 or type(self.position) is int and self.position<1
                 or type(self.position) is str and self.position not in {'top','bottom'}):
@@ -29,9 +29,13 @@ class CompositionDepartureSubject:
         state=FrozenMap(self.card_state)
         try:card=CardInstance.from_dict(thaw_value(state))
         except (ValueError,TypeError,KeyError) as exc:raise ValueError('Composition subject card is malformed') from exc
-        if (card.zone!='battlefield' or FrozenMap(card.to_dict())!=state
-                or any(type(value) is not str or not value for value in (card.object_id,card.ref,card.owner,card.controller))):
-            raise ValueError('Composition batch subjects require canonical battlefield objects')
+        expected_zone = "hand" if self.transition_kind == "discard" else "battlefield"
+        if (card.zone != expected_zone or FrozenMap(card.to_dict()) != state
+                or any(type(value) is not str or not value for value in (card.object_id,card.ref,card.owner,card.controller))
+                or expected_zone == "hand" and (
+                    card.permanent_composition is not None or self.requested_destination != "graveyard"
+                )):
+            raise ValueError("Composition batch subjects require canonical departures or accompanying discards")
         if self.destination in {'graveyard','library','hand','command'} and self.ordering_actor!=card.owner:
             raise ValueError('The physical owner orders this destination')
         object.__setattr__(self,'card_state',state)

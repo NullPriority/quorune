@@ -243,7 +243,7 @@ def resolution_condition_node_capabilities(
     cost_schema: Mapping[str, Any] | None = None,
 ) -> tuple[str, ...]:
     from .controlled_artifact_token_result import (
-        controlled_artifact_token_node_capabilities, uses_controlled_artifact_token_branch,
+        controlled_artifact_result_node_capabilities, uses_controlled_artifact_result_branch,
     )
     from .entrant_power_branch import entrant_power_branch_capabilities, uses_entrant_power_branch
     from .monarch_movement_replacements import monarch_movement_capabilities, monarch_movement_mode
@@ -278,8 +278,8 @@ def resolution_condition_node_capabilities(
         return counter_recipient_control_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
         )
-    if any(uses_controlled_artifact_token_branch(effect) for effect in effects):
-        return controlled_artifact_token_node_capabilities(effects=effects, target_schema=target_schema, cost_schema=cost_schema)
+    if any(uses_controlled_artifact_result_branch(effect) for effect in effects):
+        return controlled_artifact_result_node_capabilities(effects=effects, target_schema=target_schema, cost_schema=cost_schema)
     if any(is_monarch_counter_doubling(effect) for effect in effects):
         if cost_schema is not None:
             return ()

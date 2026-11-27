@@ -28,7 +28,8 @@ def physical_order_payload(frame):
         return state["printed_name"]
 
     previous = [
-        {"player": group[0], "destination": group[1], "cards": list(order)}
+        {"player": group[0], "destination": group[1],
+         "cards": [ref for ref in order if states[ref]["zone"] != "hand"]}
         for (group, _refs), order in zip(frame.request.choices, frame.orders)
         if group[1] != "library"
     ]

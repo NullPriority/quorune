@@ -36,6 +36,10 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
         qualified_stack_copy_specs)
     if len(effects) == 1 and PERMANENT_SPELL_COPY_FIELD in effects[0]:
         return permanent_spell_copy_node_dependencies(effects[0], target_schema)
+    from .announced_ability_copies import COPY_FIELD, node_dependencies
+
+    if any(COPY_FIELD in leaf for leaf in effects):
+        return node_dependencies(effects=effects, schema=target_schema)
     mechanics = set(mechanic_ids)
     if any(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect for effect in effects):
         expected = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
@@ -76,6 +80,10 @@ def qualified_stack_copy_runtime_dependencies(program):
     from collections.abc import Mapping
     from ..stack_spell_copy_model import qualified_stack_copy_specs, QUALIFIED_STACK_COPY_MECHANIC
 
+    from .announced_ability_copies import program_dependencies
+
+    if required := program_dependencies(program):
+        return required
     effects = tuple(getattr(program, 'effects', ()))
     schema = getattr(program, 'target_schema', None)
     from .effect_shape_walkers import nested_effects

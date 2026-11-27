@@ -15,7 +15,8 @@ from ..fractional_quantity_model import HalfQuantitySpec
 from ..query_effect_amount_model import OpponentHandMillCount
 from ..selected_graveyard_mill_count import SelectedGraveyardMillCount
 from ..rules.milled_creature_tokens import MilledCreatureTokens
-from ..rules.committed_mill_cards import ADVENTURE_MILL_COUNT, MillAdventuresToHand
+from ..rules.committed_mill_cards import MillAdventuresToHand
+from ..rules.milled_permanent_battlefield import MillOnePermanentToBattlefield
 from ..rad_counters import RadMillFollowup
 
 from ..discard_effect_origin import DiscardEffectOrigin
@@ -313,7 +314,7 @@ class MillCardsIntent:
     reason: str
     batch_players: tuple[str, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
-    followup: MilledCreatureTokens | RadMillFollowup | MillAdventuresToHand | None = None
+    followup: MilledCreatureTokens | RadMillFollowup | MillAdventuresToHand | MillOnePermanentToBattlefield | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -342,9 +343,10 @@ class MillCardsIntent:
         if isinstance(self.followup, RadMillFollowup):
             if players or self.actor != self.player or type(self.count) is not int or self.count <= 0:
                 raise ValueError("Radiation requires resolved single-player Mill on its controller")
-        elif isinstance(self.followup, MillAdventuresToHand):
-            if players or self.actor != self.player or type(self.count) is not int or self.count != ADVENTURE_MILL_COUNT:
-                raise ValueError("Committed Adventure selection requires the fixed controller Mill")
+        elif isinstance(self.followup, (MillAdventuresToHand, MillOnePermanentToBattlefield)):
+            if (players or self.actor != self.player or type(self.count) is not int
+                    or self.count != self.followup.effect()["count"]):
+                raise ValueError("Committed public card selection requires the fixed controller Mill")
         elif self.followup is not None and (
             not isinstance(self.followup, MilledCreatureTokens) or type(self.count) is not int or self.actor not in players
         ):

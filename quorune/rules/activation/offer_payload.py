@@ -5,10 +5,13 @@ from __future__ import annotations
 from ...activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_OFFER_FIELD
 from .granting_attachment import payable_granting_attachment
 from .pricing import payable_activation_mana_options
+from .commander_identity_life import current_commander_identity_life, uses_commander_identity_life
 
 
 def activation_offer_cost_hint(host, seat, source, ability):
     hint = ability.compact(source_ref=source.ref, zone=source.zone)
+    if uses_commander_identity_life(ability):
+        hint["life"] = current_commander_identity_life(host, seat, ability)
     from ..chosen_color_draw_price import current_draw_price_color
 
     chosen_output, color = current_draw_price_color(host, source, ability)
@@ -62,6 +65,7 @@ def activation_offer_payload(source,selected,hint):
                 "choose_cost",
                 "mana_options",
                 "announced_x_symbols",
+                "announced_x_minimum",
                 "granting_attachment",
                 "chosen_payment_color",
             }

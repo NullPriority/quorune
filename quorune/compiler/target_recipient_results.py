@@ -153,6 +153,27 @@ def controlled_artifact_token_template(text, *, compile_component):
     return program
 
 
+def controlled_artifact_draw_template(text, *, compile_component):
+    if re.fullmatch(r"Destroy up to one target artifact\. If you controlled that (?:permanent|artifact), draw a card\.",
+                    " ".join(text.split()), re.I) is None:
+        return None
+    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
+    from ..rules.controlled_artifact_token_result import (
+        controlled_artifact_draw_branch, controlled_artifact_draw_node_capabilities,
+    )
+
+    destruction = compile_component("Destroy up to one target artifact.")
+    draw_id, effects, target, mechanics = compile_component("Draw a card.")
+    if draw_id is None or target is not None or len(effects) != 1:
+        return None
+    branch = (draw_id, (controlled_artifact_draw_branch(effects[0]),), None, (*mechanics, RESOLUTION_CONDITION_MECHANIC))
+    program = _program((destruction, branch), schema=destruction[2])
+    if program is not None and controlled_artifact_draw_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+    ):
+        return program
+
+
 def target_recipient_result_template(text, *, compile_component):
     if controlled_tokens := controlled_artifact_token_template(text, compile_component=compile_component):
         return controlled_tokens

@@ -8,6 +8,11 @@ from .context import SemanticNodeError
 from .intents import IntentPlan
 
 
+SEARCH_CONTROL_CAPABILITY = "library.search.opponent_control_and_exile"
+SEARCH_CONTROL_HANDLER = "permission.action.library-search-control.v1"
+_CONTROL_MODES = frozenset({"control_opponent", "exile_opponent_found"})
+
+
 @dataclass(frozen=True,slots=True)
 class LibrarySearchRuleHandler:
     handler_id:str=LIBRARY_SEARCH_RULE_HANDLER
@@ -22,7 +27,11 @@ class LibrarySearchRuleHandler:
         if (descriptor['handler_id']!=self.handler_id or type(descriptor['schema_version']) is not int or descriptor['schema_version']!=1
             or descriptor['event']!=self.event or descriptor['requires_complete_card_program'] is not True):
             raise SemanticNodeError('Library search rule identity or complete-source contract changed')
-        try:return LibrarySearchRuleSpec.from_dict(descriptor['rule'])
+        try:
+            rule = LibrarySearchRuleSpec.from_dict(descriptor['rule'])
+            if (self.handler_id == SEARCH_CONTROL_HANDLER) != (rule.mode in _CONTROL_MODES):
+                raise ValueError("Search rule kind does not match its authority")
+            return rule
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
 
     def lower(self,descriptor,context):

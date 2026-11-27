@@ -183,9 +183,10 @@ def land_play_mana_runtime_dependencies(program):
 
 
 def activated_catalog_runtime_dependencies(program):
+    from ..rules.activation.commander_identity_life import commander_identity_life_draw_runtime_dependencies
     from ..rules.forage import forage_activation_runtime_dependencies
     from ..rules.noted_mana import noted_mana_program_dependencies
-    from ..rules.commander_lifelink import commander_lifelink_runtime_dependencies
+    from ..rules.owned_commander_battlefield_return import paid_commander_target_runtime_dependencies
     from ..rules.controller_top_exile_activation import controller_top_exile_runtime_dependencies
 
     return (*forage_activation_runtime_dependencies(program), *ability_local_mana_reduction_runtime_dependencies(program),
@@ -193,7 +194,8 @@ def activated_catalog_runtime_dependencies(program):
             *source_counter_placement_runtime_dependencies(program),
             *land_play_mana_runtime_dependencies(program),
             *land_potential_runtime_dependencies(program), *noted_mana_program_dependencies(program),
-            *commander_lifelink_runtime_dependencies(program), *controller_top_exile_runtime_dependencies(program))
+            *paid_commander_target_runtime_dependencies(program), *controller_top_exile_runtime_dependencies(program),
+            *commander_identity_life_draw_runtime_dependencies(program))
 
 
 @dataclass(frozen=True, slots=True)

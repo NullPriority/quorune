@@ -63,6 +63,7 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
             "types_none": ["land"],
         },
         "artifact or creature": {"types_any": ["artifact", "creature"]},
+        "artifact or enchantment": {"types_any": ["artifact", "enchantment"]},
         "creature or enchantment": {
             "types_any": ["creature", "enchantment"]
         },

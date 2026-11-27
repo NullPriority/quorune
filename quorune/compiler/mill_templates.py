@@ -129,15 +129,24 @@ def committed_milled_creature_token_template(text):
 
 
 def committed_mill_card_template(text):
-    if " ".join(text.split()).casefold() != (
+    normalized = " ".join(text.split()).casefold()
+    if normalized == (
         "mill seven cards. then put all cards that have an adventure "
         "from among the milled cards into your hand."
     ):
-        return None
-    from ..rules.committed_mill_cards import MillAdventuresToHand
+        from ..rules.committed_mill_cards import MillAdventuresToHand
 
-    result = MillAdventuresToHand()
-    return "mill-committed-adventures-to-hand-v1", (result.effect(),), None, (MILL_MECHANIC_ID,)
+        result = MillAdventuresToHand()
+        return "mill-committed-adventures-to-hand-v1", (result.effect(),), None, (MILL_MECHANIC_ID,)
+    if normalized == (
+        "mill seven cards. then put a creature, enchantment, or land card "
+        "from among the milled cards onto the battlefield."
+    ):
+        from ..rules.milled_permanent_battlefield import MillOnePermanentToBattlefield
+
+        result = MillOnePermanentToBattlefield()
+        return "mill-committed-one-permanent-to-battlefield-v1", (result.effect(),), None, (MILL_MECHANIC_ID,)
+    return None
 
 
 def fixed_mill_effect_template(text: str) -> FixedMillEffectTemplate | None:

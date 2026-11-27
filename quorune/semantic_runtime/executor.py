@@ -52,6 +52,7 @@ from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..target_combat_damage_multiplier_model import TargetCombatDamageMultiplierIntent
 from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
 from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
@@ -341,7 +342,7 @@ class SemanticIntentSink(
 
     def player_outcome_intent(self, intent: EliminatePlayersIntent | WinGameIntent) -> None: ...
 
-    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str: ...
+    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str | None: ...
 
     def retarget_stack_item_intent(
         self,
@@ -796,7 +797,7 @@ PlayerIntent = (
     BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
     | DiscardWholeHandsResultIntent | HandLibraryRedrawIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | GraveyardRecyclingIntent | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | ScheduleNextDrawResultIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | TargetCombatDamageMultiplierIntent | ScheduleNextDrawResultIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
     | ScheduleAdditionalBeginningIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
     | NextTurnAttackRestrictionIntent
@@ -807,7 +808,7 @@ PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, HandLibraryRedrawIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     GraveyardRecyclingIntent, TargetLandTypeSettingIntent, FixedSourceSacrificeIntent,
-    TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, ScheduleNextDrawResultIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent, NoMaximumForGameIntent,
+    TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, TargetCombatDamageMultiplierIntent, ScheduleNextDrawResultIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent, NoMaximumForGameIntent,
     TemporaryProtectedAttackPaymentIntent,
     NextTurnAttackRestrictionIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent, TokenMillRepeatIntent, LibraryBottomResultIntent,
@@ -896,6 +897,10 @@ def _execute_player_intent(
         from .scheduled_next_draw import apply_next_draw_result_intent
 
         return intent.actor, apply_next_draw_result_intent(sink, intent).effect_id
+    if isinstance(intent, TargetCombatDamageMultiplierIntent):
+        from .target_combat_damage_multiplier import apply_target_combat_damage_multiplier
+
+        return intent.actor, apply_target_combat_damage_multiplier(sink, intent)
     if isinstance(intent, TemporaryDrawRedirectIntent):
         from .temporary_draw_redirect import apply_temporary_draw_redirect
 
@@ -1193,9 +1198,9 @@ def _bind_event_resolution_results(host, item, raw_effect):
         if raw_effect is not None:
             raw_effect = bind_death_opponent_result(host, scoped_item, raw_effect)
             raw_effect = bind_attacking_opponent_token(host, scoped_item, raw_effect)
-            from ..rules.loot_transform_graveyard import bind_loot_transform
+            from ..rules.cast_coin_transform import bind_owner_transform_resolution
 
-            raw_effect = bind_loot_transform(host, scoped_item, raw_effect)
+            raw_effect = bind_owner_transform_resolution(host, scoped_item, raw_effect)
     except ValueError as exc:
         raise SemanticNodeError(str(exc)) from exc
     return scoped_item, raw_effect

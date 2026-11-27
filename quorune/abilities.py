@@ -175,6 +175,7 @@ class ActivatedAbility:
     power_up: PowerUpSpec | None = None
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
+    announced_x_minimum: int = 0
     boast: bool = False
     reconfigure: bool = False
     forecast: bool = False
@@ -312,6 +313,7 @@ class ActivatedAbility:
         if self.source_counter_placement_cost is not None:
             result[SOURCE_COUNTER_PLACEMENT_FIELD] = self.source_counter_placement_cost.to_dict()
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.announced_x_minimum:result['announced_x_minimum']=self.announced_x_minimum
         if self.variable_colored_reveal_price is not None:
             result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = self.variable_colored_reveal_price.to_dict()
         if self.loyalty_x:
@@ -337,6 +339,7 @@ class ActivatedAbility:
                 if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
             ),
             announced_x_symbols=value.get('announced_x_symbols'),
+            announced_x_minimum=value.get('announced_x_minimum', 0),
             variable_colored_reveal_price=(
                 VariableColoredRevealPrice.from_dict(value[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
                 if VARIABLE_COLORED_REVEAL_PRICE_FIELD in value else None
@@ -444,6 +447,7 @@ class ActivatedAbility:
         }
         mana = {key: value for key, value in self.mana.items() if value}
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.announced_x_minimum:result['announced_x_minimum']=self.announced_x_minimum
         if mana:
             result["m"] = mana
         if self.mana_cost_options:
@@ -675,7 +679,7 @@ def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
                 ability.sacrifice_source, ability.exile_source, ability.life_payment,
                 ability.energy_payment, ability.random_discard_payment, ability.waterbend,
                 ability.source_counter_removal_cost, ability.choices, ability.uncompiled_costs,
-                ability.announced_x_symbols, ability.mill_library_cost, ability.granting_attachment_payment,
+                ability.announced_x_symbols, ability.announced_x_minimum, ability.mill_library_cost, ability.granting_attachment_payment,
                 ability.crew_threshold is not None, ability.saddle_threshold is not None,
                 ability.activation_conditions, ability.activation_limit is not None,
                 ability.sorcery_speed, ability.power_up, ability.boast, ability.forecast, ability.reconfigure))

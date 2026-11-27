@@ -17,7 +17,8 @@ from ..land_entry_library_exile_model import (
 from .land_entry_library_exile import land_entry_top_exile_node_capabilities
 from ..impulse_access_model import (
     IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, IMPULSE_ACCESS_DECLARED_COUNT_VERSION,
-    IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY, SHUFFLED_TOP_FREE_PLAY_VERSION, ImpulseAccessDuration,
+    IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY, SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION,
+    ImpulseAccessDuration, validate_top_free_instant_sorcery,
     impulse_access_count_is_legal, shuffled_top_free_play_effect, validate_shuffled_top_free_play,
 )
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, DECLARED_AMOUNT_CAPABILITY, CastXAmountSpec
@@ -124,6 +125,10 @@ def declared_impulse_access_dependencies(effect):
     if _is_shuffled_top_free_play(effect):
         validate_shuffled_top_free_play(effect)
         return SHUFFLED_TOP_FREE_PLAY_CAPABILITIES
+    if effect.get("schema_version") == TOP_FREE_INSTANT_SORCERY_VERSION:
+        from .loyalty_spell_results import CAPABILITY
+        validate_top_free_instant_sorcery(effect)
+        return CAPABILITY, IMPULSE_ACCESS_CAPABILITY_ID
     if is_combat_damage_cast_exile(effect):
         from .combat_damage_library_access import COMBAT_DAMAGE_CAST_LIBRARY_DEPENDENCIES
 

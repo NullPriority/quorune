@@ -111,6 +111,12 @@ when it announces targets and when a copy selects a replacement target.
 Resolution runs the ordinary reanimation instruction after revalidating the
 target. An announced X of zero remains a legal ceiling.
 
+A sorcery-speed activation can bind the same upper bound to one artifact or
+enchantment card in its controller's graveyard. The activation pays its
+fixed colored mana and announced X and returns one controlled land to its
+owner's hand. Payable offers show the target's minimum X and the largest
+payable X. The announced X and target incarnation are retained for resolution.
+
 An X-cost permanent's self-entry trigger can limit one owned artifact or
 creature card to its sealed entry X. Trigger creation binds the ceiling
 before target selection. Entry without a resolving spell supplies zero.
@@ -684,3 +690,25 @@ opponents until cleanup. The restriction uses that resolving controller and
 the target's current incarnation. The ordinary target owner applies it when
 offering new targets and revalidating pending instructions. A kicked copy
 retains the paid cast fact and applies both instructions to its own target.
+
+## Another legendary noncommander ability source
+
+A controlled stack ability qualifies for this copy target only when the
+source's effective supertype is legendary, its commander status is known to
+be false, and its original incarnation differs from the copy activation's
+source. The target check applies during announcement and revalidation. It
+uses current facts while the source exists in its original zone and last
+known facts after the source departs or phases out.
+
+Ability-source information version three records the commander fact with the
+existing source binding. Earlier records retain the prior shapes and their
+existing ability-source predicates. The new predicate requires complete
+commander and source identity facts.
+
+The paid battlefield commander return targets a permanent designated as a
+commander and checks its actual owner against the activating seat. It uses the
+regular priority and current-turn condition, including a nonempty stack. The
+target stays eligible under another player's control, and a legendary
+lookalike without commander designation stays ineligible. Ordinary target
+incarnation revalidation and the existing owner-hand destination replacement
+choice govern resolution.

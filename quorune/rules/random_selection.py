@@ -17,6 +17,12 @@ def roll_fixed_die(sides: int, *, seed, instruction_key: str, seat: str) -> int:
     ).randint(1, sides)
 
 
+def flip_fixed_coin(*, seed, instruction_key: str, seat: str) -> bool:
+    return bool(_instruction_randomizer(
+        seed=seed, instruction_key=instruction_key, namespace="coin-flip", seat=seat,
+    ).getrandbits(1))
+
+
 def choose_random_integer(minimum: int, maximum: int, *, seed, instruction_key: str, seat: str) -> int:
     if type(minimum) is not int or type(maximum) is not int or minimum >= maximum:
         raise ValueError("A random integer interval needs two ordered integer bounds")

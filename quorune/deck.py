@@ -618,8 +618,16 @@ class DeckLoader:
             in {"mainboard", "commander", "companion", "sideboard"}
         }
         issues: list[dict[str, Any]] = []
+        from .rules.commander_companion_roles import commander_companion_is_banned
+
         for name, board in sorted(legality_entries):
             card = self.card_db.lookup(name)
+            if board == "companion" and commander_companion_is_banned(card.oracle_id):
+                issues.append({
+                    "code": "commander_companion_banned", "message": f"Commander legality: {name} is banned as a companion",
+                    "card": name, "board": board, "legality": "banned", "released_at": card.released_at or None,
+                })
+                continue
             legality = str(
                 card.legalities.get("commander") or "unknown"
             ).casefold()

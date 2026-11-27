@@ -19,7 +19,7 @@ _ORDER_CHOICES = {LOWEST_COST: 'minimum_first', MINIMUM_COST: 'unrestricted_firs
 
 
 def _ordinary_prices(host, seat, source, ability, modifiers, response=None):
-    value = 0 if response is None else chosen_activation_x(ability, response)
+    value = ability.announced_x_minimum if response is None else chosen_activation_x(ability, response)
     if ability.loyalty_x and value > source.counters.get("loyalty", 0):
         raise ActivationProposalError(
             "The source has fewer loyalty counters than the announced cost",

@@ -8,6 +8,7 @@ from ..announced_damage import (
     ANNOUNCED_DAMAGE_CAPABILITY,
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
     DAMAGE_ALLOCATION_FIELD,
+    TURN_DAMAGE_MAXIMUM,
     VariableDamageAllocationSpec,
     damage_allocation_spec,
     validate_announced_damage_effect,
@@ -558,6 +559,9 @@ def _announced_damage_capabilities(effect, target_schema, mechanics) -> tuple[st
         allocation_capabilities = (ANNOUNCED_DAMAGE_CAPABILITY,)
     del group["min"], group["max"]
     group["count"] = 1
+    if (isinstance(spec, VariableDamageAllocationSpec) and spec.quantity == TURN_DAMAGE_MAXIMUM
+            and (maximum != 0 or group != _FIXED_DAMAGE_TARGET_SCHEMAS["creature"])):
+        return ()
     direct = {"op": "damage", "source": "$source", "target": "$target.0", "amount": amount}
     base = _fixed_direct_damage_capabilities(direct, group, mechanics)
     if not base:

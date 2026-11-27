@@ -63,7 +63,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -104,6 +104,9 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError('Optional variable loyalty marker must be true')
     if 'reconfigure' in value and value['reconfigure'] is not True:
         raise ValueError('Optional Reconfigure marker must be true')
+    if "announced_x_minimum" in value and (type(value["announced_x_minimum"]) is not int
+            or value["announced_x_minimum"] != 1):
+        raise ValueError("Announced activation X minimum must be one")
     if 'announced_x_symbols' in value and (type(value['announced_x_symbols']) is not int or value['announced_x_symbols'] <= 0):
         raise ValueError('Announced X symbol count must be a positive integer')
     if 'boast' in value and value['boast'] is not True:raise ValueError('Optional Boast marker must be true')

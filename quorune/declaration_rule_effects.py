@@ -25,6 +25,7 @@ from .temporary_cast_rule_model import (
     ResolvedCastRestriction, ResolvedNextTurnSorceryTiming,
 )
 from .draw_redirect_model import DRAW_REDIRECT_KIND, ResolvedDrawRedirect
+from .target_combat_damage_multiplier_model import MULTIPLIER_KIND, ResolvedTargetCombatDamageMultiplier
 from .next_draw_replacement_model import NEXT_DRAW_REPLACEMENT_KIND, ResolvedNextDrawReplacement
 from .next_spell_cost_model import EFFECT_KIND as NEXT_SPELL_COST_KIND,ResolvedNextSpellCostReduction
 from .source_block_pair_model import SOURCE_BLOCK_PAIR_EFFECT_KIND, ResolvedSourceBlockPair
@@ -367,7 +368,7 @@ ContinuousJournalEffect: TypeAlias = (
     | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction | ResolvedLifeGainProhibition | ResolvedDamagePreventionProhibition
     | ResolvedProtectedAttackPayment | ResolvedDrawRedirect | ResolvedActivationProhibition | ResolvedNextDrawReplacement
     | ResolvedTurnMatchOutcomeProtection | ResolvedAllPlayerTurnRule | ResolvedSacrificeProhibition | ResolvedNoMaximumHandSize
-    | ResolvedNextTurnSorceryTiming | ResolvedNextTurnAttackRestriction
+    | ResolvedNextTurnSorceryTiming | ResolvedNextTurnAttackRestriction | ResolvedTargetCombatDamageMultiplier
 )
 
 
@@ -379,6 +380,8 @@ def continuous_journal_effect_from_dict(
     if isinstance(value, Mapping) and "effect_kind" in value:
         if value["effect_kind"] == RESOLVED_ACTIVATION_PROHIBITION_KIND:
             return ResolvedActivationProhibition.from_dict(value)
+        if value["effect_kind"] == MULTIPLIER_KIND:
+            return ResolvedTargetCombatDamageMultiplier.from_dict(value)
         if value["effect_kind"] == DRAW_REDIRECT_KIND:
             return ResolvedDrawRedirect.from_dict(value)
         if value["effect_kind"] == NEXT_DRAW_REPLACEMENT_KIND:

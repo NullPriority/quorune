@@ -29,6 +29,10 @@ class ChoiceStackView:
     target_snapshots: FrozenMap = field(default_factory=FrozenMap)
     copy_source: FrozenMap | None = None
     upkeep_player: str | None = None
+    library_shuffle: FrozenMap | None = None
+    kind: str | None = None
+    copy_prohibited: bool = False
+    announced_copy_scope: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
