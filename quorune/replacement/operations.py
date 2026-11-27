@@ -180,7 +180,7 @@ class HalveCounterPlacementAmount:
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
-            raise ReplacementEffectError("Counter placement halving requires the supported operation version")
+            raise ReplacementOperationError("Counter placement halving requires the supported operation version")
 
     def to_dict(self) -> dict[str, Any]:
         return {"op": "halve_counter_placement_amount"}

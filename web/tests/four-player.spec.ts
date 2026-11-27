@@ -1,7 +1,7 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { clickMove, submitSingleCleanupDiscard } from "./support/playtest";
+import { clickMove, startPlaytestPod, submitSingleCleanupDiscard } from "./support/playtest";
 import { completeCastGesture, openGameMenu, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
@@ -670,6 +670,101 @@ test("@browser-lifecycle an invited spectator receives a read-only projection an
     );
     await spectatorContext.close();
     await Promise.all(playerContexts.map((context) => context.close()));
+  }
+});
+
+test("@browser-lifecycle three seated players can start with a host-selected player and life total", async ({ browser }) => {
+  test.setTimeout(COLD_FOUR_PLAYER_JOURNEY_TIMEOUT_MS);
+  const context = await browser.newContext({ viewport: { width: 760, height: 650 } });
+  try {
+    const [host, opponent, fourth, chosen] = await Promise.all(Array.from({ length: 4 }, () => context.newPage()));
+    await enter(host, "Table host");
+    await enter(opponent, "Player B");
+    await enter(fourth, "Player C");
+    await enter(chosen, "Player D");
+    await host.getByTestId("room-size").selectOption("4");
+    await host.getByTestId("create-room").click();
+    const firstPlayer = host.getByRole("combobox", { name: "Starting player" });
+    const startingLife = host.getByRole("spinbutton", { name: "Starting life per player" });
+    const start = host.getByTestId("start-game");
+    await expect(firstPlayer).toHaveValue("random");
+    await expect(firstPlayer.locator("option")).toHaveCount(2);
+    await expect(startingLife).toBeHidden();
+
+    const invite = await host.getByTestId("room-invite").textContent();
+    expect(invite).toBeTruthy();
+    async function join(page: Page, seat: string) {
+      await page.getByTestId("invite-code").fill(invite!);
+      await page.getByTestId("seat-select").selectOption(seat);
+      await page.getByTestId("join-room").click();
+    }
+    await join(opponent, "B");
+    await expect(opponent.getByText("Advanced settings", { exact: true })).toHaveCount(0);
+    const deck = "Commander:\n1 Yargle and Multani\n\nMainboard:\n99 Swamp\n";
+    await submitNamedDeck(host, "Host deck", "Yargle and Multani", deck);
+    await submitNamedDeck(opponent, "Opponent deck", "Yargle and Multani", deck);
+    await expect(host.getByText("2 of 3 decks ready", { exact: true })).toBeVisible();
+    await expect(start).toBeDisabled();
+    await join(chosen, "D");
+    await submitNamedDeck(chosen, "Chosen deck", "Yargle and Multani", deck);
+    await expect(firstPlayer.locator('option[value="D"]')).toHaveText("Seat D · Player D");
+    await expect(start).toBeEnabled();
+    await join(fourth, "C");
+    await expect(host.getByText("3 of 4 decks ready", { exact: true })).toBeVisible();
+    await expect(start).toBeDisabled();
+    await submitNamedDeck(fourth, "Fourth deck", "Yargle and Multani", deck);
+    await expect(start).toBeEnabled();
+    await host.getByTestId("remove-seat-C").click();
+    await expect(firstPlayer.locator('option[value="C"]')).toHaveCount(0);
+    await expect(start).toBeEnabled();
+    const advanced = host.getByText("Advanced settings", { exact: true });
+    await advanced.click();
+    await startingLife.fill("0");
+    await expect(start).toBeDisabled();
+    await startingLife.fill("27");
+    await advanced.click();
+    await expect(startingLife).toBeHidden();
+    await startRoomGame(host, "D");
+
+    for (const page of [chosen, host, opponent]) {
+      await expect(page.getByTestId("player-C")).toHaveCount(0);
+      for (const seat of ["A", "B", "D"]) {
+        await expect(page.getByTestId(`player-${seat}`).getByLabel("27 life", { exact: true })).toBeVisible();
+      }
+      await submitImmediateAction(page, "keep");
+    }
+    for (const page of [host, opponent, chosen]) {
+      await expect(page.getByTestId("active-turn-label")).toHaveAttribute("data-seat", "D");
+    }
+  } finally {
+    await context.close();
+  }
+});
+
+test("@browser-lifecycle a saved rules build error stops the loading screen", async ({ browser }) => {
+  const deck = { commander: "Yargle and Multani", cards: "99 Swamp" };
+  const { contexts, pages: [host] } = await startPlaytestPod(browser, [deck, deck], 2208);
+  try {
+    const gameId = await host.locator(".game-shell").getAttribute("data-game-id");
+    expect(gameId).toBeTruthy();
+    const route = `**/api/v1/games/${gameId}`;
+    const detail = {
+      code: "game_rules_build_required",
+      message: "This saved match needs its original rules build to resume.",
+    };
+    await host.route(route, (request) => request.fulfill({ status: 409, json: { detail } }));
+    await host.routeWebSocket(`${route}/stream`, async (socket) => {
+      socket.send(JSON.stringify({ type: "terminal", ...detail }));
+      await socket.close({ code: 4409 });
+    });
+    await host.reload();
+
+    await expect(host.getByRole("alert")).toHaveText(detail.message);
+    await expect(host.locator(".loading-screen .spinner")).toHaveCount(0);
+    await host.getByRole("button", { name: "Return to lobby", exact: true }).click();
+    await expect(host.getByRole("heading", { name: "Find your table" })).toBeVisible();
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
   }
 });
 

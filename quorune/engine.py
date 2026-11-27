@@ -6356,11 +6356,13 @@ class CommanderEngine(
         """Apply or request the represented CR 704.5x-y protector repair."""
 
         attacked_targets = set(self.state.combat.attackers.values())
-        for seat in self.active_seats:
-            for object_id in list(
-                self.state.players[seat].zones["battlefield"]
-            ):
-                battle = self.state.cards[object_id]
+        battlefield = (
+            self.state.cards[object_id]
+            for seat in self.active_seats
+            for object_id in self.state.players[seat].zones["battlefield"]
+        )
+        with characteristic_read_frame(self):
+            for battle in battlefield:
                 if battle.zone != "battlefield" or battle.phased_out:
                     continue
                 card_types, subtypes, _ = self._effective_type_parts(battle)
@@ -6368,24 +6370,7 @@ class CommanderEngine(
                     continue
                 if not subtypes:
                     if battle.battle_protector != battle.controller:
-                        battle.battle_protector = battle.controller
-                        self._log(
-                            battle.controller,
-                            "state.battle_protector",
-                            (
-                                f"{battle.controller} became protector "
-                                f"of {battle.ref}."
-                            ),
-                            {
-                                "battle": battle.ref,
-                                "protector": battle.controller,
-                                "reason": "Battle has no Battle type",
-                            },
-                            importance=2,
-                            changed_objects=[battle.object_id],
-                            changed_players=[battle.controller],
-                        )
-                        return "changed"
+                        break
                     continue
                 if "siege" not in subtypes:
                     raise GameRuleError(
@@ -6406,39 +6391,42 @@ class CommanderEngine(
                     # Battle. CR 704.5y has no such exception when a Siege's
                     # controller is also its protector.
                     continue
-                candidates = [
-                    opponent
-                    for opponent in self.active_seats
-                    if opponent != battle.controller
-                ]
-                if not candidates:
-                    self._move_cards_simultaneously(
-                        [(battle.object_id, "graveyard")],
-                        reason="no legal Battle protector",
-                        log=False,
-                    )
-                    self._log(
-                        battle.controller,
-                        "state.battle_protector",
-                        (
-                            f"{battle.ref} had no legal protector and "
-                            "went to its owner's graveyard."
-                        ),
-                        {
-                            "battle": battle.ref,
-                            "protector": None,
-                            "reason": "no_legal_protector",
-                        },
-                        importance=2,
-                        changed_objects=[battle.object_id],
-                    )
-                    return "changed"
-                self._begin_battle_protector_repair_choice(
-                    battle,
-                    candidates,
-                )
-                return "waiting"
-        return None
+                break
+            else:
+                return None
+
+        if not subtypes:
+            battle.battle_protector = battle.controller
+            self._log(
+                battle.controller,
+                "state.battle_protector",
+                f"{battle.controller} became protector of {battle.ref}.",
+                {
+                    "battle": battle.ref,
+                    "protector": battle.controller,
+                    "reason": "Battle has no Battle type",
+                },
+                importance=2,
+                changed_objects=[battle.object_id],
+                changed_players=[battle.controller],
+            )
+            return "changed"
+        candidates = [opponent for opponent in self.active_seats if opponent != battle.controller]
+        if not candidates:
+            self._move_cards_simultaneously(
+                [(battle.object_id, "graveyard")], reason="no legal Battle protector", log=False,
+            )
+            self._log(
+                battle.controller,
+                "state.battle_protector",
+                f"{battle.ref} had no legal protector and went to its owner's graveyard.",
+                {"battle": battle.ref, "protector": None, "reason": "no_legal_protector"},
+                importance=2,
+                changed_objects=[battle.object_id],
+            )
+            return "changed"
+        self._begin_battle_protector_repair_choice(battle, candidates)
+        return "waiting"
 
     def _stabilize(self) -> bool:
         """Perform state-based actions until stable.

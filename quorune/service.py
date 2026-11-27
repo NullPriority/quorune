@@ -12,6 +12,7 @@ from .choice_forms import delegated_choice_fields
 from .protocol import PROTOCOL_VERSION
 from .rules.mana_pool_payment import mana_pool_choice_context
 from .session import CommanderSession
+from .turn_priority_model import PriorityWindowHolds
 
 
 COMMAND_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
@@ -49,7 +50,10 @@ class CommandEnvelope:
             "expected_view_revision",
             "choices",
         }
-        unknown = sorted(str(key) for key in set(value) - allowed)
+        unknown = sorted(
+            str(key).encode("utf-8", "backslashreplace").decode("utf-8")
+            for key in set(value) - allowed
+        )
         if unknown:
             raise ValueError(
                 "Command envelope contains unknown field(s): "
@@ -80,6 +84,10 @@ class CommandEnvelope:
             raw = value.get(name)
             if not isinstance(raw, str) or not raw:
                 raise ValueError(f"{name} must be a nonempty string")
+            try:
+                raw.encode("utf-8")
+            except UnicodeError as exc:
+                raise ValueError(f"{name} must contain valid Unicode") from exc
         return cls(
             protocol_version=str(value["protocol_version"]),
             game_id=str(value["game_id"]),
@@ -106,6 +114,7 @@ class CommandEnvelope:
         encoded = json.dumps(
             payload,
             ensure_ascii=False,
+            allow_nan=False,
             sort_keys=True,
             separators=(",", ":"),
         ).encode("utf-8")
@@ -371,13 +380,7 @@ class GameService:
         )
         return receipt
 
-    def command(
-        self,
-        envelope: CommandEnvelope,
-        *,
-        principal: str,
-        commit_idempotency: bool = True,
-    ) -> CommandReceipt:
+    def _envelope_error(self, envelope: CommandEnvelope) -> CommandReceipt | None:
         if envelope.protocol_version != PROTOCOL_VERSION:
             return self._receipt(
                 envelope,
@@ -392,8 +395,26 @@ class GameService:
                 code="wrong_game",
                 summary="Command belongs to a different game",
             )
+        return None
 
-        request_fingerprint = envelope.request_fingerprint()
+    def command(
+        self,
+        envelope: CommandEnvelope,
+        *,
+        principal: str,
+        commit_idempotency: bool = True,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
+    ) -> CommandReceipt:
+        if error := self._envelope_error(envelope):
+            return error
+
+        try:
+            request_fingerprint = envelope.request_fingerprint()
+        except (TypeError, ValueError, RecursionError):
+            return self._receipt(
+                envelope, ok=False, code="invalid_envelope",
+                summary="Command data must be valid UTF-8 JSON with finite numbers",
+            )
         prior = self.idempotency.get(
             envelope.game_id, principal, envelope.command_id
         )
@@ -519,6 +540,7 @@ class GameService:
                 "choices": copy.deepcopy(dict(envelope.choices)),
             },
             client_command_id=envelope.command_id,
+            priority_window_holds=priority_window_holds,
         )
         receipt = self._receipt(
             envelope,

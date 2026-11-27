@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD = "priority_concession_stabilization_version"
 PRIORITY_CONCESSION_RESUME_FIELD = "priority_concession_resume_from"
+PRIORITY_WINDOW_HOLDS_FIELD = "priority_window_holds"
+PRIORITY_STOP_IDS = (
+    "upkeep", "draw", "precombat_main", "combat", "beginning_combat",
+    "declare_attackers", "declare_blockers", "first_strike_damage",
+    "combat_damage", "end_combat", "postcombat_main", "end_step", "cleanup",
+)
 TURN_CONTROL_LIFETIME_VERSION_FIELD = "turn_control_lifetime_version"
 FIXED_NEXT_TURN_CONTROL_MECHANIC = "fixed-control-target-players-next-turn"
 FIXED_NEXT_TURN_CONTROL_CAPABILITY = "turn.control.target_players_next_turn"
@@ -80,6 +86,41 @@ YieldInvalidationReason = Literal[
     "stack",
     "public_change",
 ]
+
+
+@dataclass(frozen=True, slots=True)
+class PriorityWindowHolds:
+    """Seat preferences that preserve ordinary priority decisions in fast mode."""
+
+    steps: tuple[str, ...]
+    preserve_empty: bool
+
+    def __post_init__(self) -> None:
+        if type(self.preserve_empty) is not bool or type(self.steps) is not tuple or any(
+            type(step) is not str or step not in PRIORITY_STOP_IDS for step in self.steps
+        ) or len(set(self.steps)) != len(self.steps):
+            raise ValueError("Priority holds require distinct known steps and a boolean empty-window preference")
+
+    def matches(self, state: GameState) -> bool:
+        step = state.step
+        if step == "combat_damage" and state.combat.first_strike_step and state.combat.damage_step_index == 0:
+            step = "first_strike_damage"
+        return self.preserve_empty or step in self.steps or state.phase in self.steps
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"steps": list(self.steps), "preserve_empty": self.preserve_empty}
+
+    @classmethod
+    def from_dict(cls, value: Any) -> PriorityWindowHolds:
+        if not isinstance(value, Mapping) or set(value) != {"steps", "preserve_empty"} or not isinstance(value["steps"], list):
+            raise ValueError("Priority window settings are malformed")
+        return cls(tuple(value["steps"]), value["preserve_empty"])
+
+
+def priority_window_holds_from_record(value: Any, seats: Sequence[str]) -> dict[str, PriorityWindowHolds]:
+    if not isinstance(value, Mapping) or any(seat not in seats for seat in value):
+        raise ValueError("Recorded priority holds identify an unknown seat")
+    return {seat: PriorityWindowHolds.from_dict(holds) for seat, holds in value.items()}
 
 
 class TurnPriorityHost(Protocol):

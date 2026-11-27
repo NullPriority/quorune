@@ -5,9 +5,10 @@ from dataclasses import dataclass, field
 import logging
 import time
 import traceback
-from typing import Any, Literal, Mapping, Protocol
+from typing import Any, Callable, Literal, Mapping, Protocol
 
 from .service import CommandEnvelope, CommandReceipt, GameService
+from .turn_priority_model import PriorityWindowHolds
 
 
 LOG = logging.getLogger(__name__)
@@ -46,6 +47,7 @@ class _ActorMessage:
     principal: str | None = None
     full: bool = False
     cursor_key: str | None = None
+    include_lifecycle: bool = False
     envelope: CommandEnvelope | None = None
     reason: str | None = None
     after_event: int = 0
@@ -62,15 +64,20 @@ class GameActor:
         *,
         persistence: GamePersistence | None = None,
         queue_limit: int = 256,
+        publish_command_change: Callable[[str], None] | None = None,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
     ) -> None:
         if queue_limit < 1:
             raise ValueError("queue_limit must be positive")
         self.service = service
         self.game_id = service.session.state.game_id
         self.persistence = persistence
+        self._publish_command_change = publish_command_change
+        self._priority_window_holds = dict(priority_window_holds or {})
         self._mailbox: asyncio.Queue[_ActorMessage] = asyncio.Queue(
             maxsize=queue_limit
         )
+        self._admission_lock = asyncio.Lock()
         self._worker: asyncio.Task[None] | None = None
         self._closed = False
         self._failure: BaseException | None = None
@@ -91,6 +98,16 @@ class GameActor:
     def requires_recovery(self) -> bool:
         return self._failure is not None
 
+    @property
+    def priority_window_holds(self) -> dict[str, PriorityWindowHolds]:
+        return self._priority_window_holds.copy()
+
+    def set_priority_window_holds(self, seat: str, holds: PriorityWindowHolds) -> None:
+        if holds.steps or holds.preserve_empty:
+            self._priority_window_holds[seat] = holds
+        else:
+            self._priority_window_holds.pop(seat, None)
+
     async def start(self) -> None:
         if self._closed:
             raise GameActorClosed(f"Game actor {self.game_id} is closed")
@@ -104,8 +121,9 @@ class GameActor:
             )
 
     async def _request(self, message: _ActorMessage) -> Any:
-        await self.start()
-        await self._mailbox.put(message)
+        async with self._admission_lock:
+            await self.start()
+            await self._mailbox.put(message)
         return await message.future
 
     async def observe(
@@ -114,6 +132,7 @@ class GameActor:
         *,
         full: bool = False,
         cursor_key: str | None = None,
+        include_lifecycle: bool = False,
     ) -> dict[str, Any]:
         loop = asyncio.get_running_loop()
         return await self._request(
@@ -123,6 +142,7 @@ class GameActor:
                 principal=principal,
                 full=full,
                 cursor_key=cursor_key,
+                include_lifecycle=include_lifecycle,
             )
         )
 
@@ -298,6 +318,7 @@ class GameActor:
             message.envelope,
             principal=principal,
             commit_idempotency=False,
+            **({"priority_window_holds": self.priority_window_holds} if self._priority_window_holds else {}),
         )
         executed = time.perf_counter()
         persistence_ms = 0.0
@@ -309,7 +330,7 @@ class GameActor:
         ):
             await self._persist()
             persistence_ms = (time.perf_counter() - executed) * 1000
-        if not result.replayed:
+        if not result.replayed and result.code != "invalid_envelope":
             self.service.remember(
                 message.envelope,
                 principal,
@@ -324,6 +345,8 @@ class GameActor:
             "persistence_ms": round(persistence_ms, 2),
             "actor_ms": round((time.perf_counter() - started) * 1000, 2),
         }
+        if self._publish_command_change and result.ok and result.state_changed and not result.replayed:
+            self._publish_command_change(self.game_id)
         return result
 
     async def _run(self) -> None:
@@ -345,6 +368,8 @@ class GameActor:
                         full=message.full,
                         cursor_key=message.cursor_key,
                     )
+                    if message.include_lifecycle:
+                        result = {"packet": result, "lifecycle": self._lifecycle_summary()}
                 elif message.kind == "public_events":
                     result = self.service.event_page(
                         "spectator",
@@ -435,15 +460,7 @@ class GameActor:
                 if not message.future.done():
                     message.future.set_result(result)
             except BaseException as exc:
-                # A recoverable lifecycle conflict crosses from the actor task
-                # into the requester's Future while the actor keeps running.
-                # Do not forward the caught instance with this coroutine's
-                # active traceback attached; construct a clean boundary error.
-                response_exception: BaseException = (
-                    GameLifecycleConflict(str(exc))
-                    if isinstance(exc, GameLifecycleConflict)
-                    else exc
-                )
+                response_exception = exc
                 durable_failure = (
                     message.kind == "command"
                     or (
@@ -466,6 +483,8 @@ class GameActor:
                         origin.name if origin else "unknown",
                     )
                     if message.kind == "command":
+                        if self._publish_command_change:
+                            self._publish_command_change(self.game_id)
                         response_exception = GameActorUnavailable(
                             f"Game actor {self.game_id} failed durable command "
                             "commit and requires recovery"
@@ -476,7 +495,9 @@ class GameActor:
                             "lifecycle commit and requires recovery"
                         )
                 if not message.future.done():
-                    message.future.set_exception(response_exception)
+                    # A caller can clear traceback frames while handling its
+                    # exception. Keep the live worker frame out of that trace.
+                    message.future.set_exception(response_exception.with_traceback(None))
             finally:
                 self._processing_kind = None
                 self._mailbox.task_done()
@@ -490,9 +511,10 @@ class GameActor:
             return
         loop = asyncio.get_running_loop()
         future: asyncio.Future[Any] = loop.create_future()
-        await self._mailbox.put(
-            _ActorMessage(kind="stop", future=future)
-        )
+        # A backpressured request that already passed start() goes ahead of
+        # the stop message. Later requests see _closed when admitted.
+        async with self._admission_lock:
+            await self._mailbox.put(_ActorMessage(kind="stop", future=future))
         await future
         await worker
         self._worker = None
@@ -510,12 +532,17 @@ class GameManager:
         service: GameService,
         *,
         persistence: GamePersistence | None = None,
+        publish_command_change: Callable[[str], None] | None = None,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
     ) -> GameActor:
         game_id = service.session.state.game_id
         async with self._lock:
             if game_id in self._actors:
                 raise ValueError(f"Game {game_id} already has an actor")
-            actor = GameActor(service, persistence=persistence)
+            actor = GameActor(
+                service, persistence=persistence, publish_command_change=publish_command_change,
+                priority_window_holds=priority_window_holds,
+            )
             self._actors[game_id] = actor
         await actor.start()
         return actor

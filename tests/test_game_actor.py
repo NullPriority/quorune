@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+from dataclasses import replace
 import threading
+from types import SimpleNamespace
 import unittest
 
 from common import load_assets, make_session
@@ -13,7 +15,7 @@ from quorune import (
     GameService,
     PROTOCOL_VERSION,
 )
-from quorune.runtime import GameLifecycleConflict
+from quorune.runtime import GameActor, GameLifecycleConflict
 
 
 class GameActorTests(unittest.IsolatedAsyncioTestCase):
@@ -85,6 +87,113 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
         await manager.close()
         with self.assertRaises(GameActorClosed):
             await actor.observe("pilot:A")
+
+    async def test_projector_exception_leaves_the_actor_worker_available(self):
+        calls = 0
+
+        def observe(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise ValueError("Projection unavailable")
+            return {"observation": calls}
+
+        service = SimpleNamespace(session=SimpleNamespace(state=SimpleNamespace(game_id="actor-read")), observe=observe)
+        actor = GameActor(service)
+        try:
+            with self.assertRaisesRegex(ValueError, "Projection unavailable"):
+                await actor.observe("pilot:A")
+            second = await asyncio.wait_for(actor.observe("pilot:A"), timeout=2)
+            self.assertEqual({"observation": 2}, second)
+            self.assertFalse(actor.requires_recovery)
+        finally:
+            if actor._worker.done():
+                await asyncio.gather(actor._worker, return_exceptions=True)
+            else:
+                await asyncio.wait_for(actor.close(), timeout=2)
+
+    async def test_close_cannot_overtake_a_request_waiting_for_mailbox_space(self):
+        in_flight = asyncio.Event()
+        release = asyncio.Event()
+
+        class BlockingActor(GameActor):
+            async def _handle_command(self, message):
+                in_flight.set()
+                await release.wait()
+                return "finished"
+
+        service = SimpleNamespace(session=SimpleNamespace(state=SimpleNamespace(game_id="actor-close")),
+            observe=lambda *args, **kwargs: {"observed": True})
+        actor = BlockingActor(service, queue_limit=1)
+        envelope = CommandEnvelope(PROTOCOL_VERSION, "actor-close", "close-test", "decision", "pass", "cap", 0, {})
+        first = asyncio.create_task(actor.command("pilot:A", envelope))
+        await asyncio.wait_for(in_flight.wait(), timeout=2)
+        queued = asyncio.create_task(actor.observe("pilot:A"))
+        await asyncio.sleep(0)
+        waiting = asyncio.create_task(actor.observe("pilot:B"))
+        await asyncio.sleep(0)
+        self.assertEqual(1, actor.queue_depth)
+        self.assertFalse(waiting.done())
+        release.set()
+        closed = asyncio.create_task(actor.close())
+        values = await asyncio.wait_for(asyncio.gather(first, queued, waiting, closed), timeout=2)
+        self.assertEqual(["finished", {"observed": True}, {"observed": True}, None], values)
+        self.assertEqual(0, actor.queue_depth)
+
+    async def test_invalid_command_data_does_not_require_actor_recovery(self):
+        session, service = self.make_service(32008)
+        actor = GameActor(service)
+        valid = self.envelope(session)
+        try:
+            for value in (chr(0xD800), float("nan")):
+                receipt = await actor.command("pilot:A", replace(valid, choices={"unusable": value}))
+                self.assertEqual("invalid_envelope", receipt.code)
+                self.assertFalse(receipt.state_changed)
+                self.assertFalse(actor.requires_recovery)
+            self.assertEqual(0, len(session.commands))
+            receipt = await actor.command("pilot:A", valid)
+            self.assertTrue(receipt.ok)
+            self.assertFalse(receipt.replayed)
+            self.assertEqual(1, len(session.commands))
+        finally:
+            await actor.close()
+
+    async def test_command_publishes_priority_after_its_request_waiter_disconnects(self):
+        saving = threading.Event()
+        release = threading.Event()
+        published = asyncio.Event()
+
+        class DelayedPersistence:
+            def save(self, service):
+                saving.set()
+                if not release.wait(timeout=30):
+                    raise TimeoutError("Test did not release persistence")
+
+        session, service = self.make_service(32009)
+        updates = []
+
+        def notify(game_id):
+            updates.append(game_id)
+            published.set()
+
+        actor = GameActor(service, persistence=DelayedPersistence(), publish_command_change=notify)
+        envelope = self.envelope(session)
+        request = asyncio.create_task(actor.command("pilot:A", envelope))
+        try:
+            self.assertTrue(await asyncio.to_thread(saving.wait, 30))
+            request.cancel()
+            with self.assertRaises(asyncio.CancelledError):
+                await request
+            self.assertFalse(published.is_set())
+            release.set()
+            await asyncio.wait_for(published.wait(), timeout=30)
+            self.assertEqual([session.state.game_id], updates)
+            self.assertEqual(1, len(session.commands))
+            self.assertTrue((await actor.command("pilot:A", envelope)).replayed)
+            self.assertEqual([session.state.game_id], updates)
+        finally:
+            release.set()
+            await actor.close()
 
     async def test_persistence_failure_sends_no_ack_and_fails_closed(self):
         # These bounds detect a deadlock; command preparation has no five-second SLA.

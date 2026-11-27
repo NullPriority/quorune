@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 import hashlib
-from dataclasses import dataclass, field
+import marshal
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -497,6 +498,39 @@ class SemanticProgram:
         )
 
 
+def _record_snapshot_inputs(
+    programs: list[tuple[str, SemanticProgram]], card_programs: list[Any],
+) -> bytes | None:
+    from .card_programs.model import CardProgram, CardProgramFace
+
+    ability_fields = tuple(item.name for item in fields(SemanticProgram))
+    card_fields = tuple(item.name for item in fields(CardProgram) if item.name not in {"faces", "abilities"})
+    face_fields = tuple(item.name for item in fields(CardProgramFace))
+
+    def values(value: Any, expected_type: type, names: tuple[str, ...]) -> tuple[Any, ...]:
+        if type(value) is not expected_type:
+            raise TypeError("Cannot fingerprint a custom program type")
+        return tuple(getattr(value, name) for name in names)
+
+    try:
+        program_rows = tuple(
+            (key, values(ability, SemanticProgram, ability_fields)) for key, ability in programs
+        )
+        card_rows = tuple(
+            (
+                values(card, CardProgram, card_fields),
+                tuple(values(face, CardProgramFace, face_fields) for face in card.faces),
+                tuple(values(ability, SemanticProgram, ability_fields) for ability in card.abilities),
+            )
+            for card in card_programs
+        )
+        # The in-memory key preserves container types and ordering, including
+        # nested metadata and printed mode order. It never enters a Game Record.
+        return hashlib.sha256(marshal.dumps((program_rows, card_rows), 2)).digest()
+    except (TypeError, ValueError):
+        return None
+
+
 class SemanticRegistry:
     """
     Cache of card/ability semantics expressed in the engine's generic effect DSL.
@@ -520,6 +554,7 @@ class SemanticRegistry:
         self._event_program_cache: dict[str, tuple[SemanticProgram, ...]] | None = None
         self._oracle_lookup_identity = object()
         self._card_program_cache: dict[str, Any] | None = None
+        self._record_snapshot: tuple[bytes, bytes] | None = None
         self._empty_card_programs: dict[str, Any] = {}
         self._runtime_handler_compatibility: dict[
             tuple[str, str, str], tuple[SemanticProgram, ...]
@@ -658,10 +693,23 @@ class SemanticRegistry:
                 }
             )
 
-    def save(self, *, return_payload: bool = False) -> dict[str, Any] | None:
+    def save(self, *, return_payload: bool = False, reuse_unchanged: bool = False) -> dict[str, Any] | None:
         if not self.path:
             return None
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        card_programs = self.card_programs()
+        programs = sorted(self._programs.items())
+        inputs = _record_snapshot_inputs(programs, card_programs) if reuse_unchanged else None
+        prior = self._record_snapshot
+        if inputs is not None and prior is not None and inputs == prior[0]:
+            try:
+                existing = self.path.read_bytes()
+            except OSError:
+                pass
+            else:
+                # A failed record transaction may have restored an older file.
+                if hashlib.sha256(existing).digest() == prior[1]:
+                    return json.loads(existing) if return_payload else None
         payload = {
             "schema_version": SEMANTIC_SCHEMA_VERSION,
             "card_program_schema_version": 2,
@@ -669,18 +717,19 @@ class SemanticRegistry:
             "runtime_handler_compatibility_enabled": False,
             "card_programs": {
                 program.oracle_id: program.to_dict()
-                for program in self.card_programs()
+                for program in card_programs
             },
             "programs": {
-                key: program.to_dict() for key, program in sorted(self._programs.items())
+                key: program.to_dict() for key, program in programs
             },
         }
         temporary = self.path.with_suffix(self.path.suffix + ".tmp")
         # Mode maps carry printed order; fingerprint canonicalization is separate.
-        temporary.write_text(
-            json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8",
-        )
+        encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        temporary.write_bytes(encoded)
         temporary.replace(self.path)
+        if inputs is not None:
+            self._record_snapshot = (inputs, hashlib.sha256(encoded).digest())
         return payload if return_payload else None
 
     def get(self, key: str | None) -> SemanticProgram | None:

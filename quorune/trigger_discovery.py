@@ -1388,6 +1388,30 @@ def _source_may_observe_event(source, event, programs):
     )
 
 
+def _iter_event_observers(host, sources, event, read_programs):
+    if event in {"card.drawn", "card.second_draw", DRAW_EXCEPT_FIRST_OWN_STEP_EVENT}:
+        # Draw observers are read from the same committed state before any
+        # trigger usage, pending control duration, or stack writes.
+        with characteristic_read_frame(host):
+            observations = [(source, read_programs(source)) for source in sources]
+        for source, (active_zone, characteristics, programs) in observations:
+            if _source_may_observe_event(source, event, programs):
+                yield source, (active_zone, characteristics, programs)
+        return
+
+    remaining = iter(sources)
+    while True:
+        with characteristic_read_frame(host):
+            for source in remaining:
+                active_zone, characteristics, programs = read_programs(source)
+                if _source_may_observe_event(source, event, programs):
+                    break
+            else:
+                return
+        # Processing an observer can change trigger usage or source markers.
+        yield source, (active_zone, characteristics, programs)
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1416,16 +1440,8 @@ def dispatch_semantic_event(
         return _event_programs_for_source(
             host,source,event,source_zones=source_zones,source_characteristics=source_characteristics)
 
-    if event in {"card.drawn", "card.second_draw", DRAW_EXCEPT_FIRST_OWN_STEP_EVENT}:
-        # Draw observers use the same committed state. Keep this read before any
-        # trigger usage, pending control duration, or stack writes.
-        with characteristic_read_frame(host):
-            source_programs = [(source, read_programs(source)) for source in participation_sources]
-    else:
-        source_programs = ((source, read_programs(source)) for source in participation_sources)
+    source_programs = _iter_event_observers(host, participation_sources, event, read_programs)
     for source, (active_zone, characteristics, programs) in source_programs:
-        if not _source_may_observe_event(source, event, programs):
-            continue
         from .rules.trigger_participation_runtime import typed_trigger_participations
         _extra,prevented=typed_trigger_participations(host,source=source,controller=source.controller,event=event,context=context,
             sources=participation_sources,source_characteristics=source_characteristics,

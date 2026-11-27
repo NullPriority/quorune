@@ -26,7 +26,7 @@ class RoomStartSpec:
     seed: int
     profile: str
     decks: dict[str, DeckDefinition]
-    deck_ids: tuple[str, ...]
+    roster: tuple[tuple[str, str, str, int], ...]
 
 
 class StoreConflict(ValueError):
@@ -135,7 +135,7 @@ class ServerStore:
         room_id: str | None = None,
     ) -> tuple[str, str]:
         if player_count not in {2, 4}:
-            raise StoreConflict("A browser room must have 2 or 4 players")
+            raise StoreConflict("A browser room must have capacity for 2 or 4 seats")
         room_id = room_id or uuid.uuid4().hex
         invite_code = secrets.token_urlsafe(18)
         now = utc_now()
@@ -708,12 +708,13 @@ class ServerStore:
                 (room_id,),
             ).fetchall()
         seat_count = int(room["seat_count"])
-        if len(rows) != seat_count or any(
-            row["guest_id"] is None or row["definition_json"] is None
-            for row in rows
-        ):
-            raise StoreConflict(f"All {seat_count} seats must be occupied and ready")
-        waiting = [row for row in rows if not row["ready"]]
+        minimum_players = 2 if seat_count == 2 else 3
+        occupied = [row for row in rows if row["guest_id"] is not None]
+        if len(occupied) < minimum_players:
+            raise StoreConflict(f"At least {minimum_players} players must join before the game can start")
+        if any(row["definition_json"] is None for row in occupied):
+            raise StoreConflict("Every seated player must submit a deck")
+        waiting = [row for row in occupied if not row["ready"]]
         if use_reviewed_card_data:
             if not waiting or not all(
                 has_integrity_blocker(json.loads(row["preflight_json"] or "{}"))
@@ -721,20 +722,23 @@ class ServerStore:
             ):
                 raise StoreConflict("Earlier card data is available only for decks waiting for a card data review")
         elif waiting:
-            raise StoreConflict(f"All {seat_count} seats must be occupied and ready")
+            raise StoreConflict("Every seated player's deck must be ready")
         return RoomStartSpec(
             seed=int(room["seed"]),
             profile=str(room["format_profile"]),
             decks={
                 str(row["seat"]): DeckDefinition.from_dict(json.loads(row["definition_json"]))
-                for row in rows
+                for row in occupied
             },
-            deck_ids=tuple(str(row["deck_id"]) for row in rows),
+            roster=tuple(
+                (row["seat"], row["guest_id"], row["deck_id"], row["ready"])
+                for row in occupied
+            ),
         )
 
     def commit_started_game(
         self, room_id: str, game_id: str, record_path: str, revision: int, *,
-        expected_deck_ids: tuple[str, ...], save_record: Callable[[], object],
+        expected_roster: tuple[tuple[str, str, str, int], ...], save_record: Callable[[], object],
     ) -> None:
         now = utc_now()
         with self._connection(write=True) as connection:
@@ -745,11 +749,15 @@ class ServerStore:
                 raise StoreNotFound("Room not found")
             if room["status"] != "open":
                 raise StoreConflict("Room has already started")
-            deck_rows = connection.execute(
-                "SELECT deck_id FROM room_seats WHERE room_id = ? ORDER BY seat", (room_id,),
+            roster = connection.execute(
+                """
+                SELECT seat, guest_id, deck_id, ready FROM room_seats
+                WHERE room_id = ? AND guest_id IS NOT NULL ORDER BY seat
+                """,
+                (room_id,),
             ).fetchall()
-            if tuple(row["deck_id"] for row in deck_rows) != expected_deck_ids:
-                raise StoreConflict("A deck changed while the game was starting. Review the table and try again.")
+            if tuple(map(tuple, roster)) != expected_roster:
+                raise StoreConflict("The roster or a deck changed while the game was starting. Review the table and try again.")
             save_record()
             connection.execute(
                 """

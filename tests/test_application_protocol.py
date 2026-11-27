@@ -13,10 +13,14 @@ from jsonschema import Draft202012Validator
 from common import keep_all, load_assets, make_session
 from quorune import (
     CommandEnvelope,
+    CommanderSession,
+    GameConfig,
     GameService,
     PROTOCOL_VERSION,
+    parse_deck_text,
 )
 from quorune.record import authoritative_state_hash, replay_record
+from quorune.turn_priority_model import PriorityWindowHolds
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -96,6 +100,12 @@ class ApplicationProtocolTests(unittest.TestCase):
             CommandEnvelope.from_mapping(
                 {key: value for key, value in body.items() if key != "command_id"}
             )
+        with self.assertRaisesRegex(ValueError, "decision_id must contain valid Unicode"):
+            CommandEnvelope.from_mapping({**body, "decision_id": chr(0xD800)})
+        with self.assertRaises(ValueError) as error:
+            CommandEnvelope.from_mapping({**body, chr(0xD800): True})
+        self.assertIn(r"\ud800", str(error.exception))
+        str(error.exception).encode("utf-8")
 
     def test_current_turn_pass_intent_rejects_stale_scope_and_unknown_activations(self):
         session, service = self.make_service(31017)
@@ -119,6 +129,45 @@ class ApplicationProtocolTests(unittest.TestCase):
         ), principal=principal)
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertEqual(turn, session.commands[-1]["payload"]["pass_turn_sequence"])
+
+    def test_fast_priority_preserves_only_the_selected_empty_hold_and_replays_it(self):
+        deck = parse_deck_text("Commander:\n1 Yargle and Multani\nMainboard:\n99 Swamp\n")
+        session = CommanderSession.create(
+            self.db, {seat: deck for seat in "ABCD"}, first_player="A",
+            config=GameConfig(seed=31018, auto_pass_empty_priority=True),
+        )
+        service = GameService(session)
+        holds = {"B": PriorityWindowHolds(("upkeep",), False)}
+        for seat in "ABCD":
+            principal = f"pilot:{seat}"
+            result = service.command(
+                self.envelope(session, principal=principal, command_id=f"keep-with-hold-{seat}"),
+                principal=principal, priority_window_holds=holds,
+            )
+            self.assertTrue(result.ok, result.summary)
+
+        self.assertEqual("upkeep", session.state.step)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(["A"], session.state.priority_passes)
+        self.assertEqual({"B": {"steps": ["upkeep"], "preserve_empty": False}},
+            session.commands[-1]["priority_window_holds"])
+        self.assertEqual({}, session.engine.turn_priority.window_holds)
+
+        receipt = service.command(
+            self.envelope(session, principal="pilot:B", command_id="resume-upkeep", action_id="pass"),
+            principal="pilot:B",
+        )
+        self.assertTrue(receipt.ok, receipt.summary)
+        self.assertEqual("precombat_main", session.state.phase)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        self.assertNotIn("priority_window_holds", session.commands[-1])
+
+        schema = json.loads((ROOT / "schemas/game-record-v3-command.schema.json").read_text(encoding="utf-8"))
+        for row in session.commands:
+            Draft202012Validator(schema).validate(row)
+        with tempfile.TemporaryDirectory() as record_dir:
+            session.save(record_dir)
+            self.assertTrue(replay_record(record_dir, self.db)["ok"])
         with tempfile.TemporaryDirectory() as directory:
             session.save(directory)
             replay = replay_record(directory, session.card_db, verify=True)

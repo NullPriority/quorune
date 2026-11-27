@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { COMBAT_PRIORITY_STOPS, type CombatPriorityStop } from "./tableAutomation";
+import { PRIORITY_STOPS, type PriorityStop } from "./tableAutomation";
 import { tableSeat } from "./SeatLabel";
 import {
   presentTurn,
@@ -9,24 +9,25 @@ import {
 } from "./tablePresentation";
 
 
-export function CombatStopOptions({ selected, onToggle }: {
-  selected: readonly CombatPriorityStop[];
-  onToggle: (stop: CombatPriorityStop) => void;
+export function PriorityStopOptions({ selected, onToggle, phase }: {
+  selected: readonly PriorityStop[];
+  onToggle: (stop: PriorityStop) => void;
+  phase?: MacroPhase;
 }) {
   return (
-    <div className="combat-stop-options" role="group" aria-label="Combat priority stops">
-      {COMBAT_PRIORITY_STOPS.map(({ id, label }) => (
+    <div className="combat-stop-options" role="group" aria-label="Priority steps">
+      {PRIORITY_STOPS.filter((stop) => !phase || stop.phase === phase).map(({ id, label }) => (
         <button key={id} type="button" aria-pressed={selected.includes(id)} onClick={() => onToggle(id)}>{label}</button>
       ))}
     </div>
   );
 }
 
-export function TurnStatus({ value, compact, combatStops, onCombatStop, holding }: {
+export function TurnStatus({ value, compact, priorityStops, onPriorityStop, holding }: {
   value: TurnPresentationInput;
   compact: boolean;
-  combatStops: readonly CombatPriorityStop[];
-  onCombatStop?: (stop: CombatPriorityStop) => void;
+  priorityStops: readonly PriorityStop[];
+  onPriorityStop?: (stop: PriorityStop) => void;
   holding?: string;
 }) {
   const presentation = presentTurn(value);
@@ -49,25 +50,28 @@ export function TurnStatus({ value, compact, combatStops, onCombatStop, holding 
         {holding && <span className="priority-held" role="status" title={holding}>Holding priority</span>}
       </div>
       <ol className="phase-rail" data-testid="phase-rail" aria-label="Turn phases">
-        {presentation.rail.map((entry) => (
-          <li key={entry.id} className={`${entry.state}${entry.id === "combat" && combatStops.length ? " has-priority-stop" : ""}`}>
+        {presentation.rail.map((entry) => {
+          const options = PRIORITY_STOPS.filter((stop) => stop.phase === entry.id);
+          const selected = options.some((stop) => priorityStops.includes(stop.id));
+          return <li key={entry.id} className={`${entry.state}${selected ? " has-priority-stop" : ""}`}>
             <button
               type="button"
               aria-current={entry.state === "current" ? "step" : undefined}
               aria-expanded={expanded === entry.id}
-              title={entry.id === "combat" && onCombatStop ? "Set combat priority stops" : undefined}
+              title={options.length > 0 && onPriorityStop ? `Set ${entry.label} priority holds` : undefined}
               onClick={() => setExpanded((current) => current === entry.id ? null : entry.id)}
             >
               <span className="phase-marker" aria-hidden="true">{entry.state === "past" ? "✓" : entry.state === "current" ? "●" : "○"}</span>
               {entry.label}
+              {selected && <span className="phase-stop-indicator" role="img" aria-label="Priority hold selected">●</span>}
             </button>
-            {expanded === entry.id && (entry.id === "combat" && onCombatStop
-              ? <div className="phase-detail phase-stop-menu"><CombatStopOptions selected={combatStops} onToggle={onCombatStop} /></div>
+            {expanded === entry.id && (options.length > 0 && onPriorityStop
+              ? <div className="phase-detail phase-stop-menu"><PriorityStopOptions selected={priorityStops} onToggle={onPriorityStop} phase={entry.id} /></div>
               : <span className="phase-detail" role="status">
                   {entry.state === "current" ? presentation.exactStep : entry.state === "past" ? "Completed this turn" : "Upcoming this turn"}
                 </span>)}
-          </li>
-        ))}
+          </li>;
+        })}
       </ol>
     </section>
   );

@@ -10,7 +10,7 @@ concern: "browser-product"
 
 # Browser product
 
-The Quorune browser is a projected client for two- or four-player games under
+The Quorune browser is a projected client for two-, three-, and four-player games under
 the current Commander profile. It supports invite-only rooms, validated deck
 submission, seat-isolated play,
 read-only spectators, public history, and restart-safe game lifecycle. It does
@@ -33,12 +33,17 @@ affected card. Open a card to see the changes in Oracle text or rulings when a
 retained snapshot matches the reviewed implementation. The details distinguish
 formatting edits from added, removed, or changed text. Technical details include
 the diagnostic ID and the program sources.
-Once every seat submits a deck, the host can choose **Use earlier card data**.
+When every player has submitted a deck and a deck needs a card data review,
+the host can choose **Use earlier card data**.
 The game starts with one retained snapshot if it matches the earlier
 implementations and every submitted deck passes its checks against it. The
 selected snapshot applies to the whole match and is pinned for replay.
-Every seat submits a list before the host can start. The owner can rotate the
+A four-seat room can start with three players. Every seated player must be
+ready, including the fourth player once they join. The owner can rotate the
 invite, remove a nonowner before start, or replace an unstarted room.
+The host can pick an occupied seat under **Starting player** or leave it on
+**Random**. Under **Advanced settings**, the host can set the starting life
+total for every player. The default is 40 life.
 
 Use **Edit deck** in **Saved decks** to open a copy in a new table’s editor.
 Checking and submitting saves the edited list. The host can use **Decks and
@@ -62,6 +67,9 @@ The table renders only the current projected state:
   update only after an authoritative packet. The printed face rotates when a
   card is tapped, and the card’s accessibility description reports its state;
 - each attached battlefield card names the permanent or player it is on;
+- your draws and mills appear together when they arrive in the same update.
+  Draws animate from your library to your hand, and mills highlight your
+  library with the count in the notice. Reduced motion keeps the notices visible.
 - the complete public log is paginated from the durable record through
   spectator visibility filtering. It shows the acting seat and a readable
   description for each entry.
@@ -73,7 +81,7 @@ Versioned generic forms render server-issued modes, targets, ordering,
 assignments, private selections, and confirmations. Unknown forms remain
 unavailable rather than being guessed.
 
-Use **All opponents** to see the three opposing boards or select a seat to
+Use **All opponents** to see the opposing boards or select a seat to
 give that opponent the full upper row. Seat buttons show eligible targets
 while a target choice is open. On short or narrow screens, **Your board**
 switches back to your own battlefield.
@@ -189,26 +197,25 @@ Only an unchanged pure tap-for-mana activation can be undone before spending or
 passing. Costs with sacrifice, life payment, restrictions, or other side
 effects are not locally reversible.
 
-Pass or Resolve sends one pass from this seat. Other seats still receive
-priority. Automatic pass submits only routine pass-only decisions. Full
-control holds each decision for the player, including priority on their own
-triggers.
+**Pass priority** or **Resolve** passes once from your seat. **Pass turn** at
+the bottom right keeps passing your priority during the current turn, even
+when a spell or ability is available. Required choices, including attackers
+and blockers, still wait for you. The turn yield ends when the next turn
+begins or you refresh. **Cancel pass turn** holds your next priority.
 
-**Pass turn** at the bottom right yields voluntary priority for the current
-turn, including priority with an available spell or activation. Required
-decisions and selected step holds still pause the yield. Table settings can
-also hold for a new stack object or a change to the graveyard. A manual pass
-acknowledges the current stack and graveyard. Canceling, refreshing, or reaching
-the next turn ends the yield. Each response uses the current seat capability
-and is recorded with the current turn. To use regular Auto-pass around a specific
-activation, choose its ignore option in the game menu. That ignore expires if
-the activation offers different costs, targets, or choices.
+Open **Priority stops** beside **Pass turn** to hold at specific steps, for a
+new stack item, or for graveyard activity. Both Auto-pass and Pass turn honor
+these stops, including in fast mode. A manual pass acknowledges the current
+stack and graveyard activity. Choose a phase on the turn rail to edit its
+holds, and look for the gold marker on phases with an enabled hold. Combat
+stops apply after the named assignments or damage step.
 
-Open **Combat** in the turn rail to select the steps where you want to hold
-priority. **Game menu → Hold priority at specific steps** also offers upkeep,
-draw, main phase, and end step holds. A selected stop holds available priority for your
-seat at that step, even when Auto-pass or Pass turn is active. Pass manually
-to continue. Attacker and blocker stops apply after those assignments.
+Auto-pass handles routine priority while keeping spell and land offers
+available. To pass when only optional activations are available, enable
+**Auto-pass through optional activations** or skip a particular offered ability
+for the current turn. Skipping a single ability covers its current costs,
+targets, and choices. When a skipped ability is the only play in your main
+phase, Auto-pass moves on. **Full control** holds your priority at each window.
 
 Combat forms use the current legal assignment maps. Damage shows the assigned
 and remaining amounts beside each source and its recipients. Concession uses a

@@ -1235,24 +1235,20 @@ def parse_declaration_restriction_line(
                 if match.group("player") == "defending player"
                 else "source_controller"
             )
-            state: Literal["monarch", "poisoned"] = (
-                "monarch"
-                if match.group("state") == "the monarch"
-                else "poisoned"
+            condition = DeclarationPlayerStateCondition(
+                player=player,
+                state="monarch" if match.group("state") == "the monarch" else "poisoned",
             )
             return DeclarationRestrictionParse(
                 True,
                 DeclarationRestrictionTemplate(
                     template_id=(
-                        f"intrinsic-{player.replace('_', '-')}-{state}-"
+                        f"intrinsic-{player.replace('_', '-')}-{condition.state}-"
                         f"{'-'.join(declarations)}-unless-v1"
                     ),
                     declarations=declarations,
                     scope="self",
-                    condition=DeclarationPlayerStateCondition(
-                        player=player,
-                        state=state,
-                    ),
+                    condition=condition,
                     applies_when_condition=False,
                 ),
                 declarations=declarations,

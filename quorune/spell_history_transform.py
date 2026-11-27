@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Runtime previous-turn predicates for self-transform upkeep triggers."""
 
-from typing import Mapping
+from typing import Any, Mapping
 
 from .model import CardInstance, TurnHistory
 from .spell_history_transform_model import (

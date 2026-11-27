@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { PRIORITY_STOPS, type PriorityStop } from "./tableAutomation.ts";
 
 export const TABLE_PREFERENCES_KEY = "commander-table-preferences:v2";
 export const LEGACY_TABLE_PREFERENCES_KEY = "commander-table-preferences:v1";
@@ -25,6 +26,8 @@ export type TablePreferences = {
   autoPass: boolean;
   holdNewStack: boolean;
   holdGraveyard: boolean;
+  passWithOptionalActivations: boolean;
+  priorityStops: PriorityStop[];
   handPanelHeight: number;
   handAutoCollapse: boolean;
   cardScale: number;
@@ -41,8 +44,10 @@ export type TablePreferences = {
 export const DEFAULT_TABLE_PREFERENCES: Readonly<TablePreferences> = {
   autoMana: true,
   autoPass: true,
-  holdNewStack: true,
+  holdNewStack: false,
   holdGraveyard: false,
+  passWithOptionalActivations: false,
+  priorityStops: [],
   handPanelHeight: 310,
   handAutoCollapse: true,
   cardScale: 1,
@@ -102,6 +107,9 @@ export function parseTablePreferences(raw: string | null): TablePreferences {
       autoPass: typeof value.autoPass === "boolean" ? value.autoPass : DEFAULT_TABLE_PREFERENCES.autoPass,
       holdNewStack: typeof value.holdNewStack === "boolean" ? value.holdNewStack : DEFAULT_TABLE_PREFERENCES.holdNewStack,
       holdGraveyard: value.holdGraveyard === true,
+      passWithOptionalActivations: value.passWithOptionalActivations === true,
+      priorityStops: PRIORITY_STOPS.filter(({ id }) => Array.isArray(value.priorityStops) && value.priorityStops.includes(id))
+        .map(({ id }) => id),
       handPanelHeight: boundedNumber(value.handPanelHeight, DEFAULT_TABLE_PREFERENCES.handPanelHeight, 190, 650),
       handAutoCollapse: typeof value.handAutoCollapse === "boolean" ? value.handAutoCollapse : DEFAULT_TABLE_PREFERENCES.handAutoCollapse,
       cardScale: boundedNumber(value.cardScale, DEFAULT_TABLE_PREFERENCES.cardScale, MIN_CARD_SIZE, MAX_CARD_SIZE),

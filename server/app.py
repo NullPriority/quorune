@@ -8,11 +8,12 @@ import hmac
 import json
 import os
 from pathlib import Path
+import random
 import re
 import secrets
 import sqlite3
 import time
-from typing import Any, AsyncIterator, Literal
+from typing import Any, AsyncIterator, Literal, Mapping
 from urllib.parse import urlsplit
 import uuid
 
@@ -45,7 +46,11 @@ from quorune import (
 )
 from quorune.card_programs.adapters import CardProgramSourceMismatch
 from quorune.record import database_fingerprint, verify_record_integrity
+from quorune.record_trust import RecordRulesMismatch
 from quorune.rules.evidence import _capability_validation_snapshot
+from quorune.turn_priority_model import (
+    PRIORITY_STOP_IDS, PRIORITY_WINDOW_HOLDS_FIELD, PriorityWindowHolds, priority_window_holds_from_record,
+)
 from quorune.runtime import (
     GameActor,
     GameActorClosed,
@@ -163,6 +168,13 @@ class RoomRequest(StrictModel):
 
 class RoomStartRequest(StrictModel):
     use_reviewed_card_data: bool = Field(default=False, strict=True)
+    first_player: Literal["random", "A", "B", "C", "D"] = "random"
+    starting_life: int | None = Field(default=None, strict=True, ge=1, le=2**53 - 1)
+
+
+class PriorityWindowRequest(StrictModel):
+    steps: list[str] = Field(max_length=len(PRIORITY_STOP_IDS))
+    preserve_empty: bool = Field(strict=True)
 
 
 class JoinRoomRequest(StrictModel):
@@ -271,11 +283,13 @@ class _BrowserGameService(GameService):
         *,
         principal: str,
         commit_idempotency: bool = True,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
     ) -> CommandReceipt:
         receipt = super().command(
             envelope,
             principal=principal,
             commit_idempotency=commit_idempotency,
+            priority_window_holds=priority_window_holds,
         )
         if receipt.ok:
             _pause_browser_rules_boundary(self)
@@ -320,7 +334,7 @@ class ProjectionHub:
     def version(self, game_id: str) -> int:
         return self._versions.get(game_id, 0)
 
-    async def notify(self, game_id: str) -> None:
+    def notify(self, game_id: str) -> None:
         self._versions[game_id] = self.version(game_id) + 1
         event = self._events.pop(game_id, None)
         if event is not None:
@@ -338,6 +352,14 @@ class ProjectionHub:
         if self.version(game_id) <= after:
             await asyncio.wait_for(event.wait(), timeout=timeout)
         return self.version(game_id)
+
+
+class GameRulesBuildRequired(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status_code=409, detail={
+            "code": "game_rules_build_required",
+            "message": "This saved match needs its original rules build to resume.",
+        })
 
 
 class ServerRuntime:
@@ -369,12 +391,15 @@ class ServerRuntime:
             return None
 
     def _load_game_service(self, game_id: str, *, recovering: bool) -> GameService:
+        self.records.recover_interrupted_save(game_id)
         database = self._database_for_game(game_id)
         if recovering:
             directory = self.records.game_directory(game_id)
             if not verify_record_integrity(directory, database, replay=False)["ok"]:
                 raise ValueError("The saved game did not pass recovery verification")
-        loaded = self.records.load(database, game_id, idempotency=self.idempotency)
+        loaded = self.records.load(
+            database, game_id, idempotency=self.idempotency, verify_rules=True,
+        )
         service = _BrowserGameService(loaded.session, idempotency=self.idempotency)
         if _pause_browser_rules_boundary(service):
             self.records.save(service)
@@ -396,6 +421,8 @@ class ServerRuntime:
             recovering = actor is not None
             try:
                 service = await asyncio.to_thread(self._load_game_service, game_id, recovering=recovering)
+            except RecordRulesMismatch as exc:
+                raise GameRulesBuildRequired() from exc
             except (KeyError, ValueError, OSError, sqlite3.DatabaseError) as exc:
                 if not recovering:
                     raise
@@ -404,7 +431,14 @@ class ServerRuntime:
                 raise GameActorUnavailable("The saved match could not be recovered yet") from exc
             if actor is not None:
                 await self.manager.remove(game_id)
-            return await self.manager.add(service, persistence=self.persistence)
+            latest = service.session.commands[-1] if service.session.commands else {}
+            holds = actor.priority_window_holds if actor is not None else priority_window_holds_from_record(
+                latest.get(PRIORITY_WINDOW_HOLDS_FIELD, {}), service.session.state.turn_order,
+            )
+            return await self.manager.add(
+                service, persistence=self.persistence, publish_command_change=self.hub.notify,
+                priority_window_holds=holds,
+            )
 
     def _database_for_game(self, game_id: str) -> CardDatabase:
         manifest_path = self.records.game_directory(game_id) / "manifest.json"
@@ -471,8 +505,10 @@ class ServerRuntime:
         # Authorize before a request can cause a persisted game to be loaded.
         self.store.game_membership(game_id, guest_id)
         actor = await self.actor(game_id)
+        return self.describe_game(game_id, guest_id, await actor.inspect())
+
+    def describe_game(self, game_id: str, guest_id: str, lifecycle: Mapping[str, Any]) -> dict[str, Any]:
         control = self.store.game_summary(game_id, guest_id)
-        lifecycle = await actor.inspect()
         return {
             **control,
             **lifecycle,
@@ -1125,17 +1161,22 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         runtime: ServerRuntime = Depends(_runtime),
     ) -> dict[str, Any]:
         try:
-            use_reviewed = body is not None and body.use_reviewed_card_data
+            options = body or RoomStartRequest()
             start_spec = runtime.store.start_spec(
                 room_id,
                 guest["guest_id"],
-                use_reviewed_card_data=use_reviewed,
+                use_reviewed_card_data=options.use_reviewed_card_data,
             )
             profile = start_spec.profile
             if profile not in {"commander_duel", "commander_multiplayer"}:
                 raise StoreConflict("Room has an unsupported format profile")
+            first_player: str = options.first_player
+            if first_player == "random":
+                first_player = random.Random(f"quorune-first-player:{start_spec.seed}").choice(tuple(start_spec.decks))
+            elif first_player not in start_spec.decks:
+                raise HTTPException(status_code=422, detail="Choose an occupied starting seat in this room")
             card_db = runtime.card_db
-            if use_reviewed:
+            if options.use_reviewed_card_data:
                 card_db = reviewed_match_snapshot(
                     runtime.card_db, runtime.retained_card_databases(), start_spec.decks.values(),
                 )
@@ -1144,25 +1185,21 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                         "No retained card data passed the checks for every submitted deck. "
                         "Have each player check their saved deck again."
                     )
+            config = GameConfig(
+                seed=start_spec.seed,
+                profile=profile,
+                review_profile="commander_review",
+                semantic_policy="trusted_only",
+                auto_pass_empty_priority=resolved.auto_pass_empty_priority,
+                manual_active_main_phase=True,
+                # Retain every event for the browser's filtered public log.
+                trace_level="debug",
+            )
+            if options.starting_life is not None:
+                config.starting_life = options.starting_life
             with _capability_validation_snapshot():
                 session = CommanderSession.create(
-                    card_db,
-                    start_spec.decks,
-                    first_player="A",
-                    config=GameConfig(
-                        seed=start_spec.seed,
-                        profile=profile,
-                        review_profile="commander_review",
-                        semantic_policy="trusted_only",
-                        # The host opts into engine advancement for new games.
-                        auto_pass_empty_priority=resolved.auto_pass_empty_priority,
-                        manual_active_main_phase=True,
-                        # Browser tables expose a durable complete public log.
-                        # Retain every engine event in the private Game Record;
-                        # the public endpoint separately filters visibility and
-                        # strips authoritative details.
-                        trace_level="debug",
-                    ),
+                    card_db, start_spec.decks, first_player=first_player, config=config,
                 )
                 service = _BrowserGameService(
                     session,
@@ -1173,10 +1210,10 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     session.state.game_id,
                     str(runtime.records.game_directory(session.state.game_id)),
                     session.state.revision,
-                    expected_deck_ids=start_spec.deck_ids,
+                    expected_roster=start_spec.roster,
                     save_record=lambda: runtime.records.save(service),
                 )
-            await runtime.manager.add(service, persistence=runtime.persistence)
+            await runtime.manager.add(service, persistence=runtime.persistence, publish_command_change=runtime.hub.notify)
         except CardProgramSourceMismatch as exc:
             raise HTTPException(status_code=409, detail={
                 "code": "card_data_review_required",
@@ -1269,7 +1306,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             actor = await runtime.actor(game_id)
             result = await actor.pause(body.reason)
             if result["changed"]:
-                await runtime.hub.notify(game_id)
+                runtime.hub.notify(game_id)
             return {
                 "game": await runtime.game_summary(
                     game_id, guest["guest_id"]
@@ -1295,7 +1332,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             actor = await runtime.actor(game_id)
             result = await actor.resume()
             if result["changed"]:
-                await runtime.hub.notify(game_id)
+                runtime.hub.notify(game_id)
             return {
                 "game": await runtime.game_summary(
                     game_id, guest["guest_id"]
@@ -1305,6 +1342,24 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             raise _translate_store_error(exc) from exc
         except GameLifecycleConflict as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @app.put("/api/v1/games/{game_id}/priority-holds", dependencies=[Depends(_csrf)])
+    async def update_priority_holds(
+        game_id: str,
+        body: PriorityWindowRequest,
+        guest: dict[str, Any] = Depends(_guest),
+        runtime: ServerRuntime = Depends(_runtime),
+    ) -> dict[str, Any]:
+        try:
+            _, seat = runtime.store.game_access(game_id, guest["guest_id"])
+            holds = PriorityWindowHolds(tuple(body.steps), body.preserve_empty)
+            actor = await runtime.actor(game_id)
+            actor.set_priority_window_holds(seat, holds)
+        except (StoreForbidden, StoreNotFound) as exc:
+            raise _translate_store_error(exc) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        return {"holds": holds.to_dict()}
 
     @app.post(
         "/api/v1/games/{game_id}/commands",
@@ -1326,16 +1381,12 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             if not isinstance(raw, dict):
                 raise ValueError("Command envelope must be an object")
             envelope = CommandEnvelope.from_mapping(raw)
+        except RecursionError as exc:
+            raise HTTPException(status_code=422, detail="Command data is nested too deeply") from exc
         except (ValueError, TypeError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         actor = await runtime.actor(game_id)
-        try:
-            receipt = await actor.command(principal, envelope)
-        except (GameActorUnavailable, GameActorClosed):
-            await runtime.hub.notify(game_id)
-            raise
-        if receipt.ok and receipt.state_changed and not receipt.replayed:
-            await runtime.hub.notify(game_id)
+        receipt = await actor.command(principal, envelope)
         return {"receipt": receipt.to_dict()}
 
     @app.websocket("/api/v1/games/{game_id}/stream")
@@ -1379,6 +1430,11 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 game_id, guest["guest_id"]
             )
             actor = await runtime.actor(game_id)
+        except GameRulesBuildRequired as exc:
+            await websocket.accept(subprotocol=selected_protocol)
+            await websocket.send_json({"type": "terminal", **exc.detail})
+            await websocket.close(code=4409, reason="Saved rules build required")
+            return
         except (GameActorUnavailable, GameActorClosed):
             await websocket.accept(subprotocol=selected_protocol)
             await websocket.close(code=1013, reason="Match recovery")
@@ -1409,19 +1465,26 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         cursor_key = f"network:{principal}:{uuid.uuid4().hex}"
         await websocket.accept(subprotocol=selected_protocol)
         version = runtime.hub.version(game_id)
-        try:
-            packet = await actor.observe(
-                principal, full=True, cursor_key=cursor_key
+
+        async def send_projection(*, full: bool = False) -> dict[str, Any]:
+            capture = await actor.observe(
+                principal, full=full, cursor_key=cursor_key, include_lifecycle=True,
             )
+            game = runtime.describe_game(game_id, guest["guest_id"], capture["lifecycle"])
+            if game["spectator"] != membership["spectator"] or game["seat"] != membership["seat"]:
+                raise StoreForbidden("Game membership changed during the connection")
+            packet = capture["packet"]
             await websocket.send_json(
                 {
                     "type": "projection",
                     "packet": packet,
-                    "game": await runtime.game_summary(
-                        game_id, guest["guest_id"]
-                    ),
+                    "game": game,
                 }
             )
+            return packet
+
+        try:
+            packet = await send_projection(full=True)
             receive_task = asyncio.create_task(websocket.receive())
             while True:
                 hub_task = asyncio.create_task(
@@ -1443,18 +1506,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                         )
                         continue
                     version = hub_task.result()
-                    packet = await actor.observe(
-                        principal, cursor_key=cursor_key
-                    )
-                    await websocket.send_json(
-                        {
-                            "type": "projection",
-                            "packet": packet,
-                            "game": await runtime.game_summary(
-                                game_id, guest["guest_id"]
-                            ),
-                        },
-                    )
+                    packet = await send_projection()
                 except TimeoutError:
                     await websocket.send_json(
                         {"type": "ping", "view_revision": packet["view_revision"]}
@@ -1463,6 +1515,8 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             return
         except (GameActorUnavailable, GameActorClosed):
             await websocket.close(code=1013, reason="Match recovery")
+        except (StoreForbidden, StoreNotFound):
+            await websocket.close(code=4401, reason="Game access lost")
         finally:
             tasks = [
                 task

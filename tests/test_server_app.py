@@ -322,7 +322,7 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertNotIn("preflight", visible["deck"])
 
         path = f"{room_path}/start"
-        override = {"use_reviewed_card_data": True}
+        override = {"use_reviewed_card_data": True, "first_player": "B", "starting_life": 27}
         self.assertEqual(409, self.client.post(path, headers=self.auth(host)).status_code)
         self.assertEqual(403, self.client.post(path, headers=self.auth(other), json=override).status_code)
         unavailable = earlier.with_suffix(".unavailable")
@@ -340,13 +340,16 @@ class ServerApplicationTests(unittest.TestCase):
         record_dir = self.settings.game_root / game_id
         manifest = json.loads((record_dir / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(earlier_hash, manifest["scryfall"]["metadata_hash"])
+        self.assertEqual(["B", "A"], manifest["turn_order"])
         with CardDatabase(self.settings.card_db) as active:
             self.assertNotEqual(earlier_hash, database_fingerprint(active)["metadata_hash"])
 
         self.restart_client()
         resumed = self.client.get(f"/api/v1/games/{game_id}/state?full=true", headers=self.auth(other))
         self.assertEqual(200, resumed.status_code, resumed.text)
-        self.assertEqual(game_id, resumed.json()["packet"]["state"]["game"]["id"])
+        state = resumed.json()["packet"]["state"]
+        self.assertEqual(game_id, state["game"]["id"])
+        self.assertEqual({27}, {player["life"] for player in state["players"].values()})
         with CardDatabase(earlier) as database:
             self.assertTrue(replay_record(record_dir, database, verify=True)["ok"])
 
@@ -396,7 +399,7 @@ class ServerApplicationTests(unittest.TestCase):
         created = self.client.post(
             "/api/v1/rooms",
             headers=self.auth(alice),
-            json={"seed": 20260730, "player_count": 2},
+            json={"seed": 1, "player_count": 2},
         )
         self.assertEqual(201, created.status_code, created.text)
         room = created.json()["room"]
@@ -430,6 +433,15 @@ class ServerApplicationTests(unittest.TestCase):
                 },
             )
             self.assertEqual(200, uploaded.status_code, uploaded.text)
+        start_path = f"/api/v1/rooms/{room['room_id']}/start"
+        forbidden = self.client.post(
+            start_path, headers=self.auth(bob), json={"first_player": "B", "starting_life": 27},
+        )
+        self.assertEqual(403, forbidden.status_code, forbidden.text)
+        for options in ({"first_player": "C"}, {"starting_life": 0}, {"starting_life": True}, {"starting_life": 12.5}):
+            with self.subTest(options=options):
+                invalid = self.client.post(start_path, headers=self.auth(alice), json=options)
+                self.assertEqual(422, invalid.status_code, invalid.text)
         add = GameManager.add
 
         async def checked_add(manager, *args, **kwargs):
@@ -441,7 +453,7 @@ class ServerApplicationTests(unittest.TestCase):
             patch.object(GameManager, "add", checked_add),
         ):
             started = self.client.post(
-                f"/api/v1/rooms/{room['room_id']}/start",
+                start_path,
                 headers=self.auth(alice),
             )
         self.assertEqual(1, loader.call_count)
@@ -465,6 +477,7 @@ class ServerApplicationTests(unittest.TestCase):
         )
         self.assertEqual("commander_duel", summary["format_profile"])
         self.assertEqual({"A", "B"}, set(packet["state"]["players"]))
+        self.assertEqual({40}, {player["life"] for player in packet["state"]["players"].values()})
         self.assertEqual(200, progress.status_code, progress.text)
         self.assertEqual(0, progress.json()["queue_depth"])
         self.assertFalse(progress.json()["persistence"]["pending"])
@@ -473,6 +486,7 @@ class ServerApplicationTests(unittest.TestCase):
         checkpoint = json.loads(
             (record_dir / "checkpoint.json").read_text(encoding="utf-8")
         )
+        self.assertEqual(["B", "A"], checkpoint["state"]["turn_order"])
         self.assertEqual(
             "trusted_only", checkpoint["state"]["config"]["semantic_policy"]
         )
@@ -675,10 +689,60 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, response.status_code, response.text)
         self.assertEqual(game_id, response.json()["packet"]["state"]["game"]["id"])
 
-    def create_ready_game(
-        self, player_count: int = 4
-    ) -> tuple[str, list[str], str]:
-        seats = "ABCD"[:player_count]
+    def test_reopened_match_requires_its_saved_rules_build(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        owner = self.auth(tokens[0])
+        packet = self.client.get(f"{base}/state?full=true", headers=owner).json()["packet"]
+        directory = self.settings.game_root / game_id
+        manifest_path = directory / "manifest.json"
+        original = manifest_path.read_bytes()
+        manifest = json.loads(original)
+        manifest["runtime_trust"]["capability_registry_fingerprint"] = "0" * 64
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        before = {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()}
+        self.restart_client()
+
+        refused = self.client.get(f"{base}/state?full=true", headers=owner)
+        self.assertEqual(409, refused.status_code, "Cold load must reject mismatched rules before projecting a hand")
+        detail = refused.json()["detail"]
+        self.assertEqual("game_rules_build_required", detail["code"])
+        self.assertNotIn("packet", refused.json())
+
+        command = {
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "previous-build-keep",
+            "decision_id": packet["decision"]["id"],
+            "action_id": "keep",
+            "capability": packet["decision"]["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        }
+        submitted = self.client.post(f"{base}/commands", headers=owner, json=command)
+        self.assertEqual(409, submitted.status_code, submitted.text)
+        self.assertEqual(detail, submitted.json()["detail"])
+        outsider, _ = self.guest("Outside this room")
+        denied = self.client.get(f"{base}/state?full=true", headers=self.auth(outsider))
+        self.assertEqual(403, denied.status_code, denied.text)
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with self.client.websocket_connect(f"{base}/stream") as socket:
+            self.assertEqual({"type": "terminal", **detail}, socket.receive_json())
+            self.assertEqual(4409, socket.receive()["code"])
+
+        runtime = self.client.app.state.runtime
+        self.assertIsNone(runtime._game_actor(game_id))
+        self.assertEqual(before, {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()})
+
+        manifest_path.write_bytes(original)
+        reopened = self.client.get(f"{base}/state?full=true", headers=owner)
+        self.assertEqual(200, reopened.status_code, reopened.text)
+        self.assertEqual(packet["view_revision"], reopened.json()["packet"]["view_revision"])
+
+    def create_ready_room(
+        self, player_count: int, *, occupied: str | None = None,
+    ) -> tuple[str, list[str]]:
+        seats = occupied or "ABCD"[:player_count]
         tokens = [self.guest(f"Player {seat}")[0] for seat in seats]
         response = self.client.post(
             "/api/v1/rooms",
@@ -730,12 +794,105 @@ class ServerApplicationTests(unittest.TestCase):
                     )
                 ),
             )
+        return room_id, tokens
+
+    def create_ready_game(
+        self, player_count: int = 4, *, first_player: str = "A", starting_life: int | None = None,
+    ) -> tuple[str, list[str], str]:
+        room_id, tokens = self.create_ready_room(player_count)
         response = self.client.post(
             f"/api/v1/rooms/{room_id}/start",
             headers=self.auth(tokens[0]),
+            json={"first_player": first_player, "starting_life": starting_life},
         )
         self.assertEqual(200, response.status_code, response.text)
         return response.json()["game_id"], tokens, room_id
+
+    def test_host_selected_starting_seat_and_life_survive_replay(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2, first_player="B", starting_life=27)
+        base = f"/api/v1/games/{game_id}"
+        auth_a, auth_b = (self.auth(token) for token in tokens)
+
+        def observe(auth):
+            response = self.client.get(f"{base}/state?full=true", headers=auth)
+            self.assertEqual(200, response.status_code, response.text)
+            return response.json()["packet"]
+
+        def submit(auth, action):
+            packet = observe(auth)
+            decision = packet["decision"]
+            response = self.client.post(f"{base}/commands", headers=auth, json={
+                "protocol_version": "3.0",
+                "game_id": game_id,
+                "command_id": f"{action}-{packet['view_revision']}",
+                "decision_id": decision["id"],
+                "action_id": action,
+                "capability": decision["cap"],
+                "expected_view_revision": packet["view_revision"],
+                "choices": {},
+            })
+            self.assertEqual(200, response.status_code, response.text)
+            self.assertTrue(response.json()["receipt"]["ok"], response.text)
+
+        opening = observe(auth_a)["state"]["players"]
+        self.assertEqual({"A": 27, "B": 27}, {seat: player["life"] for seat, player in opening.items()})
+        submit(auth_b, "keep")
+        submit(auth_a, "keep")
+        turn = observe(auth_b)["state"]["turn"]
+        self.assertEqual((1, "B", "upkeep"), (turn["seq"], turn["active"], turn["step"]))
+        submit(auth_b, "pass")
+        submit(auth_a, "pass")
+        state = observe(auth_b)["state"]
+        self.assertEqual(("B", "draw"), (state["turn"]["active"], state["turn"]["step"]))
+        self.assertEqual(7, state["players"]["B"]["hand_n"])
+
+        record_dir = self.settings.game_root / game_id
+        checkpoint = json.loads((record_dir / "checkpoint.json").read_text(encoding="utf-8"))["state"]
+        self.assertEqual(27, checkpoint["config"]["starting_life"])
+        self.assertEqual(["B", "A"], checkpoint["turn_order"])
+        with CardDatabase(self.settings.card_db) as database:
+            replay = replay_record(record_dir, database, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_multiplayer_start_rejects_unready_fourth_seat_and_accepts_three(self):
+        room_id, tokens = self.create_ready_room(4, occupied="ABD")
+        room_path = f"/api/v1/rooms/{room_id}"
+        host = self.auth(tokens[0])
+        fourth, _ = self.guest("Joining fourth player")
+        store = self.client.app.state.runtime.store
+        fourth_id = store.authenticate(fourth)["guest_id"]
+        commit = store.commit_started_game
+
+        def join_before_commit(*args, **kwargs):
+            store.join_room(fourth_id, invite_code=self.last_ready_invite, seat="C")
+            commit(*args, **kwargs)
+
+        with patch.object(store, "commit_started_game", side_effect=join_before_commit):
+            raced = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+        self.assertEqual(409, raced.status_code, raced.text)
+        self.assertIn("roster or a deck changed", raced.text)
+        self.assertEqual([], list(self.settings.game_root.glob("*/manifest.json")))
+
+        unready = self.client.post(f"{room_path}/start", headers=host)
+        self.assertEqual(409, unready.status_code, unready.text)
+        self.assertIn("Every seated player must submit a deck", unready.text)
+        removed = self.client.delete(f"{room_path}/seats/C", headers=host)
+        self.assertEqual(200, removed.status_code, removed.text)
+        empty = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "C"})
+        self.assertEqual(422, empty.status_code, empty.text)
+
+        started = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+        self.assertEqual(200, started.status_code, started.text)
+        result = started.json()
+        self.assertEqual("commander_multiplayer", result["profile"])
+        directory = self.settings.game_root / result["game_id"]
+        manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(["D", "A", "B"], manifest["turn_order"])
+        late = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(fourth),
+            json={"invite_code": self.last_ready_invite, "seat": "C"},
+        )
+        self.assertEqual(409, late.status_code, late.text)
 
     def test_lost_durable_ack_reloads_same_move_without_a_second_commit(self):
         game_id, tokens, _ = self.create_ready_game(player_count=2)
@@ -776,6 +933,74 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, retry.status_code, retry.text)
         self.assertTrue(retry.json()["receipt"]["replayed"])
         self.assertEqual(1, recovered.json()["game"]["commands"])
+
+    def test_priority_holds_require_the_seat_and_do_not_modify_the_game_revision(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        spectator, _ = self.guest("Priority settings spectator")
+        watched = self.client.post("/api/v1/rooms/watch", headers=self.auth(spectator),
+            json={"invite_code": self.last_ready_invite})
+        self.assertEqual(200, watched.status_code, watched.text)
+        url = f"/api/v1/games/{game_id}/priority-holds"
+        settings = {"steps": ["upkeep"], "preserve_empty": False}
+        self.assertEqual(403, self.client.put(url, headers=self.auth(spectator), json=settings).status_code)
+        self.assertEqual(422, self.client.put(url, headers=self.auth(tokens[1]),
+            json={**settings, "steps": ["upkeep", "upkeep"]}).status_code)
+        self.assertEqual(422, self.client.put(url, headers=self.auth(tokens[1]),
+            json={**settings, "seat": "A"}).status_code)
+
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        revision = actor.service.session.state.revision
+        response = self.client.put(url, headers=self.auth(tokens[1]), json=settings)
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual(settings, response.json()["holds"])
+        self.assertEqual({"B": settings}, {seat: value.to_dict() for seat, value in actor.priority_window_holds.items()})
+        self.assertEqual(revision, actor.service.session.state.revision)
+
+    def test_interrupted_record_save_restores_previous_revision(self):
+        from quorune import record
+
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        auth = self.auth(tokens[0])
+        original = self.client.get(f"{base}/state?full=true", headers=auth).json()["packet"]
+        decision = original["decision"]
+        command = {
+            "protocol_version": "3.0", "game_id": game_id, "command_id": "interrupted-record-save",
+            "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+            "expected_view_revision": original["view_revision"], "choices": {},
+        }
+        runtime = self.client.app.state.runtime
+        failed_actor = runtime.manager.get(game_id)
+        directory = runtime.records.game_directory(game_id)
+        before = {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()}
+        write_journal = record._atomic_jsonl
+
+        def fail_after_checkpoint(path, rows):
+            if path.name == "commands.jsonl":
+                self.assertNotEqual(before["checkpoint.json"], (directory / "checkpoint.json").read_bytes())
+                raise OSError("Injected interruption between checkpoint and command journal")
+            return write_journal(path, rows)
+
+        with patch.object(record, "_atomic_jsonl", side_effect=fail_after_checkpoint):
+            failed = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(503, failed.status_code, failed.text)
+        self.assertTrue(failed_actor.requires_recovery)
+
+        result = self.client.get(f"{base}/state?full=true", headers=auth)
+        self.assertEqual(200, result.status_code, result.text)
+        self.assertEqual(before, {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()})
+        recovered = result.json()
+        packet = recovered["packet"]
+        self.assertEqual(original["view_revision"], packet["view_revision"])
+        self.assertEqual(0, recovered["game"]["commands"])
+        self.assertIsNot(failed_actor, runtime.manager.get(game_id))
+
+        retry = self.client.post(f"{base}/commands", headers=auth, json={
+            **command, "decision_id": packet["decision"]["id"], "capability": packet["decision"]["cap"],
+        })
+        self.assertTrue(retry.json()["receipt"]["ok"], retry.text)
+        self.assertFalse(retry.json()["receipt"]["replayed"])
+        self.assertEqual(1, len((directory / "commands.jsonl").read_text(encoding="utf-8").splitlines()))
 
     def test_command_progress_shows_only_the_requesting_pilots_timing(self):
         game_id, tokens, _room = self.create_ready_game(player_count=2)
@@ -1119,6 +1344,43 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(403, outsider.status_code)
         me = self.client.get("/api/v1/me", headers=self.auth(alice))
         self.assertEqual("Alice", me.json()["guest"]["display_name"])
+
+    def test_websocket_preserves_packet_and_lifecycle_revision_when_a_move_commits(self):
+        from quorune import CommandEnvelope
+
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        observe = actor.observe
+        committed = []
+
+        async def capture_then_commit(*args, **kwargs):
+            captured = await observe(*args, **kwargs)
+            if not committed:
+                packet = captured.get("packet", captured)
+                decision = packet["decision"]
+                envelope = CommandEnvelope.from_mapping({
+                    "protocol_version": "3.0", "game_id": game_id, "command_id": "between-projections",
+                    "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+                    "expected_view_revision": packet["view_revision"], "choices": {},
+                })
+                committed.append(await actor.command("pilot:A", envelope))
+            return captured
+
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with patch.object(actor, "observe", side_effect=capture_then_commit), self.client.websocket_connect(
+            f"/api/v1/games/{game_id}/stream", headers={"origin": "http://testserver"},
+        ) as socket:
+            initial = socket.receive_json()
+            self.assertTrue(committed[0].ok, committed[0].summary)
+            first = initial["packet"]["view_revision"]
+            self.assertEqual(first + 1, committed[0].state_revision)
+            self.assertEqual(first, initial["game"]["state_revision"])
+            self.assertIn("pilot:A", initial["game"]["pending_principals"])
+
+            updated = socket.receive_json()
+            self.assertEqual(first + 1, updated["packet"]["view_revision"])
+            self.assertEqual(first + 1, updated["game"]["state_revision"])
+            self.assertNotIn("pilot:A", updated["game"]["pending_principals"])
 
     def test_four_seat_projection_websocket_reconnect_and_exact_replay(self):
         game_id, tokens, _ = self.create_ready_game()

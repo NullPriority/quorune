@@ -18,6 +18,7 @@ from .mana_undo import (
     undo_mana_activation,
 )
 from .model import DecisionGroup, GameState, YieldPolicy
+from .permissions import current_turn_controller
 from .semantic_runtime.action_permissions import land_play_permission_options
 from .rules.action_catalog import action_offer_signature_facts
 from .trigger_processing import start_delayed_trigger_batch
@@ -25,6 +26,7 @@ from .shared_type_doors import shared_type_doors_enabled
 from .turn_priority_model import (
     PriorityGrantPlan,
     PriorityPassPlan,
+    PriorityWindowHolds,
     TurnPriorityHost,
     YieldInvalidationReason,
 )
@@ -43,6 +45,7 @@ class TurnPriorityDecisionOwner:
 
     def __init__(self, host: TurnPriorityHost) -> None:
         self.host = host
+        self.window_holds: Mapping[str, PriorityWindowHolds] = {}
 
     @property
     def state(self) -> GameState:
@@ -673,13 +676,16 @@ class TurnPriorityDecisionOwner:
                 hints = self.host._priority_action_hints(seat)
                 action_signature = self.meaningful_action_signature(seat, hints)
                 meaningful = self.signature_has_actions(seat, hints)
+                controller = current_turn_controller(self.state, seat) or seat
+                holds = self.window_holds.get(controller)
+                held = holds is not None and holds.matches(self.state)
                 self.increment_optimization(seat, "priority_windows_considered")
                 if self.state.stack:
                     self.increment_optimization(
                         seat,
                         (
                             "stack_interaction_windows_created"
-                            if meaningful
+                            if meaningful or held
                             else "stack_interaction_windows_auto_passed"
                         ),
                     )
@@ -691,6 +697,7 @@ class TurnPriorityDecisionOwner:
                 if (
                     self.state.config.auto_pass_empty_priority
                     and not meaningful
+                    and not held
                     and not self.manual_active_main_phase_window(seat)
                 ):
                     self.increment_optimization(
@@ -708,7 +715,7 @@ class TurnPriorityDecisionOwner:
                     )
                     self.pass_priority(seat, automatic=True)
                     continue
-                if can_yield:
+                if can_yield and not held:
                     self.increment_optimization(seat, "yield_covered_windows")
                     self.record_action_opportunity(
                         seat,

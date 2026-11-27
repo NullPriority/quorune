@@ -8,6 +8,7 @@ import {
   type PublicGameEvent,
   type Room,
   type SavedDeck,
+  type StartingPlayer,
   type SystemStatus,
   streamUrl,
   streamProtocols,
@@ -25,12 +26,14 @@ import { deckSubmissionNotice } from "./deckSubmissionNotice";
 import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
-import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, isIgnoredActivation, turnYieldPause, type CombatPriorityStop, type TurnYieldBoundary } from "./tableAutomation";
+import { PRIORITY_STOPS, type PriorityStop } from "./tableAutomation";
 import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, needsActivationConfirmation, phyrexianCastCostLabels, publicEventSummary, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp } from "./TableStatus";
 import { CardSizeSlider, TableSettings } from "./TableSettings";
 import { type OpenTableZone, ZoneBrowser, ZonePiles } from "./TableZones";
-import { CombatStopOptions, TurnStatus } from "./TurnStatus";
+import { TurnStatus } from "./TurnStatus";
+import { PriorityControls } from "./PriorityControls";
+import { useTablePriority } from "./useTablePriority";
 import { PlayerBoard } from "./PlayerBoard";
 import { StackPanel } from "./StackPanel";
 import { projectedCardSeat, SeatLabel, tableSeat } from "./SeatLabel";
@@ -106,11 +109,21 @@ function RoomView({
   const [busy, setBusy] = useState(false);
   const [legalityReview, setLegalityReview] = useState<LegalityConfirmationRequired | null>(null);
   const [nextPlayerCount, setNextPlayerCount] = useState<2 | 4>(initial.seat_count);
+  const [firstPlayer, setFirstPlayer] = useState<StartingPlayer>("random");
+  const [startingLifeInput, setStartingLifeInput] = useState("");
   const mine = room.seats.find((seat) => seat.mine);
   const owner = room.owner_guest_id === guest.guest_id;
-  const readyCount = room.seats.filter((seat) => seat.ready).length;
+  const occupiedSeats = room.seats.filter((seat) => seat.guest_id !== null);
+  const minimumPlayers = room.seat_count === 2 ? 2 : 3;
+  const enoughPlayers = occupiedSeats.length >= minimumPlayers;
+  const requiredDeckCount = Math.max(minimumPlayers, occupiedSeats.length);
+  const readyCount = occupiedSeats.filter((seat) => seat.ready).length;
+  const allReady = readyCount === requiredDeckCount;
+  const allDecksSubmitted = enoughPlayers && occupiedSeats.every((seat) => seat.deck !== null);
   const reviewingDraft = !mine?.ready && Boolean(mine?.deck?.preflight?.data_integrity_issue);
-  const allDecksSubmitted = room.seats.every((seat) => seat.deck !== null);
+  const startingSeat = occupiedSeats.some((seat) => seat.seat === firstPlayer) ? firstPlayer : "random";
+  const startingLife = startingLifeInput === "" ? undefined : Number(startingLifeInput);
+  const invalidStartingLife = startingLife !== undefined && (!Number.isSafeInteger(startingLife) || startingLife < 1);
 
   useEffect(() => {
     if (room.spectator) return;
@@ -355,7 +368,11 @@ function RoomView({
   async function start(useReviewedCardData = false) {
     setBusy(true);
     try {
-      const result = await api.start(room.room_id, useReviewedCardData);
+      const result = await api.start(room.room_id, {
+        first_player: startingSeat,
+        starting_life: startingLife,
+        use_reviewed_card_data: useReviewedCardData,
+      });
       onGame(result.game_id);
     } catch (caught) {
       setMessageKind("error");
@@ -369,7 +386,7 @@ function RoomView({
     <main className="page-shell">
       <header className="room-header">
         <div>
-          <div className="eyebrow">{room.seat_count === 2 ? "COMMANDER DUEL" : "COMMANDER MULTIPLAYER"} · 40 LIFE</div>
+          <div className="eyebrow">{room.seat_count === 2 ? "COMMANDER DUEL" : "COMMANDER MULTIPLAYER"}</div>
           <h1>{room.seat_count === 2 ? "Commander duel" : "Commander table"}</h1>
         </div>
         <div className="room-header-actions">
@@ -395,7 +412,7 @@ function RoomView({
                 value={nextPlayerCount}
                 onChange={(event) => setNextPlayerCount(Number(event.target.value) as 2 | 4)}
               >
-                <option value={4}>4 players</option>
+                <option value={4}>3–4 players</option>
                 <option value={2}>1v1 duel</option>
               </select>
               <button type="button" className="quiet-button" data-testid="new-room" disabled={busy} onClick={makeNewRoom}>New room</button>
@@ -498,18 +515,37 @@ function RoomView({
       {owner && (
         <div className="start-bar">
           <div className="readiness-copy">
-            <strong>{readyCount} of {room.seat_count} decks ready</strong>
-            <span>{readyCount === room.seat_count ? "You can start the game."
+            <strong>{readyCount} of {requiredDeckCount} decks ready</strong>
+            <span>{allReady ? "You can start the game."
+              : !enoughPlayers ? `At least ${minimumPlayers} players must join.`
               : allDecksSubmitted ? "A submitted deck needs a card data review."
-              : "Each player needs to submit a deck."}</span>
+              : "Each seated player needs to submit a deck."}</span>
           </div>
-          <div className="readiness-meter" aria-hidden="true"><span style={{ width: `${readyCount / room.seat_count * 100}%` }} /></div>
-          <button data-testid="start-game" disabled={busy || readyCount !== room.seat_count} onClick={() => void start()}>{room.seat_count === 2 ? "Start duel" : "Start game"}</button>
-          {allDecksSubmitted && readyCount < room.seat_count && <details className="reviewed-rules-action">
+          <div className="readiness-meter" aria-hidden="true"><span style={{ width: `${readyCount / requiredDeckCount * 100}%` }} /></div>
+          <div className="room-start-actions">
+            <label>Starting player
+              <select value={startingSeat} disabled={busy} onChange={(event) => setFirstPlayer(tableSeat(event.target.value) ?? "random")}>
+                <option value="random">Random</option>
+                {occupiedSeats.map((seat) => <option key={seat.seat} value={seat.seat}>Seat {seat.seat} · {seat.display_name}</option>)}
+              </select>
+            </label>
+            <button data-testid="start-game" disabled={busy || invalidStartingLife || !allReady} onClick={() => void start()}>{room.seat_count === 2 ? "Start duel" : "Start game"}</button>
+          </div>
+          <details className="advanced-start-settings">
+            <summary>Advanced settings</summary>
+            <label>Starting life per player
+              <input type="number" min={1} max={Number.MAX_SAFE_INTEGER} step={1} placeholder="40"
+                value={startingLifeInput} disabled={busy} aria-invalid={invalidStartingLife || undefined}
+                aria-describedby={invalidStartingLife ? "starting-life-error" : undefined}
+                onChange={(event) => setStartingLifeInput(event.target.value)} />
+            </label>
+            {invalidStartingLife && <small id="starting-life-error" role="alert">Enter a valid whole number greater than zero.</small>}
+          </details>
+          {allDecksSubmitted && !allReady && <details className="reviewed-rules-action">
             <summary>Use earlier card data</summary>
             <div>
               <p>Start this match using one retained version of the card data for the whole table. Every submitted deck must pass its checks with that version.</p>
-              <button type="button" className="quiet-button" disabled={busy} onClick={() => void start(true)}>
+              <button type="button" className="quiet-button" disabled={busy || invalidStartingLife} onClick={() => void start(true)}>
                 {busy ? "Checking decks…" : "Start with earlier card data"}
               </button>
             </div>
@@ -541,9 +577,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const [compactBoards, setCompactBoards] = useState(() =>
     window.matchMedia("(max-height: 520px), (max-width: 650px)").matches);
   const [compactOwnBoard, setCompactOwnBoard] = useState(true);
-  const [turnYield, setTurnYield] = useState<TurnYieldBoundary | null>(null);
-  const [combatStops, setCombatStops] = useState<CombatPriorityStop[]>([]);
-  const [ignoredStops, setIgnoredStops] = useState<{ turn: number; offers: ReadonlyMap<string, string> }>();
   const [handManuallyCollapsed, setHandManuallyCollapsed] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<JsonValue | null>(null);
   const [focusedStackId, setFocusedStackId] = useState("");
@@ -578,7 +611,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const dragOverOwnBattlefieldRef = useRef(false);
   const lastDroppedCardRef = useRef("");
   const cardDropHandlerRef = useRef<(cardRef: string) => void>(() => undefined);
-  const autoPassDecisionRef = useRef("");
   const manualMana = !tablePreferences.autoMana;
   const {
     draft, openDraft, closeDraft, stageChoices, submitDraft, act, retry, lastMove,
@@ -586,6 +618,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
     canResumeDraft, dismissParkedDraft,
   } = useDecisionInteraction({ view, gameId, enabled: connection === "LIVE" && lifecycle?.status === "active", onNotice: setNotice });
   const selectedAction = draft?.action ?? null;
+  const priorityAutomation = useTablePriority({
+    gameId, view, active: lifecycle?.status === "active", online: connection === "LIVE", preferences: tablePreferences, act,
+    blocked: submitting || Boolean(pendingRetry || selectedAction || parkedAction || actionChoices.length),
+  });
   const choiceMinimized = Boolean(selectedAction && minimizedChoice === view?.decision?.id);
   const minimizeInsteadOfCancel = canMinimizeChoice(view?.decision);
   const currentChoiceDetail = view?.decision ? decisionDetail(view.decision) : "";
@@ -599,45 +635,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const compatibilityErrors = choiceCompatibilityErrors(selectedAction?.form, choiceValues);
   const commitBlocked = compatibilityErrors.length > 0;
   const choiceErrors = commitBlocked ? compatibilityErrors : draft?.errors ?? [];
-  const projectedTurn = asRecord(view?.state.turn);
-  const graveyardRefs = tablePreferences.holdGraveyard
-    ? Object.values(asRecord(view?.state.players)).flatMap((player) => asList(asRecord(player).gy).map((card) => String(asRecord(card).id)))
-    : [];
-  const turnBoundary = {
-    turn: Number(projectedTurn.seq ?? 0),
-    phase: String(projectedTurn.phase ?? ""),
-    stack: [...stackPositions.keys()],
-    graveyard: JSON.stringify([graveyardRefs, stack.filter((item) => {
-      const row = asRecord(item);
-      return row.from === "graveyard" || [row.src, ...asList(row.targets)].some((ref) => graveyardRefs.includes(String(ref)));
-    }).map((item) => asRecord(item).id)]),
-  };
-  const combatStop = view?.decision?.kind === "priority" ? activeCombatPriorityStop(
-    turnBoundary.phase, String(projectedTurn.step ?? ""), Boolean(asRecord(view.state.combat).first_strike_step), combatStops,
-  ) : undefined;
-  function toggleCombatStop(stop: CombatPriorityStop) {
-    setCombatStops((selected) => selected.includes(stop) ? selected.filter((value) => value !== stop) : [...selected, stop]);
-  }
-  const ignoredOffers = ignoredStops?.turn === turnBoundary.turn ? ignoredStops.offers : undefined;
-  const passWindow = {
-    activePlayer: String(projectedTurn.active ?? ""),
-    phase: turnBoundary.phase,
-    principalSeat: view?.principal.split(":").at(-1) ?? "",
-    stackDepth: turnBoundary.stack.length,
-    ignoredActivations: ignoredOffers,
-  };
-  const legalPriority = view?.decision?.legal_actions ?? [];
-  const autoPass = turnYield ? legalPriority.find((action) => action.action === "pass")
-    : findSafeAutoPass(legalPriority, passWindow);
-  const yieldPause = turnYield && (combatStop ? `Priority held · ${combatStop}`
-    : turnYieldPause(turnYield, turnBoundary, view?.decision?.kind, Boolean(autoPass), {
-      stack: tablePreferences.holdNewStack, graveyard: tablePreferences.holdGraveyard,
-    }));
-
-  useEffect(() => {
-    if (turnYield && turnYield.turn !== turnBoundary.turn) setTurnYield(null);
-  }, [turnYield, turnBoundary.turn]);
-
   function refreshPublicLog(reset = false): Promise<void> {
     queuedLogRefresh.current = reset || queuedLogRefresh.current === true;
     if (publicLogCall.current) return publicLogCall.current;
@@ -828,46 +825,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
   }, [hasStack, selectedAction?.id, stackTargetStep]);
 
   useEffect(() => {
-    const decision = view?.decision;
-    if (
-      (!tablePreferences.autoPass && !turnYield)
-      || !decision
-      || decision.kind !== "priority"
-      || lifecycle?.status !== "active"
-      || connection !== "LIVE"
-      || submitting
-      || pendingRetry
-      || selectedAction
-      || parkedAction
-      || actionChoices.length > 0
-      || autoPassDecisionRef.current === decision.id
-    ) return;
-    if (!autoPass || yieldPause || combatStop) return;
-    autoPassDecisionRef.current = decision.id;
-    const ignored = decision.legal_actions.filter((row) => isIgnoredActivation(row, ignoredOffers)).map((row) => row.id);
-    void act(autoPass, turnYield ? {
-      pass_turn_sequence: turnBoundary.turn,
-      ...(ignored.length > 0 ? { ignored_activation_ids: ignored } : {}),
-    } : {});
-  }, [
-    connection,
-    lifecycle?.status,
-    pendingRetry,
-    selectedAction,
-    parkedAction,
-    actionChoices.length,
-    submitting,
-    tablePreferences.autoPass,
-    autoPass,
-    combatStop,
-    yieldPause,
-    turnYield,
-    turnBoundary.turn,
-    view?.decision?.id,
-    view?.viewRevision,
-  ]);
-
-  useEffect(() => {
     if ((!selectedAction || choiceMinimized) && actionChoices.length === 0 && !zoneBrowser && !pinnedCardRef && !showPublicLog) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const oldOverflow = document.body.style.overflow;
@@ -958,10 +915,9 @@ function GameView({ gameId, system, onExit, onRoom }: {
     setCardContext(null);
     setPublicStage("");
     if (action.action === "pass" || isRoutineCast(action) || (!action.form && !needsActivationConfirmation(action))) {
-      if (action.action === "pass" && turnYield) setTurnYield(turnBoundary);
       const choices = action.action === "cast" && action.form
         ? executableChoices(action.form, initialChoices(action.form)) : {};
-      void act(action, choices);
+      if (act(action, choices) && action.action === "pass") priorityAutomation.acknowledgeManualPass();
       return;
     }
     openDraft(action);
@@ -1030,15 +986,19 @@ function GameView({ gameId, system, onExit, onRoom }: {
     key: K,
     value: TablePreferences[K],
   ) {
-    if (key === "autoPass") {
-      if (value) autoPassDecisionRef.current = "";
-      else setTurnYield(null);
-    }
+    if (key === "autoPass") priorityAutomation.resetYield();
     setTablePreferences((current) => ({ ...current, [key]: value }));
   }
 
+  function togglePriorityStop(stop: PriorityStop) {
+    const selected = new Set(tablePreferences.priorityStops);
+    if (selected.has(stop)) selected.delete(stop);
+    else selected.add(stop);
+    setTablePreference("priorityStops", PRIORITY_STOPS.filter(({ id }) => selected.has(id)).map(({ id }) => id));
+  }
+
   function resetTablePreferences() {
-    autoPassDecisionRef.current = "";
+    priorityAutomation.resetYield();
     setHandManuallyCollapsed(false);
     setTablePreferences({
       ...DEFAULT_TABLE_PREFERENCES,
@@ -1057,6 +1017,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
     setNotice("Add mana from your sources, then resume your cast.");
   }
 
+  if (!view && connection === "STOPPED") return <main className="loading-screen">
+    <div className="error-banner" role="alert">{notice || "This match is unavailable."}</div>
+    <button type="button" onClick={onExit}>Return to lobby</button>
+  </main>;
   if (!view) return <main className="loading-screen"><div className="spinner" /><p>Opening your projected table…</p>{notice && <div className="error-banner">{notice}</div>}</main>;
   const currentView = view;
   const state = view.state;
@@ -1127,7 +1091,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const concedeAction = legalActions.find((action) => action.action === "concede");
   const optionalActivations = legalActions.filter((action) => action.action === "activate" && action.mana_ability !== true);
   const contextualAction = contextualDecisionAction(view);
-  const actionDisabled = submitting || Boolean(pendingRetry) || connection !== "LIVE" || lifecycle?.status !== "active";
+  const actionDisabled = submitting || Boolean(pendingRetry) || priorityAutomation.openingHoldsPending
+    || connection !== "LIVE" || lifecycle?.status !== "active";
   const showPublicDraft = Boolean(currentStep) || usesModeTargetDraft(selectedAction, choiceValues);
   const draftSource = showPublicDraft && selectedAction ? String(selectedAction.card ?? selectedAction.source ?? "") : "";
   const draftTargets = publicSteps.flatMap((step) => step.group ? step.selected : []);
@@ -1273,23 +1238,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
           <GameMenu system={system} lifecycle={lifecycle} decision={view.decision?.kind} move={lastMove}
             disabled={actionDisabled} onConcede={concedeAction ? () => chooseAction(concedeAction) : undefined}>
             <button type="button" className="secondary-button" onClick={onExit}>Decks and games</button>
-            {!isSpectator && <details>
-              <summary>Hold priority at specific steps</summary>
-              <CombatStopOptions selected={combatStops} onToggle={toggleCombatStop} />
-            </details>}
-            {optionalActivations.length > 0 && <details>
-              <summary>Priority stops for this turn</summary>
-              {optionalActivations.map((action) => <label key={action.id} className="choice-option">
-                <input type="checkbox" checked={isIgnoredActivation(action, ignoredOffers)}
-                  onChange={(event) => {
-                    const offers = new Map(ignoredOffers);
-                    if (event.target.checked) offers.set(action.id, activationStopSignature(action));
-                    else offers.delete(action.id);
-                    setIgnoredStops({ turn: turnBoundary.turn, offers });
-                  }} />
-                Ignore stop for {action.label ?? "this ability"}
-              </label>)}
-            </details>}
                 <button
                   type="button"
                   className="secondary-button"
@@ -1332,7 +1280,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
         </div>
       </header>
       {lifecycle?.status !== "complete" && <TurnStatus value={turnPresentation} compact={tablePreferences.compactPhaseRail}
-        combatStops={combatStops} onCombatStop={isSpectator ? undefined : toggleCombatStop} holding={combatStop} />}
+        priorityStops={tablePreferences.priorityStops} onPriorityStop={isSpectator ? undefined : togglePriorityStop} holding={priorityAutomation.held} />}
       {connection !== "LIVE" && (
         <div className="connection-banner" role="status">
           <div><strong>{connection === "STOPPED" ? "Connection closed" : "Restoring your table"}</strong><span>{connection === "STOPPED" ? "Open the game again from Decks and games." : "Wait for the table to sync before sending a move."}</span></div>
@@ -1544,13 +1492,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </>
         ) : <div className="waiting-decision"><span className="status-dot muted" /><div><strong>Waiting for the table</strong><p>Waiting for another player’s decision.</p></div></div>}
       </section>}
-      {!isSpectator && lifecycle?.status === "active" && turnBoundary.turn > 0 && <div className="turn-yield turn-yield-dock">
-        {turnYield && <small role="status">{yieldPause ?? "Passing priority for this turn"}</small>}
-        <button type="button" className="table-control-toggle" aria-pressed={Boolean(turnYield)}
-          onClick={() => setTurnYield(turnYield ? null : turnBoundary)}>
-          {turnYield ? "Cancel pass turn" : "Pass turn"}
-        </button>
-      </div>}
+      {!isSpectator && lifecycle?.status === "active" && <PriorityControls priority={priorityAutomation}
+        preferences={tablePreferences} activations={optionalActivations} onToggleStop={togglePriorityStop} onChange={setTablePreference} />}
       </div>
       {showPublicLog && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowPublicLog(false); }}>

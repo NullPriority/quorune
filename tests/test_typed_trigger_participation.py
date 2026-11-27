@@ -142,6 +142,37 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
         self.assertEqual(before,captured)
         self.assertEqual([modifier.object_id]*2,reads)
 
+    def test_observer_scan_shares_skipped_reads_and_resets_before_the_next_observer(self):
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.trigger_discovery import _iter_event_observers
+
+        host = SimpleNamespace()
+        skipped, first, second = (card(ref) for ref in ("SKIPPED", "FIRST", "SECOND"))
+        subscription = SimpleNamespace(trust_level="trusted", event_condition=None, event="permanent.enter")
+        board = {"type_line": "Creature"}
+        reads = []
+
+        def read_board():
+            reads.append(board["type_line"])
+            return dict(board)
+
+        def inspect(source):
+            current = memoized_characteristic_read(host, "board", read_board)
+            programs = [] if source is skipped else [(subscription, None)]
+            return source.zone, current, programs
+
+        observers = _iter_event_observers(host, (skipped, first, second), "permanent.enter", inspect)
+        source, (_, characteristics, _) = next(observers)
+        self.assertIs(first, source)
+        self.assertEqual("Creature", characteristics["type_line"])
+        self.assertEqual(["Creature"], reads)
+        board["type_line"] = "Artifact"
+        source, (_, characteristics, _) = next(observers)
+        self.assertIs(second, source)
+        self.assertEqual("Artifact", characteristics["type_line"])
+        self.assertEqual(["Creature", "Artifact"], reads)
+        self.assertEqual([], list(observers))
+
     def test_prohibition_scope_beats_additions_and_preserves_opponent_relations(self):
         observer=card('OBSERVER');modifier=card('MODIFIER');orb=card('ORB','B')
         rows={modifier.object_id:data(ability_fragments=[ability_fragment_to_dict(spec('permanent_enters'))]),

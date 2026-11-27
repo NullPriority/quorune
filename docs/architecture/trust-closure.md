@@ -112,6 +112,11 @@ Typed trigger participation evaluates current characteristic inputs inside one
 existing read frame per collection pass. Explicit event-time source snapshots
 remain separate inputs. The frame ends before the caller resumes, so later
 ability removal, control changes and source departures receive fresh reads.
+Departure snapshots, player-speed discovery, and Battle protector scans each
+reuse characteristic reads during collection. Zone moves and protector
+repairs run after the relevant read frame closes.
+Trigger discovery shares a frame while scanning past sources that cannot
+observe the event. It closes that frame before processing an observing source.
 Oracle program candidates can also share this frame. Registry loads and edits
 invalidate the candidates, and each lookup returns a fresh ordered list.
 Current static fragments use the registry's current programs. Historical

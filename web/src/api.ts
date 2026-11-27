@@ -170,6 +170,14 @@ export interface Room {
   seats: Seat[];
 }
 
+export type StartingPlayer = "random" | "A" | "B" | "C" | "D";
+
+interface RoomStartOptions {
+  first_player?: StartingPlayer;
+  starting_life?: number;
+  use_reviewed_card_data?: boolean;
+}
+
 export interface GameLifecycle {
   game_id: string;
   room_id: string;
@@ -339,10 +347,10 @@ export const api = {
     request<{ room: Room }>(`/api/v1/rooms/${roomId}/deck`, {
       method: "DELETE",
     }),
-  start: (roomId: string, useReviewedCardData = false) =>
+  start: (roomId: string, options: RoomStartOptions = {}) =>
     request<{ game_id: string }>(`/api/v1/rooms/${roomId}/start`, {
       method: "POST",
-      body: JSON.stringify(useReviewedCardData ? { use_reviewed_card_data: true } : {}),
+      body: JSON.stringify(options),
     }),
   game: (gameId: string) =>
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}`),
@@ -363,6 +371,10 @@ export const api = {
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}/resume`, {
       method: "POST",
       body: JSON.stringify({}),
+    }),
+  priorityHolds: (gameId: string, holds: { steps: string[]; preserve_empty: boolean }) =>
+    request<{ holds: typeof holds }>(`/api/v1/games/${gameId}/priority-holds`, {
+      method: "PUT", body: JSON.stringify(holds),
     }),
   command: (gameId: string, envelope: CommandEnvelope) =>
     request<{ receipt: CommandReceipt }>(`/api/v1/games/${gameId}/commands`, {

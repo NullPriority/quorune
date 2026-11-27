@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
-from typing import Any, Iterable, Mapping, TYPE_CHECKING
+from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .activation_mana_cost import ActivationManaCostOption

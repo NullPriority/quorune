@@ -5,6 +5,46 @@ import { completeCastGesture } from "./support/startup";
 
 const opponentDeck = { commander: "Yargle and Multani", cards: "99 Swamp" };
 
+test("@browser-rules one resolution shows both the mill and the draw", async ({ browser }, info) => {
+  const { contexts, pages } = await startPlaytestPod(browser, [
+    { commander: "Mishra, Eminent One", cards: "1 Thought Scour\n98 Island" },
+    opponentDeck,
+  ], 1);
+  const [host, opponent] = pages;
+  try {
+    const land = host.getByTestId("decision-panel").locator('[data-testid^="action-play-land:"]').first();
+    await ready(pages, land, info, "Play the Island for Thought Scour");
+    await clickMove(host, land);
+    await host.getByTestId("hand-panel").getByRole("button", { name: "Collapse", exact: true }).click();
+    await expect(host.getByTestId("hand-panel-collapsed")).toBeVisible();
+    await host.evaluate(() => {
+      const observer = new MutationObserver((changes) => {
+        for (const change of changes) for (const node of change.addedNodes) {
+          if (node instanceof HTMLElement && node.classList.contains("card-transfer-animation")) {
+            document.body.dataset.drawAnimationSeen = "true";
+            observer.disconnect();
+          }
+        }
+      });
+      observer.observe(document.body, { childList: true });
+    });
+
+    const cast = castOffer(host, "Thought Scour");
+    await ready(pages, cast, info, "Offer Thought Scour");
+    await cast.click();
+    await host.getByRole("button", { name: /^Select Seat A,/ }).click();
+    await clickMove(host, host.getByTestId("public-action-draft").getByTestId("submit-choice"));
+    await ready(pages, host.getByTestId("zone-A-graveyard").getByText("Graveyard 3", { exact: true }), info,
+      "Resolve Thought Scour and its two library moves");
+    await expect(host.locator(".table-move-notice")).toContainText("You milled 2 cards and drew 1 card.",
+      { timeout: 4_000 });
+    await expect(host.locator("body")).toHaveAttribute("data-draw-animation-seen", "true");
+    await expect(opponent.locator(".table-move-notice")).not.toContainText("You milled 2 cards and drew 1 card.");
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});
+
 async function ready(pages: Page[], target: Locator, testInfo: TestInfo, label: string) {
   await driveUntil(pages, async () => await target.isVisible() && await target.isEnabled(), testInfo, {
     label,

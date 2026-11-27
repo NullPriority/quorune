@@ -52,6 +52,10 @@ opportunities, semantic identity, manifest, and replay hashes. Projection
 cursors are connection-local and nondurable. Capabilities are reissued after
 load rather than persisted as raw secrets.
 
+Routine saves reuse the persisted card-program snapshot when its current
+program data and the saved file both match the previous write. A changed
+program, missing snapshot, or restored older file triggers a fresh write.
+
 Derived review files are not replay inputs. Routine live saves update the
 authoritative record without rebuilding postgame review; pause, abort,
 completion, explicit refresh, or finalization produces current derived review.
@@ -77,7 +81,8 @@ an arbitrary upstream URL or enumerate the bulk database.
 - An ambiguous persistence failure fails the actor closed until durable reload.
 - Reconnect starts a new cursor with a full hash-verified projection.
 - Process restart lazily recreates the actor from the checksummed record and
-  exact card/semantic fingerprints.
+  exact card-data snapshot. The server verifies the saved engine, semantic
+  programs, and declared runtime trust before issuing player capabilities.
 - Administrative resume clears only `administrative_stop`; rules, fidelity,
   corruption, abort, and completion remain fail-closed.
 - Loss of authenticated game access terminates the stream instead of creating

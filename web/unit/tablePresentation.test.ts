@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { LegalAction } from "../src/generated/protocol.ts";
 
-import { actionTitle, activationCostLabel, cardActionCost, decisionDetail, isMandatorySelection, needsActivationConfirmation, phyrexianCastCostLabels, presentTurn, publicEventSummary, visibleActionLabel } from "../src/tablePresentation.ts";
+import { actionTitle, activationCostLabel, cardActionCost, decisionDetail, isMandatorySelection, needsActivationConfirmation, phyrexianCastCostLabels, presentTurn, publicEventSummary, summarizeTableActivity, visibleActionLabel } from "../src/tablePresentation.ts";
 
 const pass = { id: "pass", action: "pass", label: "Pass priority" };
 
@@ -24,6 +24,23 @@ test("public events use names and counts in plain language", () => {
     "Tapped a mana source for 1 black and 2 red mana.");
   assert.equal(publicEventSummary({ code: "mana.undo", summary: "B undid B19's mana activation." }, island),
     "Undid mana from Island.");
+});
+
+test("an update keeps both personal library movements and the latest public activity", () => {
+  const events = [
+    { id: 1, code: "card.mill", actor: "B", summary: "A milled 4 card(s).", importance: 1 },
+    { id: 2, code: "card.draw", actor: "A", summary: "A drew 1 card(s).", importance: 1 },
+    { id: 3, code: "card.draw.private", actor: "A", summary: "A drew Island.", importance: 1 },
+    { id: 4, code: "card.draw", actor: "A", summary: "A drew 1 card(s).", importance: 1 },
+    { id: 5, code: "stack.cast", actor: "C", summary: "C cast S4 Negate.", importance: 1 },
+  ];
+  assert.deepEqual(summarizeTableActivity(events, "A"), {
+    ownText: "You milled 4 cards and drew 2 cards.",
+    drew: true, milled: true, latestPublic: events[4],
+  });
+  assert.equal(summarizeTableActivity(events, "B").ownText, "");
+  assert.equal(summarizeTableActivity(events, "").ownText, "");
+  assert.equal(publicEventSummary(events[0]), "Seat A milled 4 cards.");
 });
 
 test("players see a readable action or choice when a label is missing", () => {
@@ -132,8 +149,8 @@ test("turn presentation normalizes both main phases and combat damage", () => {
   };
   assert.equal(presentTurn({ ...base, phase: "precombat_main", step: "main" }).exactStep, "Main Phase 1");
   assert.equal(presentTurn({ ...base, phase: "postcombat_main", step: "main" }).exactStep, "Main Phase 2");
-  assert.equal(presentTurn({ ...base, phase: "combat", step: "combat_damage", firstStrikeStep: true }).exactStep, "First-Strike Damage");
-  assert.equal(presentTurn({ ...base, phase: "combat", step: "combat_damage", combatDamageStep: 2 }).exactStep, "Combat Damage");
+  assert.equal(presentTurn({ ...base, phase: "combat", step: "combat_damage", combatDamageStep: 1, firstStrikeStep: true }).exactStep, "First-Strike Damage");
+  assert.equal(presentTurn({ ...base, phase: "combat", step: "combat_damage", combatDamageStep: 2, firstStrikeStep: true }).exactStep, "Combat Damage");
 });
 
 test("completed games replace live turn and priority presentation", () => {

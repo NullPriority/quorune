@@ -6,6 +6,7 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from .characteristic_read_frames import characteristic_read_method
 from .model import CardInstance, StackItem
 from .discard_effect_origin import OPPONENT_SOURCE_DISCARD_EVENT, opponent_discard_origin
 from .creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
@@ -107,6 +108,7 @@ def order_observing_trigger_sources(host, sources, source_zones):
     return sorted(candidates, key=lambda source: (source.zone_timestamp, source.object_id, source.logical_object_id))
 
 
+@characteristic_read_method
 def capture_departure_trigger_sources(
     host: ZoneTriggerProcessingHost,
     *,

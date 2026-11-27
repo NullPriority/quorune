@@ -29,6 +29,7 @@ from ...compiled_cast_timing import compiled_cast_timing_permissions, compiled_s
 from ...compiled_cast_lifecycles import compiled_sneak_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
+from ...errors import GameRuleError
 from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
 from ...printed_mana_cost_model import (
     PHYREXIAN_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD, STRICT_ANNOUNCED_CAST_X_VERSION, cast_snow_mana_required,

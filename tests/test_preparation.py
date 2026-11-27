@@ -208,8 +208,13 @@ class PreparationRuntimeTests(unittest.TestCase):
         self.assertEqual('outside',session.state.cards[copy.object_id].zone);self.replay(session,load=True)
 
     def test_physical_card_cannot_cast_inset_and_failed_copy_cast_keeps_preparation(self):
+        from quorune.rules.casting.proposal import build_cast_offer
+
         session=self.session(7224);source=self.add(session.engine,'Adventurous Eater',zone='hand',ref='physical-prepare')
         self.fund(session,{'B':1,'C':2})
+        invalid_face = build_cast_offer(session.engine, "A", source, face_name="Have a Bite")
+        self.assertEqual("unavailable", invalid_face.status)
+        self.assertIn("physical preparation card", invalid_face.reason)
         actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
         self.assertEqual(['cast:'+source.ref],[row['id'] for row in actions if row.get('card')==source.ref])
         self.reject(session,action_id='cast:'+source.ref,face='Have a Bite',pay='auto')

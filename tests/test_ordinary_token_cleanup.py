@@ -56,6 +56,17 @@ class OrdinaryTokenCleanupCompilerTests(unittest.TestCase):
 
 
 class CreatedTokenCleanupModelTests(unittest.TestCase):
+    def test_copy_intent_freezes_an_ordinary_snapshot_mapping(self):
+        from quorune.replacement.immutable import FrozenMap
+        from quorune.semantic_runtime.intents import CreateTokenIntent
+
+        snapshot = {"name": "Soldier", "type_line": "Creature — Soldier"}
+        intent = CreateTokenIntent(actor="A", controller="A", name="", quantity=1,
+            reason="snapshot witness", copy_of="A1", copy_snapshot=snapshot)
+        self.assertEqual(FrozenMap(snapshot), intent.copy_snapshot)
+        snapshot["name"] = "Changed"
+        self.assertEqual("Soldier", intent.copy_snapshot["name"])
+
     def test_closed_cleanup_specs_distinguish_action_and_applicable_step(self):
         from quorune.created_token_cleanup_model import CreatedTokenCleanupSpec
         for action in ('sacrifice','exile'):

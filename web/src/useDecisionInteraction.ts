@@ -139,14 +139,14 @@ export function useDecisionInteraction({
     }
   }
 
-  function act(action: LegalAction, choices: ChoiceValues = {}) {
-    if (!enabled || !view?.decision || commitment.current) return;
+  function act(action: LegalAction, choices: ChoiceValues = {}): boolean {
+    if (!enabled || !view?.decision || commitment.current) return false;
     const currentAction = view.decision.legal_actions.find((row) => row.id === action.id);
-    if (!currentAction) return;
+    if (!currentAction) return false;
     const errors = currentAction.form ? validateChoices(currentAction.form, choices) : [];
     if (errors.length > 0) {
       onNotice(errors.join(" "));
-      return;
+      return false;
     }
     void send({
       protocol_version: "3.0",
@@ -158,6 +158,7 @@ export function useDecisionInteraction({
       expected_view_revision: view.viewRevision,
       choices,
     }, actionTitle(action));
+    return true;
   }
 
   function submitDraft() {

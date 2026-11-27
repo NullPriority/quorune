@@ -13,18 +13,50 @@ const manaColors: Record<string, string> = {
   W: "white", U: "blue", B: "black", R: "red", G: "green", C: "colorless",
 };
 
+type CardTransferVerb = "drew" | "milled";
+
+function publicCardTransfer(
+  event: Pick<PublicGameEvent, "code" | "summary">,
+): { seat: string; verb: CardTransferVerb; count: number } | undefined {
+  const verb = event.code === "card.draw" ? "drew" : event.code === "card.mill" ? "milled" : undefined;
+  if (!verb) return undefined;
+  const match = /^([ABCD]) (drew|milled) (\d+) card\(s\)\.$/.exec(event.summary);
+  if (match?.[2] !== verb) return undefined;
+  return { seat: match[1], verb, count: Number(match[3]) };
+}
+
+function cardTransferText(verb: CardTransferVerb, count: number): string {
+  return `${verb} ${count} ${count === 1 ? "card" : "cards"}`;
+}
+
+export function summarizeTableActivity(events: readonly PublicGameEvent[], ownSeat: string) {
+  const ownCounts = new Map<CardTransferVerb, number>();
+  let latestPublic: PublicGameEvent | undefined;
+  for (const event of events) {
+    if (event.code !== "card.draw" && event.code !== "card.mill" && event.code !== "stack.cast") continue;
+    const transfer = publicCardTransfer(event);
+    if (transfer?.seat === ownSeat && transfer.count > 0) {
+      ownCounts.set(transfer.verb, (ownCounts.get(transfer.verb) ?? 0) + transfer.count);
+    } else {
+      latestPublic = event;
+    }
+  }
+  const transfers = [...ownCounts].map(([verb, count]) => cardTransferText(verb, count));
+  return {
+    ownText: transfers.length ? `You ${transfers.join(" and ")}.` : "",
+    drew: ownCounts.has("drew"),
+    milled: ownCounts.has("milled"),
+    latestPublic,
+  };
+}
+
 export function publicEventSummary(
   event: Pick<PublicGameEvent, "code" | "summary">,
   cardLabel?: (ref: string) => string | undefined,
 ): string {
   if (event.code === "stack.cast" && event.summary) return event.summary.replace(/^[ABCD] cast S\d+ /, "Cast ");
-  if (event.code === "card.draw" || event.code === "card.mill") {
-    const transfer = /^([ABCD]) (drew|milled) (\d+) card\(s\)\.$/.exec(event.summary);
-    if (transfer) {
-      const [, seat, verb, count] = transfer;
-      return `Seat ${seat} ${verb} ${count} ${count === "1" ? "card" : "cards"}.`;
-    }
-  }
+  const transfer = publicCardTransfer(event);
+  if (transfer) return `Seat ${transfer.seat} ${cardTransferText(transfer.verb, transfer.count)}.`;
   if (event.code === "land.play" && event.summary) return event.summary.replace(/^[ABCD] played [ABCD]\d+ /, "Played ");
   if (event.code === "mana.ability") {
     const activation = /^[ABCD] activated (\S+) \S+ for mana\.$/.exec(event.summary);
@@ -292,7 +324,7 @@ function exactStepLabel(input: TurnPresentationInput): string {
     "ending/cleanup": "Cleanup",
   };
   if (key === "combat/combat_damage") {
-    return input.firstStrikeStep ? "First-Strike Damage" : "Combat Damage";
+    return input.firstStrikeStep && input.combatDamageStep === 1 ? "First-Strike Damage" : "Combat Damage";
   }
   return labels[key] ?? "Game setup";
 }

@@ -38,6 +38,10 @@ the same principal-scoped full and delta packets plus safe lifecycle metadata.
 The in-process and network paths share protocol and validation code; neither is
 a second rules interface.
 
+Matches that require a different saved rules build return HTTP `409` with
+`game_rules_build_required`. The stream sends the same code in a terminal
+message, and the browser offers a return to the lobby.
+
 The progress endpoint reports queue and persistence status without submitting
 a game command. A pilot can read the interaction ID and monotonic durations
 for their own latest command. Browser timing records the matching receipt,
@@ -54,6 +58,15 @@ If the card programs disagree with one another or with the active card data,
 deck submission saves an editable draft. The owner's preflight includes every
 mismatch with the card identity, the program sources, and the source excerpts
 when available. Other seats see that a deck needs review.
+
+A duel requires two seated players. A four-seat room requires at least three.
+Every occupied seat must be ready for a standard start. The server checks that
+the roster and deck choices still match before committing the game.
+The start request accepts `first_player` as an occupied seat ID or `random`.
+The default selects a seat from the room seed. An optional positive integer
+`starting_life` applies to every seat. Leaving it unset uses the format
+default. The initial Game Record state stores the resolved order and life
+total.
 
 The room owner may set `use_reviewed_card_data` to `true` on the start request.
 The server verifies one retained snapshot against the current submitted decks
@@ -101,6 +114,14 @@ server validates the turn and the offered IDs before recording the command.
 Each subsequent pass requires its own current capability. The existing yield
 policy uses its own declared choice field.
 
+An authenticated pilot may update their own priority holds with
+`PUT /api/v1/games/{game_id}/priority-holds`. The body has `steps` for selected
+hold points and `preserve_empty` for full control or activity holds. The
+server preserves those priority decisions during fast advancement. The request
+itself leaves the game revision unchanged. Each accepted game command records
+the active hold settings as private replay input. An explicit pass still uses
+the current issuer's capability and yields only that seat's priority.
+
 ## Projected packets
 
 [`schemas/decision-packet.schema.json`](../../schemas/decision-packet.schema.json)
@@ -108,6 +129,10 @@ defines the client packet. A full packet establishes a principal-specific view,
 its canonical hash, current revision, visible definitions/events, and current
 decision. A delta names the exact base hash, resulting view hash, patch, event
 tail, and current decision.
+
+A WebSocket projection and its game lifecycle summary describe the same
+authoritative revision. A move committed after that observation produces a
+separate update.
 
 A resolving cast choice over several exiled cards includes a public `card`
 reference in each `cast_options` entry. The submitted `cost_option` selects the

@@ -46,6 +46,17 @@
       "summary": "Public Game Events"
     },
     {
+      "method": "PUT",
+      "operation_id": "update_priority_holds_api_v1_games__game_id__priority_holds_put",
+      "path": "/api/v1/games/{game_id}/priority-holds",
+      "request_schema": "#/components/schemas/PriorityWindowRequest",
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Update Priority Holds"
+    },
+    {
       "method": "GET",
       "operation_id": "game_progress_api_v1_games__game_id__progress_get",
       "path": "/api/v1/games/{game_id}/progress",
@@ -447,6 +458,7 @@
         "normalized_payload",
         "payload",
         "principal",
+        "priority_window_holds",
         "rng",
         "selected_costs",
         "selected_object_refs",
@@ -940,7 +952,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "0e52a5e7eb196adb2ff8d4e31b2054c7f7a9a9a3508e62351102c90e68959f54",
+  "source_fingerprint": "7072509d7ad75443aeac2a24699c1937d779522171f85d94bc9456d89fceb275",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

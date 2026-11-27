@@ -1463,11 +1463,18 @@ and `corrupt`. A pause has a structured reason. An administrative browser stop
 does not add a synthetic game command or advance state; resume may clear only
 that administrative reason.
 
-Record components are written atomically and the manifest is the final commit
-marker. Accepted network commands are persisted before acknowledgement.
-Integrity verification rejects manifest/journal counter disagreement, invalid
-hashes, malformed continuations, and incompatible source identity rather than
-trusting a stale summary.
+An accepted command may carry `priority_window_holds`, the server's snapshot
+of the pilots' priority hold settings for that command. Replay restores those
+settings when scheduling priority windows. Older commands with no settings
+use their recorded game's original advancement behavior.
+
+The record writer replaces the checkpoint and journals before publishing the
+manifest. The server retains the previous files in a private recovery directory
+until the entire save finishes. An interrupted save restores that revision before
+the game loads, even when a new server process opens the record. The server
+acknowledges an accepted move after the save commits. Integrity verification
+checks that the manifest, journals, hashes, continuations, and source identity
+agree.
 
 ## Privacy and derived artifacts
 

@@ -2,7 +2,7 @@
 title: "Generated protocol inventory"
 status: "generated"
 authoritative_source: "server FastAPI OpenAPI output and versioned schemas/*.json"
-verified: "62b5c8e9d1e9f7c10dfba75d3252c57187aaa98827c87f17567e668df8c2271c"
+verified: "9fef235aee02349ea9325ae8c42ca9ebb98dd6d56ebfea90fd694469df1657f6"
 audience: "client, server, and protocol contributors"
 maintenance: "generated"
 generated_source: "coverage/protocol-inventory.json"
@@ -11,13 +11,13 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_protocol_referenc
 
 # Generated protocol inventory
 
-Source fingerprint: `0e52a5e7eb196adb2ff8d4e31b2054c7f7a9a9a3508e62351102c90e68959f54`
+Source fingerprint: `7072509d7ad75443aeac2a24699c1937d779522171f85d94bc9456d89fceb275`
 
 ## Current top-level state
 
 - API title: `Quorune Server`
 - API version: `0.9.0`
-- HTTP operations: `28`
+- HTTP operations: `29`
 - WebSocket routes: `1`
 - Versioned schemas: `17`
 
@@ -33,6 +33,7 @@ Source fingerprint: `0e52a5e7eb196adb2ff8d4e31b2054c7f7a9a9a3508e62351102c90e689
 | `GET` | `/api/v1/games/{game_id}` | `inspect_game_api_v1_games__game_id__get` |
 | `POST` | `/api/v1/games/{game_id}/commands` | `submit_command_api_v1_games__game_id__commands_post` |
 | `GET` | `/api/v1/games/{game_id}/events` | `public_game_events_api_v1_games__game_id__events_get` |
+| `PUT` | `/api/v1/games/{game_id}/priority-holds` | `update_priority_holds_api_v1_games__game_id__priority_holds_put` |
 | `GET` | `/api/v1/games/{game_id}/progress` | `game_progress_api_v1_games__game_id__progress_get` |
 | `POST` | `/api/v1/games/{game_id}/rematch` | `rematch_api_v1_games__game_id__rematch_post` |
 | `POST` | `/api/v1/games/{game_id}/resume` | `resume_game_api_v1_games__game_id__resume_post` |

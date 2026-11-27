@@ -7,7 +7,8 @@ from quorune.trigger_discovery import _source_may_observe_event, dispatch_semant
 
 class SemanticEventInterestTests(unittest.TestCase):
     def program(self, event='activate', condition=None, trust='trusted'):
-        return SimpleNamespace(event=event, event_condition=condition, trust_level=trust)
+        # The discovery owner pairs each program with an optional attachment payment.
+        return SimpleNamespace(event=event, event_condition=condition, trust_level=trust), None
 
     def test_only_unconditional_unrelated_subscriptions_are_rejected(self):
         source = SimpleNamespace(annotations={})

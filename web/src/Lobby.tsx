@@ -55,7 +55,7 @@ export function Lobby({ guest, system, onRoom, onGame }: {
               value={playerCount}
               onChange={(event) => setPlayerCount(Number(event.target.value) as 2 | 4)}
             >
-              <option value={4}>Four-player Commander</option>
+              <option value={4}>Commander table (3–4 players)</option>
               <option value={2}>1v1 Commander duel</option>
             </select>
           </label>

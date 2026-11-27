@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import json
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Mapping
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from .announced_damage import ANNOUNCED_DAMAGE_CONTEXT
 from .carddb import CardDatabase
@@ -20,6 +20,7 @@ from .rules.face_characteristic_values import current_face_mana_value
 from .model import (
     CardInstance,
     Event,
+    StackItem,
     GameState,
     PlayerState,
     PLAYER_COUNTERS_FIELD,
@@ -101,6 +102,7 @@ class StateProjector:
         land_play_count_resolver: Callable[[str], int] | None = None,
         hand_visibility_resolver: Callable[[str], bool] | None = None,
         goading_players_resolver: Callable[[CardInstance], tuple[str, ...]] | None = None,
+        stack_effects_resolver: Callable[[str], Sequence[Mapping[str, Any]]] | None = None,
     ):
         self.card_db = card_db
         self.state = state
@@ -112,6 +114,7 @@ class StateProjector:
         self.land_play_count_resolver = land_play_count_resolver
         self.hand_visibility_resolver = hand_visibility_resolver
         self.goading_players_resolver = goading_players_resolver
+        self.stack_effects_resolver = stack_effects_resolver
 
     @staticmethod
     def seat_for(principal: str) -> str | None:
@@ -583,6 +586,12 @@ class StateProjector:
             context["presentation"] = presentation
 
     def _turn_snapshot(self) -> dict[str, Any]:
+        graveyard_activity = next((
+            event.event_id for event in reversed(self.state.events)
+            if (event.code == "card.mill" or event.code == "zone.move" and (
+                event.details.get("from") == "graveyard" or event.details.get("to") == "graveyard"
+            )) and self._event_visible(event, "spectator")
+        ), 0)
         return {
             "seq": self.state.turn_sequence,
             "active": self.state.active_player,
@@ -591,11 +600,30 @@ class StateProjector:
             "step": self.state.step,
             "priority": self.state.priority_player,
             "passes": list(self.state.priority_passes),
+            "graveyard_activity": graveyard_activity,
+            **({"fast_empty_priority": True} if self.state.config.auto_pass_empty_priority else {}),
             "extra_q": [
                 entry.player for entry in reversed(self.state.extra_turns)
                 if self.state.departed_turn_boundary_version is None or self.state.players[entry.player].in_game
             ],
         }
+
+    def _stack_touches_graveyard(self, item: StackItem, card: CardInstance | None) -> bool:
+        from .rules.effect_shape_walkers import nested_effects
+
+        source = card if card is not None else self.state.cards.get(item.source_object_id)
+        if source is None or not self._card_visible(source, "spectator"):
+            return False
+        effects = self.stack_effects_resolver(item.semantic_key) if item.semantic_key and self.stack_effects_resolver else ()
+        for effect in nested_effects((effects, item.context.get("dynamic_effects"))):
+            if effect["op"] in {"mill", "reanimate", "exile_graveyard", "exile_opponent_graveyards"}:
+                return True
+            if any(effect.get(field) == "graveyard" for field in ("origin", "zone", "from", "destination")):
+                return True
+            moves = effect.get("set")
+            if effect["op"] == "move_public_zone_set" and isinstance(moves, Mapping) and moves.get("origin") == "graveyard":
+                return True
+        return False
 
     def _stack_snapshot(self, principal: str) -> list[dict[str, Any]]:
         stack: list[dict[str, Any]] = []
@@ -617,6 +645,7 @@ class StateProjector:
                 "label": "Face-down spell" if hidden_face_down else item.label,
                 **({"targets": item.targets} if item.targets else {}),
                 **({"from": "graveyard"} if item.context.get("cast_origin") == "graveyard" else {}),
+                **({"graveyard_interaction": True} if self._stack_touches_graveyard(item, card) else {}),
             }
             if not hidden_face_down:
                 if item.modes:

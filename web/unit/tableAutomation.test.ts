@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, turnYieldPause } from "../src/tableAutomation.ts";
+import { activationStopSignature, findSafeAutoPass, priorityActivityHold, selectedPriorityStop } from "../src/tableAutomation.ts";
 
 test("automatic passing accepts only pass, concede, and bare mana actions", () => {
   const pass = { action: "pass", id: "pass:1" };
@@ -71,28 +71,43 @@ test("a current-turn yield can leave a routine main phase and preserves complex 
   }], window), null);
 });
 
-test("a current-turn yield stops at its boundaries and requires a new arm for the next turn", () => {
-  const armed = { turn: 4, phase: "precombat_main", stack: ["S1"] };
-  assert.equal(turnYieldPause(armed, armed, "priority", true), undefined);
-  assert.equal(turnYieldPause(armed, { ...armed, turn: 5 }, "priority", true), "Turn ended");
-  assert.equal(turnYieldPause(armed, { ...armed, stack: ["S2", "S1"] }, "priority", true), "New object on the stack");
-  const combat = { ...armed, phase: "combat" };
-  assert.equal(turnYieldPause(armed, combat, "priority", true), undefined);
-  assert.equal(turnYieldPause(armed, combat, "priority", false), "Priority is held");
-  assert.equal(turnYieldPause(armed, combat, "combat.attackers", false), "A decision is required");
-  assert.equal(turnYieldPause(armed, armed, "combat.blockers", false), "A decision is required");
-  assert.equal(turnYieldPause(armed, armed, "priority", false), "Priority is held");
-  assert.equal(turnYieldPause(armed, { ...armed, stack: ["S2"] }, "priority", true, { stack: false, graveyard: false }), undefined);
-  assert.equal(turnYieldPause(armed, { ...armed, graveyard: "A2" }, "priority", true, { stack: false, graveyard: true }), "Graveyard activity");
+test("activity holds distinguish a new stack item, a graveyard change, and a graveyard effect on the stack", () => {
+  const acknowledged = { stack: ["S1"], graveyard: "A1", graveyardStack: [] };
+  const stack = { ...acknowledged, stack: ["S2", "S1"] };
+  const graveyardSpell = { ...stack, graveyardStack: ["S2"] };
+  const both = { stack: true, graveyard: true };
+  assert.equal(priorityActivityHold(acknowledged, acknowledged, both), undefined);
+  assert.equal(priorityActivityHold(acknowledged, stack, both), "New object on the stack");
+  assert.equal(priorityActivityHold(acknowledged, { ...acknowledged, stack: [] }, both), undefined);
+  assert.equal(priorityActivityHold(acknowledged, { ...acknowledged, graveyard: "A2" }, both), "Graveyard activity");
+  assert.equal(priorityActivityHold(acknowledged, graveyardSpell, both), "Graveyard activity");
+  assert.equal(priorityActivityHold(graveyardSpell, graveyardSpell, both), undefined);
+  assert.equal(priorityActivityHold(acknowledged, graveyardSpell, { stack: false, graveyard: false }), undefined);
 });
 
-test("combat stops hold only the selected timing window", () => {
-  assert.equal(activeCombatPriorityStop("precombat_main", "main", false, ["combat"]), undefined);
-  assert.equal(activeCombatPriorityStop("combat", "beginning_combat", false, ["declare_attackers"]), undefined);
-  assert.equal(activeCombatPriorityStop("combat", "declare_attackers", false, ["declare_attackers"]), "After attackers are declared");
-  assert.equal(activeCombatPriorityStop("combat", "combat_damage", true, ["combat_damage"]), undefined);
-  assert.equal(activeCombatPriorityStop("combat", "combat_damage", true, ["first_strike_damage"]), "After first-strike damage");
-  assert.equal(activeCombatPriorityStop("combat", "end_combat", false, ["combat"]), "End of combat");
+test("priority stops hold only the selected timing window, including the distinct damage steps", () => {
+  assert.equal(selectedPriorityStop("precombat_main", "main", false, 0, ["combat"]), undefined);
+  assert.equal(selectedPriorityStop("precombat_main", "main", false, 0, ["precombat_main"]), "First main phase");
+  assert.equal(selectedPriorityStop("combat", "beginning_combat", false, 0, ["declare_attackers"]), undefined);
+  assert.equal(selectedPriorityStop("combat", "declare_attackers", false, 0, ["declare_attackers"]), "After attackers are declared");
+  assert.equal(selectedPriorityStop("combat", "combat_damage", true, 1, ["combat_damage"]), undefined);
+  assert.equal(selectedPriorityStop("combat", "combat_damage", true, 1, ["first_strike_damage"]), "After first-strike damage");
+  assert.equal(selectedPriorityStop("combat", "combat_damage", true, 2, ["first_strike_damage"]), undefined);
+  assert.equal(selectedPriorityStop("combat", "combat_damage", true, 2, ["combat_damage"]), "After combat damage");
+  assert.equal(selectedPriorityStop("combat", "end_combat", false, 0, ["combat"]), "End of combat");
+});
+
+test("optional-activation auto-pass leaves spell, land, and manual mana responses available", () => {
+  const pass = { action: "pass" };
+  const activation = { action: "activate", id: "activate:lantern", cost_summary: { sacrifice: true } };
+  const window = { passWithOptionalActivations: true };
+  assert.equal(findSafeAutoPass([pass, activation], window), pass);
+  const ownMain = { ...window, activePlayer: "A", phase: "precombat_main", principalSeat: "A", stackDepth: 0 };
+  assert.equal(findSafeAutoPass([pass], ownMain), null);
+  assert.equal(findSafeAutoPass([pass, activation], ownMain), pass);
+  for (const action of ["cast", "play_land", "undo_mana", "decline"]) {
+    assert.equal(findSafeAutoPass([pass, activation, { action }], ownMain), null, action);
+  }
 });
 
 test("an ignored activation survives renewal and stops again when its choices change", () => {

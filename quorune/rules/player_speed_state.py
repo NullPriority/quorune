@@ -3,11 +3,13 @@ from __future__ import annotations
 """Canonical player speed mutation and inherent once-per-turn trigger owner."""
 
 from ..ability_fragments import StaticComponentSpec
+from ..characteristic_read_frames import characteristic_read_method
 from ..model import StackItem
 from ..trigger_processing import enqueue_trigger_batch
 from .player_speed_model import player_speed,SpeedIncrease,SPEED_KEY,SPEED_TRIGGER_TURN_KEY,START_ENGINES_HANDLER
 
 
+@characteristic_read_method
 def controlled_start_engines_players(host):
     players=set()
     if not callable(getattr(host,'_semantic_event_sources',None)):return ()

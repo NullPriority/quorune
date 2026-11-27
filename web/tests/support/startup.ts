@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import type { StartingPlayer } from "../../src/api";
 import { viewRevision } from "./progress";
 
 export async function openGameMenu(page: Page): Promise<void> {
@@ -15,7 +16,8 @@ export async function completeCastGesture(page: Page, gesture: () => Promise<voi
   await expect.poll(() => viewRevision(page)).toBeGreaterThan(revision);
 }
 
-export async function startRoomGame(page: Page): Promise<void> {
+export async function startRoomGame(page: Page, firstPlayer: StartingPlayer = "A"): Promise<void> {
+  await page.getByRole("combobox", { name: "Starting player" }).selectOption(firstPlayer);
   const receipt = page.waitForResponse(
     (response) => response.request().method() === "POST"
       && /^\/api\/v1\/rooms\/[^/]+\/start$/.test(new URL(response.url()).pathname),

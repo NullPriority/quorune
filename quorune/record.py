@@ -15,7 +15,6 @@ from .model import Event, GameState
 from . import record_state_provenance
 from .record_decks import deck_fingerprints, deck_list_fingerprints
 from .record_trust import (
-    capture_stack_resolution_inputs,
     _canonical_hash,
     record_semantics_provenance,
     semantics_fingerprint,
@@ -27,7 +26,7 @@ from .record_trust import (
     validate_programs_used_provenance,
     validate_resolution_provenance,
     validate_command_card_programs_used,
-    submit_with_resolution_capture,
+    submit_recorded_command,
 )
 from .semantics import SemanticRegistry
 from .rules.evidence import _capability_validation_snapshot
@@ -1071,12 +1070,7 @@ def _apply_replay_commands(
         if capability is None:
             raise ValueError(f"No replay capability for {principal} at command {command.get('sequence')}")
         before_events = engine.state.event_sequence
-        result, resolution_inputs = submit_with_resolution_capture(engine, capture_stack_resolution_inputs(engine.state),
-            token=capability.token,
-            principal=principal,
-            action=str(command["action"]),
-            payload=copy.deepcopy(dict(command.get("payload") or {})),
-        )
+        result, resolution_inputs = submit_recorded_command(engine, command, principal, capability.token)
         if not result.ok:
             raise ValueError(f"Replay command {command.get('sequence')} rejected: {result.summary}")
         if verify and require_runtime_provenance:

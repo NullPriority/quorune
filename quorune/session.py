@@ -9,6 +9,7 @@ from typing import Any, Mapping, Sequence
 
 from .permissions import decision_context_for_capability
 from .carddb import CardDatabase
+from .characteristic_read_frames import characteristic_read_frame
 from .deck import DeckDefinition, DeckLoader
 from .engine import ActionResult, CommanderEngine
 from .errors import GameRuleError
@@ -31,6 +32,8 @@ from .semantic_runtime.action_permissions import (
 from .semantic_runtime.combat_metadata import active_goading_players
 from .semantic_runtime.hand_visibility import hand_is_public
 from .record import (
+    ENGINE_VERSION,
+    RECORD_SCHEMA_VERSION,
     authoritative_state_hash,
     capability_id,
     checkpoint_envelope,
@@ -43,7 +46,9 @@ from .record_trust import (
     command_card_program_fingerprints,
     resolved_semantic_execution_provenance_rows,
     submit_with_resolution_capture,
+    verified_replay_inputs,
 )
+from .turn_priority_model import PRIORITY_WINDOW_HOLDS_FIELD, PriorityWindowHolds
 from .review_artifacts import write_review_artifacts
 from .semantics import SemanticRegistry
 
@@ -83,6 +88,10 @@ def _state_projector(
     card_db: CardDatabase,
     engine: CommanderEngine,
 ) -> StateProjector:
+    def stack_effects(key: str):
+        program = engine.semantics.get(key)
+        return () if program is None else program.effects
+
     return StateProjector(
         card_db,
         engine.state,
@@ -94,11 +103,20 @@ def _state_projector(
             library_top_visibility(engine, owner, viewer or "") is not None
         ),
         hand_visibility_resolver=lambda owner: hand_is_public(engine, owner),
+        stack_effects_resolver=stack_effects,
         goading_players_resolver=lambda card: active_goading_players(engine, card),
         land_play_count_resolver=lambda seat: len(
             land_play_permission_options(engine, seat)
         ),
     )
+
+
+def _observation_provenance(cursor: ProjectionCursor | None) -> dict[str, Any]:
+    return {
+        "projected_state_hash": cursor.view_hash if cursor else None,
+        "observation_revision": cursor.snapshot.get("rev") if cursor and cursor.snapshot else None,
+        "observation_base_hash": cursor.view_hash if cursor else None,
+    }
 
 
 @dataclass(slots=True)
@@ -266,11 +284,12 @@ class CommanderSession:
     ) -> dict[str, Any]:
         # Rebind after a loaded/rolled-back engine state.
         self.projector.state = self.engine.state
-        return self.projector.packet(
-            principal,
-            self._cursor(cursor_key or principal),
-            force_full=full,
-        )
+        with characteristic_read_frame(self.engine):
+            return self.projector.packet(
+                principal,
+                self._cursor(cursor_key or principal),
+                force_full=full,
+            )
 
     def drop_projection_cursor(self, cursor_key: str) -> None:
         if cursor_key != "arbiter" and not cursor_key.startswith("pilot:"):
@@ -618,6 +637,7 @@ class CommanderSession:
         response: Mapping[str, Any],
         *,
         client_command_id: str | None = None,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
     ) -> ActionResult:
         capability = self.engine.permissions.capability_for(principal)
         if capability is None:
@@ -714,13 +734,7 @@ class CommanderSession:
                     "turn": self.state.turn_sequence,
                     "phase": self.state.phase,
                     "step": self.state.step,
-                    "projected_state_hash": cursor.view_hash if cursor else None,
-                    "observation_revision": (
-                        cursor.snapshot.get("rev")
-                        if cursor and cursor.snapshot
-                        else None
-                    ),
-                    "observation_base_hash": cursor.view_hash if cursor else None,
+                    **_observation_provenance(cursor),
                 }
             )
             return ActionResult(False, str(exc), [], state_changed=False)
@@ -745,6 +759,7 @@ class CommanderSession:
             principal=principal,
             action=action,
             payload=payload,
+            priority_window_holds=priority_window_holds,
         )
         after_hash = authoritative_state_hash(self.state)
         after_shuffles = {
@@ -830,13 +845,7 @@ class CommanderSession:
             "turn": turn,
             "phase": phase,
             "step": step,
-            "projected_state_hash": cursor.view_hash if cursor else None,
-            "observation_revision": (
-                cursor.snapshot.get("rev")
-                if cursor and cursor.snapshot
-                else None
-            ),
-            "observation_base_hash": cursor.view_hash if cursor else None,
+            **_observation_provenance(cursor),
         }
         if not audit.get("automatic"):
             self.decisions.append(decision_row)
@@ -881,6 +890,8 @@ class CommanderSession:
                     "action": action,
                     "payload": copy.deepcopy(payload),
                     "normalized_payload": copy.deepcopy(payload),
+                    **({PRIORITY_WINDOW_HOLDS_FIELD: {seat: holds.to_dict() for seat, holds in priority_window_holds.items()}}
+                        if priority_window_holds else {}),
                     "selected_object_refs": list(dict.fromkeys(selected_refs)),
                     "targets": copy.deepcopy(list(payload.get("targets") or [])),
                     "modes": copy.deepcopy(list(payload.get("modes") or [])),
@@ -992,6 +1003,7 @@ class CommanderSession:
         *,
         include_review: bool = True,
         runtime_trust_snapshot: Mapping[str, Any] | None = None,
+        reuse_semantic_snapshot: bool = False,
     ) -> dict[str, float]:
         started = time.perf_counter()
         directory = Path(directory)
@@ -999,7 +1011,9 @@ class CommanderSession:
         if not self.initial_checkpoint:
             self.initial_checkpoint = checkpoint_envelope(self.state)
         self.engine.semantics.path = directory / "semantics.json"
-        saved_semantics = self.engine.semantics.save(return_payload=True)
+        saved_semantics = self.engine.semantics.save(
+            return_payload=True, reuse_unchanged=reuse_semantic_snapshot,
+        )
         manifest = write_record(
             directory,
             state=self.state,
@@ -1104,18 +1118,25 @@ class CommanderSession:
         directory: str | Path,
         *,
         semantics_path: str | Path | None = None,
+        verify_rules: bool = False,
     ) -> "CommanderSession":
         directory = Path(directory)
-        persisted_semantics = directory / "semantics.json"
-        semantics = SemanticRegistry(
-            semantics_path
-            or (
-                persisted_semantics
-                if persisted_semantics.exists()
-                else None
+        manifest_path = directory / "manifest.json"
+        has_record = verify_rules or manifest_path.exists()
+        if verify_rules:
+            manifest, semantics = verified_replay_inputs(
+                directory, semantics_path=semantics_path, record_schema=RECORD_SCHEMA_VERSION,
+                engine_version=ENGINE_VERSION, fingerprint_semantics=semantics_fingerprint,
             )
-        )
-        if (directory / "manifest.json").exists():
+        else:
+            persisted_semantics = directory / "semantics.json"
+            semantics = SemanticRegistry(
+                semantics_path or (persisted_semantics if persisted_semantics.exists() else None)
+            )
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if has_record else {}
+        if has_record:
+            if not isinstance(manifest, dict):
+                raise ValueError("Game Record manifest must be an object")
             from .record import load_record_state, read_initial_checkpoint
 
             state = load_record_state(directory)
@@ -1132,7 +1153,6 @@ class CommanderSession:
                 for line in (directory / "decisions.jsonl").read_text(encoding="utf-8").splitlines()
                 if line.strip()
             ]
-            manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
             created_at = str(manifest.get("created_at") or utc_now())
             replay_mode = str(
                 manifest.get("replay", {}).get("mode") or "command_replay"
@@ -1195,7 +1215,7 @@ class CommanderSession:
         deck_provenance: dict[str, dict[str, Any]] = {}
         profile_validation: dict[str, dict[str, Any]] = {}
         arena_metadata: dict[str, Any] = {}
-        if (directory / "manifest.json").exists():
+        if has_record:
             for player in manifest.get("players", []):
                 seat = str(player.get("seat") or "")
                 if not seat:
