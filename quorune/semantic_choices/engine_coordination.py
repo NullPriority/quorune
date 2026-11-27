@@ -189,6 +189,7 @@ class SemanticChoiceCoordinationMixin:
         return tuple(rows)
 
     def _semantic_choice_stack_rows(self,effect=None) -> tuple[ChoiceStackView, ...]:
+        from ..rules.announced_ability_copies import active_copy_scope, copy_prohibited
         from ..rules.event_spell_copy import capture_event_spell_copy_source, resolve_event_spell_copy_source
         from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_closed_targeted_discard_copy_program
 
