@@ -257,6 +257,9 @@ class OptionalDrawHandler:
         "tests.test_optional_draw_choices",
     )
 
+    def requires_object_rows(self, effect: Mapping[str, Any]) -> bool:
+        return bool(set(effect) - {"op", "player", "drawer", "count", "private"})
+
     def _resolved(
         self,
         effect: Mapping[str, Any],

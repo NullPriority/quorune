@@ -97,7 +97,7 @@ def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
     return _hash_checkpoint_payload(payload)
 
 
-def checkpoint_envelope(state: GameState) -> dict[str, Any]:
+def checkpoint_envelope(state: GameState, *, copy_state: bool = True) -> dict[str, Any]:
     active_caps = []
     decision = state.pending_decision
     if decision:
@@ -111,7 +111,7 @@ def checkpoint_envelope(state: GameState) -> dict[str, Any]:
                         "actor": cap.actor,
                     }
                 )
-    payload = checkpoint_state(state)
+    payload = checkpoint_state(state) if copy_state else state.to_dict(include_ephemeral=False)
     return {
         "schema_version": RECORD_SCHEMA_VERSION,
         "kind": "authoritative-checkpoint",
@@ -681,6 +681,7 @@ def build_manifest(
     migrated_from: str | None = None,
     _state_hash: str | None = None,
     saved_semantics: Mapping[str, Any] | None = None,
+    runtime_trust_snapshot: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     effective_status = (
         "complete"
@@ -753,7 +754,10 @@ def build_manifest(
             "fingerprints": program_fingerprints,
             "trust": program_trust,
         },
-        "runtime_trust": runtime_trust_provenance(),
+        "runtime_trust": (
+            copy.deepcopy(dict(runtime_trust_snapshot))
+            if runtime_trust_snapshot is not None else runtime_trust_provenance()
+        ),
         "scryfall": database_fingerprint(card_db),
         "created_at": created_at,
         "started_at": created_at,
@@ -820,6 +824,7 @@ def write_record(
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
     saved_semantics: Mapping[str, Any] | None = None,
+    runtime_trust_snapshot: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -845,7 +850,8 @@ def write_record(
     metrics["persistent_threads_reused"] = derived_arena[
         "persistent_threads_reused"
     ]
-    checkpoint = checkpoint_envelope(state)
+    # The serialized writer owns the game until every component is committed.
+    checkpoint = checkpoint_envelope(state, copy_state=False)
     manifest = build_manifest(
         state=state,
         card_db=card_db,
@@ -862,6 +868,7 @@ def write_record(
         migrated_from=migrated_from,
         _state_hash=checkpoint["state_hash"],
         saved_semantics=saved_semantics,
+        runtime_trust_snapshot=runtime_trust_snapshot,
     )
     if prior_manifest:
         if not migrated_from and prior_manifest.get("migrated_from"):

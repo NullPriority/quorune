@@ -991,6 +991,7 @@ class CommanderSession:
         directory: str | Path,
         *,
         include_review: bool = True,
+        runtime_trust_snapshot: Mapping[str, Any] | None = None,
     ) -> dict[str, float]:
         started = time.perf_counter()
         directory = Path(directory)
@@ -1015,6 +1016,7 @@ class CommanderSession:
             status=self.record_status,
             pause_reason=self.pause_reason,
             saved_semantics=saved_semantics,
+            runtime_trust_snapshot=runtime_trust_snapshot,
         )
         self.arena_metadata = copy.deepcopy(
             dict(manifest.get("codex_arena") or {})

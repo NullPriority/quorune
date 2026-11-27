@@ -18,7 +18,7 @@ import uuid
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import (
     BaseModel,
@@ -44,10 +44,12 @@ from quorune import (
     parse_deck_text,
 )
 from quorune.card_programs.adapters import CardProgramSourceMismatch
-from quorune.record import database_fingerprint
+from quorune.record import database_fingerprint, verify_record_integrity
 from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.runtime import (
     GameActor,
+    GameActorClosed,
+    GameActorUnavailable,
     GameLifecycleConflict,
     GamePersistence,
 )
@@ -352,6 +354,7 @@ class ServerRuntime:
         self.manager = GameManager()
         self.hub = ProjectionHub()
         self._load_lock = asyncio.Lock()
+        self._invalid_recovery: set[str] = set()
         self._background: set[asyncio.Task[Any]] = set()
 
     def spawn(self, coroutine: Any, *, name: str) -> None:
@@ -359,34 +362,49 @@ class ServerRuntime:
         self._background.add(task)
         task.add_done_callback(self._background.discard)
 
-    async def actor(self, game_id: str) -> GameActor:
+    def _game_actor(self, game_id: str) -> GameActor | None:
         try:
             return self.manager.get(game_id)
         except KeyError:
-            pass
+            return None
+
+    def _load_game_service(self, game_id: str, *, recovering: bool) -> GameService:
+        database = self._database_for_game(game_id)
+        if recovering:
+            directory = self.records.game_directory(game_id)
+            if not verify_record_integrity(directory, database, replay=False)["ok"]:
+                raise ValueError("The saved game did not pass recovery verification")
+        loaded = self.records.load(database, game_id, idempotency=self.idempotency)
+        service = _BrowserGameService(loaded.session, idempotency=self.idempotency)
+        if _pause_browser_rules_boundary(service):
+            self.records.save(service)
+        self.store.update_game_state(
+            game_id, service.session.state.revision, _server_game_status(service),
+        )
+        return service
+
+    async def actor(self, game_id: str) -> GameActor:
+        actor = self._game_actor(game_id)
+        if actor is not None and not actor.requires_recovery:
+            return actor
         async with self._load_lock:
+            actor = self._game_actor(game_id)
+            if actor is not None and not actor.requires_recovery:
+                return actor
+            if game_id in self._invalid_recovery:
+                raise GameActorUnavailable("The saved match requires operator recovery")
+            recovering = actor is not None
             try:
-                return self.manager.get(game_id)
-            except KeyError:
-                loaded = self.records.load(
-                    self._database_for_game(game_id),
-                    game_id,
-                    idempotency=self.idempotency,
-                )
-                service = _BrowserGameService(
-                    loaded.session,
-                    idempotency=self.idempotency,
-                )
-                if _pause_browser_rules_boundary(service):
-                    self.records.save(service)
-                self.store.update_game_state(
-                    game_id,
-                    service.session.state.revision,
-                    _server_game_status(service),
-                )
-                return await self.manager.add(
-                    service, persistence=self.persistence
-                )
+                service = await asyncio.to_thread(self._load_game_service, game_id, recovering=recovering)
+            except (KeyError, ValueError, OSError, sqlite3.DatabaseError) as exc:
+                if not recovering:
+                    raise
+                if isinstance(exc, (KeyError, ValueError)):
+                    self._invalid_recovery.add(game_id)
+                raise GameActorUnavailable("The saved match could not be recovered yet") from exc
+            if actor is not None:
+                await self.manager.remove(game_id)
+            return await self.manager.add(service, persistence=self.persistence)
 
     def _database_for_game(self, game_id: str) -> CardDatabase:
         manifest_path = self.records.game_directory(game_id) / "manifest.json"
@@ -814,6 +832,14 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         allow_methods=["GET", "POST", "PUT", "DELETE"],
         allow_headers=["Content-Type", "X-CSRF-Token", TAB_HEADER_NAME],
     )
+
+    @app.exception_handler(GameActorUnavailable)
+    @app.exception_handler(GameActorClosed)
+    async def game_temporarily_unavailable(_request: Request, _exc: Exception) -> JSONResponse:
+        return JSONResponse(status_code=503, content={"detail": {
+            "code": "game_recovery_required",
+            "message": "The match is recovering. An unacknowledged move can be retried with the same command ID.",
+        }})
 
     _register_catalog_routes(app, resolved)
     _register_library_routes(app)
@@ -1303,7 +1329,11 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         except (ValueError, TypeError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         actor = await runtime.actor(game_id)
-        receipt = await actor.command(principal, envelope)
+        try:
+            receipt = await actor.command(principal, envelope)
+        except (GameActorUnavailable, GameActorClosed):
+            await runtime.hub.notify(game_id)
+            raise
         if receipt.ok and receipt.state_changed and not receipt.replayed:
             await runtime.hub.notify(game_id)
         return {"receipt": receipt.to_dict()}
@@ -1349,6 +1379,10 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 game_id, guest["guest_id"]
             )
             actor = await runtime.actor(game_id)
+        except (GameActorUnavailable, GameActorClosed):
+            await websocket.accept(subprotocol=selected_protocol)
+            await websocket.close(code=1013, reason="Match recovery")
+            return
         except (StoreForbidden, StoreNotFound, KeyError, ValueError):
             # Accept once so browser clients receive a terminal protocol
             # message. Rejecting the HTTP upgrade as 403 gives JavaScript no
@@ -1427,6 +1461,8 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     )
         except WebSocketDisconnect:
             return
+        except (GameActorUnavailable, GameActorClosed):
+            await websocket.close(code=1013, reason="Match recovery")
         finally:
             tasks = [
                 task
@@ -1441,7 +1477,10 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     task.cancel()
             if tasks:
                 await asyncio.gather(*tasks, return_exceptions=True)
-            await actor.drop_projection_cursor(cursor_key)
+            try:
+                await actor.drop_projection_cursor(cursor_key)
+            except (GameActorUnavailable, GameActorClosed):
+                pass
 
     index_path = resolved.static_dir / "index.html"
     assets_path = resolved.static_dir / "assets"

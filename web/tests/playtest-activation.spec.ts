@@ -7,7 +7,6 @@ import type { DecisionPacket, JsonValue } from "../src/generated/protocol";
 
 const commander = "Yargle and Multani";
 const deck = (mainboard: string) => `Commander:\n1 ${commander}\n\nMainboard:\n${mainboard}\n`;
-const readiness = /Deck (validated|accepted)/;
 
 async function enter(page: Page, seat: string) {
   await page.goto("/");
@@ -23,7 +22,7 @@ async function registerDeck(page: Page, seat: string) {
     ? "1 Viscera Seer\n1 Plagued Rusalka\n1 Ornithopter\n1 Dark Ritual\n95 Swamp"
     : "99 Swamp"));
   await page.getByTestId("submit-deck").click();
-  await expect(page.locator(".success-banner, .warning-banner").filter({ hasText: readiness })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("button", { name: "Change deck", exact: true })).toBeVisible({ timeout: 60_000 });
 }
 
 async function submit(page: Page, button: Locator, openCastForm = false) {
@@ -130,12 +129,9 @@ test("@browser-rules @mana-action @playtest-activation selected creature costs w
     await expect(host.locator(".card-action-hint").filter({ hasText: /^Info$/i })).toHaveCount(0);
 
     const passTurn = host.getByRole("button", { name: "Pass turn", exact: true });
-    await passTurn.click();
-    await expect(host.getByText("A response is available", { exact: true })).toBeVisible();
-    await host.getByRole("button", { name: "Cancel pass turn" }).click();
     await host.getByTestId("auto-pass-toggle").click();
     await expect(host.getByTestId("auto-pass-toggle")).toContainText("Full control");
-    await expect(passTurn).toBeDisabled();
+    await expect(passTurn).toBeEnabled();
     await host.getByTestId("auto-pass-toggle").click();
     const chooseRusalkaCost = async (captureAim = false) => {
       await onBoard("Plagued Rusalka").click();

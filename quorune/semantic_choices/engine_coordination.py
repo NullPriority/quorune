@@ -753,7 +753,11 @@ class SemanticChoiceCoordinationMixin:
         from ..discard_effect_origin import origin_for_resolving_hand_choice
 
         choice_effect = effect or {}
-        object_rows = self._semantic_choice_object_rows(actor, choice_effect, stack_item=stack_item)
+        object_rows = (
+            self._semantic_choice_object_rows(actor, choice_effect, stack_item=stack_item)
+            if default_semantic_choice_registry().requires_object_rows(choice_effect)
+            else ()
+        )
         target_schemas, validated_targets = (
             self._semantic_choice_target_facts(
                 actor, choice_effect, response, stack_item=stack_item,
@@ -867,9 +871,8 @@ class SemanticChoiceCoordinationMixin:
                 actor, choice_effect, source_ref, stack_item=stack_item,
             ),
             materialized_damage_source_candidates=(
-                self._semantic_choice_damage_source_candidates(
-                    actor, object_rows
-                )
+                self._semantic_choice_damage_source_candidates(actor, object_rows)
+                if object_rows else ()
             ),
             **token_creation_choice_facts(self, actor, choice_effect),
             **attacking_card_entry_choice_facts(self, actor, choice_effect),

@@ -50,8 +50,7 @@ export async function startPlaytestPod(
       await page.getByTestId("commander-name").fill(commander);
       await page.getByTestId("deck-list").fill(`Commander:\n1 ${commander}\n\nMainboard:\n${cards}\n`);
       await page.getByTestId("submit-deck").click();
-      await expect(page.locator(".success-banner, .warning-banner")
-        .filter({ hasText: /Deck (validated|accepted)/ })).toBeVisible({ timeout: 60_000 });
+      await expect(page.getByRole("button", { name: "Change deck", exact: true })).toBeVisible({ timeout: 60_000 });
     }));
     await startRoomGame(host);
     for (const page of pages) await clickMove(page, page.getByTestId("action-keep"));

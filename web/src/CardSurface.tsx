@@ -3,6 +3,7 @@ import {
   type ReactNode,
   useId,
   useLayoutEffect,
+  useRef,
   useState,
 } from "react";
 import { createPortal } from "react-dom";
@@ -216,12 +217,12 @@ export function CardTile({
       } : undefined}
       onMouseEnter={(event) => {
         onInspect?.(value);
-        if (inspectable && previewOnHover && !choice && !offerCost) setPreviewAnchor(event.currentTarget);
+        if (inspectable && previewOnHover && !choice) setPreviewAnchor(event.currentTarget);
       }}
       onMouseLeave={() => setPreviewAnchor(null)}
       onFocus={(event) => {
         onInspect?.(value);
-        if (inspectable && previewOnHover && !choice && !offerCost && event.currentTarget.matches(":focus-visible")) setPreviewAnchor(event.currentTarget);
+        if (inspectable && previewOnHover && !choice && event.currentTarget.matches(":focus-visible")) setPreviewAnchor(event.currentTarget);
       }}
       onBlur={() => setPreviewAnchor(null)}
       onPointerDown={(event) => {
@@ -255,7 +256,6 @@ export function CardTile({
         <div className="battlefield-printed-face">{printedImage}</div>
       </div> : printedImage}
       <div className="card-copy">
-        {!offerCost && !origin && printedCost && <small><ManaText text={printedCost} /></small>}
         <strong>{cardName(value)}</strong>
         {showFaceStatus && card.fd && card.n !== "?" && <small className="zone-face-status">Face down</small>}
         {attachment && <small id={attachmentDescription} className="attachment-label" title={`Attached to ${attachment}`}>
@@ -273,10 +273,9 @@ export function CardTile({
       </div>}
       {card.tap && table && <span hidden id={tappedDescription}>Tapped</span>}
       {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && <span className="card-action-hint">{actionHint}</span>}
-      {offerCost && <>
-        <span id={costDescription} hidden>{spokenMana(offerCost)}</span>
-        <span className="card-cost-overlay" data-testid="card-offer-cost" aria-hidden="true"><ManaText text={offerCost} /></span>
-      </>}
+      {offerCost && <span id={costDescription} hidden>{spokenMana(offerCost)}</span>}
+      {(offerCost || printedCost) && <span className="card-cost-overlay"
+        data-testid={offerCost ? "card-offer-cost" : undefined} aria-hidden="true"><ManaText text={offerCost || printedCost} /></span>}
       {previewAnchor && <FloatingCardPreview anchor={previewAnchor} value={value} view={view} />}
     </article>
   );
@@ -384,29 +383,35 @@ export function FloatingTablePreview({
   anchor: HTMLElement;
   children: ReactNode;
 }) {
-  const [position, setPosition] = useState({ left: 0, top: 0, width: 0 });
+  const [position, setPosition] = useState({ left: 0, top: 0, width: 0, maxHeight: 0 });
+  const previewRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     function place() {
       const bounds = anchor.getBoundingClientRect();
-      const width = Math.min(260, window.innerWidth - 24);
-      const maxHeight = Math.min(460, window.innerHeight - 24);
+      const width = Math.max(0, Math.min(280, window.innerWidth - 24));
+      const maxHeight = Math.max(0, window.innerHeight - 24);
+      const height = Math.min(previewRef.current?.scrollHeight || maxHeight, maxHeight);
       const x = bounds.right + width + 18 <= window.innerWidth
         ? bounds.right + 10 : bounds.left - width - 10;
       setPosition({
         left: Math.min(window.innerWidth - width - 12, Math.max(12, x)),
-        top: Math.min(window.innerHeight - maxHeight - 12, Math.max(12, bounds.top - 12)),
+        top: Math.max(12, Math.min(window.innerHeight - height - 12, bounds.top - 12)),
         width,
+        maxHeight,
       });
     }
+    const observer = new ResizeObserver(place);
+    if (previewRef.current) observer.observe(previewRef.current);
     place();
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };
   }, [anchor]);
-  return createPortal(<div className="floating-card-preview" style={position} aria-hidden="true">
+  return createPortal(<div ref={previewRef} className="floating-card-preview" style={position} aria-hidden="true">
     {children}
   </div>, document.body);
 }

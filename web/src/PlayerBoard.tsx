@@ -137,6 +137,10 @@ export function PlayerBoard({
           <strong>Seat {seat}</strong>{mine && <span className="you-chip">You</span>}
           <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
           <small>{String(player.hand_n ?? 0)} in hand</small>
+          {!mine && asList(player.known_hand).length > 0 && <button type="button" className="link-button"
+            aria-label={`View revealed cards in Seat ${seat}'s hand`} onClick={() => onOpenZone(seat, "known_hand")}>
+            Revealed hand
+          </button>}
         </div>
         {selection?.refs.includes(seat) ? <button type="button" className="life player-selection" data-player-ref={seat}
           aria-label={`Select Seat ${seat}, ${String(player.life ?? 0)} life`} aria-pressed={selection.selected.includes(seat)}
@@ -201,8 +205,8 @@ export function PlayerBoard({
         </div> : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
       </div>
       <footer className="zone-summary">
-        <ZonePiles seat={seat} player={player} hidden={hidden} selection={selection}
-          highlightedTargets={highlightedTargets} onOpen={onOpenZone} />
+        {!mine && <ZonePiles seat={seat} player={player} hidden={hidden} selection={selection}
+          highlightedTargets={highlightedTargets} onOpen={onOpenZone} />}
         <span>Land plays left <strong>{String(player.lands ?? 0)}</strong></span>
         {Object.keys(mana).length > 0 && <span>Mana <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ")}</strong></span>}
         {mine && <button type="button" className="link-button" aria-pressed={arranging} disabled={Boolean(selection)}

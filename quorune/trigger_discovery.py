@@ -2,6 +2,7 @@ from __future__ import annotations
 from .event_counter_reference import event_counter_recipient_context
 from .rules.block_trigger_multiplicity import block_trigger_already_collected
 from .entry_copy import copiable_oracle_id
+from .characteristic_read_frames import characteristic_read_frame
 from .evoke import is_evoked_annotation
 from .keyword_abilities import normalized_characteristic_keywords
 
@@ -35,7 +36,7 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .rules.event_subscriptions import (
-    LAND_PLAY_EVENT, PLAYED_LAND_REFERENCE_FIELD, FixedEventSubscriptionSet,
+    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, LAND_PLAY_EVENT, PLAYED_LAND_REFERENCE_FIELD, FixedEventSubscriptionSet,
     intervening_recheck_condition, public_state_intervening_actual,
     source_event_intervening_recheck,
 )
@@ -1411,9 +1412,18 @@ def dispatch_semantic_event(
         discovery_context = {**context, "subtypes": target_announcement_subtypes or ()}
     triggered: list[StackItem] = []
     participation_sources = _ordered_event_sources(host, sources, source_zones)
-    for source in participation_sources:
-        active_zone, characteristics, programs = _event_programs_for_source(
+    def read_programs(source):
+        return _event_programs_for_source(
             host,source,event,source_zones=source_zones,source_characteristics=source_characteristics)
+
+    if event in {"card.drawn", "card.second_draw", DRAW_EXCEPT_FIRST_OWN_STEP_EVENT}:
+        # Draw observers use the same committed state. Keep this read before any
+        # trigger usage, pending control duration, or stack writes.
+        with characteristic_read_frame(host):
+            source_programs = [(source, read_programs(source)) for source in participation_sources]
+    else:
+        source_programs = ((source, read_programs(source)) for source in participation_sources)
+    for source, (active_zone, characteristics, programs) in source_programs:
         if not _source_may_observe_event(source, event, programs):
             continue
         from .rules.trigger_participation_runtime import typed_trigger_participations

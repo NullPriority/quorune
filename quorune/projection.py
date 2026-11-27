@@ -139,10 +139,9 @@ class StateProjector:
             seats.add(capability.actor)
         return seats
 
-    def _event_visible(self, event: Event, principal: str) -> bool:
+    def _event_visible(self, event: Event, principal: str, seats: set[str] | None = None) -> bool:
         if principal in {"analyst", "admin"}:
             return True
-        seats = self._view_seats_for(principal)
         if not event.visibility:
             return True
         if principal == "spectator":
@@ -153,6 +152,8 @@ class StateProjector:
             return "spectator" in event.visibility or set(
                 self.state.players
             ).issubset(event.visibility)
+        if seats is None:
+            seats = self._view_seats_for(principal)
         return principal in event.visibility or any(
             seat in event.visibility for seat in seats
         )
@@ -581,6 +582,7 @@ class StateProjector:
         return {
             "seq": self.state.turn_sequence,
             "active": self.state.active_player,
+            "number": self.state.players[self.state.active_player].turns_begun if self.state.active_player else 0,
             "phase": self.state.phase,
             "step": self.state.step,
             "priority": self.state.priority_player,
@@ -610,6 +612,7 @@ class StateProjector:
                 "ctl": item.controller,
                 "label": "Face-down spell" if hidden_face_down else item.label,
                 **({"targets": item.targets} if item.targets else {}),
+                **({"from": "graveyard"} if item.context.get("cast_origin") == "graveyard" else {}),
             }
             if not hidden_face_down:
                 if item.modes:
@@ -880,8 +883,24 @@ class StateProjector:
         except KeyError:
             return {"cid": oracle_id[:8], "n": "Custom token"}
 
-    @staticmethod
-    def _event_summary(event: Event) -> str:
+    def _cast_target_label(self, ref: str) -> str:
+        if ref in self.state.players:
+            return f"Seat {ref}"
+        for item in self.state.stack:
+            if ref == item.ref:
+                card = self.state.cards.get(item.card_object_id)
+                return "a face-down spell" if card is not None and card.face_down else item.label
+        for card in self.state.cards.values():
+            if ref == card.ref:
+                if self._card_visible(card, "spectator"):
+                    return card.printed_name
+                break
+        return "an object"
+
+    def _event_summary(self, event: Event) -> str:
+        if event.code == "stack.cast" and event.details.get("targets"):
+            targets = ", ".join(self._cast_target_label(ref) for ref in event.details["targets"])
+            return f"{event.summary.rstrip('.')} targeting {targets}."
         if (
             event.summary == event.code == "library.top.reveal"
             and set(event.details) == {"player", "card"}
@@ -893,8 +912,11 @@ class StateProjector:
 
     def _events(self, principal: str, after: int) -> list[dict[str, Any]]:
         result = []
-        for event in self.state.events:
-            if event.event_id <= after or not self._event_visible(event, principal):
+        seats = self._view_seats_for(principal)
+        for event in reversed(self.state.events):
+            if event.event_id <= after:
+                break
+            if not self._event_visible(event, principal, seats):
                 continue
             if event.importance <= 0 and event.code not in {"decision.response", "action.rejected"}:
                 continue
@@ -903,9 +925,12 @@ class StateProjector:
                 "c": event.code,
                 "a": event.actor,
                 "s": self._event_summary(event),
+                **({"pub": True} if self._event_visible(event, "spectator") else {}),
                 **({"d": event.details} if event.importance >= 3 else {}),
             })
-        return result[-24:]
+            if len(result) == 24:
+                break
+        return result[::-1]
 
     def event_page(
         self,

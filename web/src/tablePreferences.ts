@@ -23,6 +23,8 @@ export type CardSizeZone = typeof CARD_SIZE_ZONES[number][0];
 export type TablePreferences = {
   autoMana: boolean;
   autoPass: boolean;
+  holdNewStack: boolean;
+  holdGraveyard: boolean;
   handPanelHeight: number;
   handAutoCollapse: boolean;
   cardScale: number;
@@ -39,6 +41,8 @@ export type TablePreferences = {
 export const DEFAULT_TABLE_PREFERENCES: Readonly<TablePreferences> = {
   autoMana: true,
   autoPass: true,
+  holdNewStack: true,
+  holdGraveyard: false,
   handPanelHeight: 310,
   handAutoCollapse: true,
   cardScale: 1,
@@ -96,6 +100,8 @@ export function parseTablePreferences(raw: string | null): TablePreferences {
     return {
       autoMana: typeof value.autoMana === "boolean" ? value.autoMana : DEFAULT_TABLE_PREFERENCES.autoMana,
       autoPass: typeof value.autoPass === "boolean" ? value.autoPass : DEFAULT_TABLE_PREFERENCES.autoPass,
+      holdNewStack: typeof value.holdNewStack === "boolean" ? value.holdNewStack : DEFAULT_TABLE_PREFERENCES.holdNewStack,
+      holdGraveyard: value.holdGraveyard === true,
       handPanelHeight: boundedNumber(value.handPanelHeight, DEFAULT_TABLE_PREFERENCES.handPanelHeight, 190, 650),
       handAutoCollapse: typeof value.handAutoCollapse === "boolean" ? value.handAutoCollapse : DEFAULT_TABLE_PREFERENCES.handAutoCollapse,
       cardScale: boundedNumber(value.cardScale, DEFAULT_TABLE_PREFERENCES.cardScale, MIN_CARD_SIZE, MAX_CARD_SIZE),

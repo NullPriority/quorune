@@ -194,20 +194,19 @@ priority. Automatic pass submits only routine pass-only decisions. Full
 control holds each decision for the player, including priority on their own
 triggers.
 
-Pass turn arms a yield for the current turn. It also passes empty-stack main
-phases and combat priority windows with no meaningful actions. A newly arrived
-stack object, an available response, or a required decision pauses the yield.
-Choosing a response keeps the yield available until the turn ends. A manual pass
-acknowledges the current stack. Cancel pass turn,
-enabling Full control, refreshing the page, or reaching the next turn ends
-the yield. Each automatic pass uses its own current seat capability and is
-recorded with the current turn. The game menu can ignore specific activation
-stops for that turn. Each ignored ability stays available for manual activation.
-The stop returns if the ability offers different costs, targets, or choices.
+**Pass turn** at the bottom right yields voluntary priority for the current
+turn, including priority with an available spell or activation. Required
+decisions and selected step holds still pause the yield. Table settings can
+also hold for a new stack object or a change to the graveyard. A manual pass
+acknowledges the current stack and graveyard. Canceling, refreshing, or reaching
+the next turn ends the yield. Each response uses the current seat capability
+and is recorded with the current turn. To use regular Auto-pass around a specific
+activation, choose its ignore option in the game menu. That ignore expires if
+the activation offers different costs, targets, or choices.
 
 Open **Combat** in the turn rail to select the steps where you want to hold
-priority. **Game menu → Combat priority stops** offers the same controls in a
-compact layout. A selected stop holds the next available priority for your
+priority. **Game menu → Hold priority at specific steps** also offers upkeep,
+draw, main phase, and end step holds. A selected stop holds available priority for your
 seat at that step, even when Auto-pass or Pass turn is active. Pass manually
 to continue. Attacker and blocker stops apply after those assignments.
 
@@ -221,6 +220,17 @@ that table, change their deck, and start a new match. The original game remains
 available in **Recent games**.
 
 ## Inspect, stop, and resume
+
+The card viewer follows hover and focus on the table. Use **Pop out viewer** to
+move the inspection view to a second window. The adjacent log and stack share
+one panel. Your library, graveyard, and exile are next to your hand. Opponents’
+hand counts are public. **Revealed hand** opens the cards the current seat is
+allowed to see.
+
+During resolution, choose a binary payment in the action tray. If you remember
+a response, the browser uses it only for the matching trigger in this game
+when the answer is legal. The game menu clears remembered responses. Any priority
+window before the trigger resolves still uses your priority controls.
 
 Hover, focus, or use **Inspect** to see current power and toughness, marked
 damage, counters, and the active face. Planeswalker cards show their current

@@ -78,10 +78,12 @@ test("a current-turn yield stops at its boundaries and requires a new arm for th
   assert.equal(turnYieldPause(armed, { ...armed, stack: ["S2", "S1"] }, "priority", true), "New object on the stack");
   const combat = { ...armed, phase: "combat" };
   assert.equal(turnYieldPause(armed, combat, "priority", true), undefined);
-  assert.equal(turnYieldPause(armed, combat, "priority", false), "A response is available");
+  assert.equal(turnYieldPause(armed, combat, "priority", false), "Priority is held");
   assert.equal(turnYieldPause(armed, combat, "combat.attackers", false), "A decision is required");
   assert.equal(turnYieldPause(armed, armed, "combat.blockers", false), "A decision is required");
-  assert.equal(turnYieldPause(armed, armed, "priority", false), "A response is available");
+  assert.equal(turnYieldPause(armed, armed, "priority", false), "Priority is held");
+  assert.equal(turnYieldPause(armed, { ...armed, stack: ["S2"] }, "priority", true, { stack: false, graveyard: false }), undefined);
+  assert.equal(turnYieldPause(armed, { ...armed, graveyard: "A2" }, "priority", true, { stack: false, graveyard: true }), "Graveyard activity");
 });
 
 test("combat stops hold only the selected timing window", () => {

@@ -51,9 +51,17 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       ...(init.headers ?? {}),
     },
   });
-  const payload = (await response.json()) as { detail?: unknown };
+  let payload: { detail?: unknown };
+  try {
+    payload = (await response.json()) as { detail?: unknown };
+  } catch {
+    throw new ApiError(
+      response.ok ? "The server returned an unreadable response." : `Request failed: ${response.status}`,
+      response.status, null,
+    );
+  }
   if (!response.ok) {
-    const detail = payload.detail;
+    const detail = payload?.detail;
     const message = typeof detail === "string"
       ? detail
       : detail && typeof detail === "object" && "message" in detail

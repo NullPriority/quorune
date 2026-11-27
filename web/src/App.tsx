@@ -14,7 +14,7 @@ import {
 } from "./api";
 import { ChoiceFormView } from "./ChoiceForm";
 import { DeckReadiness } from "./DeckReadiness";
-import { ContextualDecision, contextualDecisionAction } from "./ContextualDecision";
+import { clearTriggerResponses, ContextualDecision, contextualDecisionAction } from "./ContextualDecision";
 import { projectedChoiceCards, projectedLabels } from "./CardChoiceGrid";
 import {
   choiceCompatibilityErrors,
@@ -29,7 +29,7 @@ import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, is
 import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, needsActivationConfirmation, phyrexianCastCostLabels, publicEventSummary, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp } from "./TableStatus";
 import { CardSizeSlider, TableSettings } from "./TableSettings";
-import { type OpenTableZone, ZoneBrowser } from "./TableZones";
+import { type OpenTableZone, ZoneBrowser, ZonePiles } from "./TableZones";
 import { CombatStopOptions, TurnStatus } from "./TurnStatus";
 import { PlayerBoard } from "./PlayerBoard";
 import { StackPanel } from "./StackPanel";
@@ -37,6 +37,8 @@ import { projectedCardSeat, SeatLabel, tableSeat } from "./SeatLabel";
 import { GameMenu } from "./GameMenu";
 import { SetupScreen } from "./SetupScreen";
 import { RecentActivity } from "./RecentActivity";
+import { TableCardViewer } from "./TableCardViewer";
+import { projectedPublicEvents, TableMotion } from "./TableMotion";
 import { Lobby, Welcome } from "./Lobby";
 import type { SavedDeckSelection } from "./PlayLibrary";
 import { handZoneOffers, type HandZoneOffer } from "./handZoneOffers";
@@ -555,6 +557,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const [stopReason, setStopReason] = useState("Pause for a table break");
   const [showInspection, setShowInspection] = useState(false);
   const [showPublicLog, setShowPublicLog] = useState(false);
+  const publicLogOpen = useRef(false);
   const [publicEvents, setPublicEvents] = useState<PublicGameEvent[]>([]);
   const [publicLogLoading, setPublicLogLoading] = useState(false);
   const [controlling, setControlling] = useState(false);
@@ -597,10 +600,17 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const commitBlocked = compatibilityErrors.length > 0;
   const choiceErrors = commitBlocked ? compatibilityErrors : draft?.errors ?? [];
   const projectedTurn = asRecord(view?.state.turn);
+  const graveyardRefs = tablePreferences.holdGraveyard
+    ? Object.values(asRecord(view?.state.players)).flatMap((player) => asList(asRecord(player).gy).map((card) => String(asRecord(card).id)))
+    : [];
   const turnBoundary = {
     turn: Number(projectedTurn.seq ?? 0),
     phase: String(projectedTurn.phase ?? ""),
-    stack: asList(view?.state.stack).map((item) => String(asRecord(item).id)),
+    stack: [...stackPositions.keys()],
+    graveyard: JSON.stringify([graveyardRefs, stack.filter((item) => {
+      const row = asRecord(item);
+      return row.from === "graveyard" || [row.src, ...asList(row.targets)].some((ref) => graveyardRefs.includes(String(ref)));
+    }).map((item) => asRecord(item).id)]),
   };
   const combatStop = view?.decision?.kind === "priority" ? activeCombatPriorityStop(
     turnBoundary.phase, String(projectedTurn.step ?? ""), Boolean(asRecord(view.state.combat).first_strike_step), combatStops,
@@ -614,12 +624,15 @@ function GameView({ gameId, system, onExit, onRoom }: {
     phase: turnBoundary.phase,
     principalSeat: view?.principal.split(":").at(-1) ?? "",
     stackDepth: turnBoundary.stack.length,
-    allowActiveMain: Boolean(turnYield),
-    ignoredActivations: turnYield ? ignoredOffers : undefined,
+    ignoredActivations: ignoredOffers,
   };
-  const autoPass = findSafeAutoPass(view?.decision?.legal_actions ?? [], passWindow);
+  const legalPriority = view?.decision?.legal_actions ?? [];
+  const autoPass = turnYield ? legalPriority.find((action) => action.action === "pass")
+    : findSafeAutoPass(legalPriority, passWindow);
   const yieldPause = turnYield && (combatStop ? `Priority held · ${combatStop}`
-    : turnYieldPause(turnYield, turnBoundary, view?.decision?.kind, Boolean(autoPass)));
+    : turnYieldPause(turnYield, turnBoundary, view?.decision?.kind, Boolean(autoPass), {
+      stack: tablePreferences.holdNewStack, graveyard: tablePreferences.holdGraveyard,
+    }));
 
   useEffect(() => {
     if (turnYield && turnYield.turn !== turnBoundary.turn) setTurnYield(null);
@@ -661,6 +674,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
   }
 
   useEffect(() => saveTablePreferences(tablePreferences), [tablePreferences]);
+  useEffect(() => {
+    publicLogOpen.current = showPublicLog;
+    if (showPublicLog) void refreshPublicLog(false);
+  }, [gameId, showPublicLog]);
   useEffect(() => {
     const query = window.matchMedia("(max-height: 520px), (max-width: 650px)");
     const update = () => setCompactBoards(query.matches);
@@ -769,7 +786,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
             viewRef.current = next;
             setView(next);
             setConnection("LIVE");
-            if (refreshEvents) void refreshPublicLog(false);
+            if (refreshEvents && publicLogOpen.current) void refreshPublicLog(false);
           })
           .catch((error) => {
             if (stopped || socket !== stream) return;
@@ -788,7 +805,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
     api.game(gameId)
       .then((result) => {
         setLifecycle(result.game);
-        void refreshPublicLog(true);
+        if (publicLogOpen.current) void refreshPublicLog(true);
       })
       .catch((caught) => setNotice(caught instanceof Error ? caught.message : String(caught)));
     connect();
@@ -813,7 +830,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   useEffect(() => {
     const decision = view?.decision;
     if (
-      !tablePreferences.autoPass
+      (!tablePreferences.autoPass && !turnYield)
       || !decision
       || decision.kind !== "priority"
       || lifecycle?.status !== "active"
@@ -1056,9 +1073,13 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const ownCommand = asList(ownPlayer.cmd);
   const zoneOffers = !isSpectator && connection === "LIVE" && lifecycle?.status === "active"
     ? handZoneOffers(view) : new Map<string, HandZoneOffer>();
-  const inspectionTarget = inspectedCard ?? hand[0] ?? null;
+  const inspectionRef = asRecord(inspectedCard ?? undefined).id;
+  const visibleCards = projectedChoiceCards(view);
+  const inspectionTarget = (typeof inspectionRef === "string"
+    ? stack.find((item) => asRecord(item).id === inspectionRef) ?? visibleCards.get(inspectionRef)
+    : undefined) ?? hand[0] ?? null;
   const pinnedCard = pinnedCardRef
-    ? stack.find((item) => asRecord(item).id === pinnedCardRef) ?? projectedChoiceCards(view).get(pinnedCardRef) ?? null
+    ? stack.find((item) => asRecord(item).id === pinnedCardRef) ?? visibleCards.get(pinnedCardRef) ?? null
     : null;
   const inspectionSeat = pinnedCard ? projectedCardSeat(view, pinnedCard) : undefined;
   const pinInspector = (value: JsonValue | null) => {
@@ -1068,7 +1089,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const decisionSeat = tableSeat(view.decision?.actor) ?? tableSeat(ownSeat);
   const compactInspector = inspectionTarget && <button type="button" className="mobile-inspector-trigger link-button"
     aria-label={`View ${cardName(inspectionTarget)}`} onClick={() => pinInspector(inspectionTarget)}>Inspect</button>;
-  const showRail = hasStack ? !stackMinimized : railOpen;
+  const showRail = Boolean(stackTargetStep) || (hasStack ? !stackMinimized : railOpen);
   const focusedStackItem = showRail ? stack.find((item) => asRecord(item).id === focusedStackId) : undefined;
   const response = showRail && !focusedStackItem
     ? stack.find((item) => asList(asRecord(item).targets).some((ref) => stackPositions.has(String(ref))))
@@ -1168,6 +1189,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const tableStyle = { ...shellStyle, ...tablePreferenceStyle(tablePreferences) };
   const turnPresentation = {
     turnSequence: Number(turn.seq ?? 0),
+    personalTurn: Number(turn.number ?? 0),
     activeSeat,
     prioritySeat,
     phase: String(turn.phase ?? ""),
@@ -1195,18 +1217,12 @@ function GameView({ gameId, system, onExit, onRoom }: {
         onOpenInspector={pinInspector} />;
     }
     if (panel === "activity") {
-      return tablePreferences.activityVisible ? <RecentActivity key={panel} events={publicEvents}
+      return tablePreferences.activityVisible ? <RecentActivity key={panel} events={projectedPublicEvents(currentView)}
         describeEvent={describeEvent} onOpenLog={() => setShowPublicLog(true)} /> : null;
     }
-    if (tablePreferences.inspectorCollapsed) {
-      return (
-        <section className="inspector-collapsed" key={panel} data-testid="card-inspector-collapsed">
-          <span>Card viewer collapsed</span>
-          <button type="button" className="link-button" onClick={() => setTablePreference("inspectorCollapsed", false)}>Open</button>
-        </section>
-      );
-    }
-    return <CardInspector key={panel} value={inspectionTarget} view={currentView} onExpand={() => pinInspector(inspectionTarget)} />;
+    return <TableCardViewer key={panel} value={inspectionTarget} view={currentView} collapsed={tablePreferences.inspectorCollapsed}
+      onToggle={() => setTablePreference("inspectorCollapsed", !tablePreferences.inspectorCollapsed)}
+      onExpand={() => pinInspector(inspectionTarget)} />;
   }
   return (
     <main
@@ -1250,19 +1266,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
             onAutoMana={() => setTablePreference("autoMana", !tablePreferences.autoMana)}
           />
         )}
-        {!isSpectator && lifecycle?.status === "active" && turnBoundary.turn > 0 && <div className="turn-yield">
-          <button type="button" className="table-control-toggle" aria-pressed={Boolean(turnYield)}
-            disabled={!tablePreferences.autoPass && !turnYield}
-            onClick={() => setTurnYield(turnYield ? null : turnBoundary)}>
-            {turnYield ? "Cancel pass turn" : "Pass turn"}
-          </button>
-          {turnYield && <small role="status">{yieldPause ?? `Armed for turn ${turnYield.turn}`}</small>}
-        </div>}
           </div>
-          <button ref={stackToggleRef} type="button" className="table-control-toggle stack-toggle" aria-expanded={showRail} data-testid="stack-toggle"
-            aria-controls={showRail ? "match-stack" : undefined}
-            aria-label={hasStack ? `${showRail ? "Minimize" : "Expand"} stack (${stackCountLabel})` : undefined}
-            onClick={toggleStackRail}>{hasStack ? `Stack (${stack.length})` : showRail ? "Stack open" : "Stack"}</button>
           <span data-testid="game-status" className={`game-status ${lifecycle?.status ?? "loading"}`}>
             {statusLabel}
           </span>
@@ -1270,7 +1274,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
             disabled={actionDisabled} onConcede={concedeAction ? () => chooseAction(concedeAction) : undefined}>
             <button type="button" className="secondary-button" onClick={onExit}>Decks and games</button>
             {!isSpectator && <details>
-              <summary>Combat priority stops</summary>
+              <summary>Hold priority at specific steps</summary>
               <CombatStopOptions selected={combatStops} onToggle={toggleCombatStop} />
             </details>}
             {optionalActivations.length > 0 && <details>
@@ -1294,6 +1298,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
                   onClick={() => setShowInspection((value) => !value)}
                 >Inspect match</button>
                 <button type="button" className="secondary-button" data-testid="open-public-log" onClick={() => setShowPublicLog(true)}>Public log</button>
+                <button type="button" className="secondary-button" onClick={() => {
+                  clearTriggerResponses(gameId);
+                  setNotice("Remembered trigger responses cleared.");
+                }}>Clear trigger responses</button>
                 <TableSettings value={tablePreferences} onChange={setTablePreference} onReset={resetTablePreferences} />
                 {lifecycle?.owner && lifecycle.can_stop && (
                   <label className="stop-control">
@@ -1369,7 +1377,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </div>
         </div>
       )}
-      <div className={`table-workspace${showRail ? " has-stack-rail" : ""}${hasStack ? " has-active-stack" : ""}`}>
+      <TableMotion key={gameId} view={view} ownSeat={ownSeat} />
+      <div className={`table-workspace has-stack-rail${hasStack && showRail ? " has-active-stack" : ""}`}>
         <div className="boards-panel">
           {showOpponentControls && <div className="board-view-bar">
             <div className="opponent-views" role="group" aria-label="Battlefield views">
@@ -1419,11 +1428,16 @@ function GameView({ gameId, system, onExit, onRoom }: {
           ))}
         </section>
         </div>
-        {showRail && <aside className="table-sidebar" aria-label="Stack and recent game activity">
-          {(hasStack ? ["stack", "activity"] as const : tablePreferences.rightRailOrder).map(railPanel)}
-        </aside>}
+        <aside className="table-sidebar" aria-label="Card viewer and game activity">
+          <button ref={stackToggleRef} type="button" className="table-control-toggle stack-toggle" aria-expanded={showRail} data-testid="stack-toggle"
+            aria-controls={showRail ? "match-stack" : undefined}
+            aria-label={hasStack ? `${showRail ? "Minimize" : "Expand"} stack (${stackCountLabel})` : undefined}
+            onClick={toggleStackRail}>{showRail ? "Show game log" : hasStack ? `Show stack (${stack.length})` : "Show stack"}</button>
+          {tablePreferences.rightRailOrder.filter((panel) => panel === "card" || panel === (showRail ? "stack" : "activity")).map(railPanel)}
+        </aside>
       </div>
       <div ref={bottomDockRef} className={`table-bottom-dock${isSpectator ? " spectator" : ""}`} data-testid="table-bottom-dock">
+      {!isSpectator && <div className="hand-and-zones">
       {!isSpectator && handCollapsed && (
         <section className="hand-panel-collapsed" data-testid="hand-panel-collapsed">
           <span>Your hand · {hand.length} cards</span>
@@ -1460,6 +1474,9 @@ function GameView({ gameId, system, onExit, onRoom }: {
           selectedRef={selectedCardRef} actionsForCard={actionsForCard} onIntent={selectCardActions}
           onInspect={setInspectedCard} onDrag={(ref) => { draggedCardRef.current = ref ?? ""; }} onDrop={handleCardDrop} />
       </section>}
+      <ZonePiles localDock seat={ownSeat} player={ownPlayer} hidden={false} selection={publicSelection}
+        highlightedTargets={stackTargets} onOpen={(seat, zone) => setZoneBrowser({ seat, zone })} />
+      </div>}
       {pendingRetry && (
         <section className="retry-panel" role="alert" data-testid="command-retry">
           <div><strong>Command delivery is uncertain</strong><span>Retry “{pendingRetry.label}” to recover its result.</span></div>
@@ -1527,6 +1544,13 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </>
         ) : <div className="waiting-decision"><span className="status-dot muted" /><div><strong>Waiting for the table</strong><p>Waiting for another player’s decision.</p></div></div>}
       </section>}
+      {!isSpectator && lifecycle?.status === "active" && turnBoundary.turn > 0 && <div className="turn-yield turn-yield-dock">
+        {turnYield && <small role="status">{yieldPause ?? "Passing priority for this turn"}</small>}
+        <button type="button" className="table-control-toggle" aria-pressed={Boolean(turnYield)}
+          onClick={() => setTurnYield(turnYield ? null : turnBoundary)}>
+          {turnYield ? "Cancel pass turn" : "Pass turn"}
+        </button>
+      </div>}
       </div>
       {showPublicLog && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowPublicLog(false); }}>

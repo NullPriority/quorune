@@ -4,6 +4,7 @@ import copy
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..characteristic_read_frames import characteristic_read_method
 from ..errors import GameRuleError
 from ..life_state import LifeStateError, prepare_life_payment
 from ..model import CardInstance, StackItem
@@ -576,6 +577,7 @@ class HiddenSearchOwnerMixin:
         )
         return any(self._search_leaf_matches(row, record, query, leaf) for leaf, query in queries)
 
+    @characteristic_read_method
     def _semantic_search_options(
         self,
         seat: str,

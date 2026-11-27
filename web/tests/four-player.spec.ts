@@ -31,7 +31,7 @@ async function submitNamedDeck(page: Page, name: string, commander: string, text
   // the ready list behind a visible fail-closed fidelity warning. The first
   // hosted validation also cold-populates compiler/preflight caches.
   await expect(
-    page.locator(".success-banner, .warning-banner").filter({ hasText: /Deck (validated|accepted)/ }),
+    page.getByRole("button", { name: "Change deck", exact: true }),
   ).toBeVisible({ timeout: COLD_DECK_VALIDATION_TIMEOUT_MS });
   await expect(page.getByTestId("deck-ready-summary")).toContainText(name);
 }
@@ -867,7 +867,7 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await submitImmediateAction(opponent, "keep");
 
     for (const page of [host, opponent]) {
-      await expect(page.getByTestId("active-turn-label")).toHaveText("Seat A's Turn · Turn 1");
+      await expect(page.getByTestId("active-turn-label")).toHaveText("Seat A's 1st turn");
       await expect(page.getByTestId("priority-label")).toContainText("Priority: Seat A");
       await expect(page.getByTestId("exact-step-label")).toHaveText("Upkeep");
       await expect(page.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
@@ -888,7 +888,7 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
 
     await submitMaybeFormAction(host, "pass");
     for (const page of [host, opponent]) {
-      await expect(page.getByTestId("active-turn-label")).toHaveText("Seat A's Turn · Turn 1");
+      await expect(page.getByTestId("active-turn-label")).toHaveText("Seat A's 1st turn");
       await expect(page.getByTestId("priority-label")).toContainText("Priority: Seat B");
       await expect(page.getByTestId("exact-step-label")).toHaveText("Upkeep");
     }
@@ -905,14 +905,15 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
         && (await gameShell.getAttribute("data-phase")) === "precombat_main",
     );
     await expect(spire).toHaveAttribute("draggable", "true");
-    await expect(host.getByTestId("active-turn-label")).toHaveText("Seat A's Turn · Turn 1");
+    await expect(host.getByTestId("active-turn-label")).toHaveText("Seat A's 1st turn");
     await expect(host.getByTestId("priority-label")).toContainText("Priority: Seat A");
     await expect(host.getByTestId("exact-step-label")).toHaveText("Main Phase 1");
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
 
     const sidebar = host.locator(".table-sidebar");
-    await expect(sidebar).toHaveCount(0);
-    await host.getByRole("button", { name: "Stack", exact: true }).click();
+    await expect(sidebar.locator(".table-card-viewer")).toBeVisible();
+    await expect(sidebar.getByTestId("activity-panel")).toBeVisible();
+    await host.getByTestId("stack-toggle").click();
     await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "stack-panel");
     const stackBounds = await host.getByTestId("stack-panel").boundingBox();
     expect(stackBounds).not.toBeNull();
@@ -924,6 +925,8 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await host.getByLabel("Right rail width").fill("420");
     await host.getByLabel("Right rail first").selectOption("activity");
     await host.getByLabel("Board density").selectOption("compact");
+    await host.getByTestId("open-game-menu").click();
+    await host.getByTestId("stack-toggle").click();
     await expect(host.locator(".game-shell")).toHaveClass(/density-compact/);
     await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "activity-panel");
 
@@ -932,7 +935,6 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await expect(host.getByTestId("auto-pass-toggle")).toHaveAttribute("aria-pressed", "false");
     await expect(host.locator(".game-shell")).toHaveClass(/density-compact/);
     await expect(host.locator(".game-shell")).toHaveAttribute("style", /--right-rail-width: 420px/);
-    await host.getByRole("button", { name: "Stack", exact: true }).click();
     await expect(host.locator(".table-sidebar > section").first()).toHaveAttribute("data-testid", "activity-panel");
     const dockBottom = await host.getByTestId("table-bottom-dock").evaluate(
       (element) => Math.round(element.getBoundingClientRect().bottom),
@@ -957,13 +959,13 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await expect(host.getByTestId("action-pass")).toBeVisible();
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(6);
 
-    async function advanceUntilTurn(active: string, turn: number, step: string) {
+    async function advanceUntilTurn(active: string, turn: string, step: string) {
       await driveUntil(
         [host, opponent],
         async () => {
         const activeText = await host.getByTestId("active-turn-label").textContent();
         const stepText = await host.getByTestId("exact-step-label").textContent();
-          return activeText === `Seat ${active}'s Turn · Turn ${turn}`
+          return activeText === `Seat ${active}'s ${turn} turn`
             && stepText === step;
         },
         testInfo,
@@ -975,11 +977,11 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
       );
     }
 
-    await advanceUntilTurn("B", 2, "Draw");
+    await advanceUntilTurn("B", "1st", "Draw");
     await expect(opponent.getByTestId("own-hand").locator(".hand-card")).toHaveCount(8);
     await expect(host.getByTestId("priority-label")).toContainText("Priority: Seat B");
 
-    await advanceUntilTurn("A", 3, "Draw");
+    await advanceUntilTurn("A", "2nd", "Draw");
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
   } finally {
     await annotateJourneyMetrics([host, opponent], 2, testInfo);

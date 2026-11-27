@@ -342,7 +342,7 @@ def semantic_search_choice_schema(
 
     if (entry_choice and not is_up_to_two_forest_search(effect)
             and (str(effect.get("destination")) == "battlefield" or effect.get('schema_version')==4)
-            and not life_payment_prohibited(self, seat)):
+            and not life_payment_prohibited(host, seat)):
         choice_schema["entry_pay_life"] = "boolean"
         choice_schema["example"]["entry_pay_life"] = False
     return choice_schema

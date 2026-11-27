@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence, TYPE_CHECKING
+from .characteristic_read_frames import characteristic_read_method
 from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
@@ -65,6 +66,7 @@ class StateBasedSnapshotHost(Protocol):
     def _attachment_is_legal(self, card: Any, *, subtypes: set[str]) -> bool: ...
 
 
+@characteristic_read_method
 def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnapshot]:
     """Capture one current public view before any state-based mutation."""
     from .sacrifice_prohibition_model import sacrifice_is_prohibited

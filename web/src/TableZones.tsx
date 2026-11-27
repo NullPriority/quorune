@@ -6,11 +6,12 @@ import type { ProjectedView } from "./protocol";
 import type { TableObjectSelection } from "./PublicActionDraft";
 import { SeatLabel } from "./SeatLabel";
 
-const labels = { known_top: "Library", gy: "Graveyard", ex: "Exile" } as const;
+const labels = { known_top: "Library", gy: "Graveyard", ex: "Exile", known_hand: "Revealed hand" } as const;
 export type TableZone = keyof typeof labels;
 export type OpenTableZone = { seat: string; zone: TableZone };
 
 const zones = ["known_top", "gy", "ex"] as const;
+const dockZones = ["ex", "known_top", "gy"] as const;
 
 function zoneCards(player: Record<string, JsonValue>, zone: TableZone) {
   const cards = asList(player[zone]);
@@ -26,21 +27,22 @@ function zoneCardLabel(card: JsonValue): string {
   return data.fd && data.n !== "?" ? `${cardName(card)} · Face down` : cardName(card);
 }
 
-export function ZonePiles({ seat, player, hidden, selection, highlightedTargets, onOpen }: {
+export function ZonePiles({ seat, player, hidden, selection, highlightedTargets, onOpen, localDock = false }: {
   seat: string;
   player: Record<string, JsonValue>;
   hidden: boolean;
   selection?: TableObjectSelection | null;
   highlightedTargets: string[];
   onOpen: (seat: string, zone: TableZone) => void;
+  localDock?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [peek, setPeek] = useState<{ zone: TableZone; anchor: HTMLElement } | null>(null);
   const [failedArt, setFailedArt] = useState<string[]>([]);
   const container = `seat-${seat}-zone-piles`;
-  return <div className={`seat-zones${collapsed ? " collapsed" : ""}`}>
+  return <div className={`seat-zones${collapsed ? " collapsed" : ""}${localDock ? " local-zone-dock" : ""}`}>
     <div className="zone-piles" id={container} role="group" aria-label={`Seat ${seat} card zones`}>
-      {zones.map((zone) => {
+      {(localDock ? dockZones : zones).map((zone) => {
         const cards = zoneCards(player, zone);
         const count = zoneCount(player, zone, cards);
         const title = labels[zone];
@@ -72,12 +74,12 @@ export function ZonePiles({ seat, player, hidden, selection, highlightedTargets,
         </button>;
       })}
     </div>
-    <button type="button" className="zone-pile-toggle link-button" aria-controls={container}
+    {!localDock && <button type="button" className="zone-pile-toggle link-button" aria-controls={container}
       aria-expanded={!collapsed} aria-label={collapsed ? "Expand zones" : "Collapse zones"}
       title={collapsed ? "Expand zones" : "Collapse zones"}
       onClick={() => { setPeek(null); setCollapsed((current) => !current); }}>
       {collapsed ? "+" : "−"}
-    </button>
+    </button>}
     {peek && !hidden && <ZonePeek anchor={peek.anchor} player={player} zone={peek.zone} />}
   </div>;
 }

@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass, field
+import logging
 import time
+import traceback
 from typing import Any, Literal, Mapping, Protocol
 
 from .service import CommandEnvelope, CommandReceipt, GameService
+
+
+LOG = logging.getLogger(__name__)
 
 
 class GameActorClosed(RuntimeError):
@@ -81,6 +86,10 @@ class GameActor:
     @property
     def queue_depth(self) -> int:
         return self._mailbox.qsize()
+
+    @property
+    def requires_recovery(self) -> bool:
+        return self._failure is not None
 
     async def start(self) -> None:
         if self._closed:
@@ -284,7 +293,8 @@ class GameActor:
             raise RuntimeError("Command message is missing envelope")
         principal = str(message.principal)
         started = time.perf_counter()
-        result = self.service.command(
+        result = await asyncio.to_thread(
+            self.service.command,
             message.envelope,
             principal=principal,
             commit_idempotency=False,
@@ -446,6 +456,15 @@ class GameActor:
                     # but before durable save/idempotency completion. Stop all
                     # further traffic until a fresh actor reloads durable state.
                     self._failure = exc
+                    frames = traceback.extract_tb(exc.__traceback__)
+                    origin = frames[-1] if frames else None
+                    LOG.error(
+                        "Game actor %s failed during %s: %s at %s:%s (%s)",
+                        self.game_id, message.kind, type(exc).__name__,
+                        origin.filename if origin else "unknown",
+                        origin.lineno if origin else 0,
+                        origin.name if origin else "unknown",
+                    )
                     if message.kind == "command":
                         response_exception = GameActorUnavailable(
                             f"Game actor {self.game_id} failed durable command "

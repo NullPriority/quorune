@@ -70,9 +70,9 @@ test("deck review shows every rulings mismatch and can start with reviewed data"
       await expect(pilot.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
       await pilot.getByRole("button", { name: "Keep this hand", exact: true }).click();
     }
-    await expect(page.getByTestId("active-turn-label")).toContainText("Turn 1");
+    await expect(page.getByTestId("active-turn-label")).toContainText("1st turn");
     await opponent.reload();
-    await expect(opponent.getByTestId("active-turn-label")).toContainText("Turn 1");
+    await expect(opponent.getByTestId("active-turn-label")).toContainText("1st turn");
   } finally {
     await context.close();
   }

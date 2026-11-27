@@ -27,7 +27,7 @@ export function projectedLabels(view: ProjectedView): Map<string, string> {
 export function projectedChoiceCards(view: ProjectedView): Map<string, JsonValue> {
   const cards = new Map<string, JsonValue>();
   const rows = Object.values(asRecord(view.state.players)).flatMap((player) =>
-    ["bf", "hand", "gy", "ex", "cmd", "known_top"].flatMap((zone) =>
+    ["bf", "hand", "gy", "ex", "cmd", "known_top", "known_hand"].flatMap((zone) =>
       asList(asRecord(player)[zone])),
   );
   for (const card of [...rows, ...asList(view.decision?.ctx.preview_cards)]) {

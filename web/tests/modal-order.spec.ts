@@ -39,11 +39,7 @@ async function submitDeck(
   await page.getByTestId("commander-name").fill(commander);
   await page.getByTestId("deck-list").fill(deck);
   await page.getByTestId("submit-deck").click();
-  await expect(
-    page.locator(".success-banner, .warning-banner").filter({
-      hasText: /Deck (validated|accepted)/,
-    }),
-  ).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole("button", { name: "Change deck", exact: true })).toBeVisible({ timeout: 90_000 });
 }
 
 async function submitImmediateAction(page: Page, actionId: string) {

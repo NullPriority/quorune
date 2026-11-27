@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .characteristic_read_frames import characteristic_read_method
+from .characteristic_read_frames import characteristic_read_frame, characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
@@ -6292,13 +6292,18 @@ class CommanderEngine(
             self, reason="continuous day/night synchronization"
         )
 
+        with characteristic_read_frame(self):
+            current_worlds = {
+                card.object_id for card in self.state.cards.values()
+                if card.zone == "battlefield" and self._has_world_supertype(card)
+            }
         newly_world: list[CardInstance] = []
         for card in self.state.cards.values():
             if card.zone != "battlefield":
                 if card.world_supertype_timestamp is not None:
                     card.world_supertype_timestamp = None
                 continue
-            if self._has_world_supertype(card):
+            if card.object_id in current_worlds:
                 if card.world_supertype_timestamp is None:
                     newly_world.append(card)
             else:

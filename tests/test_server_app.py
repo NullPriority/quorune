@@ -737,6 +737,46 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, response.status_code, response.text)
         return response.json()["game_id"], tokens, room_id
 
+    def test_lost_durable_ack_reloads_same_move_without_a_second_commit(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        auth = self.auth(tokens[0])
+        packet = self.client.get(f"{base}/state?full=true", headers=auth).json()["packet"]
+        decision = packet["decision"]
+        command = {
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "lost-durable-ack",
+            "decision_id": decision["id"],
+            "action_id": "keep",
+            "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        }
+        runtime = self.client.app.state.runtime
+        failed_actor = runtime.manager.get(game_id)
+        save = runtime.persistence.save
+
+        def save_without_ack(service):
+            save(service)
+            raise OSError("Injected interruption after the durable commit")
+
+        with patch.object(runtime.persistence, "save", side_effect=save_without_ack):
+            failed = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(503, failed.status_code, failed.text)
+        self.assertEqual("game_recovery_required", failed.json()["detail"]["code"])
+        self.assertTrue(failed_actor.requires_recovery)
+
+        recovered = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[1]))
+        self.assertEqual(200, recovered.status_code, recovered.text)
+        self.assertEqual(packet["view_revision"] + 1, recovered.json()["packet"]["view_revision"])
+        self.assertIsNot(failed_actor, runtime.manager.get(game_id))
+
+        retry = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(200, retry.status_code, retry.text)
+        self.assertTrue(retry.json()["receipt"]["replayed"])
+        self.assertEqual(1, recovered.json()["game"]["commands"])
+
     def test_command_progress_shows_only_the_requesting_pilots_timing(self):
         game_id, tokens, _room = self.create_ready_game(player_count=2)
         base = f"/api/v1/games/{game_id}"

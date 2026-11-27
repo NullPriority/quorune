@@ -25,7 +25,7 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
     const stack = opponent.getByTestId("stack-panel");
     await expect(host.getByTestId("stack-panel")).toContainText("Sol Ring");
     await stack.getByRole("button", { name: "Minimize stack", exact: true }).click();
-    await expect(opponent.getByTestId("stack-toggle")).toHaveText("Stack (1)");
+    await expect(opponent.getByTestId("stack-toggle")).toHaveText("Show stack (1)");
     await expect(stack).toHaveCount(0);
     await spell.click();
     const draft = opponent.getByTestId("public-action-draft");
@@ -39,6 +39,7 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
     await expect(boardCard(opponent, "Island")).toHaveAttribute("data-tapped", "true");
     await expect(opponent.getByTestId("player-B").locator(".zone-summary")).toContainText("U1");
     await expect(opponent.getByRole("button", { name: "Undo mana from Island", exact: true }).first()).toBeVisible();
+    if (!await opponent.getByTestId("activity-panel").isVisible()) await opponent.getByTestId("stack-toggle").click();
     await opponent.getByTestId("activity-panel").getByRole("button", { name: "Full log" }).click();
     const log = opponent.getByTestId("public-game-log");
     await expect(log.getByText("Activated Island for mana.", { exact: true })).toBeVisible();
@@ -49,6 +50,7 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
     await expect(draft).toContainText("1 / 1 · Sol Ring");
     await evidence(opponent, info, "manual-mana-resumed-target");
     await clickMove(opponent, draft.getByTestId("submit-choice"));
+    if (!await stack.isVisible()) await opponent.getByTestId("stack-toggle").click();
     const counter = stack.locator(".stack-row").first();
     const target = stack.locator(".stack-row").last();
     await expect(counter.getByRole("button", { name: "Sol Ring · Stack #2" })).toBeVisible();

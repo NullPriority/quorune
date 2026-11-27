@@ -1229,6 +1229,18 @@ class WardPaymentChoiceHandler:
 class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
+    def requires_object_rows(self, effect: Mapping[str, Any]) -> bool:
+        from ..rules.opponent_event_mana_payment import uses_opponent_event_mana_payment
+
+        payment = effect.get("payment")
+        return not (
+            uses_opponent_event_mana_payment(effect)
+            and type(effect.get("schema_version")) is int
+            and effect["schema_version"] == 2
+            and isinstance(payment, Mapping)
+            and payment.get("kind") == "mana"
+        )
+
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
         from ..rules.nonmana_activation_copy import marks_activation_copy_payment
 

@@ -4,7 +4,10 @@ import json
 from pathlib import Path
 import re
 import sqlite3
+from threading import Lock
 from typing import Any
+
+from .record_trust import runtime_trust_provenance
 
 from .carddb import CardDatabase
 from .service import (
@@ -209,6 +212,8 @@ class DirectoryGamePersistence:
     def __init__(self, root: str | Path) -> None:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+        self._trust_lock = Lock()
+        self._runtime_trust: dict[str, Any] | None = None
 
     def game_directory(self, game_id: str) -> Path:
         if not GAME_ID_RE.fullmatch(game_id):
@@ -220,8 +225,14 @@ class DirectoryGamePersistence:
 
     def save(self, service: GameService) -> dict[str, float]:
         session = service.session
+        # Server deployments use an immutable code revision for the lifetime of the writer.
+        with self._trust_lock:
+            if self._runtime_trust is None:
+                self._runtime_trust = runtime_trust_provenance()
+            trust = self._runtime_trust
         return service.session.save(
             self.game_directory(session.state.game_id),
+            runtime_trust_snapshot=trust,
             include_review=(
                 session.state.game_over
                 or session.record_status not in {"created", "in_progress"}

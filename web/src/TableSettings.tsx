@@ -50,6 +50,8 @@ export function TableSettings({
         <label className="check-setting"><input type="checkbox" checked={value.handAutoCollapse} onChange={(event) => onChange("handAutoCollapse", event.target.checked)} /> Auto-collapse empty hand</label>
         <label className="check-setting"><input type="checkbox" checked={value.inspectorCollapsed} onChange={(event) => onChange("inspectorCollapsed", event.target.checked)} /> Collapse card viewer</label>
         <label className="check-setting"><input type="checkbox" checked={value.compactPhaseRail} onChange={(event) => onChange("compactPhaseRail", event.target.checked)} /> Compact phase rail</label>
+        <label className="check-setting"><input type="checkbox" checked={value.holdNewStack} onChange={(event) => onChange("holdNewStack", event.target.checked)} /> Hold Pass turn for new spells and abilities</label>
+        <label className="check-setting"><input type="checkbox" checked={value.holdGraveyard} onChange={(event) => onChange("holdGraveyard", event.target.checked)} /> Hold Pass turn for graveyard activity</label>
         <label className="check-setting"><input type="checkbox" checked={value.activityVisible} onChange={(event) => onChange("activityVisible", event.target.checked)} /> Show recent activity</label>
         <button type="button" className="secondary-button" data-testid="reset-table-settings" onClick={onReset}>Reset table layout</button>
       </div>

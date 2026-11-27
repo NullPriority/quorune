@@ -54,9 +54,13 @@ export type TurnYieldBoundary = {
   turn: number;
   phase: string;
   stack: string[];
+  graveyard?: string;
 };
 
 export const COMBAT_PRIORITY_STOPS = [
+  { id: "upkeep", label: "Upkeep" },
+  { id: "draw", label: "Draw step" },
+  { id: "precombat_main", label: "First main phase" },
   { id: "combat", label: "Every combat step" },
   { id: "beginning_combat", label: "Beginning of combat" },
   { id: "declare_attackers", label: "After attackers are declared" },
@@ -64,6 +68,8 @@ export const COMBAT_PRIORITY_STOPS = [
   { id: "first_strike_damage", label: "After first-strike damage" },
   { id: "combat_damage", label: "After combat damage" },
   { id: "end_combat", label: "End of combat" },
+  { id: "postcombat_main", label: "Second main phase" },
+  { id: "end_step", label: "End step" },
 ] as const;
 
 export type CombatPriorityStop = typeof COMBAT_PRIORITY_STOPS[number]["id"];
@@ -71,11 +77,13 @@ export type CombatPriorityStop = typeof COMBAT_PRIORITY_STOPS[number]["id"];
 export function activeCombatPriorityStop(
   phase: string, step: string, firstStrike: boolean, selected: readonly CombatPriorityStop[],
 ): string | undefined {
-  if (phase !== "combat" || selected.length === 0) return undefined;
+  if (selected.length === 0) return undefined;
   const currentStep = step === "combat_damage" && firstStrike ? "first_strike_damage" : step;
-  const option = COMBAT_PRIORITY_STOPS.find((stop) => stop.id === currentStep);
-  if (option && (selected.includes(option.id) || selected.includes("combat"))) return option.label;
-  return selected.includes("combat") ? "Combat" : undefined;
+  const allCombat = phase === "combat" && selected.includes("combat");
+  const option = COMBAT_PRIORITY_STOPS.find((stop) => stop.id === currentStep)
+    ?? (phase === "combat" ? undefined : COMBAT_PRIORITY_STOPS.find((stop) => stop.id === phase));
+  if (option && (selected.includes(option.id) || allCombat)) return option.label;
+  return allCombat ? "Combat" : undefined;
 }
 
 export function turnYieldPause(
@@ -83,10 +91,13 @@ export function turnYieldPause(
   window: TurnYieldBoundary,
   decisionKind: string | undefined,
   canPass: boolean,
+  holds = { stack: true, graveyard: false },
 ): string | undefined {
   if (window.turn !== armed.turn) return "Turn ended";
   if (decisionKind && decisionKind !== "priority") return "A decision is required";
-  if (window.stack.some((ref) => !armed.stack.includes(ref))) return "New object on the stack";
-  if (decisionKind === "priority" && !canPass) return "A response is available";
+  if (decisionKind !== "priority") return undefined;
+  if (holds.stack && window.stack.some((ref) => !armed.stack.includes(ref))) return "New object on the stack";
+  if (holds.graveyard && window.graveyard !== armed.graveyard) return "Graveyard activity";
+  if (!canPass) return "Priority is held";
   return undefined;
 }

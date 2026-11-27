@@ -18,6 +18,13 @@ export function publicEventSummary(
   cardLabel?: (ref: string) => string | undefined,
 ): string {
   if (event.code === "stack.cast" && event.summary) return event.summary.replace(/^[ABCD] cast S\d+ /, "Cast ");
+  if (event.code === "card.draw" || event.code === "card.mill") {
+    const transfer = /^([ABCD]) (drew|milled) (\d+) card\(s\)\.$/.exec(event.summary);
+    if (transfer) {
+      const [, seat, verb, count] = transfer;
+      return `Seat ${seat} ${verb} ${count} ${count === "1" ? "card" : "cards"}.`;
+    }
+  }
   if (event.code === "land.play" && event.summary) return event.summary.replace(/^[ABCD] played [ABCD]\d+ /, "Played ");
   if (event.code === "mana.ability") {
     const activation = /^[ABCD] activated (\S+) \S+ for mana\.$/.exec(event.summary);
@@ -232,6 +239,7 @@ export type MacroPhase = typeof MACRO_PHASES[number]["id"];
 
 export type TurnPresentationInput = {
   turnSequence: number;
+  personalTurn?: number;
   activeSeat: string;
   prioritySeat: string;
   phase: string;
@@ -294,7 +302,12 @@ export function presentTurn(input: TurnPresentationInput): TurnPresentation {
   const opening = !terminal && input.turnSequence === 0;
   const current = macroPhase(input.phase, input.step);
   const currentIndex = opening ? -1 : MACRO_PHASES.findIndex((entry) => entry.id === current);
-  const liveHeadline = `${input.activeSeat ? `Seat ${input.activeSeat}'s Turn · ` : ""}Turn ${input.turnSequence}`;
+  const turnNumber = input.personalTurn ?? 0;
+  const lastTwo = turnNumber % 100;
+  const suffix = lastTwo >= 11 && lastTwo <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[turnNumber % 10] ?? "th";
+  const liveHeadline = input.activeSeat && turnNumber > 0
+    ? `Seat ${input.activeSeat}'s ${turnNumber}${suffix} turn`
+    : `${input.activeSeat ? `Seat ${input.activeSeat}'s Turn · ` : ""}Turn ${input.turnSequence}`;
   const livePriority = input.prioritySeat ? `Priority: Seat ${input.prioritySeat}` : "Resolving game actions";
   const finalHeadline = input.lifecycleStatus === "aborted" ? "Game ended" : "Game complete";
   return {
