@@ -164,7 +164,8 @@ test("@browser-rules trigger cards reorder by resolution and graveyard cards fil
   await expect(rows.first()).toContainText("Resolves first");
   await expect(rows.first()).toContainText("Create a token");
   await expect(rows.last()).toContainText("Resolves last");
-  await expect(rows.first().locator(".card-tile")).toBeVisible();
+  await expect(rows.first().locator(".trigger-order-position")).toContainText("1");
+  await expect(rows.first().locator("img")).toHaveAttribute("src", /\/cards\/second\/image\?size=small/);
   await rows.last().getByRole("button", { name: "Move trigger 2 earlier in resolution" }).click();
   await expect(rows.first()).toContainText("Draw a card");
   await page.getByTestId("submit-choice").click();

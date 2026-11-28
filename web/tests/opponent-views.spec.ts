@@ -76,11 +76,23 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     }
     expect([...seen].sort()).toEqual(["Memnite", "Ornithopter", "Phyrexian Walker"]);
 
+    await observer.setViewportSize({ width: 1280, height: 720 });
+    const settings = observer.getByTestId("table-settings");
+    await openGameMenu(observer);
+    await settings.locator("summary").first().click();
+    await settings.getByRole("slider", { name: "Hand panel height" }).fill("220");
+    await settings.getByRole("slider", { name: "Hand width" }).fill("45");
+    await observer.getByTestId("open-game-menu").click();
+
     const hand = observer.getByTestId("own-hand");
     const firstCard = hand.locator(".card-tile").first();
+    const tableSize = observer.getByRole("slider", { name: "Table card size" });
+    await tableSize.fill("0.65");
     const oldWidth = (await firstCard.boundingBox())!.width;
-    await observer.getByRole("slider", { name: "Table card size" }).fill("1.6");
+    await tableSize.fill("1.6");
     await expect.poll(async () => (await firstCard.boundingBox())!.width).toBeGreaterThan(oldWidth);
+
+    await observer.setViewportSize({ width: 780, height: 650 });
     const nextHand = observer.getByRole("button", { name: "Next Hand page" });
     await expect(nextHand).toBeVisible();
     const firstRef = await firstCard.getAttribute("data-card-ref");
@@ -88,7 +100,7 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     await expect(firstCard).not.toHaveAttribute("data-card-ref", firstRef!);
 
     await openGameMenu(observer);
-    await observer.getByTestId("table-settings").locator("summary").first().click();
+    if (await settings.getAttribute("open") === null) await settings.locator("summary").first().click();
     await observer.getByText("Card sizes by zone", { exact: true }).click();
     const resizeZone = observer.getByLabel("Zone to resize", { exact: true });
     for (const label of ["Hand", "Battlefield", "Command zone", "Graveyard", "Exile", "Library choices", "Stack"]) {

@@ -289,6 +289,7 @@ export function PlayerBoard({
         className={`card-strip battlefield${mine && dropEnabled ? " drop-target" : ""}${dragActive ? " drag-active" : ""}`}
         data-testid={mine ? "own-battlefield" : undefined}
         data-own-battlefield={mine ? "true" : undefined}
+        data-permanent-count={battlefield.length}
         onDragOver={(event) => {
           if (!mine || !dropEnabled) return;
           event.preventDefault();

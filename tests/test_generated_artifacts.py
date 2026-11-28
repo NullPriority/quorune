@@ -1163,7 +1163,11 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             '"$ROOT/scripts/quick_gate.py" \\\n        --phase pre-corpus --base origin/main',
             hook,
         )
-        self.assertIn('if [ -z "$BRANCH" ] || [ "$BRANCH" = "main" ]', hook)
+        source_ref_check = '"$ROOT/scripts/validate_push_refs.py" --head "$HEAD_OID" --branch "$BRANCH" --source-checkpoint'
+        checked_ref = '"$ROOT/scripts/validate_push_refs.py" --head "$HEAD_OID" --branch "$BRANCH"'
+        self.assertIn(source_ref_check, hook)
+        self.assertIn(checked_ref + "\n", hook)
+        self.assertLess(hook.index(source_ref_check), hook.index(encoding_check))
         self.assertIn("git diff --quiet --ignore-submodules --", hook)
         self.assertIn("git diff --cached --quiet --ignore-submodules --", hook)
         self.assertLess(
@@ -1194,8 +1198,16 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             if bundled.is_file():shell=str(bundled)
         if shell is None:self.skipTest('A POSIX shell is required to execute the tracked hook')
         with TemporaryDirectory() as directory:
-            root=Path(directory)
-            subprocess.run(['git','init','-q',str(root)],check=True,capture_output=True)
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q", str(root)], check=True, capture_output=True)
+            subprocess.run(
+                ["git", "-C", str(root), "-c", "user.name=Hook fixture",
+                 "-c", "user.email=hook@example.invalid", "-c", "commit.gpgsign=false",
+                 "commit", "-q", "--allow-empty", "-m", "Hook fixture"],
+                check=True, capture_output=True,
+            )
+            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            update = f"HEAD {head} refs/heads/publisher {'0' * len(head)}\n"
             python=root/'.venv/bin/python';python.parent.mkdir(parents=True)
             python.write_text("#!/bin/sh\nprintf '%s\\n' \"$*\" >> hook-calls.txt\ncase \"$*\" in *\"--phase pre-corpus\"*) exit 79;; esac\nexit 0\n",encoding='utf-8',newline='\n')
             python.chmod(0o755)
@@ -1203,7 +1215,7 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             environment.pop('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON',None)
             environment.pop('MTG_CARD_DB',None)
             result=subprocess.run([shell,(ROOT/'.githooks/pre-push').as_posix()],cwd=root,
-                env=environment,capture_output=True,text=True,encoding='utf-8')
+                input=update, env=environment, capture_output=True, text=True, encoding='utf-8')
             self.assertEqual(79,result.returncode,result.stdout+result.stderr)
             calls=(root/'hook-calls.txt').read_text(encoding='utf-8').splitlines()
             self.assertTrue(any('quick_gate.py' in call and '--phase pre-corpus' in call for call in calls))

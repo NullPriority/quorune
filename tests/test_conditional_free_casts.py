@@ -402,14 +402,14 @@ class ConditionalFreeCastRuntimeTests(unittest.TestCase):
                 old, = semantics.programs_for_oracle(record.oracle_id)
                 self.assertNotEqual(expected, old.provenance["source_rulings_hash"])
 
-                def test_rulings(card):
+                def fixture_rulings(card):
                     if card.oracle_id == record.oracle_id:
                         return rows
                     return original_rulings(card)
 
                 original_rulings = self.db.rulings
                 deck = DeckDefinition("Ruling revision", [DeckEntry(record.name, 1)], [])
-                with patch.object(self.db, "rulings", side_effect=test_rulings):
+                with patch.object(self.db, "rulings", side_effect=fixture_rulings):
                     generated = generated_programs(self.db, record, trust_level="trusted", **options)
                     self.assertEqual({expected}, {p.provenance["source_rulings_hash"] for p in generated})
                     self.assertEqual({old.key}, shadowed_reviewed_zero_price_keys(record, generated, (old,)))

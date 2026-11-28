@@ -960,10 +960,13 @@
   .game-shell .hand-cards :is(.card-origin, .card-cost-overlay) { inset-block-start: .09rem; padding: .08rem .2rem; font-size: .56rem; }
   .game-shell .hand-cards .card-cost-overlay .ms { font-size: .64rem; }
 }
-@media (max-height: 415px) {
-  .game-shell { gap: .25rem; padding: .35rem .45rem; }
+@media (max-height: 415px), (max-width: 700px) and (max-height: 565px) {
   .game-shell :is(.board-view-bar, .game-status-line) > .card-size-slider { display: none; }
   .game-shell .compact-table-size { display: block; }
+  .game-shell .main-table-workspace { row-gap: .2rem; }
+}
+@media (max-height: 415px) {
+  .game-shell { gap: .25rem; padding: .35rem .45rem; }
   .game-shell .table-workspace { min-height: min(58px, 17dvh); }
   .game-shell .stack-panel { padding: .28rem .34rem; gap: .18rem; }
   .game-shell .stack-panel > header { padding-bottom: .12rem; }

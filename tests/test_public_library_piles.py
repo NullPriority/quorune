@@ -32,7 +32,7 @@ TOP_NAMES = (
 )
 
 
-class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
+class PublicLibraryPileFixture(InheritedNativeFixture):
     @classmethod
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()
@@ -240,6 +240,18 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.submit(game, "A", graveyard_order=[card.ref for card in reversed(chosen)])
         self.settle(game)
 
+    def assert_destinations_and_replay(self, game, spell, cards, hand, graveyard_top):
+        self.assert_destinations(game, cards, [card.object_id for card in hand], [
+            card.object_id for card in graveyard_top
+        ])
+        self.assertEqual(
+            [spell.object_id, *(card.object_id for card in graveyard_top)],
+            list(reversed(game.state.players["A"].zones["graveyard"])),
+        )
+        self.replay(game, load=True)
+
+
+class PublicLibraryPilesNativeTests(PublicLibraryPileFixture, unittest.TestCase):
     def test_actual_gifts_private_distinct_search_and_targeted_two_card_choice_replay(self):
         names = ("Plains", "Island", "Forest", "Grizzly Bears", "Mindlock Orb", "Plains")
         for count in (3, 4):
@@ -722,16 +734,6 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
         again = {"action_id": "choose", "graveyard_order": [card.ref for card in order_top]}
         self.reject(game, "A", again)
         self.reject(game, "A", again)
-
-    def assert_destinations_and_replay(self, game, spell, cards, hand, graveyard_top):
-        self.assert_destinations(game, cards, [card.object_id for card in hand], [
-            card.object_id for card in graveyard_top
-        ])
-        self.assertEqual(
-            [spell.object_id, *(card.object_id for card in graveyard_top)],
-            list(reversed(game.state.players["A"].zones["graveyard"])),
-        )
-        self.replay(game, load=True)
 
     def test_duel_short_library_can_route_all_cards_to_either_destination(self):
         for chosen in ("first", "second"):

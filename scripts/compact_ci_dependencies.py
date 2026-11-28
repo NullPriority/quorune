@@ -951,6 +951,7 @@ def discover_module_requirements(
     sources: DependencySourceScope | None = None,
     declared_sites: frozenset[tuple[str, str]] = frozenset(),
 ) -> tuple[tuple[Requirement, ...], tuple[DynamicSite, ...], tuple[str, ...]]:
+    root = root.resolve()
     test_path = root / "tests" / f"{module}.py"
     if not test_path.is_file():
         return (), (), (f"Missing test source: tests/{module}.py",)

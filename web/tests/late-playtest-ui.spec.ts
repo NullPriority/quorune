@@ -318,8 +318,13 @@ test("@browser-rules pending cascade, controller targets, commander return and p
   await lands.getByRole("button", { name: "Show all 2 Forest cards" }).click();
   const forests = lands.getByRole("button", { name: "Inspect Forest", exact: true });
   await expect(forests).toHaveCount(2);
+  const preview = page.locator(".floating-card-preview");
+  expect(await forests.first().getAttribute("data-card-ref")).not.toEqual(await forests.last().getAttribute("data-card-ref"));
+  await forests.first().hover({ timeout: 10_000 });
+  await expect(preview).toHaveCount(1);
   await forests.last().focus();
-  await expect(page.locator(".floating-card-preview")).toContainText("Forest");
+  await expect(preview).toHaveCount(1);
+  await expect(preview).toContainText("Forest");
   await expect(page.getByTestId("plus-counters")).toHaveText("3 × +1/+1");
   await expect(page.getByTestId("card-current-stats")).toHaveText("5/6");
   await page.screenshot({ path: info.outputPath("battlefield-groups.png") });

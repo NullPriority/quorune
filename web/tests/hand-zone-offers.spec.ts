@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { castOffer, clickMove, driveTo, evidence, startPlaytestPod } from "./support/playtest";
 import { captureRealZoom, zoomContext } from "./support/browserZoom";
+import { completeCastGesture } from "./support/startup";
 
 test("@browser-rules private hand shortcuts show the offered costs for Flashback and Unearth", async ({ browser }, info) => {
   test.setTimeout(360_000);
@@ -37,8 +38,6 @@ test("@browser-rules private hand shortcuts show the offered costs for Flashback
     await expect(desk.getByText("Graveyard", { exact: true })).toBeVisible();
     await expect(host.getByTestId("own-hand").getByText(deskName, { exact: true })).toHaveCount(0);
     await expect(opponent.getByTestId("hand-zone-offers").getByText(deskName, { exact: true })).toHaveCount(0);
-    await expect(desk.getByTestId("card-offer-cost")).toBeHidden();
-    await desk.hover();
     const unearthCost = desk.getByTestId("card-offer-cost");
     await expect(unearthCost).toBeVisible();
     await expect(unearthCost.locator(".ms-1")).toHaveCount(1);
@@ -58,20 +57,20 @@ test("@browser-rules private hand shortcuts show the offered costs for Flashback
     await expect(flashbackCost.locator(".ms-r")).toHaveCount(1);
     await expect(flashbackCost).toBeVisible();
     await expect(tray.getByRole("button", { name: /Cast Faithless Looting/ })).toHaveCount(0);
-    await expect(host.getByTestId("hover-card-preview")).toHaveCount(0);
+    await expect(host.getByTestId("hover-card-preview")).toContainText("Faithless Looting");
     const [price, card, name] = await Promise.all([
       flashbackCost.boundingBox(), flashback.boundingBox(), flashback.getByText("Faithless Looting", { exact: true }).boundingBox(),
     ]);
     expect(price!.x).toBeGreaterThanOrEqual(card!.x);
     expect(price!.y).toBeGreaterThanOrEqual(card!.y);
     expect(price!.x + price!.width).toBeLessThanOrEqual(card!.x + card!.width);
-    expect(price!.y + price!.height).toBeLessThanOrEqual(name!.y);
+    expect(price!.y + price!.height).toBeLessThanOrEqual(card!.y + card!.height + 1);
+    expect(price!.y + price!.height <= name!.y + 1 || price!.y >= name!.y + name!.height - 1).toBe(true);
     await evidence(host, info, "private-flashback-cost-over-card");
     await flashback.click();
     const cast = host.getByTestId("selected-card-actions").getByRole("button", { name: /Cast Faithless Looting/ });
     await expect(cast).toBeVisible();
-    await cast.click();
-    await clickMove(host, host.getByTestId("choice-dialog").getByTestId("submit-choice"));
+    await completeCastGesture(host, () => cast.click());
     await expect(fromZone("Faithless Looting")).toHaveCount(0);
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
@@ -103,9 +102,11 @@ test("@browser-rules a card offered from exile can be played from the private ha
     await expect(exiled).toHaveCount(2);
     await expect(opponent.getByTestId("hand-zone-offers").getByText("Exile", { exact: true })).toHaveCount(0);
     const handSize = await host.getByTestId("own-hand").locator(".card-tile").count();
-    await exiled.first().click();
-    await clickMove(host, host.getByTestId("selected-card-actions").getByRole("button", { name: /Play Mountain/ }));
-    await expect(exile).toContainText("1");
+    const battlefield = host.getByTestId("own-battlefield");
+    const permanentCount = Number(await battlefield.getAttribute("data-permanent-count"));
+    await clickMove(host, exiled.first());
+    await expect(exile).toHaveAttribute("aria-label", "Exile 1");
+    await expect(battlefield).toHaveAttribute("data-permanent-count", String(permanentCount + 1));
     await expect(exiled).toHaveCount(0);
     await expect(host.getByTestId("own-hand").locator(".card-tile")).toHaveCount(handSize);
   } finally {

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
+import unittest
 
 from tests import test_public_library_piles as native
 
 
-class PublicLibraryPileDepartureTests(native.PublicLibraryPilesNativeTests):
+class PublicLibraryPileDepartureTests(native.PublicLibraryPileFixture, unittest.TestCase):
     def decision(self, game, actor, stage):
         packet = game.packet("pilot:" + actor, full=True)
         projected = packet["decision"]

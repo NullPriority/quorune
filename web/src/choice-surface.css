@@ -8,6 +8,13 @@
 
 .game-shell .contextual-decision > .contextual-fields { max-block-size: min(30dvh, 20rem); overflow: auto; }
 .game-shell .contextual-decision .card-choice-options { max-height: min(30dvh, 20rem); }
+.game-shell .decision-panel > .contextual-decision:not(.combat-decision):has(> .contextual-fields) {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(min(3.5rem, 14dvh), 1fr) auto;
+}
+.game-shell .decision-panel > .contextual-decision:not(.combat-decision):has(> .contextual-fields) > footer {
+  grid-column: 1;
+}
 .game-shell .expanded-table-choice {
   box-sizing: border-box;
   width: min(75rem, calc(100vw - 1rem));

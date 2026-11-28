@@ -52,7 +52,7 @@ async function ready(pages: Page[], target: Locator, testInfo: TestInfo, label: 
   });
 }
 
-async function expectTableAspect(page: Page) {
+async function expectTableViewport(page: Page) {
   const layout = await page.locator(".game-shell").evaluate((table) => {
     const { width, height, left, top } = table.getBoundingClientRect();
     return {
@@ -63,11 +63,10 @@ async function expectTableAspect(page: Page) {
       documentHeight: document.documentElement.scrollHeight,
     };
   });
-  const expectedWidth = Math.min(layout.availableWidth, layout.availableHeight * 16 / 9);
-  expect(Math.abs(layout.width - expectedWidth)).toBeLessThan(1);
-  expect(Math.abs(layout.height - expectedWidth * 9 / 16)).toBeLessThan(1);
-  expect(Math.abs(layout.left - (layout.availableWidth - layout.width) / 2)).toBeLessThan(1);
-  expect(Math.abs(layout.top - (layout.availableHeight - layout.height) / 2)).toBeLessThan(1);
+  expect(Math.abs(layout.width - layout.availableWidth)).toBeLessThan(1);
+  expect(Math.abs(layout.height - layout.availableHeight)).toBeLessThan(1);
+  expect(Math.abs(layout.left)).toBeLessThan(1);
+  expect(Math.abs(layout.top)).toBeLessThan(1);
   expect(layout.documentWidth).toBeLessThanOrEqual(layout.availableWidth);
   expect(layout.documentHeight).toBeLessThanOrEqual(layout.availableHeight);
 }
@@ -131,19 +130,19 @@ test("@browser-rules visible zone piles distinguish a face-down exile and a priv
     if (path.endsWith("/image")) images.push(path);
   });
   try {
-    const board = host.getByTestId("player-A");
+    const opponentBoard = opponent.getByTestId("player-A");
     const library = host.getByTestId("zone-A-library");
     const opponentLibrary = opponent.getByTestId("zone-A-library");
     const exile = host.getByTestId("zone-A-exile");
     const opposingExile = opponent.getByTestId("zone-A-exile");
     await expect(library).toHaveText(/^Library \d+$/);
-    await expect(board.getByTestId("zone-A-graveyard")).toBeVisible();
+    await expect(host.getByTestId("zone-A-graveyard")).toBeVisible();
     await expect(exile).toBeVisible();
-    await board.getByRole("button", { name: "Collapse zones" }).click();
-    await expect(library.locator(".zone-pile-thumbnail")).toHaveCount(0);
-    await expect(library).toHaveText(/^Library \d+$/);
-    await board.getByRole("button", { name: "Expand zones" }).click();
-    await expect(library.locator(".zone-pile-thumbnail")).toBeVisible();
+    await opponentBoard.getByRole("button", { name: "Collapse zones" }).click();
+    await expect(opponentLibrary.locator(".zone-pile-thumbnail")).toHaveCount(0);
+    await expect(opponentLibrary).toHaveText(/^Library \d+$/);
+    await opponentBoard.getByRole("button", { name: "Expand zones" }).click();
+    await expect(opponentLibrary.locator(".zone-pile-thumbnail")).toBeVisible();
     await expect(library).toHaveText(/^Library \d+$/);
     await library.hover();
     await expect(host.getByTestId("zone-peek")).toHaveCount(0);
@@ -249,7 +248,7 @@ test("@browser-rules a public library reveal shows the same projected face to bo
     await clickMove(host, land);
     const printedIsland = (await projectedState(host)).players.A.bf[0];
     expect(printedIsland.n).toBe("Island");
-    await expectTableAspect(opponent);
+    await expectTableViewport(opponent);
     await expectLandPrinting(landOnBoard(opponent), false, printedIsland.cid);
     for (const name of ["Sol Ring", "Lantern of Insight"]) {
       const cast = castOffer(host, name);
@@ -283,12 +282,12 @@ test("@browser-rules a public library reveal shows the same projected face to bo
     await expect(opponent.getByTestId("zone-peek")).toHaveCount(0);
 
     await opponent.setViewportSize({ width: 1366, height: 650 });
-    await expectTableAspect(opponent);
+    await expectTableViewport(opponent);
     await expectLandPrinting(landOnBoard(opponent), true, printedIsland.cid);
     await evidence(opponent, info, "opponent-battlefield-in-wide-short-window");
 
     await opponent.setViewportSize({ width: 1280, height: 800 });
-    await expectTableAspect(opponent);
+    await expectTableViewport(opponent);
     await expectLandPrinting(landOnBoard(opponent), true, printedIsland.cid);
   } finally {
     await Promise.all(contexts.map((context) => context.close()));

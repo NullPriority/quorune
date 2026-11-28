@@ -1,6 +1,8 @@
 import {
   KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
+  useCallback,
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -98,6 +100,8 @@ export function CombatCardFace({ value, view, statsId }: {
   </span>;
 }
 
+let dismissActivePreview: (() => void) | null = null;
+
 export function CardTile({
   value,
   view,
@@ -162,6 +166,16 @@ export function CardTile({
   const definition = cid ? view.definitions[cid] : undefined;
   const [failedImages, setFailedImages] = useState<string[]>([]);
   const [previewAnchor, setPreviewAnchor] = useState<HTMLElement | null>(null);
+  const dismissPreview = useCallback(() => {
+    if (dismissActivePreview === dismissPreview) dismissActivePreview = null;
+    setPreviewAnchor(null);
+  }, []);
+
+  function showPreview(anchor: HTMLElement) {
+    if (dismissActivePreview !== dismissPreview) dismissActivePreview?.();
+    dismissActivePreview = dismissPreview;
+    setPreviewAnchor(anchor);
+  }
   const costDescription = useId();
   const loyaltyDescription = useId();
   const attachmentDescription = useId();
@@ -216,7 +230,7 @@ export function CardTile({
   </div>;
   function activate() {
     onInspect?.(value);
-    setPreviewAnchor(null);
+    dismissPreview();
     if (choice) choice.select();
     else if (interactive) onIntent?.(actions, value);
     else if (inspectOnActivate) onOpenInspector?.(value);
@@ -224,7 +238,7 @@ export function CardTile({
   function keydown(event: ReactKeyboardEvent<HTMLElement>) {
     if (onOpenInspector && event.key.toLowerCase() === "i" && !event.altKey && !event.ctrlKey && !event.metaKey) {
       event.preventDefault();
-      setPreviewAnchor(null);
+      dismissPreview();
       onOpenInspector(value);
       return;
     }
@@ -257,19 +271,19 @@ export function CardTile({
       onKeyDown={keydown}
       onContextMenu={onOpenInspector ? (event) => {
         event.preventDefault();
-        setPreviewAnchor(null);
+        dismissPreview();
         onOpenInspector(value);
       } : undefined}
       onMouseEnter={(event) => {
         onInspect?.(value);
-        if (inspectable && previewOnHover && !choice) setPreviewAnchor(event.currentTarget);
+        if (inspectable && previewOnHover && !choice) showPreview(event.currentTarget);
       }}
-      onMouseLeave={() => setPreviewAnchor(null)}
+      onMouseLeave={dismissPreview}
       onFocus={(event) => {
         onInspect?.(value);
-        if (inspectable && previewOnHover && !choice) setPreviewAnchor(event.currentTarget);
+        if (inspectable && previewOnHover && !choice) showPreview(event.currentTarget);
       }}
-      onBlur={() => setPreviewAnchor(null)}
+      onBlur={dismissPreview}
       onPointerDown={(event) => {
         if (canDrag && event.button === 0) onDragCard?.(ref);
       }}
@@ -334,7 +348,7 @@ export function CardTile({
         </span>
         {commanderTax > 0 && <span className="commander-tax" title={`Commander tax +${commanderTax}`}>Tax +{commanderTax}</span>}
       </div>}
-      {previewAnchor && <FloatingCardPreview anchor={previewAnchor} value={value} view={view} />}
+      {previewAnchor && <FloatingCardPreview anchor={previewAnchor} value={value} view={view} dismiss={dismissPreview} />}
     </article>
   );
 }
@@ -480,11 +494,18 @@ export function FloatingTablePreview({
   </div>, anchor.closest(".game-shell") ?? anchor.ownerDocument.body);
 }
 
-function FloatingCardPreview({ anchor, value, view }: {
+function FloatingCardPreview({ anchor, value, view, dismiss }: {
   anchor: HTMLElement;
   value: JsonValue;
   view: ProjectedView;
+  dismiss: () => void;
 }) {
+  useEffect(() => {
+    dismissActivePreview ??= dismiss;
+    return () => {
+      if (dismissActivePreview === dismiss) dismissActivePreview = null;
+    };
+  }, [dismiss]);
   return <FloatingTablePreview anchor={anchor}>
     <CardInspector value={value} view={view} previewOnly />
   </FloatingTablePreview>;

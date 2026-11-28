@@ -331,7 +331,9 @@ allowed to see.
 Use **Filter cards by name** to narrow the cards offered in a search. The
 filter keeps your selection. Creature-type choices start with types in your
 deck. Search or choose **Show all types** to find any other legal type.
-**Expand choice** opens a larger panel and preserves your selections.
+Scroll through options in the decision pane. The confirmation controls sit
+below the choices. **Expand choice** opens a larger panel and preserves your
+selections.
 
 During resolution, choose **Pay** or **Decline** and confirm in the action tray. If you remember
 a response, the browser uses it only for the matching trigger in this game

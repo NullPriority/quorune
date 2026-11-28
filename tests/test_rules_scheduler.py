@@ -2066,32 +2066,6 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             declaration["capability_ids"], current["capability_ids"]
         )
-        measurement_receipt = next(
-            row
-            for row in self.work_inputs["cohort_measurements"][
-                "transition_measurements"
-            ]
-            if row["transition_id"] == declaration["transition_id"]
-        )
-        measurement = measurement_receipt["measurement"]
-        self.assertEqual(
-            declaration["measurement_id"], current["measurement_id"]
-        )
-        self.assertEqual(
-            measurement["complete_card_gain"],
-            current["expected_complete_card_gain"],
-        )
-        current_correction = current.get("forecast_correction")
-        complete_lower_bound = (
-            current_correction["certified_complete_card_lower_bound"]
-            if current_correction is not None
-            else measurement["complete_card_gain"]
-        )
-        exact_ability_lower_bound = (
-            current_correction["certified_exact_ability_lower_bound"]
-            if current_correction is not None
-            else measurement["exact_ability_gain"]
-        )
         # Historical complete-card totals include reviewed compatibility views;
         # the current delivery measurement counts capability-closed cards.
         self.assertEqual(
@@ -2102,16 +2076,52 @@ class RulesSchedulerTests(unittest.TestCase):
             current["head_receipt"]["capability_closed_programs"] - current["base_receipt"]["capability_closed_programs"],
             current["actual_capability_closed_card_gain"],
         )
-        self.assertGreaterEqual(current["actual_capability_closed_card_gain"], complete_lower_bound)
-        self.assertGreaterEqual(
-            current["actual_exact_ability_gain"], exact_ability_lower_bound
-        )
-        if current_correction is not None:
+        self.assertEqual("semantic_content", current["receipt_identity_kind"])
+        if declaration.get("measurement_id") is None:
+            self.assertIsNone(declaration["expected_complete_card_gain"])
+            self.assertIsNone(current.get("measurement_id"))
+            self.assertIsNone(current["expected_complete_card_gain"])
+            self.assertIsNone(current.get("forecast_correction"))
+            self.assertFalse(any(
+                row["transition_id"] == declaration["transition_id"]
+                for row in self.work_inputs["cohort_measurements"]["transition_measurements"]
+            ))
+        else:
+            measurement_receipt = next(
+                row
+                for row in self.work_inputs["cohort_measurements"][
+                    "transition_measurements"
+                ]
+                if row["transition_id"] == declaration["transition_id"]
+            )
+            measurement = measurement_receipt["measurement"]
+            self.assertEqual(
+                declaration["measurement_id"], current["measurement_id"]
+            )
             self.assertEqual(
                 measurement["complete_card_gain"],
-                current_correction["original_expected_complete_card_gain"],
+                current["expected_complete_card_gain"],
             )
-        self.assertEqual("semantic_content", current["receipt_identity_kind"])
+            current_correction = current.get("forecast_correction")
+            complete_lower_bound = (
+                current_correction["certified_complete_card_lower_bound"]
+                if current_correction is not None
+                else measurement["complete_card_gain"]
+            )
+            exact_ability_lower_bound = (
+                current_correction["certified_exact_ability_lower_bound"]
+                if current_correction is not None
+                else measurement["exact_ability_gain"]
+            )
+            self.assertGreaterEqual(current["actual_capability_closed_card_gain"], complete_lower_bound)
+            self.assertGreaterEqual(
+                current["actual_exact_ability_gain"], exact_ability_lower_bound
+            )
+            if current_correction is not None:
+                self.assertEqual(
+                    measurement["complete_card_gain"],
+                    current_correction["original_expected_complete_card_gain"],
+                )
 
         corrected = by_bundle[
             "bundle:fixed-spell-cast-characteristic-triggers"
@@ -4459,6 +4469,10 @@ class RulesSchedulerTests(unittest.TestCase):
             ),
             None,
         )
+        if outcome is not None and outcome.get("measurement_id") is None:
+            with self.assertRaisesRegex(ValueError, "lacks its immutable base-frontier identity"):
+                _source_checkpoint_frontier(transition_id)
+            return
         expected = (
             outcome["measurement_frontier_fingerprint"]
             if outcome is not None
@@ -6705,6 +6719,19 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertEqual(
                 declaration["transition_id"], current["transition_id"]
             )
+            return
+        if declaration.get("measurement_id") is None:
+            self.assertIsNone(declaration["expected_complete_card_gain"])
+            current = next(
+                row for row in self.work_inputs["harvest_outcome_history"]["entries"]
+                if row.get("transition_id") == declaration["transition_id"]
+            )
+            self.assertEqual(declaration["bundle_id"], current["bundle_id"])
+            self.assertIsNone(current["expected_complete_card_gain"])
+            self.assertFalse(any(
+                row["transition_id"] == declaration["transition_id"]
+                for row in self.work_inputs["cohort_measurements"]["transition_measurements"]
+            ))
             return
         bundle = next(
             row

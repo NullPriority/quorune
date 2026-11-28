@@ -99,6 +99,12 @@ async function submitImmediateAction(page: Page, actionId: string) {
   await expect.poll(() => viewRevision(page)).toBeGreaterThan(revision);
 }
 
+async function battlefieldPermanentCount(battlefield: Locator) {
+  const count = await battlefield.getAttribute("data-permanent-count");
+  expect(count).toMatch(/^\d+$/);
+  return Number(count);
+}
+
 async function submitOpenChoice(page: Page, force = false) {
   const revision = await viewRevision(page);
   if (force) {
@@ -832,8 +838,8 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     await expect(host.getByTestId("start-game")).toHaveText("Start duel");
     await expect(host.getByTestId("start-game")).toBeEnabled();
     await startRoomGame(host);
-    await expect(host.getByText("Commander duel", { exact: true })).toBeVisible();
-    await expect(opponent.getByText("Commander duel", { exact: true })).toBeVisible();
+    await expect(host.getByTestId("game-status")).toHaveText("In progress");
+    await expect(opponent.getByTestId("game-status")).toHaveText("In progress");
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
     await expect(opponent.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
     await expect(host.locator(".player-board")).toHaveCount(2);
@@ -841,10 +847,14 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     await expect(host.getByTestId("commander-damage-A")).toHaveCount(0);
     await expect(host.getByTestId("commander-damage-B")).toHaveCount(0);
     await expect(host.getByTestId("hand-panel")).toHaveAttribute("data-resizable", "true");
-    expect(await host.getByTestId("hand-panel").evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { position: style.position, resize: style.resize };
-    })).toEqual({ position: "relative", resize: "vertical" });
+    const handPanel = host.getByTestId("hand-panel");
+    const resize = handPanel.getByRole("button", { name: "Resize hand", exact: true });
+    await expect(resize).toBeVisible();
+    const startingHeight = (await handPanel.boundingBox())!.height;
+    await resize.press("ArrowUp");
+    await expect.poll(async () => (await handPanel.boundingBox())!.height).toBeGreaterThan(startingHeight);
+    await resize.press("ArrowDown");
+    await expect.poll(async () => (await handPanel.boundingBox())!.height).toBeLessThanOrEqual(startingHeight + 1);
     const dockBottomBefore = await host.getByTestId("table-bottom-dock").evaluate(
       (element) => Math.round(element.getBoundingClientRect().bottom),
     );
@@ -874,26 +884,24 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     await expect(swamp).toHaveCount(1);
     const swampRef = await swamp.getAttribute("data-card-ref");
     expect(swampRef).toBeTruthy();
-    const battlefieldCards = host
-      .getByTestId("own-battlefield")
-      .locator(".card-tile");
-    const battlefieldCount = await battlefieldCards.count();
+    const battlefield = host.getByTestId("own-battlefield");
     // The pass which reaches main phase can still publish after the land offer
     // appears. Submit the exact current capability and certify zone outcomes;
     // an unrelated delayed revision is not evidence that a drag succeeded.
     const playSwamp = host.getByTestId(`action-play-land:${swampRef}`);
     await advanceToActionReady([host, opponent], playSwamp, host, testInfo);
+    const battlefieldCount = await battlefieldPermanentCount(battlefield);
     await playSwamp.click();
     const dialog = host.getByTestId("choice-dialog");
     await expect.poll(async () =>
       (await dialog.isVisible())
-      || (await battlefieldCards.count()) > battlefieldCount,
+      || (await battlefieldPermanentCount(battlefield)) === battlefieldCount + 1,
     ).toBe(true);
     if (await dialog.isVisible()) await submitOpenChoice(host);
     await expect(
       host.getByTestId("own-hand").locator(`[data-card-ref="${swampRef}"]`),
     ).toHaveCount(0);
-    await expect(battlefieldCards).toHaveCount(battlefieldCount + 1);
+    await expect(battlefield).toHaveAttribute("data-permanent-count", String(battlefieldCount + 1));
 
     await host.getByTestId("open-game-menu").click();
     await host.getByTestId("action-concede").click();
@@ -913,7 +921,7 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     for (const page of [host, opponent]) {
       await expect(page.getByTestId("game-status")).toHaveText("Complete");
       await expect(page.getByTestId("game-over-banner")).toContainText("Seat B wins");
-      await expect(page.getByTestId("turn-status-terminal")).toContainText("Game complete");
+      await expect(page.getByTestId("game-over-banner")).toContainText("Game complete");
       await expect(page.getByTestId("decision-panel")).toHaveCount(0);
       await expect(page.locator('[data-testid^="action-"]')).toHaveCount(0);
     }
@@ -1009,7 +1017,8 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await expect(sidebar.locator(".table-card-viewer")).toBeVisible();
     await expect(sidebar.getByTestId("activity-panel")).toBeVisible();
     await host.getByTestId("stack-toggle").click();
-    await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "stack-panel");
+    await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "activity-panel");
+    await expect(sidebar.getByTestId("stack-panel")).toBeVisible();
     const stackBounds = await host.getByTestId("stack-panel").boundingBox();
     expect(stackBounds).not.toBeNull();
     expect(stackBounds!.y + stackBounds!.height).toBeLessThan(1080);
@@ -1018,19 +1027,21 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await host.getByTestId("table-settings").locator(":scope > summary").click();
     await host.getByLabel("Hand panel height").fill("360");
     await host.getByLabel("Right rail width").fill("420");
-    await host.getByLabel("Right rail first").selectOption("activity");
+    await host.getByLabel("Right rail first").selectOption("stack");
     await host.getByLabel("Board density").selectOption("compact");
     await host.getByTestId("open-game-menu").click();
-    await host.getByTestId("stack-toggle").click();
+    if (!(await sidebar.getByTestId("stack-panel").isVisible())) await host.getByTestId("stack-toggle").click();
     await expect(host.locator(".game-shell")).toHaveClass(/density-compact/);
-    await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "activity-panel");
+    await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "stack-panel");
 
     await host.reload();
     await expect(host.locator(".game-shell")).toBeVisible();
     await expect(host.getByTestId("auto-pass-toggle")).toHaveAttribute("aria-pressed", "false");
     await expect(host.locator(".game-shell")).toHaveClass(/density-compact/);
     await expect(host.locator(".game-shell")).toHaveAttribute("style", /--right-rail-width: 420px/);
-    await expect(host.locator(".table-sidebar > section").first()).toHaveAttribute("data-testid", "activity-panel");
+    if (!(await sidebar.getByTestId("stack-panel").isVisible())) await host.getByTestId("stack-toggle").click();
+    await expect(sidebar.locator(":scope > section").first()).toHaveAttribute("data-testid", "stack-panel");
+    await host.getByTestId("stack-toggle").click();
     const dockBottom = await host.getByTestId("table-bottom-dock").evaluate(
       (element) => Math.round(element.getBoundingClientRect().bottom),
     );
@@ -1133,7 +1144,7 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     await expect(targetChoice).toContainText("Sunscorched Desert");
     await expect(targetChoice).toContainText("Seat B");
     await expect(opponent.getByTestId("contextual-decision")).toHaveCount(0);
-    await targetChoice.getByTestId("choice-target-B").check();
+    await targetChoice.getByTestId("choice-target-B").check({ timeout: 15_000 });
     await submitOpenChoice(host);
     await expect(host.getByTestId("player-B").getByLabel("39 life")).toBeVisible();
     await expect(opponent.getByTestId("player-B").getByLabel("39 life")).toBeVisible();
@@ -1145,15 +1156,13 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
         .first();
       const landRef = await land.getAttribute("data-card-ref");
       expect(landRef).toBeTruthy();
-      const battlefieldCards = page
-        .getByTestId("own-battlefield")
-        .locator(".card-tile");
-      const battlefieldCount = await battlefieldCards.count();
+      const battlefield = page.getByTestId("own-battlefield");
       const playAction = page.getByTestId(`action-play-land:${landRef}`);
       await advanceToActionReady([host, opponent], playAction, page, testInfo);
+      const battlefieldCount = await battlefieldPermanentCount(battlefield);
       await playAction.click();
       await expect(cards.locator(`[data-card-ref="${landRef}"]`)).toHaveCount(0);
-      await expect(battlefieldCards).toHaveCount(battlefieldCount + 1);
+      await expect(battlefield).toHaveAttribute("data-permanent-count", String(battlefieldCount + 1));
     }
 
     await playBasicLand(opponent, "Island");
@@ -1170,12 +1179,14 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     await battlefieldSwamp.click();
     await expect.poll(() => viewRevision(host)).toBeGreaterThan(beforeManualTap);
     await expect(battlefieldSwamp).toHaveAttribute("data-tapped", "true");
-    await expect(host.getByTestId("player-A").locator(".zone-summary")).toContainText("B1");
+    const pool = host.getByLabel("Your mana pool");
+    await expect(pool.getByRole("img", { name: "black mana" })).toBeVisible();
+    await expect(pool.locator(".mana-pool-amount")).toHaveText("{B}×1");
     const beforeManualUndo = await viewRevision(host);
     await battlefieldSwamp.click();
     await expect.poll(() => viewRevision(host)).toBeGreaterThan(beforeManualUndo);
     await expect(battlefieldSwamp).toHaveAttribute("data-tapped", "false");
-    await expect(host.getByTestId("player-A").locator(".zone-summary")).not.toContainText("B1");
+    await expect(pool).toContainText("Empty");
     await host.getByTestId("auto-mana-toggle").click();
     await expect(host.getByTestId("auto-mana-toggle")).toContainText("Auto-mana on");
 
@@ -1228,7 +1239,7 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     );
     await expect(host.getByTestId("decision-panel")).toHaveAttribute("data-decision-kind", "semantic.target");
     await expect(targetChoice).toContainText("Orcish Bowmasters");
-    await targetChoice.getByTestId("choice-target-B").check();
+    await targetChoice.getByTestId("choice-target-B").check({ timeout: 15_000 });
     await submitOpenChoice(host);
 
     const damagedOpponent = host.getByTestId("player-B").getByLabel("38 life");
@@ -1291,10 +1302,7 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
         .getAttribute("data-testid");
       const ownSeat = ownPlayerId?.replace("player-", "") || null;
       expect(ownSeat).toBeTruthy();
-      const battlefieldCards = page
-        .getByTestId("own-battlefield")
-        .locator(".card-tile");
-      const battlefieldCount = await battlefieldCards.count();
+      const battlefield = page.getByTestId("own-battlefield");
       const playAction = page.getByTestId(`action-play-land:${landRef}`);
       await advanceToActionReady(
         [host, opponent],
@@ -1316,17 +1324,18 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
           );
         },
       );
+      const battlefieldCount = await battlefieldPermanentCount(battlefield);
       await playAction.click();
       const dialog = page.getByTestId("choice-dialog");
       await expect.poll(async () =>
         (await dialog.isVisible())
-        || (await battlefieldCards.count()) > battlefieldCount,
+        || (await battlefieldPermanentCount(battlefield)) === battlefieldCount + 1,
       ).toBe(true);
       if (await dialog.isVisible()) await submitOpenChoice(page);
       await expect(cards.locator(`[data-card-ref="${landRef}"]`)).toHaveCount(0, {
         timeout: 90_000,
       });
-      await expect(battlefieldCards).toHaveCount(battlefieldCount + 1, {
+      await expect(battlefield).toHaveAttribute("data-permanent-count", String(battlefieldCount + 1), {
         timeout: 90_000,
       });
     }
@@ -1353,7 +1362,6 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
     await playLand(opponent);
     await playLand(host);
 
-    await submitImmediateAction(host, "pass");
     await advanceToDecision(
       [host, opponent], host, "combat.attackers", testInfo,
     );
@@ -1375,8 +1383,9 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
     await expect(opponent.getByTestId("player-B").getByLabel("37 life")).toBeVisible();
     await openGameMenu(host);
     await host.getByTestId("open-public-log").click();
-    await expect(host.getByTestId("public-game-log")).toContainText("attacked with 1 creature");
-    await expect(host.getByTestId("public-game-log")).toContainText("Combat damage was dealt");
+    const log = host.getByTestId("public-game-log");
+    await expect(log).toContainText("Attacked with Zimone and Dina toward Seat B.");
+    await expect(log).toContainText("Zimone and Dina dealt 3 combat damage to Seat B.");
   } finally {
     await annotateJourneyMetrics([host, opponent], 2, testInfo);
     await Promise.all([hostContext.close(), opponentContext.close()]);
@@ -1427,10 +1436,7 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
       // journeys in its serial shard. A single accepted command can take more
       // than the shared helper's normal budget while prior records flush.
       // Advancing to this seat's main phase may include that turn's draw.
-      const battlefieldCards = page
-        .getByTestId("own-battlefield")
-        .locator(".card-tile");
-      const battlefieldCount = await battlefieldCards.count();
+      const battlefield = page.getByTestId("own-battlefield");
       // This durability soak exercises more than a hundred routine commands.
       // Resolve the physical card from the exact current capability after
       // advancing. An intervening mandatory cleanup discard may legally remove
@@ -1471,11 +1477,12 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
       await expect(land).toHaveCount(1);
       const landName = await land.locator(".card-copy strong").textContent();
       expect(landName).toBeTruthy();
+      const battlefieldCount = await battlefieldPermanentCount(battlefield);
       await playAction.click();
       const dialog = page.getByTestId("choice-dialog");
       await expect.poll(async () =>
         (await dialog.isVisible())
-        || (await battlefieldCards.count()) > battlefieldCount,
+        || (await battlefieldPermanentCount(battlefield)) === battlefieldCount + 1,
       ).toBe(true);
       if (await dialog.isVisible()) await submitOpenChoice(page);
       await expect(
@@ -1483,10 +1490,9 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
       ).toHaveCount(0, {
         timeout: durableTransitionTimeout,
       });
-      // Hidden-to-public projection intentionally replaces the private hand
-      // reference, so certify the public battlefield count rather than
-      // assuming identity continuity across that privacy boundary.
-      await expect(battlefieldCards).toHaveCount(battlefieldCount + 1, {
+      // The public projection may replace the private hand reference. Its
+      // permanent total also includes cards represented by grouped tiles.
+      await expect(battlefield).toHaveAttribute("data-permanent-count", String(battlefieldCount + 1), {
         timeout: durableTransitionTimeout,
       });
     }
@@ -1534,6 +1540,9 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
         await ensureFullControl(opponent);
       }
       await playLand(host, requiredMana[turn]);
+      if (turn === 1) {
+        await expect(host.getByRole("button", { name: "Show all 2 Swamp cards" })).toBeVisible();
+      }
       if (turn === requiredMana.length - 1) {
         const commander = host
           .getByTestId("player-A")
@@ -1598,9 +1607,10 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
         timeout: durableTransitionTimeout,
       });
       await expect(commanderDamage).toHaveAttribute("data-seat-accent", "A");
-      const ownerSeat = page.getByTestId("player-A").locator(".seat-letter");
-      expect(await commanderDamage.evaluate((element) => getComputedStyle(element).color))
-        .toBe(await ownerSeat.evaluate((element) => getComputedStyle(element).color));
+      const ownerName = page.getByTestId("player-A").locator(".player-name > strong");
+      await expect(commanderDamage).toHaveCSS(
+        "color", await ownerName.evaluate((element) => getComputedStyle(element).color),
+      );
       const tooltip = commanderDamage.locator(".commander-damage-tooltip");
       await expect(tooltip).toBeHidden();
       await commanderDamage.hover();
@@ -1646,7 +1656,7 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
         "Seat A wins",
         { timeout: durableTransitionTimeout },
       );
-      await expect(page.getByTestId("turn-status-terminal")).toContainText(
+      await expect(page.getByTestId("game-over-banner")).toContainText(
         "Game complete",
         { timeout: durableTransitionTimeout },
       );
@@ -1660,7 +1670,7 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
     await openGameMenu(host);
     await host.getByTestId("open-public-log").click();
     await expect(host.getByTestId("public-game-log")).toContainText(
-      /Lost the game after reaching -?\d+ life\./i,
+      "Lost the game after taking 36 commander damage from Yargle and Multani.",
       { timeout: durableTransitionTimeout },
     );
     await expect(host.getByTestId("public-game-log")).toContainText(

@@ -8,6 +8,9 @@ test("@browser-rules a finite loop uses fresh capabilities and can hold priority
   try {
     const play = host.getByTestId("own-hand").getByRole("button", { name: "Play Forest", exact: true }).first();
     await driveTo(pages, play, info, "Offer the first Forest");
+    const autoPass = host.getByTestId("auto-pass-toggle");
+    if (await autoPass.getAttribute("aria-pressed") === "true") await autoPass.click();
+    await expect(autoPass).toHaveAttribute("aria-pressed", "false");
     await clickMove(host, play);
     await host.getByTestId("auto-mana-toggle").click();
 
@@ -92,7 +95,9 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
     await expect(draft).toHaveCount(0);
     await clickMove(opponent, boardCard(opponent, "Island"));
     await expect(boardCard(opponent, "Island")).toHaveAttribute("data-tapped", "true");
-    await expect(opponent.getByTestId("player-B").locator(".zone-summary")).toContainText("U1");
+    const pool = opponent.getByLabel("Your mana pool");
+    await expect(pool.getByRole("img", { name: "blue mana" })).toBeVisible();
+    await expect(pool.locator(".mana-pool-amount")).toHaveText("{U}×1");
     await expect(opponent.getByRole("button", { name: "Undo mana from Island", exact: true }).first()).toBeVisible();
     if (!await opponent.getByTestId("activity-panel").isVisible()) await opponent.getByTestId("stack-toggle").click();
     await opponent.getByTestId("activity-panel").getByRole("button", { name: "Full log" }).click();

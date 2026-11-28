@@ -894,7 +894,7 @@ function GameView({ gameId, userId, system, onExit, onRoom }: {
                 : "This match has ended."}
           </span>
           <div className="game-over-actions">
-            {!isSpectator && <button type="button" disabled={preparingRematch} onClick={() => void playAgain()}>
+            {lifecycle.seat !== null && <button type="button" disabled={preparingRematch} onClick={() => void playAgain()}>
               {preparingRematch ? "Opening the next table…" : lifecycle.owner ? "Play again with these decks" : "Join the next table"}
             </button>}
             <button type="button" className="secondary-button" onClick={onExit}>Decks and games</button>

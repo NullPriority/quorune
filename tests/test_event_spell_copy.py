@@ -2012,37 +2012,3 @@ class MagecraftRummageOrdinalTests(InheritedNativeFixture, unittest.TestCase):
                         ("unspent red mana","unspent blue mana")):
             changed=replace(card,oracle_text=card.oracle_text.replace(old,new))
             self.assertNotEqual("exact",compile_oracle_card(changed,capability_registry=self.registry).status)
-
-
-class MagecraftRummageOrdinalTests(InheritedNativeFixture, unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.temporary=tempfile.TemporaryDirectory()
-        path=Path(cls.temporary.name)/"magecraft-ordinal.sqlite3"
-        fixtures=ROOT/"tests/fixtures"
-        build_fixture_database([fixtures/name for name in (
-            "bound-effect-program-cards.json","event-spell-copy-cards.json",
-            "ability-source-counter-cards.json","earthbend-cards.json",
-        )],path)
-        cls.db=CardDatabase(path)
-        cls.registry=load_default_capability_registry()
-        cls.deck=DeckDefinition("Magecraft ordinal",[
-            DeckEntry("Isamaru, Hound of Konda",1,"commander"),DeckEntry("Generic Bound Plains",30),
-        ],["Isamaru, Hound of Konda"])
-
-    def _ashling(self,seed):
-        game=self.session(seed)
-        source=self.add(game.engine,"Ashling, Flame Dancer")
-        self.assert_closed(game,source)
-        return game,source
-
-    def _rummage(self,game):
-        self.assertEqual("choice.apnap",self.resolve(game).kind)
-        self.assertEqual(["pilot:A"],game.pending_principals())
-        price=next(game.state.cards[oid] for oid in game.state.players["A"].zones["hand"]
-                   if game.state.cards[oid].printed_name=="Generic Bound Plains")
-        hand=len(game.state.players["A"].zones["hand"])
-        result=game.act("pilot:A",{"action_id":"choose","cards":[price.ref]})
-        self.assertTrue(result.ok,result.summary)
-        self.assertEqual(hand,len(game.state.players["A"].zones["hand"]))
-        self.assertEqual("graveyard",game.state.cards[price.object_id].zone)

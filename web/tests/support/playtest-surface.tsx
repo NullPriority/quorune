@@ -131,7 +131,7 @@ function Surface({ mode }: { mode: Mode }) {
     turnSequence: 17, personalTurn: 4, phase: "combat", step: "combat_damage", activeSeat: "C",
     prioritySeat: "C", firstStrikeStep: true, combatDamageStep: 1, lifecycleStatus: "active",
   }} compact={false} priorityStops={[]} />;
-  const cards = Array.from({ length: 24 }, (_, index) => ({ id: `card-${index}`, n: `Graveyard card ${index + 1}` }));
+  const cards = Array.from({ length: 96 }, (_, index) => ({ id: `card-${index}`, n: `Graveyard card ${index + 1}` }));
   return <ZoneBrowser opened={{ seat: "C", zone: "gy" }} player={{ gy: cards }}
     dialogRef={dialog} view={view} selection={null} selectedCardRef="" actionDisabled
     actionsForCard={() => []} onIntent={() => undefined} onClose={() => undefined} />;

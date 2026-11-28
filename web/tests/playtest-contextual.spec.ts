@@ -112,7 +112,9 @@ test("@browser-rules @mana-action contextual Solemn decision and repeated-name s
     await expect(confirm).toBeInViewport({ ratio: 1 });
     await evidence(host, info, "solemn-visual-search-repeated-basics");
     await clickMove(host, confirm);
-    await expect(boardCard(host, "Swamp").filter({ hasNot: host.getByText("TAPPED", { exact: true }) })).toHaveCount(0);
+    const swamp = boardCard(host, "Swamp");
+    await expect(swamp).toBeVisible();
+    await expect(swamp).toHaveAttribute("data-tapped", "true");
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }
@@ -226,7 +228,19 @@ test("@browser-rules @combat two distinct blockers group under the same attacker
     await expect(attacker.getByTestId("target-arrow-layer")).toHaveAttribute("data-attack-arrow-count", "1");
     await ornithopter.click();
     await incoming.click();
-    await memnite.dragTo(incoming);
+    await block.getByRole("button", { name: "Expand choice", exact: true }).click();
+    await expect(group).toContainText("Ornithopter");
+    const bank = block.getByRole("group", { name: "Eligible blockers", exact: true });
+    async function revealBlocker(button: typeof memnite) {
+      if (!(await button.isVisible())) {
+        const next = bank.getByRole("button", { name: "Next Eligible blockers page" });
+        if (await next.isVisible() && await next.isEnabled()) await next.click();
+        else await bank.getByRole("button", { name: "Previous Eligible blockers page" }).click();
+      }
+      await expect(button).toBeVisible();
+    }
+    await revealBlocker(memnite);
+    await memnite.dragTo(incoming, { timeout: 15_000 });
     await expect(group.getByRole("button")).toHaveCount(2);
     await expect(block.locator("[data-blocked=true]")).toContainText("Blocked");
     await group.getByRole("button", { name: /Remove Memnite/ }).click();
@@ -235,8 +249,10 @@ test("@browser-rules @combat two distinct blockers group under the same attacker
     await block.getByRole("button", { name: "Clear assignments" }).click();
     await expect(group).toHaveCount(0);
     expect(await viewRevision(host)).toBe(revision);
+    await revealBlocker(ornithopter);
     await ornithopter.click();
     await incoming.click();
+    await revealBlocker(memnite);
     await memnite.click();
     await incoming.click();
     await expect(group.getByRole("button")).toHaveCount(2);

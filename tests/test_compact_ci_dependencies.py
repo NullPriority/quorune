@@ -156,7 +156,7 @@ class Shared:
             static, dynamic, errors = discover_module_requirements("test_lookup_wrapper", root=root)
             _, requested, requested_errors = discover_module_requirements(
                 "test_lookup_wrapper",
-                root=root,
+                root=root / "tests" / "..",
                 declared_sites=frozenset({
                     ("tests/test_lookup_wrapper.py", "Local.select"),
                     ("tests/test_lookup_wrapper.py", "Local.absent"),

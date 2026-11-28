@@ -34383,7 +34383,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 537299,
+      "logical_lines": 537329,
       "methods": {
         "dunder": 1447,
         "private": 1248,
@@ -34773,8 +34773,8 @@
           "file": "web/src/table-layout.css",
           "functions_and_methods": null,
           "language": "web",
-          "logical_lines": 1196,
-          "physical_lines": 1210
+          "logical_lines": 1199,
+          "physical_lines": 1213
         },
         {
           "file": "quorune/replacement/application.py",
@@ -36100,6 +36100,13 @@
           "physical_lines": 554
         },
         {
+          "file": "web/src/CardSurface.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 490,
+          "physical_lines": 512
+        },
+        {
           "file": "quorune/entry_counter_model.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -36189,13 +36196,6 @@
           "language": "python",
           "logical_lines": 472,
           "physical_lines": 515
-        },
-        {
-          "file": "web/src/CardSurface.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 471,
-          "physical_lines": 491
         },
         {
           "file": "quorune/compiler/bound_effect_programs.py",
@@ -37038,6 +37038,13 @@
           "physical_lines": 393
         },
         {
+          "file": "web/src/PlayerBoard.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 336,
+          "physical_lines": 339
+        },
+        {
           "file": "quorune/compiler/fixed_entry_return_requirements.py",
           "functions_and_methods": 12,
           "language": "python",
@@ -37064,13 +37071,6 @@
           "language": "python",
           "logical_lines": 335,
           "physical_lines": 386
-        },
-        {
-          "file": "web/src/PlayerBoard.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 335,
-          "physical_lines": 338
         },
         {
           "file": "quorune/mechanic_contracts.py",
@@ -48798,6 +48798,13 @@
           "physical_lines": 76
         },
         {
+          "file": "web/src/choice-surface.css",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 59,
+          "physical_lines": 61
+        },
+        {
           "file": "quorune/card_programs/impending.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -50021,13 +50028,6 @@
           "language": "python",
           "logical_lines": 52,
           "physical_lines": 67
-        },
-        {
-          "file": "web/src/choice-surface.css",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 52,
-          "physical_lines": 54
         },
         {
           "file": "quorune/aerial_blocking.py",
@@ -58228,7 +58228,7 @@
           "physical_lines": 1738
         }
       ],
-      "physical_lines": 608320,
+      "physical_lines": 608352,
       "python_file_count": 3310,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -110719,7 +110719,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "c57e8e121b5da252aa28479332471b1e94d3812e44ac7d49a4927b6c2b42c725",
+      "fingerprint": "989e25d2a9b076b598276d4343207b2cff799904b70fa82a7a76e075623f14f5",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -111578,8 +111578,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 21711,
-      "discovered_total": 25033,
+      "conventional_ast_cases": 21710,
+      "discovered_total": 25019,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 479,
@@ -111588,7 +111588,7 @@
         "replay_named": 1355,
         "server_named": 125
       },
-      "reconciles": false,
+      "reconciles": true,
       "test_files": 2003
     }
   }

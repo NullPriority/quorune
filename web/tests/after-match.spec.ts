@@ -80,8 +80,11 @@ test("@browser-lifecycle @playtest-rematch finish a game, find saved decks, and 
     await host.getByTestId("room-library").click();
     await recent.getByRole("button", { name: "View game", exact: true }).click();
     await expect(game).toHaveAttribute("data-game-id", previousId!);
+    await expect(host.getByTestId("own-hand")).toHaveCount(0);
+    const rematch = host.getByTestId("game-over-banner").getByRole("button", { name: "Play again with these decks" });
+    await expect(rematch).toBeVisible();
 
-    await host.getByRole("button", { name: "Play again with these decks" }).click();
+    await rematch.click();
     await opponent.getByRole("button", { name: "Join the next table" }).click();
     await expect(host.getByTestId("deck-ready-summary")).toContainText("Playtest deck A");
     await expect(opponent.getByTestId("deck-ready-summary")).toContainText("Playtest deck B");

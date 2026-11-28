@@ -3692,7 +3692,7 @@
         "tests/fixtures/source-reference-closure-cards.json"
       ],
       "oracle_ids": [],
-      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked.",
+      "rationale": "The source-reference fixture verifies strict Nemata admission and retains fail-closed witnesses for Zabaz and Kytheon/Gideon.",
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed"
     },
