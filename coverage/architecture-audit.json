@@ -34383,7 +34383,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 537329,
+      "logical_lines": 537334,
       "methods": {
         "dunder": 1447,
         "private": 1248,
@@ -36590,6 +36590,13 @@
           "physical_lines": 452
         },
         {
+          "file": "web/src/table-card-layout.css",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 403,
+          "physical_lines": 408
+        },
+        {
           "file": "quorune/compiler/resolution_condition_templates.py",
           "functions_and_methods": 12,
           "language": "python",
@@ -36609,13 +36616,6 @@
           "language": "python",
           "logical_lines": 398,
           "physical_lines": 431
-        },
-        {
-          "file": "web/src/table-card-layout.css",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 398,
-          "physical_lines": 403
         },
         {
           "file": "quorune/card_programs/binding.py",
@@ -58228,7 +58228,7 @@
           "physical_lines": 1738
         }
       ],
-      "physical_lines": 608352,
+      "physical_lines": 608357,
       "python_file_count": 3310,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -110719,7 +110719,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "989e25d2a9b076b598276d4343207b2cff799904b70fa82a7a76e075623f14f5",
+      "fingerprint": "138fec0feae82521fee4b244907b00915fad8c7d72d391e1f7b83bf488e7c8d4",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

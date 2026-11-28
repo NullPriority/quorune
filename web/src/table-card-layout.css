@@ -370,6 +370,11 @@
     --hand-viewport-limit: 17dvh;
   }
 }
+@media (521px <= width <= 700px) and (max-height: 565px) {
+  .game-shell .table-bottom-dock:not(.spectator) > .turn-yield-dock { column-gap: .25rem; }
+  .turn-yield-dock :is(.priority-controls, .loop-controls) > summary,
+  .game-shell .turn-yield-dock > .table-control-toggle { padding-inline: .25rem; }
+}
 @media (max-width: 520px) {
   .game-shell .table-bottom-dock > .hand-and-zones .hand-panel { --hand-viewport-limit: 26dvh; }
   .game-shell .board-view-bar > .card-size-slider { display: none; }

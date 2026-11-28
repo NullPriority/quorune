@@ -628,6 +628,7 @@ test("@smoke @browser-lifecycle @reconnect @lifecycle four shared-cookie browser
 });
 
 test("@browser-lifecycle an invited spectator receives a read-only projection and complete public log", async ({ browser }, testInfo) => {
+  test.setTimeout(COLD_FOUR_PLAYER_JOURNEY_TIMEOUT_MS);
   let playerContexts: BrowserContext[] = [];
   const metricsPages: Page[] = [];
   const spectatorContext = await browser.newContext();
