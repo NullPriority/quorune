@@ -219,7 +219,7 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
         self.assertEqual('capability_closed',binding['trust_basis'])
         engine.state.phase_index = TURN_STEPS.index(('precombat_main','main'))
-        offer = H.ready(self,session,source,{'U':5,'G':5,'C':8})
+        offer = H.ready(self,session,source,{'U':5,'G':5,'C':8,'B':1})
         H.checkpoint(self,session)
         return session,cards,source,offer
 
@@ -230,6 +230,120 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         self.assertEqual(before,authoritative_state_hash(session.state))
         result = session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'})
         self.assertTrue(result.ok,result.summary)
+
+    def _concede_during_ordinary_priority(self, game, seat):
+        principal = 'pilot:' + seat
+        for _ in range(len(game.engine.active_seats)):
+            actors = game.pending_principals()
+            if principal in actors:
+                result = game.act(principal, {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+                self.assertTrue(result.ok, result.summary)
+                return
+            self.assertEqual('priority', game.state.pending_decision.kind)
+            result = game.act(actors[0], {'action_id': 'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.fail('Ordinary priority never reached the departing player')
+
+    def test_open_the_way_native_cast_cap_and_committed_x_survive_a_player_leaving(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+
+        main_library = ["Generic Bound Growth", "Generic Bound Plains", "Generic Bound Body",
+                        "Generic Bound Plains", "Generic Bound Plains", "Generic Bound Growth", "Generic Bound Plains"]
+        for departure_before_cast in (False, True):
+            with self.subTest(departure_before_cast=departure_before_cast):
+                game, cards, source, offer = self.prepare("Open the Way", main_library, seed=648030 + departure_before_cast)
+                maximum = 4
+                if departure_before_cast:
+                    self._concede_during_ordinary_priority(game, "D")
+                    maximum -= 1
+                    actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer = next(row for row in actions if row.get("card") == source.ref)
+                self.assertEqual(maximum, offer["cost_options"][0]["choice_schema"]["x"]["maximum"])
+                before = authoritative_state_hash(game.state)
+                for seat, amount in (("A", maximum + 1), ("A", True), ("A", -1), ("B", maximum)):
+                    refused = game.act("pilot:"+seat, {"action_id": offer["id"], "x": amount, "pay": "auto"})
+                    self.assertFalse(refused.ok, refused.summary)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                accepted = game.act("pilot:A", {"action_id": offer["id"], "x": maximum, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(maximum, game.state.stack[-1].x_value)
+                if not departure_before_cast:
+                    self._concede_during_ordinary_priority(game, "D")
+                self.assertEqual(["A", "B", "C"], game.engine.active_seats)
+                game = H.replay(self, game, load=True)
+                self.assertEqual(maximum, game.state.stack[-1].x_value)
+                shuffle_count = game.state.players["A"].stats.get("shuffle_count", 0)
+                event_count = len(game.state.events)
+                untouched_count = 3 if maximum == 3 else 1
+                visibility = {card.object_id: (list(card.known_to), list(card.revealed_to))
+                              for card in (game.state.cards[row.object_id] for row in cards[:untouched_count])}
+                self.assertIsNone(H.resolve(self, game))
+                looked, = (event for event in game.state.events[event_count:] if event.code == "library.look")
+                self.assertEqual(len(cards) - untouched_count, looked.details["count"])
+                self.assertEqual({card.object_id for card in cards[untouched_count:]}, set(looked.changed_objects))
+                for object_id, expected in visibility.items():
+                    live = game.state.cards[object_id]
+                    self.assertEqual(expected, (live.known_to, live.revealed_to))
+                selected = (3, 4, 6) if maximum == 3 else (1, 3, 4, 6)
+                lands = [game.state.cards[cards[i].object_id] for i in selected]
+                self.assertTrue(all(card.zone == "battlefield" and card.tapped for card in lands))
+                library = game.state.players["A"].zones["library"]
+                if maximum == 3:
+                    self.assertEqual([cards[i].object_id for i in (5, 0, 1, 2)], library)
+                else:
+                    self.assertEqual(cards[0].object_id, library[-1])
+                    self.assertEqual({cards[i].object_id for i in (2, 5)}, set(library[:2]))
+                for seat in "BC":
+                    public = game.packet("pilot:"+seat, full=True)["state"]["players"]["A"]
+                    self.assertFalse(public.get("known_top"))
+                self.assertEqual(shuffle_count, game.state.players["A"].stats.get("shuffle_count", 0))
+                H.replay(self, game, load=True)
+
+    def test_open_the_way_zero_and_short_library_use_the_native_partition_and_replay(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for amount in (0, 4):
+            with self.subTest(amount=amount):
+                game, cards, source, offer = self.prepare("Open the Way",
+                    ["Generic Bound Body", "Generic Bound Plains", "Generic Bound Growth"], seed=648040 + amount)
+                prior = list(game.state.players["A"].zones["library"])
+                accepted = game.act("pilot:A", {"action_id": offer["id"], "x": amount, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                event_count = len(game.state.events)
+                self.assertIsNone(H.resolve(self, game))
+                library = game.state.players["A"].zones["library"]
+                if amount == 0:
+                    self.assertEqual(prior, library)
+                    self.assertFalse(any(event.code.startswith("library.") for event in game.state.events[event_count:]))
+                else:
+                    self.assertEqual({cards[0].object_id, cards[2].object_id}, set(library))
+                    land = game.state.cards[cards[1].object_id]
+                    self.assertEqual(("battlefield", True), (land.zone, land.tapped))
+                self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+                self.assertTrue(game.state.players["A"].in_game)
+                H.replay(self, game, load=True)
+
+    def test_open_the_way_requires_a_whole_spell_and_the_announced_x_tapped_land_partition(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.reveal_until_library_selection_model import player_capped_land_reveal_effect
+
+        game, _, source, _ = self.prepare("Open the Way", [], seed=648050)
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual((player_capped_land_reveal_effect(),), tuple(program.effects))
+        for delta in ({"stop_count": 4}, {"stop_count": "$controller"}, {"entry_tapped": False},
+                      {"remainder_order": "chosen"}, {"schema_version": 3.0}):
+            changed = replace(program, effects=({**program.effects[0], **delta},))
+            self.assertFalse(bind_semantic_program_runtime(changed, capability_registry=self.registry,
+                                                          profile="commander_review")["strict"])
+        self.assertFalse(bind_semantic_program_runtime(replace(program, active_zone="battlefield", event="activate"),
+            capability_registry=self.registry, profile="commander_review")["strict"])
+        record = self.db.lookup("Open the Way", fuzzy=False)
+        with patch("quorune.compiler.player_capped_land_reveal.player_capped_land_reveal_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
 
     def test_original_treasure_hunt_stops_at_nonland_and_moves_whole_no_match_prefix(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
@@ -312,3 +426,138 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         for card in cards[1:]:self.assertEqual('graveyard',session.state.cards[card.object_id].zone)
         self.assertEqual([],session.state.players['A'].zones['library'])
         H.replay(self,session,load=True)
+
+    def _cast_and_name(self, names, chosen, *, seed, inspect_order=False):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+        import json
+
+        session, cards, source, offer = self.prepare("Demonic Consultation", list(reversed(names)), seed=seed)
+        cards.reverse()
+        self.act(session, offer)
+        self.assertEqual("semantic.choice", H.resolve(self, session).kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        before = authoritative_state_hash(session.state)
+        original_library = list(session.state.players["A"].zones["library"])
+        for principal, name in (("pilot:B", chosen), ("pilot:A", "Unknown Bog Creature ZZZ")):
+            rejected = session.act(principal, {"action_id": "choose", "card_name": name})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            for card in cards:
+                self.assertNotIn(card.ref, json.dumps(packet))
+        self.assertEqual(original_library, session.state.players["A"].zones["library"])
+        session = H.replay(self, session, load=True)
+        start = len(session.state.events)
+        if inspect_order:
+            from unittest.mock import patch
+
+            move = session.engine.move_objects_simultaneously_intent
+            reveal = session.engine.reveal_library_cards_intent
+            observed = []
+
+            def observe_move(intent, *args, **kwargs):
+                observed.append(("exile", intent.object_refs, session.state.cards[cards[7].object_id].zone))
+                return move(intent, *args, **kwargs)
+
+            def observe_reveal(intent, *args, **kwargs):
+                observed.append(("reveal", intent.refs_top_first,
+                                 tuple(session.state.cards[card.object_id].zone for card in cards[:6])))
+                return reveal(intent, *args, **kwargs)
+
+            with (patch.object(session.engine, "move_objects_simultaneously_intent", side_effect=observe_move),
+                  patch.object(session.engine, "reveal_library_cards_intent", side_effect=observe_reveal)):
+                answer = session.act("pilot:A", {"action_id": "choose", "card_name": chosen})
+            self.assertEqual([
+                ("exile", tuple(card.ref for card in cards[:6]), "library"),
+                ("reveal", tuple(card.ref for card in cards[6:8]), ("exile",) * 6),
+                ("exile", (cards[6].ref,), "hand"),
+            ], observed)
+        else:
+            answer = session.act("pilot:A", {"action_id": "choose", "card_name": chosen})
+        self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(H.resolve(self, session))
+        return session, cards, session.state.events[start:]
+
+    def test_demonic_consultation_names_on_resolution_and_reveals_exact_prefix(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        import json
+
+        session, cards, events = self._cast_and_name(
+            ["Forest"] * 6 + ["Forest", "Treasure Hunt", "Forest"], "tREaSure HuNT", seed=648091, inspect_order=True,
+        )
+        chosen, = (event for event in events if event.code == "card.name.chosen")
+        self.assertEqual("Treasure Hunt", chosen.details["card_name"])
+        reveal, = (event for event in events if event.code == "library.reveal")
+        self.assertEqual([card.ref for card in cards[6:8]], [card["ref"] for card in reveal.details["cards"]])
+        self.assertEqual(["exile"] * 7 + ["hand", "library"],
+                         [session.state.cards[card.object_id].zone for card in cards])
+        self.assertEqual(list("ABCD"), session.state.cards[cards[7].object_id].known_to)
+        for seat in "BCD":
+            packet = json.dumps(session.packet("pilot:" + seat, full=True))
+            for card in cards[:8]:
+                self.assertIn(card.ref, packet)
+            self.assertNotIn(cards[-1].ref, packet)
+        H.replay(self, session, load=True)
+
+    def test_demonic_consultation_miss_and_short_library_exile_every_available_card(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for i, names in enumerate((
+            ["Treasure Hunt"] + ["Forest"] * 8,
+            ["Forest"] * 9,
+            ["Forest"] * 3,
+            [],
+        )):
+            with self.subTest(names=names):
+                session, cards, events = self._cast_and_name(names, "Treasure Hunt", seed=648092 + i)
+                self.assertEqual([], session.state.players["A"].zones["library"])
+                self.assertTrue(session.state.players["A"].in_game)
+                self.assertEqual(["exile"] * len(cards),
+                                 [session.state.cards[card.object_id].zone for card in cards])
+                reveals = [event for event in events if event.code == "library.reveal"]
+                self.assertEqual(int(len(cards) > 6), len(reveals))
+                if reveals:
+                    self.assertEqual([card.ref for card in cards[6:]],
+                                     [row["ref"] for row in reveals[0].details["cards"]])
+                H.replay(self, session, load=True)
+
+class ChosenNameRevealCompilerTests(unittest.TestCase):
+
+    def test_chosen_name_reveal_requires_the_complete_printed_procedure(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Choose a card name. Exile the top three cards of your library, "
+                "then reveal cards from the top of your library until you reveal a card with the chosen name. "
+                "Put that card into your hand and exile all other cards revealed this way.")
+
+        def compile_text(value):
+            return compile_oracle_card(replace(query_record(value), type_line="Instant"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertIsNone(node.target_schema)
+            self.assertEqual(3, node.effects[0]["exile_count"])
+
+        witness()
+        with patch("quorune.compiler.reveal_until_library_selection_templates.chosen_name_reveal_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (
+            text.replace("your library", "target player's library"),
+            text.replace("three cards", "X cards"),
+            text.replace("exile all other", "shuffle all other"),
+            text.replace("your hand", "exile"),
+            text + " Draw a card.",
+        ):
+            self.assertNotEqual("exact", compile_text(altered).status)

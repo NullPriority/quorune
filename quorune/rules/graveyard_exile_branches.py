@@ -7,11 +7,13 @@ from ..errors import GameRuleError
 from ..graveyard_exile_branches_model import (
     GRAVEYARD_EXILE_BRANCH_BASE_DEPENDENCIES,
     GRAVEYARD_EXILE_BRANCH_OPERATION,
+    GRAVEYARD_EXILE_LAND_MANA_CAPABILITY,
     GraveyardExileBranchSpec,
     GraveyardExileConsequence,
 )
 from ..object_query import ObjectQueryResult
 from ..replacement.immutable import FrozenMap
+from ..resolution_mana_model import RESOLUTION_MANA_CHOICE_CAPABILITY, ResolutionManaChoiceSpec
 from .committed_quantity_followups import CommittedQuantityFollowup
 from .graveyard_card_targets import PublicGraveyardCardTargetKind, PublicGraveyardCardTargetSpec
 
@@ -34,6 +36,10 @@ def graveyard_exile_branch_payload_dependencies(effect) -> tuple[str, ...]:
     if not _is_branch(effect):
         return ()
     spec = _decode_branch(effect)
+    if spec.classifies_land:
+        return (*GRAVEYARD_EXILE_BRANCH_BASE_DEPENDENCIES, GRAVEYARD_EXILE_LAND_MANA_CAPABILITY,
+                RESOLUTION_MANA_CHOICE_CAPABILITY, 'life.change.effect', 'damage.amount.positive',
+                'damage.source.stack_current_or_lki', 'damage.result.player_life')
     dependent = ('continuous.resolution.fixed_characteristics_until_end_of_turn' if spec.optional
         else 'zone.draw.library_to_hand')
     return (*GRAVEYARD_EXILE_BRANCH_BASE_DEPENDENCIES, 'life.change.effect', dependent)
@@ -171,6 +177,18 @@ def commit_graveyard_exile_branch(host, intent) -> CommittedQuantityFollowup:
 
     if not isinstance(intent, GraveyardExileBranchIntent):
         raise GameRuleError('Exclusive graveyard exile requires a typed intent')
+    if intent.result.classifies_land:
+        return _land_exile_followup(commit_graveyard_exile_card_types(host, intent))
     facts = commit_classified_graveyard_exile(host, intent, requires_committed_exile=intent.result.optional)
     consequence = intent.result.consequence(exile_committed=facts.committed, creature_card=facts.creature_card)
     return _followup(host, intent, consequence)
+
+
+def _land_exile_followup(types: frozenset[str]) -> CommittedQuantityFollowup:
+    if 'land' in types:
+        mana = ResolutionManaChoiceSpec('one_color', 1, ('G', 'R')).effect()
+        return CommittedQuantityFollowup((FrozenMap(mana),))
+    return CommittedQuantityFollowup((
+        FrozenMap({'op': 'life', 'player': '$controller', 'delta': 2}),
+        FrozenMap({'op': 'damage_each_opponent', 'source': '$source', 'amount': 2}),
+    ))

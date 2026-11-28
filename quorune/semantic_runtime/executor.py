@@ -1,6 +1,21 @@
 from __future__ import annotations
+
+from ..rules.departing_x_reflexive import PaidDepartureDamageIntent, queue_paid_damage
+
+from ..rules.name_stickers import NameStickerPlacementIntent, commit_placement
+from ..rules.opponent_blight import OpponentBlightBatchIntent
 from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+from .counter_removal_handlers import execute_counter_removal
+from ..rules.announced_x_player_rounds import is_zero_announced_x_player_round
+from ..rules.counter_scaled_annihilator import bind_counter_scaled_annihilator
+from ..rules.upkeep_source_counter_sacrifice import bind_upkeep_source_counter_sacrifice
+from ..rules.nonbasic_land_source_untap import NonbasicLandSourceUntap
+from ..rules.target_controller_library_reveal import (
+    TargetControllerLibraryReveal, committed_target_controller_library_result, target_controller_library_facts,
+)
+from ..rules.qualified_token_creators import bind_qualified_token_creators
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
+from ..resolving_cast_budget_model import ResolveBudgetedCastIntent
 from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
 from .composition_intent import ResumeCompositionOrderIntent
 from .graveyard_card_result_intent import GraveyardCardCounterLifeIntent
@@ -14,17 +29,20 @@ from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..dungeon_progress import VentureProgressIntent
 from ..initiative_model import TakeInitiativeIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.discarded_card_cast import DiscardedCardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .life_gain_cost_intent import LifeGainCostBatchIntent
-from .counter_movement_intent import MoveCountersIntent
+from .counter_movement_intent import COUNTER_MOVEMENT_INTENT_TYPES
 from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import (
+    DirectionalControlIntent,
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
     ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
@@ -43,12 +61,19 @@ from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..target_combat_damage_multiplier_model import TargetCombatDamageMultiplierIntent
+from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
+from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
+from ..next_turn_attack_restriction_model import NextTurnAttackRestrictionIntent
+from ..counter_bound_attack_model import CounterBoundAttackRestrictionIntent
 from ..extra_combat_model import ScheduleExtraCombatIntent
 from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
+from ..rules.main_phase_combat_model import UntapTurnAttackersIntent
 from ..rules.token_mill_repeat import TokenMillRepeatIntent, execute_token_mill_repeat
 from ..rules.library_bottom_results import LibraryBottomResultIntent, commit_library_bottom_creature_result
 from ..turn_skip_model import ScheduleTurnSkipIntent
+from .intents import FlipSourcePermanentIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
@@ -92,6 +117,7 @@ from ..public_tap_state_sets import (
     resolve_public_tap_state_set,
 )
 from .context import SemanticNodeError
+from .stack_instruction_preparation import prepare_source_bound_resolution
 from .intents import (
     AddManaIntent,
     AddSubtypeIntent,
@@ -106,6 +132,7 @@ from .intents import (
     ChampionExileIntent,
     ReturnLinkedAbilityExileIntent,
     CreateRegenerationShieldIntent,
+    CreateRegenerationShieldSetIntent,
     DealFixedDamageSetIntent,
     DomainEffectIntent,
     DestroyPermanentIntent,
@@ -114,6 +141,7 @@ from .intents import (
     DrawCardsIntent,
     IntentPlan,
     EliminatePlayersIntent,
+    WinGameIntent,
     ExploreCompletedIntent,
     ConniveCompletedIntent,
     ExilePermanentIntent,
@@ -274,7 +302,7 @@ class SemanticIntentSink(
     def library_selection_intent(
         self,
         intent: LibrarySelectionIntent,
-    ) -> tuple[str, ...]: ...
+    ) -> tuple[str, ...] | CommittedQuantityFollowup: ...
 
     def reorder_library_top_intent(
         self,
@@ -286,12 +314,14 @@ class SemanticIntentSink(
     def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent | GainSpellControlIntent) -> object: ...
 
     def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent
-                                | ExchangePermanentControlIntent) -> object: ...
+                                | ExchangePermanentControlIntent | DirectionalControlIntent) -> object: ...
 
     def place_counters_intent(
         self,
         intent: PlaceCountersIntent,
     ) -> tuple[str, ...]: ...
+
+    def place_opponent_blight_batch_intent(self, intent: OpponentBlightBatchIntent) -> tuple[str, ...]: ...
 
     def place_counter_batch_intent(
         self,
@@ -325,9 +355,9 @@ class SemanticIntentSink(
 
     def counter_stack_intent(self, intent: CounterStackIntent) -> None: ...
 
-    def eliminate_players_intent(self, intent: EliminatePlayersIntent) -> None: ...
+    def player_outcome_intent(self, intent: EliminatePlayersIntent | WinGameIntent) -> None: ...
 
-    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str: ...
+    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str | None: ...
 
     def retarget_stack_item_intent(
         self,
@@ -348,7 +378,7 @@ class SemanticIntentSink(
         intent: GrantZoneObjectKeywordIntent,
     ) -> str | tuple[str, ...]: ...
 
-    def proliferate_intent(self, intent: ProliferateIntent) -> None: ...
+    def proliferate_intent(self, intent: ProliferateIntent) -> CommittedQuantityFollowup | None: ...
 
     def deal_fixed_damage_set_intent(
         self,
@@ -434,7 +464,8 @@ def prepare_draw_resolution(
 PermanentObjectIntent = (
     SelectMutateMergeIntent |
     ResumeCompositionOrderIntent |
-    PairSoulbondIntent | GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | ExchangePermanentControlIntent | CreateRegenerationShieldIntent
+    PairSoulbondIntent | GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | ExchangePermanentControlIntent | DirectionalControlIntent | CreateRegenerationShieldIntent
+    | CreateRegenerationShieldSetIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
     | PrepareSourceIntent
@@ -455,9 +486,10 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
-    GainControlIntent, GainSpellControlIntent, GainControlSetIntent, GiveControlIntent, GiveControlSetIntent,
+    GainControlIntent, GainSpellControlIntent, GainControlSetIntent, GiveControlIntent, GiveControlSetIntent, DirectionalControlIntent,
     RestoreOwnerControlIntent, ExchangePermanentControlIntent,
     CreateRegenerationShieldIntent,
+    CreateRegenerationShieldSetIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
     DestroyPermanentTargetsIntent,
@@ -468,6 +500,49 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     ReturnPermanentToOwnerHandIntent,
     ReturnGraveyardCardToOwnerHandIntent,
 )
+
+
+def _destroy_permanent_with_result(sink, intent):
+    from ..rules.destroyed_creature_copy import DestroyedCreatureCopy, commit_destroyed_creature_copy
+
+    if isinstance(intent.followup, DestroyedCreatureCopy):
+        return commit_destroyed_creature_copy(sink, intent)
+    target = sink._resolve_object(intent.actor, intent.object_ref, zones={"battlefield"})
+    original = None
+    if isinstance(intent.followup, TargetControllerLibraryReveal):
+        original = (target.object_id, target.logical_object_id, target_controller_library_facts(sink, target))
+    types, _, supertypes = sink._type_parts(str(sink._effective_card_data(target).get("type_line") or ""))
+    result = destruction.destroy_permanent_refs(
+        sink, (intent.object_ref,), actor=intent.actor, reason=intent.reason,
+        replacement_selections=intent.replacement_selections,
+    )
+    if original is not None:
+        object_id, identity, facts = original
+        return committed_target_controller_library_result(sink, target_ref=intent.object_ref,
+            target_object_id=object_id, target_identity=identity, caster=intent.actor, before=facts)
+    if isinstance(intent.followup, NonbasicLandSourceUntap):
+        return intent.followup.committed_result(target_was_basic="basic" in supertypes)
+    return intent.followup.committed_result(artifact="artifact" in types, destroyed=target.object_id in result.destroyed_object_ids)
+
+
+def _destroy_target_set_with_followup(sink, intent):
+    from ..rules.controlled_destruction_source_counters import (
+        ControlledDestructionSourceCounters, commit_controlled_destruction_source_counters,
+    )
+
+    if isinstance(intent.followup, ControlledDestructionSourceCounters):
+        return commit_controlled_destruction_source_counters(sink, intent)
+    originals = tuple(sink._resolve_object(intent.actor, ref, zones={"battlefield"}) for ref in intent.object_refs)
+    controllers = {card.object_id: card.controller for card in originals}
+    result = destruction.destroy_permanent_refs(
+        sink, intent.object_refs, actor=intent.actor, reason=intent.reason,
+        replacement_selections=intent.replacement_selections,
+        record_graveyard_outcomes=intent.followup.requires_graveyard,
+    )
+    committed = result.died_object_ids if intent.followup.requires_graveyard else result.destroyed_object_ids
+    return intent.followup.from_committed_controllers(
+        controllers[object_id] for object_id in committed if object_id in controllers
+    )
 
 
 def _execute_permanent_object_intent(
@@ -500,8 +575,11 @@ def _execute_permanent_object_intent(
         return 'pair', pair.pair_id
     if isinstance(intent, (GainControlIntent, GiveControlIntent, GainSpellControlIntent)):
         return intent.object_ref, sink.gain_control_intent(intent)
-    if isinstance(intent, (GainControlSetIntent, GiveControlSetIntent, RestoreOwnerControlIntent, ExchangePermanentControlIntent)):
+    if isinstance(intent, (GainControlSetIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+                           ExchangePermanentControlIntent, DirectionalControlIntent)):
         return intent.actor, sink.gain_control_set_intent(intent)
+    if isinstance(intent, CreateRegenerationShieldSetIntent):
+        return intent.actor, tuple(_execute_permanent_object_intent(sink, shield)[1] for shield in intent.shields)
     if isinstance(intent, CreateRegenerationShieldIntent):
         return (
             intent.object_ref,
@@ -514,6 +592,8 @@ def _execute_permanent_object_intent(
             ),
         )
     if isinstance(intent, DestroyPermanentIntent):
+        if intent.followup is not None:
+            return intent.object_ref, _destroy_permanent_with_result(sink, intent)
         return (
             intent.object_ref,
             destruction.destroy_permanent_refs(
@@ -528,6 +608,8 @@ def _execute_permanent_object_intent(
     if isinstance(intent, DestroyPermanentSetIntent):
         return intent.actor, sink.destroy_permanent_set_intent(intent)
     if isinstance(intent, DestroyPermanentTargetsIntent):
+        if intent.followup is not None:
+            return intent.actor, _destroy_target_set_with_followup(sink, intent)
         return (
             intent.actor,
             destruction.destroy_permanent_refs(
@@ -690,13 +772,15 @@ def _execute_library_intent(
 
 
 CounterPlacementIntent = (
-    PlaceCounterBatchIntent
+    OpponentBlightBatchIntent
+    | PlaceCounterBatchIntent
     | PlaceCountersIntent
     | PlaceCountersOnSetIntent
     | PlaceCountersOnTargetsIntent
     | PlacePlayerCountersIntent
 )
 COUNTER_PLACEMENT_INTENT_TYPES = (
+    OpponentBlightBatchIntent,
     PlaceCounterBatchIntent,
     PlaceCountersIntent,
     PlaceCountersOnSetIntent,
@@ -710,6 +794,8 @@ def _execute_counter_placement_intent(
     sink: SemanticIntentSink,
     intent: CounterPlacementIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, OpponentBlightBatchIntent):
+        return _COUNTER_RESULT_KEY, sink.place_opponent_blight_batch_intent(intent)
     if isinstance(intent, PlaceCounterBatchIntent):
         return _COUNTER_RESULT_KEY, sink.place_counter_batch_intent(intent)
     if isinstance(intent, PlaceCountersIntent):
@@ -731,9 +817,10 @@ PlayerIntent = (
     BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
     | DiscardWholeHandsResultIntent | HandLibraryRedrawIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | GraveyardRecyclingIntent | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
-    | ScheduleAdditionalBeginningIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | TargetCombatDamageMultiplierIntent | ScheduleNextDrawResultIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
+    | ScheduleAdditionalBeginningIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
+    | NextTurnAttackRestrictionIntent | CounterBoundAttackRestrictionIntent
     | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent | TokenMillRepeatIntent | LibraryBottomResultIntent
     | VentureProgressIntent | TakeInitiativeIntent
 )
@@ -741,8 +828,9 @@ PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, HandLibraryRedrawIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     GraveyardRecyclingIntent, TargetLandTypeSettingIntent, FixedSourceSacrificeIntent,
-    TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent,
+    TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, TargetCombatDamageMultiplierIntent, ScheduleNextDrawResultIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent, NoMaximumForGameIntent,
     TemporaryProtectedAttackPaymentIntent,
+    NextTurnAttackRestrictionIntent, CounterBoundAttackRestrictionIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent, TokenMillRepeatIntent, LibraryBottomResultIntent,
     VentureProgressIntent, TakeInitiativeIntent,
 )
@@ -753,6 +841,7 @@ TapStateIntent = (
     | ProhibitNextPlayerUntapIntent
     | SetPermanentsTappedIntent
     | SetPublicPermanentsTappedIntent
+    | UntapTurnAttackersIntent
 )
 TAP_STATE_INTENT_TYPES = (
     SetPermanentTappedIntent,
@@ -761,6 +850,7 @@ TAP_STATE_INTENT_TYPES = (
     ProhibitNextPlayerUntapIntent,
     SetPermanentsTappedIntent,
     SetPublicPermanentsTappedIntent,
+    UntapTurnAttackersIntent,
 )
 
 
@@ -818,6 +908,25 @@ def _execute_player_intent(
     if isinstance(intent, TemporaryProtectedAttackPaymentIntent):
         from ..rules.protected_attack_payments import apply_protected_attack_payment
         return intent.actor, apply_protected_attack_payment(sink, intent)
+    if isinstance(intent, NoMaximumForGameIntent):
+        from .game_hand_size import commit_no_maximum_for_game
+
+        return intent.controller, commit_no_maximum_for_game(sink, intent).effect_id
+    if isinstance(intent, CounterBoundAttackRestrictionIntent):
+        from ..rules.counter_bound_attack import apply_counter_bound_attack_restriction
+
+        return intent.actor, apply_counter_bound_attack_restriction(sink, intent)
+    if isinstance(intent, NextTurnAttackRestrictionIntent):
+        from ..rules.next_turn_attack_restrictions import apply_next_turn_attack_restriction
+        return intent.actor, apply_next_turn_attack_restriction(sink, intent)
+    if isinstance(intent, ScheduleNextDrawResultIntent):
+        from .scheduled_next_draw import apply_next_draw_result_intent
+
+        return intent.actor, apply_next_draw_result_intent(sink, intent).effect_id
+    if isinstance(intent, TargetCombatDamageMultiplierIntent):
+        from .target_combat_damage_multiplier import apply_target_combat_damage_multiplier
+
+        return intent.actor, apply_target_combat_damage_multiplier(sink, intent)
     if isinstance(intent, TemporaryDrawRedirectIntent):
         from .temporary_draw_redirect import apply_temporary_draw_redirect
 
@@ -837,30 +946,18 @@ def _execute_player_intent(
             reason=intent.reason,
         )
     if isinstance(intent, ImpulseAccessIntent):
-        from ..impulse_access import (
-            ImpulseAccessRequest,
-            resolve_fixed_impulse_access,
-        )
+        from ..rules.impulse_spawn_settlement import resolve_impulse_intent_with_delayed_settlement
 
-        result = resolve_fixed_impulse_access(
-            sink,
-            ImpulseAccessRequest(
-                actor=intent.actor,
-                player=intent.player,
-                count=intent.count,
-                duration=intent.duration,
-                reason=intent.reason,
-                schema_version=intent.schema_version,
-            ),
-        )
-        return intent.player, result.exiled_refs
+        return resolve_impulse_intent_with_delayed_settlement(sink, intent)
     from ..milling import mill_cards, mill_player_batch, mill_request
 
     if intent.batch_players:
         results = mill_player_batch(sink, tuple(
             mill_request(sink, actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
             for player in intent.batch_players
-        ))
+        ), replacement_selections=intent.replacement_selections)
+        if intent.followup is not None:
+            return intent.actor, intent.followup.from_committed_results(sink, results)
         return intent.actor, tuple(ref for result in results for ref in result.refs)
 
     result = mill_cards(
@@ -871,7 +968,10 @@ def _execute_player_intent(
             count=intent.count,
             reason=intent.reason,
         ),
+        replacement_selections=intent.replacement_selections,
     )
+    if intent.followup is not None:
+        return intent.player, intent.followup.from_committed_result(sink, result)
     return intent.player, result.refs
 
 
@@ -879,6 +979,10 @@ def _execute_tap_state_intent(
     sink: SemanticIntentSink,
     intent: TapStateIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, UntapTurnAttackersIntent):
+        from ..rules.main_phase_combat_runtime import resolve_untap_turn_attackers
+
+        return intent.actor, resolve_untap_turn_attackers(sink, intent)
     if isinstance(intent, tap_state.ProhibitAttackingCreaturesNextUntapIntent):
         return intent.actor, tap_state.prohibit_attacking_creatures_next_untap(sink, intent)
     if isinstance(intent, ProhibitNextPlayerUntapIntent):
@@ -909,6 +1013,8 @@ def _execute_tap_state_intent(
                 source_ref=intent.source_ref,
                 untap_restraint=intent.untap_restraint,
                 lose_unspent_mana=intent.lose_unspent_mana,
+                restrain_snapshot_on_player_untap=intent.restrain_snapshot_on_player_untap,
+                restrain_snapshot_on_controller_untap=intent.restrain_snapshot_on_controller_untap,
             )
         except PublicTapStateSetError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -940,6 +1046,15 @@ def _execute_tap_state_intent(
     return intent.actor, result
 
 
+RESOLVING_CAST_CHOICE_INTENTS = (
+    MadnessChoiceIntent, MiracleCastChoiceIntent, DiscoverCastIntent, DiscoverCleanupIntent,
+    GraveyardCastIntent, DiscardedCardCastIntent, ExileGraveyardCopiesIntent, ResolvingExileLandPlayIntent,
+    RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent, ResolveBoundedHandCastIntent,
+    ResolveBudgetedCastIntent, ResolveRippleCastIntent, RippleBottomIntent, ResolvingSharedTypeLibraryPlayIntent,
+    ResolveQualifiedLibraryCastIntent,
+)
+
+
 def _execute_resolving_cast_choice(sink, intent):
     if isinstance(intent,ResolveRippleCastIntent):
         from ..rules.ripple_casting import execute_ripple_cast
@@ -947,6 +1062,9 @@ def _execute_resolving_cast_choice(sink, intent):
     if isinstance(intent,RippleBottomIntent):
         from ..rules.revealed_library_bottom import execute_ripple_bottom
         return intent.actor,execute_ripple_bottom(sink,intent)
+    if isinstance(intent, ResolveBudgetedCastIntent):
+        from ..rules.budgeted_resolving_cast import commit
+        return intent.actor, commit(sink,intent)
     if isinstance(intent, ResolveBoundedHandCastIntent):
         from ..rules.bounded_hand_cast import execute_bounded_hand_cast
         return intent.actor, execute_bounded_hand_cast(sink, intent)
@@ -959,12 +1077,18 @@ def _execute_resolving_cast_choice(sink, intent):
     if isinstance(intent, ResolvingSharedTypeLibraryPlayIntent):
         from ..rules.shared_type_library_play import execute_shared_type_library_play
         return intent.actor, execute_shared_type_library_play(sink, intent)
+    if isinstance(intent, ResolveQualifiedLibraryCastIntent):
+        from ..rules.qualified_library_cast import execute_qualified_library_cast
+        return intent.actor, execute_qualified_library_cast(sink, intent)
     if isinstance(intent, ResolvingExileLandPlayIntent):
         sink._play_land(intent.actor, {}, resolving=intent)
         return intent.actor, None
     if isinstance(intent, ExileGraveyardCopiesIntent):
         from ..semantic_choices.graveyard_copy_cast import execute_exile_graveyard_copies
         return intent.actor, execute_exile_graveyard_copies(sink, intent)
+    if isinstance(intent, DiscardedCardCastIntent):
+        from ..rules.discarded_card_cast import execute_discarded_card_cast
+        return intent.actor, execute_discarded_card_cast(sink, intent)
     if isinstance(intent, GraveyardCastIntent):
         from ..semantic_choices.targeted_graveyard_cast import execute_targeted_graveyard_cast
         execute_targeted_graveyard_cast(sink, intent)
@@ -975,8 +1099,7 @@ def _execute_resolving_cast_choice(sink, intent):
         return intent.actor, None
     if isinstance(intent,DiscoverCleanupIntent):
         from ..discover_cleanup import execute_discover_cleanup
-        execute_discover_cleanup(sink,intent)
-        return intent.actor, None
+        return intent.actor, execute_discover_cleanup(sink,intent)
     if isinstance(intent, MiracleCastChoiceIntent):
         from ..drawing.miracle_casting import execute_miracle_cast_choice
         execute_miracle_cast_choice(sink, intent)
@@ -995,9 +1118,32 @@ def _synchronize_instruction_observers(sink):
         reconcile_soulbond_pairs(sink)
 
 
-def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool:
-    child, = effect['effects']
+def _optional_result_scope(host, item, instruction):
+    from ..variable_resolution_mana_model import is_optional_target_mana_choice
+
+    limited_mana = is_optional_target_mana_choice(instruction)
+    if not limited_mana and instruction.get("op") != "offer_optional_effect":
+        return None, True
+    from ..rules.trigger_limits import optional_result_usage_available, optional_result_usage_binding
+
+    try:
+        binding = optional_result_usage_binding(host, item)
+        if limited_mana and binding is None:
+            raise ValueError("Optional opponent mana requires its original triggered ability")
+        return binding, binding is None or optional_result_usage_available(host.state, binding)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+
+
+def _can_choose_limited_optional_result(host, item, effect: Mapping[str, Any]) -> bool:
+    from ..permanent_event_state_model import optional_draw_proliferate_is_closed
+
     actor = effect['player']
+    children = effect['effects']
+    if optional_draw_proliferate_is_closed(children, player=actor):
+        child = children[0]
+    else:
+        child, = children
     operation = child['op']
     if operation == 'draw':
         from .draw_restrictions import current_draw_permission
@@ -1007,23 +1153,271 @@ def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool
         from .life_prohibitions import collect_life_gain_permissions
 
         return collect_life_gain_permissions(host).allows_gain(actor)
+    if operation == 'create_token':
+        from ..rules.trigger_limits import uses_enchantment_entry_copy_limit
+        from ..token_copy_runtime import enchantment_copy_available
+
+        program = host.semantics.get(item.semantic_key)
+        if program is not None and uses_enchantment_entry_copy_limit(program):
+            return enchantment_copy_available(host, item, actor, child)
     if operation == 'offer_optional_mana_payment':
         return bool(host.state.players[actor].zones['hand'])
     return True
 
 
-def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
-    """Resolve one available instruction without changing its position in the program."""
-    from ..card_overrides import normalize_game_record_v3_effect
+def _prepare_available_optional_effect(host, item, raw_effect, effect):
+    """Filter impossible choices using each represented result owner."""
+    from ..combat_removal import prepare_optional_blocked_attacker_return
+    from ..event_card_return import unavailable_optional_event_library_move
+    from ..effect_runtime.linked_library_imprint import unavailable_optional_linked_artifact_return
+    from ..permanent_transform import prepare_optional_counter_source_flip, prepare_optional_source_transform
+    from ..rules.attachment_actions import unavailable_optional_equipment_attachment
+    from ..rules.graveyard_aura_entry import prepare_optional_graveyard_aura_entry
+
+    if unavailable_optional_combat_removal(host, raw_effect, effect):
+        return None
+    try:
+        effect = prepare_optional_counter_source_flip(host, item, raw_effect, effect)
+        if effect is not None:
+            effect = prepare_optional_source_transform(host, item, raw_effect, effect)
+        if effect is not None:
+            effect = prepare_optional_blocked_attacker_return(host, item, raw_effect, effect)
+        if effect is None:
+            return None
+        if (unavailable_optional_equipment_attachment(host, raw_effect, effect)
+            or unavailable_optional_event_library_move(host, raw_effect, effect)
+            or unavailable_optional_linked_artifact_return(host, item, effect)):
+            return None
+        return prepare_optional_graveyard_aura_entry(host, item, raw_effect, effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+
+
+def _is_zero_declared_result(effect, raw_effect, item):
+    from ..entry_x_amount_model import is_zero_entry_x_token_batch
+    from ..rules.source_counter_attacking_tokens import uses_source_counter_attacking_tokens
+
+    if (uses_source_counter_attacking_tokens(raw_effect)
+            and type(effect.get("quantity")) is int and effect["quantity"] == 0):
+        return True
+    if is_zero_announced_x_player_round(raw_effect, effect) or is_zero_entry_x_token_batch(raw_effect, effect):
+        return True
+    if type(effect.get("amount")) is not int or effect["amount"] != 0:
+        return False
+    if effect.get("op") in {"place_counters", "place_counters_on_set"}:
+        from ..counter_placement_sets import uses_source_power_combat_counter_set
+        from ..query_effect_amount_model import CAST_X_AMOUNT_KIND
+
+        raw_amount = raw_effect.get("amount")
+        return uses_source_power_combat_counter_set(raw_effect) or (
+            effect["op"] == "place_counters_on_set"
+            and isinstance(raw_amount, Mapping) and raw_amount.get("kind") == CAST_X_AMOUNT_KIND
+        )
+    if effect.get("op") != "place_counters_on_targets":
+        return False
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin
+    from ..source_entry_cast_information import uses_paid_white_entry_amount
+    from ..split_two_counter_target_amount import is_optional_split_two_counter_amount
+
+    raw_amount = raw_effect.get("amount")
+    return (
+        not item.targets and is_optional_split_two_counter_amount(raw_amount)
+        or uses_paid_white_entry_amount(raw_amount)
+        or isinstance(raw_amount, Mapping) and raw_amount.get("kind") == SCALAR_AMOUNT_KIND
+        and raw_amount.get("origin") == ScalarAmountOrigin.CAST_SPELL_MANA_VALUE.value
+    )
+
+
+def _bind_event_resolution_results(host, item, raw_effect):
+    from ..rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD, verify_enchantment_return_origin
+
+    if DEATH_ENCHANTMENT_RETURN_FIELD in raw_effect:
+        verify_enchantment_return_origin(host, item, raw_effect)
+    from ..rules.casting.spell_text import scoped_cast_text_instruction
+    from ..rules.event_player_result_shapes import bind_event_player_count_effect
+    from ..rules.fractional_player_result_shapes import bind_half_library_draw
+    from ..rules.other_spell_history_shapes import bind_other_spell_draw
+    from ..rules.scheduled_player_shapes import bind_upkeep_source_counter_draw
+    from ..rules.owner_library_position_shapes import bind_draw_source_owner_top_move
+    from ..rules.attack_batches import bind_attacking_opponent_token
+    from ..rules.death_controller_opponents import bind_death_opponent_result
+    from ..rules.announced_token_sweep import TOKEN_SWEEP_RESULT_FIELD, validate_token_sweep_result
+
+    from ..rules.source_counter_mill_choice import bind_source_counter_mill
+    from ..rules.repeat_top_hand_life import bind_repeat_top_hand_life
+    from ..rules.recipient_counter_damage import bind_recipient_counter_damage
+    from ..rules.paid_discard_damage import bind_paid_nonland_damage
+    from ..rules.private_look_land_or_hand import bind_private_land_hand
+    from ..rules.apnap_type_return import bind_type_return
+    from ..rules.linked_landfall_play import bind_exploration_settlement
+    from ..rules.prior_qualified_cast_copy import bind_prior_cast_copy
+    from ..rules.impulse_spawn_settlement import RECEIPT_FIELD, bind_spawn_settlement
+    from ..rules.power_counted_impulse import bind_resolution as bind_power_counted_impulse
+    from ..rules.entrant_x_reflexive import bind_paid_entrant_counters
+
+    from ..rules.combat_receiving_life import bind_combat_receiving_life
+    try:
+        if TOKEN_SWEEP_RESULT_FIELD in raw_effect:
+            validate_token_sweep_result(host, item, raw_effect)
+        raw_effect = bind_paid_entrant_counters(host, item, raw_effect)
+        if raw_effect is None:
+            return item, None
+        scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
+        raw_effect = bind_draw_source_owner_top_move(scoped_item, raw_effect)
+        raw_effect = bind_half_library_draw(host.state, scoped_item, raw_effect)
+        raw_effect = bind_event_player_count_effect(host.state, scoped_item, raw_effect)
+        raw_effect = bind_upkeep_source_counter_draw(host, scoped_item, raw_effect)
+        raw_effect = bind_upkeep_source_counter_sacrifice(host, scoped_item, raw_effect)
+        from ..rules.source_power_firebending import bind_source_power_firebending
+
+        raw_effect = bind_source_power_firebending(host, scoped_item, raw_effect)
+        raw_effect = bind_counter_scaled_annihilator(host, scoped_item, raw_effect)
+        raw_effect = bind_other_spell_draw(host.state, scoped_item, raw_effect)
+        raw_effect = bind_qualified_token_creators(host, raw_effect)
+        raw_effect = bind_power_counted_impulse(host, scoped_item, raw_effect)
+        if raw_effect is not None:
+            raw_effect = bind_death_opponent_result(host, scoped_item, raw_effect)
+            raw_effect = bind_attacking_opponent_token(host, scoped_item, raw_effect)
+            from ..rules.cast_coin_transform import bind_owner_transform_resolution
+
+            raw_effect = bind_owner_transform_resolution(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_source_counter_mill(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_repeat_top_hand_life(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_recipient_counter_damage(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_paid_nonland_damage(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_private_land_hand(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_type_return(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = (bind_spawn_settlement(host, scoped_item, raw_effect) if RECEIPT_FIELD in raw_effect
+                              else bind_exploration_settlement(host, scoped_item, raw_effect))
+            if raw_effect is not None:
+                raw_effect = bind_prior_cast_copy(host, scoped_item, raw_effect)
+
+            if raw_effect is not None:
+                raw_effect = bind_combat_receiving_life(host, scoped_item, raw_effect)
+    except ValueError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return scoped_item, raw_effect
+
+
+def _bound_recipient_has_left(host, item, raw_effect, effect):
+    if effect.get("op") == "place_player_counters":
+        from ..rules.unblocked_attackers import unblocked_poison_recipient_has_left
+        if unblocked_poison_recipient_has_left(host, item, raw_effect, effect):
+            return True
+    if effect.get("op") == "prohibit_casting_until_end_of_turn":
+        from ..rules.temporary_cast_restrictions import attacked_defender_cast_recipient_has_left
+
+        if attacked_defender_cast_recipient_has_left(host, raw_effect, effect):
+            return True
+    if effect.get("op") == "choose_cards_apnap" and effect.get("then") in {"exile", "return_owner_hand"}:
+        from ..rules.event_player_choice_shapes import event_bound_public_choice_recipient_has_left
+
+        if event_bound_public_choice_recipient_has_left(host, raw_effect, effect):
+            return True
+    if effect.get("op") == "discard_random_cards":
+        from ..random_discard import blocked_defender_discard_recipient_has_left
+
+        if blocked_defender_discard_recipient_has_left(host, raw_effect, effect):
+            return True
+    if effect.get("op") == "mill":
+        from ..milling import event_mill_recipient_has_left
+        if event_mill_recipient_has_left(host, raw_effect, effect):
+            return True
+    return False
+
+
+from ..rules.retained_die_roll import with_retained_die_choice
+from ..rules.night_shift_dice import with_night_shift_die_choice
+
+
+def _finalize_stack_resolution_effect(host, item, scoped_item, raw_effect, effect, optional_usage):
+    """Apply availability checks to a bound instruction and finish its context."""
     from ..event_card_return import prepare_event_library_order
-    from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
+    from ..rules.casting.spell_text import cast_text_instruction_has_no_target
+
+    if raw_effect.get('op') == 'offer_optional_effect':
+        if optional_usage is not None and not _can_choose_limited_optional_result(host, item, effect):
+            return None
+        effect = _prepare_available_optional_effect(host, scoped_item, raw_effect, effect)
+        if effect is None:
+            return None
+    if raw_effect.get("players") == "$targets":
+        if effect.get("players") == []:
+            return None
+        amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(effect.get("op"))
+        amount = raw_effect.get(amount_field)
+        if isinstance(amount, Mapping) and type(effect.get(amount_field)) is int and effect[amount_field] == 0:
+            from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
+            if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
+                return None
+    if _is_zero_declared_result(effect, raw_effect, scoped_item):
+        return None
+    if _bound_recipient_has_left(host, item, raw_effect, effect):
+        return None
+    from ..turn_skip_model import TURN_SKIP_OPERATION
+
+    if (any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object'))
+        or (scoped_item is not item or raw_effect.get("op") == TURN_SKIP_OPERATION)
+        and cast_text_instruction_has_no_target(raw_effect, effect)):
+        host._log(
+            item.controller, 'effect.target.skipped',
+            f'Skipped a target-dependent part of {item.ref}.',
+            {'stack': item.ref, 'operation': effect.get('op'), 'reason': 'that target is illegal'},
+            importance=1,
+        )
+        return None
+    from ..discard_effect_origin import bind_discard_effect_origin
+    try:
+        effect = bind_discard_effect_origin(host.state, scoped_item, effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return prepare_event_library_order(host, effect)
+
+
+@with_night_shift_die_choice
+@with_retained_die_choice
+def prepare_stack_resolution_effect(
+    host, item, raw_effect: Mapping[str, Any], *, instruction_pointer: int = 0,
+) -> dict[str, Any] | None:
+    """Resolve one available instruction without changing its position in the program."""
+    from ..chosen_attack_turn_model import DESTROY as DESTROY_CHOSEN_NONATTACKERS
+    if raw_effect.get("op") == DESTROY_CHOSEN_NONATTACKERS:
+        from ..rules.chosen_attack_turn import resolve_chosen_nonattackers
+
+        return resolve_chosen_nonattackers(host, item, raw_effect)
+    handled, bound = prepare_source_bound_resolution(host, item, raw_effect, instruction_pointer)
+    if handled:
+        return bound
+    from ..rules.linked_exile_owner_tokens import FIELD as LINKED_EXILE_OWNER_TOKEN_FIELD
+
+    if LINKED_EXILE_OWNER_TOKEN_FIELD in raw_effect:
+        from ..rules.linked_exile_owner_tokens import bind_linked_exile_owner_tokens
+
+        try:
+            return bind_linked_exile_owner_tokens(host, item, raw_effect)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    from ..card_overrides import normalize_game_record_v3_effect
     from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
     from ..rules.event_outcome_shapes import cast_event_token_recipient_has_left_game
     from ..end_combat_counterpart_model import END_COMBAT_COUNTERPART_FIELD
 
     from ..rules.post_exchange_token import POST_EXCHANGE_TOKEN_VERSION_FIELD, bind_post_exchange_token
+    from ..fixed_effect_payment import EQUIPPED_DEATH_LIFE_DRAW_FIELD, bind_equipped_death_life_draw
 
+    if EQUIPPED_DEATH_LIFE_DRAW_FIELD in raw_effect:
+        try:
+            return bind_equipped_death_life_draw(item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if POST_EXCHANGE_TOKEN_VERSION_FIELD in raw_effect:
         try:
             return bind_post_exchange_token(host, item, raw_effect)
@@ -1057,34 +1451,50 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         )
         return None
 
-    from ..rules.event_player_result_shapes import bind_spell_cast_count_life_effect
-    from ..rules.other_spell_history_shapes import bind_other_spell_draw
+    from ..rules.reanimation_followup import bind_returned_creature_counter_subjects
+
     try:
-        scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
-        raw_effect = bind_spell_cast_count_life_effect(host.state, scoped_item, raw_effect)
-        raw_effect = bind_other_spell_draw(host.state, scoped_item, raw_effect)
-    except ValueError as exc:
+        raw_effect = bind_returned_creature_counter_subjects(host, raw_effect)
+    except (TypeError, ValueError) as exc:
         raise SemanticNodeError(str(exc)) from exc
     if raw_effect is None:
         return None
-    optional_usage = None
-    if raw_effect.get('op') == 'offer_optional_effect':
-        from ..rules.trigger_limits import optional_result_usage_available, optional_result_usage_binding
-
-        try:
-            optional_usage = optional_result_usage_binding(host, scoped_item)
-            if optional_usage is not None and not optional_result_usage_available(host.state, optional_usage):
-                return None
-        except (ValueError, TypeError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
+    scoped_item, raw_effect = _bind_event_resolution_results(host, item, raw_effect)
+    if raw_effect is None:
+        return None
+    optional_usage, available = _optional_result_scope(host, scoped_item, raw_effect)
+    if not available:
+        return None
     from ..stack_counter import bind_conditional_stack_counter
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
+    if raw_effect.get("op") == "choose_option":
+        from .tap_state_handlers import bind_optional_equipped_tap_state
+
+        effect = bind_optional_equipped_tap_state(host.state, raw_effect, effect)
+        if effect is None:
+            return None
+    from ..rules.attacking_entry_copy import materialize_copy, uses_copy
+
+    if uses_copy(raw_effect):
+        try:
+            return materialize_copy(host, scoped_item, raw_effect, effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    from .fixed_target_set_handlers import bind_revalidated_tap_target_cards
+
+    effect = bind_revalidated_tap_target_cards(scoped_item, raw_effect, effect)
+    from ..counter_placement_sets import bind_counter_receipt_source_exclusion
     from ..rules.affected_player_discard_capability_shapes import bind_equipped_damage_discard_player
     from ..rules.conditional_target_preparation import bind_resolution_target_color
+    from ..rules.entry_x_support import entry_x_support_has_no_targets
 
     try:
-        effect = bind_equipped_damage_discard_player(host.state, raw_effect, effect)
+        if entry_x_support_has_no_targets(scoped_item, raw_effect, effect):
+            return None
+        effect = bind_counter_receipt_source_exclusion(
+            host, scoped_item, bind_equipped_damage_discard_player(host.state, raw_effect, effect),
+        )
         if effect is not None:
             effect = bind_resolution_target_color(host, scoped_item, raw_effect, effect)
     except (TypeError, ValueError) as exc:
@@ -1097,79 +1507,17 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             return bind_temporary_occurrence_copy(host, scoped_item, raw_effect, effect)
         except (TypeError, ValueError, KeyError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+    from ..source_tap_effect import OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION, SOURCE_CONTROL_UNTAP_FIELD
+
+    if (effect.get("op") == "tap" and raw_effect.get(SOURCE_CONTROL_UNTAP_FIELD) == OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION
+            and effect.get("card") is None):
+        return None
     effect = bind_conditional_stack_counter(host, scoped_item, raw_effect, effect)
     if effect is None:
         return None
     if ENTRY_RETURN_PAYMENT_VERSION_FIELD in raw_effect:
         effect = bind_checked_entry_return_payment(host, scoped_item, raw_effect, effect)
-    if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
-        return None
-    if raw_effect.get('op') == 'offer_optional_effect':
-        from ..event_card_return import unavailable_optional_event_library_move
-        from ..rules.attachment_actions import unavailable_optional_equipment_attachment
-
-        if unavailable_optional_combat_removal(host, raw_effect, effect):
-            return None
-        try:
-            if (unavailable_optional_equipment_attachment(host, raw_effect, effect)
-                or unavailable_optional_event_library_move(host, raw_effect, effect)):
-                return None
-        except (TypeError, ValueError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
-    if raw_effect.get("players") == "$targets":
-        if effect.get("players") == []:
-            return None
-        amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(effect.get("op"))
-        amount = raw_effect.get(amount_field)
-        if isinstance(amount, Mapping) and type(effect.get(amount_field)) is int and effect[amount_field] == 0:
-            from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
-            if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
-                return None
-    if effect.get("op") == "place_counters_on_targets" and type(effect.get("amount")) is int and effect["amount"] == 0:
-        from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin
-
-        raw_amount = raw_effect.get("amount")
-        if (isinstance(raw_amount, Mapping) and raw_amount.get("kind") == SCALAR_AMOUNT_KIND
-            and raw_amount.get("origin") == ScalarAmountOrigin.CAST_SPELL_MANA_VALUE.value):
-            return None
-    if effect.get("op") == "place_player_counters":
-        from ..rules.unblocked_attackers import unblocked_poison_recipient_has_left
-        if unblocked_poison_recipient_has_left(host, item, raw_effect, effect):
-            return None
-    if effect.get("op") == "prohibit_casting_until_end_of_turn":
-        from ..rules.temporary_cast_restrictions import attacked_defender_cast_recipient_has_left
-
-        if attacked_defender_cast_recipient_has_left(host, raw_effect, effect):
-            return None
-    if effect.get("op") == "choose_cards_apnap" and effect.get("then") in {"exile", "return_owner_hand"}:
-        from ..rules.event_player_choice_shapes import event_bound_public_choice_recipient_has_left
-
-        if event_bound_public_choice_recipient_has_left(host, raw_effect, effect):
-            return None
-    if effect.get("op") == "discard_random_cards":
-        from ..random_discard import blocked_defender_discard_recipient_has_left
-
-        if blocked_defender_discard_recipient_has_left(host, raw_effect, effect):
-            return None
-    if effect.get("op") == "mill":
-        from ..milling import event_mill_recipient_has_left
-        if event_mill_recipient_has_left(host, raw_effect, effect):
-            return None
-    if (any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object'))
-        or scoped_item is not item and cast_text_instruction_has_no_target(raw_effect, effect)):
-        host._log(
-            item.controller, 'effect.target.skipped',
-            f'Skipped a target-dependent part of {item.ref}.',
-            {'stack': item.ref, 'operation': effect.get('op'), 'reason': 'that target is illegal'},
-            importance=1,
-        )
-        return None
-    from ..discard_effect_origin import bind_discard_effect_origin
-    try:
-        effect = bind_discard_effect_origin(host.state, scoped_item, effect)
-    except (TypeError, ValueError) as exc:
-        raise SemanticNodeError(str(exc)) from exc
-    return prepare_event_library_order(host, effect)
+    return _finalize_stack_resolution_effect(host, item, scoped_item, raw_effect, effect, optional_usage)
 
 
 def execute_prepared_composition_movement(sink: SemanticIntentSink, plan: IntentPlan, prepared) -> object:
@@ -1181,153 +1529,127 @@ def execute_prepared_composition_movement(sink: SemanticIntentSink, plan: Intent
     return {intent.actor: result} if plan.result_shape == "by_player" else result
 
 
+def _execute_mana_or_designation_intent(sink, intent):
+    if isinstance(intent, NameStickerPlacementIntent):
+        return intent.object_id, commit_placement(sink, intent)
+    if isinstance(intent, AddManaIntent):
+        return intent.player, sink.apply_mana_intent(intent)
+    return intent.object_ref, sink.set_card_designation_intent(intent)
+
+
+def _execute_single_intent(sink: SemanticIntentSink, intent: object) -> tuple[str, object]:
+    """Dispatch one intent and retain its result key for the enclosing plan."""
+    if isinstance(intent,CREATION_INTENT_TYPES):
+        return execute_creation_intent(sink,intent)
+    if isinstance(intent,AscendIntent):
+        from ..rules.city_blessing import award_citys_blessing
+        return (intent.player,award_citys_blessing(sink,intent.player,reason=intent.reason))
+    if isinstance(intent, STACK_INTENT_TYPES):
+        return execute_stack_intent(sink, intent)
+    if isinstance(intent, PLAYER_INTENT_TYPES):
+        return _execute_player_intent(sink, intent)
+    if isinstance(intent, TAP_STATE_INTENT_TYPES):
+        return _execute_tap_state_intent(sink, intent)
+    if isinstance(intent, UntapAllCreaturesIntent):
+        result = tap_state.untap_all_creatures(
+            sink,
+            actor=intent.actor,
+            reason=intent.reason,
+        )
+        return ("creatures", result)
+    if isinstance(intent, PERMANENT_OBJECT_INTENT_TYPES):
+        return _execute_permanent_object_intent(sink, intent)
+    if isinstance(intent, PaidDepartureDamageIntent):
+        return intent.controller, queue_paid_damage(sink, intent)
+    if isinstance(intent, FlipSourcePermanentIntent):
+        from ..permanent_transform import commit_source_flip
+
+        return intent.card_ref, commit_source_flip(sink, intent)
+    if isinstance(intent, (NameStickerPlacementIntent, AddManaIntent, SetCardDesignationIntent)):
+        return _execute_mana_or_designation_intent(sink, intent)
+    if isinstance(intent, BecomeMonstrousIntent):
+        result = sink.become_monstrous_intent(intent)
+        return (intent.object_ref, result)
+    if isinstance(intent, BecomeRenownedIntent):
+        result = sink.become_renowned_intent(intent)
+        return (intent.object_ref, result)
+    if isinstance(intent, RECORDING_INTENT_TYPES):
+        return _execute_recording_intent(sink, intent)
+    if isinstance(intent, ZoneMoveIntent):
+        result = sink.move_object_intent(intent)
+        return (intent.object_ref, result)
+    if isinstance(intent, UnearthIntent):
+        result = resolve_unearth_intent(sink, intent)
+        return (intent.card_ref, result)
+    if isinstance(intent, NinjutsuEntryIntent):
+        result = resolve_ninjutsu_entry(sink, intent)
+        return (intent.source_ref, result)
+    if isinstance(intent, EncoreTokensIntent):
+        result = resolve_encore_tokens(sink, intent)
+        return (intent.source_ref, result)
+    if isinstance(intent, SelfZoneMoveIntent):
+        result = resolve_self_zone_move(sink, intent)
+        return (intent.card_ref, result)
+    if isinstance(intent,ExploitSacrificeIntent):
+        result=sink.exploit_sacrifice_intent(intent)
+        return (intent.actor,result)
+    if isinstance(intent, MoveObjectsSimultaneouslyIntent):
+        result = sink.move_objects_simultaneously_intent(intent)
+        return (intent.actor, result)
+    if isinstance(intent, RESOLVING_CAST_CHOICE_INTENTS):
+        return _execute_resolving_cast_choice(sink, intent)
+    if isinstance(intent, LIBRARY_INTENT_TYPES):
+        return _execute_library_intent(sink, intent)
+    if isinstance(intent, RecordZoneMoveIntent):
+        sink.record_zone_move_intent(intent)
+        return (intent.object_ref, None)
+    if isinstance(intent, LIFE_INTENT_TYPES):
+        return execute_life_intent(sink,intent)
+    if isinstance(intent, COUNTER_PLACEMENT_INTENT_TYPES):
+        return _execute_counter_placement_intent(sink, intent)
+    if isinstance(intent, RemoveCountersIntent):
+        result = execute_counter_removal(sink, intent)
+        return (_COUNTER_RESULT_KEY, result)
+    if isinstance(intent, COUNTER_MOVEMENT_INTENT_TYPES):
+        from ..rules.counter_movement import execute_counter_movement
+        return (_COUNTER_RESULT_KEY, execute_counter_movement(sink, intent))
+    if isinstance(intent, (RemoveAllCountersIntent, AllPermanentCountersThenTokenExileIntent)):
+        result = sink.remove_all_counters_intent(intent)
+        return (_COUNTER_RESULT_KEY, result)
+    if isinstance(intent, (EliminatePlayersIntent, WinGameIntent)):
+        sink.player_outcome_intent(intent)
+        return ("players", None)
+    if isinstance(intent, CreateTokenIntent):
+        result = sink.create_token_intent(intent)
+        return (intent.controller, result)
+    if isinstance(intent, CopyControlledTokensIntent):
+        result = sink.copy_controlled_tokens_intent(intent)
+        return (intent.controller, result)
+    if isinstance(intent, AddSubtypeIntent):
+        result = sink.add_subtype_intent(intent)
+        return (intent.object_ref, result)
+    if isinstance(intent, GrantZoneObjectKeywordIntent):
+        result = sink.grant_zone_object_keyword_intent(intent)
+        return (intent.object_ref or intent.actor, result)
+    if isinstance(intent, ProliferateIntent):
+        result = sink.proliferate_intent(intent)
+        return (intent.actor, result)
+    if isinstance(intent, DealFixedDamageSetIntent):
+        result = sink.deal_fixed_damage_set_intent(intent)
+        return (intent.source_ref, result)
+    if isinstance(intent, DomainEffectIntent):
+        result = sink.apply_domain_effect_intent(intent)
+        return (intent.operation, result)
+    raise TypeError(f"Unsupported semantic intent {type(intent).__name__}")
+
+
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
     if any(isinstance(intent, DrawCardsIntent) for intent in plan.intents):
-        raise SemanticNodeError(
-            "Draw intents require the replacement-aware draw coordinator"
-        )
+        raise SemanticNodeError("Draw intents require the replacement-aware draw coordinator")
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
-        if isinstance(intent,CREATION_INTENT_TYPES):
-            results.append(execute_creation_intent(sink,intent))
-            continue
-        if isinstance(intent,AscendIntent):
-            from ..rules.city_blessing import award_citys_blessing
-            results.append((intent.player,award_citys_blessing(sink,intent.player,reason=intent.reason)))
-            continue
-        if isinstance(intent, STACK_INTENT_TYPES):
-            results.append(execute_stack_intent(sink, intent))
-            continue
-        if isinstance(intent, PLAYER_INTENT_TYPES):
-            results.append(_execute_player_intent(sink, intent))
-            continue
-        if isinstance(intent, TAP_STATE_INTENT_TYPES):
-            results.append(_execute_tap_state_intent(sink, intent))
-            continue
-        if isinstance(intent, UntapAllCreaturesIntent):
-            result = tap_state.untap_all_creatures(
-                sink,
-                actor=intent.actor,
-                reason=intent.reason,
-            )
-            results.append(("creatures", result))
-            continue
-        if isinstance(intent, PERMANENT_OBJECT_INTENT_TYPES):
-            results.append(_execute_permanent_object_intent(sink, intent))
-            continue
-        if isinstance(intent, AddManaIntent):
-            result = sink.apply_mana_intent(intent)
-            results.append((intent.player, result))
-            continue
-        if isinstance(intent, SetCardDesignationIntent):
-            result = sink.set_card_designation_intent(intent)
-            results.append((intent.object_ref, result))
-            continue
-        if isinstance(intent, BecomeMonstrousIntent):
-            result = sink.become_monstrous_intent(intent)
-            results.append((intent.object_ref, result))
-            continue
-        if isinstance(intent, BecomeRenownedIntent):
-            result = sink.become_renowned_intent(intent)
-            results.append((intent.object_ref, result))
-            continue
-        if isinstance(intent, RECORDING_INTENT_TYPES):
-            results.append(_execute_recording_intent(sink, intent))
-            continue
-        if isinstance(intent, ZoneMoveIntent):
-            result = sink.move_object_intent(intent)
-            results.append((intent.object_ref, result))
-            continue
-        if isinstance(intent, UnearthIntent):
-            result = resolve_unearth_intent(sink, intent)
-            results.append((intent.card_ref, result))
-            continue
-        if isinstance(intent, NinjutsuEntryIntent):
-            result = resolve_ninjutsu_entry(sink, intent)
-            results.append((intent.source_ref, result))
-            continue
-        if isinstance(intent, EncoreTokensIntent):
-            result = resolve_encore_tokens(sink, intent)
-            results.append((intent.source_ref, result))
-            continue
-        if isinstance(intent, SelfZoneMoveIntent):
-            result = resolve_self_zone_move(sink, intent)
-            results.append((intent.card_ref, result))
-            continue
-        if isinstance(intent,ExploitSacrificeIntent):
-            result=sink.exploit_sacrifice_intent(intent)
-            results.append((intent.actor,result))
-            continue
-        if isinstance(intent, MoveObjectsSimultaneouslyIntent):
-            result = sink.move_objects_simultaneously_intent(intent)
-            results.append((intent.actor, result))
-            continue
-        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
-                               GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent,
-                               RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent,ResolveBoundedHandCastIntent,
-                               ResolveRippleCastIntent,RippleBottomIntent,ResolvingSharedTypeLibraryPlayIntent)):
-            results.append(_execute_resolving_cast_choice(sink,intent))
-            continue
-        if isinstance(intent, LIBRARY_INTENT_TYPES):
-            results.append(_execute_library_intent(sink, intent))
-            continue
-        if isinstance(intent, RecordZoneMoveIntent):
-            sink.record_zone_move_intent(intent)
-            results.append((intent.object_ref, None))
-            continue
-        if isinstance(intent, LIFE_INTENT_TYPES):
-            results.append(execute_life_intent(sink,intent))
-            continue
-        if isinstance(intent, COUNTER_PLACEMENT_INTENT_TYPES):
-            results.append(_execute_counter_placement_intent(sink, intent))
-            continue
-        if isinstance(intent, RemoveCountersIntent):
-            result = sink.remove_counters_intent(intent)
-            results.append((_COUNTER_RESULT_KEY, result))
-            continue
-        if isinstance(intent, MoveCountersIntent):
-            from ..rules.counter_movement import execute_counter_movement
-            results.append((_COUNTER_RESULT_KEY, execute_counter_movement(sink, intent)))
-            continue
-        if isinstance(intent, (RemoveAllCountersIntent, AllPermanentCountersThenTokenExileIntent)):
-            result = sink.remove_all_counters_intent(intent)
-            results.append((_COUNTER_RESULT_KEY, result))
-            continue
-        if isinstance(intent, EliminatePlayersIntent):
-            sink.eliminate_players_intent(intent)
-            results.append(("players", None))
-            continue
-        if isinstance(intent, CreateTokenIntent):
-            result = sink.create_token_intent(intent)
-            results.append((intent.controller, result))
-            continue
-        if isinstance(intent, CopyControlledTokensIntent):
-            result = sink.copy_controlled_tokens_intent(intent)
-            results.append((intent.controller, result))
-            continue
-        if isinstance(intent, AddSubtypeIntent):
-            result = sink.add_subtype_intent(intent)
-            results.append((intent.object_ref, result))
-            continue
-        if isinstance(intent, GrantZoneObjectKeywordIntent):
-            result = sink.grant_zone_object_keyword_intent(intent)
-            results.append((intent.object_ref or intent.actor, result))
-            continue
-        if isinstance(intent, ProliferateIntent):
-            sink.proliferate_intent(intent)
-            results.append((intent.actor, None))
-            continue
-        if isinstance(intent, DealFixedDamageSetIntent):
-            result = sink.deal_fixed_damage_set_intent(intent)
-            results.append((intent.source_ref, result))
-            continue
-        if isinstance(intent, DomainEffectIntent):
-            result = sink.apply_domain_effect_intent(intent)
-            results.append((intent.operation, result))
-            continue
-        raise TypeError(f"Unsupported semantic intent {type(intent).__name__}")
+        results.append(_execute_single_intent(sink, intent))
     _synchronize_instruction_observers(sink)
     if plan.result_shape == "by_player":
         return dict(results)
     return results[0][1]
-    SetCardDesignationIntent,

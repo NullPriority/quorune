@@ -606,6 +606,10 @@ class FixedPlayerCounterPlacementTemplate:
             "amount": self.count,
             "source": "$source",
         }
+        from ..rad_counter_model import RAD_COUNTER, RAD_PRODUCER_FIELD, RAD_TRIGGER_VERSION
+
+        if self.counter_name == RAD_COUNTER:
+            effect[RAD_PRODUCER_FIELD] = RAD_TRIGGER_VERSION
         if self.subject is PlayerCounterPlacementSubject.TARGET:
             effect["target"] = "$target.0"
         return (effect,)
@@ -668,7 +672,10 @@ class FixedCounterPlacementSetTemplate:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
             raise ValueError("Counter-set placement requires a typed set")
         if not fixed_counter_set_spec_is_closed(self.spec):
-            raise ValueError("Counter-set placement predicate is unsupported")
+            from ..counter_placement_sets import controlled_nonflying_counter_payload_dependencies
+
+            if not controlled_nonflying_counter_payload_dependencies(self.effects[0]):
+                raise ValueError("Counter-set placement predicate is unsupported")
         if self.target_relation not in {None, "any", "opponent"}:
             raise ValueError("Counter-set player target relation is unsupported")
         needs_target = (
@@ -1054,7 +1061,13 @@ def fixed_counter_set_spec_is_closed(
             return False
     subtype_disjunction = tuple(query.subtypes_any)
     if subtype_disjunction:
-        if subtypes or type_shape or not 2 <= len(subtype_disjunction) <= 8:
+        if subtypes or type_shape not in {(), ("creature",)} or not 2 <= len(subtype_disjunction) <= 8:
+            return False
+        if type_shape and (
+            len(subtype_disjunction) != 2 or spec.controller_relation is not PermanentControllerRelation.ACTOR
+            or spec.exclude_source or query.state_predicate is not None or query.keywords_all or query.colors_any
+            or query.supertypes_all or query.token is not None or query.tapped is not None
+        ):
             return False
         if any(
             canonical_creature_subtype(value) != value
@@ -1191,6 +1204,23 @@ def _fixed_counter_set_subtype_predicates(
     }
 
 
+def _controlled_creature_subtype_choice(phrase: str) -> AffectedPermanentSetSpec | None:
+    match = re.fullmatch(
+        r"creature you control that(?:['’]s| is) an? (?P<first>[a-z][a-z' -]*?) or an? (?P<second>[a-z][a-z' -]*)",
+        phrase,
+    )
+    if match is None:
+        return None
+    left = canonical_creature_subtype(match.group("first"))
+    right = canonical_creature_subtype(match.group("second"))
+    if left is None or right is None or left == right:
+        return None
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_any=(left, right)),
+        controller_relation=PermanentControllerRelation.ACTOR,
+    )
+
+
 def _fixed_counter_set_query(
     subject: str,
 ) -> tuple[AffectedPermanentSetSpec, str | None] | None:
@@ -1198,6 +1228,8 @@ def _fixed_counter_set_query(
     if not phrase.startswith("each "):
         return None
     phrase = phrase[5:]
+    if subtype_choice := _controlled_creature_subtype_choice(phrase):
+        return subtype_choice, None
     combat=re.fullmatch(r'(?P<state>attacking|blocking) (?P<body>creature(?: .+)?)',phrase)
     combat_state=None
     if combat is not None:
@@ -1360,7 +1392,13 @@ def fixed_counter_placement_set_effect_template(
         count == 1
     ):
         return None
-    parsed = _fixed_counter_set_query(match.group("subject"))
+    subject = match.group("subject")
+    if " ".join(subject.casefold().split()) == "each creature you control without flying":
+        from ..counter_placement_sets import controlled_nonflying_counter_subjects
+
+        parsed = (controlled_nonflying_counter_subjects(), None)
+    else:
+        parsed = _fixed_counter_set_query(subject)
     if parsed is None:
         return None
     spec, target_relation = parsed

@@ -4,6 +4,7 @@ from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
+from ..rules.opponent_draw_result import OPPONENT_DRAW_MECHANIC, opponent_draw_effects
 from ..drawing.step_exemption import (
     DRAW_STEP_EXEMPT_DISCARD_CAPABILITY,
     DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
@@ -13,9 +14,22 @@ from ..drawing.step_exemption import (
     DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
 )
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.opponent_draw_followup import distinct_opponent_draw_effects
+from ..rules.mana_contribution_draw import (
+    MANA_CONTRIBUTION_DRAW_MECHANIC,
+    MANA_CONTRIBUTION_DRAW_OPERATION,
+)
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .ir_model import OracleNode, OracleResidual, SourceSpan
+
+
+def distinct_opponent_draw_template(text):
+    if re.fullmatch(r"Each opponent draws a card, then you draw a card for each opponent "
+                    r"who drew a card this way\.", " ".join(text.split()), re.I) is None:
+        return None
+    return ("distinct-opponent-draw-result-v1", opponent_draw_effects(), None,
+            (OPPONENT_DRAW_MECHANIC,))
 
 
 DrawEffectTemplate = tuple[
@@ -26,6 +40,12 @@ DrawEffectTemplate = tuple[
 ]
 
 
+_MANA_CONTRIBUTION_DRAW = re.compile(
+    r"Starting with you, each player may pay any amount of mana\. "
+    r"Each player draws X cards, where X is the total amount of mana paid this way\.",
+    re.IGNORECASE,
+)
+
 
 _DRAW_LIMIT = re.compile(
     r"^(?P<subject>players|each player|each opponent|your opponents|you) "
@@ -34,6 +54,10 @@ _DRAW_LIMIT = re.compile(
 )
 _DRAW_DOUBLE = re.compile(
     r"^If you would draw a card, draw two cards instead\.?$",
+    re.IGNORECASE,
+)
+_DRAW_DOUBLE_EMPTY_HAND = re.compile(
+    r"^If you would draw a card while you have no cards in hand, draw two cards instead\.?$",
     re.IGNORECASE,
 )
 _DRAW_REVEAL_FIRST = re.compile(
@@ -80,7 +104,7 @@ def fixed_captured_draw_cast_effect_template(text: str) -> DrawEffectTemplate | 
 
 
 def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
-    """Lower closed mandatory and optional fixed-count draw instructions."""
+    """Lower closed draw instructions, including one derived multiplayer amount."""
 
     normalized = text.strip()
     normalized = re.sub(
@@ -209,10 +233,29 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
             },
             ("cr-121-drawing-a-card", "cr-115-targets"),
         )
-    return _multiplayer_fixed_draw_template(normalized)
+    return _multiplayer_fixed_draw_template(normalized) or mana_contribution_draw_template(normalized)
+
+
+def mana_contribution_draw_template(text: str) -> DrawEffectTemplate | None:
+    """Bind the complete payment sequence and its single shared draw amount."""
+    if not _MANA_CONTRIBUTION_DRAW.fullmatch(" ".join(text.split())):
+        return None
+    return (
+        "mana-contribution-draw-v1",
+        ({"op": MANA_CONTRIBUTION_DRAW_OPERATION, "schema_version": 1, "player": "$controller"},),
+        None,
+        (MANA_CONTRIBUTION_DRAW_MECHANIC,),
+    )
 
 
 def _multiplayer_fixed_draw_template(text: str) -> DrawEffectTemplate | None:
+    if re.fullmatch(
+        r"each opponent draws a card, then you draw a card for each opponent who drew a card this way\.?",
+        text,
+        re.IGNORECASE,
+    ):
+        return ("draw-followup-distinct-opponents-v1", distinct_opponent_draw_effects(), None,
+                ("cr-121-drawing-a-card",))
     shared = re.fullmatch(
         rf"you draw (?P<controller>{FIXED_COUNT_PATTERN}|twenty) cards? and "
         rf"each opponent draws (?P<opponents>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
@@ -335,6 +378,28 @@ def static_draw_result_handler(
     """Recognize the represented individual draw-result replacements."""
 
     if re.fullmatch(
+        r"If you would draw a card while your library has no cards in it, you win the game instead\.?",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        from ..semantic_runtime.draw_empty_library_win import DEPENDENCIES, empty_library_win_descriptor
+
+        return "draw-result-controller-empty-library-win-v1", empty_library_win_descriptor(), DEPENDENCIES
+
+    if " ".join(text.casefold().split()) == (
+        "if you would draw a card, you may instead choose land or nonland and reveal cards "
+        "from the top of your library until you reveal a card of the chosen kind. "
+        "put that card into your hand and put all other cards revealed this way on the bottom "
+        "of your library in any order."
+    ):
+        from ..semantic_runtime.draw_replacements import LibraryChoiceDrawReplacementHandler, library_choice_draw_descriptor
+
+        return (
+            "draw-result-controller-library-choice-v1",
+            library_choice_draw_descriptor(),
+            LibraryChoiceDrawReplacementHandler().capability_dependencies,
+        )
+
+    if re.fullmatch(
         r"If a player would draw a card except the first one they draw in each of their draw steps, "
         r"that player discards a card instead\. If the player discards a card this way, they draw a card\. "
         r"If the player doesn't discard a card this way, they mill a card\.",
@@ -376,21 +441,43 @@ def static_draw_result_handler(
         r"If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead\.",
         text, re.IGNORECASE,
     ) is not None
-    if not exempt and _DRAW_DOUBLE.fullmatch(text) is None:
+    if _DRAW_DOUBLE_EMPTY_HAND.fullmatch(text) is not None:
+        from ..semantic_runtime.draw_replacements import (
+            EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY,
+            EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
+        )
+
+        return _draw_result_multiplier_template(
+            "draw-result-double-empty-hand-controller-static-v1",
+            EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
+            EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY,
+        )
+    if exempt:
+        return _draw_result_multiplier_template(
+            "draw-result-double-after-first-in-own-step-v1",
+            DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+            (DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY, "zone.draw.result_generated_ordering"),
+        )
+    if _DRAW_DOUBLE.fullmatch(text) is None:
         return None
+    return _draw_result_multiplier_template(
+        "draw-result-double-controller-static-v1",
+        "replacement.draw.result.multiply.v1",
+        "zone.draw.result_generated_ordering",
+    )
+
+
+def _draw_result_multiplier_template(template_id, handler_id, capabilities):
     return (
-        "draw-result-double-after-first-in-own-step-v1" if exempt else "draw-result-double-controller-static-v1",
+        template_id,
         {
-            "handler_id": DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID if exempt else "replacement.draw.result.multiply.v1",
+            "handler_id": handler_id,
             "schema_version": 1,
             "event": "draw",
-            "condition": {
-                "affected_player_relation": "source_controller",
-            },
+            "condition": {"affected_player_relation": "source_controller"},
             "modification": {"factor": 2},
         },
-        (DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY, "zone.draw.result_generated_ordering")
-        if exempt else "zone.draw.result_generated_ordering",
+        capabilities,
     )
 
 

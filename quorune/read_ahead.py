@@ -129,3 +129,40 @@ __all__ = [
     "saga_chapter_line",
     "saga_chapter_numbers",
 ]
+
+
+GRANTED_READ_AHEAD_CAPABILITY = "counter.producer.granted_saga_read_ahead"
+GRANTED_READ_AHEAD_ENTRY = "granted_read_ahead_entry"
+
+
+def controlled_saga_read_ahead_query():
+    from .object_predicate import ObjectQuerySpec
+
+    return ObjectQuerySpec(zones=("battlefield",), subtypes_any=("saga",))
+
+
+def controlled_saga_read_ahead_grant():
+    return {
+        "handler_id": "continuous.ability.fixed-query-keyword-grant.v1",
+        "schema_version": 1,
+        "event": "characteristics.evaluate",
+        "condition": {
+            "target_controller": "source_controller",
+            "predicate": controlled_saga_read_ahead_query().to_dict(),
+            "exclude_source": False,
+        },
+        "modifier": {"add_abilities": ["Read Ahead"]},
+    }
+
+
+def read_ahead_grant_descriptor_dependencies(descriptor):
+    from collections.abc import Mapping
+    from .replacement.immutable import thaw_value
+
+    modifier = descriptor.get("modifier")
+    if (not isinstance(modifier, Mapping)
+            or "Read Ahead" not in modifier.get("add_abilities", ())):
+        return ()
+    if thaw_value(descriptor) != controlled_saga_read_ahead_grant():
+        raise ValueError("Granted Read Ahead requires the exact controlled Saga query")
+    return (GRANTED_READ_AHEAD_CAPABILITY,)

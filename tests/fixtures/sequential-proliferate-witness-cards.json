@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "synthetic_generic_proliferate_composition",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-9000-000000701341",
+      "name": "Generic Sequential Proliferate Artifact",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact enters, put a -1/-1 counter on each creature target player controls.\n{3}, {T}: Proliferate twice.",
+      "colors": [],
+      "color_identity": [],
+      "produced_mana": [],
+      "keywords": [
+        "Proliferate"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

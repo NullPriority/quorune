@@ -10,6 +10,7 @@ class GraveyardExileTargetScope(StrEnum):
     UP_TO_ONE = 'up_to_one'
     UP_TO_TWO = 'up_to_two'
     UP_TO_TWO_SAME_GRAVEYARD = 'up_to_two_same_graveyard'
+    UP_TO_DEALT_DAMAGE = 'up_to_dealt_damage'
 
     @property
     def minimum(self) -> int:
@@ -17,6 +18,8 @@ class GraveyardExileTargetScope(StrEnum):
 
     @property
     def maximum(self) -> int:
+        if self is self.UP_TO_DEALT_DAMAGE:
+            raise ValueError('Combat damage sets this target bound at trigger placement')
         return 2 if self in (self.UP_TO_TWO, self.UP_TO_TWO_SAME_GRAVEYARD) else 1
 
     @property
@@ -29,6 +32,7 @@ class CreatureExileOutcome(StrEnum):
     GAIN_ONE_PER_CREATURE = 'gain_one_per_creature'
     CREATE_ONE_CLUE = 'create_one_clue'
     CREATE_ONE_FOOD = 'create_one_food'
+    COUNTERS_AND_LIFE_FROM_PARTITION = 'counters_and_life_from_partition'
 
 
 _OUTCOMES_BY_SCOPE = {
@@ -48,12 +52,20 @@ class TargetedGraveyardExileOutcomeSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
-            raise ValueError('Targeted graveyard exile outcome requires schema version one')
+        if type(self.schema_version) is not int:
+            raise ValueError('Targeted graveyard exile outcome requires an integer schema version')
         if not isinstance(self.scope, GraveyardExileTargetScope) or not isinstance(self.outcome, CreatureExileOutcome):
             raise ValueError('Targeted graveyard exile requires a typed scope and outcome')
-        if self.outcome not in _OUTCOMES_BY_SCOPE[self.scope]:
+        if self.damage_linked:
+            if self.schema_version != 2 or self.outcome is not CreatureExileOutcome.COUNTERS_AND_LIFE_FROM_PARTITION:
+                raise ValueError('Damage-linked exile requires its exact version-two outcome')
+            return
+        if self.schema_version != 1 or self.outcome not in _OUTCOMES_BY_SCOPE[self.scope]:
             raise ValueError('Targeted graveyard exile scope and outcome are not supported together')
+
+    @property
+    def damage_linked(self) -> bool:
+        return self.scope is GraveyardExileTargetScope.UP_TO_DEALT_DAMAGE
 
     def to_dict(self) -> dict[str, str | int]:
         return {'schema_version': self.schema_version, 'scope': self.scope.value, 'outcome': self.outcome.value}

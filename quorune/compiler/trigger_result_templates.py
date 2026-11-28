@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+from .opponent_event_mana_templates import opponent_event_mana_result
+
 """Existing typed result leaves bound to one normalized trigger occurrence."""
+
+from dataclasses import replace
 
 from . import regex_working_set as re
 
@@ -22,6 +26,173 @@ _EXTRA_COMBAT_AFTER_DAMAGE = re.compile(
     r"After this phase, there is an additional combat phase\.",
     re.IGNORECASE,
 )
+
+
+def _cast_coin_result(binding, body, *, card_name):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.cast_coin_transform import MECHANIC, TEMPLATE, coin_instruction, original_cast_condition
+
+    if ((binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+            or binding.event_condition is None
+            or FrozenMap(binding.event_condition) != FrozenMap(original_cast_condition())):
+        return None
+    match = re.fullmatch(
+        r"flip a coin\. If you lose the flip, (?P<dealer>.+?) deals 1 damage to you\. "
+        r"If you win the flip, you may exile (?P<source>.+?)\. If you do, return (?:it|him|her) "
+        r"to the battlefield transformed under (?:its|his|her) owner['’]s control\.",
+        body, re.IGNORECASE,
+    )
+    reference = SourceReferenceSpec(card_name)
+    if match is None or not all(reference.matches(match[role]) for role in ("dealer", "source")):
+        return None
+    return TEMPLATE, (coin_instruction(),), None, (MECHANIC,)
+
+
+def bound_trigger_effect_template(binding, body, *, card_name, effect_template, source_counter_variants):
+    from .aggregated_zone_event_bindings import artifact_arrival_damage_result
+
+    if damage := artifact_arrival_damage_result(binding, body):
+        return damage, True
+    if binding.event.value == "step.begin" and binding.variant == "your upkeep":
+        from .life_token_sequence_templates import controller_life_loss_fixed_token_template
+
+        if result := controller_life_loss_fixed_token_template(body):
+            return result, False
+    from .power_counted_impulse import power_counted_impulse_trigger
+
+    if impulse := power_counted_impulse_trigger(binding, body, card_name=card_name):
+        return impulse, False
+    from ..rules.cast_or_attack_source_exile import VARIANT as CAST_OR_ATTACK_EXILE_VARIANT
+
+    if binding.variant == CAST_OR_ATTACK_EXILE_VARIANT:
+        from .cast_or_attack_source_exile import cast_or_attack_source_exile_result
+
+        if compiled := cast_or_attack_source_exile_result(body, card_name=card_name):
+            return compiled, False
+    if coin := _cast_coin_result(binding, body, card_name=card_name):
+        return coin, True
+    if binding.variant == "source_enters_or_attacks" and binding.active_zone == "battlefield" and body == binding.body:
+        from .fixed_effect_clause_sequences import fixed_proliferate_sequence_template
+
+        if sequence := fixed_proliferate_sequence_template(body):
+            return sequence, False
+    from .committed_nonland_mill import committed_nonland_mill_counter_result, source_enters_attacks_rad_result
+    from .trigger_event_vocabulary import FixedCounterTriggerEvent
+    from ..rules.cast_name_graveyard_returns import (
+        CAST_CREATURE_CONDITION, CAST_NAME_RETURN_MECHANICS, cast_name_graveyard_return_effect,
+    )
+    from ..replacement.immutable import FrozenMap
+
+    if (binding.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST and binding.active_zone == "battlefield"
+            and binding.spell_subject is not None
+            and FrozenMap(binding.spell_subject.event_condition or {}) == CAST_CREATURE_CONDITION
+            and body == binding.body and body.casefold() == (
+                "each player returns all cards with the same name as that spell from their graveyard to the battlefield."
+            )):
+        return ("creature-cast-same-name-graveyard-return-v1", (cast_name_graveyard_return_effect(),),
+                None, CAST_NAME_RETURN_MECHANICS), True
+
+    if result := (committed_nonland_mill_counter_result(binding, body) or source_enters_attacks_rad_result(binding, body)):
+        return result, True
+    if binding.event is FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER and body == binding.body:
+        from .per_player_target_sets import controlled_destruction_source_counter_template
+
+        if result := controlled_destruction_source_counter_template(body):
+            return result, False
+    if binding.event is FixedCounterTriggerEvent.NONMANA_ACTIVATED:
+        from .nonmana_activation_copy import nonmana_activation_copy_result
+
+        return nonmana_activation_copy_result(binding, body), False
+    if binding.event is FixedCounterTriggerEvent.NINJUTSU_ACTIVATED:
+        from .fixed_public_action_event_bindings import fixed_ninjutsu_observer_effect
+
+        return fixed_ninjutsu_observer_effect(effect_template(body, card_name=card_name)), True
+    if (binding.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
+            and binding.variant == "noncreature" and body == binding.body):
+        from .fixed_public_characteristic_sets import controller_subtype_stat_untap_template
+
+        if stats_untap := controller_subtype_stat_untap_template(body):
+            return stats_untap, False
+        counter_and_damage = re.fullmatch(
+            r"put a \+1/\+1 counter on (?P<source>.+?) and it deals 1 damage to each opponent\.",
+            body, re.IGNORECASE,
+        )
+        if counter_and_damage and SourceReferenceSpec(card_name).matches(counter_and_damage["source"]):
+            body = f"Put a +1/+1 counter on {card_name}. {card_name} deals 1 damage to each opponent."
+            binding = replace(binding, body=body)
+        else:
+            pump_and_damage = re.fullmatch(
+                r"(?P<source>.+?) gets (?P<stats>[+-][0-9]+/[+-][0-9]+) until end of turn "
+                r"and deals (?P<damage>[1-9][0-9]*) damage to each opponent\.",
+                body,
+                re.IGNORECASE,
+            )
+            if pump_and_damage and SourceReferenceSpec(card_name).matches(pump_and_damage["source"]):
+                body = (f"This permanent gets {pump_and_damage['stats']} until end of turn. "
+                        f"{card_name} deals {pump_and_damage['damage']} damage to each opponent.")
+                binding = replace(binding, body=body)
+
+    if (binding.event is FixedCounterTriggerEvent.SOURCE_ATTACKS
+            and binding.variant == "source_attacks" and body == binding.body):
+        from .target_recipient_results import controlled_artifact_draw_template
+
+        result = (paid_attack_extra_combat_template(body)
+                  or controlled_artifact_draw_template(body, compile_component=lambda text: effect_template(text, card_name=card_name)))
+        if result is not None:
+            return result.compiled(), False
+
+    from .opponent_library_shuffle_templates import opponent_library_shuffle_result
+
+    from .opponent_library_search_templates import opponent_library_search_result
+
+    if search_result := opponent_library_search_result(binding, body):
+        return search_result, False
+    if shuffle_result := opponent_library_shuffle_result(binding, body):
+        return shuffle_result, False
+    from .cast_trigger_life_payment_templates import binding_with_cast_life_payment
+
+    return binding_with_cast_life_payment(
+        binding, body, card_name=card_name, effect_template=effect_template,
+        source_counter_variants=source_counter_variants,
+    )
+
+
+def paid_attack_extra_combat_template(body):
+    from ..extra_combat_model import EXTRA_COMBAT_MECHANIC, ExtraCombatUntap, extra_combat_effect
+    from .optional_payment_templates import fixed_optional_mana_payment_template
+
+    def compile_result(text):
+        if " ".join(text.casefold().split()) != (
+            "untap all attacking creatures and after this phase, there is an additional combat phase."
+        ):
+            return None, (), None, ()
+        result = extra_combat_effect(ExtraCombatUntap.ATTACKING_CREATURES)
+        return "fixed-current-attacker-untap-extra-combat-v1", (result,), None, (EXTRA_COMBAT_MECHANIC,)
+
+    return fixed_optional_mana_payment_template(body, compile_effect=compile_result)
+
+_DISCARD_CAST_AFTER_SOURCE_COUNTERS = re.compile(
+    r"Put a chorus counter on it\. Draw a card, then discard a card\. "
+    r"If there are four or more chorus counters on (?P<source>.+?), "
+    r"you may cast the discarded card without paying its mana cost\.",
+    re.IGNORECASE,
+)
+
+
+def _source_combat_discard_cast_result(binding, body, card_name):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt.self", "source_combat_damage_player", "battlefield")
+        or body != binding.body
+    ):
+        return None
+    match = _DISCARD_CAST_AFTER_SOURCE_COUNTERS.fullmatch(body)
+    if match is None or not SourceReferenceSpec(card_name).matches(match["source"]):
+        return None
+    from ..rules.discarded_card_cast import DISCARDED_CARD_CAST_MECHANIC, discarded_card_cast_effects
+
+    return ("source-combat-damage-chorus-discard-cast-v1", discarded_card_cast_effects(),
+            None, (DISCARDED_CARD_CAST_MECHANIC,))
 
 
 def _extra_combat_after_source_damage_result(binding, body):
@@ -65,11 +236,78 @@ def _equipment_source_excluding_destruction_result(binding, body):
     return 'destroy-all-except-original-equipment-v1', (effect,), None, ('destroy', 'destroy-fixed-set')
 
 
+def _equipped_counter_proliferate_result(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt", "equipped_creature_combat_damage_a_player", "battlefield")
+        or body != binding.body
+        or body.casefold() != "put a +1/+1 counter on a creature you control, then proliferate."
+    ):
+        return None
+
+    from ..counter_placement_targets import controlled_creature_counter_choice_effect
+    from ..rules.fixed_effect_clause_shapes import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+    from .proliferate_templates import ProliferateEffectTemplate
+
+    proliferate = ProliferateEffectTemplate()
+    return ("equipped-counter-then-proliferate-v1",
+            (controlled_creature_counter_choice_effect(), *proliferate.effects), None,
+            ("cr-122-counters", *proliferate.mechanics, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC))
+
+
 def _bound_source_combat_result(binding, body, *, allow_optional):
     """Lower fixed results from an original source combat occurrence."""
+    from ..combat_damage_library_exile import combat_damage_cast_exile_effect, combat_damage_exile_effect
+    from ..replacement.immutable import FrozenMap
+    from ..rules.combat_damage_library_access import COMBAT_DAMAGE_LIBRARY_CONDITION
+    from .exiled_target_library_search_templates import equipped_exiled_target_search_result
+    from .graveyard_return_choice_templates import combat_surveil_land_return_template
+    from .impulse_access_templates import IMPULSE_ACCESS_MECHANIC_ID
+    from .public_tap_state_set_templates import combat_recipient_land_tap_untap_result
+    from .targeted_graveyard_cast_templates import equipped_surveil_graveyard_cast_template
+
+    if surveil_result := (combat_surveil_land_return_template(binding, body)
+                          or equipped_surveil_graveyard_cast_template(binding, body)):
+        return surveil_result
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            == ("damage.dealt.self", "source_combat_damage_player", "battlefield")
+            and body == binding.body and FrozenMap(binding.event_condition or {}) == COMBAT_DAMAGE_LIBRARY_CONDITION
+            and " ".join(body.split()).casefold() == ("that player exiles the top two cards of their library. "
+                "until end of turn, you may play those cards without paying their mana costs.")):
+        return ("combat-damage-recipient-top-exile-free-play-v1", (combat_damage_exile_effect(),),
+                None, (IMPULSE_ACCESS_MECHANIC_ID,))
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            == ("damage.dealt.self", "source_combat_damage_player", "battlefield")
+            and body == binding.body and FrozenMap(binding.event_condition or {}) == COMBAT_DAMAGE_LIBRARY_CONDITION
+            and " ".join(body.split()).casefold() == ("create a treasure token and exile the top card "
+                "of that player's library. until end of turn, you may cast that card.")):
+        from .token_templates import fixed_token_creation_effect_template
+
+        treasure = fixed_token_creation_effect_template("Create a Treasure token.")
+        return ("combat-damage-recipient-treasure-and-top-cast-v1", (treasure.effect, combat_damage_cast_exile_effect()),
+                None, (*treasure.mechanics, IMPULSE_ACCESS_MECHANIC_ID))
+    if exiled_search := equipped_exiled_target_search_result(binding, body):
+        return exiled_search
+    if land_set := combat_recipient_land_tap_untap_result(binding, body):
+        return land_set
+    if counter_proliferate := _equipped_counter_proliferate_result(binding, body):
+        return counter_proliferate
+    if allow_optional:
+        from .optional_effect_templates import optional_entry_exempt_discard_trigger_result
+        from .self_transform_templates import optional_equipped_source_transform_result
+
+        if entry_exempt := optional_entry_exempt_discard_trigger_result(binding, body):
+            return entry_exempt
+        transform = optional_equipped_source_transform_result(binding, body)
+        if transform is not None:
+            return transform
     source_excluding = _equipment_source_excluding_destruction_result(binding, body)
     if source_excluding is not None:
         return source_excluding
+    from .die_roll_draw_templates import combat_die_draw_hand_size_result, equipped_attack_die_result
+
+    if die_draw := (combat_die_draw_hand_size_result(binding, body) or equipped_attack_die_result(binding, body)):
+        return die_draw
     extra_combat = _extra_combat_after_source_damage_result(binding, body)
     if extra_combat is not None:
         return extra_combat
@@ -131,7 +369,134 @@ def _equipped_life_and_optional_graveyard_return(binding, body, *, compile_effec
     ), targets, mechanics
 
 
+def _bound_payment_result(binding, body, *, card_name, effect_template, source_counter_variants, allow_optional):
+    if allow_optional:
+        from .attached_copy_payment import attached_copy_payment_result
+
+        if attached_copy := attached_copy_payment_result(binding, body, card_name=card_name):
+            return attached_copy
+        from .draw_step_drawing_settlement import draw_step_settlement_trigger_result
+
+        if settlement := draw_step_settlement_trigger_result(binding, body):
+            return settlement, False
+        from .bounded_hand_cast_templates import (
+            damaged_player_hand_cast_trigger_result, legendary_wizard_hand_cast_trigger_result,
+        )
+
+        hand_cast = (damaged_player_hand_cast_trigger_result(binding, body)
+                     or legendary_wizard_hand_cast_trigger_result(binding, body))
+        if hand_cast is not None:
+            return hand_cast
+    if (binding.event.value == "creature.dies" and binding.variant == "equipped_creature_dies"
+            and binding.active_zone == "battlefield" and body == binding.body
+            and body.casefold() == "you may pay x life, where x is its power. if you do, draw x cards."):
+        from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
+        from ..fixed_effect_payment import equipped_death_life_draw_effect
+
+        return ("equipped-death-life-draw-v1", (equipped_death_life_draw_effect(),), None,
+                (FIXED_EFFECT_PAYMENT_MECHANIC,)), True
+    from .shared_type_sacrifice import shared_type_sacrifice_binding_result
+    from .optional_sacrifice_stat_results import optional_sacrifice_stat_binding_result
+
+    if allow_optional and (shared := shared_type_sacrifice_binding_result(binding, body)):
+        return shared
+    paid_stat = optional_sacrifice_stat_binding_result(binding, body, compile_fixed=lambda text: effect_template(text, card_name=card_name)) if allow_optional else None
+    if paid_stat is not None:return paid_stat
+    from .life_gain_counted_results import (
+        capped_life_gain_draw_payment, life_gain_counted_counter_payment, life_gain_life_draw_payment,
+    )
+
+    if allow_optional and (draw_payment := life_gain_life_draw_payment(body, binding=binding)
+                           or capped_life_gain_draw_payment(body, binding=binding)):
+        return draw_payment
+    counted_payment = life_gain_counted_counter_payment(body, binding=binding, compile_result=lambda child: binding_effect_template(
+        binding, child, card_name=card_name, effect_template=effect_template, _allow_payment=False,
+        source_counter_variants=source_counter_variants, _allow_optional=allow_optional))
+    if counted_payment is not None:return counted_payment
+
+
+def _point_combat_result(binding, body):
+    from ..rules.combat_point_counters import (
+        INBOUND_POINT_VARIANT, OUTBOUND_POINT_VARIANT, point_combat_effects,
+    )
+
+    if binding.variant not in {INBOUND_POINT_VARIANT, OUTBOUND_POINT_VARIANT} or body != binding.body:
+        return None
+    outbound = binding.variant == OUTBOUND_POINT_VARIANT
+    mechanics = ("cr-122-counters", "fixed-resolution-public-condition") if outbound else ("cr-122-counters",)
+    return "fixed-combat-point-result-v1", point_combat_effects(outbound=outbound), None, mechanics
+
+
+def _closed_event_outcome(binding, body, *, card_name, effect_template):
+    from ..rules.attack_event_results import (ATTACHED_BLOCK_GROWTH_VARIANT, ATTACHED_BLOCK_GROWTH_TEMPLATE,
+        attached_block_growth_effects)
+    if binding.variant == ATTACHED_BLOCK_GROWTH_VARIANT:
+        growth = re.fullmatch(
+            r"it gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) until end of turn and you gain (?P<life>[1-9][0-9]*) life[.]?",
+            body.strip(), re.I,
+        )
+        if growth is not None:
+            try:
+                effects = attached_block_growth_effects(*(int(growth[key]) for key in ("power", "toughness", "life")))
+            except ValueError:
+                return (None, (), None, ()), False
+            return (ATTACHED_BLOCK_GROWTH_TEMPLATE, effects, None,
+                    ("cr-611-continuous-effects", "cr-119-life")), False
+    point_result = _point_combat_result(binding, body)
+    if point_result is not None:
+        return point_result, False
+    from .event_outcome_templates import fixed_event_outcome_template
+
+    return fixed_event_outcome_template(binding, body, card_name=card_name, effect_template=effect_template)
+
+
+def _bound_source_return_result(binding, body, *, card_name):
+    """Lower the source-bound return forms before generic trigger results."""
+    if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
+        from .graveyard_copy_cast_templates import mill_random_graveyard_copy_template
+        from .reanimation_templates import relative_target_reanimation_template
+        event = "attack" if binding.variant == "source_attacks" else "end_step"
+        returned = mill_random_graveyard_copy_template(binding, body) or relative_target_reanimation_template(
+            body, card_name=card_name, event=event,
+        )
+        if returned is not None:
+            return returned
+    if binding.variant in {"your upkeep", "your end step"} and body == binding.body:
+        return_choice = fixed_controller_return_choice_template(body)
+        if return_choice is not None:
+            return return_choice.compiled()
+    if binding.variant == "source_attacks" and body == binding.body:
+        from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
+        conditional_return = conditional_reanimation_entry_counter_template(body, card_name=card_name)
+        if conditional_return is not None:
+            return conditional_return
+        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
+        from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
+        relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(
+            body, card_name=card_name,
+        )
+        if relative is not None:
+            return relative
+    if body == binding.body and body.casefold().startswith('you may return '):
+        from .controlled_return_templates import controlled_return_trigger_template
+        selected = controlled_return_trigger_template(binding, body)
+        if selected is not None:
+            return selected
+
+
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from ..rules.transform_capability_shapes import counter_end_step_flip_template
+
+    if flip := counter_end_step_flip_template(binding, body):
+        return flip, True
+    from .combat_keyword_share_templates import combat_keyword_share_template
+
+    if share := combat_keyword_share_template(binding, body):
+        return share, True
+    from .magecraft_rummage_ordinal_templates import magecraft_rummage_ordinal_template
+
+    if ordinal := magecraft_rummage_ordinal_template(binding,body,card_name=card_name):
+        return ordinal, False
     if _allow_optional:
         equipped_return = _equipped_life_and_optional_graveyard_return(
             binding, body, compile_effect=lambda text: effect_template(text, card_name=card_name),
@@ -144,16 +509,15 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     if shared is not None:
         return shared, False
     if _allow_payment:
-        from .optional_sacrifice_stat_results import optional_sacrifice_stat_binding_result
-        paid_stat = optional_sacrifice_stat_binding_result(binding, body, compile_fixed=lambda text: effect_template(text, card_name=card_name)) if _allow_optional else None
-        if paid_stat is not None:return paid_stat
-        from .life_gain_counted_results import life_gain_counted_counter_payment
-        counted_payment = life_gain_counted_counter_payment(body, binding=binding, compile_result=lambda child: binding_effect_template(
-            binding, child, card_name=card_name, effect_template=effect_template, _allow_payment=False,
-            source_counter_variants=source_counter_variants, _allow_optional=_allow_optional))
-        if counted_payment is not None:return counted_payment
-    from .event_outcome_templates import fixed_event_outcome_template
-    outcome = fixed_event_outcome_template(binding, body, card_name=card_name, effect_template=effect_template)
+        paid = _bound_payment_result(
+            binding, body, card_name=card_name, effect_template=effect_template,
+            source_counter_variants=source_counter_variants, allow_optional=_allow_optional,
+        )
+        if paid is not None:
+            return paid
+    outcome = _combat_receiving_life_result(binding, body) or _closed_event_outcome(
+        binding, body, card_name=card_name, effect_template=effect_template,
+    )
     if outcome is not None: return outcome
     from .event_damage_source_templates import event_damage_source_template
     dealer = event_damage_source_template(binding, body, card_name=card_name, effect_template=effect_template, allow_optional=_allow_optional)
@@ -179,6 +543,9 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
 
     if discard_result := event_player_discard_result_template(binding, body):
         return discard_result, False
+    discard_cast = _source_combat_discard_cast_result(binding, body, card_name) if _allow_optional else None
+    if discard_cast is not None:
+        return discard_cast, False
     source_combat = _bound_source_combat_result(binding, body, allow_optional=_allow_optional)
     if source_combat is not None:
         return source_combat, False
@@ -186,45 +553,32 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     source_damage = bound_source_fixed_damage(binding, body)
     if source_damage is not None:
         return source_damage, False
-    if binding.variant in {"source_attacks", "your end step"} and body == binding.body:
-        from .reanimation_templates import relative_target_reanimation_template
-        event = "attack" if binding.variant == "source_attacks" else "end_step"
-        returned = relative_target_reanimation_template(body, card_name=card_name, event=event)
-        if returned is not None:
-            return returned, False
-    if binding.variant in {"your upkeep", "your end step"} and body == binding.body:
-        return_choice = fixed_controller_return_choice_template(body)
-        if return_choice is not None:
-            return return_choice.compiled(), False
-    if binding.variant == "source_attacks" and body == binding.body:
-        from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
-        conditional_return = conditional_reanimation_entry_counter_template(body, card_name=card_name)
-        if conditional_return is not None:
-            return conditional_return, False
-        from .graveyard_copy_cast_templates import relative_graveyard_copy_template
-        from .targeted_graveyard_cast_templates import relative_graveyard_cast_template
-        relative = relative_graveyard_copy_template(body, card_name=card_name, event="attack") or relative_graveyard_cast_template(
-            body, card_name=card_name,
-        )
-        if relative is not None:
-            return relative, False
-    if body == binding.body and body.casefold().startswith('you may return '):
-        from .controlled_return_templates import controlled_return_template
-        selected = controlled_return_template(body, source_is_permanent=binding.active_zone == 'battlefield')
-        if selected is not None:
-            return selected, False
+    if binding.variant == "your end step" and body == binding.body:
+        from .token_copy_templates import chosen_entry_token_copy_trigger_template
+
+        copy_batch = chosen_entry_token_copy_trigger_template(binding, body)
+        if copy_batch is not None:
+            return copy_batch.compiled(), False
+    if (returned := _bound_source_return_result(binding, body, card_name=card_name)) is not None:
+        return returned, False
     from .exile_templates import triggered_source_exile_template
     source_exile = triggered_source_exile_template(binding, body)
     if source_exile is not None:
         return source_exile, True
-    from .discover_templates import cast_event_fixed_top_exile, damage_player_qualified_exile_cast
-    exile_cast = damage_player_qualified_exile_cast(binding, body) or cast_event_fixed_top_exile(binding, body)
+    from .discover_templates import (cast_event_fixed_top_exile, damage_player_qualified_exile_cast,
+                                     elected_nonland_exile_trigger_result)
+    exile_cast = (damage_player_qualified_exile_cast(binding, body) or cast_event_fixed_top_exile(binding, body)
+                  or elected_nonland_exile_trigger_result(binding, body))
     if exile_cast is not None:
         return exile_cast, False
     if _allow_payment and _allow_optional and body == binding.body:
-        from .occurrence_object_results import entry_equipment_attachment_result, entry_permanent_result
-        entry = entry_permanent_result(binding, body) or entry_equipment_attachment_result(
-            binding, body, card_name=card_name, effect_template=effect_template,
+        from .occurrence_object_results import entry_aura_attachment_result, entry_equipment_attachment_result, entry_permanent_result
+        from .qualified_entry_effects import qualified_entry_result
+
+        entry = (
+            qualified_entry_result(binding, body) or entry_permanent_result(binding, body)
+            or entry_aura_attachment_result(binding, body)
+            or entry_equipment_attachment_result(binding, body, card_name=card_name, effect_template=effect_template)
         )
         if entry is not None:
             return entry
@@ -253,10 +607,13 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .event_player_modifiers import event_player_modifier_result
     modifier=event_player_modifier_result(binding,body)
     if modifier is not None:return modifier
-    from .per_player_query_life import source_attack_opponent_subtype_absence_life_result
-    absence = source_attack_opponent_subtype_absence_life_result(binding, body)
-    if absence is not None:
-        return absence, False
+    from .per_player_query_life import (
+        each_end_step_opponent_turn_life_loss_result, source_attack_opponent_subtype_absence_life_result,
+    )
+    loss = (each_end_step_opponent_turn_life_loss_result(binding, body)
+            or source_attack_opponent_subtype_absence_life_result(binding, body))
+    if loss is not None:
+        return loss, False
     from .event_player_target_results import event_player_target_result
     defending_target=event_player_target_result(binding,body,compile_result=lambda text: binding_effect_template(
         binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,
@@ -279,11 +636,22 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .reflexive_payment_templates import binding_aware_reflexive_payment_template
 
     return binding_aware_reflexive_payment_template(
-        body, compile_result=lambda child: binding_effect_template(
+        body, allow_attack_discard=binding.variant == 'controller_attack_batch',
+        compile_result=lambda child: binding_effect_template(
             binding, child, card_name=card_name, effect_template=effect_template,
             source_counter_variants=source_counter_variants, _allow_payment=False,
         ),
     ) or result
+
+
+def bound_attack_discard_result_is_closed(binding, effects, target_schema, mechanics):
+    if binding.variant != 'controller_attack_batch':
+        return False
+    from ..rules.reflexive_payment_shapes import BOUND_DISCARD_ATTACK_CAPABILITY, reflexive_payment_node_capabilities
+
+    return BOUND_DISCARD_ATTACK_CAPABILITY in reflexive_payment_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+    )
 
 
 def _temporary_occurrence_copy_result(binding, body):
@@ -301,13 +669,437 @@ def _temporary_occurrence_copy_result(binding, body):
             (TEMPORARY_OCCURRENCE_COPY_MECHANIC,)), False
 
 
-def _source_bound_optional_trigger_result(binding, body):
-    from .optional_effect_templates import optional_shared_source_type_trigger_result
+def _source_bound_optional_trigger_result(binding, body, *, card_name):
+    from ..permanent_event_state_model import COUNTERED_DAMAGE_SOURCE_VARIANT
 
-    return _temporary_occurrence_copy_result(binding, body) or optional_shared_source_type_trigger_result(binding, body)
+    if binding.variant == COUNTERED_DAMAGE_SOURCE_VARIANT and body == binding.body:
+        from .draw_templates import fixed_draw_effect_template
+
+        return fixed_draw_effect_template(body), False
+
+    from .optional_effect_templates import (
+        optional_landfall_life_loss_counter_result, optional_shared_entrant_type_mana_trigger_result,
+        optional_shared_source_type_trigger_result,
+        optional_targeted_control_trigger_result,
+    )
+
+    return (_temporary_occurrence_copy_result(binding, body)
+            or optional_shared_entrant_type_mana_trigger_result(binding, body)
+            or optional_shared_source_type_trigger_result(binding, body)
+            or optional_targeted_control_trigger_result(binding, body)
+            or optional_landfall_life_loss_counter_result(binding, body, card_name=card_name))
+
+
+def _equipped_color_upkeep_counter(binding, body, *, compile_effect):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone) != ("step.begin", "your upkeep", "battlefield")
+        or body != binding.body
+    ):
+        return None
+    match = re.fullmatch(
+        r"Put a \+1/\+1 counter on equipped creature if it['’]s (?P<color>white|blue|black|red|green)\.",
+        body, re.I,
+    )
+    if match is None:
+        return None
+
+    from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+
+    template, effects, schema, mechanics = compile_effect("Put a +1/+1 counter on equipped creature.")
+    if template is None or len(effects) != 1 or schema is not None:
+        return None
+    effect = effects[0]
+    colors = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+    reference = AttachmentReferenceSpec(
+        AttachmentReferenceKind.EQUIPPED, "creature", schema_version=3,
+        required_color=colors[match["color"].casefold()],
+    )
+    return (template, ({**effect, "card": reference.to_dict()},), schema, mechanics), False
+
+
+def _upkeep_opponent_threshold_search_result(binding, body):
+    from ..continuous_conditions import FixedPublicStateFact
+    from ..source_sacrifice_model import SOURCE_SACRIFICE_MECHANIC, fixed_source_sacrifice_effect
+    from .public_trigger_conditions import opponent_threshold_search_body
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("step.begin", "your upkeep", "battlefield")
+            or getattr(binding.public_state_condition, "fact", None) is not FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM
+            or body != binding.body):
+        return None
+    search = opponent_threshold_search_body(body)
+    if search is None:
+        return None
+    _, children, target_schema, mechanics = search
+    return ("upkeep-source-sacrifice-and-creature-search-v1", (fixed_source_sacrifice_effect(), *children),
+            target_schema, (SOURCE_SACRIFICE_MECHANIC, *mechanics))
+
+
+def attack_food_stats_trigger_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.attack_food_bonus import (
+        ATTACK_FOOD_SOURCE_CONDITION, ATTACK_FOOD_STATS_MECHANICS, attack_food_stats_effect,
+    )
+    from .fixed_public_event_trigger_bindings import attack_food_stats_body_matches
+
+    if (
+        (binding.event.value, binding.variant, binding.active_zone) != ("creature.attacks", "source_attacks", "battlefield")
+        or FrozenMap(binding.event_condition or {}) != FrozenMap(ATTACK_FOOD_SOURCE_CONDITION)
+        or body != binding.body or not attack_food_stats_body_matches(body)
+    ):
+        return None
+    return ("attacking-creature-stats-and-food-entry-v1", (attack_food_stats_effect(),),
+            None, ATTACK_FOOD_STATS_MECHANICS)
+
+
+def defending_player_top_exile_result(binding, body):
+    from ..defending_player_library_exile import defending_player_exile_effect
+    from ..replacement.immutable import FrozenMap
+    from ..rules.defending_player_top_exile import DEFENDING_PLAYER_TOP_ATTACK_CONDITION
+    from .impulse_access_templates import IMPULSE_ACCESS_MECHANIC_ID
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("creature.attacks", "source_attacks", "battlefield")
+            or body != binding.body
+            or FrozenMap(binding.event_condition or {}) != DEFENDING_PLAYER_TOP_ATTACK_CONDITION
+            or " ".join(body.split()).casefold() != "defending player exiles the top twenty cards of their library."):
+        return None
+    return ("defending-player-twenty-top-exile-v1", (defending_player_exile_effect(),),
+            None, (IMPULSE_ACCESS_MECHANIC_ID,))
+
+
+def monarch_counter_distribution_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.cumulative_object_upkeep import CONTROLLER_UPKEEP
+    from ..rules.monarch_counter_distribution import (
+        MONARCH_COUNTER_DISTRIBUTION_MECHANICS, monarch_counter_distribution_effects,
+        monarch_counter_distribution_target_schema,
+    )
+
+    if ((binding.event.value, binding.active_zone) != ("step.begin", "battlefield")
+            or body != binding.body or FrozenMap(binding.event_condition or {}) != FrozenMap(CONTROLLER_UPKEEP)):
+        return None
+    material = " ".join(body.split()).casefold().replace("’", "'")
+    if material != ("distribute two +1/+1 counters among up to two target creatures. then if you're the monarch, "
+                    "double the number of +1/+1 counters on each creature you control."):
+        return None
+    return ("monarch-counter-distribution-doubling-v1", monarch_counter_distribution_effects(),
+            monarch_counter_distribution_target_schema(), MONARCH_COUNTER_DISTRIBUTION_MECHANICS)
+
+
+def monarch_knight_entry_damage_result(binding, body, *, card_name):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.monarch_knight_entry_damage import (
+        MONARCH_KNIGHT_ENTRY_DAMAGE_MECHANICS, guard_monarch_knight_damage, knight_damage_instruction,
+    )
+    from ..rules.monarch_movement_replacements import MONARCH_MOVEMENT_UPKEEP
+    from .damage_templates import fixed_damage_effect_template
+    from .declared_effect_amounts import declared_effect_amount_template
+    from .token_templates import fixed_token_creation_effect_template
+
+    if ((binding.event.value, binding.active_zone) != ("step.begin", "battlefield")
+            or body != binding.body or FrozenMap(binding.event_condition or {}) != MONARCH_MOVEMENT_UPKEEP):
+        return None
+    token_text = "Create a 3/1 red Knight creature token."
+    damage_text = "This enchantment deals X damage to each opponent, where X is the number of creatures you control."
+    material = " ".join(body.split()).casefold().replace("’", "'")
+    if material != f"{token_text} Then if you're the monarch, {damage_text}".casefold():
+        return None
+
+    def fixed_opponent_damage(text):
+        fixed = fixed_damage_effect_template(text, card_name=card_name)
+        if fixed is None:
+            return None, (), None, ()
+        template, effects, target_schema, mechanics = fixed.compiled()
+        if (len(effects) != 1 or target_schema is not None or effects[0] !=
+                {"op": "damage_each_opponent", "source": "$source", "amount": effects[0].get("amount")}):
+            return None, (), None, ()
+        return template, (knight_damage_instruction(effects[0]["amount"]),), None, mechanics
+
+    token = fixed_token_creation_effect_template(token_text)
+    damage = declared_effect_amount_template(damage_text, source_name=card_name, compile_fixed=fixed_opponent_damage)
+    if token is None or damage is None:
+        return None
+    return ("monarch-knight-entry-damage-v1", (*token.compiled()[1], guard_monarch_knight_damage(damage[1][0])),
+            None, MONARCH_KNIGHT_ENTRY_DAMAGE_MECHANICS)
+
+
+def monarch_selected_player_mill_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.monarch_movement_replacements import MONARCH_MOVEMENT_UPKEEP
+    from ..rules.monarch_selected_player_mill import (
+        monarch_selected_player_mill_effect, monarch_selected_player_mill_schema,
+    )
+
+    if ((binding.event.value, binding.active_zone) != ("step.begin", "battlefield")
+            or body != binding.body or FrozenMap(binding.event_condition or {}) != MONARCH_MOVEMENT_UPKEEP):
+        return None
+    material = " ".join(body.split()).casefold().replace("’", "'")
+    if material != ("any number of target players each mill two cards. "
+                    "if you're the monarch, each of those players mills ten cards instead."):
+        return None
+    return ("monarch-selected-player-mill-v1", (monarch_selected_player_mill_effect(),),
+            monarch_selected_player_mill_schema(), ("fixed-resolution-public-condition",))
+
+
+def monarch_movement_replacement_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.monarch_movement_replacements import (
+        MONARCH_MOVEMENT_TEMPLATE, MONARCH_MOVEMENT_UPKEEP, monarch_movement_effect, monarch_movement_target_schema,
+    )
+
+    if (binding.event.value != "step.begin" or binding.active_zone != "battlefield" or body != binding.body
+            or FrozenMap(binding.event_condition or {}) != MONARCH_MOVEMENT_UPKEEP):
+        return None
+    material = " ".join(body.split()).casefold().replace("’", "'")
+    variants = {
+        ("you may put a land card from your hand onto the battlefield. if you're the monarch, "
+         "instead you may put a creature or land card from your hand onto the battlefield."): "hand_entry",
+        ("return target permanent card with mana value 3 or less from your graveyard to your hand. "
+         "if you're the monarch, return that permanent card to the battlefield instead."): "graveyard_destination",
+    }
+    mode = variants.get(material)
+    if mode is None:
+        return None
+    effect = monarch_movement_effect(mode)
+    mechanics = ("fixed-resolution-public-condition",
+                 *effect["mechanic_ids"], *effect["otherwise_mechanic_ids"])
+    return MONARCH_MOVEMENT_TEMPLATE, (effect,), monarch_movement_target_schema(mode), tuple(dict.fromkeys(mechanics))
+
+
+def _entrant_power_branch_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.entrant_power_branch import (
+        CONTROLLED_CREATURE_ENTRY, ENTRANT_GREATEST_POWER_DRAW_TEMPLATE, OTHER_CREATURE_ENTRY,
+        entrant_greatest_power_draw_effect, entrant_power_branch_effect,
+    )
+
+    if binding.active_zone != "battlefield" or binding.event.value != "creature.enter" or body != binding.body:
+        return None
+    condition = FrozenMap(binding.event_condition or {})
+    if (condition == FrozenMap(OTHER_CREATURE_ENTRY)
+            and " ".join(body.split()).casefold().replace("’", "'")
+            == "its controller may draw a card if its power is greater than each other creature's power."):
+        return (ENTRANT_GREATEST_POWER_DRAW_TEMPLATE, (entrant_greatest_power_draw_effect(),), None,
+                ("fixed-resolution-public-condition",))
+    if condition != FrozenMap(CONTROLLED_CREATURE_ENTRY):
+        return None
+    pattern = (
+        r"Draw a card if its power is (?P<minimum>[1-9]) or greater\. "
+        r"Otherwise, put (?P<counters>one \+1/\+1 counter|two \+1/\+1 counters|three \+1/\+1 counters) on it\."
+    )
+    match = re.fullmatch(pattern, " ".join(body.split()), re.I)
+    if not match:
+        return None
+    count = {"one": 1, "two": 2, "three": 3}[match["counters"].split()[0].casefold()]
+    effect = entrant_power_branch_effect(int(match["minimum"]), count)
+    return ("entrant-power-draw-or-counters-v1", (effect,), None, ("fixed-resolution-public-condition", "cr-122-counters"))
+
+
+def opponent_source_power_mana_result(binding, body, *, card_name):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.opponent_event_mana_payment import (
+        opponent_source_power_mana_effect, opponent_source_power_payment_condition,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+    from .draw_templates import fixed_draw_effect_template
+    from .optional_payment_templates import FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC
+    from .oracle_source_text import without_parenthetical_reminder
+
+    if (binding.active_zone != "battlefield" or binding.event.value != "spell.cast"
+            or body != binding.body
+            or FrozenMap(binding.event_condition) != FrozenMap(opponent_source_power_payment_condition())):
+        return None
+    named = "|" + SourceReferenceSpec(card_name).regex_pattern if card_name else ""
+    pattern = (
+        r"Draw a card unless that player pays \{X\}, where X is "
+        rf"(?:this creature{named})['’]s power\."
+    )
+    if re.fullmatch(pattern, " ".join(without_parenthetical_reminder(body).split()), re.I) is None:
+        return None
+    _, _, _, draw_mechanics = fixed_draw_effect_template("Draw a card.")
+    return (
+        "opponent-source-power-mana-payment-v1", (opponent_source_power_mana_effect(),), None,
+        (FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC, *draw_mechanics),
+    )
+
+
+def accepts_counter_bearing_event_result(
+    binding, template, effects, target_schema, mechanics, *, grouped_departure,
+):
+    from .public_event_closure_variants import fixed_public_event_allows_counter_placement
+
+    return (
+        fixed_public_event_allows_counter_placement(
+            binding, effects, target_schema, grouped_departure=grouped_departure,
+        )
+        or bound_attack_discard_result_is_closed(binding, effects, target_schema, mechanics)
+        or accepts_closed_typed_counter_result(binding, template, effects)
+    )
+
+
+def accepts_closed_typed_counter_result(binding, template, effects):
+    from ..rules.exile_origin_creature_counters import is_exile_origin_counter_result
+    from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_EVENT, unblocked_defender_poison_effect
+
+    return (
+        (binding.event.value == UNBLOCKED_ATTACKER_EVENT and tuple(effects) == (unblocked_defender_poison_effect(),))
+        or is_exile_origin_counter_result(template, effects)
+        or (len(effects) == 1 and effects[0].get("op") == "look_top_shared_type_reveal")
+    )
+
+
+def accepts_counter_binding_result(
+    binding, body_mechanics, *, effects, target_schema, noncounter_variants, public_action_variants,
+):
+    from ..rules.source_counter_attacking_tokens import source_counter_attacking_tokens_node_capabilities
+    from .room_bindings import OWN_DOOR_VARIANT
+
+    if binding.variant == "one_or_more_qualified_attack":
+        if (tokens := source_counter_attacking_tokens_node_capabilities(effects, target_schema)) is not None:
+            return bool(tokens)
+    if binding.variant == OWN_DOOR_VARIANT:
+        from ..rules.node_capability_shapes import fixed_counter_placement_target_set_node_capabilities
+
+        if fixed_counter_placement_target_set_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=body_mechanics,
+        ):
+            return True
+    from ..rules.aggregated_arrival_counters import MATCHED_ARRIVAL_MECHANIC
+
+    counter_mechanics = {
+        "fixed-entry-event-object-counter", "fixed-public-event-source-counter",
+        "fixed-public-event-target-counter", "fixed-public-event-set-counter", MATCHED_ARRIVAL_MECHANIC,
+    }
+    return (
+        bool(counter_mechanics.intersection(body_mechanics)) or binding.variant not in noncounter_variants
+        or binding.event.value in {"permanent.sacrificed", "card.discarded"} and binding.variant in public_action_variants
+    )
+
+
+def _mana_value_revealed_cast_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.revealed_library_cast import HAND_CAST_CONDITION, mana_value_cast_instruction
+
+    if ((binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+            or FrozenMap(binding.event_condition or {}) != HAND_CAST_CONDITION or body != binding.body
+            or " ".join(body.split()).casefold().replace("’", "'") != (
+                "reveal the top x cards of your library, where x is that spell's mana value. "
+                "you may cast a spell with mana value x or less from among cards revealed this way "
+                "without paying its mana cost. put the rest on the bottom of your library in a random order."
+            )):
+        return None
+    return "hand-cast-mana-value-reveal-cast-v1", (mana_value_cast_instruction(),), None, ()
 
 
 def _bound_source_specific_result(binding, body, *, card_name, effect_template):
+    from ..rules.opponent_blight import OPPONENT_BLIGHT_ENTRY_VARIANT, OPPONENT_BLIGHT_MECHANIC, opponent_blight_effect
+
+    if binding.variant == OPPONENT_BLIGHT_ENTRY_VARIANT and re.fullmatch(r"each opponent blights 1[.]?", body, re.I):
+        return ("fixed-opponents-blight-v1", (opponent_blight_effect(),), None, (OPPONENT_BLIGHT_MECHANIC,)), False
+    from .captured_counter_keyword_mode import captured_legendary_cast_counter_result
+
+    if cohort := captured_legendary_cast_counter_result(binding, body):
+        return cohort
+    if binding.variant == "one_or_more_qualified_attack":
+        from .attacking_token_results import source_counter_attacking_tokens_template
+
+        if result := source_counter_attacking_tokens_template(body, card_name=card_name):
+            return result, False
+    if revealed_cast := _mana_value_revealed_cast_result(binding, body):
+        return revealed_cast, False
+    from .counter_movement_templates import fixed_counter_movement_trigger_result
+    from .opponent_top_exile_templates import opponent_top_exile_trigger_result
+    from .fixed_control_templates import attached_temporary_control_trigger_result
+    from .resolution_condition_templates import first_ability_counter_trigger_result, second_ability_trigger_result
+    from .opponent_library_exile_templates import (
+        controlled_opponent_library_exile_play_result,
+        each_opponent_library_top_exile_result,
+    )
+    from .opposing_owner_entry_life import opposing_owner_entry_result
+
+    from .temporary_player_rule_templates import turn_creature_target_prohibition_trigger_template
+    if prohibition := turn_creature_target_prohibition_trigger_template(binding, body):
+        return prohibition, False
+
+    from .land_entry_library_exile import land_entry_top_exile_result
+    if land_top := land_entry_top_exile_result(binding, body):
+        return land_top, False
+    from .fixed_resolution_mana import player_attack_combat_mana_result, source_attack_turn_retained_mana_result
+    from .tap_attack_result_templates import tap_attack_result_template
+
+    if attack_payment := tap_attack_result_template(binding, body, card_name=card_name):
+        return attack_payment, True
+    if attack_mana := (source_attack_turn_retained_mana_result(binding, body) or player_attack_combat_mana_result(binding, body)):
+        return attack_mana, False
+
+    from ..rules.milled_permanent_recovery import food_paid_mill_result
+
+    if paid_mill := food_paid_mill_result(binding, body):
+        return paid_mill, False
+    if attack_food := attack_food_stats_trigger_result(binding, body):
+        return attack_food, True
+    if defending_top := defending_player_top_exile_result(binding, body):
+        return defending_top, True
+    from .graveyard_return_choice_templates import defending_nonland_return_template
+    if defending_return := defending_nonland_return_template(binding, body):
+        return defending_return, False
+    if each_opponent_exile := each_opponent_library_top_exile_result(binding, body):
+        return each_opponent_exile, True
+    if opponent_library_play := controlled_opponent_library_exile_play_result(binding, body):
+        return opponent_library_play, True
+    if opponent_top := opponent_top_exile_trigger_result(binding, body):
+        return opponent_top, True
+    if owned_entry := opposing_owner_entry_result(binding, body):
+        return owned_entry, True
+    from ..rules.controlled_creature_counter_tokens import controlled_creature_counter_token_result
+
+    if tokens := controlled_creature_counter_token_result(binding, body):
+        return tokens, False
+    from ..rules.library_creature_arrival import EVENT, VARIANT, MECHANIC, arrival_effect
+
+    if ((binding.event.value,binding.variant,binding.active_zone)==(EVENT,VARIANT,"battlefield")
+            and body==binding.body and " ".join(body.casefold().split())=="put one of them onto the battlefield."):
+        return ("library-creature-arrival-return-v1", (arrival_effect(),), None, (MECHANIC,)), True
+    if movement := fixed_counter_movement_trigger_result(binding, body):
+        return movement, True
+    if counter := first_ability_counter_trigger_result(
+        binding, body, compile_component=lambda text: effect_template(text, card_name=card_name),
+    ):
+        return counter, False
+    if ordinal := second_ability_trigger_result(binding, body):
+        return ordinal, False
+    if search := _upkeep_opponent_threshold_search_result(binding, body):
+        return search, False
+    if monarch_distribution := monarch_counter_distribution_result(binding, body):
+        return monarch_distribution, True
+    if monarch_knight := monarch_knight_entry_damage_result(binding, body, card_name=card_name):
+        return monarch_knight, True
+    if monarch_mill := monarch_selected_player_mill_result(binding, body):
+        return monarch_mill, True
+    if movement := monarch_movement_replacement_result(binding, body):
+        return movement, True
+    from ..extra_combat_model import (
+        EXTRA_COMBAT_MECHANIC, MAIN_PHASE_EXTRA_COMBAT_CAPABILITY, ExtraCombatUntap,
+        extra_combat_effect, main_phase_extra_combat_condition,
+    )
+
+    if (
+        MAIN_PHASE_EXTRA_COMBAT_CAPABILITY in binding.public_capabilities
+        and (binding.event.value, binding.active_zone) == ("land.enter", "battlefield")
+        and binding.event_condition == main_phase_extra_combat_condition() and body == binding.body
+    ):
+        return ("own-main-landfall-extra-combat-v2", (extra_combat_effect(ExtraCombatUntap.GRANTED_COMBAT_CREATURES),),
+                None, (EXTRA_COMBAT_MECHANIC,)), True
+    if power_branch := _entrant_power_branch_result(binding, body):
+        return power_branch, False
+    if payment := (opponent_source_power_mana_result(binding, body, card_name=card_name)
+                   or opponent_event_mana_result(binding, body)):
+        return payment, False
+    if attached_control := attached_temporary_control_trigger_result(binding, body):
+        return attached_control
+    if colored_counter := _equipped_color_upkeep_counter(
+        binding, body, compile_effect=lambda text: effect_template(text, card_name=card_name),
+    ):
+        return colored_counter
     from .source_block_defender import source_block_defender_result
 
     if block_change := source_block_defender_result(binding, body):
@@ -320,10 +1112,11 @@ def _bound_source_specific_result(binding, body, *, card_name, effect_template):
     from .affected_player_sacrifice_templates import attack_sacrifice_stat_result, entry_sacrifice_power_draw_result
     from .fixed_public_multi_event_bindings import graveyard_creature_transition_result
     from .fixed_public_event_trigger_bindings import linked_player_cast_mill_result
-    from .received_damage_bindings import linked_player_receiving_result
+    from .received_damage_bindings import linked_player_receiving_result, targeted_receiving_damage_result
 
     if result := (graveyard_creature_transition_result(binding, body)
-                  or linked_player_receiving_result(binding, body) or linked_player_cast_mill_result(binding, body)):
+                  or linked_player_receiving_result(binding, body) or linked_player_cast_mill_result(binding, body)
+                  or targeted_receiving_damage_result(binding, body)):
         return result
     if sacrifice := (entry_sacrifice_power_draw_result(binding, body) or attack_sacrifice_stat_result(binding, body)):
         return sacrifice
@@ -342,7 +1135,21 @@ def _bound_source_specific_result(binding, body, *, card_name, effect_template):
     from .source_counter_quantity_sequences import source_bound_sequence_result
     source_sequence=source_bound_sequence_result(binding,body,card_name=card_name,effect_template=effect_template)
     if source_sequence is not None:return source_sequence
+    from .attack_event_results import attached_player_attack_token_result
+    if attack_tokens := attached_player_attack_token_result(binding, body):
+        return attack_tokens, False
     return None
+
+
+def _combat_receiving_life_result(binding, body):
+    if binding.variant != "source_received_combat_damage" or not re.fullmatch(
+        r"you gain that much life and (?:the )?attacking player loses that much life[.]",
+        body, re.IGNORECASE,
+    ):
+        return None
+    from ..rules.combat_receiving_life import COMBAT_RECEIVING_LIFE_TEMPLATE, combat_receiving_life_effects
+
+    return ((COMBAT_RECEIVING_LIFE_TEMPLATE, combat_receiving_life_effects(), None, ("cr-119-life",)), True)
 
 
 def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
@@ -365,7 +1172,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
                 return source_removal, False
     if _allow_optional:
         from .binding_optional_results import binding_aware_optional_result
-        optional = _source_bound_optional_trigger_result(binding, body) or binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
+        optional = _source_bound_optional_trigger_result(binding, body, card_name=card_name) or binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
         if optional is not None:return optional
     from ..expend_model import EXPEND_CAPABILITY
     if EXPEND_CAPABILITY in binding.explicit_capabilities:
@@ -466,8 +1273,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
         if normalized is not None:
             value=effect_template(normalized,card_name=card_name)
             if value[0] is not None:return pin_source_result_incarnation(value),True
-    from .scheduled_player_triggers import scheduled_player_result
-    scheduled=scheduled_player_result(binding,body,effect_template=effect_template,card_name=card_name)
+    from .private_opponent_library_cast_templates import private_cast_or_scheduled_result
+    scheduled=private_cast_or_scheduled_result(binding,body,effect_template=effect_template,card_name=card_name)
     if scheduled is not None:return scheduled
     from .event_card_return_templates import event_card_return_template
     returned = event_card_return_template(binding, body, card_name=card_name, effect_template=effect_template)

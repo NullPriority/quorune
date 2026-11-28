@@ -94,16 +94,21 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    CONTROLLER_UNLOCKED_ROOM_DOORS = "controller_unlocked_room_doors"
     OPPONENT_HAS_GREATER_METRIC = 'opponent_has_greater_metric'
+    OPPONENT_CREATURE_COUNT_MAXIMUM = "opponent_creature_count_maximum"
     UNIQUE_PLAYER_MAXIMUM = 'unique_player_maximum'
+    CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT = "controls_a_greatest_mana_value_artifact"
     CONTROLS_A_GREATEST_POWER_CREATURE = "controls_a_greatest_power_creature"
     CONTROLS_EACH_GREATEST_POWER_CREATURE = "controls_each_greatest_power_creature"
+    CURRENT_COMBAT_BEFORE_BLOCKERS = "current_combat_before_blockers"
     CURRENT_COMBAT_AFTER_BLOCKERS = "current_combat_after_blockers"
     CURRENT_DECLARE_BLOCKERS_STEP = "current_declare_blockers_step"
     CONTROLLER_COMPLETED_A_DUNGEON = "controller_completed_a_dungeon"
     CONTROLLER_HAS_NOT_COMPLETED_NAMED_DUNGEON = "controller_has_not_completed_named_dungeon"
     CONTROLLER_HAS_THE_INITIATIVE = "controller_has_the_initiative"
     SOURCE_RENOWNED = 'source_renowned'
+    SOURCE_JESKAI_TEMUR_TEMUR_CHOSEN = 'source_jeskai_temur_temur_chosen'
     SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER = "source_paid_impending_with_time_counter"
     CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
@@ -141,6 +146,7 @@ class FixedPublicStateFact(StrEnum):
     )
     ANY_CREATURE_DIED_THIS_TURN = "any_creature_died_this_turn"
     CONTROLLER_ATTACKED_THIS_TURN = "controller_attacked_this_turn"
+    CONTROLLER_DISTINCT_CREATURES_ATTACKED_THIS_TURN = "controller_distinct_creatures_attacked_this_turn"
     CONTROLLER_TOKENS_CREATED_THIS_TURN = "controller_tokens_created_this_turn"
     CONTROLLER_PERMANENT_LEFT_THIS_TURN = "controller_permanent_left_this_turn"
     OPPONENT_LOST_LIFE_THIS_TURN = "opponent_lost_life_this_turn"
@@ -159,6 +165,7 @@ class FixedPublicStateFact(StrEnum):
 
 
 BLOCK_DECLARATION_TIMING_FACTS = frozenset({
+    FixedPublicStateFact.CURRENT_COMBAT_BEFORE_BLOCKERS,
     FixedPublicStateFact.CURRENT_COMBAT_AFTER_BLOCKERS,
     FixedPublicStateFact.CURRENT_DECLARE_BLOCKERS_STEP,
 })
@@ -189,6 +196,25 @@ def greatest_creature_power_condition_dependencies(value: Any) -> tuple[str, ...
     )
 
     return (PUBLIC_POWER_THRESHOLD_CAPABILITY, PUBLIC_STAT_AGGREGATE_CAPABILITY)
+
+
+GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY = "trigger.condition.greatest_artifact_mana_value"
+
+
+def greatest_artifact_mana_value_condition_dependencies(value: Any) -> tuple[str, ...]:
+    if (not isinstance(value, Mapping)
+            or value.get("fact") != FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT):
+        return ()
+    FixedPublicStateConditionSpec.from_dict(value)
+    return ("trigger.condition.fixed_public_state", GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY)
+
+
+def greatest_artifact_mana_value_condition() -> "FixedPublicStateConditionSpec":
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+        amount=1, schema_version=4,
+        fact=FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -340,13 +366,25 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    if fact is FixedPublicStateFact.CONTROLLER_UNLOCKED_ROOM_DOORS:
+        if schema_version != 4 or type(amount) is not int or amount < 1 or parameter is not None:
+            raise FixedPublicStateConditionError("Unlocked Room counts require a fixed positive public threshold")
+        return
     if fact in BLOCK_DECLARATION_TIMING_FACTS:
         if schema_version != 4 or amount != 1 or parameter is not None:
             raise FixedPublicStateConditionError("Block declaration timing requires its exact boolean window")
         return
+    if fact is FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT:
+        if schema_version != 4 or amount != 1 or parameter is not None:
+            raise FixedPublicStateConditionError("Greatest artifact mana value requires a fixed boolean comparison")
+        return
     if fact in GREATEST_CREATURE_POWER_FACTS:
         if schema_version != 4 or amount != 1 or parameter is not None:
             raise FixedPublicStateConditionError("Greatest creature power requires one closed controller comparison")
+        return
+    if fact is FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM:
+        if schema_version != 4 or not 1 <= amount <= 10 or parameter is not None:
+            raise FixedPublicStateConditionError("Opponent creature thresholds require a fixed positive creature count")
         return
     if fact in {FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM,FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC}:
         from .player_maximum_model import validate_player_maximum_fact
@@ -369,6 +407,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
+    if fact is FixedPublicStateFact.SOURCE_JESKAI_TEMUR_TEMUR_CHOSEN and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Temur requires one current source faction designation")
     if fact is FixedPublicStateFact.SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError("Impending requires one current source payment and time-counter fact")
@@ -393,6 +434,7 @@ def _validate_public_fact_fields(
     if schema_version == 3 and fact in {
         FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN,
         FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN,
+        FixedPublicStateFact.CONTROLLER_DISTINCT_CREATURES_ATTACKED_THIS_TURN,
         FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN,
         FixedPublicStateFact.OPPONENT_LOST_LIFE_THIS_TURN,
     }:

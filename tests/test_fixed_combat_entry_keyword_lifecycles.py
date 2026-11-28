@@ -567,6 +567,142 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             item for item in engine.state.stack if item.context.get("blitz") is True
         ]
 
+    def test_silver_fur_ninjutsu_reduction_is_one_exact_static_cost_scope(self):
+        from dataclasses import replace
+        from quorune.activation_cost_modifiers import ACTIVATION_GENERIC_COST_CAPABILITY, FixedActivationCostModifierSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        row = self.db.lookup("Silver-Fur Master", fuzzy=False)
+        compiled = compile_oracle_card(row, capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        clause, = (node for face in compiled.faces for node in face.nodes if "less to activate" in node.text)
+        self.assertEqual("static_ability", clause.kind)
+        descriptor, = clause.handlers
+        spec = FixedActivationCostModifierSpec.from_dict(descriptor["modifier"])
+        self.assertEqual(("ninjutsu", "source_controller", -1),
+                         (spec.ability_scope, spec.controller_relation, spec.generic_adjustment))
+        for updates in ({"controller_relation":"any"}, {"minimum_mana":1}, {"generic_adjustment":1}):
+            with self.subTest(updates=updates), self.assertRaises(ValueError):
+                FixedActivationCostModifierSpec.from_dict({**spec.to_dict(), **updates})
+        raw = json.loads((ROOT/"quorune/rules/capability-registry.json").read_bytes())
+        next(entry for entry in raw["capabilities"] if entry["id"] == ACTIVATION_GENERIC_COST_CAPABILITY).update(
+            status="blocked", blockers=["Flat activation-price authority withdrawn"])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified("0" * 64)
+        got = compile_oracle_card(row, capability_registry=withdrawn, capability_profile="commander_review")
+        self.assertNotEqual("exact", got.status)
+        for quoted in ("more to activate.", "less to activate unless they're mana abilities."):
+            edited = replace(row, oracle_text=row.oracle_text.replace("less to activate.",quoted),
+                faces=tuple({**face,"oracle_text":face["oracle_text"].replace("less to activate.",quoted)}
+                            for face in row.faces))
+            self.assertNotEqual("exact",compile_oracle_card(edited, capability_registry=self.capabilities,
+                capability_profile="commander_review").status)
+
+    def _silver_fur_price_scenario(self, seed, *, lord_seat="A"):
+        session = self.session(seed)
+        engine = session.engine
+        lord = self.add_card(engine, name="Silver-Fur Master", ref="silver-price-source",
+                             seat=lord_seat, zone="battlefield")
+        ninja = self.add_card(engine, name="Ninja of the Deep Hours", ref="silver-price-ninja")
+        attacker = self.add_card(engine, name="Changeling Outcast", ref="silver-eligible-attacker",
+                                 zone="battlefield")
+        farmland = self.add_card(engine, name="Irrigated Farmland", ref="silver-offscope-cycling")
+        shock = self.add_card(engine, name="Shock", ref="silver-remove-lord", seat="B")
+        attacker.attacking = "B"
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "combat"
+        engine.state.step = "declare_blockers"
+        engine.state.combat = CombatState(
+            attackers_declared=True, blockers_declared=True, had_attacking_creature=True,
+            attackers={attacker.object_id: "B"},
+            attack_target_context={attacker.object_id: {
+                "target":"B", "kind":"player", "defending_player":"B",
+            }},
+            defending_players=["B"],
+        )
+        engine.state.players["A"].mana_pool["U"] = 1
+        engine.state.players["B"].mana_pool["R"] = 1
+        engine.permissions.invalidate_current()
+        engine.state.priority_player = None
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        return session, lord, ninja, attacker, farmland, shock
+
+    def _silver_fur_offer_ids(self, session):
+        decision = session.packet("pilot:A",full=True)["decision"]
+        return {entry["id"] for entry in decision["ctx"]["legal"]["actions"]}
+
+    def _assert_silver_fur_exact_replay(self, session):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "silver-fur-price-proof"
+            session.save(directory)
+            result = replay_record(directory, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(authoritative_state_hash(session.state), result["final_state_hash"])
+
+    def test_actual_silver_fur_price_current_controller_and_ninjutsu_entry_replay(self):
+        session, lord, ninja, attacker, farmland, _ = self._silver_fur_price_scenario(260049)
+        self.assertEqual(2, session.engine._numeric_stat(lord.object_id,"power"))
+        self.assertEqual(2, session.engine._numeric_stat(attacker.object_id,"power"))
+        ninja_action = f"activate:{ninja.ref}:ab1"
+        cycling, = (ability for ability in session.engine._activated_abilities(farmland)
+                    if ability.zones == ("hand",))
+        offers = self._silver_fur_offer_ids(session)
+        self.assertIn(ninja_action,offers)
+        self.assertNotIn(f"activate:{farmland.ref}:{cycling.ability_id}",offers)
+        self.assertNotIn(json.dumps(ninja.ref), json.dumps(session.packet("pilot:B",full=True)["state"]))
+        before = authoritative_state_hash(session.state)
+        command = {"action_id":ninja_action,"cost_objects":[attacker.ref],"pay":"auto"}
+        self.assertFalse(session.act("pilot:B",command).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        activated = session.act("pilot:A",command)
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual("hand", session.state.cards[attacker.object_id].zone)
+        self.assertEqual("hand", session.state.cards[ninja.object_id].zone)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        self.resolve_stack_with_passes(session)
+        entered = session.state.cards[ninja.object_id]
+        self.assertEqual("battlefield", entered.zone)
+        self.assertTrue(entered.tapped)
+        self.assertEqual("B",entered.attacking)
+        self._assert_silver_fur_exact_replay(session)
+
+    def test_actual_silver_fur_price_rejects_opponent_source_and_rechecks_departure(self):
+        opponent, _, ninja, _, _, _ = self._silver_fur_price_scenario(260050,lord_seat="B")
+        self.assertNotIn(f"activate:{ninja.ref}:ab1", self._silver_fur_offer_ids(opponent))
+        self._assert_silver_fur_exact_replay(opponent)
+        session, lord, ninja, attacker, _, shock = self._silver_fur_price_scenario(260051)
+        ninja_action = f"activate:{ninja.ref}:ab1"
+        self.assertIn(ninja_action,self._silver_fur_offer_ids(session))
+        for seat,command in (("A",{"action_id":"pass"}),
+                             ("B",{"action_id":f"cast:{shock.ref}","targets":[lord.ref],"pay":"auto"})):
+            accepted = session.act(f"pilot:{seat}",command)
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("graveyard",session.state.cards[lord.object_id].zone)
+        self.assertNotIn(ninja_action,self._silver_fur_offer_ids(session))
+        before = authoritative_state_hash(session.state)
+        stale = session.act("pilot:A",{"action_id":ninja_action,"cost_objects":[attacker.ref],"pay":"auto"})
+        self.assertFalse(stale.ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self._assert_silver_fur_exact_replay(session)
+
+    def test_silver_fur_missing_price_selector_is_detected_on_a_native_offer(self):
+        from unittest.mock import patch
+        import quorune.rules.activation.cost_modifiers as owner
+
+        original = owner.activation_matches_cost_scope
+        def missing(host,source,ability,scope):
+            return scope != "ninjutsu" and original(host,source,ability,scope)
+
+        with patch.object(owner,"activation_matches_cost_scope",side_effect=missing):
+            session, _, ninja, _, _, _ = self._silver_fur_price_scenario(260052)
+            self.assertNotIn(f"activate:{ninja.ref}:ab1",self._silver_fur_offer_ids(session))
+
     def test_ninjutsu_offer_and_same_recipient_entry(self):
         session = self.session(260001)
         engine = session.engine

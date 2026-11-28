@@ -7,9 +7,12 @@ from . import regex_working_set as re
 
 from ..continuous_conditions import (
     GREATEST_CREATURE_POWER_FACTS, FixedPublicStateConditionKind, FixedPublicStateConditionSpec,
-    FixedPublicStateFact, greatest_creature_power_condition_dependencies,
+    FixedPublicStateFact, greatest_artifact_mana_value_condition,
+    greatest_artifact_mana_value_condition_dependencies, greatest_creature_power_condition_dependencies,
 )
-from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+from ..characteristic_fragments import (
+    CharacteristicQuantityScope, CharacteristicQuantitySpec, nonowner_control_quantity_capabilities,
+)
 from ..controller_creature_keyword_absence import (
     ControllerCreatureKeywordAbsence, is_controller_end_step_schedule,
 )
@@ -162,6 +165,29 @@ def _other_spell_self_cast_binding(match, *, card_name, compile_binding):
     return replace(base, variant=subject.variant, spell_subject=subject)
 
 
+def _entrant_name_absence_binding(match, *, card_name, compile_binding):
+    from ..rules.entrant_name_absence import ENTRANT_NAME_ABSENCE_CAPABILITY, entrant_name_absence_condition
+
+    if tuple(match[field].casefold() for field in ("prefix", "condition", "body")) != (
+        "whenever a nontoken creature you control enters",
+        "it doesn't have the same name as another creature you control or a creature card in your graveyard",
+        "draw a card.",
+    ):
+        return None
+    base = compile_binding(f"{match['prefix']}, {match['body']}", card_name=card_name)
+    if base is None or (base.event.value, base.active_zone) != ("creature.enter", "battlefield"):
+        return None
+    condition = entrant_name_absence_condition(base.event_condition)
+    if condition is None:
+        return None
+    return replace(
+        base, public_mechanic="trigger-event-normalized-zone-change", public_condition=condition,
+        public_template_id="fixed-entrant-name-absence-trigger-v1", public_active_zone="battlefield",
+        public_capabilities=(*base.public_capabilities, "trigger.condition.fixed_public_state",
+                             ENTRANT_NAME_ABSENCE_CAPABILITY),
+    )
+
+
 def _combat_damage_entry_binding(match, *, card_name, compile_binding):
     from ..rules.combat_damage_entry_history import COMBAT_DAMAGE_ENTRY_CAPABILITIES, combat_damage_entry_condition
 
@@ -177,6 +203,30 @@ def _combat_damage_entry_binding(match, *, card_name, compile_binding):
         return None
     required = tuple(dict.fromkeys((*base.public_capabilities, *COMBAT_DAMAGE_ENTRY_CAPABILITIES)))
     return replace(base, public_condition=condition, public_capabilities=required)
+
+
+def _tapped_draw_damage_binding(match, *, card_name, compile_binding):
+    if tuple(match[field].casefold() for field in ("prefix", "condition", "body")) != (
+        "at the beginning of your draw step", "this artifact is tapped", "it deals 1 damage to you.",
+    ):
+        return None
+    from ..rules.trigger_source_information import (
+        TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY, TAPPED_DRAW_SOURCE_DAMAGE_TEMPLATE,
+        tapped_draw_source_condition,
+    )
+
+    base = compile_binding(f"{match['prefix']}, This artifact deals 1 damage to you.", card_name=card_name)
+    if base is None or (base.event.value, base.active_zone, base.variant) != (
+        "step.begin", "battlefield", "your draw step",
+    ):
+        return None
+    return replace(
+        base, public_state_condition=tapped_draw_source_condition(),
+        public_mechanic="cr-603-handling-triggered-abilities",
+        public_template_id=TAPPED_DRAW_SOURCE_DAMAGE_TEMPLATE,
+        public_active_zone=base.active_zone, public_condition=base.event_condition,
+        public_capabilities=(*base.public_capabilities, TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY),
+    )
 
 
 def _opponent_damage_untapped_draw_binding(match):
@@ -238,13 +288,223 @@ def _opponent_death_toughness_binding(match, *, card_name, compile_binding):
     return public_binding_from_spec(spec, binding_type=type(base), event_type=type(base.event))
 
 
+def _entrant_land_advantage_binding(match, *, card_name, compile_binding):
+    if tuple(match[field].casefold() for field in ("prefix", "condition", "body")) != (
+        "whenever a land an opponent controls enters",
+        "that player controls more lands than you",
+        "you may put a land card from your hand onto the battlefield.",
+    ):
+        return None
+    from ..land_entry_condition_model import (
+        ENTRANT_LAND_ADVANTAGE_CAPABILITY, entrant_land_advantage_condition,
+    )
+
+    base = compile_binding(f"{match['prefix']}, {match['body']}", card_name=card_name)
+    if (base is None or (base.event.value, base.active_zone, base.variant)
+            != ("land.enter", "battlefield", "opponent_land")):
+        return None
+    return replace(
+        base,
+        public_condition=entrant_land_advantage_condition(),
+        public_template_id="fixed-counter-opponent-land-entry-current-advantage-v1",
+        public_capabilities=(*base.public_capabilities, FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,
+                             ENTRANT_LAND_ADVANTAGE_CAPABILITY),
+    )
+
+
+def _opponent_other_land_arrival_binding(match):
+    if tuple(match[field].casefold().replace("’", "'") for field in ("prefix", "condition", "body")) != (
+        "whenever a land enters under an opponent's control",
+        "that player had another land enter the battlefield under their control this turn",
+        "this creature deals 3 damage to that player.",
+    ):
+        return None
+    from ..land_entry_condition_model import (
+        OTHER_LAND_ARRIVAL_EVENT, OTHER_LAND_ARRIVAL_VARIANT, opponent_other_land_arrival_condition,
+    )
+    from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+    from .qualified_zone_event_bindings import public_binding_from_spec
+
+    spec = FixedPublicEventBindingSpec(
+        event=OTHER_LAND_ARRIVAL_EVENT, variant=OTHER_LAND_ARRIVAL_VARIANT, body=match["body"],
+        template_id="fixed-counter-opponent-land-entry-history-v1",
+        mechanic="trigger-event-normalized-zone-change", condition=opponent_other_land_arrival_condition(),
+        capabilities=(PUBLIC_HISTORY_QUERY_CAPABILITY, FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY),
+    )
+    return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
+
+
+def _source_entered_end_step_phase_binding(match, *, card_name, compile_binding, compile_source_binding):
+    if (match["prefix"].casefold() != "at the beginning of your end step"
+            or match["body"].casefold() not in {"he phases out", "he phases out."}):
+        return None
+    from ..rules.source_references import SourceReferenceSpec
+
+    entered = re.fullmatch(r"(?P<source>.+?) entered this turn", match["condition"], re.I)
+    if entered is None or not SourceReferenceSpec(card_name).matches(entered["source"]):
+        return None
+    text = f"{match['prefix']}, this planeswalker phases out."
+    base = compile_binding(text, card_name=card_name) or compile_source_binding(text, card_name=card_name)
+    if (
+        base is None or base.event is not FixedCounterTriggerEvent.STEP_BEGIN or base.active_zone != "battlefield"
+        or not is_controller_end_step_schedule(base.event_condition)
+    ):
+        return None
+    condition = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN)
+    return replace(base, public_state_condition=condition)
+
+
+def opponent_threshold_search_body(body):
+    from .library_search_templates import fixed_creature_group_library_search_template
+
+    match = re.fullmatch(r"Sacrifice this enchantment, (?P<search>search .+)", " ".join(body.split()), re.I)
+    return fixed_creature_group_library_search_template(match["search"]) if match is not None else None
+
+
+def opponent_creature_threshold_condition(text):
+    match = re.fullmatch(rf"an opponent controls (?P<count>{FIXED_COUNT_PATTERN}) or more creatures", text, re.I)
+    if match is None:
+        return None
+    count = fixed_number(match["count"])
+    if not 1 <= count <= 10:
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=count, schema_version=4,
+        fact=FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM,
+    )
+
+
+def _unpaid_creature_entry_binding(match, *, card_name):
+    from ..rules.source_references import SourceReferenceSpec
+    from ..rules.unpaid_creature_entry import DEPS, condition
+    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+    from .fixed_public_event_trigger_bindings import _spec
+    from .qualified_zone_event_bindings import public_binding_from_spec
+
+    if (not card_name or match["condition"].casefold() != "none of them were cast or no mana was spent to cast them"
+            or match["body"].casefold() != "draw a card."):
+        return None
+    prefix = re.fullmatch(r"Whenever (?P<source>.+?) and/or one or more other nontoken creatures you control enter",
+                          match["prefix"], re.I)
+    if prefix is None or not SourceReferenceSpec(card_name).matches(prefix["source"]):
+        return None
+    spec = _spec("permanent.enter", "unpaid_creature_entry_group", match["body"],
+                 "unpaid-creature-entry-group-draw-v1", "trigger-event-normalized-zone-change",
+                 condition=condition(), capabilities=DEPS)
+    return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
+
+
+def _opponent_off_turn_draw_binding(match, *, card_name, compile_binding):
+    fields = tuple(match[key].casefold().replace("’", "'") for key in ("prefix", "condition", "body"))
+    if fields != ("whenever an opponent draws a card", "it isn't that player's turn", "create a tapped treasure token."):
+        return None
+    from ..rules.opponent_off_turn_draw import OFF_TURN_DRAW_CAPABILITY, off_turn_opponent_draw_condition
+
+    base = compile_binding(f"{match['prefix']}, {match['body']}", card_name=card_name)
+    if base is None or (base.event.value, base.variant, base.active_zone) != (
+        "card.drawn", "opponent_card_draw", "battlefield",
+    ):
+        return None
+    return replace(base, public_condition=off_turn_opponent_draw_condition(),
+                   public_capabilities=(*base.public_capabilities, OFF_TURN_DRAW_CAPABILITY))
+
+
+def _main_phase_landfall_combat_binding(match, *, card_name, compile_binding):
+    from ..extra_combat_model import MAIN_PHASE_EXTRA_COMBAT_CAPABILITY, main_phase_extra_combat_condition
+
+    prefix = match["prefix"]
+    if (
+        re.fullmatch(r"(?:Landfall\s+[—-]\s+)?Whenever a land you control enters", prefix, re.I) is None
+        or match["condition"].casefold().replace("’", "'") != "it's your main phase"
+        or " ".join(match["body"].split()).casefold().replace("’", "'") != (
+            "there's an additional combat phase after this phase. "
+            "at the beginning of that combat, untap all creatures you control."
+        )
+    ):
+        return None
+    base = compile_binding(f"{prefix}, {match['body']}", card_name=card_name)
+    if base is None or (base.event.value, base.active_zone) != ("land.enter", "battlefield"):
+        return None
+    return replace(
+        base,
+        public_mechanic="trigger-event-normalized-zone-change",
+        public_condition=main_phase_extra_combat_condition(),
+        public_template_id="own-main-landfall-extra-combat-v1",
+        public_active_zone="battlefield",
+        public_capabilities=(*base.public_capabilities, MAIN_PHASE_EXTRA_COMBAT_CAPABILITY),
+    )
+
+
+def _enchantment_death_return_binding(match, *, card_name):
+    from .event_card_return_templates import self_death_return_binding
+    from ..rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_VARIANT
+
+    if match["condition"].casefold() == "it was a creature":
+        death = self_death_return_binding(match.string, card_name=card_name)
+        if death is not None and death.variant == DEATH_ENCHANTMENT_RETURN_VARIANT:
+            from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding, FixedCounterTriggerEvent
+            from .qualified_zone_event_bindings import public_binding_from_spec
+
+            return public_binding_from_spec(death, binding_type=FixedCounterTriggerBinding,
+                                            event_type=FixedCounterTriggerEvent)
+
+
 def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
+    if match["condition"].casefold() == "you cast it from anywhere other than your hand":
+        from .fixed_counter_trigger_nodes import _public_trigger_binding
+
+        return _public_trigger_binding(match.string, card_name=card_name)
+    if off_turn := _opponent_off_turn_draw_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return off_turn
+    if land_combat := _main_phase_landfall_combat_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return land_combat
+    if death := _enchantment_death_return_binding(match, card_name=card_name):
+        return death
+    from .opposing_end_step_advantage_templates import opposing_end_step_advantage_binding
+    if advantage := opposing_end_step_advantage_binding(match):
+        return advantage
+    if match["condition"].casefold().replace("’", "'") == "it's attacking":
+        from .fixed_counter_trigger_nodes import _public_trigger_binding
+
+        if binding := _public_trigger_binding(match.string, card_name=card_name):
+            return binding
+    from .counter_movement_templates import departure_counter_transfer_binding
+    if departure := departure_counter_transfer_binding(match.string):
+        from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+        from .qualified_zone_event_bindings import public_binding_from_spec
+        return public_binding_from_spec(departure, binding_type=FixedCounterTriggerBinding,
+                                        event_type=FixedCounterTriggerEvent)
+    from .counter_movement_templates import source_counter_trigger_binding
+    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+
+    counter_binding = source_counter_trigger_binding(
+        match.string, card_name=card_name, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent,
+    )
+    if counter_binding is not None:
+        return counter_binding
+    phase = _source_entered_end_step_phase_binding(
+        match, card_name=card_name, compile_binding=compile_binding, compile_source_binding=compile_source_binding,
+    )
+    if phase is not None:
+        return phase
+    if unpaid := _unpaid_creature_entry_binding(match, card_name=card_name):
+        return unpaid
+    if land := _opponent_other_land_arrival_binding(match):
+        return land
+    if advantage := _entrant_land_advantage_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return advantage
     if death := _opponent_death_toughness_binding(match, card_name=card_name, compile_binding=compile_binding):
         return death
     if counter_draw := _source_counter_upkeep_draw_binding(match, card_name=card_name, compile_binding=compile_binding):
         return counter_draw
+    if tapped_draw := _tapped_draw_damage_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return tapped_draw
     if untapped_draw := _opponent_damage_untapped_draw_binding(match):
         return untapped_draw
+    if entrant_names := _entrant_name_absence_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return entrant_names
     if combat_entry := _combat_damage_entry_binding(match, card_name=card_name, compile_binding=compile_binding):
         return combat_entry
     if other_spell := _other_spell_self_cast_binding(match, card_name=card_name, compile_binding=compile_binding):
@@ -269,14 +529,28 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     token_absence = _each_upkeep_creature_token_absence(match['prefix'], match['condition'])
     keyword_absence = _controller_end_step_creature_keyword_absence(match['prefix'], match['condition'])
     death_absence = _death_keyword_absence(match['prefix'], match['condition'])
+    artifact_maximum = (
+        match["prefix"].casefold() == "at the beginning of your upkeep"
+        and match["condition"].casefold() ==
+        "you control the artifact with the greatest mana value or tied for the greatest mana value"
+        and match["body"].casefold().rstrip(".") == "draw a card"
+    )
     condition = (
-        upkeep_hand_condition(match['condition']) or token_absence or keyword_absence or death_absence
+        (greatest_artifact_mana_value_condition() if artifact_maximum else None)
+        or upkeep_hand_condition(match['condition']) or token_absence or keyword_absence or death_absence
         or greatest_creature_power_control_condition(match['condition'])
+        or opponent_creature_threshold_condition(match["condition"])
         or fixed_public_state_condition(match['condition'], source_name=card_name or 'This source')
     )
     if condition is None:
         return None
-    if isinstance(condition, FixedPublicStateConditionSpec) and any(leaf.kind in {
+    is_counter_flip = (
+        isinstance(condition, FixedPublicStateConditionSpec)
+        and condition.kind is FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST
+        and match["prefix"].casefold() in {"at the beginning of the end step", "at the beginning of each end step"}
+        and match["body"].casefold().rstrip(".") == "you may flip it"
+    )
+    if not is_counter_flip and isinstance(condition, FixedPublicStateConditionSpec) and any(leaf.kind in {
         FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
         FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
         FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
@@ -303,6 +577,11 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
         condition.fact in GREATEST_CREATURE_POWER_FACTS and base.active_zone != 'battlefield'
     ):
         return None
+    if (isinstance(condition, FixedPublicStateConditionSpec)
+            and condition.fact is FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM
+            and ((base.active_zone, base.event.value, base.variant) != ("battlefield", "step.begin", "your upkeep")
+                 or opponent_threshold_search_body(body) is None)):
+        return None
     if token_absence is not None and (base.active_zone != 'battlefield' or base.event is not FixedCounterTriggerEvent.STEP_BEGIN):
         return None
     if isinstance(condition, UpkeepParticipantHandCondition) and (
@@ -323,6 +602,36 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     return replace(base, public_state_condition=condition)
 
 
+def public_state_source_self_trigger_spec(material_line, *, card_name):
+    """Parse source-self zone forms accepted by typed intervening-if."""
+    from ..rules.source_references import SourceReferenceSpec
+    from .public_event_binding_spec import public_event_binding
+
+    subjects = (
+        r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent)"
+    )
+    if card_name:
+        subjects = rf"(?:{subjects}|{SourceReferenceSpec(card_name).regex_pattern})"
+    match = re.fullmatch(
+        rf"(?:When|Whenever) {subjects} (?P<event>enters|dies), "
+        r"(?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    event = match.group("event").casefold()
+    return public_event_binding(
+        (
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES.value
+            if event == "dies"
+            else FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER.value
+        ),
+        f"public_state_source_{event}", match.group("body"),
+        "fixed-counter-public-state-source-zone-trigger-v1", "trigger-event-normalized-zone-change",
+    )
+
+
 def public_trigger_condition_capabilities(condition: PublicTriggerCondition | None) -> tuple[str, ...]:
     if condition is None:
         return ()
@@ -332,16 +641,31 @@ def public_trigger_condition_capabilities(condition: PublicTriggerCondition | No
         return ATTACHED_GREATEST_POWER_CAPABILITIES
     if isinstance(condition, (ControllerCreatureKeywordAbsence, DeathKeywordAbsence)):
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+    if condition.fact is FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT:
+        return greatest_artifact_mana_value_condition_dependencies(condition.to_dict())
     if condition.fact in GREATEST_CREATURE_POWER_FACTS:
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,
                 *greatest_creature_power_condition_dependencies(condition.to_dict()))
     if condition.fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM:
         from ..player_maximum_model import PLAYER_MAXIMUM_CAPABILITY
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,PLAYER_MAXIMUM_CAPABILITY)
+    if condition.fact is FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM:
+        from ..player_maximum_model import OPPONENT_CREATURE_THRESHOLD_CAPABILITY
+
+        return FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, OPPONENT_CREATURE_THRESHOLD_CAPABILITY
     if condition.fact is FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC:
         from ..player_maximum_model import OPPONENT_MORE_METRIC_CAPABILITY
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,OPPONENT_MORE_METRIC_CAPABILITY)
     if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, 'condition.creature.fixed_numeric_exists')
     from ..initiative_model import dungeon_condition_dependencies
-    return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *dungeon_condition_dependencies(condition))
+    query_capabilities = {
+        capability
+        for leaf in condition.leaf_conditions()
+        for capability in nonowner_control_quantity_capabilities(leaf.quantity)
+    }
+    if any(leaf.fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER
+           for leaf in condition.leaf_conditions()):
+        query_capabilities.add('state_query.commander.designation')
+    return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *dungeon_condition_dependencies(condition),
+            *sorted(query_capabilities))

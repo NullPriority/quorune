@@ -10,6 +10,7 @@ from typing import Any, Mapping
 from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from .object_predicate import ObjectQuerySpec
 from .query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
 from .replacement.immutable import thaw_value
@@ -29,6 +30,7 @@ FIXED_TARGET_COLOR_MECHANIC = "fixed-target-color-setting"
 FIXED_TARGET_COLOR_CAPABILITY = "zone.object.fixed_resolution_color"
 FIXED_TARGET_COLOR_ZONES = ("battlefield", "stack")
 SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
+FIXED_SUBTYPE_BASE_CAPABILITY = "continuous.resolution.fixed_base_with_added_creature_type"
 CHOSEN_SUBTYPE_SETTING_VERSION = 15
 CHOSEN_SUBTYPE_CHOICE_VERSION = 2
 DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION = 16
@@ -42,6 +44,17 @@ TARGET_CARD_TYPE_ADDITION_VERSION = 20
 TARGET_CARD_TYPE_ADDITION_MECHANIC = "fixed-target-card-type-addition"
 TARGET_CARD_TYPE_ADDITION_CAPABILITY = "continuous.resolution.fixed_target_card_type_addition"
 INDEFINITE_TARGET_LAND_ANIMATION_VERSION = 21
+TARGET_PLAYER_CREATURE_OVERWRITE_VERSION = 31
+TARGET_CREATURE_ABILITY_LOSS_VERSION = 32
+NEXT_TURN_TARGET_LAND_ANIMATION_VERSION = 33
+NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC = "untap-retaining-land-animation-next-turn"
+NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.untap_land_animation_next_turn"
+NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS = (
+    "tap-and-untap", "cr-611-continuous-effects", "cr-115-targets",
+    NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC, "haste",
+)
+COUNTED_TARGET_LAND_ANIMATION_VERSION = 35
+COUNTED_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.enchantment_count_land_animation"
 INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC = "indefinite-target-land-animation"
 INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_target_land_animation"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
@@ -53,6 +66,9 @@ FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, TARGET_CARD_TYPE_ADDITION_VERSION,
     INDEFINITE_TARGET_LAND_ANIMATION_VERSION, FIXED_TARGET_LAND_TYPE_VERSION,
+    TARGET_PLAYER_CREATURE_OVERWRITE_VERSION, TARGET_CREATURE_ABILITY_LOSS_VERSION,
+    NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+    COUNTED_TARGET_LAND_ANIMATION_VERSION,
     *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -273,6 +289,26 @@ class IndefiniteTargetLandAnimationSpec:
     def layer_operations(self):return self.settings.layer_operations()
 
 
+def next_turn_target_land_animation_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+            "types_any": ["land"], "controller_relation": "you"}
+
+
+def next_turn_target_land_animation_settings():
+    return FixedResolutionCharacteristicsSpec(
+        card_types=("Creature",), creature_subtypes=("Elemental",), retain_types=True,
+        retain_creature_subtypes=True, keywords=("Haste",), base_power=5, base_toughness=5,
+    )
+
+
+def next_turn_target_land_animation_effects():
+    return (
+        {"op": "untap", "card": "$target.0"},
+        {"op": CHARACTERISTIC_OPERATION, "schema_version": NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+         "card": "$target.0", "characteristics": next_turn_target_land_animation_settings().to_dict()},
+    )
+
+
 class IndefiniteEnchantmentFormSpec:
     """One closed layer-four type setting on the original source."""
 
@@ -341,12 +377,38 @@ class DerivedResolutionCharacteristicsSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class CountedTargetLandAnimationSpec:
+    """Animate the original controlled land using one current enchantment count."""
+
+    @property
+    def quantity(self) -> LiveBattlefieldQuantitySpec:
+        return LiveBattlefieldQuantitySpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",)),
+            controller_relation="source_controller",
+        )
+
+    def effect(self) -> dict[str, Any]:
+        return {
+            "op": CHARACTERISTIC_OPERATION, "schema_version": COUNTED_TARGET_LAND_ANIMATION_VERSION,
+            "card": "$target.0", "characteristics": {"quantity": self.quantity.to_dict()},
+        }
+
+    def materialize(self, amount: int) -> FixedResolutionCharacteristicsSpec:
+        return FixedResolutionCharacteristicsSpec(
+            card_types=("Creature",), creature_subtypes=("Elemental",), retain_types=True,
+            retain_creature_subtypes=True, keywords=("Trample", "Haste"),
+            base_power=amount, base_toughness=amount,
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class FixedResolutionSubtypeGrantSpec:
-    """A retained creature subtype and optional keyword additions."""
+    """Add a creature subtype, with either keywords or a fixed base-setting cohort."""
 
     subtype: str
     keywords: tuple[str, ...] = ()
     schema_version: int = 3
+    base_power_toughness: tuple[int, int] | None = None
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != 3:
@@ -362,23 +424,48 @@ class FixedResolutionSubtypeGrantSpec:
             or len(self.keywords) != len(set(self.keywords))
         ):
             raise ValueError("Fixed subtype grant keywords are outside the represented vocabulary")
+        base = self.base_power_toughness
+        if base is not None and (self.keywords or not isinstance(base, tuple) or len(base) != 2
+                                 or any(type(value) is not int or value < 0 for value in base)):
+            raise ValueError("Additive subtype with base stats requires two fixed values and no keyword changes")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "subtype": self.subtype, "keywords": list(self.keywords)}
+        result = {"schema_version": self.schema_version, "subtype": self.subtype, "keywords": list(self.keywords)}
+        if self.base_power_toughness is not None:
+            result["base_power_toughness"] = list(self.base_power_toughness)
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> FixedResolutionSubtypeGrantSpec:
-        if not isinstance(value, Mapping) or set(value) != {"schema_version", "subtype", "keywords"}:
+        expected = {"schema_version", "subtype", "keywords"}
+        if not isinstance(value, Mapping) or set(value) not in (expected, expected | {"base_power_toughness"}):
             raise ValueError("Fixed subtype grant has an invalid shape")
         if not isinstance(value["keywords"], (list, tuple)):
             raise ValueError("Fixed subtype grant keywords must be ordered")
-        return cls(value["subtype"], tuple(value["keywords"]), value["schema_version"])
+        base = value.get("base_power_toughness")
+        if "base_power_toughness" in value and not isinstance(base, (list, tuple)):
+            raise ValueError("Fixed subtype grant base stats must be ordered")
+        return cls(value["subtype"], tuple(value["keywords"]), value["schema_version"],
+                   tuple(base) if base is not None else None)
 
     def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
         additions = (ContinuousOperation("add_types", (self.subtype,), field="subtypes"),)
         abilities = tuple(ContinuousOperation("add_ability", keyword) for keyword in self.keywords)
         result = ((Layer.TYPE, "4", additions),)
+        if self.base_power_toughness is not None:
+            return (*result, (Layer.POWER_TOUGHNESS, "7b",
+                             (ContinuousOperation("set_power_toughness", self.base_power_toughness),)))
         return (*result, (Layer.ABILITY, "6", abilities)) if abilities else result
+
+
+def controlled_subtype_creature_query(subtype: str, *, controller: str = "$controller") -> ObjectQuerySpec:
+    return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+                           controller=controller, subtypes_all=(subtype,))
+
+
+def is_fixed_subtype_base_instruction(value: Mapping[str, Any]) -> bool:
+    return (value.get("op") == CHARACTERISTIC_OPERATION and value.get("schema_version") == SUBTYPE_GRANT_INSTRUCTION_VERSION
+            and isinstance(value.get("characteristics"), Mapping) and "base_power_toughness" in value["characteristics"])
 
 
 @dataclass(frozen=True, slots=True)
@@ -452,6 +539,62 @@ class FixedResolutionSubtypeSettingSpec:
         return ((Layer.TYPE, "4", (ContinuousOperation("set_creature_subtype", self.subtype),)),)
 
 
+@dataclass(frozen=True, slots=True)
+class TargetPlayerCreatureOverwriteSpec:
+    form: str
+
+    def __post_init__(self):
+        if type(self.form) is not str or self.form not in ("blue_frog", "zero_two"):
+            raise ValueError("Player creature overwrite requires a closed characteristic result")
+
+    def to_dict(self):
+        return {"form": self.form}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"form"}:
+            raise ValueError("Player creature overwrite fields are closed")
+        return cls(value["form"])
+
+    def layer_operations(self):
+        if self.form == "blue_frog":
+            subtype = FixedResolutionSubtypeSettingSpec("frog")
+            settings = FixedResolutionCharacteristicsSpec(colors=("U",), remove_all_abilities=True,
+                                                          base_power=1, base_toughness=1)
+            return (*subtype.layer_operations(), *settings.layer_operations())
+        return FixedResolutionCharacteristicsSpec(
+            remove_all_abilities=True, base_power=0, base_toughness=2,
+        ).layer_operations()
+
+
+@dataclass(frozen=True, slots=True)
+class TargetCreatureAbilityLossSpec:
+    def to_dict(self):
+        return {"remove_all_abilities": True}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {"remove_all_abilities"} or value["remove_all_abilities"] is not True:
+            raise ValueError("Ability loss requires the exact remove-all-abilities instruction")
+        return cls()
+
+    def layer_operations(self):
+        return ((Layer.ABILITY, "6", (ContinuousOperation("remove_all_abilities"),)),)
+
+
+def target_creature_ability_loss_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"],
+            "controller_relation": "opponent", "count": 1}
+
+
+def target_player_creature_overwrite_schema():
+    return {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
+
+
+def target_player_creature_overwrite_query(controller="$target.0"):
+    return ObjectQuerySpec(zones=("battlefield",), controller=controller, types_all=("creature",))
+
+
 CHOSEN_CREATURE_TYPE_RESULT_FIELD = "chosen_creature_type_result"
 CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY = "choice.creature_type.fixed_battlefield_result"
 CHOSEN_CREATURE_TYPE_MODIFIER_FIELD = "chosen_creature_type_modifier"
@@ -460,6 +603,8 @@ CHOSEN_CREATURE_TYPE_MODIFIER_FIELD = "chosen_creature_type_modifier"
 class ChosenCreatureTypeResult(str, Enum):
     CONTROLLED_PERMANENT_DRAW = "controlled_permanent_draw"
     NONMATCHING_CREATURE_STATS = "nonmatching_creature_stats"
+    NONMATCHING_CREATURE_RETURN = "nonmatching_creature_return"
+    REVEAL_UNTIL_ENTRY = "reveal_until_entry"
 
     def choice_effect(self) -> dict[str, Any]:
         return {
@@ -488,13 +633,20 @@ class ChosenCreatureTypeResult(str, Enum):
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
-        result = (
-            "zone.draw.library_to_hand" if self is self.CONTROLLED_PERMANENT_DRAW
-            else "continuous.resolution.fixed_characteristics_until_end_of_turn"
-        )
+        if self is self.REVEAL_UNTIL_ENTRY:
+            from .rules.chosen_type_library_entry import CHOSEN_TYPE_LIBRARY_ENTRY_CAPABILITY
+            return (CHOSEN_TYPE_LIBRARY_ENTRY_CAPABILITY, "library.select.reveal_until_controller",
+                    "library.select.battlefield_controller", "library.shuffle.fixed_controller")
+        result = {
+            self.CONTROLLED_PERMANENT_DRAW: "zone.draw.library_to_hand",
+            self.NONMATCHING_CREATURE_STATS: "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            self.NONMATCHING_CREATURE_RETURN: "zone.move.fixed_public_set",
+        }[self]
         return CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY, result
 
     def battlefield_query(self, subtype: str, *, actor: str) -> ObjectQuerySpec:
+        if self is self.REVEAL_UNTIL_ENTRY:
+            raise ValueError("This chosen creature type applies to a library entry instruction")
         if type(subtype) is not str or subtype not in CREATURE_SUBTYPES:
             raise ValueError("Chosen creature type result requires one canonical creature type")
         if self is self.CONTROLLED_PERMANENT_DRAW:
@@ -604,11 +756,49 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec | SourceBlockDefenderSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | CountedTargetLandAnimationSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec | SourceBlockDefenderSpec | TargetPlayerCreatureOverwriteSpec | TargetCreatureAbilityLossSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value.get("schema_version")
+    if type(version) is int and version == NEXT_TURN_TARGET_LAND_ANIMATION_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Next-turn land animation needs one exact result")
+        card = value["card"]
+        settings = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
+        if (type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0")
+                or settings != next_turn_target_land_animation_settings()):
+            raise ValueError("Next-turn land animation requires the original target and retaining form")
+        return settings, card
+    if type(version) is int and version == COUNTED_TARGET_LAND_ANIMATION_VERSION:
+        spec = CountedTargetLandAnimationSpec()
+        template = spec.effect()
+        if set(value) != expected | {"card"} or any(thaw_value(value[key]) != template[key] for key in expected):
+            raise ValueError("Counted animation needs its exact enchantment count and land settings")
+        card = value["card"]
+        if type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0"):
+            raise ValueError("Counted animation must use the original targeted land")
+        return spec, card
+    if type(version) is int and version == TARGET_CREATURE_ABILITY_LOSS_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Ability loss needs one exact target instruction")
+        card = value["card"]
+        if type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0"):
+            raise ValueError("Ability loss must use the original targeted creature")
+        return TargetCreatureAbilityLossSpec.from_dict(value["characteristics"]), card
+    if type(version) is int and version == TARGET_PLAYER_CREATURE_OVERWRITE_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"predicate"}:
+            raise ValueError("Player creature overwrite needs its exact public query and no other fields")
+        predicate = ObjectQuerySpec.from_dict(value["predicate"])
+        controller = predicate.controller
+        if (
+            type(controller) is not str or not controller
+            or (controller.startswith("$") if resolved else controller != "$target.0")
+            or predicate != target_player_creature_overwrite_query(controller)
+            or predicate.to_dict() != dict(value["predicate"])
+        ):
+            raise ValueError("Player creature overwrite requires the originally declared player's current creatures")
+        return TargetPlayerCreatureOverwriteSpec.from_dict(value["characteristics"]), predicate
     if type(version) is int and version == FIXED_TARGET_LAND_TYPE_VERSION:
         if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
             raise ValueError("Fixed basic land type needs one closed result")
@@ -648,7 +838,7 @@ def fixed_resolution_characteristic_instruction(
     from .next_turn_effect import split_next_turn_effect
 
     value, source_tapped = split_source_tap_effect(value)
-    value, _ = split_next_turn_effect(value)
+    value, has_next_turn = split_next_turn_effect(value)
     if set(value) not in (expected | {"card"}, expected | {"predicate"}):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value["schema_version"]
@@ -660,9 +850,9 @@ def fixed_resolution_characteristic_instruction(
             raise ValueError("Tapped-source modifiers require a fixed query and exact integer deltas")
         spec = FixedResolutionModifierSpec(raw["power"], raw["toughness"])
     elif version == SUBTYPE_GRANT_INSTRUCTION_VERSION:
-        if "card" not in value:
-            raise ValueError("Fixed subtype grants require a single object")
         spec = FixedResolutionSubtypeGrantSpec.from_dict(value["characteristics"])
+        if (spec.base_power_toughness is None) != ("card" in value):
+            raise ValueError("A subtype grant requires its declared single object or closed base-setting query")
     elif version == CHOSEN_SUBTYPE_SETTING_VERSION:
         spec = FixedResolutionSubtypeSettingSpec.from_dict(value["characteristics"])
     elif version == DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION:
@@ -678,4 +868,13 @@ def fixed_resolution_characteristic_instruction(
     predicate = ObjectQuerySpec.from_dict(value["predicate"])
     if predicate.to_dict() != dict(value["predicate"]):
         raise ValueError("Fixed characteristic predicate is not canonical")
+    if isinstance(spec, FixedResolutionSubtypeGrantSpec) and spec.base_power_toughness is not None:
+        subtype, controller = predicate.subtypes_all, predicate.controller
+        if (
+            len(subtype) != 1 or canonical_creature_subtype(subtype[0]) != subtype[0]
+            or not controller or (controller.startswith("$") if resolved else controller != "$controller")
+            or predicate != controlled_subtype_creature_query(subtype[0], controller=controller)
+            or source_tapped or has_next_turn
+        ):
+            raise ValueError("Fixed base and added subtype require the controller's matching creatures until end of turn")
     return spec, predicate

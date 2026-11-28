@@ -3,10 +3,13 @@ from __future__ import annotations
 from typing import Any, Mapping, Protocol, Sequence
 
 from .abilities import ActivatedAbility
+from .characteristic_read_frames import characteristic_read_frame
 from .errors import GameRuleError
+from .fixed_mana_results import EXERT_MANA_SOURCE, GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
 from .mana import ManaMode, ManaStepInput
 from .mana_ability_runtime import (
+    activated_mana_spending_rule,
     mana_output_for_ability,
     payable_mana_modes,
     typed_mana_modes_for_abilities,
@@ -17,12 +20,17 @@ from .mana_undo import (
     ReversibleManaActivation,
 )
 from .mana_mode_effects import apply_mana_mode_effects
-from .mana_spend_rules import bind_mana_spend_rule
+from .mana_spend_rules import is_source_bound_cast_mana
 from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
-from .triggered_mana import TapManaSource, commit_triggered_mana, tap_mana_source, triggered_mana_base_response
+from .triggered_mana import (
+    TapManaSource, commit_triggered_mana, queue_mana_tap_triggers, tap_mana_source, triggered_mana_base_response,
+)
 from .triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+from .rules.creature_ability_activation import (
+    CreatureAbilityActivation, capture_creature_ability_activation, publish_creature_ability_activation,
+)
 
 
 class ManaActivationHost(Protocol):
@@ -97,55 +105,39 @@ def complete_mana_activation(
     source_information=None,
     mana_payment=None,
     trigger_source: TapManaSource | None = None,
+    creature_activation: CreatureAbilityActivation | None = None,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
     from .mana_ability_runtime import tap_mana_production_factor
+    from .rules.exert_mana import apply_mana_exert, is_exert_mana
 
-    base_bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
-        source_information=source_information)
+    observed = publish_creature_ability_activation(host, creature_activation)
+    if is_exert_mana(ability):
+        apply_mana_exert(host, source, actor=seat)
+    from .artifact_hand_mana_model import is_artifact_hand_mana
+    artifact_selection = None
+    if is_artifact_hand_mana(ability):
+        from .rules.hand_artifact_mana import ArtifactHandManaSelection, commit_artifact_hand_mana_reveal
+
+        artifact_selection = source_information
+        if (not isinstance(artifact_selection, ArtifactHandManaSelection) or artifact_selection.actor != seat
+                or artifact_selection.source.object_id != source.object_id):
+            raise GameRuleError("Artifact hand mana lost its sealed activation selection")
+        base_bundle = commit_artifact_hand_mana_reveal(host, artifact_selection, source.ref)
+    else:
+        base_bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
+            source_information=source_information)
     factor = tap_mana_production_factor(host, seat, trigger_source)
     bundle = {color: amount * factor for color, amount in base_bundle.items()}
-    restriction = bind_mana_spend_rule(ability.mana_spend_restriction, source)
+    restriction = activated_mana_spending_rule(ability, source, seat)
     host._add_mana_to_pool(
         seat,
         bundle,
         restriction=restriction,
         snow_source=source_was_snow,
     )
-    selected_mode = next(
-        (
-            mode
-            for mode in host._mana_modes_for_ability(seat, source, ability)
-            if normalize_mana_bundle(mode.bundle) == base_bundle
-        ),
-        None,
-    )
-    # Explicit activation costs were already committed transactionally by the
-    # activation owner. ManaMode side effects are the equivalent cost plan used
-    # only by automatic payment and must not be applied twice here.
-    result_effects = tuple(
-        effect
-        for effect in (
-            selected_mode.side_effects if selected_mode is not None else ()
-        )
-        if effect.get("op") in {"damage_self",'skip_actor_untap','sacrifice_if_no_counters'}
-    )
-    if result_effects:
-        apply_mana_mode_effects(
-            host,
-            seat,
-            result_effects,
-            source=source,
-            payment_id=str(response.get("_mana_payment_id") or "") or None,
-            replacement_selections_by_event=(
-                response.get("_mana_replacement_selections")
-                if isinstance(
-                    response.get("_mana_replacement_selections"), Mapping
-                )
-                else None
-            ),
-        )
+    selected_mode = _commit_mana_activation_results(host, seat, source, ability, response, base_bundle)
     host._log(
         seat,
         "mana.ability",
@@ -167,9 +159,12 @@ def complete_mana_activation(
     selection = response.get(TRIGGERED_MANA_OPTION_FIELD)
     triggered = commit_triggered_mana(host, seat, trigger_source, bundle,
         **({"selection": selection} if selection is not None else {}))
+    queue_mana_tap_triggers(host, seat, trigger_source, bundle)
     reversible = bool(
         not host.state.pending_trigger_batches
+        and not observed
         and not triggered
+        and (artifact_selection is None or not artifact_selection.cards)
         and ability.tap_source
         and ability.activation_limit is None
         and not sum(ability.mana.values())
@@ -221,6 +216,46 @@ def complete_mana_activation(
     host.turn_priority.retain_priority_after_action(seat)
 
 
+def _commit_mana_activation_results(host, seat, source, ability, response, base_bundle):
+    from .rules.next_cast_library_access import NEXT_CAST_LIBRARY_ACCESS
+
+    selected_mode = next(
+        (
+            mode
+            for mode in host._mana_modes_for_ability(seat, source, ability)
+            if normalize_mana_bundle(mode.bundle) == base_bundle
+        ),
+        None,
+    )
+    # Explicit activation costs were already committed transactionally by the
+    # activation owner. ManaMode side effects are the equivalent cost plan used
+    # only by automatic payment and must not be applied twice here.
+    result_effects = tuple(
+        effect
+        for effect in (
+            selected_mode.side_effects if selected_mode is not None else ()
+        )
+        if effect.get("op") in {"damage_self", "skip_actor_untap", "sacrifice_if_no_counters",
+                                    GAIN_CONTROLLER_LIFE, PLACE_MANA_POINT_COUNTER, NEXT_CAST_LIBRARY_ACCESS}
+    )
+    if result_effects:
+        apply_mana_mode_effects(
+            host,
+            seat,
+            result_effects,
+            source=source,
+            payment_id=str(response.get("_mana_payment_id") or "") or None,
+            replacement_selections_by_event=(
+                response.get("_mana_replacement_selections")
+                if isinstance(
+                    response.get("_mana_replacement_selections"), Mapping
+                )
+                else None
+            ),
+        )
+    return selected_mode
+
+
 def _mana_plan_modes(
     host: ManaActivationHost,
     seat: str,
@@ -261,17 +296,23 @@ def _selected_plan_mode(
     spend_context: str | None,
     tap_source: bool,
     input_payment: ManaStepInput | None = None,
+    artifact_ability_id: str | None = None,
+    requested_restriction: str | None = None,
+    payment_window: bool = False,
 ) -> tuple[ManaMode, str | None]:
     price_key = input_payment.key if input_payment else None
-    mode = next(
-        (
-            value
-            for value in modes
-            if normalize_mana_bundle(value.bundle) == bundle and value.tap_source==tap_source
-            and (value.price.key if value.price else None) == price_key
-        ),
-        None,
-    )
+    matching = [
+        value for value in modes
+        if value.tap_source == tap_source and value.artifact_hand_mana == artifact_ability_id
+        and (artifact_ability_id is not None or value.double_unspent or normalize_mana_bundle(value.bundle) == bundle)
+        and (value.price.key if value.price else None) == price_key
+    ]
+    has_rider = any(is_source_bound_cast_mana(value.restriction) for value in matching)
+    if payment_window:
+        matching = [value for value in matching if (value.restriction or None) == requested_restriction]
+    elif is_source_bound_cast_mana(requested_restriction) or (has_rider and requested_restriction is not None):
+        matching = [value for value in matching if value.restriction == requested_restriction]
+    mode = next(iter(matching), None)
     if mode is None:
         raise GameRuleError(
             f"Declared output is not a recognized mana mode of {card.printed_name}"
@@ -280,7 +321,11 @@ def _selected_plan_mode(
     restriction_allows = bool(
         compiled and host._mana_restriction_allows(compiled, spend_context)
     )
-    if mode.requires_choice:
+    if payment_window and compiled and not restriction_allows:
+        from .mana_restriction_model import valid_produced_mana_spend_restriction
+
+        restriction_allows = valid_produced_mana_spend_restriction(compiled)
+    if mode.requires_choice and artifact_ability_id is None:
         raise GameRuleError(
             f"{card.printed_name}'s selected mana mode has a nonmana choice/cost; "
             "activate that Oracle ability explicitly."
@@ -347,10 +392,12 @@ def _commit_plan_mode(
     replacement_selections_by_event: Mapping[str, Any] | None,
     triggered_mana_option: str | None = None,
     chosen_subtype_mana=None,
+    artifact_selection=None,
 ) -> None:
+    creature_activation = capture_creature_ability_activation(host, seat, card)
     trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     from .mana_source_counter_payment_model import exact_mana_cost_order
-    cost_operations = {"sacrifice_source","remove_source_counters"}
+    cost_operations = {"sacrifice_source", "exile_hand_source", "remove_source_counters", EXERT_MANA_SOURCE}
     if exact_mana_cost_order(host.state):cost_operations.add("pay_life")
     cost_effects = tuple(
         effect for effect in mode.side_effects
@@ -370,6 +417,7 @@ def _commit_plan_mode(
         payment_id=payment_id,
         replacement_selections_by_event=replacement_selections_by_event,
     )
+    publish_creature_ability_activation(host, creature_activation)
     if chosen_subtype_mana is not None:
         from .public_quantity_mana_runtime import public_quantity_mana_amount
 
@@ -378,6 +426,10 @@ def _commit_plan_mode(
             host, seat, card, output, source_information=source_information,
         ):
             raise GameRuleError("The mana plan no longer matches the current chosen subtype count")
+    if artifact_selection is not None:
+        from .rules.hand_artifact_mana import commit_artifact_hand_mana_reveal
+
+        bundle = commit_artifact_hand_mana_reveal(host, artifact_selection, card.ref)
     from .mana_ability_runtime import tap_mana_production_factor
 
     factor = tap_mana_production_factor(host, seat, trigger_source)
@@ -408,6 +460,7 @@ def _commit_plan_mode(
     )
     commit_triggered_mana(host, seat, trigger_source, bundle,
         **({"selection": triggered_mana_option} if triggered_mana_option is not None else {}))
+    queue_mana_tap_triggers(host, seat, trigger_source, bundle)
 
 
 def complete_mana_plan_activations(
@@ -419,59 +472,73 @@ def complete_mana_plan_activations(
     payment_id: str | None = None,
     replacement_selections_by_event: Mapping[str, Any] | None = None,
     preserve_source_id: str | None = None,
+    payment_window: bool = False,
 ) -> None:
     """Validate and commit an authoritative derived mana-payment plan."""
 
     for activation in activations:
-        tap_source=activation.get('tap_source',True)
-        if type(tap_source) is not bool:
-            raise GameRuleError('A mana plan tap cost must be Boolean')
-        card = host._resolve_object(
-            seat,
-            str(activation["source"]),
-            zones={"battlefield"},
-            controlled_only=True,
-        )
-        if card.tapped and tap_source:
-            raise GameRuleError(f"{card.ref} is already tapped")
-        data = host._effective_card_data(card)
-        card_types, _subtypes, supertypes = host._type_parts(
-            str(data.get("type_line") or "")
-        )
-        if (
-            tap_source and "creature" in card_types
-            and summoning_sickness_prohibits_tap_or_untap_cost(
-                host,
-                card,
-                as_though_haste=host._may_activate_creature_as_haste(
-                    seat, card
-                ),
+        with characteristic_read_frame(host):
+            tap_source=activation.get('tap_source',True)
+            if type(tap_source) is not bool:
+                raise GameRuleError('A mana plan tap cost must be Boolean')
+            card = host._resolve_object(
+                seat,
+                str(activation["source"]),
+                zones={"battlefield"} if tap_source else {"battlefield", "hand"},
+                controlled_only=True,
             )
-        ):
-            raise GameRuleError(f"{card.ref} is summoning sick")
-        bundle = normalize_mana_bundle(activation.get("bundle"))
-        modes = _mana_plan_modes(host, seat, card)
-        if card.object_id == preserve_source_id:
-            from .mana import mana_modes_preserving_source
+            if card.zone == "hand" and activation["source"] != card.ref:
+                raise GameRuleError("Hand mana steps require the exact source reference")
+            if card.tapped and tap_source:
+                raise GameRuleError(f"{card.ref} is already tapped")
+            data = host._effective_card_data(card)
+            card_types, _subtypes, supertypes = host._type_parts(
+                str(data.get("type_line") or "")
+            )
+            if (
+                tap_source and "creature" in card_types
+                and summoning_sickness_prohibits_tap_or_untap_cost(
+                    host,
+                    card,
+                    as_though_haste=host._may_activate_creature_as_haste(
+                        seat, card
+                    ),
+                )
+            ):
+                raise GameRuleError(f"{card.ref} is summoning sick")
+            from .rules.hand_artifact_mana import prepare_artifact_hand_mana_step
 
-            modes = mana_modes_preserving_source(modes)
-        try:
-            input_payment = ManaStepInput.from_dict(activation["input"]) if "input" in activation else None
-        except ValueError as exc:
-            raise GameRuleError(str(exc)) from exc
-        mode, restriction = _selected_plan_mode(
-            host,
-            seat,
-            card,
-            modes,
-            bundle,
-            allow_conditional=bool(activation.get("allow_conditional")),
-            spend_context=spend_context,
-            tap_source=tap_source,
-            input_payment=input_payment,
-        )
-        chosen_subtype_mana = _capture_plan_chosen_subtype(host, seat, card, mode)
+            artifact_ability_id, artifact_selection = prepare_artifact_hand_mana_step(host, seat, card, activation)
+            bundle = normalize_mana_bundle(
+                {"C": artifact_selection.colorless} if artifact_selection is not None else activation.get("bundle")
+            )
+            modes = _mana_plan_modes(host, seat, card)
+            if card.object_id == preserve_source_id:
+                from .mana import mana_modes_preserving_source
+
+                modes = mana_modes_preserving_source(modes)
+            try:
+                input_payment = ManaStepInput.from_dict(activation["input"]) if "input" in activation else None
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            mode, restriction = _selected_plan_mode(
+                host,
+                seat,
+                card,
+                modes,
+                bundle,
+                allow_conditional=bool(activation.get("allow_conditional")),
+                spend_context=spend_context,
+                tap_source=tap_source,
+                input_payment=input_payment,
+                artifact_ability_id=artifact_ability_id,
+                requested_restriction=activation.get("restriction"),
+                payment_window=payment_window,
+            )
+            chosen_subtype_mana = _capture_plan_chosen_subtype(host, seat, card, mode)
         _commit_plan_input(host, seat, mode, input_payment)
+        if mode.double_unspent and bundle != normalize_mana_bundle(host.state.players[seat].mana_pool):
+            raise GameRuleError("Mana doubling plan no longer matches the paid unspent pool")
         _commit_plan_mode(
             host,
             seat,
@@ -484,6 +551,7 @@ def complete_mana_plan_activations(
             replacement_selections_by_event=replacement_selections_by_event,
             chosen_subtype_mana=chosen_subtype_mana,
             triggered_mana_option=activation.get(TRIGGERED_MANA_OPTION_FIELD),
+            artifact_selection=artifact_selection,
         )
 
 

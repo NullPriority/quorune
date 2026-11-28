@@ -7,10 +7,12 @@ from pathlib import Path
 import re
 from typing import Any
 
-from .abilities import parse_activated_abilities
 from .carddb import CardDatabase, CardRecord
+from .compiler.chosen_basic_land_entry import basic_land_entry_choice_handler
 from .compiler.entry_state_templates import static_entry_state_handler
 from .compiler.preflight_keyword_coverage import static_lines_without_keyword_owners
+from .compiler.program_generation import rulings_source_hash
+from .card_programs.adapters import card_program_source_diagnostics
 from .card_programs.binding import bind_card_program_runtime
 from .card_programs.trust import compute_match_trust_closure
 from .cycling_abilities import PRINTED_CYCLING_KEYWORD_PATTERN
@@ -26,7 +28,7 @@ from .profiles import (
     deck_source_fingerprint,
 )
 from .semantics import SemanticRegistry
-from .util import mana_cost_to_vector, stable_json
+from .util import mana_cost_to_vector
 
 from .rules.capabilities import (
     CapabilityRegistry,
@@ -106,7 +108,7 @@ _MATERIAL_KEYWORDS = {
 }
 
 
-def _without_parenthetical_reminder(text: str) -> str:
+def _without_parenthetical_reminder(text: str, *, preserve_offsets: bool = False) -> str:
     """Remove balanced parenthetical reminder text from Oracle text.
 
     Reminder text frequently contains colons, trigger words, and token mana
@@ -118,14 +120,15 @@ def _without_parenthetical_reminder(text: str) -> str:
     result: list[str] = []
     depth = 0
     for character in text:
+        reminder = character == "(" or depth > 0
         if character == "(":
             depth += 1
-            continue
-        if character == ")" and depth:
+        elif character == ")" and depth:
             depth -= 1
-            continue
-        if depth == 0:
+        if not reminder:
             result.append(character)
+        elif preserve_offsets:
+            result.append("\n" if character == "\n" else " ")
     return "".join(result)
 
 
@@ -165,7 +168,8 @@ def _material_oracle_text(record: CardRecord) -> str:
 
 def _printed_activated_abilities(record: CardRecord) -> tuple[Any, ...]:
     from .compiler.activated_ability_catalog import specialize_compiled_activation_costs
-    return specialize_compiled_activation_costs(parse_activated_abilities(
+    from .compiler.activated_costs import parse_compiled_activated_abilities
+    return specialize_compiled_activation_costs(parse_compiled_activated_abilities(
         card_name=record.name,
         oracle_text=_without_quoted_granted_text(
             _material_oracle_text(record)
@@ -325,12 +329,19 @@ def _kernel_compiles_cast_cost(record: CardRecord) -> bool:
     return True
 
 
-def _generic_land_status(record: CardRecord) -> tuple[str, list[str]]:
+def _generic_land_status(record: CardRecord, trusted_programs=(), source_lines=()) -> tuple[str, list[str]]:
+    from .color_set_mana_abilities import COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
+
+    spends_mana_with_delayed_trigger = any(
+        handler.get("handler_id") == COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
+        for program in trusted_programs for handler in program.handlers
+    )
+    covered_trigger_lines = source_lines if spends_mana_with_delayed_trigger else ()
     oracle = record.oracle_text.casefold()
     compiled_entry = any(
         static_entry_state_handler(line, source_name=record.name) is not None
         for line in _printed_static_lines(record)
-    )
+    ) or any(basic_land_entry_choice_handler(line) is not None for line in source_lines)
     unresolved: list[str] = []
     supported = (
         not oracle
@@ -338,12 +349,14 @@ def _generic_land_status(record: CardRecord) -> tuple[str, list[str]]:
         or compiled_entry
         or "search your library for a" in oracle
     )
-    if "when " in oracle or "whenever " in oracle:
+    uncovered_material = "\n".join(
+        line.casefold() for line in _material_oracle_text(record).splitlines()
+        if line.strip() not in covered_trigger_lines
+    )
+    if any(marker in uncovered_material for marker in ("when ", "whenever ", "return a land you control")):
         unresolved.append("triggered_ability")
     if "as " in oracle and "enters" in oracle and not supported:
         unresolved.append("replacement_effect")
-    if "return a land you control" in oracle:
-        unresolved.append("triggered_ability")
     return ("trusted_builtin" if supported and not unresolved else "partial"), unresolved
 
 
@@ -351,27 +364,8 @@ def _card_source_hashes(
     db: CardDatabase,
     record: CardRecord,
 ) -> tuple[str, str]:
-    oracle_hash = hashlib.sha256(
-        record.oracle_text.encode("utf-8")
-    ).hexdigest()
-    # Scryfall does not define an ordering among rulings that share a
-    # publication date. SQLite's insertion-order tie break therefore differs
-    # between a full bulk-data database and the compact CI fixture even when
-    # both contain the exact same ruling set. Provenance must describe content,
-    # not import order, so canonicalize every field before hashing.
-    ruling_rows = sorted(
-        (asdict(ruling) for ruling in db.rulings(record)),
-        key=lambda row: (
-            str(row["published_at"]),
-            str(row["source"]),
-            str(row["comment"]),
-            str(row["oracle_id"]),
-        ),
-    )
-    rulings_hash = hashlib.sha256(
-        stable_json(ruling_rows).encode("utf-8")
-    ).hexdigest()
-    return oracle_hash, rulings_hash
+    oracle_hash = hashlib.sha256(record.oracle_text.encode("utf-8")).hexdigest()
+    return oracle_hash, rulings_source_hash(db, record)
 
 
 def _material_effect_categories(record: CardRecord) -> list[str]:
@@ -451,8 +445,9 @@ def _trusted_activated_ability_is_covered(
     ability: Any,
     trusted_programs: list[Any],
     trusted_ids: set[str],
+    bound_activation_lines: set[str],
 ) -> bool:
-    if f"ability:{ability.ability_id}" in trusted_ids:
+    if f"ability:{ability.ability_id}" in trusted_ids or ability.oracle_line in bound_activation_lines:
         return True
     from .rules.equip_preflight_coverage import trusted_equip_keyword_covers
     if trusted_equip_keyword_covers(ability,trusted_programs):return True
@@ -469,6 +464,19 @@ def _trusted_activated_ability_is_covered(
     )
 
 
+def _unique_bound_activation_lines(abilities, activation_lines):
+    # Legacy activation IDs use flattened line numbers across faces. A unique
+    # printed activation can instead be matched to its strictly bound native span.
+    printed_lines = Counter(ability.oracle_line for ability in abilities)
+    # The legacy parser excludes separately compiled quoted granted abilities.
+    activation_lines = {_without_quoted_granted_text(line).strip() for line in activation_lines}
+    return {
+        ability.oracle_line for ability in abilities
+        if printed_lines[ability.oracle_line] == 1
+        and ability.oracle_line in activation_lines
+    }
+
+
 def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_registry, profile):
     """Recognize only exact current source spans with bound native execution."""
     from .card_programs.binding import bind_semantic_program_runtime
@@ -477,6 +485,7 @@ def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_r
     ranges={face.face_id:[] for face in oracle_ir.faces}
     covered_occurrences=set()
     all_occurrences=set()
+    activation_lines=set()
     for face in oracle_ir.faces:
         all_occurrences.update((face.face_id,line.strip()) for line in
             _without_parenthetical_reminder(face.oracle_text).splitlines() if line.strip())
@@ -492,20 +501,34 @@ def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_r
                 continue
             ranges[face.face_id].append((node.span.start,node.span.end))
             text=face.oracle_text[node.span.start:node.span.end]
-            covered_occurrences.update((face.face_id,line.strip()) for line in
-                _without_parenthetical_reminder(text).splitlines() if line.strip())
+            source_lines={line.strip() for line in
+                _without_parenthetical_reminder(text).splitlines() if line.strip()}
+            covered_occurrences.update((face.face_id,line) for line in source_lines)
+            if node.kind == "activated_ability":
+                activation_lines.update(source_lines)
     lines={line for _,line in all_occurrences if
         all((face,line) in covered_occurrences for face,value in all_occurrences if value==line)}
     keywords=set()
+    material_text = {face.face_id: _without_parenthetical_reminder(face.oracle_text, preserve_offsets=True)
+                     for face in oracle_ir.faces}
     for keyword in record.keywords:
-        pattern=(PRINTED_CYCLING_KEYWORD_PATTERN if keyword.casefold() == 'cycling'
-                 else re.compile(r'\b'+re.escape(keyword)+r's?\b',re.I))
+        if keyword.casefold() == "cycling":
+            pattern = PRINTED_CYCLING_KEYWORD_PATTERN
+        elif keyword.casefold() == "transform":
+            pattern = re.compile(r"\btransform(?:s|ed)?\b", re.I)
+        else:
+            pattern = re.compile(r'\b'+re.escape(keyword)+r's?\b', re.I)
         matches=[(face.face_id,match) for face in oracle_ir.faces
             for match in pattern.finditer(face.oracle_text)]
+        if keyword.casefold() == "transform":
+            material_matches = [(face.face_id, match) for face in oracle_ir.faces
+                                for match in pattern.finditer(material_text[face.face_id])]
+            # A bound Disturb instruction can describe its back-face cast in reminder text.
+            matches = material_matches or matches
         if matches and all(any(start<=match.start() and match.end()<=end
                 for start,end in ranges[face_id]) for face_id,match in matches):
             keywords.add(keyword.casefold())
-    return lines,keywords
+    return lines, keywords, lines & activation_lines
 
 
 def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability_registry, capability_profile):
@@ -514,7 +537,7 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
     legacy_coverage={value for program in trusted_programs
         if not str(program.provenance.get('authored_by','')).startswith('oracle-ir-v')
         for value in program.coverage}
-    source_lines,source_keywords=_trusted_generated_source_coverage(record,oracle_ir,trusted_programs,
+    source_lines,source_keywords,activation_lines=_trusted_generated_source_coverage(record,oracle_ir,trusted_programs,
         capability_registry or load_default_capability_registry(),capability_profile)
     replacement_lines={line.strip() for line in _material_oracle_text(record).splitlines()
         if 'instead' in line.casefold()}
@@ -563,7 +586,35 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
                 'you may cast that card','you may play lands from','you may play it this turn')))
     ):
         unresolved.append("zone_permission")
-    return tuple(unresolved),frozenset(legacy_coverage)
+    return tuple(unresolved), frozenset(legacy_coverage), source_lines, activation_lines
+
+
+def _oracle_ir_report(oracle_ir, status: str, trusted_programs) -> dict[str, Any]:
+    return {
+        "schema_version": oracle_ir.schema_version,
+        "compiler_version": oracle_ir.compiler_version,
+        "semantic_hash": oracle_ir.semantic_hash,
+        "status": oracle_ir.status,
+        "material_residual_count": len(
+            oracle_ir.material_residuals
+        ),
+        "material_residuals": [
+            {
+                "kind": residual.kind,
+                "reason": residual.reason,
+                "source_line": residual.span.line,
+                "blockers": list(residual.blockers),
+            }
+            for residual in oracle_ir.material_residuals
+        ],
+        "covered_by_trusted_card_semantics": (
+            status == "fully_playable"
+            and bool(trusted_programs)
+        ),
+        "covered_by_existing_trusted_runtime": (
+            status == "fully_playable"
+        ),
+    }
 
 
 def card_semantic_status(
@@ -621,17 +672,7 @@ def card_semantic_status(
         else:
             unresolved.append("cast_cost")
     abilities = _printed_activated_abilities(record)
-    unresolved.extend(
-        "activated_ability"
-        for ability in abilities
-        if not ability.compiled_cost and not ability.mana_ability
-    )
     oracle = _material_oracle_text(record).casefold()
-    if record.is_land:
-        generic_status, generic_unresolved = _generic_land_status(record)
-        unresolved.extend(generic_unresolved)
-    else:
-        generic_status = "none"
     trigger_lines = _printed_trigger_lines(record)
     trusted_event_programs = [
         program
@@ -645,14 +686,25 @@ def card_semantic_status(
         for program in trusted_programs
         for value in program.coverage
     }
-    material_unresolved,legacy_coverage=_unresolved_source_materials(
+    material_unresolved,legacy_coverage,source_lines,activation_lines=_unresolved_source_materials(
         record,oracle_ir,trusted_programs,capability_registry,capability_profile)
     unresolved.extend(material_unresolved)
+    generic_status = "none"
+    if record.is_land:
+        generic_status, generic_unresolved = _generic_land_status(record, trusted_programs, source_lines)
+        unresolved.extend(generic_unresolved)
     trusted_ids = {
         program.ability_id
         for program in trusted_programs
         if program.ability_id.startswith("ability:")
     }
+    bound_activation_lines = _unique_bound_activation_lines(abilities, activation_lines)
+    unresolved.extend(
+        "activated_ability"
+        for ability in abilities
+        if not ability.compiled_cost and not ability.mana_ability
+        and ability.oracle_line not in bound_activation_lines
+    )
 
     for ability in abilities:
         if ability.mana_ability:
@@ -678,9 +730,10 @@ def card_semantic_status(
                 re.IGNORECASE,
             )
         )
+        # Generated abilities on split faces use face-local line indices.
         if (
             not builtin_fetch
-            and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids)
+            and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids, bound_activation_lines)
         ):
             unresolved.append(f"activated_ability:{ability.ability_id}")
     trusted_spell_program = any(
@@ -803,31 +856,7 @@ def card_semantic_status(
         "intentionally_ignored_reasons": ignored_reasons,
         "unresolved": unresolved,
         "programs": program_rows,
-        "oracle_ir": {
-            "schema_version": oracle_ir.schema_version,
-            "compiler_version": oracle_ir.compiler_version,
-            "semantic_hash": oracle_ir.semantic_hash,
-            "status": oracle_ir.status,
-            "material_residual_count": len(
-                oracle_ir.material_residuals
-            ),
-            "material_residuals": [
-                {
-                    "kind": residual.kind,
-                    "reason": residual.reason,
-                    "source_line": residual.span.line,
-                    "blockers": list(residual.blockers),
-                }
-                for residual in oracle_ir.material_residuals
-            ],
-            "covered_by_trusted_card_semantics": (
-                status == "fully_playable"
-                and bool(trusted_programs)
-            ),
-            "covered_by_existing_trusted_runtime": (
-                status == "fully_playable"
-            ),
-        },
+        "oracle_ir": _oracle_ir_report(oracle_ir, status, trusted_programs),
     }
 
 
@@ -862,6 +891,7 @@ def _deck_preflight_rows(
     registry: SemanticRegistry,
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    source_diagnostics: dict[str, dict[str, Any]] | None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     cards: list[dict[str, Any]] = []
     card_programs: dict[str, Any] = {}
@@ -876,7 +906,20 @@ def _deck_preflight_rows(
             capability_registry=capability_registry,
             capability_profile=capability_profile,
         )
-        program = registry.card_program_for_oracle(record.oracle_id)
+        if source_diagnostics is not None:
+            diagnostics = card_program_source_diagnostics(
+                record, registry.programs_for_oracle(record.oracle_id),
+                oracle_hash=row["oracle_hash"], rulings_hash=row["rulings_hash"],
+            )
+            for diagnostic in diagnostics:
+                source_diagnostics[diagnostic["diagnostic_id"]] = diagnostic
+            if diagnostics:
+                row["source_hash_match"] = False
+        program = (
+            registry.card_program_for_oracle(record.oracle_id)
+            if source_diagnostics is None or row["source_hash_match"]
+            else None
+        )
         if program is not None:
             card_programs[record.oracle_id] = program
             binding = bind_card_program_runtime(
@@ -902,6 +945,20 @@ def _deck_preflight_rows(
     return cards, card_programs
 
 
+def _deck_strict_binding_blockers(
+    cards: list[dict[str, Any]], match_blockers: list[str]
+) -> list[str]:
+    blockers = set(match_blockers)
+    for row in cards:
+        name = row["name"]
+        if row["card_program_fingerprint"] is None:
+            blockers.add(f"card_program:missing:{name}")
+        binding = row["card_program_runtime_binding"]
+        if binding is not None:
+            blockers.update(f"card:{name}:{blocker}" for blocker in binding["blockers"])
+    return sorted(blockers)
+
+
 @_capability_validation_snapshot()
 def semantic_preflight(
     db: CardDatabase,
@@ -911,6 +968,8 @@ def semantic_preflight(
     cache_dir: str | Path | None = None,
     force_refresh: bool = False,
     capability_profile: str = "commander_review",
+    collect_source_diagnostics: bool = False,
+    checked_card_programs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     registry = registry or SemanticRegistry()
     capability_registry = load_default_capability_registry()
@@ -924,8 +983,9 @@ def semantic_preflight(
     generation = _register_deck_programs(
         db, deck, registry, capability_registry, capability_profile
     )
+    source_diagnostics: dict[str, dict[str, Any]] | None = {} if collect_source_diagnostics else None
     cards, card_programs = _deck_preflight_rows(
-        db, deck, registry, capability_registry, capability_profile
+        db, deck, registry, capability_registry, capability_profile, source_diagnostics,
     )
     quantities = Counter()
     for row in cards:
@@ -973,35 +1033,30 @@ def semantic_preflight(
         registry=capability_registry,
         profile=capability_profile,
     )
-    missing_card_programs = sorted(
-        row["name"]
-        for row in cards
-        if row["card_program_fingerprint"] is None
+    strict_binding_blockers = _deck_strict_binding_blockers(
+        cards, match_trust_closure["blockers"]
     )
-    strict_binding_blockers = list(match_trust_closure["blockers"])
-    strict_binding_blockers.extend(
-        f"card_program:missing:{name}" for name in missing_card_programs
+    deck_review_eligible = not (
+        unresolved_cards or partial_cards or drifted_cards or ignored_without_reason
     )
-    for row in cards:
-        binding = row["card_program_runtime_binding"]
-        if binding is None:
-            continue
-        strict_binding_blockers.extend(
-            f"card:{row['name']}:{blocker}"
-            for blocker in binding["blockers"]
-        )
-    strict_binding_blockers = sorted(set(strict_binding_blockers))
+    total_cards = deck.total_cards()
+    card_rules_ready = (
+        0 < total_cards == quantities["fully_playable"]
+        and deck_review_eligible
+        and not uncovered_oracle_residual_cards
+        and all(row["card_program_strict_capability_ready"] for row in cards)
+    )
     compatibility_ready = (
-        not unresolved_cards
-        and not partial_cards
-        and not drifted_cards
-        and not ignored_without_reason and match_trust_closure["compatible_ready"]
+        deck_review_eligible
+        and match_trust_closure["compatible_ready"]
         and all(
             row["card_program_runtime_binding"]["compatible_ready"]
             for row in cards
             if row["card_program_runtime_binding"] is not None
         )
     )
+    if checked_card_programs is not None:
+        checked_card_programs.update(card_programs)
     return {
         "schema_version": PREFLIGHT_SCHEMA_VERSION,
         "deck": deck.name,
@@ -1016,7 +1071,7 @@ def semantic_preflight(
             capability_registry.evidence_fingerprint
         ),
         "card_data_metadata": db.metadata(),
-        "total_cards": deck.total_cards(),
+        "total_cards": total_cards,
         "fully_playable_cards": quantities["fully_playable"],
         "partial_cards": quantities["partial"],
         "unresolved_cards": quantities["unresolved"],
@@ -1027,15 +1082,10 @@ def semantic_preflight(
         "expected_arbiter_calls": sum(
             int(row["quantity"]) for row in unresolved_cards + partial_cards
         ),
-        "deck_review_eligible_possible": not unresolved_cards
-        and not partial_cards
-        and not drifted_cards
-        and not ignored_without_reason,
+        "deck_review_eligible_possible": deck_review_eligible,
+        "card_rules_ready": card_rules_ready,
         "trusted_only_ready": (
-            not unresolved_cards
-            and not partial_cards
-            and not drifted_cards
-            and not ignored_without_reason
+            deck_review_eligible
             and not strict_binding_blockers
             and match_trust_closure["strict_capability_ready"]
         ),
@@ -1043,6 +1093,9 @@ def semantic_preflight(
         "strict_binding_blockers": strict_binding_blockers,
         "match_trust_closure": match_trust_closure,
         "source_hash_drift_cards": sorted(set(drifted_cards)),
+        **({"data_integrity_blockers": sorted(
+            source_diagnostics.values(), key=lambda issue: (issue["card"].casefold(), issue["kind"]),
+        )} if source_diagnostics is not None else {}),
         "intentionally_ignored_without_reason": sorted(
             set(ignored_without_reason)
         ),

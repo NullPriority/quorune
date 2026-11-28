@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from enum import StrEnum
+import json
+from typing import ClassVar
 
 from .mana_restriction_model import _token
 
@@ -11,19 +13,95 @@ from .mana_restriction_model import _token
 MANA_SPEND_RULE_CAPABILITY = "mana.activated.typed_spend_rules"
 CHOSEN_SUBTYPE_MANA_CAPABILITY = "mana.activated.chosen_subtype_spending"
 PAID_MANA_HASTE_CAPABILITY = "mana.spend.creature_haste"
+CREATURE_SPELL_OR_BATTLEFIELD_ABILITY_CAPABILITY = "mana.spend.creature_spell_or_battlefield_ability"
+NONCAST_MANA_PAYMENT_CAPABILITY = "mana.spend.noncast_payment"
+EXILE_CAST_MANA_CAPABILITY = "mana.spend.cast_from_exile"
 PAID_MANA_PROTECTION_FIELD = "paid_mana_counter_protection"
 _PAID_MANA_HASTE_FIELD = "paid_mana_haste"
 MANA_SPEND_RULES = ("106.6", "601.2h", "605.1a", "605.3b", "701.6a", "707.2")
 _PREFIX = "mana-spend-rule-v2|"
+_COMMANDER_SCRY_PREFIX = "mana-cast-commander-scry-v1|"
+_COMMANDER_ENTRY_COUNTER_PREFIX = "mana-cast-commander-entry-counters-v1|"
+COMMANDER_ENTRY_COUNTER_MANA_CAPABILITY = "mana.spend.commander_entry_counters"
+COMMANDER_TYPE_SCRY_CAPABILITY = "mana.spend.commander_type_scry"
+
+
+@dataclass(frozen=True, slots=True)
+class _CommanderCastMana:
+    """An unrestricted mana unit carrying its original ability source and controller."""
+
+    prefix: ClassVar[str]
+    label: ClassVar[str]
+    controller: str
+    source_object_id: str
+    source_logical_object_id: str
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not str or not value or value.strip() != value
+               for value in (self.controller, self.source_object_id, self.source_logical_object_id)):
+            raise ValueError(f"{self.label} mana requires its exact controller and source")
+
+    def encode(self) -> str:
+        identities = (self.controller, self.source_object_id, self.source_logical_object_id)
+        return self.prefix + json.dumps(identities, ensure_ascii=True, separators=(",", ":"))
+
+    @classmethod
+    def decode(cls, value: object):
+        if not isinstance(value, str) or not value.startswith(cls.prefix):
+            return None
+        try:
+            raw = json.loads(value[len(cls.prefix):])
+            if not isinstance(raw, list) or len(raw) != 3:
+                raise ValueError(f"{cls.label} mana requires three source fields")
+            unit = cls(*raw)
+            if unit.encode() != value:
+                raise ValueError(f"{cls.label} mana source fields are not canonical")
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{cls.label} mana has an invalid source binding") from exc
+        return unit
+
+
+class CommanderScryMana(_CommanderCastMana):
+    __slots__ = ()
+    prefix = _COMMANDER_SCRY_PREFIX
+    label = "Commander Scry"
+
+
+class CommanderEntryCounterMana(_CommanderCastMana):
+    __slots__ = ()
+    prefix = _COMMANDER_ENTRY_COUNTER_PREFIX
+    label = "Commander entry counter"
+
+
+def is_source_bound_cast_mana(value: object) -> bool:
+    return isinstance(value, str) and value.startswith(
+        (_COMMANDER_SCRY_PREFIX, _COMMANDER_ENTRY_COUNTER_PREFIX)
+    )
+
+
+def decode_source_bound_cast_mana(value: object) -> _CommanderCastMana | None:
+    return CommanderScryMana.decode(value) or CommanderEntryCounterMana.decode(value)
+
+
+def is_commander_scry_mana(value: object) -> bool:
+    return isinstance(value, str) and value.startswith(_COMMANDER_SCRY_PREFIX)
+
+
+def decode_commander_scry_mana(value: object) -> CommanderScryMana | None:
+    return CommanderScryMana.decode(value)
 
 
 class ManaSpendRuleKind(StrEnum):
+    NONCAST_PAYMENT = "noncast_payment"
+    CAST_FROM_EXILE = "cast_from_exile"
+    CHOSEN_MONOCOLORED_SPELL = "chosen_monocolored_spell"
     CHOSEN_CREATURE = "chosen_creature"
     CHOSEN_CREATURE_OR_ABILITY = "chosen_creature_or_ability"
     CHOSEN_OR_LEGENDARY_CREATURE = "chosen_or_legendary_creature"
     CHOSEN_CREATURE_UNCOUNTERABLE = "chosen_creature_uncounterable"
     INSTANT_OR_SORCERY_UNCOUNTERABLE = "instant_or_sorcery_uncounterable"
     CHOSEN_SUBTYPE_SPELL_OR_ABILITY = "chosen_subtype_spell_or_ability"
+    CREATURE_SPELL_OR_BATTLEFIELD_ABILITY = "creature_spell_or_battlefield_ability"
     CREATURE_HASTE = "creature_haste"
     CREATURE_TEMPORARY_HASTE = "creature_temporary_haste"
     DRAGON_CREATURE_TEMPORARY_HASTE = "dragon_creature_temporary_haste"
@@ -50,7 +128,12 @@ class ManaSpendRule:
     def __post_init__(self):
         if not isinstance(self.kind, ManaSpendRuleKind) or type(self.bound) is not bool:
             raise ValueError("Mana spending rule kind or binding is malformed")
-        if self.requires_choice:
+        if self.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL:
+            if self.chosen_type is not None and (
+                not self.bound or type(self.chosen_type) is not str or self.chosen_type not in tuple("WUBRG")
+            ):
+                raise ValueError("A monocolored mana lot binds one canonical chosen color")
+        elif self.requires_choice:
             if self.chosen_type is not None:
                 from .type_subtype_vocabulary import CREATURE_SUBTYPES
 
@@ -63,10 +146,24 @@ class ManaSpendRule:
 
     @property
     def requires_choice(self) -> bool:
-        return self.kind not in {ManaSpendRuleKind.INSTANT_OR_SORCERY_UNCOUNTERABLE, *_HASTE_LIFETIMES}
+        return self.kind not in {
+            ManaSpendRuleKind.NONCAST_PAYMENT,
+            ManaSpendRuleKind.CAST_FROM_EXILE,
+            ManaSpendRuleKind.INSTANT_OR_SORCERY_UNCOUNTERABLE,
+            ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY,
+            *_HASTE_LIFETIMES,
+        }
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL:
+            return (MANA_SPEND_RULE_CAPABILITY, CHOSEN_MONOCOLORED_MANA_CAPABILITY)
+        if self.kind is ManaSpendRuleKind.NONCAST_PAYMENT:
+            return (MANA_SPEND_RULE_CAPABILITY, NONCAST_MANA_PAYMENT_CAPABILITY)
+        if self.kind is ManaSpendRuleKind.CAST_FROM_EXILE:
+            return (MANA_SPEND_RULE_CAPABILITY, EXILE_CAST_MANA_CAPABILITY)
+        if self.kind is ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY:
+            return (MANA_SPEND_RULE_CAPABILITY, CREATURE_SPELL_OR_BATTLEFIELD_ABILITY_CAPABILITY)
         if self.kind in _HASTE_LIFETIMES:
             return (MANA_SPEND_RULE_CAPABILITY, PAID_MANA_HASTE_CAPABILITY)
         if self.kind is ManaSpendRuleKind.CHOSEN_SUBTYPE_SPELL_OR_ABILITY:
@@ -81,7 +178,18 @@ class ManaSpendRule:
         suffix = f"|{self.chosen_type or '-'}" if self.bound else ""
         return _PREFIX + self.kind.value + suffix
 
-    def allows(self, action, types, subtypes, supertypes) -> bool:
+    def allows(self, action, types, subtypes, supertypes, *, battlefield_creature_ability=False,
+               colors=(), spell_from_exile=False) -> bool:
+        if self.kind is ManaSpendRuleKind.CAST_FROM_EXILE:
+            return action == "spell" and spell_from_exile is True
+        if self.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL:
+            return (action == "spell" and self.bound and self.chosen_type is not None
+                    and set(colors) == {self.chosen_type})
+        if self.kind is ManaSpendRuleKind.NONCAST_PAYMENT:
+            return action != "spell"
+        if self.kind is ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY:
+            return ((action == "spell" and "creature" in types)
+                    or (action == "ability" and battlefield_creature_ability))
         if not self.requires_choice:
             return True
         if not self.bound:
@@ -114,6 +222,12 @@ class ManaSpendRule:
                 and self.allows(action, types, subtypes, supertypes))
 
 
+NONCAST_MANA_PAYMENT_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.NONCAST_PAYMENT).encode()
+EXILE_CAST_MANA_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.CAST_FROM_EXILE).encode()
+CHOSEN_MONOCOLORED_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL).encode()
+CHOSEN_MONOCOLORED_MANA_CAPABILITY = "mana.spend.chosen_monocolored_spell"
+
+
 def is_typed_mana_spend_rule(value) -> bool:
     return isinstance(value, str) and value.startswith(_PREFIX)
 
@@ -136,7 +250,8 @@ def bind_mana_spend_rule(value, source):
     rule = decode_mana_spend_rule(value)
     if rule is None or not rule.is_template:
         return value
-    return replace(rule, bound=True, chosen_type=source.annotations.get("chosen_creature_type")).encode()
+    key = "chosen_color" if rule.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL else "chosen_creature_type"
+    return replace(rule, bound=True, chosen_type=source.annotations.get(key)).encode()
 
 
 def consume_paid_mana_protection(stats):

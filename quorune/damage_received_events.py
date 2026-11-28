@@ -34,13 +34,20 @@ def received_damage_occurrences(events, *, event_id: str):
 
 
 def dispatch_received_damage_events(host, result, *, sources, source_zones, trigger_batch):
+    from .trigger_processing import collect_controlled_combat_token_triggers
+
+    collect_controlled_combat_token_triggers(host, result.events, trigger_batch)
+    from .trigger_processing import collect_received_damage_watch_items
+
     for occurrence in received_damage_occurrences(result.events, event_id=result.event_batch_id):
+        context = occurrence.semantic_context()
         host._dispatch_semantic_event(
-            RECEIVED_DAMAGE_EVENT, occurrence.semantic_context(), sources=sources,
+            RECEIVED_DAMAGE_EVENT, context, sources=sources,
             source_zones=source_zones, trigger_batch=trigger_batch,
         )
         if host._semantic_pause_annotation() is not None:
             return
+        trigger_batch.extend(collect_received_damage_watch_items(host, context))
         if occurrence.combat_amount:
             host._dispatch_semantic_event(
                 RECEIVED_COMBAT_DAMAGE_EVENT, occurrence.semantic_context(combat_only=True),

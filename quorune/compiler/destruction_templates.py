@@ -382,10 +382,17 @@ def mass_destruction_effect_template(
 ) -> MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | None:
     if attached := attached_destruction_set_template(text):
         return attached
+    if " ".join(text.casefold().split()).removesuffix(".") == "destroy all creatures with no counters on them":
+        from .qualified_destruction_queries import creature_counter_absence_query
+
+        return MassDestructionEffectTemplate(AffectedPermanentSetSpec(query=creature_counter_absence_query(None)))
     split = _split_regeneration_prohibition(text)
     if split is None:
         return None
     destruction, prohibition_subject = split
+    if (prohibition_subject is None and destruction.casefold().replace("’", "'").removesuffix(".")
+            == "destroy all creatures you don't control and all planeswalkers you don't control"):
+        destruction = "Destroy all creatures and planeswalkers you don't control."
     if prohibition_subject not in {
         None,
         "they",
@@ -403,8 +410,16 @@ def mass_destruction_effect_template(
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"),
-        singular=match['quantifier'].casefold() == 'each')
+    from .qualified_destruction_queries import (
+        fixed_creature_subtype_destruction_query, unenchanted_creature_destruction_query,
+    )
+
+    subject = match.group("subject")
+    singular = match["quantifier"].casefold() == "each"
+    query = unenchanted_creature_destruction_query(subject)
+    if query is None and not singular:
+        query = fixed_creature_subtype_destruction_query(subject)
+    parsed = (query, False) if query is not None else fixed_affected_permanent_query(subject, singular=singular)
     if parsed is None:
         return None
     query, exclude_source = parsed

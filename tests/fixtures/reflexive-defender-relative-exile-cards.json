@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "5e166b42-252e-4f34-9610-dcddc04a62ff",
+      "name": "Auron, Venerated Guardian",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Spirit Samurai",
+      "oracle_text": "Vigilance\nShooting Star — Whenever Auron attacks, put a +1/+1 counter on it. When you do, exile target creature defending player controls with power less than Auron's power until Auron leaves the battlefield.",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance",
+        "Shooting Star"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "5e166b42-252e-4f34-9610-dcddc04a62ff",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled."
+    },
+    {
+      "oracle_id": "5e166b42-252e-4f34-9610-dcddc04a62ff",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Once a creature is exiled by the reflexive triggered ability, it doesn't matter what happens to Auron's power. Reducing Auron's power below the exiled creature's power won't cause the exiled creature to return to the battlefield."
+    },
+    {
+      "oracle_id": "5e166b42-252e-4f34-9610-dcddc04a62ff",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "You don't choose a target for Auron's last ability at the time it triggers. Rather, a second \"reflexive\" ability triggers when you put a +1/+1 counter on it this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "5e166b42-252e-4f34-9610-dcddc04a62ff",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    }
+  ]
+}

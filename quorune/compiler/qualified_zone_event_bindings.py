@@ -16,6 +16,51 @@ from ..object_predicate import PermanentStatePredicateSpec
 QUALIFIED_ZONE_CAPABILITY = "trigger.event.qualified_zone_change"
 COUNTER_QUALIFIED_ZONE_CAPABILITY = "trigger.event.counter_qualified_zone_change"
 QUALIFIED_ZONE_VARIANT = "qualified_public_zone_query"
+ATTACHED_PLAYER_CREATURE_ENTRY_VARIANT = "attached_player_controls_entering_creature"
+_NONCREATURE_HAND_RETURN = re.compile(
+    r"Whenever a noncreature permanent is returned to hand, (?P<body>draw a card\.)", re.IGNORECASE,
+)
+
+
+def noncreature_hand_return_condition():
+    return {"all": [
+        {"field": "to", "op": "eq", "value": "hand"},
+        {"not": {"field": "types", "op": "contains_any", "value": ["creature"]}},
+    ]}
+
+
+def _noncreature_hand_return_binding(material_line):
+    match = _NONCREATURE_HAND_RETURN.fullmatch(material_line)
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event="permanent.leave", variant=QUALIFIED_ZONE_VARIANT, body=match["body"],
+        template_id="fixed-counter-public-zone-trigger-v1", mechanic="trigger-event-normalized-zone-change",
+        condition=noncreature_hand_return_condition(), capabilities=(QUALIFIED_ZONE_CAPABILITY,),
+    )
+
+
+def attached_player_creature_entry_binding_spec(
+    material_line: str, *, card_name: str | None = None,
+) -> FixedPublicEventBindingSpec | None:
+    del card_name
+    match = re.fullmatch(
+        r"Whenever a creature enchanted player controls enters, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event="creature.enter",
+        variant=ATTACHED_PLAYER_CREATURE_ENTRY_VARIANT,
+        body=match["body"],
+        template_id="fixed-counter-public-zone-trigger-v1",
+        mechanic="trigger-event-normalized-zone-change",
+        condition={"field": "source_attached_player", "op": "eq", "value": "$context.controller"},
+        capabilities=("attachment.reference.current_or_lki",),
+    )
+
+
 _ZONE_EVENT = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) "
     r"(?P<verb>enters(?: from your graveyard)?|dies|leaves the battlefield|"
@@ -115,6 +160,8 @@ def qualified_public_zone_event_binding_spec(
     Existing productions retain precedence and serialized descriptors.
     """
 
+    if return_to_hand := _noncreature_hand_return_binding(material_line):
+        return return_to_hand
     match = _ZONE_EVENT.fullmatch(material_line)
     if match is None:
         return None

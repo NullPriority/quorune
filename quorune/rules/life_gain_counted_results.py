@@ -40,6 +40,12 @@ def life_gain_counter_payment_projection(effect, *, resolved=False):
     return {key: thaw_value(value) for key, value in effect.items() if key != LIFE_GAIN_COUNTER_RESULT_FIELD}
 
 
+def life_gain_counter_node_capabilities(**context):
+    from .life_gain_counter_reset import life_gain_counter_reset_node_capabilities
+
+    return life_gain_counter_reset_node_capabilities(**context) or life_gain_counter_payment_node_capabilities(**context)
+
+
 def life_gain_counter_payment_node_capabilities(*, effects, target_schema, mechanic_ids=(), **kwargs):
     if (len(effects) != 1 or target_schema != _TARGET or type(target_schema.get('count')) is not int):
         return ()
@@ -78,4 +84,125 @@ def life_gain_counter_payment_program_dependencies(program):
     required = life_gain_counter_payment_node_capabilities(effects=program.effects, target_schema=program.target_schema)
     if not required:
         raise ValueError('Paid life-gain counters require their complete marked price and result')
+    return required
+
+
+CAPPED_LIFE_GAIN_DRAW_VERSION = 17
+_CAPPED_MANA_DRAW = "life_gain_capped_generic_draw"
+
+
+def capped_life_gain_draw_effect():
+    return {
+        "op": "offer_optional_mana_payment", "schema_version": CAPPED_LIFE_GAIN_DRAW_VERSION,
+        "player": "$controller", "payment": {"kind": _CAPPED_MANA_DRAW, "limit": "$context.amount"},
+    }
+
+
+def uses_capped_life_gain_draw(effect):
+    if not isinstance(effect, Mapping) or effect.get("op") != "offer_optional_mana_payment":
+        return False
+    payment = effect.get("payment")
+    return (effect.get("schema_version") == CAPPED_LIFE_GAIN_DRAW_VERSION
+            or isinstance(payment, Mapping) and payment.get("kind") == _CAPPED_MANA_DRAW)
+
+
+def capped_life_gain_draw_limit(effect, *, payer=None):
+    compiled = capped_life_gain_draw_effect()
+    if payer is None:
+        if (not uses_capped_life_gain_draw(effect) or type(effect.get("schema_version")) is not int
+                or thaw_value(effect) != compiled):
+            raise ValueError("Capped life-gain payment requires its original event amount")
+        return
+    payment = effect.get("payment")
+    amount = payment.get("limit") if isinstance(payment, Mapping) else None
+    if (type(payer) is not str or not payer or type(amount) is not int or amount <= 0
+            or type(effect.get("schema_version")) is not int or thaw_value(effect) != {
+                **compiled, "player": payer, "payment": {"kind": _CAPPED_MANA_DRAW, "limit": amount},
+            }):
+        raise ValueError("Capped life-gain payment requires a positive committed amount and its payer")
+    return amount
+
+
+def capped_life_gain_draw_node_capabilities(*, effects, target_schema):
+    if target_schema is not None or len(effects) != 1:
+        return ()
+    try:
+        capped_life_gain_draw_limit(effects[0])
+    except (TypeError, ValueError, KeyError):
+        return ()
+    return (
+        FIXED_EFFECT_PAYMENT_CAPABILITY, "zone.draw.library_to_hand",
+        "trigger.event.normalized_life_gain", "trigger.effect.fixed_event", "trigger.placement.apnap",
+    )
+
+
+def capped_life_gain_draw_program_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(uses_capped_life_gain_draw(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    required = capped_life_gain_draw_node_capabilities(effects=program.effects, target_schema=program.target_schema)
+    if (not required or (program.event, program.active_zone) != ("life.gained", "battlefield")
+            or thaw_value(program.event_condition) != _CONDITION or program.handlers
+            or program.cost_schema is not None or not program.ability_id.startswith("trigger:")):
+        raise ValueError("Capped life-gain payment requires its complete controller life-gain trigger")
+    return required
+
+
+LIFE_GAIN_LIFE_DRAW_VERSION = 20
+LIFE_GAIN_LIFE_DRAW_CAPABILITY = "effect.choice.life_gain_amount_life_draw"
+_LIFE_DRAW_KIND = "life_gain_equal_life_draw"
+
+
+def life_gain_life_draw_effect():
+    return {
+        "op": "offer_optional_mana_payment", "schema_version": LIFE_GAIN_LIFE_DRAW_VERSION,
+        "player": "$controller", "payment": {"kind": _LIFE_DRAW_KIND, "amount": "$context.amount"},
+    }
+
+
+def uses_life_gain_life_draw(effect):
+    if not isinstance(effect, Mapping) or effect.get("op") != "offer_optional_mana_payment":
+        return False
+    payment = effect.get("payment")
+    return (effect.get("schema_version") == LIFE_GAIN_LIFE_DRAW_VERSION
+            or isinstance(payment, Mapping) and payment.get("kind") == _LIFE_DRAW_KIND)
+
+
+def life_gain_life_draw_amount(effect, payer):
+    if not isinstance(effect, Mapping):
+        raise ValueError("Life-gain payment requires its closed instruction")
+    payment = effect.get("payment")
+    amount = payment.get("amount") if isinstance(payment, Mapping) else None
+    expected = {**life_gain_life_draw_effect(), "player": payer,
+                "payment": {"kind": _LIFE_DRAW_KIND, "amount": amount}}
+    if (type(payer) is not str or not payer or type(amount) is not int or amount <= 0
+            or type(effect.get("schema_version")) is not int or thaw_value(effect) != expected):
+        raise ValueError("Life-gain payment requires its original controller and positive gain amount")
+    return amount
+
+
+def life_gain_life_draw_node_capabilities(*, effects, target_schema):
+    if (target_schema is not None or len(effects) != 1
+            or not uses_life_gain_life_draw(effects[0])
+            or type(effects[0].get("schema_version")) is not int
+            or thaw_value(effects[0]) != life_gain_life_draw_effect()):
+        return ()
+    return (
+        LIFE_GAIN_LIFE_DRAW_CAPABILITY, FIXED_EFFECT_PAYMENT_CAPABILITY,
+        "zone.draw.library_to_hand", "trigger.event.normalized_life_gain",
+        "trigger.effect.fixed_event", "trigger.placement.apnap",
+    )
+
+
+def life_gain_life_draw_program_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(uses_life_gain_life_draw(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    required = life_gain_life_draw_node_capabilities(effects=program.effects, target_schema=program.target_schema)
+    if (not required or (program.event, program.active_zone) != ("life.gained", "battlefield")
+            or thaw_value(program.event_condition) != _CONDITION or program.handlers
+            or program.cost_schema is not None or not program.ability_id.startswith("trigger:")):
+        raise ValueError("Life-gain life payment requires its original controller gain trigger")
     return required

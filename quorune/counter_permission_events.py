@@ -107,6 +107,8 @@ def refresh_entry_counter_permissions(event, payload, children):
     stored = payload.get(COUNTER_PERMISSIONS_FIELD)
     if stored is None:
         return
+    from .rad_counter_model import ENTRY_RAD_COUNTER_CHILD
+
     permissions = CounterPermissionSnapshot.from_dict(thaw_value(stored))
     excluded = event.entry_scope.reserved_zone_changes if event.entry_scope is not None else ()
     for index, child in enumerate(children):
@@ -123,3 +125,5 @@ def refresh_entry_counter_permissions(event, payload, children):
             facts['target_controller'] = payload.get('destination_controller')
             children[index] = apply_counter_permissions(replace(child,payload=facts),
                 permissions, excluded_sources=excluded)
+        elif child.kind == "counter.place" and child.payload.get(ENTRY_RAD_COUNTER_CHILD) is True:
+            children[index] = apply_counter_permissions(child, permissions, excluded_sources=excluded)

@@ -45,6 +45,97 @@ def _bolt() -> CardRecord:
     )
 
 
+class CardProgramFingerprintAuditTests(unittest.TestCase):
+    def test_source_fingerprint_audit_reports_all_drift_in_one_snapshot(self):
+        from unittest.mock import patch
+
+        from quorune.semantics import SemanticProgram
+        from scripts.audit_card_program_fingerprints import audit_snapshot, trusted_program_groups
+
+        alpha = SimpleNamespace(oracle_id="alpha", name="Alpha", oracle_text="Draw a card.")
+        beta = SimpleNamespace(oracle_id="beta", name="Beta", oracle_text="Destroy target creature.")
+        cards = {record.oracle_id: record for record in (alpha, beta)}
+
+        def program(key, oracle_id, *, provisional=False):
+            return SemanticProgram(
+                key=key, label=key, oracle_id=oracle_id, ability_id="spell:front",
+                trust_level="provisional" if provisional else "trusted",
+                provenance={
+                    "source_oracle_hash": "0" * 64, "source_rulings_hash": "1" * 64,
+                    "authored_by": "fixture", "review_status": "reviewed",
+                },
+                tests=["audit_fixture"],
+            )
+
+        registry = SemanticRegistry(include_builtin_packs=False)
+        for candidate in (
+            program("alpha:spell", "alpha"), program("alpha:cost", "alpha"),
+            program("beta:spell", "beta"), program("missing:spell", "missing"),
+            program("draft:spell", "draft", provisional=True),
+        ):
+            registry.put(candidate)
+        groups = trusted_program_groups(registry)
+        with patch("scripts.audit_card_program_fingerprints.CardDatabase") as open_database:
+            db = open_database.return_value.__enter__.return_value
+            db.metadata.return_value = {"snapshot": "fixture"}
+            db.by_oracle_id.side_effect = cards.__getitem__
+            db.rulings.return_value = []
+            report = audit_snapshot("fixture.sqlite3", groups)
+
+        self.assertEqual((3, 4), (report["mismatched_cards"], report["mismatched_programs"]))
+        self.assertEqual(["alpha", "beta", "missing"], [row["oracle_id"] for row in report["mismatches"]])
+        first, second, missing = report["mismatches"]
+        self.assertEqual(["alpha:cost", "alpha:spell"], [row["key"] for row in first["programs"]])
+        self.assertEqual(["oracle_hash", "rulings_hash"], second["programs"][0]["fields"])
+        self.assertEqual(["missing_card"], missing["programs"][0]["fields"])
+        self.assertEqual(3, db.by_oracle_id.call_count)
+        self.assertEqual(2, db.rulings.call_count)
+
+
+    def test_dungeon_fingerprint_accepts_the_reviewed_marker_and_rejects_rules_changes(self):
+        import json
+        from unittest.mock import patch
+
+        from common import ROOT
+        from quorune.card_programs.validation import program_source_is_current
+        from scripts.audit_card_program_fingerprints import audit_snapshot
+
+        fixture = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())
+        row = next(card for card in fixture["cards"] if card["name"] == "Undercity // The Initiative")
+        programs = list(SemanticRegistry().programs_for_oracle(row["oracle_id"]))
+        self.assertEqual(9, len(programs))
+        original = row["oracle_text"]
+        original_reminder = (
+            "If you te not, enter Undercity You can take the initiative even if you already"
+            + chr(10) + "have it."
+        )
+        corrected = original.replace(
+            original_reminder,
+            "If you're not, enter Undercity. You can take the initiative even if you already have it.",
+        )
+        self.assertNotEqual(original, corrected)
+        cases = (
+            ("reviewed marker", corrected, 0),
+            ("changed room", corrected.replace("Scry 2.", "Scry 1."), 9),
+            ("changed Initiative rule", corrected.replace("your upkeep", "your end step"), 9),
+        )
+        with patch("scripts.audit_card_program_fingerprints.CardDatabase") as open_database:
+            db = open_database.return_value.__enter__.return_value
+            db.metadata.return_value = {"snapshot": "fixture"}
+            db.rulings.return_value = []
+            for label, text, expected in cases:
+                with self.subTest(label=label):
+                    db.by_oracle_id.return_value = SimpleNamespace(
+                        oracle_id=row["oracle_id"], name=row["name"], layout=row["layout"], oracle_text=text,
+                    )
+                    report = audit_snapshot("fixture.sqlite3", {row["oracle_id"]: programs})
+                    self.assertEqual(expected, report["mismatched_programs"])
+                    self.assertEqual(9 - expected, len(report["approved_equivalences"]))
+                    self.assertTrue(all(
+                        program_source_is_current(db, program) == (expected == 0) for program in programs
+                    ))
+
+
 class CardProgramTrustTests(unittest.TestCase):
     def test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source(self):
         from dataclasses import replace
@@ -271,6 +362,101 @@ class CardProgramTrustTests(unittest.TestCase):
         self.assertEqual(inventory, registry.inventory())
         self.assertEqual(expected_fingerprint, registry.fingerprint)
 
+
+    def test_deck_preflight_registers_and_reloads_complete_basic_land_mana(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.preflight import semantic_preflight
+        from quorune.semantics import SemanticRegistry
+
+        commander = "Mishra, Eminent One"
+        deck = DeckDefinition("Basic-land admission witness",
+            [DeckEntry(commander, 1, "commander"), DeckEntry("Mountain", 49), DeckEntry("Swamp", 50)],
+            [commander])
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            registry = SemanticRegistry(path)
+            report = semantic_preflight(self.db, deck, registry=registry)
+            rows = {row["name"]: row for row in report["cards"]}
+            reopened = SemanticRegistry(path)
+            for name in ("Mountain", "Swamp"):
+                with self.subTest(name=name):
+                    row = rows[name]
+                    self.assertTrue(row["card_program_strict_capability_ready"], row["unresolved"])
+                    self.assertEqual("capability_closed", row["card_program_trust_basis"])
+                    oid = self.db.lookup(name, fuzzy=False).oracle_id
+                    program = reopened.card_program_for_oracle(oid)
+                    self.assertIsNotNone(program)
+                    self.assertEqual(row["card_program_fingerprint"], program.fingerprint)
+                    self.assertEqual(["intrinsic_ability"], [ability.event for ability in program.abilities])
+
+    def test_retained_dryad_form_recompiles_identically_after_preflight_and_reload(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.preflight import semantic_preflight
+
+        dryad = self.db.lookup("Dryad Arbor", fuzzy=False)
+        deck = DeckDefinition("Dryad Arbor form witness", [DeckEntry(dryad.name)], [])
+        arguments = {
+            "capability_registry": self.capabilities,
+            "capability_profile": "commander_review",
+        }
+        empty = SemanticRegistry()
+        expected = compile_best_available_card_program(self.db, dryad, semantic_registry=empty, **arguments)
+        expected_provisional = compile_card_program(self.db, dryad, semantic_registry=empty, **arguments)
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            registry = SemanticRegistry(path)
+            first, = semantic_preflight(self.db, deck, registry=registry)["cards"]
+            self.assertTrue(first["card_program_strict_capability_ready"], first["unresolved"])
+            self.assertEqual("fully_playable", first["status"])
+            before = path.read_bytes()
+
+            for candidate in (registry, SemanticRegistry(path)):
+                with self.subTest(reopened=candidate is not registry):
+                    stored, = candidate.programs_for_oracle(dryad.oracle_id)
+                    self.assertEqual("intrinsic_ability", stored.event)
+                    self.assertIn("generated_card_form_rule", stored.coverage)
+                    repeated = compile_best_available_card_program(
+                        self.db, dryad, semantic_registry=candidate, **arguments,
+                    )
+                    self.assertEqual(expected.to_dict(), repeated.to_dict())
+                    provisional = compile_card_program(
+                        self.db, dryad, semantic_registry=candidate, **arguments,
+                    )
+                    self.assertEqual(expected_provisional.to_dict(), provisional.to_dict())
+                    again, = semantic_preflight(self.db, deck, registry=candidate)["cards"]
+                    self.assertEqual(first["card_program_fingerprint"], again["card_program_fingerprint"])
+            self.assertEqual(before, path.read_bytes())
+
+    def test_retained_card_form_conflicts_and_source_drift_still_fail_compilation(self):
+        from dataclasses import replace
+
+        from quorune.card_programs import CardProgramError
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        dryad = self.db.lookup("Dryad Arbor", fuzzy=False)
+        arguments = {
+            "capability_registry": self.capabilities,
+            "capability_profile": "commander_review",
+        }
+        registry = SemanticRegistry(include_builtin_packs=False)
+        current = compile_best_available_card_program(self.db, dryad, semantic_registry=registry, **arguments)
+        intrinsic, = current.abilities
+        for changed in (
+            replace(intrinsic, provenance={**intrinsic.provenance, "source_oracle_hash": "0" * 64}),
+            replace(intrinsic, provenance={**intrinsic.provenance, "source_rulings_hash": "0" * 64}),
+            replace(intrinsic, effects=[{"op": "draw", "player": "$controller", "count": 1}]),
+        ):
+            with self.subTest(changed=changed), self.assertRaisesRegex(CardProgramError, "Retained card-form ability.*conflicts"):
+                registry.put(changed)
+                compile_best_available_card_program(self.db, dryad, semantic_registry=registry, **arguments)
+
     def test_global_handler_and_component_inventory_is_capability_bound(self):
         status = runtime_component_status("commander_review")
         self.assertEqual(
@@ -309,6 +495,10 @@ class CardProgramTrustTests(unittest.TestCase):
             runtime_component_ids,
         )
         self.assertIn(
+            ("modification.cast-cost.untapped-mana-floor.v1", "casting.cost.minimum_mana.untapped_source"),
+            {(row["handler_id"], row["family"]) for row in status["runtime_components"]},
+        )
+        self.assertIn(
             "replacement.counter.quantity.v2",
             {
                 row["handler_id"]
@@ -318,13 +508,26 @@ class CardProgramTrustTests(unittest.TestCase):
         self.assertEqual(
             {
                 "activation.cost.modifier.fixed_generic",
+                "random.die.pay_life_adjust_one",
+                "zone.draw.replacement.controller_library_choice",
                 "ability.activated.catalog",
                 "ability.activated.class-level",
+                "ability.activated.mana.artifact-hand-reveal",
                 "ability.activated.mana.color-set",
+                "ability.activated.mana.linked-hand-colors",
+                "ability.activated.mana.linked-graveyard-colors",
+                "ability.activated.mana.exert-source",
+                "ability.activated.mana.forage-combination",
+                "ability.activated.mana.whole-hand-sacrifice",
+                "ability.activated.mana.commander-entry-counters",
                 "ability.activated.mana.commander-identity",
+                "ability.activated.mana.commander-type-scry",
                 "ability.activated.mana.fixed-output",
+                "ability.activated.mana.land-potential",
+                "ability.activated.mana.luck-counter-color",
                 "ability.activated.mana.public-quantity",
                 "ability.activated.mana.source-chosen-color",
+                "ability.activated.mana.land-play-output",
                 "ability.activated.fixed-counter-keyword",
                 "ability.activated.cycling",
                 "ability.activated.crew",
@@ -333,7 +536,9 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.activated.station",
                 "ability.activated.self_zone_move",
                 "ability.activated.unearth",
+                "continuous.ability.battlefield_creature_activation_grant",
                 "continuous.ability.graveyard_unearth_grant",
+                "continuous.ability.hand_ninjutsu_grant",
                 "ability.enchant.linked_graveyard_creature",
                 "ability.static.enchant",
                 "ability.static.enchant.typed",
@@ -344,6 +549,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.all_creature_types_characteristic_definition",
                 "ability.static.all_colors_characteristic_definition",
                 "continuous.characteristics.off_battlefield_self_creature",
+                "continuous.characteristics.all_nonbasic_land_types",
                 "ability.static.ascend",
                 "ability.static.colorless_characteristic_definition",
                 "ability.static.counter_maximum",
@@ -363,6 +569,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.bounded_block_as_though",
                 "ability.static.counter_prohibition",
                 "ability.static.defender_permission",
+                "combat.attack.permission.enchanted_creature_as_haste",
                 "ability.static.block_capacity",
                 "ability.static.as_unblocked_assignment",
                 "ability.static.toughness_assignment",
@@ -410,10 +617,12 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.additional.paid_entry_copy",
                 "casting.bestow.fixed_mana",
                 "casting.impending.fixed_mana",
+                "casting.cost.minimum_mana.untapped_source",
                 "casting.cost.modifier.fixed_query",
                 "casting.cost.optional_life_colored_reduction",
                 "casting.permission.source_once_per_turn",
                 "casting.permission.source_graveyard_exile",
+                "casting.permission.source_graveyard_permanent_types",
                 "casting.permission.source_tapped_entry",
                 "casting.permission.command_owned_graveyard",
                 "casting.permission.source_current_mill",
@@ -425,6 +634,8 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.evoke.fixed_mana",
                 "casting.evoke.fixed_hand_exile",
                 "casting.flashback.fixed_mana",
+                "casting.harmonize.fixed_announced_x",
+                "casting.flashback.fixed_creature_sacrifice",
                 "casting.kicker.fixed_mana",
                 "casting.kicker.fixed_nonmana",
                 "casting.multikicker.fixed_mana",
@@ -435,7 +646,10 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.additional_cost.bargain",
                 "casting.additional_cost.per_target_fixed_mana",
                 "casting.alternative_cost.emerge_fixed_mana",
+                "casting.additional_cost.offering",
                 "casting.lifecycle.disturb_fixed_mana",
+                "casting.lifecycle.more_than_meets_the_eye_fixed_mana",
+                "casting.lifecycle.source_granted_escape",
                 "zone.change.self_graveyard_exile",
                 "replacement.zone.self-graveyard-library-shuffle",
                 "casting.lifecycle.fixed_public",
@@ -462,8 +676,11 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.commander_permanent_keywords",
                 "continuous.opponent_keyword_prohibition",
                 "continuous.attached.fixed_characteristics",
+                "continuous.attached.combat_counterpart_first_strike",
+                "continuous.attached.planeswalker_combat_loyalty",
                 "continuous.attached.qualified_characteristics",
                 "continuous.attached.source_chosen_color_protection",
+                "continuous.attached.commander_complement_protection",
                 "continuous.soulbond.paired_grant",
                 "continuous.characteristics.fixed_public_state",
                 "continuous.characteristics.conditional_creature_type_removal",
@@ -479,6 +696,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.fixed_subtype_composite_grant",
                 "continuous.ability.graveyard_conditional_grant",
                 "continuous.characteristics.fixed_public_setting",
+                "continuous.characteristics.controlled_enchantment_animation",
                 "continuous.characteristics.fixed_nonowner_creature_modifier",
                 "continuous.characteristics.fixed_opponent_base_toughness",
                 "continuous.characteristics.enchanted_player_query",
@@ -487,6 +705,9 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.fixed_public_state_grant",
                 "continuous.ability.spell_payment_grant",
                 "continuous.ability.battlefield_cascade_grant",
+                "continuous.ability.battlefield_ripple_grant",
+                "continuous.ability.nontoken_riot_grant",
+                "continuous.ability.conditional_stack_cascade",
                 "continuous.ability.conditional_flash",
                 "continuous.ability.public_state_color_grant",
                 "continuous.declaration.public_state",
@@ -495,6 +716,10 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.block_capacity.public_state",
                 "continuous.characteristics.chosen_designation",
                 "continuous.characteristics.conditional_chosen_designation",
+                "continuous.characteristics.linked_color_protection",
+                "continuous.characteristics.linked_exile_creature",
+                "continuous.ability.linked_exile_activations",
+                "continuous.characteristics.linked_card_type_protection",
                 "continuous.characteristics.linked_player_protection",
                 "continuous.characteristics.leveler_bands",
                 "continuous.characteristics.station_symbols",
@@ -502,6 +727,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.quantified_query_power_toughness_anthem",
                 "continuous.recipient_quantity_power_toughness_anthem",
                 "continuous.recipient_shared_type_power_toughness_anthem",
+                "continuous.recipient_shared_name_power_toughness_anthem",
                 "continuous.fixed_power_toughness_anthem",
                 "continuous.basic_land_type.add_all_lands",
                 "continuous.basic_land_type.fixed_addition",
@@ -511,6 +737,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.miracle.trigger",
                 "modification.activation.loyalty-cost",
                 "prevention.damage.all",
+                "prevention.damage.static-self-triggered-reflection",
                 "prevention.damage.fixed",
                 "prevention.damage.fixed_self_counter",
                 "prohibition.combat.goad",
@@ -519,6 +746,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "untap.phasing.keyword",
                 "participation.untap_step.fixed_selection_limit",
                 "permission.action.static",
+                "permission.action.library-search-control",
                 "permission.action.library-search-rule",
                 "permission.cast.self-zone",
                 "permission.cast.classic_flash_cleanup",
@@ -536,18 +764,26 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.draw.result_quantity",
                 "replacement.draw.result_recipient",
                 "replacement.draw.discard_result",
+                "replacement.draw.exile_turn_play_result",
+                "replacement.draw.win_empty_library_result",
                 "replacement.fixed_additional_token",
                 "replacement.token_quantity",
+                "replacement.token.creature_definition",
+                "replacement.token.predefined_artifact_set",
                 "replacement.life.gain.addition",
                 "replacement.life.gain.to_loss",
                 "replacement.life.gain.multiplier",
+                "replacement.random.controller_extra_ignore_lowest",
                 "life.gain.prohibition",
+                "life.total.prohibition",
                 "damage.prevention.prohibition",
                 "replacement.zone.destination",
                 "replacement.zone.entry_state",
                 "replacement.zone.external_entry_counter",
                 "replacement.zone.entry_designation",
+                "zone.entry.linked_basic_land_type",
                 "replacement.zone.entry_card_name",
+                "replacement.zone.entry_control_opponent",
                 "replacement.zone.linked_entry_opponent",
                 "replacement.zone.linked_entry_player",
                 "replacement.zone.counted_entry_opponent",
@@ -555,10 +791,14 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.entry_copy",
                 "replacement.zone.linked-graveyard-exile",
                 "replacement.zone.entry_reveal_hand",
+                "replacement.zone.entry_tapped_rad_choice",
+                "replacement.zone.entry_land_discard",
+                "replacement.stack.spell-copy",
                 "replacement.zone.amplify",
                 "replacement.zone.conditional-self-entry-counter",
                 "replacement.zone.dynamic-self-entry-counter",
                 "replacement.zone.entry-counter-transfer",
+                "zone.change.opponent_discard_to_battlefield",
                 "replacement.zone.read-ahead-entry-choice",
                 "replacement.zone.riot-entry-choice",
                 "replacement.zone.tribute-entry",
@@ -570,12 +810,15 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.self-entry-counter",
                 "replacement.zone.sunburst",
                 "rule.cast.static",
+                "rule.player.static_match_outcome_restriction",
                 "rule.stack.split_second",
                 "rule.cleanup.no_maximum_hand_size",
+                "rule.mana.step_color_retention",
                 "rule.cleanup.fixed_hand_size_adjustment",
                 "rule.cleanup.fixed_hand_size_setting",
                 "restriction.activation.chosen_name_nonmana",
                 "restriction.activation.fixed_public",
+                "permission.activation.boast_twice",
                 "restriction.draw.maximum_per_turn",
             },
             {row["family"] for row in status["runtime_components"]},

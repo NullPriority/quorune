@@ -14,7 +14,7 @@ from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
 KICKED_ENTRY_TRIGGER_CAPABILITY = 'trigger.entry.fixed_kicked_result'
 KICKED_ENTRY_TRIGGER_MECHANIC = 'fixed-kicked-entry-trigger'
-_TRIGGER = re.compile(r'When (?P<source>.+?) enters, if it was kicked, (?P<body>.+)', re.I)
+_TRIGGER = re.compile(r'When (?P<source>.+?) enters, if (?:it|he|she) was kicked, (?P<body>.+)', re.I)
 
 _KICKED_DESTRUCTION = re.compile(
     r"When (?P<source>.+?) enters, destroy all (?P<subject>lands|other creatures) you control\. "
@@ -30,6 +30,11 @@ def fixed_source_entry_or_step_trigger_node(**kwargs: Any) -> OracleNode | None:
         name: value for name, value in kwargs.items()
         if name not in {"effect_template", "trusted_mechanics"}
     }
+    from .scheduled_player_triggers import main_phase_opponent_mana_node
+
+    main_phase_mana = main_phase_opponent_mana_node(**fixed_args)
+    if main_phase_mana is not None:
+        return main_phase_mana
     discard = opponent_discard_node(**fixed_args)
     if discard is not None:
         return discard

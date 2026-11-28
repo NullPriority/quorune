@@ -4,10 +4,16 @@ from copy import deepcopy
 from hashlib import sha256
 from typing import Any, Mapping, Protocol
 
+from .entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD
+from .errors import GameRuleError
 from .linked_ability_exile_model import LINKED_ABILITY_EXILE_ANNOTATION, LinkedAbilityExile
-from .mandatory_loop_model import MandatoryLinkedLoopWatch
+from .mandatory_loop_model import LINKED_EXILE_LOOP_FAMILY, RECEIVED_DAMAGE_LOOP_FAMILY
 from .public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
 from .rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
+from .rules.modal_selection import (
+    has_distinct_turn_trigger_modes,
+    optional_trigger_mode_capability,
+)
 from .target_source import stack_targeting_source
 from .targets import TargetGroup
 from .util import stable_json
@@ -58,7 +64,7 @@ class TriggerTargetingHost(Protocol):
 
 def _reset_linked_loop(state):
     if state.mandatory_linked_loop is not None and state.mandatory_linked_loop.cursor is not None:
-        state.mandatory_linked_loop = MandatoryLinkedLoopWatch()
+        state.mandatory_linked_loop = state.mandatory_linked_loop.cleared()
 
 
 def record_linked_loop_decision(state, decision):
@@ -219,11 +225,60 @@ def _observe_linked_loop(host, item, program, schema):
     except (ValueError, TypeError, KeyError):
         _reset_linked_loop(state)
         return False
-    state.mandatory_linked_loop, repeated = watch.observe(signature, item.ref)
+    return _observe_mandatory_position(
+        host, signature, item.ref, family=LINKED_EXILE_LOOP_FAMILY,
+        reason="Mandatory linked abilities repeated a forced cycle.",
+    )
+
+
+def _observe_mandatory_position(host, signature, cursor, *, family, reason):
+    state = host.state
+    state.mandatory_linked_loop, repeated = state.mandatory_linked_loop.observe(signature, cursor, family=family)
     if repeated:
         from .state_based_execution import commit_game_draw
-        commit_game_draw(host, reason="Mandatory linked abilities repeated a forced cycle.")
+
+        commit_game_draw(host, reason=reason)
     return repeated
+
+
+def observe_received_damage_loop(host):
+    watch = host.state.mandatory_linked_loop
+    if watch is None or watch.schema_version != 2:
+        return False
+    from .rules.received_damage_loop import received_damage_loop_position
+
+    try:
+        position = received_damage_loop_position(host)
+    except (GameRuleError, KeyError, TypeError, ValueError):
+        position = None
+    if position is None:
+        if watch.family == RECEIVED_DAMAGE_LOOP_FAMILY:
+            _reset_linked_loop(host.state)
+        return False
+    signature, cursor = position
+    return _observe_mandatory_position(
+        host, signature, cursor, family=RECEIVED_DAMAGE_LOOP_FAMILY,
+        reason="Mandatory received-damage abilities repeated a forced cycle.",
+    )
+
+
+def _can_decline_trigger_modes(program) -> bool:
+    return (program is not None
+            and optional_trigger_mode_capability(program.target_schema) in program.capability_dependencies)
+
+
+def remove_declined_optional_trigger(host: TriggerTargetingHost, item, program) -> bool:
+    """Remove a declined modal trigger during placement under CR 603.3c."""
+    if item.modes or not _can_decline_trigger_modes(program):
+        return False
+    host.state.stack.remove(item)
+    host._log(
+        item.controller, "stack.trigger.removed",
+        f"Removed {item.ref}: {item.label}; no modes were chosen.",
+        {"stack": item.ref, "reason": "no_modes_chosen"},
+        importance=2,
+    )
+    return True
 
 
 def begin_pending_trigger_target_selection(
@@ -250,11 +305,27 @@ def begin_pending_trigger_target_selection(
             if not target_schema:
                 item.context.pop("trigger_target_selection_pending", None)
                 continue
+            distinct_turn_modes = has_distinct_turn_trigger_modes(target_schema)
+            if distinct_turn_modes and not target_schema["modes"]:
+                host.state.stack.remove(item)
+                host._log(
+                    item.controller, "stack.trigger.removed",
+                    f"Removed {item.ref}: {item.label}; no unused modes remained.",
+                    {"stack": item.ref, log_reason_field: "no_unused_modes"}, importance=2,
+                )
+                removed_invalid_trigger = True
+                break
+            chooser = item.controller
+            if ENTRY_EXCHANGE_TARGET_FIELD in target_schema:
+                from .rules.entry_control_exchange import entry_exchange_target_chooser
+                chooser = entry_exchange_target_chooser(target_schema)
+                if chooser not in host.active_seats:
+                    chooser = None
             public_schema = host._public_target_schema(
                 item.controller,
                 target_schema,
                 acting_source=stack_targeting_source(host,item), source_ref=host._stack_source_ref(item),
-            )
+            ) if chooser is not None else None
             if _observe_linked_loop(host, item, program, public_schema):
                 return True
             if public_schema is None:
@@ -274,15 +345,20 @@ def begin_pending_trigger_target_selection(
                 )
                 removed_invalid_trigger = True
                 break
+            if public_schema.get("legal_modes") == [] and remove_declined_optional_trigger(host, item, program):
+                removed_invalid_trigger = True
+                break
             host.permissions.issue(
                 kind="semantic.target",
                 role=decision_role,
-                actors=[item.controller],
+                actors=[chooser],
                 allowed_actions=["choose"],
                 payload_by_actor={
-                    item.controller: {
+                    chooser: {
                         "stack": item.ref,
-                        "prompt": f"Choose legal targets for {item.label}.",
+                        "prompt": (f"Choose modes for {item.label}."
+                                   if distinct_turn_modes or _can_decline_trigger_modes(program)
+                                   else f"Choose legal targets for {item.label}."),
                         "target_schema": public_schema,
                         "legal_actions": [
                             {
@@ -295,7 +371,7 @@ def begin_pending_trigger_target_selection(
                 },
                 continuation={
                     "selection": host._target_selection_continuation(
-                        actor=item.controller,
+                        actor=chooser,
                         item=item,
                         public_schema=public_schema,
                         trigger_creation=True,

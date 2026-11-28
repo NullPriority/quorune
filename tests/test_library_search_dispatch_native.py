@@ -14,9 +14,171 @@ class LibrarySearchDispatchNativeTests(InheritedNativeFixture,unittest.TestCase)
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'numeric-search-dispatch.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/library-search-dispatch-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/library-search-dispatch-cards.json',ROOT/'tests/fixtures/external-entry-tapped-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Numeric search dispatch',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',14)],['Isamaru, Hound of Konda'])
+
+
+
+    def begin_fabled_passage(self, other_lands, *, competing_entries=False):
+        session = self.session(305810 + other_lands)
+        source = self.add(session.engine, "Fabled Passage", ref="conditional-fetch-source")
+        found = self.add(session.engine, "Mountain", zone="library", ref="conditional-fetch-found")
+        nonbasic = self.add(session.engine, "Volcanic Island", zone="library", ref="conditional-fetch-rejected")
+        for index in range(other_lands):
+            self.add(session.engine, "Mountain", ref=f"conditional-fetch-other-{index}")
+        for index in range(4):
+            self.add(session.engine, "Mountain", seat="B", ref=f"conditional-fetch-opponent-{index}")
+        if competing_entries:
+            orb = self.add(session.engine, "Orb of Dreams", ref="conditional-fetch-orb")
+            archelos = self.add(session.engine, "Archelos, Lagoon Mystic", seat="C", ref="conditional-fetch-archelos")
+            self.assert_closed(session, orb)
+            self.assert_closed(session, archelos)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activation, = (row for row in rows if row["id"].startswith(f"activate:{source.ref}:"))
+        self.reject(session, "B", {"action_id": activation["id"]})
+        action = session.act("pilot:A", {"action_id": activation["id"], "pay": "auto"})
+        self.assertTrue(action.ok, action.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        self.assertEqual("library", session.state.cards[found.object_id].zone)
+        return session, found, nonbasic
+
+    def assert_fabled_passage_search_result(self, other_lands, selection):
+        from unittest.mock import patch
+        from quorune.tap_state import untap_permanent
+
+        session, found, nonbasic = self.begin_fabled_passage(other_lands)
+        schema = session.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+        self.assertEqual(0, schema["minimum"])
+        self.assertIn(found.ref, schema["legal_refs"])
+        self.assertNotIn(nonbasic.ref, schema["legal_refs"])
+        self.assertNotIn(found.ref, json.dumps(session.packet("pilot:B", full=True)))
+        self.reject(session, "B", {"action_id": "choose", "search_cards": [found.ref]})
+        self.reject(session, "A", {"action_id": "choose", "search_cards": [nonbasic.ref]})
+        self.reject(session, "A", {"action_id": "choose", "search_cards": [found.ref], "pay_life": True})
+        shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+        session = self.replay(session, load=True)
+        reached = []
+
+        def observe(host, permanent, **options):
+            reached.append((permanent.object_id, permanent.zone, permanent.tapped,
+                            host.state.players["A"].stats["shuffle_count"]))
+            return untap_permanent(host, permanent, **options)
+
+        with patch("quorune.tap_state.untap_permanent", side_effect=observe):
+            action = session.act("pilot:A", {
+                "action_id": "choose", "search_cards": [found.ref] if selection else [],
+            })
+        self.assertTrue(action.ok, action.summary)
+        current = session.state.cards[found.object_id]
+        self.assertEqual("battlefield" if selection else "library", current.zone)
+        self.assertEqual(selection and other_lands < 3, current.tapped, "Reached land threshold")
+        self.assertEqual(shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+        self.assertEqual([(found.object_id, "battlefield", True, shuffles + 1)]
+                         if selection and other_lands >= 3 else [], reached)
+        self.assertNotIn(nonbasic.ref, json.dumps(session.packet("pilot:B", full=True)))
+        self.replay(session, load=True)
+
+    def test_fabled_passage_resolves_tapped_entry_then_shuffles_before_condition(self):
+        for other_lands, selection in ((3, True), (2, True), (4, False)):
+            with self.subTest(other_lands=other_lands, selection=selection):
+                self.assert_fabled_passage_search_result(other_lands, selection)
+
+    def test_fabled_passage_replays_private_replacement_before_threshold(self):
+        session, found, nonbasic = self.begin_fabled_passage(3, competing_entries=True)
+        shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+        result = session.act("pilot:A", {"action_id": "choose", "search_cards": [found.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual(["A"], session.state.pending_decision.actors)
+        self.assertEqual("library", session.state.cards[found.object_id].zone)
+        self.assertEqual(shuffles, session.state.players["A"].stats.get("shuffle_count", 0))
+        packet = session.packet("pilot:B", full=True)
+        self.assertNotIn(found.ref, json.dumps(packet))
+        self.assertNotIn(nonbasic.ref, json.dumps(packet))
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        option = next(row["id"] for row in options if "conditional-fetch-archelos" in row["id"])
+        command = {"action_id": "choose", "replacement": option}
+        self.reject(session, "B", command)
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[found.object_id]
+        self.assertEqual(("A", "battlefield", False), (current.controller, current.zone, current.tapped))
+        self.assertEqual(shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+        self.replay(session, load=True)
+
+    def test_fabled_passage_witness_kills_omitting_reached_untap(self):
+        from unittest.mock import patch
+
+        owner = "quorune.selection.searching.untap_search_result_after_shuffle"
+        with patch(owner, return_value=None), self.assertRaisesRegex(AssertionError, "Reached land threshold"):
+            self.assert_fabled_passage_search_result(3, True)
+
+    def test_fabled_passage_validates_the_descriptor_and_independent_runtime_authority(self):
+        from copy import deepcopy
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.library_search_model import (
+            CONDITIONAL_UNTAP_SEARCH_CAPABILITY, CONDITIONAL_UNTAP_SEARCH_FIELD,
+            FixedCountedLibrarySearchTemplate, counted_search_bound_dependencies,
+        )
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.semantics import SemanticRegistry
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        record = self.db.lookup("Fabled Passage", fuzzy=False)
+        profile = "commander_review"
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for face in ir.faces for node in face.nodes if node.effects)
+        raw = FixedCountedLibrarySearchTemplate.from_effect(node.effects[0]).effect()
+        self.assertEqual(4, raw[CONDITIONAL_UNTAP_SEARCH_FIELD])
+        for changed in (
+            {key: value for key, value in raw.items() if key != CONDITIONAL_UNTAP_SEARCH_FIELD},
+            {**raw, CONDITIONAL_UNTAP_SEARCH_FIELD: True},
+            {**raw, "enters_tapped_override": False},
+            {**raw, "shuffle_after": False},
+            {**raw, "schema_version": 2},
+            {**raw, "selector": {"types": ["land"]}},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                counted_search_bound_dependencies(changed)
+
+        program = compile_best_available_card_program(
+            self.db, record, capability_registry=self.registry, capability_profile=profile,
+            semantic_registry=SemanticRegistry(),
+        )
+        self.assertTrue(bind_card_program_runtime(
+            program, capability_registry=self.registry, profile=profile,
+        )["strict_capability_ready"])
+        registry_source = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        contracted = deepcopy(registry_source)
+        next(row for row in contracted["capabilities"]
+             if row["id"] == CONDITIONAL_UNTAP_SEARCH_CAPABILITY).update(
+                 status="blocked", blockers=["Withdraw the reached search untap owner"],
+             )
+        withdrawn = CapabilityRegistry(contracted)
+        index = build_index(
+            registry_value=contracted,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()),
+        )
+        withdrawn.mark_evidence_verified(validate_capability_evidence_index(index, registry=withdrawn))
+        self.assertFalse(bind_card_program_runtime(
+            program, capability_registry=withdrawn, profile=profile,
+        )["strict_capability_ready"])
+        self.assertNotEqual("exact", compile_oracle_card(
+            record, capability_registry=withdrawn, capability_profile=profile,
+        ).status)
 
     def test_original_basic_land_type_searches_offer_typed_duals_and_keep_other_cards_private(self):
         for index, name in enumerate(("Nervous Gardener", "Spoils of Victory", "Perilous Forays")):
@@ -439,3 +601,221 @@ class LibrarySearchDispatchNativeTests(InheritedNativeFixture,unittest.TestCase)
                 if decline:self.assertEqual(library,tuple(s.state.players['A'].zones['library']))
                 self.assertTrue(all(s.state.cards[c.object_id].zone=='library' for c in cards.values()))
                 self.replay(s,load=True)
+
+
+DISCOVERY_INSTRUCTION = (
+    "Tempting offer — Search your library for a land card and put it onto the battlefield. "
+    "Each opponent may search their library for a land card and put it onto the battlefield. "
+    "For each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. "
+    "Then each player who searched a library this way shuffles."
+)
+
+
+class OpponentLandSearchNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "opponent-land-search.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "library-search-rules-cards.json", "bargain-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Coordinated land searches", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 22),
+        ], ["Generic Bound Commander"])
+
+    def prepare_discovery(self, seed, *, objects=()):
+        game = self.session(seed)
+        engine = game.engine
+        source = self.add(engine, "Tempt with Discovery", zone="hand", ref="discovery")
+        self.assert_closed(game, source)
+        chosen = {}
+        for seat, name, zone, ref in objects:
+            card = self.add(engine, name, seat=seat, zone=zone, ref=ref)
+            if zone == "library":
+                card.known_to = []
+                card.revealed_to = []
+            chosen[ref] = card
+        self.prepare(game, mana={"C": 3, "G": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        return game, chosen
+
+    def choose(self, game, seat, **selection):
+        result = game.act("pilot:" + seat, {"action_id": "choose", **selection})
+        self.assertTrue(result.ok, result.summary)
+
+    def outcome(self, game, seat, kind):
+        decision = self.resolve(game)
+        self.assertIsNotNone(decision)
+        self.assertEqual(kind, decision.kind)
+        self.assertEqual([seat], list(decision.actors))
+        return decision
+
+    def context(self, game, seat):
+        return game.packet("pilot:" + seat, full=True)["decision"]["ctx"]
+
+    def shuffle_counts(self, game):
+        return {seat: game.state.players[seat].stats.get("shuffle_count", 0) for seat in "ABCD"}
+
+    def reject(self, game, seat, **selection):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, {"action_id": "choose", **selection})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_discovery_stages_opponent_finds_and_counts_accepted_failure(self):
+        game, objects = self.prepare_discovery(7012301, objects=(
+            *[(seat, "Generic Bound Plains", "library", f"discovery-land-{seat}") for seat in "ABCD"],
+            ("A", "Generic Bound Plains", "library", "discovery-bonus-A"),
+        ))
+        counts = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        self.reject(game, "B", search_cards=["discovery-land-A"])
+        self.choose(game, "A", search_cards=["discovery-land-A"])
+        self.outcome(game, "B", "choice.apnap")
+        self.assertEqual("battlefield", game.state.cards[objects["discovery-land-A"].object_id].zone)
+        for index, seat in enumerate("BCD"):
+            self.outcome(game, seat, "choice.apnap")
+            history = self.context(game, seat)["prior_search_choices"]
+            self.assertEqual([{"player": name, "search": True} for name in "BCD"[:index]], history)
+            if seat == "B":
+                self.reject(game, "C", choice="search")
+                game = self.replay(game, load=True)
+            self.choose(game, seat, choice="search")
+        self.outcome(game, "B", "semantic.search")
+        self.assertIn("discovery-land-B", json.dumps(self.context(game, "B")))
+        self.reject(game, "B", search_cards=["discovery-land-C"])
+        self.choose(game, "B", search_cards=["discovery-land-B"])
+        self.outcome(game, "C", "semantic.search")
+        self.assertNotIn("discovery-land-B", json.dumps(game.packet("pilot:C", full=True)))
+        self.assertIn("discovery-land-C", json.dumps(self.context(game, "C")))
+        self.choose(game, "C", search_cards=[])
+        self.outcome(game, "D", "semantic.search")
+        self.assertEqual("library", game.state.cards[objects["discovery-land-B"].object_id].zone)
+        self.assertEqual(counts, self.shuffle_counts(game))
+        game = self.replay(game, load=True)
+        self.choose(game, "D", search_cards=["discovery-land-D"])
+        for seat in "BD":
+            self.assertEqual("battlefield", game.state.cards[objects[f"discovery-land-{seat}"].object_id].zone)
+        self.assertEqual("library", game.state.cards[objects["discovery-land-C"].object_id].zone)
+        for index in range(3):
+            self.outcome(game, "A", "semantic.search")
+            self.assertEqual(counts, self.shuffle_counts(game))
+            self.choose(game, "A", search_cards=["discovery-bonus-A"] if index == 0 else [])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + 1 for seat, count in counts.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_reuses_the_original_restricted_view_for_bonus_selection(self):
+        game, objects = self.prepare_discovery(7012303, objects=(
+            ("B", "Aven Mindcensor", "battlefield", "discovery-restrictor"),
+            *[("A", "Generic Bound Plains", "library", f"discovery-top-{index}") for index in range(5)],
+        ))
+        initial = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        context = self.context(game, "A")
+        self.assertEqual({f"discovery-top-{i}" for i in range(1, 5)}, {row["id"] for row in context["search_window"]})
+        self.choose(game, "A", search_cards=["discovery-top-4"])
+        for seat, choice in (("B", "search"), ("C", "decline"), ("D", "decline")):
+            self.outcome(game, seat, "choice.apnap")
+            self.choose(game, seat, choice=choice)
+        self.outcome(game, "B", "semantic.search")
+        self.choose(game, "B", search_cards=[])
+        self.outcome(game, "A", "semantic.search")
+        context = self.context(game, "A")
+        self.assertEqual({f"discovery-top-{i}" for i in range(1, 4)}, {row["id"] for row in context["search_window"]})
+        self.assertEqual(initial, self.shuffle_counts(game))
+        self.reject(game, "A", search_cards=["discovery-top-0"])
+        self.choose(game, "A", search_cards=["discovery-top-3"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + int(seat in "AB") for seat, count in initial.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_controlled_opponent_find_exiles_and_counts_privately(self):
+        game, objects = self.prepare_discovery(7012305, objects=(
+            ("C", "Opposition Agent", "battlefield", "discovery-control"),
+            ("B", "Generic Bound Plains", "library", "discovery-controlled-find"),
+            ("D", "Generic Bound Plains", "library", "discovery-other-controlled-find"),
+        ))
+        initial = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        self.choose(game, "C", search_cards=[])
+        for seat, choice in (("B", "search"), ("C", "decline"), ("D", "search")):
+            self.outcome(game, seat, "choice.apnap")
+            self.choose(game, seat, choice=choice)
+        self.outcome(game, "B", "semantic.search")
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        private_ref = "discovery-controlled-find"
+        related_ref = "discovery-other-controlled-find"
+        parallel = self.context(game, "C")["parallel_search_views"]
+        self.assertEqual({"B", "D"}, set(parallel))
+        self.assertIn(private_ref, {row["id"] for row in parallel["B"]})
+        self.assertIn(related_ref, {row["id"] for row in parallel["D"]})
+        for seat in "ABD":
+            packet = json.dumps(game.packet("pilot:" + seat, full=True))
+            self.assertNotIn(private_ref, packet)
+            self.assertNotIn(related_ref, packet)
+        self.reject(game, "B", search_cards=[private_ref])
+        game = self.replay(game, load=True)
+        self.choose(game, "C", search_cards=[private_ref])
+        self.outcome(game, "D", "semantic.search")
+        self.assertEqual("library", game.state.cards[objects[private_ref].object_id].zone)
+        self.choose(game, "C", search_cards=[])
+        found = game.state.cards[objects[private_ref].object_id]
+        self.assertEqual("exile", found.zone)
+        self.assertEqual(("C", found.logical_object_id), tuple(found.annotations["opponent_library_exile_incarnation_play"]))
+        for _ in range(2):
+            self.outcome(game, "A", "semantic.search")
+            self.choose(game, "C", search_cards=[])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + int(seat in "ABD") for seat, count in initial.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_search_prohibition_skips_participation_and_shuffle(self):
+        game, _ = self.prepare_discovery(7012310, objects=(("B", "Mindlock Orb", "battlefield", "discovery-prohibition"),))
+        initial = self.shuffle_counts(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.stack)
+        self.assertEqual(initial, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_strict_shape_and_dependency_withdrawal(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.fixed_opponent_land_search import CAPABILITY, opponent_land_search_node_capabilities
+        from test_fixed_library_searches import card_record
+
+        record = card_record(DISCOVERY_INSTRUCTION)
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        self.assertEqual((0, len(DISCOVERY_INSTRUCTION)), (node.span.start, node.span.end))
+        original, = node.effects
+        for field, value in (("fixed_opponent_land_search", True), ("players", "all"), ("bonus", 1)):
+            effect = {**original, field: value}
+            self.assertEqual((), opponent_land_search_node_capabilities((effect,), None, None, node.mechanics))
+        for text in (
+            DISCOVERY_INSTRUCTION.replace("who searches a library", "who finds a land"),
+            DISCOVERY_INSTRUCTION.replace("onto the battlefield", "into their hand", 1),
+            DISCOVERY_INSTRUCTION.replace("Then each player", "First each player"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(card_record(text), capability_registry=self.registry).status)
+        with patch("quorune.compiler.library_search_templates.FixedOpponentLandSearchTemplate", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+        game = self.session(7012311)
+        source = self.add(game.engine, "Tempt with Discovery", zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])

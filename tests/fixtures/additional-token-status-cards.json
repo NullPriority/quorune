@@ -3,10 +3,240 @@
   "fixture_kind": "public_exact-list_card_data",
   "source": "Constructed complete replacement/creation instructions, independently governed by pinned Worldwalker Helm and Chatterfang rulings",
   "cards": [
-    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690001","name":"Generic Token Status Observer","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"If you would create one or more artifact tokens, instead create those tokens plus an additional Map token.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690002","name":"Generic Tapped Artifact Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a tapped 1/1 colorless Servo artifact creature token.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690003","name":"Generic Intrinsic Artifact Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a 1/1 colorless Servo artifact creature token with deathtouch.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690004","name":"Generic Tapped Creature Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a tapped 1/1 white Soldier creature token.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+    {
+      "oracle_id": "d4fa0d11-b397-4720-8c14-1c26ca690001",
+      "name": "Generic Token Status Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would create one or more artifact tokens, instead create those tokens plus an additional Map token.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "d4fa0d11-b397-4720-8c14-1c26ca690002",
+      "name": "Generic Tapped Artifact Subject",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create a tapped 1/1 colorless Servo artifact creature token.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "d4fa0d11-b397-4720-8c14-1c26ca690003",
+      "name": "Generic Intrinsic Artifact Subject",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create a 1/1 colorless Servo artifact creature token with deathtouch.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "d4fa0d11-b397-4720-8c14-1c26ca690004",
+      "name": "Generic Tapped Creature Subject",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create a tapped 1/1 white Soldier creature token.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "name": "Chatterfang, Squirrel General",
+      "mana_cost": "{2}{G}",
+      "type_line": "Legendary Creature — Squirrel Warrior",
+      "oracle_text": "Forestwalk (This creature can't be blocked as long as defending player controls a Forest.)\nIf one or more tokens would be created under your control, those tokens plus that many 1/1 green Squirrel creature tokens are created instead.\n{B}, Sacrifice X Squirrels: Target creature gets +X/-X until end of turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [
+        "Landwalk",
+        "Forestwalk"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:pair-tapped-servos",
+      "name": "Generic Pair of Tapped Servos",
+      "type_line": "Instant",
+      "oracle_text": "Create two tapped 1/1 colorless Servo artifact creature tokens.",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "fixture:pair-of-treasures",
+      "name": "Generic Pair of Treasures",
+      "type_line": "Instant",
+      "oracle_text": "Create two Treasure tokens.",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "fixture:subtype-sacrifice-squirrel",
+      "name": "Generic Subtype Sacrifice Squirrel",
+      "type_line": "Creature — Squirrel",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "colors": [],
+      "color_identity": [],
+      "released_at": "2026-01-01",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "oracle_id": "fixture:subtype-sacrifice-target",
+      "name": "Generic Subtype Sacrifice Target",
+      "type_line": "Creature — Human",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "colors": [],
+      "color_identity": [],
+      "released_at": "2026-01-01",
+      "power": "2",
+      "toughness": "5"
+    }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Chatterfang's second ability applies to all kinds of tokens, including Clue, Food, and Treasure tokens."
+    },
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If an effect changes under whose control a token would be created, that effect applies before Chatterfang's effect applies. If an effect changes under whose control a token would enter the battlefield, that effect applies after Chatterfang's effect is able to be applied."
+    },
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "In a Commander game, the defending player is the player Chatterfang is attacking or the controller of the planeswalker Chatterfang is attacking."
+    },
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The additional Squirrel tokens won't have any abilities the other tokens were created with. Anything else specified in the effect creating the token (such as tapped, attacking, \"That token gains haste,\" or \"Exile that token at end of combat\") applies to both the original tokens and the Squirrels."
+    },
+    {
+      "oracle_id": "f15b3b76-d38a-48db-bb44-3296183c8641",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You don't need to control the spell or ability that creates the tokens, nor do you have to be the one creating the tokens for Chatterfang's ability to apply. As long as the tokens are being created under your control, Chatterang's replacement effect will apply."
+    }
+  ]
 }

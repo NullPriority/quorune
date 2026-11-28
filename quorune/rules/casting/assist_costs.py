@@ -61,6 +61,7 @@ def select_assist_cost(
         player for player in others
         if requirements["GENERIC"] and (minimum == 0 or cost_is_affordable(
             read_host, player, {"GENERIC": minimum}, spend_context=spend_context,
+            public_hand_mana_bound=True,
         ))
     ]
     if hint:

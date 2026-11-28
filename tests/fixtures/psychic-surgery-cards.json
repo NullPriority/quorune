@@ -1,0 +1,74 @@
+{
+  "cards": [
+    {
+      "oracle_id": "e5128230-3535-4f77-8b97-20d0791e7b1d",
+      "name": "Psychic Surgery",
+      "mana_cost": "{1}{U}",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "Whenever an opponent shuffles their library, you may look at the top two cards of that library. You may exile one of those cards. Then put the rest on top of that library in any order.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-05-13",
+      "toughness": null,
+      "type_line": "Enchantment",
+      "cmc": 2.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "e5128230-3535-4f77-8b97-20d0791e7b1d",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "In most cases, Green Sun’s Zenith instructs you to shuffle your library twice. Although shuffling that library only once is an acceptable shortcut, Psychic Surgery’s ability will still trigger twice."
+    },
+    {
+      "oracle_id": "e5128230-3535-4f77-8b97-20d0791e7b1d",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "You look at the top two cards of that library as the triggered ability resolves. That happens after your opponent is done shuffling."
+    },
+    {
+      "oracle_id": "e5128230-3535-4f77-8b97-20d0791e7b1d",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If your opponent’s library has one card in it and they are instructed to shuffle that library, Psychic Surgery will trigger. You may’ exile the one card in that library."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

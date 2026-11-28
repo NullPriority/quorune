@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility
+from ...life_state import available_life_for_payment
 from .pricing import payable_activation_mana_options
 from .x_costs import activation_requirements
 from ...crew import CrewAbilityError, activation_power_tap_cost, available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...mana_restrictions import ability_mana_spend_context
+from ...paid_activation_card_types import has_bounded_sacrifice
+from ..chosen_color_draw_price import draw_spend_context
 from ...station import (
     StationAbilityError,
     station_candidates,
@@ -17,6 +20,8 @@ from ...semantic_runtime.activation_restrictions import (
     current_activation_prohibitions,
 )
 from .conditions import activation_condition_status
+from .equip_permissions import equip_instant_timing
+from .commander_identity_life import current_commander_identity_life
 
 
 class ActivationAvailabilityHost(Protocol):
@@ -58,6 +63,8 @@ def activation_availability(
     seat: str,
     card: Any,
     ability: ActivatedAbility,
+    *,
+    priced_ability: ActivatedAbility | None = None,
 ) -> tuple[str, str | None]:
     """Return the read-only payable status for one typed ability."""
 
@@ -84,20 +91,37 @@ def activation_availability(
     )
     if condition_status != "payable":
         return condition_status, condition_reason
-    if ability.sorcery_speed and not _main_phase_timing(host, seat):
+    from ...land_play_mana_model import land_play_mana_output
+    from ...turn_history import land_played_this_turn
+
+    if land_play_mana_output(ability) is not None and land_played_this_turn(host.state, seat) is None:
+        return "unavailable", "complete_land_play_history_required"
+    if (ability.sorcery_speed and not _main_phase_timing(host, seat)
+            and not equip_instant_timing(host, seat, card, ability)):
         return "unavailable", "sorcery_timing"
     loyalty_status = _loyalty_availability(host, seat, card, ability)
     if loyalty_status is not None:
         return loyalty_status
+    ability = priced_ability or ability
     source_status = _source_cost_availability(host, seat, card, ability)
     if source_status is not None:
         return source_status
-    if ability.life_payment and player.life < ability.life_payment:
+    life_payment = current_commander_identity_life(host, seat, ability)
+    if life_payment is None:
+        return "unavailable", "commander_identity_life_unavailable"
+    if life_payment and available_life_for_payment(host, seat) < life_payment:
         return "unpayable", "insufficient_life"
     if ability.energy_payment and player.energy < ability.energy_payment:
         return "unpayable", "insufficient_energy"
+    if ability.mill_library_cost and len(player.zones['library']) < ability.mill_library_cost:
+        return 'unpayable', 'insufficient_library_cards_for_mill'
     if ability.random_discard_payment and len(player.zones['hand'])<ability.random_discard_payment:
         return 'unpayable','insufficient_random_discard_cards'
+    if ability.source_counter_placement_cost is not None:
+        from .counter_costs import source_counter_placement_is_payable
+
+        if not source_counter_placement_is_payable(host, seat, card):
+            return "unpayable", "source_counter_placement_prohibited"
     if ability.source_counter_removal_cost is not None:
         cost = ability.source_counter_removal_cost
         if zone != "battlefield":
@@ -116,7 +140,7 @@ def activation_availability(
             return "unresolved", "unresolved_station_power"
         if not candidates:
             return "unpayable", "station_cost_object_unavailable"
-    elif ability.choices and not host._ability_choice_payable(
+    elif ability.choices and not has_bounded_sacrifice(ability) and not host._ability_choice_payable(
         seat, card, ability
     ):
         return "unpayable", "mandatory_cost_object_unavailable"
@@ -151,9 +175,9 @@ def _activation_mana_availability(host, seat, card, ability):
         except ValueError:
             return 'unavailable', 'mandatory_target_unavailable'
         excluded = {card.object_id} if ability.tap_source else set()
-        spend_context = ability_mana_spend_context(
-            str(host._effective_card_data(card).get("type_line") or "")
-        )
+        spend_context = draw_spend_context(host, card, ability, ability_mana_spend_context(
+            str(host._effective_card_data(card).get("type_line") or ""), source_zone=card.zone,
+        ))
         if sum(requirements.values()) and not host._cost_is_affordable(
             seat,
             requirements,
@@ -243,6 +267,10 @@ def _source_cost_availability(
             return "unavailable", "sacrifice_source_wrong_zone"
         if card.controller != seat:
             return "unavailable", "sacrifice_source_not_controlled"
+        from ...sacrifice_prohibition_model import sacrifice_is_prohibited
+
+        if sacrifice_is_prohibited(host.state, card):
+            return "unavailable", "sacrifice_source_prohibited"
     if ability.granting_attachment_payment is not None:
         from .granting_attachment import payable_granting_attachment
         if payable_granting_attachment(host, seat, card, ability.granting_attachment_payment) is None:

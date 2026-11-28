@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .counter_placement import validate_counter_event_subjects
 from .errors import StateInvariantError
 from .model import StackItem
+from .rules.main_phase_combat_model import later_main_phase_context as fixed_later_main_context
 from .replacement_effects import (
     ReplacementChoiceRequired,
     ReplacementContinuation,
@@ -162,10 +163,17 @@ def complete_ordinary_priority_step_entry(
     active = host.state.active_player
     if active is None:
         raise StateInvariantError("A turn has no active player")
+    from .extra_combat_model import later_main_phase_context as legacy_later_main_context
+
+    schedule = host.state.main_phase_combat_schedule
+    phase_context = (fixed_later_main_context(phase=host.state.phase, step=host.state.step,
+                     schedule=schedule, inserted_count=host.state.inserted_main_phase_count)
+        if schedule is not None else legacy_later_main_context(host.state, host.state.phase, host.state.step))
     context = {
         "phase": host.state.phase,
         "step": host.state.step,
         "player": active,
+        **phase_context,
     }
     waiting = collect_trigger_items(
         host,

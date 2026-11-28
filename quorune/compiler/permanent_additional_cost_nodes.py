@@ -25,22 +25,26 @@ PERMANENT_ADDITIONAL_COST_COVERAGE = "fixed-permanent-additional-cost-declaratio
 
 
 def permanent_additional_cost_node(*, node_id, line, material_line, span: SourceSpan,
-    card_types, capability_registry, capability_profile, residuals: list[OracleResidual]):
+    card_types, capability_registry, capability_profile, residuals: list[OracleResidual],
+    linked_behold_cost_schema=None):
     if not set(card_types).intersection({"artifact", "battle", "creature", "enchantment", "planeswalker"}):
         return None
     if not material_line.casefold().startswith("as an additional cost to cast this spell,"):
         return None
-    template = next((value for parse in (
+    cost_schema = linked_behold_cost_schema
+    template = None if cost_schema is not None else next((value for parse in (
         fixed_waterbend_additional_cost_template,
         fixed_tap_additional_cost_template, fixed_counter_additional_cost_template, fixed_sacrifice_additional_cost_template,
         partial(fixed_zone_change_additional_cost_template,allow_counted=True), fixed_life_payment_additional_cost_template,
         fixed_alternative_additional_cost_template,
     ) if (value := parse(material_line)) is not None), None)
-    if template is None:
+    if template is not None:
+        cost_schema = template.cost_schema
+    if cost_schema is None:
         return None
     mechanics = ("cr-601-casting-spells",)
     gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
-        cost_schema=template.cost_schema, trusted_mechanics=frozenset(),
+        cost_schema=cost_schema, trusted_mechanics=frozenset(),
         capability_registry=capability_registry, capability_profile=capability_profile)
     residual_ids = ()
     if gate.blockers:
@@ -48,7 +52,7 @@ def permanent_additional_cost_node(*, node_id, line, material_line, span: Source
             reason="Permanent casting price requires its existing typed cost capabilities", blockers=gate.blockers),)
     return OracleNode(node_id=node_id, kind="spell_ability", text=line, span=span,
         active_zone="stack", event="resolve", lowerable=True, exact=not gate.blockers,
-        template_id=PERMANENT_ADDITIONAL_COST_TEMPLATE, cost=template.cost_schema,
+        template_id=PERMANENT_ADDITIONAL_COST_TEMPLATE, cost=cost_schema,
         mechanics=mechanics, runtime_coverage=(PERMANENT_ADDITIONAL_COST_COVERAGE,),
         residual_ids=residual_ids, capability_dependencies=gate.capabilities,
         capability_closure=gate.closure.reachable if gate.closure else (),

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 from .live_battlefield_quantities import resolution_quantity
-from ..query_effect_amount_model import PublicQueryAmountSpec
+from ..query_effect_amount_model import PublicQueryAmountSpec, controlled_creature_power_search_amount
 from ..library_search_model import QueryBoundLibrarySearchSpec
 
 
@@ -19,7 +19,12 @@ def query_bound_library_search_template(text):
     elif re.fullmatch(r'Reveal those cards, put them into your hand, then shuffle\.',placement,re.I):
         destination,reveal,tapped='hand',True,False
     else:return None
-    quantity=resolution_quantity(match['quantity'],source_name='Source',complete_value=True)
-    if quantity is None:return None
-    try:return QueryBoundLibrarySearchSpec(PublicQueryAmountSpec(quantity),destination,reveal,tapped)
+    if match['quantity'].casefold() == 'the greatest power among creatures you control':
+        amount = controlled_creature_power_search_amount()
+    else:
+        quantity = resolution_quantity(match['quantity'], source_name='Source', complete_value=True)
+        if quantity is None:
+            return None
+        amount = PublicQueryAmountSpec(quantity)
+    try:return QueryBoundLibrarySearchSpec(amount,destination,reveal,tapped)
     except ValueError:return None

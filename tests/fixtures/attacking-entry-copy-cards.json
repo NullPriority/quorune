@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "name": "Thousand-Faced Shadow",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Ninja",
+      "oracle_text": "Ninjutsu {2}{U}{U} ({2}{U}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nFlying\nWhen this creature enters from your hand, if it's attacking, create a token that's a copy of another target attacking creature. The token enters tapped and attacking.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As you activate a ninjutsu ability, you reveal the Ninja card in your hand and return the attacking creature. The Ninja card stays revealed and isn't put onto the battlefield until the ability resolves. If it leaves your hand before then, it won't enter the battlefield at all."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although the token is attacking, it was never declared as an attacking creature (for purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated during the declare blockers step, combat damage step, or end of combat step. In most cases (see below), if you wait until the combatdamage step or end of combat step, it will be after combat damage has been dealt, so the Ninja won't deal combat damage."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If the copied creature was copying something else, the token enters the battlefield as whatever that creature was copying."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The creature with ninjutsu enters the battlefield attacking the same player or planeswalker that the returned creature was attacking. This is a rule specific to ninjutsu; in other cases, when a creature is put onto the battlefield attacking, that creature's controller chooses which player or planeswalker it's attacking."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated only after blockers have been declared. Before then, attacking creatures are neither blocked nor unblocked."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a creature in combat has first strike or double strike, you can activate the ninjutsu ability during the first-strike combat damage step. The Ninja will deal combat damage during the regular combat damage step, even if it has first strike."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “As [this creature] enters the battlefield” or “[This creature] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although the Ninja is attacking, it was never declared as an attacking creature (for purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that creature has any counters on it or Auras and/or Equipment attached to it, or any non-copy effects that changed its power, toughness, types, color, and so on. Notably, it doesn't copy any effects that may have turned a noncreature permanent into a creature. If the token isn't a creature as it enters the battlefield, it won't be attacking."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If the copied creature had {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token created by Thousand-Faced Shadow copies the original characteristics of that token as stated by the effect that put it onto the battlefield."
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "You choose which opponent or opposing planeswalker the token is attacking as you put it onto the battlefield. It doesn't have to be the same player or planeswalker Thousand-Faced Shadow is attacking. (Remember that the rules for ninjutsu specify that a creature that enters the battlefield attacking because of a ninjutsu ability attacks the same player or planeswalker the returned unblocked creature was.)"
+    },
+    {
+      "oracle_id": "98636623-bbc6-4935-a2bb-2234691eb6d8",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Puff of smoke not included."
+    }
+  ]
+}

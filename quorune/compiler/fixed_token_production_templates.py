@@ -19,6 +19,8 @@ from ..fixed_token_production import (
     INVESTIGATE_MECHANIC_ID,
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     fixed_ordinary_token_name,
+    mana_life_token_name,
+    named_mana_life_token,
 )
 from .direct_target import direct_permanent_target_spec
 from .fixed_numbers import fixed_number
@@ -338,6 +340,12 @@ def _fixed_named_token_template(
     *,
     compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
 ) -> FixedTokenCreationTemplate | None:
+    if normalized.casefold().startswith("create ") and (mana_token_name := mana_life_token_name(normalized)):
+        return FixedTokenCreationTemplate(
+            template_id="create-fixed-named-mana-life-token-v1",
+            effect=named_mana_life_token(mana_token_name),
+            mechanics=(FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "cr-111-tokens", "fixed-named-token"),
+        )
     legendary = _FIXED_LEGENDARY_NAMED_TOKEN.fullmatch(normalized)
     if legendary is not None:
         inner = compile_inner("Create a " + legendary.group("body") + ".")

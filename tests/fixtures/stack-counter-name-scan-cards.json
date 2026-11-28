@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall exact rules subset for affected-player counter and exile tests",
+  "cards": [
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "name": "Tibalt's Trickery",
+      "mana_cost": "{1}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell. Choose 1, 2, or 3 at random. Its controller mills that many cards, then exiles cards from the top of their library until they exile a nonland card with a different name than that spell. They may cast that card without paying its mana cost. Then they put the exiled cards on the bottom of their library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "restricted",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If the spell has {X} in its mana cost, they must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If there aren't any nonland cards in that library with a different name than the countered spell, the player will exile all cards from their library, revealing all of them, and then they'll put those cards on the bottom of their library in a random order."
+    },
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Tibalt's Trickery can target a spell that can't be countered. If Tibalt's Trickery resolves, the target spell won't be countered, but all of the other effects will still happen."
+    },
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If a player casts a spell \"without paying its mana cost,\" they can't choose to cast it for any alternative costs. They can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "6623cb85-fb1e-4561-8b21-0977c25096c2",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If the spell that's countered was the back face of a modal double-faced card, no card in the player's library will have the same name as that spell because those cards all use only their front-face characteristics while in the library; however, if the first card the player exiles that has a different name than the spell is a modal double-faced card, they may cast either face, even if the back face has the same name as the countered spell."
+    }
+  ]
+}

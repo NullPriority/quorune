@@ -1,0 +1,91 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Trouble in Pairs",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "oracle_text": "If an opponent would begin an extra turn, that player skips that turn instead.\nWhenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If an opponent attacks you with two or more creatures more than once in a turn (probably because they've generated extra combat phases), Trouble in Pairs's last ability will trigger each time that happens.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Trouble in Pairs's last ability can trigger multiple times per opponent per turn. For example, if an opponent draws a second card, casts a second spell, and attacks you with two or more creatures in a single turn, Trouble in Pairs's last ability will trigger once when each of those events occurs, for a total of three times.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Extra turns can still be created while Trouble in Pairs is on the battlefield. They're not skipped until they would begin, so if Trouble in Pairs leaves the battlefield before that happens, the extra turns will be unaffected.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Trouble in Pairs counts spells that were cast even if they didn't resolve. This means it still counts spells that were countered.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Trouble in Pairs doesn't have to be on the battlefield to see the first card an opponent draws in a turn or the first spell they cast in a turn. As long as it's already on the battlefield when they draw their second card or cast their second spell in a turn, its last ability will trigger.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "An \"extra turn\" is any turn created by a spell or ability. Notably, it doesn't include additional turns taken in tournaments after time expires for a round.",
+      "oracle_id": "f349f58b-8cc8-45e4-9565-2b46fdf976c9",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

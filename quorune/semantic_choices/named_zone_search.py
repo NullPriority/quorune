@@ -7,6 +7,7 @@ from ..named_search_model import (
     decode_named_zone_search,
 )
 from ..replacement.immutable import FrozenMap
+from ..rules.library_search_rules import library_graveyard_search_choices
 from .model import (
     ScalarChoice, SemanticChoiceCompletion, SemanticChoiceError, SemanticChoicePreparation,
     SemanticChoiceRequest,
@@ -32,8 +33,7 @@ class NamedZoneSearchChoiceHandler:
             spec = decode_named_zone_search(effect, actor=context.actor)
             if context.actor != context.stack_controller:
                 raise ValueError("Named zone search requires the resolving controller")
-            options = (("library", "graveyard", "both") if context.query.library_search_allowed(context.actor)
-                       else ("graveyard",))
+            options = library_graveyard_search_choices(context.query.library_search_allowed(context.actor))
             if spec.optional:
                 options += ("decline",)
             return SemanticChoicePreparation(

@@ -14,6 +14,7 @@ from .aura import keyword_target_schema
 from .carddb import CardDatabase, CardRecord
 from .compiler.declared_effect_amounts import declared_spell_effect_compiler
 from .compiler.card_face_finalization import finalize_card_faces
+from .compiler.face_type_context import PERMANENT_CARD_TYPES as _PERMANENT_CARD_TYPES, face_type_context as _face_type_context
 from .cast_timing import (
     CAST_PERMISSION_ACTIVE_ZONE,
     CAST_PERMISSION_EVENT,
@@ -29,9 +30,9 @@ from .compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
 )
 from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
-from .compiler.fixed_stack_spell_copy import next_cast_copy_template
-from .compiler.attached_granted_ability_nodes import (
-    compile_early_material_nodes as _early_material_nodes,
+from .compiler.temporary_player_rule_templates import delayed_spell_cast_template
+from .compiler.saga_chapter_grants import (
+    compile_early_material_nodes_with_saga_grants as _early_material_nodes,
 )
 from .compiler.effect_template_composition import (
     reviewed_contextual_effect_template,
@@ -64,11 +65,12 @@ from .compiler.source_self_effect_templates import (
 from .compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
 )
-from .compiler.fixed_counter_trigger_nodes import (
-    fixed_typed_event_effect_trigger_node,
+from .compiler.controlled_spell_counter_nodes import (
+    fixed_typed_or_controlled_spell_counter_trigger_node,
 )
 from .compiler.fixed_keyword_entry_nodes import fixed_keyword_entry_nodes
 from .compiler.keyword_event_effect_nodes import (
+    source_scaled_keyword_event_mechanics,
     fixed_keyword_event_effect_node,
     fixed_keyword_event_effect_mechanics,
 )
@@ -103,9 +105,7 @@ from .compiler.mill_templates import fixed_mill_effect_template
 from .compiler.impulse_access_templates import (
     fixed_impulse_access_effect_template,
 )
-from .compiler.modal_context_nodes import (
-    fixed_nonrepeating_modal_context_blocks,
-)
+from .compiler.independent_target_rows import prepare_target_clause_context, mark_independent_target_nodes
 from .compiler.modal_templates import (
     fixed_choose_one_modal_spell_template,
     fixed_nonrepeating_modal_template,
@@ -161,9 +161,6 @@ from .compiler.surveil_templates import fixed_surveil_effect_template
 from .compiler.static_runtime_nodes import (
     runtime_handler_node,
 )
-from .compiler.spell_additional_cost_nodes import (
-    typed_additional_cost_spell_node,
-)
 from .compiler.spell_history_transform_nodes import (
     previous_turn_transform_trigger_node,
 )
@@ -180,7 +177,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1230"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1237"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of|at end of combat)\b",
@@ -189,17 +186,6 @@ _TRIGGER_PREFIX = re.compile(
 _ABILITY_WORD = re.compile(
     r"^(?P<word>[A-Za-z][A-Za-z ']+)\s+[—-]\s+(?P<body>.+)$"
 )
-_PERMANENT_CARD_TYPES = frozenset(
-    {
-        "artifact",
-        "battle",
-        "creature",
-        "enchantment",
-        "land",
-        "planeswalker",
-    }
-)
-_SPELL_CARD_TYPES = frozenset({"instant", "sorcery"})
 
 
 def _read_ahead_face_context(
@@ -209,49 +195,6 @@ def _read_ahead_face_context(
     _types, subtypes, _supertypes = type_parts(type_line)
     return tuple(sorted(subtypes)), saga_chapter_numbers(
         material_line for _line, material_line, _span in material_rows
-    )
-
-
-def _face_type_context(
-    type_line: str,
-) -> tuple[
-    frozenset[str],
-    bool,
-    bool,
-    bool | None,
-    AttachmentReferenceKind | None,
-]:
-    """Return exact card types and closed resolution-source context."""
-
-    parsed_card_types, subtypes, _supertypes = type_parts(type_line)
-    card_types = frozenset(parsed_card_types)
-    permanent = bool(card_types.intersection(_PERMANENT_CARD_TYPES))
-    spell = bool(card_types.intersection(_SPELL_CARD_TYPES))
-    support_source = (
-        True
-        if permanent and not spell
-        else False
-        if spell and not permanent
-        else None
-    )
-    attachment_relations = tuple(
-        relation
-        for subtype, relation in (
-            ("aura", AttachmentReferenceKind.ENCHANTED),
-            ("equipment", AttachmentReferenceKind.EQUIPPED),
-            ("fortification", AttachmentReferenceKind.FORTIFIED),
-        )
-        if subtype in subtypes
-    )
-    attachment_relation = (
-        attachment_relations[0] if len(attachment_relations) == 1 else None
-    )
-    return (
-        card_types,
-        permanent,
-        spell,
-        support_source,
-        attachment_relation,
     )
 
 
@@ -696,7 +639,7 @@ def _keyword_nodes(
     mechanics = keyword_mechanics(
         material_line,
         keywords,
-    ) or fixed_keyword_event_effect_mechanics(material_line, keywords)
+    ) or fixed_keyword_event_effect_mechanics(material_line, keywords) or source_scaled_keyword_event_mechanics(material_line, card_name)
     if mechanics is None:
         return ()
     if 'ravenous' in mechanics:
@@ -844,7 +787,7 @@ def _source_self_zone_trigger_match(
     return re.fullmatch(
         rf"(?:when|whenever) "
         rf"(?P<subject>this (?:artifact|aura|card|creature|"
-        rf"enchantment|equipment|land|permanent|class)|{source_name}) "
+        rf"enchantment|equipment|land|permanent|class|siege)|{source_name}) "
         rf"(?P<event>enters|dies|leaves the battlefield), "
         rf"(?P<body>.+)",
         material_line,
@@ -896,14 +839,12 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        from .compiler.source_self_effect_templates import compile_source_self_zone_effect
+        from .compiler.source_self_effect_templates import (
+            compile_source_self_zone_effect, normalized_source_self_zone_event,
+        )
         template,effects,target_schema,mechanics,event_condition=compile_source_self_zone_effect(
             trigger.group('body'),card_name=card_name,event_phrase=event_phrase,effect_template=effect_template)
-        event = {
-            "enters": "permanent.enter.self",
-            "dies": "creature.dies.self",
-            "leaves the battlefield": "permanent.leave.self",
-        }[event_phrase]
+        event = normalized_source_self_zone_event(event_phrase, template)
         recognized = True
     diagnostic_binding = None
     if not recognized:
@@ -992,44 +933,6 @@ def _trigger_node(
     )
 
 
-def _typed_additional_cost_face(
-    record: CardRecord,
-    face_id: str,
-    face_name: str,
-    oracle_text: str,
-    material_rows: Sequence[tuple[str, str, SourceSpan]],
-    effect_template: Any,
-    trusted_mechanics: frozenset[str],
-    capability_registry: CapabilityRegistry | None,
-    capability_profile: str,
-    residuals: list[OracleResidual],
-) -> OracleFaceIR | None:
-    from .compiler.additional_cost_payment_faces import compile_additional_cost_payment_face
-    composed=compile_additional_cost_payment_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
-        material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if composed is not None:return composed
-    node = typed_additional_cost_spell_node(
-        node_id=f"{face_id}:n1",
-        rows=material_rows,
-        card_name=face_name or record.name,
-        effect_template=effect_template,
-        trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-        residuals=residuals,
-    )
-    if node is None:
-        return None
-    return OracleFaceIR(
-        face_id=face_id,
-        face_name=face_name,
-        oracle_text=oracle_text,
-        nodes=(node,),
-        residuals=tuple(residuals),
-    )
-
-
 def _activated_or_fixed_event_trigger_node(
     *,
     node_id: str,
@@ -1049,6 +952,12 @@ def _activated_or_fixed_event_trigger_node(
     bargain_spec: Any = None,
     room_door_face: str | None = None,
 ) -> OracleNode | None:
+    from .compiler.linked_landfall_play_nodes import linked_landfall_play_node
+
+    linked = linked_landfall_play_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if linked is not None:
+        return linked
     from .compiler.trigger_limit_nodes import limited_trigger_node
     from .compiler.state_trigger_nodes import public_state_trigger_node
     state_trigger=public_state_trigger_node(node_id=node_id,line=line,material_line=material_line,span=span,
@@ -1111,7 +1020,7 @@ def _activated_or_fixed_event_trigger_node(
     if triggered_mana is not None:
         return triggered_mana
     from .compiler.room_bindings import own_door_binding
-    return fixed_typed_event_effect_trigger_node(
+    return fixed_typed_or_controlled_spell_counter_trigger_node(
         node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
@@ -1136,11 +1045,27 @@ def _typed_whole_spell_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
-    from .compiler.paid_mana_spell_faces import compile_paid_mana_spell_face
-    paid=compile_paid_mana_spell_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
+    from .compiler.die_damage_table import compile_die_damage_table_face
+
+    damage_table = compile_die_damage_table_face(
+        face_id=face_id, face_name=face_name or record.name, oracle_text=oracle_text, material_rows=material_rows,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if damage_table is not None:
+        return damage_table
+    from .compiler.die_table_spell_faces import compile_die_table_spell_face
+    if die_table := compile_die_table_spell_face(
+        face_id=face_id, face_name=face_name, oracle_text=oracle_text, material_rows=material_rows,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    ):
+        return die_table
+    from .compiler.contextual_spell_faces import compile_contextual_spell_face
+    contextual = compile_contextual_spell_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
         material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if paid is not None:return paid
+    if contextual is not None:
+        return contextual
     from .compiler.paired_spell_faces import compile_fixed_text_variant_face
     alternative = compile_fixed_text_variant_face(record=record, face_id=face_id, face_name=face_name,
         oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
@@ -1148,17 +1073,14 @@ def _typed_whole_spell_face(
         capability_profile=capability_profile, residuals=residuals)
     if alternative is not None:
         return alternative
-    additional_cost_face = _typed_additional_cost_face(
-        record,
-        face_id,
-        face_name,
-        oracle_text,
-        material_rows,
-        effect_template,
-        trusted_mechanics,
-        capability_registry,
-        capability_profile,
-        residuals,
+    from .compiler.additional_cost_payment_faces import compile_typed_additional_cost_face
+    additional_cost_face = compile_typed_additional_cost_face(
+        record=record, face_id=face_id, face_name=face_name, type_line=type_line,
+        keywords=keywords, oracle_text=oracle_text, material_rows=material_rows,
+        effect_template=effect_template, compile_inner=_activated_or_fixed_event_trigger_node,
+        trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
     )
     if additional_cost_face is not None:
         return additional_cost_face
@@ -1191,6 +1113,28 @@ def _prepare_face_source(record, face_id, type_line, oracle_text, *, check_besto
             bestow_grant_context, class_context, _read_ahead_face_context(type_line, rows))
 
 
+def _material_residual_node(
+    *, node_id: str, line: str, span: SourceSpan, permanent: bool, residuals: list[OracleResidual],
+) -> OracleNode:
+    """Keep unmatched printed text and its reason in one source-spanned node."""
+    if permanent:
+        kind, active_zone, event = "static_ability", "battlefield", "continuous"
+        reason = "static/continuous text has no exact typed contract"
+        blockers = ("continuous-effect layers and dependencies",)
+    else:
+        kind, active_zone, event = "spell_ability", "stack", "resolve"
+        reason = "spell effect has no exact generic template"
+        blockers = ()
+    residual_id = _residual(
+        residuals, kind="static_ability" if permanent else "spell_effect",
+        text=line, span=span, reason=reason, blockers=blockers,
+    )
+    return OracleNode(
+        node_id=node_id, kind=kind, text=line, span=span, active_zone=active_zone, event=event,
+        lowerable=False, exact=False, residual_ids=(residual_id,),
+    )
+
+
 def _compile_face(
     record: CardRecord,
     *,
@@ -1213,24 +1157,24 @@ def _compile_face(
      bestow_grant_context, class_context, (printed_subtypes, saga_chapters)) = _prepare_face_source(
         record, face_id, type_line, oracle_text, check_bestow=source_attachment_relation is None
     )
+    material_rows, closed_face = spell_lifecycle_context_owner.lower_complete_face(
+        record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords,
+        oracle_text=oracle_text, material_rows=material_rows, card_types=card_types, spell=spell,
+        effect_template=contextual_effect_template, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals, context=cipher_context, compile_spell_face=_typed_whole_spell_face,
+    )
+    if closed_face is not None:
+        return closed_face
+    if spell and not record.faces:
+        from .compiler.announced_mana_value_target import prepare_announced_target_spell_rows
 
-    if spell:
-        from .compiler.public_replacement_rows import public_replacement_material_rows
-        material_rows=public_replacement_material_rows(material_rows,oracle_text=oracle_text,source_name=face_name or record.name,
-            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template,face_name=face_name))
-        typed_face = _typed_whole_spell_face(
-            record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
-            material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template, face_name=face_name),
-            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
-            capability_profile=capability_profile, residuals=residuals,
-        )
-        if typed_face is not None:
-            return spell_lifecycle_context_owner.apply_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
-    from .compiler.independent_target_rows import prepare_target_clause_context,mark_independent_target_nodes
-    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,face_id=face_id,oracle_text=oracle_text,
+        material_rows = prepare_announced_target_spell_rows(material_rows, record.mana_cost)
+    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,oracle_id=record.oracle_id,face_id=face_id,oracle_text=oracle_text,
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
-        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
+        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node,
+        allow_linked_card_type=permanent and class_context is None and leveler_context is None)
     compile_inner, contextual_trigger_node = linked_face_ability_compilers(
         record, material_rows, contextual_trigger_effect_template, compile_inner,
         card_name=face_name or record.name, card_types=card_types, permanent=permanent,
@@ -1246,7 +1190,7 @@ def _compile_face(
             nodes.extend(player_nodes)
             continue
         early_nodes = _early_material_nodes(
-            record=record, face_id=face_id, node_id=node_id, line=line,
+            record=record, face_id=face_id, node_id=node_id, line=line, type_line=type_line,
             material_line=material_line, span=span,
             source_name=face_name or record.name, effect_template=contextual_effect_template, keywords=keywords,
             printed_card_types=tuple(sorted(card_types)),
@@ -1276,7 +1220,7 @@ def _compile_face(
             nodes.append(ability_node)
             continue
 
-        event_nodes = None if spell and next_cast_copy_template(material_line) is not None else draw_reveal_or_trigger_nodes(
+        event_nodes = None if spell and delayed_spell_cast_template(material_line) is not None else draw_reveal_or_trigger_nodes(
             permanent=permanent, node_id=node_id,
             line=line, span=span,
             card_name=face_name or record.name,
@@ -1386,33 +1330,9 @@ def _compile_face(
             )
             continue
 
-        residual_id = _residual(
-            residuals,
-            kind="static_ability" if permanent else "spell_effect",
-            text=line,
-            span=span,
-            reason=(
-                "static/continuous text has no exact typed contract"
-                if permanent
-                else "spell effect has no exact generic template"
-            ),
-            blockers=(
-                ("continuous-effect layers and dependencies",)
-                if permanent
-                else ()
-            ),
-        )
         nodes.append(
-            OracleNode(
-                node_id=node_id,
-                kind="static_ability" if permanent else "spell_ability",
-                text=line,
-                span=span,
-                active_zone="battlefield" if permanent else "stack",
-                event="continuous" if permanent else "resolve",
-                lowerable=False,
-                exact=False,
-                residual_ids=(residual_id,),
+            _material_residual_node(
+                node_id=node_id, line=line, span=span, permanent=permanent, residuals=residuals,
             )
         )
     nodes=mark_independent_target_nodes(nodes,distinct_target_spans)

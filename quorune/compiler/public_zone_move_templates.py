@@ -9,12 +9,14 @@ from typing import Any, Mapping
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import canonical_creature_subtype
 from ..public_zone_moves import (
+    FixedMixedZoneExileSpec, MixedZoneExileScope,
     PUBLIC_AURA_ENTRY_VERSION,
     public_graveyard_power_return_spec,
     own_graveyard_type_return_choice_effect,
     PublicBattlefieldController,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
+    same_turn_graveyard_return_spec, targeted_same_turn_graveyard_return_schema,
     PublicZoneOrigin,
     PublicZoneRelationAxis,
     PublicZoneSeatRelation,
@@ -26,8 +28,8 @@ from ..rules.graveyard_card_targets import (
 from ..rules.same_name_zone_moves import SameNameZoneMoveScope
 from .destruction_templates import fixed_affected_permanent_query
 from .direct_target import compiled_direct_target, direct_target_effect
-from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec
-from .graveyard_card_result_templates import parse_graveyard_card_counter_life
+from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec, GraveyardPermanentCardCounterSpec
+from .graveyard_card_result_templates import parse_graveyard_card_counter_life, parse_graveyard_permanent_card_counter
 from .public_tap_state_set_templates import (
     FixedPublicTapStateSetTemplate,
     fixed_public_tap_state_set_effect_template,
@@ -58,10 +60,12 @@ class PublicGraveyardCardExileTemplate:
         PublicGraveyardCardTargetSpec(self.target, owner_relation=self.owner_relation)
         if self.result is not None and (not isinstance(self.result, GraveyardCardCounterLifeSpec)
                 or self.target is not PublicGraveyardCardTargetKind.CARD or self.owner_relation != 'any'):
-            raise ValueError('Conditional creature-card result requires one unrestricted public graveyard card')
+            raise ValueError('Conditional card result requires one unrestricted public graveyard card')
 
     @property
     def template_id(self) -> str:
+        if isinstance(self.result, GraveyardPermanentCardCounterSpec):
+            return 'exile-target-graveyard-permanent-card-counter-result-v2'
         if self.result is not None:
             return 'exile-target-graveyard-card-counter-life-result-v1'
         if self.owner_relation != "any":
@@ -108,7 +112,10 @@ class PublicZoneMoveSetTemplate:
         if not isinstance(self.spec, PublicZoneMoveSetSpec):
             raise ValueError("Public zone move requires a typed affected set")
         schema = dict(self.target_schema) if self.target_schema is not None else None
-        targeted = self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER or self.spec.same_name_target is not None
+        targeted = (
+            self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
+            or self.spec.same_name_target is not None or self.spec.target_refs is not None
+        )
         if targeted is not (schema is not None):
             raise ValueError(
                 "Public zone-move target schema contradicts its affected set"
@@ -231,7 +238,7 @@ def _relation(
 def public_graveyard_card_exile_template(
     text: str,
 ) -> PublicGraveyardCardExileTemplate | None:
-    result = parse_graveyard_card_counter_life(text)
+    result = parse_graveyard_card_counter_life(text) or parse_graveyard_permanent_card_counter(text)
     if result is not None:
         return PublicGraveyardCardExileTemplate(result=result)
     targets = "|".join(
@@ -248,6 +255,28 @@ def public_graveyard_card_exile_template(
         PublicGraveyardCardTargetKind(match.group("target").casefold()),
         owner_relation={"a": "any", "your": "you"}.get(match.group("owner").casefold(), "opponent"),
     )
+
+
+_SAME_TURN_RETURN_SEATS = {
+    ("return to the battlefield all permanent cards in your graveyard that were put there "
+     "from the battlefield this turn."): PublicZoneSeatRelation.ACTOR,
+    ("each player returns to the battlefield all artifact, creature, enchantment, and land cards "
+     "in their graveyard that were put there from the battlefield this turn."): PublicZoneSeatRelation.ANY,
+}
+
+
+def _same_turn_graveyard_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    normalized = " ".join(text.casefold().split())
+    if normalized == (
+        "choose up to two target permanent cards in your graveyard that were put there from the battlefield "
+        "this turn. return them to the battlefield tapped."
+    ):
+        return PublicZoneMoveSetTemplate(
+            same_turn_graveyard_return_spec(PublicZoneSeatRelation.ACTOR, targeted=True),
+            target_schema=targeted_same_turn_graveyard_return_schema(),
+        )
+    relation = _SAME_TURN_RETURN_SEATS.get(normalized)
+    return PublicZoneMoveSetTemplate(same_turn_graveyard_return_spec(relation)) if relation is not None else None
 
 
 def _graveyard_set_template(text: str) -> PublicZoneMoveSetTemplate | None:
@@ -332,6 +361,14 @@ def _battlefield_set_template(
 
 
 def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    if " ".join(text.casefold().split()).rstrip(".") == "exile all nonland permanents that aren't legendary":
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(
+                zones=("battlefield",), excluded_types=("land",), excluded_supertypes=("legendary",),
+            ),
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.EXILE,
+        ))
     return _battlefield_set_template(
         text,
         action="exile",
@@ -340,6 +377,28 @@ def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
 
 
 def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    if re.fullmatch(
+        r"Return each nonland permanent that['’]s not historic to its owner['’]s hand\."
+        r"(?: \(Artifacts, legendaries, and Sagas are historic\.\))?",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        from ..public_zone_moves import NONHISTORIC_NONLAND_QUERY, PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
+
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=NONHISTORIC_NONLAND_QUERY,
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.OWNER_HAND,
+            schema_version=PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION,
+        ))
+    if re.fullmatch(r"Return each creature without a \+1/\+1 counter on it to its owner['’]s hand[.]?",
+                    " ".join(text.split()), re.IGNORECASE):
+        from .qualified_destruction_queries import creature_counter_absence_query
+
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=creature_counter_absence_query("+1/+1"),
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.OWNER_HAND,
+        ))
     exception = re.fullmatch(
         r"return all creatures to their owners['’] hands except for "
         r"(?P<subtypes>.+)",
@@ -444,6 +503,25 @@ def _graveyard_public_move_template(
     text: str,
 ) -> PublicZoneMoveSetTemplate | None:
     normalized = " ".join(text.strip().split())
+    colors = re.fullmatch(
+        r"Each player returns all (?P<first>white|blue|black|red|green) and all "
+        r"(?P<second>white|blue|black|red|green) creature cards from their graveyard to the battlefield\.",
+        normalized, re.IGNORECASE,
+    )
+    if colors is not None:
+        symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+        color_union = tuple(sorted({symbols[colors[key].casefold()] for key in ("first", "second")}))
+        if len(color_union) != 2:
+            return None
+        return PublicZoneMoveSetTemplate(spec=PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), colors_any=color_union, token=False),
+            origin=PublicZoneOrigin.GRAVEYARD,
+            destination=PublicZoneDestination.BATTLEFIELD,
+            relation_axis=PublicZoneRelationAxis.OWNER,
+            seat_relation=PublicZoneSeatRelation.ANY,
+            battlefield_controller=PublicBattlefieldController.OWNER,
+            schema_version=PUBLIC_AURA_ENTRY_VERSION,
+        ))
     ordered_hand = re.fullmatch(
         r"Return to your hand all (?:(?P<subject>.+?) )?cards in your graveyard\.?",
         normalized,
@@ -592,21 +670,75 @@ def chosen_color_permanent_return_template(text: str) -> ChosenColorPermanentRet
     return ChosenColorPermanentReturnTemplate()
 
 
+class ChosenTypeTapStateTemplate:
+    """One original target followed by an exact type and tap-state choice."""
+
+    def compiled(self):
+        from ..rules.public_zone_move_capability_shapes import (
+            CHOSEN_TYPE_TAP_STATE_MECHANICS, CHOSEN_TYPE_TAP_STATE_TARGET,
+            CHOSEN_TYPE_TAP_STATE_TEMPLATE, chosen_type_tap_state_effect,
+        )
+
+        return (
+            CHOSEN_TYPE_TAP_STATE_TEMPLATE, (chosen_type_tap_state_effect(),),
+            dict(CHOSEN_TYPE_TAP_STATE_TARGET), CHOSEN_TYPE_TAP_STATE_MECHANICS,
+        )
+
+
+def chosen_type_tap_state_template(text: str) -> ChosenTypeTapStateTemplate | None:
+    if " ".join(text.casefold().split()) != (
+        "choose artifact, creature, or land. tap all untapped permanents of the chosen type target player "
+        "controls, or untap all tapped permanents of that type that player controls."
+    ):
+        return None
+    return ChosenTypeTapStateTemplate()
+
+
+@dataclass(frozen=True, slots=True)
+class FixedMixedZoneExileTemplate:
+    scope: MixedZoneExileScope
+
+    def compiled(self):
+        spec = FixedMixedZoneExileSpec(self.scope)
+        version = spec.to_dict()["schema_version"]
+        return f"fixed-mixed-zone-exile-v{version}", (spec.effect(),), None, ("exile",)
+
+
+def _fixed_mixed_zone_exile_template(text: str) -> FixedMixedZoneExileTemplate | None:
+    normalized = " ".join(text.casefold().split())
+    if normalized == (
+        "exile all the cards from your hand, then draw that many cards. "
+        "until the end of your next turn, you may play cards exiled this way."
+    ):
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY)
+    if normalized == "exile all cards from all hands and graveyards.":
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.HANDS_AND_GRAVEYARDS)
+    if normalized == ("exile all artifacts, creatures, and lands from the battlefield, "
+                      "all cards from all graveyards, and all cards from all hands."):
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.ARTIFACTS_CREATURES_LANDS_HANDS_AND_GRAVEYARDS)
+    return None
+
+
 def public_zone_move_effect_template(
     text: str,
 ) -> (
     PublicGraveyardCardExileTemplate
     | PublicZoneMoveSetTemplate
+    | FixedMixedZoneExileTemplate
     | OwnGraveyardTypeReturnTemplate
     | FixedPublicTapStateSetTemplate
     | ChosenColorPermanentReturnTemplate
+    | ChosenTypeTapStateTemplate
     | None
 ):
     return (
-        chosen_color_permanent_return_template(text)
+        _fixed_mixed_zone_exile_template(text)
+        or chosen_type_tap_state_template(text)
+        or chosen_color_permanent_return_template(text)
         or _same_name_zone_move_template(text)
         or _own_graveyard_type_return_template(text)
         or public_graveyard_card_exile_template(text)
+        or _same_turn_graveyard_return_template(text)
         or _graveyard_set_template(text)
         or _graveyard_power_return_template(text)
         or _graveyard_public_move_template(text)

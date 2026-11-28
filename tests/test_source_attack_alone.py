@@ -238,3 +238,294 @@ class SourceAttackAloneNativeTests(unittest.TestCase):
         self.attack(session,[(source,'D')]);self.assertEqual(1,self.trigger_count(session,source));session=self.replay(session,load=True);self.assertIsNone(self.resolve(session))
         self.assertEqual((5,4),tuple(session.engine._numeric_stat(source.object_id,s) for s in ('power','toughness')));self.assertIn('trample',session.engine._combat_keywords(session.state.cards[source.object_id]))
         life=session.state.players['D'].life;self.until(session,lambda s:s.state.phase_index>=9);self.assertEqual(life-5,session.state.players['D'].life);self.replay(session,load=True)
+
+
+_PONY_RULES = (
+    "Trample, haste\nWhenever this creature attacks, attacking creatures get +1/+1 until end of turn. "
+    "If a Food entered under your control this turn, untap those creatures and they get an additional "
+    "+2/+2 until end of turn."
+)
+
+
+class MotivatedPonyCompilerTests(unittest.TestCase):
+    def test_current_attack_and_food_history_are_both_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.public_history_query_model import (
+            ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY, PublicHistoryQuerySpec, controller_food_entry_query,
+        )
+        from quorune.rules.attack_food_bonus import (
+            ATTACK_FOOD_SOURCE_CONDITION, ATTACK_FOOD_STATS_CAPABILITY, attack_food_stats_effect,
+        )
+        from quorune.semantics import SemanticProgram
+
+        registry = load_default_capability_registry()
+        profile = "commander_review"
+
+        def compile_text(text):
+            record = replace(query_record(text), keywords=("Trample", "Haste"))
+            return compile_oracle_card(record, capability_registry=registry, capability_profile=profile)
+
+        for wording in (_PONY_RULES, _PONY_RULES.replace("Food entered under", "Food entered the battlefield under")):
+            result = compile_text(wording)
+            self.assertEqual("exact", result.status, result.material_residuals)
+            node, = [member for member in result.faces[0].nodes if member.event == "creature.attacks"]
+            self.assertEqual(wording.splitlines()[1], wording[node.span.start:node.span.end])
+            self.assertEqual(ATTACK_FOOD_SOURCE_CONDITION, node.event_condition)
+            self.assertEqual((attack_food_stats_effect(),), node.effects)
+            self.assertIsNone(node.target_schema)
+
+        scope = controller_food_entry_query().to_dict()
+        self.assertEqual((9, "controller", "food"),
+                         (scope["schema_version"], scope["relation"], scope["artifact_subtype"]))
+        for off_scope in ({"artifact_subtype": "treasure"}, {"relation": "opponents"}, {"schema_version": 4}):
+            with self.assertRaises(ValueError):
+                PublicHistoryQuerySpec.from_dict({**scope, **off_scope})
+
+        dependencies = tuple(node.capability_dependencies)
+        values = {
+            "key": "compiler:attacking-food-instance", "label": "Attack Food fixture", "ability_id": "trigger:front:n2",
+            "event": node.event, "active_zone": node.active_zone, "event_condition": node.event_condition,
+            "effects": list(node.effects), "coverage": [*node.mechanics, *node.runtime_coverage],
+        }
+        def declared_program(deps, **overrides):
+            return SemanticProgram(
+                **{**values, **overrides}, capability_dependencies=list(deps),
+                capability_closure=registry.closure(deps, profile=profile).to_dict(),
+            )
+
+        self.assertTrue(bind_semantic_program_runtime(
+            declared_program(dependencies), capability_registry=registry, profile=profile,
+        )["strict"])
+        for owner in (ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY, ATTACK_FOOD_STATS_CAPABILITY):
+            reduced = tuple(capability for capability in dependencies if capability != owner)
+            bound = bind_semantic_program_runtime(declared_program(reduced), capability_registry=registry, profile=profile)
+            self.assertFalse(bound["strict"], bound)
+            self.assertIn("capability:undeclared_runtime_dependency:" + owner, bound["blockers"])
+        effect, = node.effects
+        malformed = (
+            declared_program(dependencies, event_condition=None),
+            declared_program(dependencies, effects=[{**effect, "power": True}]),
+            declared_program(dependencies, effects=[{**effect, "food_followup": {**effect["food_followup"], "untap": False}}]),
+        )
+        for program in malformed:
+            bound = bind_semantic_program_runtime(program, capability_registry=registry, profile=profile)
+            self.assertFalse(bound["strict"], bound)
+        for near in (_PONY_RULES.replace("a Food entered", "a Food left"),
+                     _PONY_RULES.replace("under your control", "under an opponent's control")):
+            self.assertNotEqual("exact", compile_text(near).status)
+        with patch("quorune.compiler.trigger_result_templates.attack_food_stats_trigger_result", return_value=None):
+            omitted = compile_text(_PONY_RULES)
+            self.assertNotEqual("exact", omitted.status)
+            self.assertTrue(any(member.exact for member in omitted.faces[0].nodes))
+
+
+class MotivatedPonyNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = SourceAttackAloneNativeTests.session
+    add = SourceAttackAloneNativeTests.add
+    prepare = SourceAttackAloneNativeTests.prepare
+    cast_for = SourceAttackAloneNativeTests.cast_for
+    action = SourceAttackAloneNativeTests.action
+    priority = SourceAttackAloneNativeTests.priority
+    checkpoint = SourceAttackAloneNativeTests.checkpoint
+    resolve = SourceAttackAloneNativeTests.resolve
+    resolve_top = SourceAttackAloneNativeTests.resolve_top
+    replay = SourceAttackAloneNativeTests.replay
+    assert_closed = SourceAttackAloneNativeTests.assert_closed
+    until = SourceAttackAloneNativeTests.until
+    attack = SourceAttackAloneNativeTests.attack
+    trigger_count = SourceAttackAloneNativeTests.trigger_count
+
+    @classmethod
+    def setUpClass(cls):
+        import os
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        pinned = os.environ.get("MOTIVATED_PONY_PINNED_DB")
+        database = Path(cls.temporary.name) / "motivated-pony.sqlite3"
+        if not pinned:
+            build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+                "source-attack-alone-cards.json", "recorded-history-condition-cards.json",
+            )], database)
+        cls.db = CardDatabase(pinned or database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Current attackers and Food entry witness",
+            [DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30)],
+            ["Isamaru, Hound of Konda"],
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    @staticmethod
+    def _current(game, card):
+        return game.state.cards[card.object_id]
+
+    @staticmethod
+    def _food_entries(game, seat):
+        from quorune.public_history_query_model import controller_food_entry_query, matching_public_history_events
+
+        facts = matching_public_history_events(game.state, seat, controller_food_entry_query())
+        if facts is None:
+            raise AssertionError("The current typed movement history is unavailable")
+        return facts
+
+    @staticmethod
+    def _stats(game, creature):
+        return tuple(game.engine._numeric_stat(creature.object_id, key) for key in ("power", "toughness"))
+
+    def _pony(self, game):
+        card = self.add(game.engine, "Motivated Pony", zone="hand")
+        self.assert_closed(game, card)
+        return card
+
+    def _food_spell(self, game, seat):
+        source = self.add(game.engine, "Elanor Gardner", seat=seat, zone="hand")
+        self.assert_closed(game, source)
+        return source
+
+    def _cast_and_resolve(self, game, seat, card, targets=()):
+        self.cast_for(game, seat, card, targets)
+        self.assertIsNone(self.resolve(game))
+
+    def _finish_current_turn(self, game):
+        from optional_result_followup_fixture import OptionalResultFollowupFixture
+
+        OptionalResultFollowupFixture.finish_turn(self, game)
+
+    def _assert_attacking(self, game, card, *, tapped):
+        current = self._current(game, card)
+        self.assertIs(current.tapped, tapped)
+        self.assertIsNotNone(current.attacking)
+        self.assertIn(current.object_id, game.state.combat.attackers)
+
+    def test_departed_printed_food_buff_uses_current_attackers_after_source_departs(self):
+        game = self.session(508206401)
+        pony = self._pony(game)
+        food = self.add(game.engine, "Gingerbrute", zone="hand")
+        first = self.add(game.engine, "Grizzly Bears", ref="retained-attacker")
+        removed = self.add(game.engine, "Grizzly Bears", ref="departing-attacker")
+        idle = self.add(game.engine, "Grizzly Bears", ref="idle-creature")
+        hidden = self.add(game.engine, "Unsummon", seat="D", zone="hand", ref="private-bystander")
+        bounce = [
+            self.add(game.engine, "Unsummon", seat="B", zone="hand", ref=f"attack-test-bounce-{i}")
+            for i in range(3)
+        ]
+        for index in range(3):
+            self.add(game.engine, "Island", seat="B", ref=f"attack-test-island-{index}")
+        self.prepare(game, mana={"C": 5, "G": 1})
+        self.checkpoint(game)
+
+        self._cast_and_resolve(game, "A", food)
+        self.assertFalse(self._current(game, food).is_token)
+        self.assertEqual("hand", self._current(game, pony).zone)
+        entry, = self._food_entries(game, "A")
+        self.assertEqual(("A", self._current(game, food).logical_object_id, "food"),
+                         (entry.actor, entry.object_incarnation, entry.target))
+        self.cast_for(game, "B", bounce[0], [self._current(game, food).ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", self._current(game, food).zone)
+        self.assertEqual((entry,), self._food_entries(game, "A"))
+
+        self._cast_and_resolve(game, "A", pony)
+        self.assertTrue({"haste", "trample"} <= set(game.engine._combat_keywords(self._current(game, pony))))
+        self.attack(game, [(self._current(game, pony), "B"), (first, "C"), (removed, "D")])
+        self.assertEqual(1, self.trigger_count(game, pony))
+        for spell, target in zip(bounce[1:], (removed, pony), strict=True):
+            self.cast_for(game, "B", spell, [self._current(game, target).ref])
+            self.resolve_top(game)
+            self.assertEqual("hand", self._current(game, target).zone)
+        game = self.replay(game, load=True)
+
+        late_ref, = game.engine.create_token(
+            "A", name="Late attacking creature", copy_of=self._current(game, idle).ref,
+            tapped=True, attacking="B", reason="Committed attacking entry after the trigger was queued",
+        )
+        late = next(card for card in game.state.cards.values() if card.ref == late_ref)
+        self.checkpoint(game)
+        self.resolve_top(game)
+        for creature in (first, late):
+            self.assertEqual((5, 5), self._stats(game, creature))
+            self._assert_attacking(game, creature, tapped=False)
+        self.assertEqual((2, 2), self._stats(game, idle))
+        self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:A", full=True)))
+
+        self._finish_current_turn(game)
+        self.assertEqual((2, 2), self._stats(game, first))
+        self.assertEqual((), self._food_entries(game, "A"))
+        self.replay(game, load=True)
+
+    def test_token_food_and_other_or_previous_turn_entries(self):
+        for i, mode in enumerate(("caster", "other_player", "previous_turn")):
+            with self.subTest(mode=mode):
+                game = self.session(508206415 + i)
+                pony = self._pony(game)
+                creator = "B" if mode == "other_player" else "A"
+                source = self._food_spell(game, creator)
+                body = self.add(game.engine, "Grizzly Bears", ref="attack-rider-token-control")
+                hidden = self.add(game.engine, "Unsummon", seat="D", zone="hand", ref="token-test-private-card")
+                if mode == "other_player":
+                    self.add(game.engine, "Vedalken Orrery", seat="B")
+                    game.state.players["B"].mana_pool.update({"C": 3, "G": 1})
+                    self.prepare(game, mana={"C": 4, "G": 1})
+                elif mode == "previous_turn":
+                    self.add(game.engine, "Vedalken Orrery")
+                    for index in range(5):
+                        self.add(game.engine, "Forest", ref=f"next-turn-forest-{index}")
+                    self.prepare(game, active="D", actor="A", mana={"C": 3, "G": 1})
+                    game.state.last_normal_turn_player = "D"
+                else:
+                    self.prepare(game, mana={"C": 7, "G": 2})
+                self.checkpoint(game)
+                self._cast_and_resolve(game, creator, source)
+                committed, = self._food_entries(game, creator)
+                creature_food = next(card for card in game.state.cards.values()
+                                     if card.logical_object_id == committed.object_incarnation)
+                self.assertTrue(creature_food.is_token)
+                self.assertEqual("hand", self._current(game, pony).zone)
+
+                if mode == "previous_turn":
+                    self._finish_current_turn(game)
+                    self.until(game, lambda current: current.state.active_player == "A"
+                               and current.state.phase == "precombat_main")
+                    self.assertEqual("battlefield", self._current(game, creature_food).zone)
+                self.assertEqual(mode == "caster", bool(self._food_entries(game, "A")))
+                self._cast_and_resolve(game, "A", pony)
+                self.attack(game, [(self._current(game, pony), "C"), (body, "B")])
+                self.resolve_top(game)
+                expected = 5 if mode == "caster" else 3
+                self.assertEqual((expected, expected), self._stats(game, body))
+                self._assert_attacking(game, body, tapped=mode != "caster")
+                self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:A", full=True)))
+                self.replay(game, load=True)
+
+    def test_prevented_untap_does_not_remove_the_additional_stats(self):
+        from quorune import public_tap_state_sets
+
+        game = self.session(508206427)
+        pony = self._pony(game)
+        source = self._food_spell(game, "A")
+        bear = self.add(game.engine, "Grizzly Bears", ref="untap-prevention-attacker")
+        self.prepare(game, mana={"C": 7, "G": 2})
+        self.checkpoint(game)
+        self._cast_and_resolve(game, "A", source)
+        self._cast_and_resolve(game, "A", pony)
+        self.attack(game, [(self._current(game, pony), "C"), (bear, "B")])
+        original = public_tap_state_sets.set_permanent_tapped
+        seen = []
+
+        def suppress_untap(host, ref, *, tapped, **options):
+            if ref == bear.ref and not tapped:
+                seen.append(host._numeric_stat(bear.object_id, "power"))
+                return ref
+            return original(host, ref, tapped=tapped, **options)
+
+        with patch.object(public_tap_state_sets, "set_permanent_tapped", side_effect=suppress_untap):
+            self.resolve_top(game)
+            self.assertEqual([3], seen)
+            self.assertEqual((5, 5), self._stats(game, bear))
+            self._assert_attacking(game, bear, tapped=True)
+            self.replay(game, load=True)

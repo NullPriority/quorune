@@ -375,6 +375,8 @@ from inherited_composition_fixture import InheritedNativeFixture
 
 
 class RippleNativeFixture(InheritedNativeFixture):
+    extra_ripple_fixtures = ()
+
     @classmethod
     def setUpClass(cls):
         import json,tempfile
@@ -388,7 +390,8 @@ class RippleNativeFixture(InheritedNativeFixture):
         base=json.loads((ROOT/'tests/fixtures/bound-effect-program-cards.json').read_text(encoding='utf-8'))
         base['cards']=[r for r in base['cards'] if r['name']=='Generic Bound Plains'];base['rulings']=[]
         path=root/'base.json';path.write_text(json.dumps(base),encoding='utf-8')
-        build_fixture_database([path,ROOT/'tests/fixtures/ripple-cards.json'],root/'ripple.sqlite3')
+        build_fixture_database([path,ROOT/'tests/fixtures/ripple-cards.json',
+                                *cls.extra_ripple_fixtures],root/'ripple.sqlite3')
         cls.db=CardDatabase(root/'ripple.sqlite3');cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Ripple',[DeckEntry('Sliver Hivelord',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Sliver Hivelord'])
 

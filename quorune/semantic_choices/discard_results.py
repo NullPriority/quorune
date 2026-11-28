@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from ..discard_result_model import (DISCARD_GRAVEYARD_ORDER_FIELD, DISCARD_RESULT_CAPABILITY, DISCARD_RESULT_OPERATION,
     EVENT_PLAYER_DISCARD_RESULT_VERSION, DiscardWholeHandsResultIntent, IntentResultPlayerDraws, ReducedDiscardResultDraws,
     SELECTED_LAND_DISCARD_RESULT_VERSION, SELECTED_LAND_DISCARD_FIELD, SelectedLandDiscardCounterDraws,
-    event_discard_player_departed, validate_discard_draw)
+    event_discard_player_departed, is_ordered_opponents_discard, validate_discard_draw)
 from ..replacement.immutable import FrozenMap
 from .model import AutoContinue, ObjectChoice, SemanticChoiceCompletion, SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest
 
@@ -23,6 +23,10 @@ class DiscardResultDrawHandler:
     test_modules: tuple[str, ...] = ('tests.test_discard_results', 'tests.test_discard_result_native')
 
     def prepare(self, effect, context):
+        if DISCARD_GRAVEYARD_ORDER_FIELD in effect and is_ordered_opponents_discard(effect):
+            from .discard_graveyard_order import prepare_next_opponents_discard_order
+
+            return prepare_next_opponents_discard_order(effect, context)
         try:
             validate_discard_draw(effect)
             if effect['actor'] != context.actor:
@@ -33,7 +37,9 @@ class DiscardResultDrawHandler:
             order = context.query.apnap_order
             if not order or len(order) != len(set(order)) or set(order) != set(context.query.active_seats):
                 raise ValueError('Discard-result APNAP order is unavailable')
-            players = tuple(order) if effect['players'] == 'all' else tuple(effect['players'])
+            ordered_opponents = is_ordered_opponents_discard(effect)
+            players = (tuple(p for p in order if p != context.actor) if ordered_opponents else
+                       tuple(order) if effect['players'] == 'all' else tuple(effect['players']))
             if any(player not in context.query.active_seats for player in players):
                 raise ValueError('Discard-result player is unavailable')
             selected_lands = effect['schema_version'] == SELECTED_LAND_DISCARD_RESULT_VERSION
@@ -43,12 +49,18 @@ class DiscardResultDrawHandler:
             if hands is None:raise ValueError('Authoritative discard membership was not materialized')
             intent = DiscardWholeHandsResultIntent(
                 context.actor, players, hands, context.stack_label,
-                require_graveyard_order=selected_lands or effect["schema_version"] == EVENT_PLAYER_DISCARD_RESULT_VERSION,
+                require_graveyard_order=ordered_opponents or selected_lands
+                    or effect["schema_version"] == EVENT_PLAYER_DISCARD_RESULT_VERSION,
                 selected_lands=selected_lands,
                 discard_effect_origin=getattr(context.query, "discard_effect_origin", None),
             )
         except (ValueError, TypeError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
+        if ordered_opponents:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect), preparation_intents=(intent,),
+                auto_continue=AutoContinue(reason="The ordered opponent hands were discarded"),
+            )
         binding = (SelectedLandDiscardCounterDraws if selected_lands
                    else ReducedDiscardResultDraws if effect['schema_version'] == 2 else IntentResultPlayerDraws)
         return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect), preparation_intents=(intent,),

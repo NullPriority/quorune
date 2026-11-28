@@ -13,7 +13,15 @@ def chosen_color_activated_mana_node(ability, node_id, line, span, capability_re
     spec = compile_chosen_color_activated_mana_ability(ability)
     if spec is None:
         return ability, None
-    gate = explicit_capabilities_gate((CHOSEN_COLOR_MANA_CAPABILITY, *activated_ability_cost_capabilities(ability)),
+    from ..mana_spend_rules import decode_mana_spend_rule
+
+    from ..chosen_color_mana_model import NOTED_MANA_OUTPUT_VERSION
+    from ..rules.noted_mana import NOTED_MANA_CAPABILITY
+
+    note = (NOTED_MANA_CAPABILITY,) if spec.output.schema_version == NOTED_MANA_OUTPUT_VERSION else ()
+    spend = decode_mana_spend_rule(spec.output.restriction)
+    gate = explicit_capabilities_gate((CHOSEN_COLOR_MANA_CAPABILITY, *note, *activated_ability_cost_capabilities(ability),
+                                      *(spend.capability_dependencies if spend is not None else ())),
         capability_registry=capability_registry, capability_profile=capability_profile)
     residual_ids = (append_residual(residuals, kind='dependency_contract', text=line, span=span,
         reason='Source chosen-color mana lacks trusted output/cost ownership', blockers=gate.blockers),) if gate.blockers else ()

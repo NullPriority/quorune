@@ -117,12 +117,12 @@ def normalized_transition_kind_map(
         raise GameRuleError(
             "Simultaneous transition kinds must be typed and name changed objects"
         )
-    if discard_effect_origin is not None and (
-        not isinstance(discard_effect_origin, DiscardEffectOrigin) or not changes
-        or any(result.get(object_id) is not ZoneTransitionKind.DISCARD or dest != "graveyard"
-               for object_id, dest in changes)
-    ):
-        raise GameRuleError("Discard effect provenance requires one committed discard batch")
+    if discard_effect_origin is not None:
+        discard_destinations = [dest for object_id, dest in changes
+                                if result.get(object_id) is ZoneTransitionKind.DISCARD]
+        if (not isinstance(discard_effect_origin, DiscardEffectOrigin)
+                or not discard_destinations or any(dest != "graveyard" for dest in discard_destinations)):
+            raise GameRuleError("Discard effect provenance requires a committed discard in the batch")
     return result
 
 
@@ -423,7 +423,9 @@ def _validated_source_entry_cast_information(occurrence):
     if (occurrence.destination!='battlefield' or info.source!=ContinuousObjectIdentity(
             occurrence.object_id,occurrence.current_logical_object_id)
             or info.cast is not None and (occurrence.origin!='stack'
-                or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)):
+                or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)
+            or info.mana_spent_counts is not None and (occurrence.origin != "stack"
+                or info.mana_spent_counts.logical_object_id != occurrence.previous_logical_object_id)):
         raise ZoneTriggerEventError('Source-entry information differs from the actual committed entry')
     return FrozenMap(info.to_dict())
 
@@ -618,6 +620,18 @@ def _normalized_battlefield_entry_events(occurrence, common):
     return result
 
 
+def _owned_zone_exile_event(occurrence: ZoneChangeOccurrence, *, physical: bool):
+    from .rules.event_subscriptions import OWNED_ZONE_EXILE_EVENT
+
+    if (not physical or not occurrence.card_object or occurrence.token or occurrence.destination != "exile"
+            or occurrence.origin not in {"library", "graveyard"}):
+        return ()
+    timing = "before" if occurrence.origin == "graveyard" else "after"
+    # The trigger needs only the owner. In particular, a face-down arrival
+    # must never expose the card's identity or its old library position.
+    return (NormalizedZoneTriggerEvent(OWNED_ZONE_EXILE_EVENT, timing, FrozenMap({"owner": occurrence.owner})),)
+
+
 def normalized_zone_trigger_events(
     occurrence: ZoneChangeOccurrence,
 ) -> tuple[NormalizedZoneTriggerEvent, ...]:
@@ -740,6 +754,7 @@ def normalized_zone_trigger_events(
                 name for name, count in occurrence.current_counters.items() if count > 0
             )
         result.append(NormalizedZoneTriggerEvent('card.enter_graveyard', 'after', FrozenMap(entered_graveyard)))
+    result.extend(_owned_zone_exile_event(occurrence, physical=physical))
     return _state_timed_zone_events(occurrence,result)
 
 

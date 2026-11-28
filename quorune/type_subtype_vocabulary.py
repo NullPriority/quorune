@@ -7,6 +7,11 @@ from .basic_land_types import LAND_SUBTYPES
 from .creature_subtypes import CREATURE_SUBTYPES
 
 
+# CR 205.2a. The Commander profile's card pool uses a subset of these types.
+CARD_TYPES = (
+    "artifact", "battle", "conspiracy", "creature", "dungeon", "enchantment", "instant",
+    "kindred", "land", "phenomenon", "plane", "planeswalker", "scheme", "sorcery", "vanguard",
+)
 CARD_SUPERTYPES = frozenset({"basic", "legendary", "ongoing", "snow", "world"})
 ARTIFACT_SUBTYPES=frozenset('attraction blood bobblehead book clue contraption equipment food fortification gold '
     'incubator infinity junk lander map mutagen powerstone spacecraft stone treasure vehicle vibranium'.split())

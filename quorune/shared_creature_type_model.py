@@ -59,9 +59,9 @@ def shared_type_objects(values):
     return tuple(sorted(objects, key=lambda value: value.identity))
 
 
-def shared_creature_type_count(objects, *, recipient, creature_types):
+def shared_creature_type_count(objects, *, recipient, creature_types, exclude_recipient=True):
     if not isinstance(recipient, ContinuousObjectIdentity):
         raise ValueError('A shared-type quantity requires its recipient incarnation')
     types = frozenset(canonical_creature_types(creature_types))
-    return sum(value.identity != recipient and bool(types.intersection(value.creature_types))
+    return sum((not exclude_recipient or value.identity != recipient) and bool(types.intersection(value.creature_types))
                for value in shared_type_objects(objects))

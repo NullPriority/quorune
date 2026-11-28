@@ -8,16 +8,18 @@ from typing import Any, Mapping
 from .replacement.immutable import thaw_value
 
 
-def ordered_role_plans(plans, submitted_order, first_timestamp):
+def ordered_role_plans(plans, submitted_order, first_timestamp, *, mixed=False):
     from .token_creation import TokenCreationError
+
+    roles = tuple(index for index, plan in enumerate(plans) if plan.aura_target_ref is not None
+                  and plan.annotations.get('token_characteristics', {}).get('type_line') == 'Token Enchantment — Aura Role')
+    if not mixed and len(roles) != len(plans):
+        raise TokenCreationError('Ordered attached token timestamps require only Role tokens')
     order = tuple(submitted_order)
-    if (len(order) != len(plans) or any(type(index) is not int for index in order)
-            or sorted(order) != list(range(len(plans)))):
+    if len(order) != len(roles) or any(type(index) is not int for index in order) or tuple(sorted(order)) != roles:
         raise TokenCreationError('Role timestamp order must be a complete permutation')
-    for plan in plans:
-        characteristics = plan.annotations.get('token_characteristics', {})
-        if plan.aura_target_ref is None or characteristics.get('type_line') != 'Token Enchantment — Aura Role':
-            raise TokenCreationError('Ordered attached token timestamps require only Role tokens')
+    if mixed:
+        order = (*order, *(index for index in range(len(plans)) if index not in roles))
     rank = {index: position for position, index in enumerate(order)}
     return tuple(replace(plan, zone_timestamp=first_timestamp + rank[index])
         for index, plan in enumerate(plans))

@@ -3,8 +3,12 @@ from __future__ import annotations
 """Current-or-immediate-LKI copy references behind the canonical zone hook."""
 
 from copy import deepcopy
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
+from .attachment_references import AttachmentObjectIdentity
+from .replacement.immutable import FrozenMap, thaw_value
+from .rules.attached_copy_payment import FALLBACK_FIELD, attached_copy_payment_parts
 from .token_copy_recipes import GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, TokenCopyRecipeError, TokenCopyRecipeSpec, copy_recipes
 from .token_copy_recipient_model import has_occurrence_copy_recipient
 from .rules.token_copy_recipients import represents_occurrence_controller_copy
@@ -15,6 +19,13 @@ from .rules.cast_target_copy import (
 
 
 COPY_REFERENCE_CONTEXT = "token_copy_references_v1"
+ATTACHED_COPY_PAYMENT_CONTEXT = "attached_copy_payment_v1"
+
+
+def _enchantment_entry_copy(program):
+    from .rules.trigger_limits import uses_enchantment_entry_copy_limit
+
+    return uses_enchantment_entry_copy_limit(program)
 
 
 def _snapshot(host: Any, card: Any) -> dict[str, Any]:
@@ -29,33 +40,43 @@ def _snapshot(host: Any, card: Any) -> dict[str, Any]:
 
 
 def copy_source_context(host: Any, source: Any, effects: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    if not any(recipe.origin == "source" for recipe in copy_recipes(effects)):
-        return {}
-    return {COPY_REFERENCE_CONTEXT: {"source": _snapshot(host, source)}}
+    recipes = copy_recipes(effects)
+    result = {}
+    if any(recipe.origin == "source" for recipe in recipes):
+        result[COPY_REFERENCE_CONTEXT] = {"source": _snapshot(host, source)}
+    if any(recipe.source_bound_cleanup for recipe in recipes):
+        result["source_logical_object_id"] = source.logical_object_id
+    return result
 
 
 def triggered_copy_reference_context(host, program, event, context):
     from .rules.event_spell_copy import event_spell_copy_trigger_context
     from .rules.temporary_occurrence_copy import represents_temporary_occurrence_copy
 
+    from .rules.nonmana_activation_copy import retained_nonmana_activation_context
+
     retained = event_spell_copy_trigger_context(host, program, event, context)
+    retained.update(retained_nonmana_activation_context(host, program, event, context))
     if any(represents_cast_target_copy(effect) for effect in program.effects):
         card = controlled_cast_copy_target(host, context, controller=context.get("controller"))
         if event != "spell.cast" or card is None:
             raise TokenCopyRecipeError("Cast target copy lost its matching original target")
         return {COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
-    if not (represents_temporary_occurrence_copy(program.effects) or represents_occurrence_controller_copy(program.effects)):
+    enchantment_copy = _enchantment_entry_copy(program)
+    if not (enchantment_copy or represents_temporary_occurrence_copy(program.effects)
+            or represents_occurrence_controller_copy(program.effects)):
         return retained
     logical_id = context.get("card_object_identity")
     object_id = logical_id.rpartition("@")[0] if type(logical_id) is str else ""
     card = host.state.cards.get(object_id)
-    if (event != "creature.enter" or card is None or card.ref != context.get("card")
+    expected_event = "permanent.enter" if enchantment_copy else "creature.enter"
+    if (event != expected_event or card is None or card.ref != context.get("card")
             or card.logical_object_id != logical_id or card.zone != "battlefield"):
         raise TokenCopyRecipeError("Occurrence copy lost its original entering incarnation")
     return {**retained, COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
 
 
-def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
+def source_attachment_copy_identity(host: Any, item: Any, attachment_kind: str) -> tuple[str, str, str] | None:
     """Read the canonical relation, keeping the original source incarnation."""
     from .attachment_references import (
         ATTACHMENT_INFORMATION_VERSION, AttachmentReferenceKind,
@@ -63,11 +84,12 @@ def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
     )
     version = item.context.get(ATTACHMENT_INFORMATION_VERSION)
     if type(version) is not int or version != 1:
-        raise TokenCopyRecipeError("Enchanted copy requires versioned attachment information")
+        raise TokenCopyRecipeError("Attached copy requires versioned attachment information")
     snapshot = SourceAttachmentSnapshot.from_dict(item.context.get("source_attachment_snapshot"))
     source_id = item.source_object_id or item.card_object_id
     logical_id = item.context.get("source_logical_object_id")
-    spec = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "creature", schema_version=2)
+    relation = AttachmentReferenceKind.EQUIPPED if attachment_kind == "equipped" else AttachmentReferenceKind.ENCHANTED
+    spec = AttachmentReferenceSpec(relation, "creature", schema_version=2)
     # This validates the source identity even when the referenced creature left.
     current = resolve_source_attachment(
         host.state.cards, snapshot.to_dict(), spec,
@@ -81,6 +103,106 @@ def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
     identity = snapshot.attached_object
     return ((identity.object_id, identity.logical_object_id, "battlefield")
             if identity is not None else None)
+
+
+@dataclass(frozen=True, slots=True)
+class _DepartedAttachmentModel:
+    identity: AttachmentObjectIdentity
+    controller: str
+    creature: bool
+
+    def __post_init__(self):
+        if (not isinstance(self.identity, AttachmentObjectIdentity) or type(self.controller) is not str
+                or not self.controller or self.controller.startswith("$") or type(self.creature) is not bool):
+            raise ValueError("Attachment departure needs a closed public creature and controller observation")
+
+    def to_dict(self):
+        return {"identity": self.identity.to_dict(), "controller": self.controller, "creature": self.creature}
+
+    @classmethod
+    def from_dict(cls, raw):
+        if not isinstance(raw, Mapping) or set(raw) != {"identity", "controller", "creature"}:
+            raise ValueError("Attachment departure observation fields changed")
+        return cls(AttachmentObjectIdentity.from_dict(raw["identity"]), raw["controller"], raw["creature"])
+
+
+@dataclass(frozen=True, slots=True)
+class _AttachedCopySeal:
+    qualified: AttachmentObjectIdentity | None = None
+    departure: _DepartedAttachmentModel | None = None
+
+    def to_dict(self):
+        return {"schema_version": 1,
+                "qualified": self.qualified.to_dict() if self.qualified is not None else None,
+                "departure": self.departure.to_dict() if self.departure is not None else None}
+
+    @classmethod
+    def from_item(cls, item):
+        raw = item.context.get(ATTACHED_COPY_PAYMENT_CONTEXT)
+        if raw is None and ATTACHED_COPY_PAYMENT_CONTEXT not in item.context:
+            return cls()
+        if (not isinstance(raw, Mapping) or set(raw) != {"schema_version", "qualified", "departure"}
+                or type(raw["schema_version"]) is not int or raw["schema_version"] != 1):
+            raise ValueError("Attached copy seal has a closed version-one schema")
+        qualified = AttachmentObjectIdentity.from_dict(raw["qualified"]) if raw["qualified"] is not None else None
+        departure = _DepartedAttachmentModel.from_dict(raw["departure"]) if raw["departure"] is not None else None
+        return cls(qualified, departure)
+
+
+def _paid_attachment_copy_identity(item, *, required=False):
+    model = _AttachedCopySeal.from_item(item).qualified
+    if required and model is None:
+        raise ValueError("Paid attachment copy requires a sealed recipient")
+    return (model.object_id, model.logical_object_id, "battlefield") if model is not None else None
+
+
+def _current_attached_model(host, card):
+    identity = AttachmentObjectIdentity(card.object_id, card.logical_object_id, card.ref)
+    effective = host._effective_card_data(card)
+    types, _, _ = host._type_parts(str(effective.get("type_line") or ""))
+    return _DepartedAttachmentModel(identity, effective.get("controller", card.controller), "creature" in types)
+
+
+def _observe_attachment_copy_departure(host, item, card):
+    seal = _AttachedCopySeal.from_item(item)
+    if seal.qualified is not None and card.logical_object_id != seal.qualified.logical_object_id:
+        raise ValueError("Attached copy managed departure changed the qualified incarnation")
+    return replace(seal, departure=_current_attached_model(host, card)).to_dict()
+
+
+def bind_attached_copy_payment(host, item, raw):
+    """Qualify the original attachment recipient before mana can move it."""
+    _, copy, fallback = attached_copy_payment_parts(raw)
+    program = host.semantics.get(item.semantic_key)
+    if (program is None or len(program.effects) != 1 or FrozenMap(program.effects[0]) != FrozenMap(raw)
+            or not host.semantic_program_is_current_trusted(program)):
+        raise ValueError("Attached copy payment requires its trusted resolving ability")
+    actor = item.controller
+    fallback = {**fallback, "controller": actor}
+    identity = source_attachment_copy_identity(host, item, "enchanted")
+    if identity is None:
+        return fallback
+    object_id, logical_id, _ = identity
+    seal = _AttachedCopySeal.from_item(item)
+    if seal.qualified is not None:
+        raise ValueError("Attached copy payment cannot qualify its recipient twice")
+    card = host.state.cards.get(object_id)
+    if card is not None and card.zone == "battlefield" and card.logical_object_id == logical_id:
+        if card.phased_out:
+            return fallback
+        model = _current_attached_model(host, card)
+    else:
+        model = seal.departure
+    if model is None or (model.identity.object_id, model.identity.logical_object_id) != (object_id, logical_id):
+        raise ValueError("Attached copy payment lacks the original recipient's public departure facts")
+    if not model.creature or model.controller != actor:
+        return fallback
+    item.context[ATTACHED_COPY_PAYMENT_CONTEXT] = replace(seal, qualified=model.identity).to_dict()
+    copy = thaw_value(FrozenMap(copy))
+
+    return {**thaw_value(FrozenMap(raw)), "player": actor, "source": model.identity.reference,
+            "effects": [{**copy, "controller": actor, FALLBACK_FIELD: fallback}],
+            "declined_effects": [fallback]}
 
 
 def _copy_reference_key(origin, target_index):
@@ -106,13 +228,13 @@ def _current_graveyard_copy_target_identity(host, item, *, target_index):
     return card.object_id, card.logical_object_id, "graveyard"
 
 
-def _identity(host: Any, item: Any, origin: str, *, target_index=None) -> tuple[str, str, str] | None:
+def _identity(host: Any, item: Any, origin: str, *, target_index=None, attachment_kind=None) -> tuple[str, str, str] | None:
     if origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN:
         return _current_graveyard_copy_target_identity(host, item, target_index=target_index)
     if target_index is not None and (origin!='target' or type(target_index) is not int or not 0<=target_index<len(item.targets)):
         raise TokenCopyRecipeError('Copy target index is invalid')
     if origin == "source_attachment":
-        return _attachment_identity(host, item)
+        return source_attachment_copy_identity(host, item, attachment_kind or "enchanted")
     context = item.context.get(COPY_REFERENCE_CONTEXT)
     key = _copy_reference_key(origin, target_index)
     cached = context.get(key) if isinstance(context, Mapping) else None
@@ -184,12 +306,17 @@ def _cast_spell_token_reference(host, trigger):
 
 
 def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *, target_index=None,
-                            use_phased_lki=False) -> Mapping[str, Any] | None:
+                            use_phased_lki=False, paid_attachment=False) -> Mapping[str, Any] | None:
     if recipe.origin == "event_spell":
         if target_index is not None:
             raise TokenCopyRecipeError("The original cast spell is not a selected target")
         return _cast_spell_token_reference(host,item)
-    identity = _identity(host, item, recipe.origin,target_index=target_index)
+    paid_ref = None
+    if paid_attachment:
+        identity = _paid_attachment_copy_identity(item, required=True)
+        paid_ref = _AttachedCopySeal.from_item(item).qualified.reference
+    else:
+        identity = _identity(host, item, recipe.origin, target_index=target_index, attachment_kind=recipe.attachment_kind)
     if identity is None and recipe.origin in {"source_attachment", GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN}:
         return None
     if identity is None:
@@ -211,7 +338,8 @@ def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *
             if isinstance(snapshot, Mapping):
                 value = {"object_id": object_id, "logical_object_id": logical_object_id,
                          "ref": context["card"], "zone": zone, "snapshot": snapshot}
-    if not isinstance(value, Mapping) or set(value) != {"object_id", "logical_object_id", "ref", "zone", "snapshot"}:
+    if (not isinstance(value, Mapping) or set(value) != {"object_id", "logical_object_id", "ref", "zone", "snapshot"}
+            or paid_ref is not None and paid_ref != value["ref"]):
         raise TokenCopyRecipeError("Copy reference snapshot is unavailable or malformed")
     return deepcopy(dict(value))
 
@@ -235,7 +363,7 @@ def _pin_original_occurrence_copy_departures(host, departing):
             continue
         program = host.semantics.get(semantic_key) if semantic_key else None
         if program is None or not (
-            represents_temporary_occurrence_copy(program.effects)
+            _enchantment_entry_copy(program) or represents_temporary_occurrence_copy(program.effects)
             or represents_occurrence_controller_copy(program.effects)
             or any(represents_cast_target_copy(effect) for effect in program.effects)
         ):
@@ -262,6 +390,37 @@ def _pin_original_occurrence_copy_departures(host, departing):
             replace_pending_trigger_batch(host, index, PendingTriggerBatch.from_dict(data))
 
 
+def _pin_pending_attached_copy_departures(host, departing):
+    from .model import StackItem
+    from .rules.attached_copy_payment import uses_attached_copy_payment
+    from .trigger_batches import PendingTriggerBatch
+    from .trigger_processing import replace_pending_trigger_batch
+
+    for index, batch in enumerate(host.state.pending_trigger_batches):
+        data = batch.to_dict()
+        changed = False
+        for group in data["groups"]:
+            for frame in group["items"]:
+                program = host.semantics.get(frame.get("semantic_key"))
+                if (program is None or len(program.effects) != 1
+                        or not uses_attached_copy_payment(program.effects[0])):
+                    continue
+                item = StackItem.from_dict(frame)
+                identity = source_attachment_copy_identity(host, item, "enchanted")
+                if identity is None:
+                    continue
+                object_id, logical_id, zone = identity
+                model = departing.get(object_id)
+                if model is None or zone != "battlefield" or model.logical_object_id != logical_id:
+                    continue
+                context = frame["context"]
+                context.setdefault(COPY_REFERENCE_CONTEXT, {})["source_attachment"] = _snapshot(host, model)
+                context[ATTACHED_COPY_PAYMENT_CONTEXT] = _observe_attachment_copy_departure(host, item, model)
+                changed = True
+        if changed:
+            replace_pending_trigger_batch(host, index, PendingTriggerBatch.from_dict(data))
+
+
 def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error_type=TokenCopyRecipeError,
                                        phase_out=False) -> None:
     """Only evaluate references belonging to this committed departure group."""
@@ -276,6 +435,7 @@ def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error
 
             pin_occurrence_controller_departures(host, tuple(departing.values()), phase_out=True)
             return
+        _pin_pending_attached_copy_departures(host, departing)
         for item in host.state.stack:
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is None:
@@ -291,14 +451,21 @@ def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error
                     continue
                 recipe=TokenCopyRecipeSpec.from_dict(effect['copy_spec'])
                 target=effect.get('_copy_target');index=target['index'] if isinstance(target,Mapping) else None
-                identity = _identity(host, item, recipe.origin,target_index=index)
+                scoped = FALLBACK_FIELD in effect
+                qualified = _paid_attachment_copy_identity(item) if scoped else None
+                identity = qualified or _identity(
+                    host, item, recipe.origin, target_index=index, attachment_kind=recipe.attachment_kind,
+                )
                 if identity is None:continue
                 object_id,logical_object_id,zone=identity
                 card=departing.get(object_id)
                 if card is None or zone!='battlefield' or card.logical_object_id!=logical_object_id:continue
                 key=recipe.origin if index is None else f'target:{index}'
-                updates.append((item,key,_snapshot(host,card)))
-        for item, origin, value in updates:
+                observation = _observe_attachment_copy_departure(host, item, card) if scoped else None
+                updates.append((item, key, _snapshot(host, card), observation))
+        for item, origin, value, observation in updates:
             item.context.setdefault(COPY_REFERENCE_CONTEXT, {})[origin] = value
+            if observation is not None:
+                item.context[ATTACHED_COPY_PAYMENT_CONTEXT] = observation
     except (KeyError, TypeError, ValueError) as error:
         raise error_type(str(error)) from error

@@ -2,6 +2,7 @@ from __future__ import annotations
 from .token_creation_event_bindings import TOKEN_CREATION_VARIANTS
 from .crime_bindings import CRIME_VARIANTS
 from ..crime_model import crime_fact_dependencies
+from ..rules.source_subtype_progression import ring_damage_trigger_node_dependencies
 
 from dataclasses import dataclass, replace
 from enum import Enum
@@ -28,7 +29,8 @@ from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE,
 from .announced_damage_templates import fixed_announced_damage_template
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
-from .trigger_result_templates import binding_effect_template
+from . import trigger_result_templates
+from .trigger_result_templates import accepts_counter_binding_result
 from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition, validate_public_trigger_metadata
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
@@ -50,6 +52,7 @@ from .spell_cast_predicates import (
 from .public_trigger_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, PUBLIC_INTERVENING_IF_TRIGGER, PublicTriggerCondition,
     bind_public_intervening_trigger, public_trigger_condition_capabilities,
+    public_state_source_self_trigger_spec,
 )
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
@@ -63,6 +66,7 @@ from .chosen_color_event_bindings import CHOSEN_COLOR_CAST_VARIANTS
 from .chosen_type_event_bindings import CHOSEN_TYPE_EVENT_VARIANTS
 from .explore_event_bindings import CREATURE_EXPLORE_VARIANT
 from .mutate_event_bindings import MUTATE_SOURCE_VARIANT,MUTATE_TRIGGER_TEMPLATE
+from ..rules.first_own_turn_life_loss import TEMPLATE as FIRST_OWN_TURN_LIFE_LOSS_TEMPLATE
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
@@ -75,6 +79,7 @@ FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC = (
 FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
     {
         MUTATE_TRIGGER_TEMPLATE,
+        FIRST_OWN_TURN_LIFE_LOSS_TEMPLATE,
         'fixed-counter-creature-explore-trigger-v1',
         "fixed-counter-step-trigger-v1",
         CONTROLLER_SACRIFICE_LIFE_TEMPLATE,
@@ -107,6 +112,8 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-source-received-damage-trigger-v1",
         LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE,
         "fixed-counter-source-received-combat-damage-trigger-v1",
+        "fixed-counter-targeted-receiving-damage-v1",
+        "fixed-counter-targeted-receiving-life-prohibition-v1",
         "fixed-counter-public-zone-trigger-v1",
         "fixed-counter-public-damage-trigger-v1",
         "fixed-counter-public-damage-dealer-response-v1",
@@ -166,6 +173,9 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "battalion_source_and_two_others_attack",
     }
 )
+from ..rules.event_subscriptions import OWNED_ZONE_EXILE_VARIANT
+from ..rules.library_creature_arrival import VARIANT as LIBRARY_CREATURE_ARRIVAL_VARIANT
+
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *TOKEN_CREATION_VARIANTS,
@@ -175,6 +185,10 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         CREATURE_EXPLORE_VARIANT,
         MUTATE_SOURCE_VARIANT,
         'player_expend',
+        OWNED_ZONE_EXILE_VARIANT,
+        LIBRARY_CREATURE_ARRIVAL_VARIANT,
+        'ordinary_land_mana_tap',
+        'opponent_land_enters_with_other_arrival',
         'public_waterbend',
         'public_ring_temptation', 'public_ring_bearer_choice',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
@@ -185,6 +199,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "controller_attack_batch_at_least_3",
         "one_or_more_qualified_attack",
         "controller_cycles",
+        "controller_discards_one_or_more_cards",
         "one_or_more_controlled_tokens_enter",
         "controlled_token_leaves",
         "another_controlled_creature_leaves",
@@ -239,32 +254,9 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         },
     }
 )
-MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
-    {
-        'source_block_pair_counterpart',
-        "source_room_door_unlock",
-        "controlled_enchantment_entry_or_room_unlock",
-        "enchanted_creature_tap_or_received_damage",
-        "independent_dual_event",
-        "qualified_zone_event_pair",
-        GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
-        "source_enters_or_attacks",
-        "source_enters_or_dies",
-        "source_attacks_or_blocks",
-        "source_blocks_or_becomes_blocked",
-        "source_enters_or_leaves_the_battlefield",
-        "source_enters_or_is_put_into_a_graveyard_from_the_battlefield",
-        "source_enters_or_is_turned_face_up",
-        "source_enters_or_deals_combat_damage_to_a_player",
-        "source_enters_or_becomes_monstrous",
-        "source_transform_pair",
-        "source_artifact_enters_and_is_sacrificed",
-        "enchanted_creature_attacks_or_blocks",
-        COMBAT_PARTICIPANT_DAMAGE_VARIANT,
-        "source_attacks_or_blocks_with_controlled_dinosaur",
-    }
+from .public_event_closure_variants import (
+    MULTI_EVENT_BINDING_CLOSURE_VARIANTS, PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
 )
-from .public_event_closure_variants import PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
@@ -279,6 +271,8 @@ _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         QUALIFIED_DAMAGE_BATCH_VARIANT,
         "one_or_more_qualified_attack",
+        OWNED_ZONE_EXILE_VARIANT,
+        LIBRARY_CREATURE_ARRIVAL_VARIANT,
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
@@ -845,6 +839,10 @@ class FixedCounterTriggerBinding:
         ]
         if self.variant in {'your first main phase','your precombat main phase','your second main phase','your postcombat main phase'}:
             conditions.append({'field':'phase','op':'eq','value':'precombat_main' if self.variant in {'your first main phase','your precombat main phase'} else 'postcombat_main'})
+        if self.variant == "your second main phase":
+            from ..extra_combat_model import LATER_MAIN_PHASE_FIELD
+
+            conditions.append({"field": LATER_MAIN_PHASE_FIELD, "op": "ne", "value": True})
         if controller_only:
             conditions.insert(
                 0,
@@ -1040,37 +1038,11 @@ def _source_event_trigger_binding(
 
 
 def _public_state_source_self_trigger_binding(
-    material_line: str,
-    *,
-    card_name: str | None,
+    material_line: str, *, card_name: str | None,
 ) -> FixedCounterTriggerBinding | None:
-    """Bind only the source-self zone forms admitted by typed intervening-if."""
-
-    subjects = (
-        r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent)"
-    )
-    if card_name:
-        subjects = rf"(?:{subjects}|{SourceReferenceSpec(card_name).regex_pattern})"
-    match = re.fullmatch(
-        rf"(?:When|Whenever) {subjects} (?P<event>enters|dies), "
-        r"(?P<body>.+)",
-        material_line,
-        re.IGNORECASE,
-    )
-    if match is None:
-        return None
-    event = match.group("event").casefold()
-    return FixedCounterTriggerBinding(
-        event=(
-            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES
-            if event == "dies"
-            else FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER
-        ),
-        variant=f"public_state_source_{event}",
-        body=match.group("body"),
-        public_active_zone="battlefield",
-        public_mechanic="trigger-event-normalized-zone-change",
-        public_template_id="fixed-counter-public-state-source-zone-trigger-v1",
+    return public_binding_from_spec(
+        public_state_source_self_trigger_spec(material_line, card_name=card_name),
+        binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent,
     )
 
 
@@ -1079,7 +1051,9 @@ def _public_trigger_binding(
     *,
     card_name: str | None,
 ) -> FixedCounterTriggerBinding | None:
-    spec = public_trigger_binding_spec(material_line, card_name=card_name)
+    from .committed_nonland_mill import committed_nonland_mill_binding_spec
+
+    spec = committed_nonland_mill_binding_spec(material_line) or public_trigger_binding_spec(material_line, card_name=card_name)
     if spec is None:
         return None
     from .attacking_card_entry_templates import source_graveyard_attacking_entry_binding
@@ -1103,8 +1077,17 @@ def fixed_counter_trigger_binding(
     if normalized is not None:
         source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
         if source_binding is not None:return source_binding
+    from .nonmana_activation_copy import nonmana_activation_copy_binding
+
+    if activation_copy := nonmana_activation_copy_binding(material_line):
+        return public_binding_from_spec(activation_copy, binding_type=FixedCounterTriggerBinding,
+                                        event_type=FixedCounterTriggerEvent)
     intervening = PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
+        from .defended_attacker_payment import defended_attacker_binding
+
+        if defended := defended_attacker_binding(intervening):
+            return defended
         if (intervening['prefix'].casefold() == 'whenever this creature attacks a player'
                 and intervening['condition'].casefold() == 'no opponent has more life than that player'):
             return FixedCounterTriggerBinding(
@@ -1115,6 +1098,12 @@ def fixed_counter_trigger_binding(
             intervening, card_name=card_name, compile_binding=fixed_counter_trigger_binding,
             compile_source_binding=_public_state_source_self_trigger_binding,
         )
+    from .opponent_library_search_templates import library_observer_binding_spec
+
+    observer = library_observer_binding_spec(material_line, card_name=card_name)
+    if observer is not None:
+        return public_binding_from_spec(observer,
+            binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
     public = _public_trigger_binding(
         material_line,
         card_name=card_name,
@@ -1197,9 +1186,9 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=()) -> tuple[str, ...]:
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=(), result_template_id=None) -> tuple[str, ...]:
     from .trigger_runtime_coverage import trigger_runtime_coverage
-    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics,
+    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics, result_template_id=result_template_id,
         qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
         aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
         ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
@@ -1211,7 +1200,17 @@ def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_abil
 
 
 def _binding_effect_template(binding, body, *, card_name, effect_template):
-    compiled, current = binding_effect_template(binding, body, card_name=card_name,
+    from .entrant_x_reflexive import entrant_x_binding_result
+    from ..rules.first_own_turn_life_loss import VARIANT, first_own_turn_loss_results
+
+    if binding.variant == VARIANT:
+        return (FIRST_OWN_TURN_LIFE_LOSS_TEMPLATE, first_own_turn_loss_results(), None,
+                ("cr-122-counters", "cr-121-drawing-a-card")), True
+    from ..rules.artifact_graveyard_departure import VARIANT, departure_artifact_return_result
+
+    if binding.variant == VARIANT:
+        return departure_artifact_return_result(), True
+    compiled, current = entrant_x_binding_result(binding, body) or trigger_result_templates.bound_trigger_effect_template(binding, body, card_name=card_name,
         effect_template=effect_template, source_counter_variants=_NONCOUNTER_PUBLIC_EVENT_VARIANTS)
     from .cycle_or_discard_bindings import CYCLE_OR_DISCARD_CAPABILITY
     if CYCLE_OR_DISCARD_CAPABILITY in binding.public_capabilities:
@@ -1222,17 +1221,21 @@ def _binding_effect_template(binding, body, *, card_name, effect_template):
 
 
 def _counter_binding_accepts_result(binding, body_mechanics, *, effects, target_schema):
-    from .room_bindings import OWN_DOOR_VARIANT
-    if binding.variant == OWN_DOOR_VARIANT:
-        from ..rules.node_capability_shapes import fixed_counter_placement_target_set_node_capabilities
-        if fixed_counter_placement_target_set_node_capabilities(
-            effects=effects, target_schema=target_schema, mechanic_ids=body_mechanics,
-        ):
-            return True
-    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter','fixed-public-event-set-counter'}.intersection(body_mechanics))
-        or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
-        or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
-        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
+    from ..rules.entrant_x_reflexive import ENTRANT_X_MECHANIC, ENTRANT_X_VARIANT, entrant_x_node_capabilities
+
+    if binding.variant == ENTRANT_X_VARIANT:
+        return (ENTRANT_X_MECHANIC in body_mechanics
+                and bool(entrant_x_node_capabilities(effects=effects, target_schema=target_schema)))
+    from .committed_nonland_mill import source_enters_attacks_rad_result
+
+    rad_result = source_enters_attacks_rad_result(binding, binding.body)
+    if rad_result is not None and tuple(effects) == rad_result[1] and target_schema is None:
+        return True
+    return accepts_counter_binding_result(
+        binding, body_mechanics, effects=effects, target_schema=target_schema,
+        noncounter_variants=_NONCOUNTER_PUBLIC_EVENT_VARIANTS,
+        public_action_variants=PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+    )
 
 
 def fixed_counter_event_trigger_node(
@@ -1402,7 +1405,14 @@ def fixed_typed_event_effect_trigger_node(
     binding: FixedCounterTriggerBinding | None = None,
 ) -> OracleNode | None:
     """Compose one closed event binding with one reviewed typed effect body."""
+    from .early_typed_event_nodes import early_typed_event_node
 
+    early = early_typed_event_node(
+        node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if early is not None:
+        return early
     counter_node = fixed_counter_event_trigger_node(
         node_id=node_id,
         line=line,
@@ -1422,12 +1432,20 @@ def fixed_typed_event_effect_trigger_node(
     binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
+    from ..rules.grouped_graveyard_departure import COVERAGE as GROUPED_GRAVEYARD_DEPARTURE_COVERAGE
+    from .grouped_graveyard_departure import grouped_graveyard_departure_result
+
+    departure_result = grouped_graveyard_departure_result(binding)
     allocation = fixed_announced_damage_template(
-        binding.body,
-        card_name=card_name,
+        binding.body, card_name=card_name,
         allow_source_pronoun=binding.variant in {"source_attacks", "source_enters_or_attacks"},
     )
-    if allocation is not None:
+    if departure_result is not None:
+        effects, mechanics, _ = departure_result
+        binding = replace(binding, event=FixedCounterTriggerEvent.CARD_LEAVE_GRAVEYARD_LOOKBACK)
+        compiled = binding.typed_effect_template_id, effects, None, mechanics
+        requires_current_ability = True
+    elif allocation is not None:
         compiled, requires_current_ability = allocation, False
     else:
         compiled, requires_current_ability = _binding_effect_template(
@@ -1437,11 +1455,6 @@ def fixed_typed_event_effect_trigger_node(
             effect_template=effect_template,
         )
     template, effects, target_schema, body_mechanics = compiled
-    from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_EVENT, unblocked_defender_poison_effect
-    closed_unblocked_poison = (
-        binding.event.value == UNBLOCKED_ATTACKER_EVENT
-        and tuple(effects) == (unblocked_defender_poison_effect(),)
-    )
     if (
         template is None
         or (
@@ -1449,8 +1462,9 @@ def fixed_typed_event_effect_trigger_node(
             and FIXED_NONREPEATING_MODAL_MECHANIC not in body_mechanics
         )
         or (_COUNTER_PLACEMENT_OPERATIONS.intersection(_nested_operations(effects))
-            and not (closed_unblocked_poison
-                     or len(effects) == 1 and effects[0].get("op") == "look_top_shared_type_reveal"))
+            and not trigger_result_templates.accepts_counter_bearing_event_result(
+                binding, template, effects, target_schema, body_mechanics,
+                grouped_departure=departure_result is not None))
     ):
         return None
     mechanics = (
@@ -1468,27 +1482,22 @@ def fixed_typed_event_effect_trigger_node(
         capability_profile=capability_profile,
         explicit_capabilities=(
             *binding.explicit_capabilities,
+            *(departure_result[2] if departure_result is not None else ()),
+            *ring_damage_trigger_node_dependencies(effects),
             *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
             *public_trigger_condition_capabilities(binding.public_state_condition),
         ),
     )
-    residual_ids = (
-        (
-            append_residual(
-                residuals,
-                kind="dependency_contract",
-                text=line,
-                span=span,
-                reason=(
-                    "fixed typed event-effect trigger lacks a trusted "
-                    "capability closure"
-                ),
-                blockers=gate.blockers,
-            ),
+    residual_ids = ()
+    if gate.blockers:
+        residual_id = append_residual(residuals,
+            kind="dependency_contract",
+            text=line,
+            span=span,
+            reason="fixed typed event-effect trigger lacks a trusted capability closure",
+            blockers=gate.blockers,
         )
-        if gate.blockers
-        else ()
-    )
+        residual_ids = (residual_id,)
     closure = gate.closure
     return OracleNode(
         node_id=node_id,
@@ -1505,9 +1514,10 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             *_event_runtime_coverage(
-                binding, effect_mechanics=body_mechanics,
-                current_ability=fixed_typed_result_requires_current_ability(binding, template, requires_current_ability),
+                binding, effect_mechanics=body_mechanics, result_template_id=template,
+                current_ability=departure_result is not None or fixed_typed_result_requires_current_ability(binding, template, requires_current_ability),
             ),
+            *((GROUPED_GRAVEYARD_DEPARTURE_COVERAGE,) if departure_result is not None else ()),
             *((SCHEDULED_PLAYER_DEPARTURE_COVERAGE,) if SCHEDULED_PLAYER_MECHANIC in body_mechanics else ()),
         ),
         mechanics=mechanics,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from ..composition_order_model import CompositionOrderRequest
+from ..composition_order_model import ORDERED_SACRIFICE_REQUEST_VERSION, CompositionOrderRequest
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
 from .model import (OrderingChoice,SemanticChoiceRequest,SemanticChoicePreparation,
@@ -32,13 +32,20 @@ class CompositionOrderHandler:
         root=context.query.object(request.root_state['ref'],zones=('battlefield',))
         if root is None or root.logical_object_id!=request.root.logical_object_id:
             raise SemanticChoiceError('Composition ordering source changed')
-        rows=[]
-        for part in request.root.permanent_composition.parts:
-            raw=part.card_state
-            if raw['ref'] not in request.refs:continue
-            hidden=(request.current_destination=='library' and raw['face_down']
-                and request.chooser not in (*raw['known_to'],*raw['revealed_to']))
-            rows.append({'id':raw['ref'],'name':'Face-down component' if hidden else raw['printed_name']})
+        ordered_sacrifice = request.schema_version == ORDERED_SACRIFICE_REQUEST_VERSION
+        if ordered_sacrifice:
+            candidates = (state for subject in request.batch_request.subjects for state in subject.physical_states)
+        else:
+            candidates = (part.card_state for part in request.root.permanent_composition.parts)
+        rows = []
+        for candidate in candidates:
+            if candidate['ref'] not in request.refs:
+                continue
+            hidden = (ordered_sacrifice or request.current_destination == 'library') and candidate['face_down'] and (
+                request.chooser not in (*candidate['known_to'], *candidate['revealed_to'])
+            )
+            rows.append({'id': candidate['ref'],
+                         'name': 'Face-down component' if hidden else candidate['printed_name']})
         return SemanticChoicePreparation(request=SemanticChoiceRequest(
             prompt='Order the physical cards from bottom to top.',
             choice=OrderingChoice('cards',request.refs,visibility='actor_private',

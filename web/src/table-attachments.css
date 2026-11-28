@@ -1,0 +1,126 @@
+/* Reserve the same measurement width for each slot on an affected paged lane. */
+.battlefield-row.has-attachment-rails {
+  --attachment-gap: .6rem;
+  --attachment-rail-width: clamp(52px, 26cqw, 108px);
+}
+
+.battlefield-row.has-attachment-rails > .battlefield-card-slot {
+  --attachment-primary-width: min(
+    var(--battlefield-slot-width),
+    max(1px, calc(100cqw - var(--attachment-rail-width) - var(--attachment-gap) - 8px))
+  );
+  flex-basis: calc(var(--attachment-primary-width) + var(--attachment-rail-width) + var(--attachment-gap) + .14rem);
+  justify-items: start;
+}
+
+.battlefield-row > .has-attached-cards {
+  grid-template-columns: var(--attachment-primary-width) var(--attachment-rail-width);
+  column-gap: var(--attachment-gap);
+  align-items: start;
+}
+
+.battlefield-row > .has-attached-cards > .battlefield-card {
+  --frame-width: min(var(--battlefield-print-width), var(--attachment-primary-width));
+  --frame-height: min(var(--battlefield-card-height), calc(var(--attachment-primary-width) * 88 / 63));
+}
+
+.battlefield-row > .has-attached-cards > .battlefield-card.tapped {
+  --frame-width: min(var(--battlefield-card-height), var(--attachment-primary-width));
+  --frame-height: min(var(--battlefield-print-width), calc(var(--attachment-primary-width) * 63 / 88));
+}
+
+.attachment-rail {
+  position: relative;
+  grid-area: 1 / 2;
+  width: 100%;
+  min-width: 0;
+  --attachment-art-height: max(12px, min(clamp(22px, calc(var(--battlefield-card-height) * .68), 60px), 100cqh - 8px));
+  --attachment-art-width: calc(var(--attachment-art-height) * 63 / 88);
+}
+
+.attachment-connector {
+  position: absolute;
+  inset-inline-start: calc(-1 * var(--attachment-gap));
+  inset-block-start: min(16px, calc(var(--attachment-art-height) / 2));
+  width: var(--attachment-gap);
+  height: 2px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+.permanent-attachments {
+  display: grid;
+  align-content: start;
+  gap: .2rem;
+  min-width: 0;
+  max-block-size: max(14px, min(
+    100cqh - 4px,
+    var(--battlefield-slot-width) + var(--battlefield-caption-height) + var(--battlefield-card-inset) - 2px
+  ));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1px .12rem;
+  border-inline-start: 1px solid var(--accent);
+  scrollbar-width: thin;
+}
+
+.permanent-attachments > .card-tile.compact {
+  grid-template-columns: var(--attachment-art-width) minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: min(24px, var(--attachment-art-height));
+  min-width: 0;
+}
+
+.permanent-attachments > .card-tile.compact:not(.has-image) { grid-template-columns: minmax(0, 1fr); }
+.permanent-attachments > .card-tile.compact img {
+  display: block;
+  width: var(--attachment-art-width);
+  height: var(--attachment-art-height);
+  min-height: 0;
+  object-fit: contain;
+}
+.permanent-attachments > .card-tile .card-copy { min-width: 0; padding: .1rem .14rem; }
+.permanent-attachments > .card-tile .card-copy > strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  font-size: .65rem;
+  line-height: 1.15;
+}
+.permanent-attachments .attachment-label,
+.permanent-attachments .card-action-hint,
+.permanent-attachments .card-cost-overlay { display: none; }
+.permanent-attachments > .card-tile:focus-visible { outline: 2px solid var(--table-highlight); outline-offset: -2px; }
+
+@container battlefield-row (max-width: 205px) {
+  .attachment-rail {
+    --attachment-art-height: max(12px, min(32px, var(--battlefield-card-height), 100cqh - 21px));
+  }
+  .permanent-attachments > .card-tile.compact {
+    justify-items: center;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .permanent-attachments > .card-tile .card-copy { width: 100%; text-align: center; }
+}
+
+@container battlefield (max-width: 230px) {
+  .game-shell .battlefield-lane:has(> .has-attachment-rails) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}
+
+@container battlefield-row (max-width: 145px) {
+  .battlefield-row.has-attachment-rails > .battlefield-card-slot {
+    --attachment-gap: .4rem;
+    --attachment-rail-width: min(43px, 38cqw);
+  }
+  .battlefield-row > .has-attached-cards .battlefield-card-footer .plus-counters {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+}

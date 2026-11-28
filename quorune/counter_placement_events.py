@@ -3,12 +3,16 @@ from __future__ import annotations
 """Sealed gameplay occurrences from committed canonical counter placements."""
 
 from collections import OrderedDict
+from .characteristic_read_frames import characteristic_read_method
 from .replacement.immutable import FrozenMap,thaw_value
 from .zone_trigger_events import sealed_public_characteristic_facts
 from .trigger_processing import enqueue_trigger_batch
 from .counter_placement_event_model import COUNTER_PLACEMENT_EVENT,SINGLE_COUNTER_EVENT,CounterPlacementOccurrence
+from .recipient_counter_occurrences import (
+    RECIPIENT_COUNTER_EVENT, RecipientCounterOccurrence, recipient_counter_occurrences,
+)
 
-def capture_counter_placement_occurrences(host,events,*,reason):
+def capture_counter_placement_occurrences(host,events,*,reason,recipient_totals=False):
     """Capture after all mutations in the containing instruction are committed."""
     grouped=OrderedDict()
     for event in events:
@@ -45,18 +49,27 @@ def capture_counter_placement_occurrences(host,events,*,reason):
         context['counter_kind_index']=indices[key]
         context['event_id']='counter.put:'+':'.join(context['counter_event_ids'])
         occurrences.append(CounterPlacementOccurrence(FrozenMap(context)))
+    if recipient_totals:
+        occurrences.extend(recipient_counter_occurrences(host, events, reason=reason))
     return tuple(occurrences)
 
 
+@characteristic_read_method
 def counter_event_subscribers(host):
     """Use the existing printed-and-granted discovery boundary once per batch."""
     sources=host._semantic_event_sources(zones={'battlefield'})
     from .trigger_discovery import _event_programs_for_source,_selected_event_subscription
-    selected={event:[] for event in (COUNTER_PLACEMENT_EVENT,SINGLE_COUNTER_EVENT)}
+    selected={event:[] for event in (COUNTER_PLACEMENT_EVENT,SINGLE_COUNTER_EVENT,RECIPIENT_COUNTER_EVENT)}
+    characteristics = {}
     for event in selected:
         for source in sources:
-            _zone,_characteristics,programs=_event_programs_for_source(host,source,event,source_zones=None,source_characteristics=None)
-            if any(_selected_event_subscription(program,event)[0] for program in programs):
+            _zone, data, programs = _event_programs_for_source(
+                host, source, event, source_zones=None, source_characteristics=characteristics,
+            )
+            # This scan finishes before any trigger dispatch or nested placement.
+            # Reuse its current snapshot while retaining event-specific program binding.
+            characteristics[source.object_id] = data
+            if any(_selected_event_subscription(program,event)[0] for program, _ in programs):
                 selected[event].append(source)
     return selected
 
@@ -70,6 +83,11 @@ def dispatch_counter_placement_occurrences(host,occurrences,*,trigger_batch=None
         return
     for occurrence in occurrences:
         context=thaw_value(occurrence.context)
+        if isinstance(occurrence, RecipientCounterOccurrence):
+            if selected.get(RECIPIENT_COUNTER_EVENT):
+                host._dispatch_semantic_event(RECIPIENT_COUNTER_EVENT, context,
+                    sources=selected[RECIPIENT_COUNTER_EVENT], trigger_batch=batch)
+            continue
         if selected[COUNTER_PLACEMENT_EVENT]:
             host._dispatch_semantic_event(COUNTER_PLACEMENT_EVENT,context,sources=selected[COUNTER_PLACEMENT_EVENT],trigger_batch=batch)
         # The singular event identity is private rules vocabulary, independent
@@ -81,14 +99,26 @@ def dispatch_counter_placement_occurrences(host,occurrences,*,trigger_batch=None
         enqueue_trigger_batch(host,batch)
 
 
-def dispatch_prepared_counter_events(host,prepared,*,reason,trigger_batch=None):
-    if not any(event.affected_object is not None and type(event.payload.get('amount')) is int and event.payload['amount']>0 for event in prepared.events):
+def capture_counter_damage_occurrences(host, events, *, reason):
+    may_have_counters = any(event.payload.get("amount") for event in events)
+    recipient_totals = may_have_counters and bool(counter_event_subscribers(host)[RECIPIENT_COUNTER_EVENT])
+    return capture_counter_placement_occurrences(host, events, reason=reason, recipient_totals=recipient_totals)
+
+
+def _dispatch_counter_leaves(host, events, *, reason, trigger_batch):
+    if not any(type(event.payload.get("amount")) is int and event.payload["amount"] > 0 for event in events):
         return
-    subscribers=counter_event_subscribers(host)
+    subscribers = counter_event_subscribers(host)
     if not any(subscribers.values()):
         return
-    occurrences=capture_counter_placement_occurrences(host,prepared.events,reason=reason)
-    dispatch_counter_placement_occurrences(host,occurrences,trigger_batch=trigger_batch,subscribers=subscribers)
+    occurrences = capture_counter_placement_occurrences(
+        host, events, reason=reason, recipient_totals=bool(subscribers[RECIPIENT_COUNTER_EVENT]),
+    )
+    dispatch_counter_placement_occurrences(host, occurrences, trigger_batch=trigger_batch, subscribers=subscribers)
+
+
+def dispatch_prepared_counter_events(host,prepared,*,reason,trigger_batch=None):
+    _dispatch_counter_leaves(host, prepared.events, reason=reason, trigger_batch=trigger_batch)
 
 
 def dispatch_committed_counter_events(host, prepared, results, *, reason, dispatch_sagas=True):
@@ -114,10 +144,4 @@ def dispatch_counter_event_trees(host,resolutions,*,reason,trigger_batch=None):
     for resolution in resolutions:
         if resolution.event is not None:
             events.extend(prepared_counter_events_from_tree(resolution.event,effects=resolution.effects,journal=resolution.journal).events)
-    if not any(event.affected_object is not None and type(event.payload.get('amount')) is int and event.payload['amount']>0 for event in events):
-        return
-    subscribers=counter_event_subscribers(host)
-    if not any(subscribers.values()):
-        return
-    occurrences=capture_counter_placement_occurrences(host,events,reason=reason)
-    dispatch_counter_placement_occurrences(host,occurrences,trigger_batch=trigger_batch,subscribers=subscribers)
+    _dispatch_counter_leaves(host, events, reason=reason, trigger_batch=trigger_batch)

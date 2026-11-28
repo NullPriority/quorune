@@ -7,16 +7,21 @@ import hashlib
 import re
 from typing import Any, Iterable, Mapping
 
+from .additional_cost_vocabulary import SACRIFICE_ONE_COST
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .model import CardInstance
+from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .replacement.model import ReplacementClass, ReplacementEffect
 from .replacement.operations import SetField
 from .rules.casting_additional_cost_groups import FixedLifePaymentAdditionalCost
+from .rules.casting_additional_costs import FixedZoneChangeAdditionalCost
 from .util import mana_cost_to_vector, stable_json
 
 
 FLASHBACK_CAPABILITY_ID = "casting.flashback.fixed_mana"
+SACRIFICE_FLASHBACK_CAPABILITY_ID = "casting.flashback.fixed_creature_sacrifice"
+SACRIFICE_FLASHBACK_HANDLER_ID = "casting.flashback.fixed-creature-sacrifice.v1"
 FLASHBACK_CAST_ANNOTATION = "cast_via_flashback"
 FLASHBACK_CAST_OPTION_ID = "flashback"
 FLASHBACK_HANDLER_ID = "casting.flashback.fixed-mana.v1"
@@ -30,6 +35,9 @@ _FIXED_FLASHBACK = re.compile(
     r"Pay (?P<life>[1-9]\d*) life)"
     r"\.?(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
+)
+_THREE_CREATURE_FLASHBACK = re.compile(
+    r"^Flashback[—–]\s*Sacrifice three creatures\.?(?:\s+\(.*\))?\.?$", re.IGNORECASE
 )
 _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 
@@ -161,6 +169,63 @@ class FixedManaFlashbackSpec:
         return option
 
 
+@dataclass(frozen=True, slots=True)
+class FixedSacrificeFlashbackSpec:
+    """Three distinct controlled creatures replace the spell’s printed mana cost."""
+
+    ability_id: str
+    line_index: int
+    oracle_line: str
+
+    def __post_init__(self) -> None:
+        if (type(self.line_index) is not int or self.line_index < 0
+                or self.ability_id != f"ab{self.line_index + 1}"
+                or not isinstance(self.oracle_line, str)
+                or _THREE_CREATURE_FLASHBACK.fullmatch(self.oracle_line.strip()) is None):
+            raise FlashbackError("Unsupported source for three-creature Flashback")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"schema_version": 1, "ability_id": self.ability_id,
+                "line_index": self.line_index, "oracle_line": self.oracle_line}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "FixedSacrificeFlashbackSpec":
+        if (not isinstance(value, Mapping)
+                or set(value) != {"schema_version", "ability_id", "line_index", "oracle_line"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise FlashbackError("Three-creature Flashback descriptors have a closed schema")
+        return cls(value["ability_id"], value["line_index"], value["oracle_line"])
+
+    @property
+    def fingerprint(self) -> str:
+        return hashlib.sha256(stable_json(self.to_dict()).encode()).hexdigest()
+
+    def cast_cost_option(self) -> dict[str, Any]:
+        price = FixedZoneChangeAdditionalCost(
+            operation=SACRIFICE_ONE_COST, choice_field="sacrifice_cards", count=3,
+            predicate=ObjectQuerySpec(zones=("battlefield",), controller="$actor",
+                                      known_to_actor=True, types_all=("creature",)),
+        )
+        return {
+            "id": FLASHBACK_CAST_OPTION_ID,
+            "kind": "alternate",
+            "label": "Flashback—Sacrifice three creatures",
+            "requirements": dict.fromkeys(_MANA_FIELDS, 0),
+            "flashback_fingerprint": self.fingerprint,
+            "source_zone": "graveyard",
+            "x_value_policy": "zero",
+            "_additional_option_costs": [price.to_descriptor()],
+        }
+
+
+def compile_fixed_sacrifice_flashback(
+    *, material_line: str, oracle_line: str, line_index: int,
+) -> FixedSacrificeFlashbackSpec | None:
+    if _THREE_CREATURE_FLASHBACK.fullmatch(material_line.strip()) is None:
+        return None
+    return FixedSacrificeFlashbackSpec(f"ab{line_index + 1}", line_index, oracle_line)
+
+
 def compile_fixed_mana_flashback(
     *,
     material_line: str,
@@ -184,9 +249,12 @@ def compile_fixed_mana_flashback(
     )
 
 
-def flashback_handler_descriptor(spec: FixedManaFlashbackSpec) -> dict[str, Any]:
+def flashback_handler_descriptor(
+    spec: FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec,
+) -> dict[str, Any]:
     return {
-        "handler_id": FLASHBACK_HANDLER_ID,
+        "handler_id": (SACRIFICE_FLASHBACK_HANDLER_ID
+                       if isinstance(spec, FixedSacrificeFlashbackSpec) else FLASHBACK_HANDLER_ID),
         "schema_version": 1,
         "event": FLASHBACK_RUNTIME_EVENT,
         REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True,
@@ -196,16 +264,23 @@ def flashback_handler_descriptor(spec: FixedManaFlashbackSpec) -> dict[str, Any]
 
 def flashed_back_leave_replacement(card: CardInstance) -> ReplacementEffect | None:
     """Return Flashback's mandatory replacement for the current stack object."""
+    return paid_stack_exile_replacement(
+        card, annotation=FLASHBACK_CAST_ANNOTATION, rule="flashback",
+        description="exile the flashed-back spell instead",
+    )
+
+
+def paid_stack_exile_replacement(card, *, annotation, rule, description):
 
     if (
         not isinstance(card, CardInstance)
         or card.zone != "stack"
         or card.object_kind != "card"
-        or card.annotations.get(FLASHBACK_CAST_ANNOTATION) is not True
+        or card.annotations.get(annotation) is not True
     ):
         return None
     return ReplacementEffect(
-        effect_id=f"rule:flashback:{card.logical_object_id}",
+        effect_id=f"rule:{rule}:{card.logical_object_id}",
         source_id=card.ref,
         event_kind="zone.change",
         replacement_class=ReplacementClass.SELF_REPLACEMENT,
@@ -216,7 +291,7 @@ def flashed_back_leave_replacement(card: CardInstance) -> ReplacementEffect | No
             "logical_object_id": {"eq": card.logical_object_id},
         },
         operations=(SetField("destination", "exile"),),
-        label=f"{card.ref}: exile the flashed-back spell instead",
+        label=f"{card.ref}: {description}",
     )
 
 

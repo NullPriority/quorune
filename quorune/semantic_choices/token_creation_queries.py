@@ -11,6 +11,13 @@ def semantic_choice_token_creation_preview(
 ) -> tuple[FrozenMap, ...]:
     operation = str(effect.get("op") or "")
     common: dict[str, Any]
+    from ..rules.attached_role_batch import ATTACHED_ROLE_BATCH_OPERATION, PREVIEW_FIELD, resolve_attached_role_batch
+    from ..rules.targeted_attack_die_copy import is_rolled_attacking_copy
+
+    if operation == ATTACHED_ROLE_BATCH_OPERATION:
+        base = {key: value for key, value in effect.items() if key != PREVIEW_FIELD}
+        resolved, _ = resolve_attached_role_batch(self, actor, base)
+        return tuple(FrozenMap(token) for token in resolved.specs)
     if operation == 'create_role_token':
         common = {'name': str(effect.get('name') or ''), 'quantity': 1, 'attacking_groups': (),
             'characteristics': dict(effect.get('characteristics') or {})}
@@ -19,6 +26,13 @@ def semantic_choice_token_creation_preview(
         _opponents, _groups, common = per_opponent_token_inputs(actor, effect,
             seats=self.seats, active_seats=self.active_seats,
             attacking=self.state.phase == 'combat' and self.state.active_player == actor)
+    elif operation == 'choose_fixed_attacking_token_destinations' and effect.get('token_entry_version') == 4:
+        common = {'name': '', 'quantity': 1, 'tapped': True, 'attacking_groups': ('any',),
+                  'copy_of': effect['copy_of'], 'copy_snapshot': dict(effect['copy_snapshot'])}
+    elif is_rolled_attacking_copy(effect):
+        attacking = self.state.phase == "combat" and self.state.active_player == actor
+        common = {"name": "", "quantity": 1, "tapped": True, "attacking_groups": ("any",) if attacking else (),
+                  "copy_of": effect["copy_of"], "copy_snapshot": dict(effect["copy_snapshot"])}
     elif operation in {"choose_attacking_token_destinations", 'choose_fixed_attacking_token_destinations'}:
         quantity = effect.get("quantity")
         if type(quantity) is not int or quantity < 0:
@@ -67,8 +81,10 @@ def semantic_choice_token_creation_preview(
     return tuple(FrozenMap(value) for value in resolved.specs)
 
 
-def attached_token_candidate_refs(host, effect: Mapping[str, Any]) -> tuple[str, ...]:
-    """Materialize exact current legal Equipment recipients from the committed result."""
+def attached_token_candidate_refs(
+    host, effect: Mapping[str, Any], *, attachment_kind: str = "equipment", token_result: bool = True,
+) -> tuple[str, ...]:
+    """Materialize exact current legal recipients from the committed result."""
     from ..effect_runtime.zones_and_attachments import _attachment_target_is_legal
 
     refs, source_ref = effect.get("cards"), effect.get("source")
@@ -83,8 +99,8 @@ def attached_token_candidate_refs(host, effect: Mapping[str, Any]) -> tuple[str,
         return ()
     return tuple(
         ref for ref in refs
-        if ref in battlefield and battlefield[ref].is_token
-        and _attachment_target_is_legal(host, source, battlefield[ref], attachment_kind="equipment")
+        if ref in battlefield and battlefield[ref].is_token == token_result
+        and _attachment_target_is_legal(host, source, battlefield[ref], attachment_kind=attachment_kind)
     )
 
 

@@ -1,4 +1,12 @@
+import { useId, useRef, useState, type DragEvent } from "react";
+import { CardChoiceGrid, projectedChoiceCards } from "./CardChoiceGrid";
+import { CardInspector, FloatingTablePreview, cardImageUrl } from "./CardSurface";
+import { CombatAssignment } from "./CombatAssignment";
+import { ManaText, spokenMana } from "./ManaText";
 import type { ChoiceForm, JsonValue } from "./generated/protocol";
+import type { ProjectedView } from "./protocol";
+import { modeLabel } from "./tablePresentation";
+import { projectedCardSeat, SeatLabel, tableSeat } from "./SeatLabel";
 import {
   activeFields,
   activeVariants,
@@ -10,7 +18,8 @@ import {
   list,
   orderedPartitionNames,
   record,
-  selectedDamageAllocation,
+  selectedTargetAllocation,
+  targetGroupModes,
   targetGroups,
   selectedTargetCostLabel,
   updateModalTargetSelection,
@@ -23,6 +32,10 @@ interface Props {
   values: ChoiceValues;
   onChange: (values: ChoiceValues) => void;
   labelFor: (value: string) => string;
+  view?: ProjectedView;
+  tableTargets?: { field: string; groupIds: ReadonlySet<string> };
+  onInspect?: (card: JsonValue) => void;
+  costLabels?: Readonly<Record<string, string>>;
 }
 
 function text(value: JsonValue | undefined): string {
@@ -33,8 +46,21 @@ function testValue(value: JsonValue | undefined): string {
   return text(value).replace(/[^A-Za-z0-9_-]/g, "-");
 }
 
+function optionLabel(label: JsonValue | undefined, value: JsonValue | undefined, labelFor: (value: string) => string): string {
+  const ref = text(value);
+  const supplied = text(label);
+  if (supplied && supplied !== ref) return supplied;
+  if (/^(?:[ABCD]\d+|S\d+|[a-f0-9-]{24,})$/i.test(ref)) return labelFor(ref);
+  const words = ref.replaceAll("_", " ").replaceAll("-", " ").trim();
+  return words ? words[0].toUpperCase() + words.slice(1) : "Choose an option";
+}
+
 function FieldLabel({ field }: { field: ChoiceField }) {
-  return <span>{text(field.label || field.name)}{field.required ? " *" : ""}</span>;
+  return <span>{fieldTitle(field)}{field.required ? " *" : ""}</span>;
+}
+
+function fieldTitle(field: ChoiceField): string {
+  return optionLabel(field.label, field.name, () => "Choice");
 }
 
 function RefOptions({
@@ -51,6 +77,8 @@ function RefOptions({
   const name = text(field.name);
   const selected = list(value).map(String);
   const options = list(field.options).map(record);
+  const everyOptionRequired = Boolean(field.ordered) && Number(field.minimum) === options.length
+    && Number(field.maximum) === options.length && selected.length === options.length;
   function toggle(ref: string, checked: boolean) {
     const next = checked
       ? [...selected, ref]
@@ -69,7 +97,7 @@ function RefOptions({
   return (
     <fieldset className="choice-field choice-refs">
       <legend><FieldLabel field={field} /></legend>
-      <div className="choice-options">
+      {!everyOptionRequired && <div className="choice-options">
         {options.map((option) => {
           const ref = text(option.value);
           return (
@@ -81,11 +109,11 @@ function RefOptions({
                 disabled={option.available === false && !selected.includes(ref)}
                 onChange={(event) => toggle(ref, event.target.checked)}
               />
-              <span>{text(option.label) || labelFor(ref)}</span>
+              <span>{optionLabel(option.label, option.value, labelFor)}</span>
             </label>
           );
         })}
-      </div>
+      </div>}
       {Boolean(field.ordered) && selected.length > 0 && (
         <ol className="choice-order">
           {selected.map((ref, index) => (
@@ -93,13 +121,13 @@ function RefOptions({
               <span>{labelFor(ref)}</span>
               <button
                 type="button"
-                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, earlier in ${text(field.label || field.name)}`}
+                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, earlier in ${fieldTitle(field)}`}
                 onClick={() => move(index, -1)}
                 disabled={index === 0}
               >↑</button>
               <button
                 type="button"
-                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, later in ${text(field.label || field.name)}`}
+                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, later in ${fieldTitle(field)}`}
                 onClick={() => move(index, 1)}
                 disabled={index === selected.length - 1}
               >↓</button>
@@ -111,17 +139,81 @@ function RefOptions({
   );
 }
 
+const orderedCardDragType = "application/x-quorune-ordered-card";
+
+function TriggerOrderCards({ field, value, onValue, labelFor, previews }: {
+  field: ChoiceField; value: JsonValue | undefined;
+  onValue: (value: JsonValue) => void; labelFor: (ref: string) => string;
+  previews: JsonValue;
+}) {
+  const order = list(value).map(String).reverse();
+  const artByRef = new Map(list(previews).map((card) => [text(record(card).id), cardImageUrl(card, "small")]));
+  const names = new Map(list(field.options).map(record).map((row) => [
+    text(row.value), optionLabel(row.label, row.value, labelFor),
+  ]));
+  function rearrange(from: number, to: number) {
+    if (from < 0 || to < 0 || to >= order.length || from === to) return;
+    const next = [...order];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    onValue(next.reverse());
+  }
+  return <fieldset className="choice-field trigger-order-field">
+    <legend className="sr-only">Trigger resolution order</legend>
+    <ol className="trigger-order-cards">
+      {order.map((ref, index) => {
+        const art = artByRef.get(ref);
+        return (
+          <li key={ref} draggable
+            onDragStart={(event) => event.dataTransfer.setData(orderedCardDragType, ref)}
+            onDragOver={(event) => {
+              if (event.dataTransfer.types.includes(orderedCardDragType)) event.preventDefault();
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              rearrange(order.indexOf(event.dataTransfer.getData(orderedCardDragType)), index);
+            }}>
+            <span className="trigger-order-position" aria-hidden="true">
+              {index + 1}
+              {art && <img key={art} src={art} alt="" loading="lazy" draggable={false}
+                onError={(event) => { event.currentTarget.hidden = true; }} />}
+            </span>
+            <div className="trigger-order-info">
+              <small>{index === 0 ? "Resolves first" : index === order.length - 1 ? "Resolves last" : `Resolves #${index + 1}`}</small>
+              <strong>{names.get(ref) ?? labelFor(ref)}</strong>
+            </div>
+            <div className="trigger-order-moves">
+              <button type="button" className="link-button" disabled={index === 0}
+                aria-label={`Move trigger ${index + 1} earlier in resolution`} onClick={() => rearrange(index, index - 1)}>↑</button>
+              <button type="button" className="link-button" disabled={index === order.length - 1}
+                aria-label={`Move trigger ${index + 1} later in resolution`} onClick={() => rearrange(index, index + 1)}>↓</button>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  </fieldset>;
+}
+
 function OrderedPartition({
   field,
   value,
   onValue,
   labelFor,
+  view,
+  onInspect,
 }: {
   field: ChoiceField;
   value: JsonValue | undefined;
   onValue: (value: JsonValue) => void;
   labelFor: (value: string) => string;
+  view?: ProjectedView;
+  onInspect?: Props["onInspect"];
 }) {
+  const draggedCard = useRef("");
+  const [preview, setPreview] = useState<{ ref: string; anchor: HTMLElement } | null>(null);
+  const visible = view && projectedChoiceCards(view);
+  const previewCard = preview && visible?.get(preview.ref);
   const partition = record(value);
   const configured = record(field.partitions);
   const names = orderedPartitionNames(field);
@@ -135,12 +227,30 @@ function OrderedPartition({
   const optionLabels = new Map(
     options.map((option) => [
       text(option.value),
-      text(option.label) || labelFor(text(option.value)),
+      optionLabel(option.label, option.value, labelFor),
     ]),
   );
 
   function cardLabel(ref: string): string {
     return optionLabels.get(ref) || labelFor(ref);
+  }
+
+  function inspect(ref: string, anchor: HTMLElement) {
+    const card = visible?.get(ref);
+    if (card === undefined) return;
+    onInspect?.(card);
+    setPreview({ ref, anchor });
+  }
+
+  function previewEvents(ref: string) {
+    return {
+      onMouseEnter: (event: React.MouseEvent<HTMLElement>) => inspect(ref, event.currentTarget),
+      onMouseLeave: () => setPreview(null),
+      onFocus: (event: React.FocusEvent<HTMLElement>) => inspect(ref, event.currentTarget),
+      onBlur: (event: React.FocusEvent<HTMLElement>) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setPreview(null);
+      },
+    };
   }
 
   function groupLabel(name: string, descriptor: ChoiceField): string {
@@ -151,21 +261,42 @@ function OrderedPartition({
     return list(partition[name]).map(String);
   }
 
-  function moveBetween(ref: string, destination: string) {
+  function moveBetween(ref: string, destination: string, index?: number) {
     const next: Record<string, JsonValue> = {};
     for (const [name] of groups) {
       next[name] = groupRefs(name).filter((candidate) => candidate !== ref);
     }
-    next[destination] = [...list(next[destination]).map(String), ref];
+    const destinationRefs = list(next[destination]).map(String);
+    destinationRefs.splice(index ?? destinationRefs.length, 0, ref);
+    next[destination] = destinationRefs;
     onValue(next);
   }
 
   function reorder(group: string, index: number, offset: number) {
-    const values = [...groupRefs(group)];
+    const values = groupRefs(group);
     const target = index + offset;
     if (target < 0 || target >= values.length) return;
-    [values[index], values[target]] = [values[target], values[index]];
-    onValue({ ...partition, [group]: values });
+    moveBetween(values[index], group, target);
+  }
+
+  function allowCardDrop(event: DragEvent<HTMLElement>) {
+    if (!draggedCard.current) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }
+
+  function dropCard(event: DragEvent<HTMLElement>, group: string, rowRef?: string) {
+    const ref = event.dataTransfer.getData(orderedCardDragType);
+    if (!ref || ref !== draggedCard.current || !optionLabels.has(ref)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    draggedCard.current = "";
+    if (ref === rowRef) return;
+    const otherRefs = groupRefs(group).filter((candidate) => candidate !== ref);
+    const rowIndex = rowRef ? otherRefs.indexOf(rowRef) : -1;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const insertAfter = event.clientY >= rect.top + rect.height / 2;
+    moveBetween(ref, group, rowIndex < 0 ? undefined : rowIndex + Number(insertAfter));
   }
 
   function orderedGroup(
@@ -184,7 +315,7 @@ function OrderedPartition({
             : "The listed order is the submitted destination order.";
     const label = groupLabel(group, descriptor);
     return (
-      <div className="choice-partition-group">
+      <div className="choice-partition-group" onDragOver={allowCardDrop} onDrop={(event) => dropCard(event, group)}>
         <strong>{label}</strong>
         <span className="choice-help">{orderLabel}</span>
         <ol
@@ -192,7 +323,14 @@ function OrderedPartition({
           aria-label={`${label} group order. ${orderLabel}`}
         >
           {refs.map((ref, index) => (
-            <li key={ref} data-card-ref={ref}>
+            <li key={ref} data-card-ref={ref} draggable
+              onDragStart={(event) => {
+                draggedCard.current = ref;
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData(orderedCardDragType, ref);
+              }}
+              onDragEnd={() => { draggedCard.current = ""; }}
+              onDrop={(event) => dropCard(event, group, ref)} {...previewEvents(ref)}>
               <span>{cardLabel(ref)}</span>
               <button
                 type="button"
@@ -216,6 +354,7 @@ function OrderedPartition({
   return (
     <fieldset className="choice-field choice-partition">
       <legend><FieldLabel field={field} /></legend>
+      {options.length > 0 && <p className="choice-help">Drag a card to a destination or use its destination menu.</p>}
       <div className="choice-options">
         {options.map((option, optionIndex) => {
           const ref = text(option.value);
@@ -223,7 +362,7 @@ function OrderedPartition({
             groupRefs(name).includes(ref),
           )?.[0] ?? groups[0][0];
           return (
-            <label key={ref} className="choice-option">
+            <label key={ref} className="choice-option" {...previewEvents(ref)}>
               <span>{cardLabel(ref)}</span>
               <select
                 data-testid={`choice-${text(field.name)}-${testValue(ref)}`}
@@ -239,6 +378,9 @@ function OrderedPartition({
           );
         })}
       </div>
+      {view && preview && previewCard !== undefined && <FloatingTablePreview anchor={preview.anchor}>
+        <CardInspector value={previewCard} view={view} previewOnly />
+      </FloatingTablePreview>}
       <div className="choice-partition-orders">
         {groups.map(([name, descriptor]) => (
           <div key={name}>{orderedGroup(name, descriptor)}</div>
@@ -339,23 +481,34 @@ function ManaModes({
   );
 }
 
-function TargetControl({
+export function TargetControl({
   field,
   values,
   onChange,
   labelFor,
+  tableTargetGroups,
+  view,
+  onInspect,
 }: {
   field: ChoiceField;
   values: ChoiceValues;
   onChange: (values: ChoiceValues) => void;
   labelFor: (value: string) => string;
+  tableTargetGroups?: ReadonlySet<string>;
+  view?: ProjectedView;
+  onInspect?: Props["onInspect"];
 }) {
+  const cards = view && projectedChoiceCards(view);
   const schema = record(field.schema);
   const name = text(field.name || "targets");
   const modes = list(values.modes).map(String);
   const targets = record(values[name]);
   const legalModes = list(schema.legal_modes).map(String);
-  const allocation = selectedDamageAllocation(field, values);
+  const modeLabels = record(schema.mode_labels);
+  const targetModes = targetGroupModes(field);
+  const minimumModes = Number(schema.min_modes ?? schema.mode_count ?? 1);
+  const maximumModes = Number(schema.max_modes ?? schema.mode_count ?? 1);
+  const allocation = selectedTargetAllocation(field, values);
   function toggleMode(mode: string, checked: boolean) {
     const next = updateModalTargetSelection(
       schema,
@@ -376,56 +529,79 @@ function TargetControl({
       next = maximum === 1 ? [ref] : [...next.slice(-(maximum - 1)), ref];
     }
     const updated = { ...values, [name]: { ...targets, [id]: next } };
-    if (allocation) delete updated[DAMAGE_ALLOCATION_FIELD];
+    if (allocation) delete updated[allocation.name];
     onChange(updated);
   }
   return (
     <fieldset className="choice-field target-control">
-      <legend><FieldLabel field={field} /></legend>
+      <legend>{legalModes.length > 0 ? "Modes" : <FieldLabel field={field} />}</legend>
       {legalModes.length > 0 && (
-        <div className="choice-options">
-          {legalModes.map((mode) => (
-            <label key={mode} className="choice-option">
-              <input
-                type="checkbox"
-                data-testid={`choice-mode-${testValue(mode)}`}
-                checked={modes.includes(mode)}
-                onChange={(event) => toggleMode(mode, event.target.checked)}
-              />
-              <span>{mode}</span>
-            </label>
-          ))}
-        </div>
+        <>
+          <p className="choice-help" aria-live="polite">
+            {modes.length} selected · Choose {minimumModes === maximumModes ? minimumModes : `${minimumModes}–${maximumModes}`}
+          </p>
+          <div className="choice-options">
+            {legalModes.map((mode, index) => (
+              <label key={mode} className="choice-option">
+                <input
+                  type="checkbox"
+                  data-testid={`choice-mode-${testValue(mode)}`}
+                  checked={modes.includes(mode)}
+                  onChange={(event) => toggleMode(mode, event.target.checked)}
+                />
+                <span>{text(modeLabels[mode]) || modeLabel(mode, index)}</span>
+              </label>
+            ))}
+          </div>
+        </>
       )}
       {targetGroups(field, values).map((group) => {
         const id = text(group.id || "target");
+        if (tableTargetGroups?.has(id)) return null;
         const selected = list(targets[id]).map(String);
+        const maximum = Number(group.max ?? 1);
+        const full = maximum === 0
+          || group.maximum_from === "x" && maximum > 1 && selected.length >= maximum;
+        const mode = targetModes.get(id);
+        const targetLabel = text(group.label || "Targets");
+        const label = mode ? `${text(modeLabels[mode]) || modeLabel(mode, legalModes.indexOf(mode))} · ${targetLabel}` : targetLabel;
+        const bySeat = new Map<string, string[]>();
+        for (const ref of list(group.legal_refs).map(text)) {
+          const seat = tableSeat(ref) ?? (view ? projectedCardSeat(view, cards?.get(ref) ?? null) : undefined) ?? "";
+          bySeat.set(seat, [...(bySeat.get(seat) ?? []), ref]);
+        }
         return (
-          <div key={id} className="target-group">
-            <strong>{text(group.label || id)} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
-            <div className="choice-options">
-              {list(group.legal_refs).map((rawRef) => {
-                const ref = text(rawRef);
-                return (
-                  <label key={ref} className="choice-option">
+          <div key={id} className="target-group" role="group" aria-label={label}>
+            <strong>{label} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
+            {group.maximum_from === "x" && group.max === 0 && selected.length === 0
+              && <p className="choice-help">Set X above 0 to select targets.</p>}
+            <div className="seat-target-options">
+              {[...bySeat].sort(([a], [b]) => a.localeCompare(b)).map(([seat, refs]) =>
+                <div key={seat} className="seat-target-group" role={seat ? "group" : undefined} data-seat={seat || undefined}
+                  aria-label={seat ? `Seat ${seat} targets` : undefined}>
+                  <SeatLabel seat={seat} />
+                  {refs.map((ref) => {
+                    const card = cards?.get(ref);
+                    const inspect = card !== undefined && onInspect ? () => onInspect(card) : undefined;
+                    return <label key={ref} className="choice-option" onMouseEnter={inspect} onFocus={inspect}>
                     <input
                       type="checkbox"
                       data-testid={`choice-target-${testValue(ref)}`}
                       checked={selected.includes(ref)}
-                      disabled={group.max === 0 && !selected.includes(ref)}
+                      disabled={full && !selected.includes(ref)}
                       onChange={(event) => toggleTarget(group, ref, event.target.checked)}
                     />
                     <span>{labelFor(ref)}</span>
-                  </label>
-                );
-              })}
+                    </label>;
+                  })}
+                </div>)}
             </div>
           </div>
         );
       })}
       {allocation && allocation.refs.length > 0 && (
         <fieldset className="choice-field">
-          <legend>Divide {allocation.total} damage</legend>
+          <legend>Divide {allocation.total} {allocation.counters ? "+1/+1 counters" : "damage"}</legend>
           {allocation.refs.map((ref) => (
             <label key={ref} className="choice-option">
               <span>{labelFor(ref)}</span>
@@ -436,7 +612,7 @@ function TargetControl({
                 value={text(allocation.shares[ref])}
                 onChange={(event) => onChange({
                   ...values,
-                  [DAMAGE_ALLOCATION_FIELD]: {
+                  [allocation.name]: {
                     ...allocation.shares,
                     [ref]: event.target.value === "" ? "" : Number(event.target.value),
                   },
@@ -480,7 +656,7 @@ function AssignmentMap({
           const chosen = Array.isArray(selected[key]) ? list(selected[key]).map(text) : text(selected[key]) ? [text(selected[key])] : [];
           return (
             <fieldset key={key} className="choice-field">
-              <legend>{text(row.label) || labelFor(key)}</legend>
+              <legend>{optionLabel(row.label, row.value, labelFor)}</legend>
               <p className="choice-help">Choose up to {maximum} {text(field.choice_label) || "attackers"}.</p>
               {list(row.options).map((rawOption) => {
                 const option = record(rawOption);
@@ -495,7 +671,7 @@ function AssignmentMap({
                       else delete next[key];
                       onValue(next);
                     }} />
-                  <span>{text(option.label) || labelFor(ref)}</span>
+                  <span>{optionLabel(option.label, option.value, labelFor)}</span>
                 </label>;
               })}
             </fieldset>
@@ -503,7 +679,7 @@ function AssignmentMap({
         }
         return (
           <label key={key}>
-            {text(row.label) || labelFor(key)}
+            {optionLabel(row.label, row.value, labelFor)}
             <select
               data-testid={`choice-${text(field.name)}-${testValue(key)}`}
               value={text(selected[key])}
@@ -517,7 +693,7 @@ function AssignmentMap({
               <option value="">Do not assign</option>
               {list(row.options).map((rawOption) => {
                 const option = record(rawOption);
-                return <option key={text(option.value)} value={text(option.value)}>{text(option.label) || labelFor(text(option.value))}</option>;
+                return <option key={text(option.value)} value={text(option.value)}>{optionLabel(option.label, option.value, labelFor)}</option>;
               })}
             </select>
           </label>
@@ -553,9 +729,17 @@ function DamageAssignments({
       <legend><FieldLabel field={field} /></legend>
       {Object.entries(sources).map(([source, rawSource]) => {
         const sourceData = record(rawSource);
+        const power = Number(sourceData.power ?? 0);
+        const assigned = assignments
+          .filter((row) => row.source === source)
+          .reduce((total, row) => total + Number(row.amount ?? 0), 0);
+        const remaining = power - assigned;
         return (
           <div key={source} className="damage-source">
-            <strong>{labelFor(source)} assigns {text(sourceData.power)} damage</strong>
+            <strong>{labelFor(source)} assigns {power} damage</strong>
+            <p className="choice-help" role="status">
+              {assigned} assigned · {remaining < 0 ? `${-remaining} over the limit` : `${remaining} remaining`}
+            </p>
             {sourceData.as_unblocked_recipient && (
               <p>Assign all damage to {labelFor(text(sourceData.as_unblocked_recipient))}, or use the ordinary assignment to blockers.</p>
             )}
@@ -567,7 +751,7 @@ function DamageAssignments({
                   <input
                     type="number"
                     min={0}
-                    max={Number(sourceData.power ?? 0)}
+                    max={power}
                     value={amount(source, target)}
                     onChange={(event) => update(source, target, Number(event.target.value))}
                   />
@@ -575,6 +759,41 @@ function DamageAssignments({
               );
             })}
           </div>
+        );
+      })}
+    </fieldset>
+  );
+}
+
+function QuantityMap({ field, value, onValue, labelFor }: {
+  field: ChoiceField;
+  value: JsonValue | undefined;
+  onValue: (value: JsonValue) => void;
+  labelFor: (value: string) => string;
+}) {
+  const amounts = record(value);
+  const budget = Number(field.exact_total ?? field.maximum_total);
+  const total = Object.values(amounts).reduce<number>((sum, amount) => sum + Number(amount), 0);
+  return (
+    <fieldset className="choice-field">
+      <legend><FieldLabel field={field} /></legend>
+      <p>{total} of {budget} assigned</p>
+      {list(field.options).map((rawOption) => {
+        const option = record(rawOption);
+        const ref = text(option.value);
+        return (
+          <label key={ref} className="choice-option">
+            <input type="number" min={0} max={Number(field.maximum_each ?? budget)} step={1}
+              value={Number(amounts[ref] ?? 0)} aria-label={labelFor(ref)}
+              onChange={(event) => {
+                const next = { ...amounts };
+                const amount = Number(event.target.value);
+                if (amount === 0) delete next[ref];
+                else next[ref] = amount;
+                onValue(next);
+              }} />
+            <span>{labelFor(ref)}</span>
+          </label>
         );
       })}
     </fieldset>
@@ -720,7 +939,7 @@ function CopyTargets({
               const selected = selectedFor(submitted[index], group, groups.length);
               return (
                 <div key={id} className="target-group">
-                  <span>{text(group.label || id)}</span>
+                  <span>{text(group.label || "Targets")}</span>
                   <div className="choice-options">
                     {list(group.legal_refs).map((rawRef) => {
                       const ref = text(rawRef);
@@ -747,16 +966,67 @@ function CopyTargets({
   );
 }
 
+function EntryCreatureTypePicker({ field, value, onValue, types }: {
+  field: ChoiceField;
+  value: JsonValue | undefined;
+  onValue: (value: string) => void;
+  types: Record<string, JsonValue>;
+}) {
+  const [query, setQuery] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const options = list(field.options).map(record);
+  const filter = query.trim().toLowerCase();
+  const preferred = options.some((option) => record(types[text(option.value)]).preferred === true);
+  const showCatalog = showAll || Boolean(filter) || !preferred;
+  const matches = options.flatMap((option) => {
+    const ref = text(option.value);
+    const type = record(types[ref]);
+    const label = text(type.label ?? option.label ?? option.value);
+    const visible = !type.label || showCatalog || type.preferred === true || ref === value;
+    return visible && label.toLowerCase().includes(filter) ? [{ ref, label }] : [];
+  });
+  const radioName = useId();
+
+  return <fieldset className="choice-field creature-type-choice">
+    <legend>Creature type</legend>
+    <div className="creature-type-tools">
+      <label className="choice-filter">
+        <span>Search all creature types</span>
+        <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => { if (event.key === "Enter") event.preventDefault(); }} />
+      </label>
+      {preferred && !filter && <button type="button" className="secondary-button" aria-pressed={showAll}
+        onClick={() => setShowAll((current) => !current)}>
+        {showAll ? "Show types in your deck" : "Show all types"}
+      </button>}
+    </div>
+    {!showCatalog && <small>Types in your deck</small>}
+    {matches.length === 0 && <p role="status">No matching creature types.</p>}
+    <div className="creature-type-options">
+      {matches.map(({ ref, label }) => <label key={ref} className="choice-option">
+        <input type="radio" name={radioName} value={ref} checked={ref === value} onChange={() => onValue(ref)} />
+        {label}
+      </label>)}
+    </div>
+  </fieldset>;
+}
+
 function ChoiceControl({
   field,
   values,
   onChange,
   labelFor,
+  tableTargetGroups,
+  view,
+  onInspect,
 }: {
   field: ChoiceField;
   values: ChoiceValues;
   onChange: (values: ChoiceValues) => void;
   labelFor: (value: string) => string;
+  tableTargetGroups?: ReadonlySet<string>;
+  view?: ProjectedView;
+  onInspect?: Props["onInspect"];
 }) {
   const name = text(field.name);
   const control = text(field.control);
@@ -769,14 +1039,16 @@ function ChoiceControl({
   if (control === MANA_POOL_PAYMENT_FIELD) return <ManaPoolPayment field={field} value={value} onValue={set} />;
   if (control === "mana_modes") return <ManaModes field={field} value={value} onValue={set} />;
   if (control === "refs") return <RefOptions field={field} value={value} onValue={set} labelFor={labelFor} />;
-  if (control === "ordered_partition") return <OrderedPartition field={field} value={value} onValue={set} labelFor={labelFor} />;
+  if (control === "ordered_partition") return <OrderedPartition field={field} value={value} onValue={set} labelFor={labelFor} view={view} onInspect={onInspect} />;
   if (control === "targets") return <>
-    <TargetControl field={field} values={values} onChange={onChange} labelFor={labelFor} />
-    {selectedTargetCostLabel(field, values) && <p role="status">{selectedTargetCostLabel(field, values)}</p>}
+    <TargetControl field={field} values={values} onChange={onChange} labelFor={labelFor} tableTargetGroups={tableTargetGroups}
+      view={view} onInspect={onInspect} />
+    {!tableTargetGroups && selectedTargetCostLabel(field, values) && <p role="status">{selectedTargetCostLabel(field, values)}</p>}
   </>;
   if (control === "assignment_map") return <AssignmentMap field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "damage_assignments") return <DamageAssignments field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "object_map") return <ObjectMap field={field} value={value} onValue={set} labelFor={labelFor} />;
+  if (control === "quantity_map") return <QuantityMap field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "boolean") {
     const legalValues = list(field.legal_values).filter(
       (candidate): candidate is boolean => typeof candidate === "boolean",
@@ -795,7 +1067,7 @@ function ChoiceControl({
   if (control === "integer") {
     return (
       <label className="choice-field"><FieldLabel field={field} />
-        <input data-testid={`choice-${name}`} type="number" min={Number(field.minimum ?? 0)} max={field.maximum === undefined ? undefined : Number(field.maximum)} value={Number(value ?? 0)} onChange={(event) => set(Number(event.target.value))} />
+        <input data-testid={`choice-${name}`} name={name} type="number" min={Number(field.minimum ?? 0)} max={field.maximum === undefined ? undefined : Number(field.maximum)} value={Number(value ?? 0)} onChange={(event) => set(Number(event.target.value))} />
       </label>
     );
   }
@@ -814,37 +1086,91 @@ function ChoiceControl({
           {list(field.options).map((rawOption) => {
             const option = record(rawOption);
             const rawValue = option.value;
-            return <option key={text(rawValue)} value={text(rawValue)}>{text(option.label) || labelFor(text(rawValue))}</option>;
+            return <option key={text(rawValue)} value={text(rawValue)}>{optionLabel(option.label, rawValue, labelFor)}</option>;
           })}
         </select>
       </label>
     );
   }
   if (control === "copy_targets") return <CopyTargets field={field} value={value} onValue={set} labelFor={labelFor} />;
-  return <p className="choice-warning">This server-issued control is not renderable by this browser version.</p>;
+  return field.required ? null
+    : <p className="choice-warning">A newer browser build can show this optional control.</p>;
 }
 
-export function ChoiceFormView({ form, values, onChange, labelFor }: Props) {
+export function ChoiceFormView({ form, values, onChange, labelFor, view, tableTargets, costLabels, onInspect }: Props) {
+  const costGroup = useId();
+  if (form.v !== 1) return null;
   const variants = activeVariants(form, values);
   const selector = text(variants.field || "cost_option");
   const variantOptions = list(variants.options).map(record);
+  const showPrices = variantOptions.some((option) => costLabels?.[text(option.value)]);
+  const selectedCost = text(values[selector] ?? variants.default);
+  const changeCost = (value: string) => onChange(choicesWithDefaults(form, { ...values, [selector]: value }));
+  const fields = activeFields(form, values);
+  const decisionKind = view?.decision?.kind;
+  const entryTypes = record(view?.decision?.ctx.entry_creature_types);
+  const choosingHandCards = decisionKind === "mulligan.bottom" || decisionKind === "cleanup.discard";
+  const cardPicker = (field: ChoiceField) => {
+    if (decisionKind === "state.legend" && field.name === "card") {
+      return field.control === "ref" || field.control === "select" || field.control === "refs";
+    }
+    if (field.name === "search_card" || field.name === "search_cards") {
+      return field.control === "ref" || field.control === "select" || field.control === "refs";
+    }
+    return field.control === "refs" && (field.name === "cost_cards"
+      || (choosingHandCards && field.name === "cards"));
+  };
+  const cards = view && fields.some(cardPicker)
+    ? projectedChoiceCards(view) : null;
   return (
     <div className="choice-form-fields">
-      {variantOptions.length > 0 && (
+      {variantOptions.length > 1 && (showPrices ? (
+        <fieldset className="choice-field" data-testid={`choice-${selector}`}>
+          <legend>{text(variants.label || "Casting cost")}</legend>
+          <div className="choice-options">
+            {variantOptions.map((option) => {
+              const value = text(option.value);
+              const label = costLabels?.[value] ?? text(option.label);
+              return <label key={value} className="choice-option">
+                <input type="radio" name={costGroup} value={value} checked={selectedCost === value}
+                  aria-label={spokenMana(label)} onChange={() => changeCost(value)} />
+                <ManaText text={label} />
+              </label>;
+            })}
+          </div>
+        </fieldset>
+      ) : (
         <label className="choice-field">
           {text(variants.label || "Casting cost")}
           <select
             data-testid={`choice-${selector}`}
-            value={text(values[selector] ?? variants.default)}
-            onChange={(event) => onChange(choicesWithDefaults(form, { ...values, [selector]: event.target.value }))}
+            value={selectedCost}
+            onChange={(event) => changeCost(event.target.value)}
           >
             {variantOptions.map((option) => <option key={text(option.value)} value={text(option.value)}>{text(option.label)}</option>)}
           </select>
         </label>
-      )}
-      {activeFields(form, values).map((field) => (
-        <ChoiceControl key={text(field.name)} field={field} values={values} onChange={onChange} labelFor={labelFor} />
       ))}
+      {fields.map((field) => {
+        const name = text(field.name);
+        const onValue = (value: JsonValue) => onChange({ ...values, [name]: value });
+        if (decisionKind === "trigger.order" && field.control === "refs" && field.ordered) {
+          return <TriggerOrderCards key={name} field={field} value={values[name]} onValue={onValue} labelFor={labelFor}
+            previews={view?.decision?.ctx.preview_cards ?? []} />;
+        }
+        if (name === "replacement" && list(field.options).some((raw) => entryTypes[text(record(raw).value)])) {
+          return <EntryCreatureTypePicker key={name} field={field} value={values[name]} onValue={onValue} types={entryTypes} />;
+        }
+        if (view && cards && cardPicker(field)) {
+          return <CardChoiceGrid key={name} field={field} value={values[name]}
+            onValue={onValue} labelFor={labelFor} view={view} cards={cards} />;
+        }
+        if (view && field.control === "assignment_map" && (name === "attackers" || name === "blocks")) {
+          return <CombatAssignment key={name} field={field} value={values[name]} onValue={onValue} view={view} labelFor={labelFor} />;
+        }
+        return <ChoiceControl key={name} field={field} values={values} onChange={onChange} labelFor={labelFor}
+          view={view} onInspect={onInspect} tableTargetGroups={tableTargets?.field === name ? tableTargets.groupIds : undefined} />;
+      })}
     </div>
   );
 }

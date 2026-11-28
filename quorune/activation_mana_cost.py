@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
 from .replacement.immutable import FrozenMap, thaw_value
+from .printed_mana_cost_model import phyrexian_mana_choices
 from .mana_restrictions import ability_mana_spend_context
 
 
@@ -154,9 +155,8 @@ def fixed_complex_activation_mana_options(
         ):
             color = next(part for part in parts if part != "2")
             choices = (("generic", 2), ("mana", color))
-        elif (len(parts) in (2, 3) and parts[-1] == "P"
-                and len(set(parts[:-1])) == len(parts) - 1 and set(parts[:-1]).issubset(_COLORS)):
-            choices = [*(('mana', color) for color in parts[:-1]), ('life', 2)]
+        elif phyrexian := phyrexian_mana_choices(symbol):
+            choices = phyrexian
         elif symbol == "S":
             choices = (("snow", 1),)
         else:
@@ -302,8 +302,11 @@ def payable_activation_mana_options(
         else set()
     )
     spend_context = ability_mana_spend_context(
-        str(host._effective_card_data(source).get("type_line") or "")
+        str(host._effective_card_data(source).get("type_line") or ""), source_zone=source.zone,
     )
+    from .life_state import available_life_for_payment
+
+    available = available_life_for_payment(host, seat)
     return tuple(
         option
         for option in current_activation_mana_options(
@@ -313,8 +316,7 @@ def payable_activation_mana_options(
             source,
             modifiers=modifiers,
         )
-        if host.state.players[seat].life
-        >= base_life + option.life_payment
+        if available >= base_life + option.life_payment
         and host._cost_is_affordable(
             seat,
             option.requirements,

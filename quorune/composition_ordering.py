@@ -5,7 +5,9 @@ from __future__ import annotations
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import replace
-from .composition_order_model import CompositionOrderRequest,CompositionOrderChoiceRequired
+from .composition_order_model import (
+    ORDERED_SACRIFICE_REQUEST_VERSION, CompositionOrderRequest, CompositionOrderChoiceRequired,
+)
 from .errors import GameRuleError
 from .replacement.immutable import FrozenMap
 from .zone_trigger_events import ZoneTransitionKind
@@ -105,6 +107,56 @@ def resolve_composition_departure_batch(owner,changes,*,reason,replacement_selec
     return list(resolve_composition_departure(owner,object_id,destination,reason=reason,
         replacement_selections=replacement_selections,transition_kind=kinds.get(object_id,ZoneTransitionKind.ORDINARY),
         prepared_replacement=(prepared_replacements or {}).get(object_id),damage_clears=damage_clears))
+
+
+def resolve_ordered_sacrifice_batch(owner, object_ids, *, actor, reason, replacement_selections=()):
+    """Collect physical arrival orders before committing a resolving sacrifice batch."""
+    from .composition_departure_batch import prepare_composition_departure_batch
+    from .composition_departure_commit import commit_prepared_composition_departures
+    from .semantic_runtime.zone_replacements import prepare_zone_change_replacement_batch
+    from .zone_transition_model import filter_prohibited_sacrifice_transitions
+
+    if actor != _ACTOR.get():
+        raise GameRuleError('Ordered sacrifice requires its resolving-effect actor')
+    changes, kinds = filter_prohibited_sacrifice_transitions(
+        owner.state, tuple((oid, 'graveyard') for oid in object_ids),
+        {oid: ZoneTransitionKind.SACRIFICE for oid in object_ids},
+    )
+    if not changes:
+        return ()
+    replacements = prepare_zone_change_replacement_batch(
+        owner.host, changes, transition_kinds=kinds, selections=replacement_selections, error_type=GameRuleError,
+    )
+    batch = prepare_composition_departure_batch(
+        owner, changes, actor=actor, reason=reason, transition_kinds=kinds,
+        prepared_replacements=replacements, ordered_sacrifice=True,
+    )
+    choices = batch.request.choices
+    selection = _SELECTION.get()
+    if not choices:
+        if selection is not None:
+            raise GameRuleError('The ordered sacrifice no longer matches the offered departure')
+        return commit_prepared_composition_departures(owner, batch.with_orders(()))
+
+    anchor = batch.request.subjects[0]
+    chooser = choices[0][0][0]
+    request = CompositionOrderRequest(
+        anchor.card_state, anchor.requested_destination, actor, chooser, reason, anchor.position,
+        anchor.transition_kind, ORDERED_SACRIFICE_REQUEST_VERSION, anchor.destination, chooser,
+        batch_request=batch.request,
+    )
+    if selection is None:
+        raise CompositionOrderChoiceRequired(request)
+    saved, refs = selection
+    if replace(saved, chooser=chooser, ordering_actor=chooser, orders=()) != request:
+        raise GameRuleError('The ordered sacrifice no longer matches the offered departure')
+    orders = (*saved.orders, tuple(refs))
+    if len(orders) < len(choices):
+        next_owner = choices[len(orders)][0][0]
+        raise CompositionOrderChoiceRequired(
+            replace(request, chooser=next_owner, ordering_actor=next_owner, orders=orders),
+        )
+    return commit_prepared_composition_departures(owner, batch.with_orders(orders))
 
 
 def _matches_chosen_owner_library_move(host, item, program, retained, instruction_pointer, request):

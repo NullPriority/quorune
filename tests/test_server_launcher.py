@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import os
 import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
-from server import __main__ as launcher
+from server import ServerSettings, __main__ as launcher
 
 
 class ServerLauncherTests(unittest.TestCase):
@@ -24,6 +25,13 @@ class ServerLauncherTests(unittest.TestCase):
 
         timer_factory.assert_not_called()
         timer.start.assert_not_called()
+
+    def test_engine_managed_empty_priority_requires_an_opt_in(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            self._run_launcher("--no-build-browser", "--offline")
+            self.assertFalse(ServerSettings.from_environment().auto_pass_empty_priority)
+            self._run_launcher("--no-build-browser", "--offline", "--auto-pass-empty-priority")
+            self.assertTrue(ServerSettings.from_environment().auto_pass_empty_priority)
 
     def test_open_flag_explicitly_schedules_browser(self) -> None:
         timer, timer_factory = self._run_launcher(

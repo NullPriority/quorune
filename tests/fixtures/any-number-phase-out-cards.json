@@ -70,7 +70,106 @@
       },
       "power": "2",
       "toughness": "2"
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "name": "Talon Gates of Madara",
+      "mana_cost": "",
+      "type_line": "Land — Gate",
+      "oracle_text": "When this land enters, up to one target creature phases out.\n{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\n{4}: Put this card from your hand onto the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "cmc": 0.0,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "An attacking or blocking creature that phases out is removed from combat."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Any continuous effects with a \"for as long as\" duration ignore phased-out objects. If ignoring those objects causes the effect's conditions to no longer be met, the duration will expire."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "As a permanent is phased out, Auras and Equipment attached to it also phase out at the same time. Those Auras and Equipment will phase in at the same time that permanent does, and they'll phase in still attached to that permanent."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Choices made for permanents as they entered the battlefield are remembered when they phase in."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Permanents phase back in during their controller's untap step, immediately before that player untaps their permanents. Creatures that phase in this way are able to attack during that turn, and their activated abilities with {T} in their costs can be activated. If a permanent had counters on it when it phased out, it will have those counters when it phases back in."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Phased-out permanents are treated as though they don't exist. They can't be the targets of spells or abilities, their static abilities have no effect on the game, their triggered abilities can't trigger, they can't attack or block, and so on."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Phasing out doesn't cause any \"leaves the battlefield\" abilities to trigger. Similarly, phasing in won't cause any \"enters the battlefield\" abilities to trigger."
+    },
+    {
+      "oracle_id": "8c45bf9d-a017-43bf-9e32-67810a8a217b",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "When you activate Talon Gates of Madara's last ability, you must reveal Talon Gates of Madara from your hand until that ability resolves or otherwise leaves the stack. If Talon Gates of Madara isn't still in your hand as that ability resolves, nothing happens."
+    }
+  ]
 }

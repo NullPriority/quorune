@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic source-sacrifice library-entry witness",
+  "cards": [
+    {
+      "oracle_id": "9aecc61d-f37b-43bd-943d-c36c42897bdb",
+      "name": "Underflow Surveyor",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "{2}{U}{U}, Sacrifice this creature: Choose a creature type. Reveal cards from the top of your library until you reveal a creature card of that type. Put that card onto the battlefield and shuffle the rest into your library.",
+      "power": "2",
+      "toughness": "3",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

@@ -15,6 +15,8 @@ from ..rules.graveyard_card_targets import (
     opposing_graveyard_return_sequence,
     opposing_graveyard_return_sequence_capabilities,
     public_graveyard_return_effect,
+    per_color_graveyard_return_effect,
+    per_color_graveyard_return_target_schema,
 )
 from ..rules.source_excluding_graveyard_returns import source_excluding_graveyard_return_schema
 from .direct_target import (
@@ -284,10 +286,24 @@ def targeted_return_to_hand_effect_template(
     )
 
 
+class PerColorGraveyardReturnTemplate:
+    def compiled(self):
+        from .fixed_homogeneous_target_sets import FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC
+
+        return (
+            "return-one-own-graveyard-card-of-each-color-v1", (per_color_graveyard_return_effect(),),
+            per_color_graveyard_return_target_schema(),
+            (FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC, "return-to-owner-hand", "cr-115-targets"),
+        )
+
+
 def targeted_own_graveyard_return_to_hand_effect_template(
     text: str,
-) -> TargetedOwnGraveyardReturnToHandEffectTemplate | TargetedGraveyardReturnManaValueLifeTemplate | None:
+) -> (TargetedOwnGraveyardReturnToHandEffectTemplate | TargetedGraveyardReturnManaValueLifeTemplate
+      | PerColorGraveyardReturnTemplate | None):
     normalized = ' '.join(text.strip().split())
+    if normalized.casefold() == "for each color, return up to one target card of that color from your graveyard to your hand.":
+        return PerColorGraveyardReturnTemplate()
     prefix = "return another target "
     if normalized.casefold().startswith(prefix):
         ordinary = targeted_own_graveyard_return_to_hand_effect_template("return target " + normalized[len(prefix):])

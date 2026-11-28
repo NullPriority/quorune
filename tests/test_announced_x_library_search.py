@@ -50,6 +50,30 @@ class AnnouncedXLibrarySearchModelTests(unittest.TestCase):
             with self.subTest(malformed=malformed), self.assertRaises(ValueError):
                 counted_search_bound_dependencies(malformed)
 
+    def test_loyalty_x_accepts_only_the_closed_artifact_search_result(self):
+        text = (
+            "−X: Search your library for an artifact card with mana value X or less, "
+            "put it onto the battlefield, then shuffle."
+        )
+        caps = load_default_capability_registry()
+        card = record(text, "Legendary Planeswalker — Test")
+        for unsupported in (
+            text.replace("an artifact", "a creature"),
+            text.replace("X or less", "X"),
+            text.replace("onto the battlefield", "into your hand"),
+            text.replace("onto the battlefield", "onto the battlefield tapped"),
+        ):
+            with self.subTest(unsupported=unsupported):
+                variant = replace(card, oracle_text=unsupported)
+                self.assertNotEqual("exact", compile_oracle_card(variant, capability_registry=caps).status)
+        ir = compile_oracle_card(card, capability_registry=caps)
+        self.assertEqual("exact", ir.status)
+        node, = ir.faces[0].nodes
+        self.assertEqual(
+            {FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, DECLARED_AMOUNT_CAPABILITY, "activation.loyalty.announced_x"},
+            set(node.capability_dependencies),
+        )
+
     def test_omitting_the_search_bound_projection_is_detected(self):
         with patch("quorune.compiler.declared_effect_amounts.counted_search_mana_value_slot", return_value=False):
             with self.assertRaises(AssertionError):
@@ -68,6 +92,7 @@ class AnnouncedXLibrarySearchRuntimeTests(actions.InheritedNativeFixture, unitte
             ROOT / "tests/fixtures/kicked-entry-triggers.json",
             ROOT / "tests/fixtures/state-based-destination-cards.json",
             ROOT / "tests/fixtures/announced-x-library-search-cards.json",
+            ROOT / "tests/fixtures/untargeted-untap-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -218,4 +243,144 @@ class AnnouncedXLibrarySearchRuntimeTests(actions.InheritedNativeFixture, unitte
         self.settle(session)
         self.assertEqual("battlefield", session.state.cards[elf.object_id].zone)
         self.assertEqual(baseline + 1, self.shuffles(session))
+        self.replay(session, load=True)
+
+    def tezzeret(self, session, loyalty):
+        source = self.add(session.engine, "Tezzeret the Seeker")
+        source.counters["loyalty"] = loyalty
+        source.annotations["loyalty_initialized"] = True
+        self.assert_closed(session, source)
+        return source
+
+    def activate_loyalty(self, session, source, slot, **selection):
+        action_id = f"activate:{source.ref}:ab{slot}"
+        offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action_id, {offer["id"] for offer in offers})
+        result = session.act("pilot:A", {"action_id": action_id, **selection})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_original_tezzeret_plus_one_keeps_zero_one_and_partial_target_resolution(self):
+        for index, (targets, destroy_target) in enumerate(((0, False), (1, False), (1, True), (2, True))):
+            with self.subTest(targets=targets, destroy_target=destroy_target):
+                session = self.session(1070310 + index)
+                source = self.tezzeret(session, 4)
+                artifact = self.add(session.engine, "Sol Ring", ref="tezzeret-own-ring")
+                foreign = self.add(session.engine, "Memnite", seat="B", ref="tezzeret-foreign-memnite")
+                removal = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+                artifact.tapped = foreign.tapped = True
+                self.prepare(session)
+                session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+                self.checkpoint(session)
+
+                action = {"action_id": f"activate:{source.ref}:ab1"}
+                before = authoritative_state_hash(session.state)
+                invalid = [artifact.ref, artifact.ref]
+                self.assertFalse(session.act("pilot:A", {**action, "targets": invalid}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+                selected = [artifact.ref, foreign.ref][:targets]
+                self.activate_loyalty(session, source, 1, targets=selected)
+                self.assertEqual(selected, list(session.state.stack[-1].targets))
+                self.assertEqual(5, session.state.cards[source.object_id].counters["loyalty"])
+                self.assertTrue(session.state.cards[artifact.object_id].tapped)
+                if destroy_target:
+                    self.cast(session, "B", removal, [artifact.ref])
+                    self.assertIsNone(self.resolve_top(session))
+                    self.assertEqual("graveyard", session.state.cards[artifact.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                if not destroy_target:
+                    self.assertEqual(targets == 0, session.state.cards[artifact.object_id].tapped)
+                self.assertEqual(targets < 2, session.state.cards[foreign.object_id].tapped)
+                self.assertFalse(session.act("pilot:A", {
+                    "action_id": f"activate:{source.ref}:ab2", "x": 0,
+                }).ok)
+                self.replay(session, load=True)
+
+    def test_original_tezzeret_minus_x_keeps_paid_bound_and_shuffle_on_choice_or_failure(self):
+        for amount in (0, 1):
+            with self.subTest(x=amount):
+                session = self.session(1070320 + amount)
+                source = self.tezzeret(session, 1)
+                citadel = self.add(session.engine, "Darksteel Citadel", zone="library", ref="tezzeret-hidden-citadel")
+                ring = self.add(session.engine, "Sol Ring", zone="library", ref="tezzeret-hidden-ring")
+                self.add(session.engine, "Llanowar Elves", zone="library")
+                self.prepare(session)
+                baseline = self.shuffles(session)
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                command = {"action_id": f"activate:{source.ref}:ab2"}
+                for malformed in (-1, 2, True):
+                    self.assertFalse(session.act("pilot:A", {**command, "x": malformed}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+
+                self.activate_loyalty(session, source, 2, x=amount)
+                self.assertEqual(amount, session.state.stack[-1].x_value)
+                self.assertEqual("graveyard" if amount else "battlefield", session.state.cards[source.object_id].zone)
+                self.assertEqual(baseline, self.shuffles(session))
+                packet = self.search_packet(session, amount)
+                choice = packet["legal_actions"][0]["choice_schema"]
+                expected = {citadel.ref, ring.ref} if amount else {citadel.ref}
+                self.assertEqual(expected, set(choice["legal_refs"]))
+                self.assertTrue(choice["rules_may_fail_to_find"])
+                for viewer in "BCD":
+                    projection = json.dumps(session.packet("pilot:" + viewer, full=True))
+                    self.assertNotIn(citadel.ref, projection)
+                    self.assertNotIn(ring.ref, projection)
+                before = authoritative_state_hash(session.state)
+                for actor, ref in (("B", citadel.ref), ("A", source.ref if amount else ring.ref)):
+                    self.assertFalse(session.act(f"pilot:{actor}", {
+                        "action_id": "choose", "search_cards": [ref],
+                    }).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", {
+                    "action_id": "choose", "search_cards": [ring.ref] if amount else [],
+                })
+                self.assertTrue(result.ok, result.summary)
+                self.settle(session)
+                self.assertEqual("battlefield" if amount else "library", session.state.cards[ring.object_id].zone)
+                self.assertEqual("library", session.state.cards[citadel.object_id].zone)
+                self.assertEqual(baseline + 1, self.shuffles(session))
+                self.replay(session, load=True)
+
+    def test_original_tezzeret_minus_five_locks_artifact_set_and_expires_set_base(self):
+        session = self.session(1070330)
+        source = self.tezzeret(session, 5)
+        land = self.add(session.engine, "Darksteel Citadel")
+        creature = self.add(session.engine, "Memnite")
+        late = self.add(session.engine, "Sol Ring", zone="hand")
+        other = self.add(session.engine, "Sol Ring", seat="B", ref="tezzeret-other-ring")
+        creature.counters["+1/+1"] = 1
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        self.activate_loyalty(session, source, 3)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+
+        def effective(card):
+            current = session.state.cards[card.object_id]
+            return session.engine._effective_card_data(current)
+
+        def types(card):
+            return session.engine._type_parts(effective(card)["type_line"])[0]
+
+        self.assertEqual({"artifact", "land", "creature"}, types(land))
+        self.assertEqual({"artifact", "creature"}, types(creature))
+        def stats(card):
+            return tuple(session.engine._numeric_stat(card.object_id, name) for name in ("power", "toughness"))
+
+        self.assertEqual((5, 5), stats(land))
+        self.assertEqual((6, 6), stats(creature))
+        self.assertIn("Construct", effective(creature)["type_line"])
+        self.assertEqual({"artifact"}, types(other))
+        self.cast(session, "A", late)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"artifact"}, types(late))
+        self.replay(session, load=True)
+
+        current_turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > current_turn)
+        self.assertEqual({"artifact", "land"}, types(land))
+        self.assertEqual((2, 2), stats(creature))
         self.replay(session, load=True)

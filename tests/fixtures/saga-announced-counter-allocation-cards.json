@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned_oracle_card",
+  "source": "Pinned Commander card data for the Saga three-counter announced allocation.",
+  "cards": [
+    {
+      "oracle_id": "5a848c1f-d11a-42fb-b9ce-663901fc9555",
+      "name": "Revival of the Ancestors",
+      "mana_cost": "{1}{W}{B}{G}",
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create three 1/1 white Spirit creature tokens.\nII — Distribute three +1/+1 counters among one, two, or three target creatures you control.\nIII — Creatures you control gain trample and lifelink until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2025-04-11",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

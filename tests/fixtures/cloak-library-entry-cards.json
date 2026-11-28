@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source": "Original synthetic face-down library and printed-price fixtures",
+  "cards": [
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a321","name":"Fixture Shrouded Gate","mana_cost":"{G}","cmc":1,"type_line":"Sorcery","oracle_text":"Cloak the top card of your library.","colors":["G"],"color_identity":["G"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a322","name":"Fixture Hidden Passage","mana_cost":"{3}{G}","cmc":4,"type_line":"Sorcery","oracle_text":"Look at the top five cards of your library, cloak two of them, and put the rest on the bottom of your library in a random order.","colors":["G"],"color_identity":["G"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a323","name":"Fixture Hollow Lynx","mana_cost":"{1}{G}","cmc":2,"type_line":"Creature — Cat","oracle_text":"","power":"3","toughness":"1","colors":["G"],"color_identity":["G"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a324","name":"Fixture Canopy Fade","mana_cost":"{1}{U}","cmc":2,"type_line":"Instant","oracle_text":"Target creature gets -1/-1 until end of turn.","colors":["U"],"color_identity":["U"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a325","name":"Fixture Dust Crane","mana_cost":"{3}{W}","cmc":4,"type_line":"Creature — Bird","oracle_text":"Disguise {1}{W}","power":"4","toughness":"2","colors":["W"],"color_identity":["W"],"keywords":["Disguise"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a326","name":"Fixture Frost Talon","mana_cost":"{S}{G/P}","cmc":2,"type_line":"Snow Creature — Bird","oracle_text":"","power":"3","toughness":"2","colors":["G"],"color_identity":["G"],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"cab17281-65b1-427c-8534-5c489833a327","name":"Fixture Frost Point","mana_cost":"","cmc":0,"type_line":"Basic Snow Land — Forest","oracle_text":"","produced_mana":["G"],"colors":[],"color_identity":["G"],"layout":"normal","legalities":{"commander":"legal"}}
+  ],
+  "rulings": []
+}

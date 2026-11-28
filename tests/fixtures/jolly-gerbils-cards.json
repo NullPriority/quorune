@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "8e22bf51-1b1b-459b-af78-91188b6e3f09",
+      "name": "Jolly Gerbils",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Hamster Citizen",
+      "oracle_text": "Whenever you give a gift, draw a card.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "8e22bf51-1b1b-459b-af78-91188b6e3f09",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The ability of Jolly Gerbils triggers when the gift is actually given. For permanent spells, that happens when the gift triggered ability resolves. For instants and sorceries, that happens when the spell resolves. It doesn’t matter if a replacement effect causes the gift you gave to become something else or if a static effect stops the player from receiving that gift."
+    }
+  ]
+}

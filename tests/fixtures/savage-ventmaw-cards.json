@@ -1,0 +1,69 @@
+{
+  "cards": [
+    {
+      "oracle_id": "f743d85f-754e-4e70-9907-af54acb9e8d4",
+      "name": "Savage Ventmaw",
+      "mana_cost": "{4}{R}{G}",
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "Flying\nWhenever this creature attacks, add {R}{R}{R}{G}{G}{G}. Until end of turn, you don't lose this mana as steps and phases end.",
+      "power": "4",
+      "produced_mana": [
+        "G",
+        "R"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "4",
+      "type_line": "Creature — Dragon",
+      "cmc": 6.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "f743d85f-754e-4e70-9907-af54acb9e8d4",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "This mana won't be lost as steps and phases end for the remainder of the turn even if Savage Ventmaw leaves the battlefield during the turn."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -93,7 +93,7 @@ _ZONE_OBJECT_SEQUENCE = re.compile(
 
 
 def _keyword_list(
-    text: str, *, extended: bool = False
+    text: str, *, extended: bool = False, maximum: int | None = None
 ) -> tuple[str, ...] | None:
     vocabulary = (
         TEMPORARY_TARGET_CHARACTERISTIC_KEYWORDS
@@ -107,7 +107,7 @@ def _keyword_list(
     )
     if (
         not values or any(not value for value in values)
-        or len(values) > (3 if extended else 2)
+        or len(values) > (maximum or (3 if extended else 2))
         or len(set(values)) != len(values)
         or any(value not in vocabulary for value in values)
     ):
@@ -517,6 +517,7 @@ def fixed_target_characteristics_effect_template(
     *,
     existing_target: bool = False,
     extended: bool = False,
+    maximum_keywords: int | None = None,
 ) -> FixedTargetCharacteristicsTemplate | None:
     """Parse one fixed target or target-pronoun characteristic instruction."""
 
@@ -562,7 +563,7 @@ def fixed_target_characteristics_effect_template(
         )
     if gains is None:
         return None
-    keywords = _keyword_list(gains.group("keywords"), extended=extended)
+    keywords = _keyword_list(gains.group("keywords"), extended=extended, maximum=maximum_keywords)
     if keywords is None:
         return None
     return FixedTargetCharacteristicsTemplate(
@@ -687,6 +688,20 @@ def fixed_target_zone_object_keyword_sequence_template(
     )
 
 
+def _controlled_creature_keyword_clause(clause, *, effects, schema):
+    if (schema is None or schema.get("controller_relation") != "you"
+            or tuple(schema.get("types_any", ())) != ("creature",)
+            or len(effects) != 1 or effects[0].get("op") != "place_counters"):
+        return None
+    grant = fixed_target_characteristics_effect_template(
+        clause, existing_target=True, extended=True, maximum_keywords=4,
+    )
+    if (grant is None or grant.power is not None or len(grant.keywords) != 4
+            or any(keyword not in FIXED_CHARACTERISTIC_KEYWORDS for keyword in grant.keywords)):
+        return None
+    return grant
+
+
 def fixed_target_effect_sequence_template(
     text: str,
     *,
@@ -717,6 +732,8 @@ def fixed_target_effect_sequence_template(
             )
         if compiled is None and target_schema is not None:
             compiled = existing_target_counter_placement_effect_template(clause)
+        if compiled is None and len(clauses) == 2:
+            compiled = _controlled_creature_keyword_clause(clause, effects=effects, schema=target_schema)
         if compiled is None:
             return None
         _template_id, clause_effects, clause_schema, mechanics = compiled.compiled()

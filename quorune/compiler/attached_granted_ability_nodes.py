@@ -7,7 +7,6 @@ from typing import Any, Callable, Mapping, Sequence
 from ..attachment_references import AttachmentReferenceKind
 from ..abilities import ActivatedAbility, parse_activated_abilities
 from ..ability_fragments import (
-    CURRENT_ABILITY_FRAGMENT_COVERAGE,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     ability_fragment_to_dict,
@@ -17,12 +16,13 @@ from ..mana_restrictions import valid_mana_spend_restriction
 from ..granted_activation_model import (
     GRANTED_SOURCE_COUNTER_CAPABILITY, GRANTED_SPORE_COUNTER_COST,
     GRANTING_ATTACHMENT_PAYMENT_CAPABILITY, GRANTING_ATTACHMENT_PAYMENT_FIELD,
+    GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY, GRANTING_ATTACHMENT_SACRIFICE_REF,
     GrantingAttachmentPayment, GrantingAttachmentPaymentKind, RESTRICTED_MANA_GRANT_CAPABILITY,
 )
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.activation_counter_cost import SourceCounterRemovalCost
-from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE
+from ..util import normalize_card_name
 from .continuous_templates import (
     attached_quoted_ability_handler,
     attached_quoted_ability_text,
@@ -85,11 +85,12 @@ def attached_granted_program_ability_id(
     if emblem_match is not None:
         token_slot = ':emblem:' + emblem_match[1]
     token_match = re.search(
-        r":token-ability:(?P<slot>[1-9][0-9]*)$",
+        r"(?P<slots>(?::token-ability:[1-9][0-9]*)+)$",
         str(node_id or ""),
     )
     if token_match is not None:
-        token_slot = f":token:{token_match.group('slot')}"
+        slots = token_match["slots"].split(":token-ability:")[1:]
+        token_slot = ":token:" + ".".join(slots)
     quote_match = re.search(r':quoted-ability:(?P<slot>[1-9][0-9]*)(?::granted)?$',str(node_id or ''))
     if quote_match is not None:
         token_slot = f":quote:{quote_match.group('slot')}"
@@ -259,6 +260,11 @@ def attached_granted_ability_plan(
         )
     if node.kind != "triggered_ability" or not node.event:
         return None
+    if granting_attachment_payment is not None and (
+        node.event != 'creature.attacks'
+        or granting_attachment_payment.kind is not GrantingAttachmentPaymentKind.SACRIFICE
+    ):
+        return None
     node_kind = GRANTED_TRIGGERED_ABILITY_KIND
     ability_id = attached_granted_program_ability_id(
         kind=node_kind,
@@ -279,8 +285,12 @@ def attached_granted_ability_plan(
                 semantic_key=semantic_key,
                 event=node.event,
                 label=display_text or quoted_text,
+                schema_version=3 if granting_attachment_payment is not None else 1,
+                granting_attachment_payment=granting_attachment_payment,
             )
         ),
+        capability_dependencies=((GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY,)
+                                 if granting_attachment_payment is not None else ()),
     )
 
 
@@ -295,7 +305,7 @@ def _compile_granted_ability_pair(
     quoted: str,
     compile_shell: Callable[
         [Mapping[str, Any], tuple[str, ...]],
-        tuple[str, Mapping[str, Any], tuple[str, ...]] | None,
+        tuple[str, Mapping[str, Any] | tuple[Mapping[str, Any], ...], tuple[str, ...]] | None,
     ],
     runtime_coverage: str,
     dependency_reason: str,
@@ -352,10 +362,27 @@ def _compile_granted_ability_pair(
             capability_closure=closure.reachable, capability_profile=closure.profile,
             capability_fingerprint=closure.fingerprint,
         )
-    printed_cost_text = quoted.partition(':')[0].strip() if granting_attachment_payment is not None else None
+    printed_cost_text = None
+    if granting_attachment_payment is not None:
+        if inner.kind == 'triggered_ability':
+            from ..rules.reflexive_payment_shapes import reflexive_payment_parts
+            if len(inner.effects) != 1:
+                return None
+            effect, = inner.effects
+            try:
+                payment, _ = reflexive_payment_parts(effect)
+            except (TypeError, ValueError, KeyError):
+                return None
+            if payment.kind != 'source_sacrifice' or payment.source_ref != '$source.zone_object':
+                return None
+            payment = replace(payment, source_ref=GRANTING_ATTACHMENT_SACRIFICE_REF)
+            inner = replace(inner, effects=({**effect, 'payment': payment.to_dict()},))
+        else:
+            printed_cost_text = quoted.partition(':')[0].strip()
     plan = attached_granted_ability_plan(
         node=inner,
         quoted_text=inner_text,
+        display_text=quoted if inner.kind == 'triggered_ability' else None,
         oracle_id=record.oracle_id,
         face_id=face_id,
         source_line=span.line,
@@ -369,7 +396,7 @@ def _compile_granted_ability_pair(
     )
     if plan is None:
         return None
-    if granting_attachment_payment is not None:
+    if printed_cost_text is not None:
         if inner.cost is None or plan.node_kind != GRANTED_ACTIVATED_ABILITY_KIND:
             return None
         inner = replace(inner, cost={**inner.cost, 'text': printed_cost_text,
@@ -378,13 +405,13 @@ def _compile_granted_ability_pair(
     inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
     if inner is None:
         return None
-    compiled = compile_shell(
-        plan.fragment,
-        tuple(inner.capability_dependencies),
-    )
+    from .granted_trigger_providers import quoted_trigger_provider_contract
+    fragment, coverage = quoted_trigger_provider_contract(plan.fragment, inner, runtime_coverage)
+    compiled = compile_shell(fragment, tuple(inner.capability_dependencies))
     if compiled is None:
         return None
     from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
+    first_handler = compiled[1][0] if isinstance(compiled[1], tuple) else compiled[1]
     outer = runtime_handler_node(
         node_id=node_id,
         line=line,
@@ -392,7 +419,7 @@ def _compile_granted_ability_pair(
         compiled=compiled,
         kind="static_ability",
         event="characteristics.evaluate",
-        active_zone='graveyard' if compiled[1].get('handler_id') in {
+        active_zone='graveyard' if first_handler.get('handler_id') in {
             GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID} else 'battlefield',
         runtime_coverage=(runtime_coverage,),
         dependency_reason=dependency_reason,
@@ -400,10 +427,6 @@ def _compile_granted_ability_pair(
         capability_profile=capability_profile,
         residuals=residuals,
     )
-    coverage = inner.runtime_coverage
-    if ATTACKED_PLAYER_LIFE_COVERAGE in coverage:
-        # The typed grant itself supplies current ability presence for its recipient.
-        coverage = tuple(tag for tag in coverage if tag != CURRENT_ABILITY_FRAGMENT_COVERAGE)
     granted = replace(
         inner,
         node_id=f"{node_id}:granted",
@@ -426,6 +449,26 @@ def _granting_equipment_payment_quote(quoted: str, source_name: str) -> tuple[st
         return None
     kind = GrantingAttachmentPaymentKind(match['kind'].casefold())
     return f"{match['fixed']}: {body.strip()}", GrantingAttachmentPayment(kind)
+
+
+def _granting_equipment_attack_payment_quote(
+    quoted: str, source_name: str,
+) -> tuple[str, GrantingAttachmentPayment] | None:
+    match = re.fullmatch(
+        r"Whenever this creature attacks, you may sacrifice (?P<payer>[^.]+)\. "
+        r"When you do, this creature deals (?P<amount>[1-9][0-9]*) damage to any target\.?",
+        quoted, re.I,
+    )
+    if match is None or normalize_card_name(match['payer']) not in {
+        normalize_card_name(source_name), 'this equipment',
+    }:
+        return None
+    # Compile the ordinary attack, cost and consequence before rebinding the cost object.
+    normalized = (
+        'Whenever this creature attacks, you may sacrifice this creature. '
+        f"When you do, this creature deals {match['amount']} damage to any target."
+    )
+    return normalized, GrantingAttachmentPayment(GrantingAttachmentPaymentKind.SACRIFICE)
 
 
 def compile_attached_granted_ability_nodes(
@@ -462,8 +505,10 @@ def compile_attached_granted_ability_nodes(
     )
     if quoted is None:
         return None
-    payment_quote = (_granting_equipment_payment_quote(quoted, source_name)
-                     if paired is None and source_attachment_relation is AttachmentReferenceKind.EQUIPPED else None)
+    payment_quote = None
+    if paired is None and source_attachment_relation is AttachmentReferenceKind.EQUIPPED:
+        payment_quote = (_granting_equipment_payment_quote(quoted, source_name)
+                         or _granting_equipment_attack_payment_quote(quoted, source_name))
     compiled_quote, payment = payment_quote if payment_quote is not None else (quoted, None)
     if _EXTERNAL_ATTACHMENT_REFERENCE.search(compiled_quote) and not granted_characteristic_reference_is_closed(compiled_quote):
         return None
@@ -532,6 +577,14 @@ def compile_fixed_query_granted_ability_nodes(
     )
     if graveyard is not None:
         return graveyard
+    from .hand_ninjutsu_grants import compile_hand_ninjutsu_nodes
+    hand = compile_hand_ninjutsu_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line,
+        span=span, capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if hand is not None:
+        return hand
     from .granted_keyword_activation_nodes import compile_granted_keyword_activation_nodes
     activation_grant = compile_granted_keyword_activation_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
@@ -643,6 +696,59 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
 
 
+def _cast_linked_permanent_nodes(
+    *, record, face_id, node_id, line, material_line, span, printed_card_types,
+    trusted_mechanics, capability_registry, capability_profile, residuals,
+):
+    """Lower a permanent's cast-linked printed abilities before generic grants."""
+    from .ripple_nodes import battlefield_ripple_grant_nodes
+
+    ripple = battlefield_ripple_grant_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+        span=span, printed_card_types=printed_card_types, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if ripple is not None:
+        return ripple
+
+    from .kicked_artifact_entry import kicked_artifact_entry_node
+
+    kicked_artifact = kicked_artifact_entry_node(record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, printed_card_types=printed_card_types, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if kicked_artifact is not None:
+        return (kicked_artifact,)
+
+    return None
+
+
+def _composed_source_trigger_nodes(*, printed_card_types, **scope):
+    from .experience_results import experience_attack_node
+
+    experience = experience_attack_node(**scope)
+    if experience is not None:
+        return (experience,)
+    from .persistent_self_copy_trigger import copy_trigger_node
+
+    copy_trigger = copy_trigger_node(printed_card_types=printed_card_types, **scope)
+    return (copy_trigger,) if copy_trigger is not None else None
+
+
+def _closed_attachment_restraint_nodes(*, source_attachment_relation, node_id, line, material_line, span,
+                                       source_name, capability_registry, capability_profile, residuals):
+    """Recognize the attached counter and untap restraints before ordinary keywords."""
+    from .attached_untap_restraints import attached_counter_prohibition_nodes, attached_untap_restraint_node
+    attached_rules = attached_counter_prohibition_nodes(
+        source_attachment_relation=source_attachment_relation, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if attached_rules is not None:
+        return attached_rules
+    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restraint is not None:return (restraint,)
+    return None
+
+
 def compile_early_material_nodes(
     *,
     record: CardRecord,
@@ -672,6 +778,12 @@ def compile_early_material_nodes(
     from .deck_copy_limits import DECK_COPY_LIMIT_PREFIX, printed_deck_copy_limit_node
     from .cycle_or_discard_bindings import cycle_and_death_trigger_nodes
 
+    cast_linked = _cast_linked_permanent_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, printed_card_types=printed_card_types, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if cast_linked is not None:
+        return cast_linked
+
     cycle_death = cycle_and_death_trigger_nodes(
         node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
         printed_card_types=printed_card_types, effect_template=effect_template, trigger_node=trigger_node,
@@ -680,12 +792,19 @@ def compile_early_material_nodes(
     )
     if cycle_death is not None:
         return cycle_death
-    from .persistent_self_copy_trigger import copy_trigger_node
-    copy_trigger = copy_trigger_node(node_id=node_id, line=line, material_line=material_line,
+    from .cycling_nodes import cycling_x_token_node
+
+    cycling_x = cycling_x_token_node(
+        record=record, node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if cycling_x is not None:
+        return (cycling_x,)
+    composed_triggers = _composed_source_trigger_nodes(node_id=node_id, line=line, material_line=material_line,
         printed_card_types=printed_card_types, source_name=source_name, span=span,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
-    if copy_trigger is not None:
-        return (copy_trigger,)
+    if composed_triggers is not None:
+        return composed_triggers
     if material_line.casefold().startswith(DECK_COPY_LIMIT_PREFIX):
         deck_limit = printed_deck_copy_limit_node(record=record, node_id=node_id, line=line,
             material_line=material_line, span=span, capability_registry=capability_registry,
@@ -720,7 +839,7 @@ def compile_early_material_nodes(
         grant_effect_templates=grant_effect_templates)
     if role is not None:
         return role
-    from .typed_token_ability_nodes import typed_token_ability_nodes
+    from .exile_spell_copy_grant_nodes import typed_token_or_exile_copy_nodes
 
     from .exert_nodes import exert_attack_nodes
     exerted=exert_attack_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
@@ -735,7 +854,7 @@ def compile_early_material_nodes(
         trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,compile_inner=compile_inner,
         effect_template=effect_template,trigger_effect_template=grant_effect_templates(True,printed_card_types,source_attachment_relation)[1],material_line_for=material_line_for)
     if max_result is not None:return max_result
-    typed_token_nodes = typed_token_ability_nodes(
+    typed_token_nodes = typed_token_or_exile_copy_nodes(
         record=record,
         face_id=face_id,
         node_id=node_id,
@@ -756,17 +875,12 @@ def compile_early_material_nodes(
     )
     if typed_token_nodes is not None:
         return typed_token_nodes
-    from .attached_untap_restraints import attached_counter_prohibition_nodes, attached_untap_restraint_node
-    attached_rules = attached_counter_prohibition_nodes(
+    if (restraints := _closed_attachment_restraint_nodes(
         source_attachment_relation=source_attachment_relation, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
-    )
-    if attached_rules is not None:
-        return attached_rules
-    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
-        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if restraint is not None:return (restraint,)
+    )) is not None:
+        return restraints
     keyword_nodes = keyword_node_compiler(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
@@ -797,14 +911,39 @@ def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span
         capability_profile,residuals,compile_inner,trigger_node,keyword_node_compiler,
         effect_template,trigger_effect_template,material_line_for):
     """Route complete quoted children after ordinary keywords and source costs."""
+    if source_attachment_relation is AttachmentReferenceKind.EQUIPPED and "planeswalker" in printed_card_types:
+        from .equipped_planeswalker_nodes import equipped_planeswalker_nodes
+        planeswalker = equipped_planeswalker_nodes(
+            record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+            source_name=source_name, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals,
+        )
+        if planeswalker is not None:
+            return planeswalker
+    from .source_subtype_progression import source_subtype_progression_nodes
+    progression = source_subtype_progression_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        compile_inner=compile_inner, trigger_node=trigger_node, effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template, material_line_for=material_line_for)
+    if progression is not None:
+        return progression
     from .entry_copy_ability_nodes import entry_copy_ability_nodes
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
         effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
-    from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
-    temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
+    from .grantor_damage_redirection import grantor_damage_redirection_nodes
+    grantor = grantor_damage_redirection_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+        printed_card_types=printed_card_types, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    )
+    if grantor is not None:
+        return grantor
+    from .blocked_damage_grant_nodes import composed_temporary_ability_nodes
+    temporary = composed_temporary_ability_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span,
         source_name=source_name, printed_card_types=printed_card_types,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,

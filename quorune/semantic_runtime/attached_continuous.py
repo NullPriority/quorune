@@ -11,7 +11,9 @@ from ..continuous_effect_model import (
     Layer,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
+from ..ability_fragments import (
+    GrantedTriggeredAbilitySpec, ability_fragment_from_dict, ability_fragment_to_dict,
+)
 from ..granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantedActivatedAbilitySpec
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from .component_registry import exact_fields
@@ -46,6 +48,7 @@ class AttachedFixedCharacteristicsNode:
     quantity: CharacteristicQuantitySpec | None
     quantity_power: int
     quantity_toughness: int
+    default_creature_stats: bool = False
 
 
 def _ability_values(value: Any, *, field: str) -> tuple[str, ...]:
@@ -89,7 +92,8 @@ def _ability_fragment_values(
             )
         try:
             fragment = ability_fragment_from_dict(candidate)
-            if (isinstance(fragment, GrantedActivatedAbilitySpec) and fragment.granting_attachment_payment is not None
+            if (isinstance(fragment, (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec))
+                    and fragment.granting_attachment_payment is not None
                     and fragment.granting_attachment_payment.granting_object is not None):
                 raise ValueError('Attached ability definition cannot preselect its granting Equipment')
         except ValueError as exc:
@@ -102,8 +106,9 @@ def _bind_granting_equipment(fragments, context):
     bound = []
     for descriptor in fragments:
         value = descriptor.get('value')
-        if descriptor.get('kind') == 'granted_activated' and isinstance(value, Mapping) and GRANTING_ATTACHMENT_PAYMENT_FIELD in value:
-            fragment = GrantedActivatedAbilitySpec.from_dict(value)
+        if (descriptor.get('kind') in {'granted_activated', 'granted_triggered'}
+                and isinstance(value, Mapping) and GRANTING_ATTACHMENT_PAYMENT_FIELD in value):
+            fragment = ability_fragment_from_dict(descriptor)
             try:
                 payment = fragment.granting_attachment_payment.bind(
                     context.source_object_id, context.source_logical_object_id,
@@ -124,6 +129,10 @@ def _type_operations(value: Any) -> tuple[ContinuousOperation, ...]:
             raise SemanticNodeError(
                 f"modifier.type_operations[{index}] must be an object"
             )
+        if candidate.get("op") == "remove_planeswalker_card_type":
+            exact_fields(candidate, {"op"}, field=f"modifier.type_operations[{index}]")
+            result.append(ContinuousOperation("remove_planeswalker_card_type"))
+            continue
         exact_fields(
             candidate,
             {"op", "field", "values"},
@@ -270,6 +279,7 @@ def _attached_characteristics_node(
     if set(modifier) not in (
         _LEGACY_MODIFIER_FIELDS,
         _EXTENDED_MODIFIER_FIELDS,
+        _EXTENDED_MODIFIER_FIELDS | {"default_creature_stats"},
     ):
         raise SemanticNodeError(
             "runtime handler modifier has missing or unknown fields"
@@ -295,9 +305,16 @@ def _attached_characteristics_node(
         raise SemanticNodeError(
             "modifier.remove_all_abilities must be boolean"
         )
+    type_operations = _type_operations(modifier["type_operations"])
+    default_creature_stats = "default_creature_stats" in modifier
+    if default_creature_stats and (
+        modifier["default_creature_stats"] is not True or base_power is not None
+        or ContinuousOperation("add_types", ["Creature"], field="card_types") not in type_operations
+    ):
+        raise SemanticNodeError("Default creature stats require an added creature type without a fixed base")
     return AttachedFixedCharacteristicsNode(
         subject_types_all=subject_types_all,
-        type_operations=_type_operations(modifier["type_operations"]),
+        type_operations=type_operations,
         color_operations=_color_operations(modifier.get("color_operations", [])),
         add_abilities=_ability_values(
             modifier["add_abilities"], field="modifier.add_abilities"
@@ -317,6 +334,7 @@ def _attached_characteristics_node(
         quantity=quantity,
         quantity_power=quantity_power,
         quantity_toughness=quantity_toughness,
+        default_creature_stats=default_creature_stats,
     )
 
 
@@ -417,7 +435,16 @@ class AttachedFixedCharacteristicsHandler:
             ),
         }
         from .fixed_characteristic_effects import fixed_characteristic_effects
-        return fixed_characteristic_effects(node, context, common=common)
+        effects = fixed_characteristic_effects(node, context, common=common)
+        if not node.default_creature_stats:
+            return effects
+        return (*effects, ContinuousEffect(
+            effect_id=f"{context.source_object_id}:{context.component_id}:7a-default",
+            layer=Layer.POWER_TOUGHNESS,
+            sublayer="7a",
+            operations=(ContinuousOperation("default_creature_stats"),),
+            **common,
+        ))
 
 
 __all__ = [

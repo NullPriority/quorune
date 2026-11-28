@@ -63,6 +63,8 @@ def _fixed_result_shape(effect,schema):
         field={'draw':'count','life':'delta','lose_life':'amount','create_token':'quantity'}[op]
         recipient='controller' if op=='create_token' else 'player'
         return schema is None and effect.get(recipient)=='$controller' and type(effect.get(field)) is int
+    if op == 'manifest_card':
+        return schema is None and effect == {'op': 'manifest_card', 'player': '$controller', 'mode': 'top'}
     if op=='choose_cards_apnap':
         return (schema==_PLAYER_SCHEMA and effect.get('players')==['$target.0']
             and effect.get('target')=='$target.0' and type(effect.get('count')) is int)
@@ -74,6 +76,8 @@ def _fixed_result_shape(effect,schema):
 def bind_fixed_recipient_result(effect,schema,recipient):
     if not _fixed_result_shape(effect,schema):return None
     bound=deepcopy(dict(effect))
+    if bound['op'] == 'manifest_card' and recipient.get('kind') != TARGET_CONTROLLER_INFORMATION_KIND:
+        return None
     if bound['op']=='choose_cards_apnap':
         bound['players']=[dict(recipient)];bound.pop('target')
     elif bound['op']=='give_control':
@@ -130,7 +134,17 @@ def target_recipient_result_node_capabilities(*,effects,target_schema,mechanic_i
         TARGET_OWNER_INFORMATION_CAPABILITY,TARGET_OWNER_INFORMATION_MECHANIC)
     if information[1] not in mechanics or not target_recipient_prefix_is_closed(effects[0],target_schema,relation):return ()
     prefix=closed_effect_component_capabilities(effects[:1],target_schema=target_schema,mechanics=mechanics)
-    result=closed_effect_component_capabilities((restored,),target_schema=schema,mechanics=mechanics)
+    if restored.get("op") == "manifest_card":
+        from ..compiler.direct_target import direct_permanent_target_spec
+        from ..replacement.immutable import thaw_value
+        from .manifest_shapes import manifest_node_capabilities
+
+        if (relation != "controller" or effects[0] != {"op": "exile_permanent", "card": "$target.0"}
+                or thaw_value(target_schema) != direct_permanent_target_spec("target creature").to_target_schema()):
+            return ()
+        result = manifest_node_capabilities(effects=(restored,), target_schema=schema, mechanics=mechanics)
+    else:
+        result = closed_effect_component_capabilities((restored,), target_schema=schema, mechanics=mechanics)
     if not prefix or not result:return ()
     return tuple(sorted({TARGET_RECIPIENT_RESULT_CAPABILITY,BOUND_EFFECT_PROGRAM_CAPABILITY,
         'resolution.effect_program.closed_components',information[0],*prefix,*result}))
@@ -195,21 +209,78 @@ def _target_sacrifice_power_dependencies(program):
     return required
 
 
+def target_characteristic_token_node_capabilities(**shape):
+    from .target_destruction_mana_value_tokens import target_destruction_mana_token_node_capabilities
+
+    return (target_sacrifice_power_node_capabilities(**shape)
+            or target_destruction_mana_token_node_capabilities(**shape))
+
+
+def uses_target_recipient_manifest(effect):
+    return (effect.get("op") == "manifest_card" and isinstance(effect.get("player"), Mapping))
+
+
 def target_recipient_result_runtime_dependencies(program):
     """A new producer keeps its recipient contract even if annotations are removed."""
-    if sacrifice := _target_sacrifice_power_dependencies(program):
-        return sacrifice
-    from ..compiler.target_recipient_results import TARGET_RECIPIENT_RESULT_TEMPLATE
+    from ..target_permanent_shuffle_reveal_model import WARP_MECHANIC, WARP_OPERATION
     from .effect_shape_walkers import nested_effects
 
     handlers = getattr(program, "handlers", ())
+    if WARP_MECHANIC in program.coverage or any(
+        effect.get("op") == WARP_OPERATION for effect in nested_effects((program.effects, handlers))
+    ):
+        from .library_result_capability_shapes import (
+            is_closed_target_permanent_shuffle_reveal_program,
+            target_permanent_shuffle_reveal_node_capabilities,
+        )
+
+        if not is_closed_target_permanent_shuffle_reveal_program(program):
+            raise ValueError("Target-owner shuffle and reveal requires its complete ordinary spell recipe")
+        return target_permanent_shuffle_reveal_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+
+    from .controlled_artifact_token_result import controlled_artifact_result_program_dependencies
+    from .target_destruction_mana_value_tokens import target_destruction_mana_token_program_dependencies
+
+    if controlled_result := controlled_artifact_result_program_dependencies(program):
+        return controlled_result
+    if mana_tokens := target_destruction_mana_token_program_dependencies(program):
+        return mana_tokens
+    if sacrifice := _target_sacrifice_power_dependencies(program):
+        return sacrifice
+    from ..compiler.target_recipient_results import TARGET_RECIPIENT_RESULT_TEMPLATE
+
     shuffle = any(uses_target_owner_shuffle(effect) for effect in nested_effects((program.effects, handlers)))
+    if shuffle and len(program.effects) == 1:
+        from .public_zone_move_capability_shapes import (
+            face_up_exile_owner_shuffle_is_closed, fixed_owner_zone_move_node_capabilities,
+        )
+
+        if face_up_exile_owner_shuffle_is_closed(program.effects[0], program.target_schema):
+            if ((program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+                    or program.cost_schema is not None or program.event_condition is not None or handlers):
+                raise ValueError("Face-up exile shuffle requires its original source-entry ability")
+            required = fixed_owner_zone_move_node_capabilities(
+                effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+            )
+            if not required:
+                raise ValueError("Face-up exile shuffle requires its exact target and owner shuffle")
+            return required
     if shuffle and (
         (program.event, program.active_zone) != ("resolve", "stack")
         or program.cost_schema is not None or handlers or not program.ability_id.startswith("spell:")
     ):
         raise ValueError("Target-owner shuffle and draw requires its complete spell resolution")
-    if not shuffle and getattr(program,'provenance',{}).get('template_id')!=TARGET_RECIPIENT_RESULT_TEMPLATE:return ()
+    manifest = any(uses_target_recipient_manifest(effect) for effect in nested_effects((program.effects, handlers)))
+    if manifest and (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or program.cost_schema is not None or program.event_condition is not None or handlers
+        or not program.ability_id.startswith("spell:") or len(program.effects) != 2
+        or not uses_target_recipient_manifest(program.effects[-1])
+    ):
+        raise ValueError("Target-controller Manifest requires the original creature-exile spell resolution")
+    if not (shuffle or manifest) and getattr(program,'provenance',{}).get('template_id')!=TARGET_RECIPIENT_RESULT_TEMPLATE:return ()
     from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
     projected=public_query_amount_shape_context(program.effects,set(program.coverage),target_schema=program.target_schema)
     if projected is None:raise ValueError('Target-recipient production lost its closed amount recipe')

@@ -6,6 +6,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 import re
 
+from ...artifact_hand_mana_model import ARTIFACT_HAND_MANA_STEP, ArtifactHandManaStep
 from ...errors import GameRuleError
 from ...mana import ManaStepInput
 from ...replacement.immutable import FrozenMap, thaw_value
@@ -56,6 +57,7 @@ class AssistManaStep:
     replacements: FrozenMap = FrozenMap({})
     input: ManaStepInput | None = None
     triggered_mana_option: str | None = None
+    artifact_hand_reveal: ArtifactHandManaStep | None = None
 
     def __post_init__(self):
         if (type(self.seat) is not str or not self.seat or type(self.source) is not str or not self.source
@@ -68,7 +70,14 @@ class AssistManaStep:
                     or not selections or any(not ((type(value) is str and value) or isinstance(value, Mapping))
                                             for value in selections)):
                 raise GameRuleError("Assist mana replacement journal is malformed")
-        object.__setattr__(self, "bundle", assist_mana_bundle(self.bundle, allow_zero=False))
+        artifact = self.artifact_hand_reveal
+        bundle = assist_mana_bundle(self.bundle, allow_zero=artifact is not None)
+        if artifact is not None and (
+            not isinstance(artifact, ArtifactHandManaStep) or not self.tap_source or self.input is not None
+            or bundle != FrozenMap({"C": artifact.colorless} if artifact.colorless else {})
+        ):
+            raise GameRuleError("Assist artifact mana requires the same selected cards and tap output")
+        object.__setattr__(self, "bundle", bundle)
         object.__setattr__(self, "replacements", FrozenMap(self.replacements))
         if self.triggered_mana_option is not None:
             try:
@@ -86,7 +95,14 @@ class AssistManaStep:
             if value[TRIGGERED_MANA_OPTION_FIELD] is None:
                 raise GameRuleError("Assist triggered mana option is missing")
             fields |= {TRIGGERED_MANA_OPTION_FIELD}
+        if isinstance(value, Mapping) and ARTIFACT_HAND_MANA_STEP in value:
+            fields |= {ARTIFACT_HAND_MANA_STEP}
         data = dict(_closed_mapping(value, fields, "Assist mana activation fields changed"))
+        if ARTIFACT_HAND_MANA_STEP in data:
+            try:
+                data[ARTIFACT_HAND_MANA_STEP] = ArtifactHandManaStep.from_dict(data[ARTIFACT_HAND_MANA_STEP])
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
         if has_input:
             try:
                 data["input"] = ManaStepInput.from_dict(data["input"])
@@ -100,6 +116,8 @@ class AssistManaStep:
             result["input"] = self.input.to_dict()
         if self.triggered_mana_option is not None:
             result[TRIGGERED_MANA_OPTION_FIELD] = self.triggered_mana_option
+        if self.artifact_hand_reveal is not None:
+            result[ARTIFACT_HAND_MANA_STEP] = self.artifact_hand_reveal.to_dict()
         return result
 
     def to_dict(self):

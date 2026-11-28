@@ -686,6 +686,140 @@
           "comment": "If you have multiple instant cards in your graveyard with the same name, and one of them is being targeted by another spell on the stack or is enchanted (with Spellweaver Volute, for example), you must differentiate them so you know which one (if any) is chosen at random. In that case, it may be better to use dice or another method that allows you to differentiate between the instant cards to choose one at random."
         }
       ]
+    },
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "name": "Storm of Memories",
+      "mana_cost": "{2}{R}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)\nExile an instant or sorcery card with mana value 3 or less from your graveyard at random. You may cast it without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "cmc": 5.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Storm"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Village Rites",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The copies are put directly onto the stack. They aren't cast and won't be counted by other spells with storm cast later in the turn."
+    },
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The triggered ability that creates the copies can itself be countered by anything that can counter a triggered ability. If it is countered, no copies will be put onto the stack."
+    },
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Spells cast from zones other than a player's hand and spells that were countered or otherwise failed to resolve are counted by the storm ability."
+    },
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "A copy of a spell can be countered like any other spell, but it must be countered individually. Countering a spell with storm won't affect the copies."
+    },
+    {
+      "oracle_id": "6f8ca795-d6fd-4e3e-911c-c621a942acbb",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The instants or sorceries cast using copies of Storm of Memories go on the stack as each copy of Storm of Memories resolves, and those spells will each resolve before more copies of Storm of Memories resolve."
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures.",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "published_at": "2021-02-05",
+      "source": "wotc"
     }
   ]
 }

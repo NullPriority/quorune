@@ -18,8 +18,8 @@ class OpeningHandSubject:
 
     def __post_init__(self):
         if (any(type(v) is not str or not v for v in (self.object_id,self.logical_object_id,self.ref,self.player))
-                or self.action_kind not in {'battlefield','reveal'} or type(self.semantic_key) is not str
-                or self.action_kind=='reveal' and not self.semantic_key):
+                or self.action_kind not in {'battlefield','reveal','luck'} or type(self.semantic_key) is not str
+                or self.action_kind != 'battlefield' and not self.semantic_key):
             raise GameRuleError('Opening-hand source identity is malformed')
 
     def to_dict(self,version=1):

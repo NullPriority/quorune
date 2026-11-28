@@ -12,8 +12,15 @@ from ..additional_cost_vocabulary import (
     RETURN_ONE_TO_OWNER_HAND_COST,
     SACRIFICE_ONE_COST,
 )
+from ..rules.named_sacrifice_cost_model import (
+    NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD, named_creature_sacrifice_predicate,
+)
 from ..replacement.immutable import FrozenMap
+from ..sacrifice_union_model import (
+    colored_or_artifact_creature_sacrifice, controlled_permanent_predicate,
+)
 from .spell_additional_cost_templates import (
+    _COLOR_WORDS,
     fixed_sacrifice_additional_cost_template,
     fixed_zone_change_additional_cost_template,
 )
@@ -25,6 +32,12 @@ _ANOTHER_SACRIFICE = re.compile(
 )
 _COUNTED_OTHER_SACRIFICE = re.compile(
     r'^sacrifice (?P<count>two|three|four|five|six|seven|eight|nine|ten|[2-9]|10) other (?P<quality>[A-Za-z][A-Za-z -]*)$', re.I,
+)
+_NAMED_SIX_CREATURE_COST = re.compile(
+    r"Sacrifice (?:six|6) creatures named (?P<name>[^$,:;.]+)", re.I,
+)
+_COLORED_OR_ARTIFACT_CREATURE_COST = re.compile(
+    r"Sacrifice a (?P<color>white|blue|black|red|green) or artifact creature", re.I,
 )
 
 
@@ -51,6 +64,31 @@ def _activation_cost_clause(
 
 def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
     cost_clause, another = _activation_cost_clause(cost_text)
+    if cost_clause.casefold() == "sacrifice two other artifacts and/or creatures":
+        predicate = replace(controlled_permanent_predicate(), types_any=("artifact", "creature"))
+        return {
+            "operation": SACRIFICE_ONE_COST,
+            "predicate": predicate.to_dict(),
+            "another": True,
+            "count": 2,
+        }
+    named = _NAMED_SIX_CREATURE_COST.fullmatch(cost_clause)
+    if named is not None and not another and len(named["name"]) <= 200:
+        return {
+            "operation": SACRIFICE_ONE_COST, "count": 6,
+            "predicate": named_creature_sacrifice_predicate().to_dict(),
+            "schema_version": NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD: named["name"],
+        }
+    union_match = _COLORED_OR_ARTIFACT_CREATURE_COST.fullmatch(cost_clause)
+    if union_match is not None:
+        union = colored_or_artifact_creature_sacrifice(_COLOR_WORDS[union_match['color'].casefold()])
+        return {
+            "operation": SACRIFICE_ONE_COST,
+            "predicate": controlled_permanent_predicate().to_dict(),
+            "predicate_union": union.to_dict(),
+            "another": another,
+            "count": 1,
+        }
     if re.fullmatch(r'Sacrifice a creature with defender',cost_clause,re.I):
         from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION, keyword_sacrifice_predicate
         return {'operation':SACRIFICE_ONE_COST,'predicate':keyword_sacrifice_predicate('defender').to_dict(),
@@ -85,6 +123,28 @@ def fixed_activated_zone_change_cost(
         or ability.exile_source
     ):
         return ability
+    if not ability.choices and tuple(part.casefold() for part in ability.uncompiled_costs) == ("forage",):
+        from ..rules.forage import FORAGE_COST_KIND, validate_forage_activation
+        from ..rules.forage_mana import forage_mana_text
+
+        if (forage_mana_text(ability.cost_text, ability.effect_text)
+                or re.fullmatch(r"(?:\{[0-9]+\}|\{[WUBRGC]\})+,\s*Forage", ability.cost_text.strip(), re.I)):
+            candidate = replace(ability, choices=(CostChoice(kind=FORAGE_COST_KIND),), uncompiled_costs=())
+            try:
+                validate_forage_activation(candidate)
+            except ValueError:
+                return ability
+            return candidate
+    from ..paid_activation_card_types import COST_KIND, COST_TEXT
+    from ..rules.activation.bounded_type_sacrifice import validate_paid_type_ability
+
+    if not ability.choices and ability.uncompiled_costs and ability.cost_text == COST_TEXT:
+        candidate = replace(ability, choices=(CostChoice(kind=COST_KIND, count=3),), uncompiled_costs=())
+        try:
+            validate_paid_type_ability(candidate)
+        except ValueError:
+            return ability
+        return candidate
     legacy_choice = ability.choices[0] if ability.choices else None
     if legacy_choice is not None:
         if (
@@ -111,9 +171,15 @@ def fixed_activated_zone_change_cost(
     another = descriptor.get("another") is True
     contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
     predicate = descriptor.get("predicate")
+    union = descriptor.get("predicate_union")
     count = descriptor.get('count', 1)
     if contract is None or not isinstance(predicate, dict):
         return ability
+    if union is not None:
+        from .paid_sacrifice_amount_templates import has_paid_creature_mana_value_output
+
+        if not ability.mana_ability or not has_paid_creature_mana_value_output(ability.effect_text):
+            return ability
     if legacy_choice is not None and (
         legacy_choice.kind
         != {
@@ -134,8 +200,13 @@ def fixed_activated_zone_change_cost(
                 zone=contract[0],
                 another=another,
                 predicate=FrozenMap(predicate),
+                predicate_union=FrozenMap(union) if isinstance(union, dict) else None,
                 return_schema_version=(7 if descriptor.get('schema_version') == 7 else None),
-                sacrifice_schema_version=(8 if descriptor.get('schema_version') == 8 else None),
+                sacrifice_schema_version=(
+                    descriptor["schema_version"] if descriptor.get("schema_version") in {8, NAMED_SACRIFICE_COST_VERSION}
+                    else None
+                ),
+                sacrifice_name=descriptor.get(NAMED_SACRIFICE_NAME_FIELD),
             ),
         ),
         uncompiled_costs=(),

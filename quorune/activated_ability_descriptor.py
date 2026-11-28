@@ -8,10 +8,46 @@ activation limits, and executable outputs.  Domain models may depend on this
 shape contract without importing that rules implementation.
 """
 
+import re
 from typing import Any, Mapping
 
+from .cumulative_counter_upkeep import CounterPlacementCostSpec
+from .util import ORDINARY_FIXED_MANA_PATTERN, mana_cost_to_vector
+
+
+SOURCE_LIBRARY_BOTTOM_FIELD = "source_library_bottom"
+SOURCE_LIBRARY_BOTTOM_OFFER = "bottom_library_self"
+SOURCE_LIBRARY_BOTTOM_CAPABILITY = "activation.source_zone_change.owner_library_bottom"
+SOURCE_LIBRARY_BOTTOM_TEXT = "put this creature on the bottom of its owner's library"
 
 ABILITY_LOCAL_MANA_REDUCTION_FIELD = "ability_local_mana_reduction"
+SOURCE_COUNTER_PLACEMENT_FIELD = "source_counter_placement_cost"
+SOURCE_COUNTER_PLACEMENT_OFFER_FIELD = "place_source_counter"
+SOURCE_COUNTER_PLACEMENT_COST = CounterPlacementCostSpec("-1/-1", "source")
+SOURCE_COUNTER_PLACEMENT_CAPABILITY = "activation.source_counter_placement.fixed"
+
+
+def normalize_source_library_bottom_cost(text: str) -> str:
+    return " ".join(text.casefold().replace("’", "'").split())
+
+
+def source_library_bottom_mana_price(text: str) -> dict[str, int] | None:
+    match = re.fullmatch(
+        rf"(?P<mana>{ORDINARY_FIXED_MANA_PATTERN}), \{{T\}}, {SOURCE_LIBRARY_BOTTOM_TEXT}",
+        normalize_source_library_bottom_cost(text), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    mana, _ = mana_cost_to_vector(match["mana"])
+    return mana
+
+
+def decode_source_counter_placement_cost(value: Any) -> CounterPlacementCostSpec:
+    cost = CounterPlacementCostSpec.from_dict(value)
+    if cost != SOURCE_COUNTER_PLACEMENT_COST:
+        raise ValueError("The fixed source counter price requires one -1/-1 counter on the source")
+    return cost
+
 ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     {
         "schema_version",
@@ -49,7 +85,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_energy_reanimation", "activation_grantor", SOURCE_LIBRARY_BOTTOM_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -86,8 +122,22 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("activated abilities use a closed schema")
     if value["schema_version"] != 1:
         raise ValueError("unsupported activated ability schema version")
+    if "announced_energy_reanimation" in value and value["announced_energy_reanimation"] is not True:
+        raise ValueError("The optional announced energy reanimation marker must be true")
+    if "activation_grantor" in value and (
+        type(value["activation_grantor"]) is not str or not value["activation_grantor"].strip()
+        or value["activation_grantor"].startswith("$")
+    ):
+        raise ValueError("An activation grantor requires one bound player")
+    if SOURCE_LIBRARY_BOTTOM_FIELD in value and value[SOURCE_LIBRARY_BOTTOM_FIELD] is not True:
+        raise ValueError("Optional source library-bottom marker must be true")
+    if 'loyalty_x' in value and value['loyalty_x'] is not True:
+        raise ValueError('Optional variable loyalty marker must be true')
     if 'reconfigure' in value and value['reconfigure'] is not True:
         raise ValueError('Optional Reconfigure marker must be true')
+    if "announced_x_minimum" in value and (type(value["announced_x_minimum"]) is not int
+            or value["announced_x_minimum"] != 1):
+        raise ValueError("Announced activation X minimum must be one")
     if 'announced_x_symbols' in value and (type(value['announced_x_symbols']) is not int or value['announced_x_symbols'] <= 0):
         raise ValueError('Announced X symbol count must be a positive integer')
     if 'boast' in value and value['boast'] is not True:raise ValueError('Optional Boast marker must be true')
@@ -96,6 +146,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("Optional Saddle threshold must be a nonnegative integer")
     if 'random_discard_payment' in value and (type(value['random_discard_payment']) is not int or not 1<=value['random_discard_payment']<=4):
         raise ValueError('Optional random-discard cost must be an exact positive supported count')
+    if "mill_library_cost" in value and (type(value["mill_library_cost"]) is not int or value["mill_library_cost"] != 1):
+        raise ValueError("The optional library Mill cost must be exactly one")
     if any(not isinstance(value[field], list) for field in _SEQUENCE_FIELDS):
         raise ValueError("activated ability sequence fields must be arrays")
     if not isinstance(value["mana"], Mapping):
@@ -130,6 +182,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError(
             "source_counter_removal_cost must be an object when present"
         )
+    if SOURCE_COUNTER_PLACEMENT_FIELD in value:
+        decode_source_counter_placement_cost(value[SOURCE_COUNTER_PLACEMENT_FIELD])
     if "power_up" in value:
         from .power_up_model import PowerUpSpec
         PowerUpSpec.from_dict(value["power_up"])
@@ -137,7 +191,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         from .fixed_mana_results import FixedManaResultSpec
         FixedManaResultSpec.from_dict(value['fixed_mana_result'])
     if 'granting_attachment_payment' in value:
-        from .granted_activation_model import GrantingAttachmentPayment
-        if GrantingAttachmentPayment.from_dict(value['granting_attachment_payment']).granting_object is None:
+        from .granted_activation_model import GrantingAttachmentPayment, GrantingAttachmentPaymentKind
+        payment = GrantingAttachmentPayment.from_dict(value['granting_attachment_payment'])
+        if payment.kind is not GrantingAttachmentPaymentKind.UNATTACH_SOURCE and payment.granting_object is None:
             raise ValueError('Granted activation must name the Equipment incarnation')
     return value

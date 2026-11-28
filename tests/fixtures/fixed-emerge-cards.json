@@ -1046,6 +1046,118 @@
         "tlr": "not_legal"
       },
       "cmc": 7.0
+    },
+    {
+      "oracle_id": "e75356a8-6268-4355-a0bd-114a5243d527",
+      "name": "Patron of the Kitsune",
+      "mana_cost": "{4}{W}{W}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Spirit",
+      "oracle_text": "Fox offering (You may cast this spell any time you could cast an instant by sacrificing a Fox and paying the difference in mana costs between this and the sacrificed Fox. Mana cost includes color.)\nWhenever a creature attacks, you may gain 1 life.",
+      "power": "5",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Offering"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2005-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "316f7091-0c75-4510-a89a-6b58bb7f0627",
+      "name": "Golden-Tail Disciple",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment Creature — Fox Monk",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e75356a8-6268-4355-a0bd-114a5243d527",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "You may gain life when any creatures are declared as attackers, not just for attacking creatures you control."
+    },
+    {
+      "oracle_id": "e75356a8-6268-4355-a0bd-114a5243d527",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "You may gain one life per attacking creature when the ability resolves during each declare attackers step."
     }
   ]
 }

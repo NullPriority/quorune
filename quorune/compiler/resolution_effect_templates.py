@@ -8,6 +8,7 @@ from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .tap_state_templates import (
+    restrict_controller_lands_after_fixed_effect_template,
     fixed_combat_prevention_attackers_untap_template, next_player_untap_effect_template,
     target_combat_prevention_two_untaps_template,
 )
@@ -38,7 +39,10 @@ from .affected_player_discard_templates import (
 )
 from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
-    fixed_affected_player_sacrifice_effect_template,
+    any_number_sacrifice_template, committed_sacrifice_hand_entry_template,
+    counted_sacrifice_damage_template, counted_sacrifice_token_template,
+    fixed_affected_player_sacrifice_effect_template, keep_by_type_template, ordered_type_sacrifice_template,
+    sacrifice_discard_fallback_template, target_sacrifice_toughness_template,
 )
 from .fixed_attachment_templates import (
     created_token_attachment_effect_template,
@@ -96,7 +100,7 @@ from .fixed_counter_controller_effect_sequences import (
 from .proliferate_templates import single_proliferate_effect_template
 from .reanimation_templates import fixed_target_reanimation_effect_template, fixed_target_reanimation_mana_value_loss_template
 from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
-from .reanimation_followup_templates import fixed_reanimation_followup_template
+from .reanimation_followup_templates import fixed_reanimation_entry_subtype_template, fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
@@ -112,7 +116,7 @@ from .temporary_declaration_templates import (
 from .temporary_target_interactions import temporary_target_interaction_effect_template
 from .source_keyword_choices import source_keyword_choice_template
 from .source_protection_choices import source_protection_choice_template
-from .source_fixed_protection import source_fixed_protection_template
+from .source_fixed_protection import each_color_protection_template, source_fixed_protection_template
 from .fixed_target_color import fixed_target_color_template
 
 
@@ -173,9 +177,23 @@ def _attachment_or_zone_result(
 from .creature_subtype_set_templates import creature_subtype_set_template
 
 
+def _budgeted_hand_graveyard_cast(text):
+    normalized = " ".join(text.casefold().split()).replace("’", "'")
+    if normalized != (
+        "you may cast up to two instant and/or sorcery spells with total mana value 6 or less "
+        "from your graveyard and/or hand without paying their mana costs. "
+        "if those spells would be put into your graveyard, exile them instead."
+    ):
+        return None
+    from ..resolving_cast_budget_model import MECHANIC, effect
+
+    return "two-spell-six-value-hand-graveyard-cast-v1", (effect(),), None, (MECHANIC,)
+
+
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     fixed_draw_hand_putback_template,
     hand_library_redraw_template,
+    fixed_reanimation_entry_subtype_template,
     fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_mana_value_loss_template, fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
@@ -205,6 +223,20 @@ def _single_stack_target_change_template(text, *, source_is_permanent):
         return None
     spec = SingleStackTargetChangeSpec(bool(match["ability"]))
     return "mandatory-single-stack-target-change-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
+
+
+def _stack_target_change_mana_value_loss_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import SingleStackTargetChangeSpec, stack_target_change_with_mana_value_loss_effects
+
+    if source_is_permanent is not False or re.fullmatch(
+        r"Change the target of target spell with a single target\. "
+        r"You lose life equal to that spell['’]s mana value\.?",
+        " ".join(text.split()), re.I,
+    ) is None:
+        return None
+    return ("mandatory-stack-target-change-mana-value-loss-v1", stack_target_change_with_mana_value_loss_effects(),
+            SingleStackTargetChangeSpec(False).target_schema, ("cr-115-targets",))
 
 
 def _optional_stack_target_change_template(text, *, source_is_permanent):
@@ -273,6 +305,14 @@ def _forced_block_status_template(text: str) -> CompiledEffectTemplate | None:
             forced_block_status_target_schema(), ("cr-115-targets",))
 
 
+def _turn_damage_resolution_template(text, *, card_name, source_is_permanent):
+    from .damage_permission_templates import turn_damage_prevention_template, turn_received_damage_watch_template
+
+    return turn_received_damage_watch_template(text, source_is_permanent=source_is_permanent) or (
+        turn_damage_prevention_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    )
+
+
 def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
@@ -282,6 +322,7 @@ def _source_context_resolution_template(
         return forced
     stack_change = (
         _single_stack_target_change_template(text, source_is_permanent=source_is_permanent)
+        or _stack_target_change_mana_value_loss_template(text, source_is_permanent=source_is_permanent)
         or _optional_stack_target_change_template(text, source_is_permanent=source_is_permanent)
         or _stack_spell_control_template(text, source_is_permanent=source_is_permanent)
         or _stack_target_change_payment_template(text, source_is_permanent=source_is_permanent)
@@ -289,8 +330,7 @@ def _source_context_resolution_template(
     )
     if stack_change is not None:
         return stack_change
-    from .damage_permission_templates import turn_damage_prevention_template
-    turn_damage = turn_damage_prevention_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    turn_damage = _turn_damage_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
     if turn_damage is not None:return turn_damage
     from .source_sacrifice_templates import fixed_source_sacrifice_template
     sacrifice = fixed_source_sacrifice_template(text, source_name=card_name,
@@ -319,8 +359,9 @@ def _source_context_resolution_template(
     blight = fixed_blight_effect_template(text)
     if blight is not None:
         return blight
-    extra_turn = fixed_extra_turn_effect_template(text)
-    if extra_turn is not None:return extra_turn
+    turn_result = fixed_extra_turn_effect_template(text)
+    if turn_result is not None:
+        return turn_result
     scheduled_skip = scheduled_turn_skip_effect_template(text)
     if scheduled_skip is not None:
         return scheduled_skip
@@ -350,6 +391,10 @@ def _source_context_resolution_template(
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
+    from .die_roll_draw_templates import controller_hand_count_draw_and_size_template
+
+    if hand_count := controller_hand_count_draw_and_size_template(text):
+        return hand_count
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
     if mana is not None:
         return mana
@@ -370,19 +415,45 @@ def _source_context_resolution_template(
         return control.compiled()
     conditional=conditional_source_exile_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
     if conditional is not None:return conditional.compiled()
+    from ..rules.graveyard_exchange_model import graveyard_exchange_effects
+    from ..linked_exile_return_model import LINKED_EXILE_RETURN_MECHANIC
+
+    if source_is_permanent is False and " ".join(text.split()).casefold() == (
+        "each player exiles all creature cards from their graveyard, then sacrifices all creatures "
+        "they control, then puts all cards they exiled this way onto the battlefield."
+    ):
+        return ("graveyard-exile-sacrifice-return-v1", graveyard_exchange_effects(), None,
+                (LINKED_EXILE_RETURN_MECHANIC,))
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
+    from .permanent_protection_life import permanent_protection_then_life_template
+
+    if protection := permanent_protection_then_life_template(text):
+        return protection
     """Retain the precedence of leaves that do not inspect source context."""
+    from .main_phase_combat_templates import main_phase_combat_template
+
+    if extra_combat := main_phase_combat_template(text):
+        return extra_combat
+    from .apnap_library_reveals import apnap_library_reveal_round_template
+    from .airbend_templates import airbend_and_cast_restriction_template
+    from .library_search_templates import private_search_random_discard_effect_template
     from .player_life_exchange import player_life_exchange_template
     from .post_exchange_token import post_exchange_token_spell_template
+    from .created_token_fights import created_token_fight_template
 
-    if closed := (creature_subtype_set_template(text)
+    if closed := (private_search_random_discard_effect_template(text)
+                  or apnap_library_reveal_round_template(text)
+                  or airbend_and_cast_restriction_template(text)
+                  or creature_subtype_set_template(text)
                   or post_exchange_token_spell_template(text)
+                  or created_token_fight_template(text)
                   or player_life_exchange_template(text)
                   or all_permanent_counters_then_token_exile_template(text)
                   or fixed_combat_prevention_attackers_untap_template(text)
+                  or restrict_controller_lands_after_fixed_effect_template(text)
                   or target_combat_prevention_two_untaps_template(text)):
         return closed
     from .temporary_self_copy_templates import temporary_copy_subject_template, temporary_creature_copy_set_template
@@ -440,11 +511,12 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     from .temporary_player_rule_templates import temporary_player_rule_template
     cast_restriction=temporary_player_rule_template(text)
     if cast_restriction is not None:return cast_restriction
-    from .random_graveyard_returns import random_graveyard_return_template
-    random_return=random_graveyard_return_template(text)
+    from .random_graveyard_returns import random_graveyard_exile_cast_template, random_graveyard_return_template
+    random_return=random_graveyard_return_template(text) or random_graveyard_exile_cast_template(text)
     if random_return is not None:return random_return
     from .manifest_templates import manifest_effect_template
-    manifest = manifest_effect_template(text)
+    from .cloak_templates import cloak_effect_template
+    manifest = manifest_effect_template(text) or cloak_effect_template(text)
     if manifest is not None:
         return manifest
     return None
@@ -492,7 +564,7 @@ def _opponent_greatest_power_exile_template(text: str) -> CompiledEffectTemplate
     )
 
 
-def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+def _affected_player_object_effect_template(text: str, *, card_name: str) -> CompiledEffectTemplate | None:
     if greatest_power_exile := _opponent_greatest_power_exile_template(text):
         return greatest_power_exile
     if distinct := _distinct_sacrifice_template(text):
@@ -505,6 +577,26 @@ def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate
         payment = apnap_object_payment_template(text)
         if payment is not None:
             return payment
+    if keep_types := keep_by_type_template(text):
+        return keep_types
+    if ordered := ordered_type_sacrifice_template(text):
+        return ordered
+    if fallback := sacrifice_discard_fallback_template(text):
+        return fallback
+    if sacrifice_damage := counted_sacrifice_damage_template(text, card_name=card_name):
+        return sacrifice_damage
+    if sacrifice_entry := committed_sacrifice_hand_entry_template(text):
+        return sacrifice_entry
+    if arbitrary_sacrifice := any_number_sacrifice_template(text):
+        return arbitrary_sacrifice
+    if sacrifice_tokens := counted_sacrifice_token_template(text):
+        return sacrifice_tokens
+    if sacrifice_life := target_sacrifice_toughness_template(text):
+        return sacrifice_life
+    from .affected_player_sacrifice_templates import ordered_opponent_creature_sacrifice_template
+
+    if ordered := ordered_opponent_creature_sacrifice_template(text):
+        return ordered
     sacrifice = fixed_affected_player_sacrifice_effect_template(text)
     if sacrifice is not None:
         return sacrifice.compiled()
@@ -521,6 +613,8 @@ def _temporary_characteristic_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None, source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
     """Retain ordered source protection, keyword and source/target characteristic leaves."""
+    if protection := each_color_protection_template(text):
+        return protection
     protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types), source_name=card_name)
     if protection_choice is not None:
@@ -556,7 +650,15 @@ def _fixed_phase_out_template(text, *, card_name, source_is_permanent):
     from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
     from .direct_target import direct_permanent_target_spec
 
-    match = re.fullmatch(r"(?P<subject>.+?) phases out\.?", " ".join(text.split()), re.I)
+    normalized = " ".join(text.split())
+    if (source_is_permanent is False
+            and normalized.casefold() == "put a +1/+1 counter on target creature. it phases out."):
+        from ..rules.occurrence_object_results import counter_then_phase_out_effects
+
+        target = direct_permanent_target_spec("target creature")
+        return ("fixed-target-counter-then-phase-out-v1", counter_then_phase_out_effects(),
+                target.to_target_schema(), ("cr-122-counters", "cr-115-targets", PHASE_OUT_MECHANIC))
+    match = re.fullmatch(r"(?P<subject>.+?) phases out\.?", normalized, re.I)
     if match is None:
         return None
     subject = match["subject"]
@@ -602,17 +704,37 @@ def _greatest_power_target_template(text: str) -> CompiledEffectTemplate | None:
 
 
 def _source_reference_resolution_template(text, *, card_name, source_is_permanent, attachment):
+    from .controller_damage_redirection import controller_damage_redirection_template
+
+    if redirection := controller_damage_redirection_template(
+        text, source_is_permanent=source_is_permanent, source_attachment_relation=attachment,
+    ):
+        return redirection
+    from ..rules.combat_prevention_draw import combat_prevention_draw_grant_template
+
+    combat_draw = combat_prevention_draw_grant_template(text)
+    if combat_draw is not None:
+        return combat_draw
+
     from .referenced_damage_templates import attachment_fixed_damage_template
     from .optional_source_damage_templates import optional_source_damage_template
     from .collective_source_damage_templates import collective_source_damage_spell_template
     from .source_directed_redirect import source_directed_redirect_template
+    from ..rules.counter_marked_keep import keep_counter_effect
+    from .secret_number_templates import secret_number_extremes_template
 
+    if (source_is_permanent is False and " ".join(text.casefold().split()) ==
+            "each player puts a vow counter on a creature they control and sacrifices the rest. "
+            "each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it."):
+        return ("fixed-counter-marked-creature-retention-v1", (keep_counter_effect(),), None,
+                ("fixed-affected-player-sacrifice", "sacrifice"))
     redirect = source_directed_redirect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
     if redirect is not None:
         return redirect
     return (
         optional_source_damage_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
         or collective_source_damage_spell_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+        or secret_number_extremes_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
         or keep_three_permanents_spell_template(text, source_is_permanent=source_is_permanent)
         or attachment_fixed_damage_template(
             text, card_name=card_name, source_is_permanent=source_is_permanent, relation=attachment,
@@ -629,7 +751,7 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
-    referenced = owner_library_position_template(text) or _source_reference_resolution_template(
+    referenced = _budgeted_hand_graveyard_cast(text) or owner_library_position_template(text) or _source_reference_resolution_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent, attachment=source_attachment_relation)
     if referenced is not None:
         return referenced
@@ -712,7 +834,7 @@ def typed_resolution_effect_template(
     )
     if fixed_player_counter_placement is not None:
         return fixed_player_counter_placement.compiled()
-    if (affected_object := _affected_player_object_effect_template(text)) is not None:
+    if (affected_object := _affected_player_object_effect_template(text, card_name=card_name)) is not None:
         return affected_object
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)

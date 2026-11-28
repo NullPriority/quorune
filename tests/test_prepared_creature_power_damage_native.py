@@ -124,3 +124,68 @@ class PreparedPowerDamageNativeTests(fixtures.PreparedPowerDamageFixture, unitte
         self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
         self.assertEqual('hand', s.state.cards[land.object_id].zone)
         self.private(s);self.replay(s, load=True)
+
+    def test_agni_kai_excess_reads_committed_damage_and_retains_the_pool(self):
+        for index, (fighter, marked) in enumerate((("Grizzly Bears", 7), ("Vampire Nighthawk", 0))):
+            with self.subTest(fighter=fighter):
+                game, spell, source, rival = self.board("The Last Agni Kai", 1904001 + index, fighter=fighter)
+                rival.marked_damage = marked
+                game.engine._add_mana_to_pool("A", {"R": 1, "G": 1})
+                self.checkpoint(game)
+                game = self.cast_prepared(game, spell, source, rival, resume=True, reserve={"R": 1, "G": 1})
+                self.settle(game)
+                pool = game.state.players["A"].mana_pool
+                self.assertEqual(2, pool["R"])
+                self.assertEqual("graveyard", game.state.cards[rival.object_id].zone)
+                self.until(game, lambda s: s.state.phase == "combat")
+                self.assertEqual(2, game.state.players["A"].mana_pool["R"])
+                self.assertEqual(0, game.state.players["A"].mana_pool["G"])
+                self.finish_turn(game)
+                self.assertEqual(0, game.state.players["A"].mana_pool["R"])
+                self.replay(game, load=True)
+
+    def test_agni_kai_prevention_or_illegal_rival_still_retains_existing_red(self):
+        for index, name in enumerate(("Healing Salve", "Unsummon")):
+            with self.subTest(response=name):
+                game, spell, source, rival = self.board(
+                    "The Last Agni Kai", 1904004 + index, fighter="Vampire Nighthawk",
+                )
+                response = self.add(game.engine, name, seat="B", zone="hand")
+                self.add(game.engine, "Plains" if index == 0 else "Island", seat="B")
+                game.engine._add_mana_to_pool("A", {"R": 1})
+                self.checkpoint(game)
+                game = self.cast_prepared(game, spell, source, rival, reserve={"R": 1})
+                if index == 0:
+                    self.priority(game, "B")
+                    action = self.action(game, "B", response)
+                    accepted = game.act("pilot:B", {"action_id": action["id"], "modes": ["mode_2"],
+                                                   "targets": [rival.ref], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                else:
+                    self.cast(game, "B", response, [rival.ref])
+                game = self.replay(game, load=True)
+                self.settle(game)
+                self.until(game, lambda s: s.state.phase == "combat")
+                self.assertEqual(1, game.state.players["A"].mana_pool["R"])
+                self.replay(game, load=True)
+
+    def test_agni_kai_closed_fight_and_retention_mutations(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.turn_retained_resolution_mana import FIGHT_EXCESS_RED_CAPABILITY, TURN_POOL_COLOR_CAPABILITY
+
+        original = self.db.lookup("The Last Agni Kai", fuzzy=False)
+        ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        for old, new in (("excess damage", "damage"), ("unspent red mana", "unspent green mana")):
+            mutant = replace(original, oracle_text=original.oracle_text.replace(old,new))
+            self.assertNotEqual("exact", compile_oracle_card(mutant, capability_registry=self.registry).status)
+        game, spell, _, _ = self.board("The Last Agni Kai", 1904006)
+        program, = game.engine.semantics.programs_for_oracle(spell.oracle_id)
+        for cap in (FIGHT_EXCESS_RED_CAPABILITY, TURN_POOL_COLOR_CAPABILITY):
+            deps = tuple(dependency for dependency in program.capability_dependencies if dependency != cap)
+            mutated = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            result = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"])

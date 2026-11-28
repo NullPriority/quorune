@@ -108,3 +108,73 @@ class NumberOfTokenNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual({},s.state.cards[source.object_id].counters)
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
         self.assertEqual(4,len(self.tokens(s,'Robot Token')));self.replay(s,load=True)
+
+    def test_actual_ouroboroid_uses_one_source_value_and_the_current_creatures(self):
+        for index, scenario in enumerate(("current", "departed", "phased", "negative")):
+            with self.subTest(scenario=scenario):
+                s = self.session(608200350 + index)
+                source = self.add(s.engine, "Ouroboroid", ref="combat-count-source")
+                source.owner = "D"
+                ally = self.add(s.engine, "Grizzly Bears", ref="combat-count-friendly")
+                rival = self.add(s.engine, "Grizzly Bears", seat="C", ref="combat-count-opposing")
+                land = self.add(s.engine, "Forest", ref="combat-count-land")
+                growth = self.add(s.engine, "Giant Growth", zone="hand", ref="combat-count-boost")
+                self.assert_closed(s, source)
+                self.assert_closed(s, growth)
+                if scenario == "current":
+                    scales = self.add(s.engine, "Hardened Scales", ref="combat-count-replacement")
+                    self.assert_closed(s, scales)
+                else:
+                    answer_name = {"departed": "Unsummon", "phased": "Reality Ripple",
+                                   "negative": "Disfigure"}[scenario]
+                    answer = self.add(s.engine, answer_name, seat="B", zone="hand", ref="combat-count-response")
+                    self.add(s.engine, "Swamp" if scenario == "negative" else "Island",
+                             seat="B", ref="combat-count-response-mana")
+                    if scenario == "phased":
+                        self.add(s.engine, "Island", seat="B", ref="combat-count-response-extra")
+                    self.assert_closed(s, answer)
+                self.prepare(s, active="A")
+                self.checkpoint(s)
+                self.until(s, lambda game: game.state.step == "beginning_combat")
+                queued, = [item for item in s.state.stack if item.source_object_id == source.object_id]
+                self.assertEqual(("A", []), (queued.controller, queued.targets))
+                before = authoritative_state_hash(s.state)
+                actor, = s.pending_principals()
+                rejected = s.act(actor, {"action_id": "choose", "targets": [rival.ref]})
+                self.assertFalse(rejected.ok, rejected.summary)
+                self.assertEqual(before, authoritative_state_hash(s.state))
+
+                if scenario != "negative":
+                    self.cast(s, "A", growth, [source.ref])
+                    self.resolve_top(s)
+                    self.assertEqual(4, s.engine._numeric_stat(source.object_id, "power"))
+                if scenario != "current":
+                    self.cast(s, "B", answer, [source.ref])
+                    self.resolve_top(s)
+                if scenario == "departed":
+                    self.assertEqual("hand", s.state.cards[source.object_id].zone)
+                elif scenario == "phased":
+                    self.assertTrue(s.state.cards[source.object_id].phased_out)
+                elif scenario == "negative":
+                    self.assertEqual(-1, s.engine._numeric_stat(source.object_id, "power"))
+
+                s = self.replay(s, load=True)
+                self.assertIsNone(self.resolve(s))
+                amount = {"current": 5, "departed": 4, "phased": 4, "negative": 0}[scenario]
+                self.assertEqual(amount, s.state.cards[ally.object_id].counters.get("+1/+1", 0))
+                self.assertEqual(0, s.state.cards[rival.object_id].counters.get("+1/+1", 0))
+                self.assertEqual(0, s.state.cards[land.object_id].counters.get("+1/+1", 0))
+                source_counters = {"current": 5, "departed": 0, "phased": 0, "negative": 0}[scenario]
+                self.assertEqual(source_counters, s.state.cards[source.object_id].counters.get("+1/+1", 0))
+                self.replay(s, load=True)
+
+    def test_actual_ouroboroid_triggers_only_in_its_controllers_combat(self):
+        s = self.session(608200360)
+        source = self.add(s.engine, "Ouroboroid")
+        self.assert_closed(s, source)
+        self.prepare(s, actor="B", active="B")
+        self.checkpoint(s)
+        self.until(s, lambda game: game.state.active_player == "B" and game.state.step == "beginning_combat")
+        self.assertFalse(any(item.source_object_id == source.object_id for item in s.state.stack))
+        self.assertEqual(0, s.state.cards[source.object_id].counters.get("+1/+1", 0))
+        self.replay(s, load=True)

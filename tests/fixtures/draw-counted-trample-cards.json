@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and ruling subset",
+  "cards": [
+    {
+      "name": "Fists of Flame",
+      "oracle_id": "e05abb6b-e9f4-4d9e-ad1e-7805ebc09914",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Draw a card. Until end of turn, target creature gains trample and gets +1/+0 for each card you've drawn this turn. (A creature with trample can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e05abb6b-e9f4-4d9e-ad1e-7805ebc09914",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a spell or ability causes you to put cards into your hand without specifically using the word \"draw,\" Fists of Flame's effect doesn't count them."
+    },
+    {
+      "oracle_id": "e05abb6b-e9f4-4d9e-ad1e-7805ebc09914",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target by the time Fists of Flame tries to resolve, the spell doesn't resolve. You won't draw a card."
+    },
+    {
+      "oracle_id": "e05abb6b-e9f4-4d9e-ad1e-7805ebc09914",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "The bonus that the target creature receives is locked in as Fists of Flame resolves, counting the card drawn during its first effect. The creature won't get an additional +1/+0 if you draw another card later in the turn."
+    }
+  ]
+}

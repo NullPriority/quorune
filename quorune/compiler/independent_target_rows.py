@@ -18,18 +18,25 @@ _MUTATIONS = {'modify_stats_until_end_of_turn', 'grant_keyword_until_end_of_turn
 _TARGET_WORD = re.compile(r'\btarget\b', re.I)
 
 
-def prepare_target_clause_context(material_rows,*,spell,face_id,oracle_text,card_name,type_line,keywords,
-        trusted_mechanics,capability_registry,capability_profile,effect_template,activated_or_event_node,trigger_node):
+def prepare_target_clause_context(material_rows,*,spell,oracle_id,face_id,oracle_text,card_name,type_line,keywords,
+        trusted_mechanics,capability_registry,capability_profile,effect_template,activated_or_event_node,trigger_node,allow_linked_card_type=False):
     """Prepare source rows before their shared modal block classification."""
     distinct_spans=set()
     if spell:
         material_rows,distinct_spans=independent_target_source_rows(material_rows,
             source_name=card_name,compile_effect=effect_template)
     from .modal_context_nodes import fixed_nonrepeating_modal_context_blocks
-    blocks=fixed_nonrepeating_modal_context_blocks(material_rows=material_rows,face_id=face_id,
+    blocks=fixed_nonrepeating_modal_context_blocks(material_rows=material_rows,oracle_id=oracle_id,face_id=face_id,
         oracle_text=oracle_text,card_name=card_name,type_line=type_line,keywords=keywords,
         trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,capability_profile=capability_profile,
         effect_template=effect_template,activated_or_event_node=activated_or_event_node,trigger_node=trigger_node)
+    if allow_linked_card_type:
+        from .linked_card_type_nodes import add_linked_card_type_context_nodes
+
+        blocks = add_linked_card_type_context_nodes(
+            blocks, material_rows, card_name=card_name, face_id=face_id,
+            capability_registry=capability_registry, capability_profile=capability_profile,
+        )
     return material_rows,distinct_spans,blocks
 
 

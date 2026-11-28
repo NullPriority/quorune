@@ -1,10 +1,13 @@
 """CR701.8/608.2h/903.3: fixed qualified simultaneous destruction sets."""
 import unittest
-from quorune.compiler.destruction_templates import mass_destruction_effect_template
+from quorune.compiler.destruction_templates import fixed_affected_permanent_query,mass_destruction_effect_template
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from test_qualified_zone_event_queries import query_record
 from dataclasses import replace
+
+
+WINDS_TEXT = "Destroy all creatures that aren't enchanted. They can't be regenerated."
 
 
 class QualifiedDestructionCompilerTests(unittest.TestCase):
@@ -25,6 +28,31 @@ class QualifiedDestructionCompilerTests(unittest.TestCase):
                 self.assertEqual(1,len(template.effects));self.assertEqual('destroy_all',template.effects[0]['op'])
                 ir=compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=registry,capability_profile='commander_review')
                 self.assertEqual('exact',ir.status,ir.material_residuals)
+
+    def test_unenchanted_creatures_keep_the_exact_regeneration_prohibition(self):
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.rules.capabilities import capability_dependencies_for_node
+
+        template = mass_destruction_effect_template(WINDS_TEXT)
+        self.assertIsNotNone(template)
+        self.assertIsNone(template.target_schema)
+        self.assertEqual(('creature',), template.spec.query.types_all)
+        self.assertIs(False, template.spec.query.state_predicate.enchanted)
+        effect, = template.effects
+        self.assertEqual('destroy_all', effect['op'])
+        self.assertIs(True, effect['regeneration_prohibited'])
+        dependencies = capability_dependencies_for_node(
+            effects=template.effects, target_schema=None, mechanic_ids=template.mechanics,
+        )
+        self.assertIn('permanent.destroy.regeneration_prohibition', dependencies)
+        payload_dependencies = typed_result_amount_runtime_dependencies(effect)
+        self.assertIn('permanent.destroy.qualified_fixed_set', payload_dependencies)
+        self.assertIn('permanent.destroy.regeneration_prohibition', payload_dependencies)
+        self.assertIsNone(fixed_affected_permanent_query("creatures that aren't enchanted"))
+        ir = compile_oracle_card(replace(query_record(WINDS_TEXT), type_line='Sorcery'),
+            capability_registry=load_default_capability_registry(), capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertFalse(ir.material_residuals)
 
     def test_descriptor_owned_withdrawal_rejects_qualified_selection_and_keeps_plain_destroy(self):
         import json
@@ -71,7 +99,8 @@ class QualifiedDestructionCompilerTests(unittest.TestCase):
                 self.assertIs(scope, attached.spec.scope)
         for text in ('Destroy all creatures with power X or greater.',
                 'Destroy all creatures of the creature type of your choice.',
-                "Destroy all creatures that aren't enchanted.",
+                "Destroy all creatures that aren't enchanted or equipped.",
+                "Destroy all creatures that aren't enchanted. They can't be sacrificed.",
                 'Destroy all creatures with the remembered quality.'):
             with self.subTest(text=text):self.assertIsNone(mass_destruction_effect_template(text))
 
@@ -124,13 +153,14 @@ class QualifiedDestructionSelectionTests(unittest.TestCase):
         self.assertFalse(result.errors,result.errors);self.assertEqual(1,len(result.failures))
 
 
-import json,tempfile
+import json,os,tempfile
 from pathlib import Path
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
-from quorune.record import authoritative_state_hash
+from quorune.record import authoritative_state_hash,replay_record
+from quorune.session import CommanderSession
 from quorune.attachments import attach_objects
 from scripts.build_test_database import build_fixture_database
 
@@ -142,6 +172,131 @@ class QualifiedDestructionNativeTests(InheritedNativeFixture,unittest.TestCase):
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/qualified-destruction-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Qualified destruction',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',20)],['Isamaru, Hound of Konda'])
+
+    def replay_winds(self, s, case, *, load=False):
+        saved = os.environ.get('QUORUNE_WINDS_RECORD_PARENT')
+        directory = Path(saved or self.temporary.name)
+        if saved:
+            fixture = directory / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = directory / ('winds-' + case)
+        s.save(path)
+        manifest = json.loads((path / 'manifest.json').read_bytes())
+        self.assertEqual(3, manifest['schema_version'])
+        result = replay_record(path, self.db, verify=True)
+        expected = authoritative_state_hash(s.state)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        self.assertEqual(expected, result['final_state_hash'])
+        if saved:
+            proof = directory / (path.name + '.verification.json')
+            proof.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(expected, authoritative_state_hash(resumed.state))
+            return resumed
+
+    def test_winds_destroys_only_unenchanted_creatures_with_ordinary_protections(self):
+        from unittest.mock import patch
+        from quorune import destruction_sets as owner
+        from quorune.destruction import DestructionError
+        from quorune.regeneration import create_regeneration_shield
+
+        s = self.session(701800225)
+        wipe = self.add(s.engine, 'Winds of Rath', zone='hand')
+        regenerating = self.add(s.engine, 'Grizzly Bears', ref='winds-regeneration')
+        bearer = self.add(s.engine, 'Grizzly Bears', seat='B', ref='winds-aura-bearer')
+        equipped = self.add(s.engine, 'Grizzly Bears', seat='B', ref='winds-equipment-only')
+        shielded = self.add(s.engine, 'Grizzly Bears', seat='C', ref='winds-shield-counter')
+        indestructible = self.add(s.engine, 'Grizzly Bears', seat='D', ref='winds-indestructible')
+        aura = self.add(s.engine, 'Pacifism', seat='C', ref='winds-foreign-aura')
+        equipment = self.add(s.engine, 'Bonesplitter', seat='D', ref='winds-equipment')
+        enchantment = self.add(s.engine, 'Glorious Anthem', seat='C', ref='winds-unrelated-enchantment')
+        secret = self.add(s.engine, 'Counterspell', seat='D', zone='hand', ref='winds-private')
+        for source, target in ((aura, bearer), (equipment, equipped)):
+            attach_objects(s.state.cards, source, target, source_timestamp=source.zone_timestamp, players=s.state.players)
+        equipped.temporary_keywords.append('hexproof')
+        indestructible.temporary_keywords.append('indestructible')
+        shielded.counters['shield'] = 1
+        for card in (regenerating, shielded):
+            create_regeneration_shield(s.engine, card.ref, actor=card.controller,
+                reason='Winds witness', logical_object_id=card.logical_object_id)
+        self.assert_closed(s, wipe)
+        self.prepare(s, mana={'C': 3, 'W': 2})
+        self.checkpoint(s)
+        wrong = s.act('pilot:D', {'action_id': 'cast:' + wipe.ref, 'pay': 'auto'})
+        self.assertFalse(wrong.ok)
+        self.cast(s, 'A', wipe, [])
+        self.assertEqual([], s.state.stack[-1].targets)
+        self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+        for seat in 'ABC':
+            self.assertNotIn(secret.ref, json.dumps(s.packet('pilot:' + seat, full=True)))
+
+        commit = owner.commit_destruction_plan
+        committed = []
+
+        def fail_after_commit(host, plan, **kwargs):
+            result = commit(host, plan, **kwargs)
+            committed.append((set(result.destroyed_object_ids),
+                tuple(host.state.cards[card.object_id].zone for card in (regenerating, equipped))))
+            raise DestructionError('Injected failure after the Winds batch committed')
+
+        failed_principal = None
+        with patch.object(owner, 'commit_destruction_plan', fail_after_commit):
+            for _ in range(8):
+                principal = s.pending_principals()[0]
+                before = authoritative_state_hash(s.state)
+                result = s.act(principal, {'action_id': 'pass'})
+                if not result.ok:
+                    self.assertEqual(before, authoritative_state_hash(s.state))
+                    failed_principal = principal
+                    break
+        destroyed = {regenerating.object_id, equipped.object_id}
+        self.assertEqual([(destroyed, ('graveyard', 'graveyard'))], committed)
+        self.assertIsNotNone(failed_principal)
+        self.assertEqual(1, s.state.cards[shielded.object_id].counters['shield'])
+        s = self.replay_winds(s, 'pre-destruction', load=True)
+        result = s.act(failed_principal, {'action_id': 'pass'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(s))
+        for card in (regenerating, equipped, wipe):
+            self.assertEqual('graveyard', s.state.cards[card.object_id].zone)
+        for card in (bearer, shielded, indestructible, aura, equipment, enchantment):
+            self.assertEqual('battlefield', s.state.cards[card.object_id].zone)
+        self.assertEqual(bearer.object_id, s.state.cards[aura.object_id].attached_to)
+        self.assertIsNone(s.state.cards[equipment.object_id].attached_to)
+        shield = s.state.cards[shielded.object_id]
+        self.assertNotIn('shield', shield.counters)
+        self.assertEqual(1, shield.regeneration_shields)
+        destruction, = [event for event in s.state.events if event.code == 'effect.permanent.destroy_set']
+        self.assertEqual(destroyed, set(destruction.changed_objects))
+        self.assertEqual((4, 2, 1, 1), tuple(destruction.details[key] for key in (
+            'affected_count', 'destroyed_count', 'shielded_count', 'indestructible_count',
+        )))
+        self.replay_winds(s, 'settled-protections')
+
+    def test_winds_uses_current_aura_state_after_a_real_response(self):
+        s = self.session(701800226)
+        wipe = self.add(s.engine, 'Winds of Rath', zone='hand')
+        bearer = self.add(s.engine, 'Grizzly Bears', seat='B', ref='winds-former-bearer')
+        aura = self.add(s.engine, 'Pacifism', seat='C', ref='winds-removed-aura')
+        heart = self.add(s.engine, 'Serene Heart', seat='B', zone='hand')
+        attach_objects(s.state.cards, aura, bearer, source_timestamp=aura.zone_timestamp, players=s.state.players)
+        for card in (wipe, heart):
+            self.assert_closed(s, card)
+        s.state.players['B'].mana_pool.update({'C': 1, 'G': 1})
+        self.prepare(s, mana={'C': 3, 'W': 2})
+        self.checkpoint(s)
+        self.cast(s, 'A', wipe, [])
+        self.cast(s, 'B', heart, [])
+        self.resolve_top(s)
+        self.assertEqual('graveyard', s.state.cards[aura.object_id].zone)
+        self.assertEqual('battlefield', s.state.cards[bearer.object_id].zone)
+        s = self.replay_winds(s, 'removed-aura-pending', load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('graveyard', s.state.cards[bearer.object_id].zone)
+        self.replay_winds(s, 'removed-aura-settled')
 
     def test_actual_threshold_reads_current_toughness_after_response_and_replays(self):
         s=self.session(701800201)

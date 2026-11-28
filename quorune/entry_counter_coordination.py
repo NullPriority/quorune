@@ -145,6 +145,7 @@ def prepare_resolving_entry_replacement(
         retained = item.context.get('copied_aura_prepared_entry')
         from .rules.death_cast_permissions import qualified_death_entry_counters
         from .rules.impending import impending_entry_counters
+        from .rules.casting.mana_spend_entry import paid_commander_entry_counters
 
         prepared = prepare_zone_change_replacement(
             host,
@@ -155,6 +156,7 @@ def prepare_resolving_entry_replacement(
             effect_entry_counters=(
                 *qualified_death_entry_counters(host, item),
                 *impending_entry_counters(item, entry_card, entry_destination),
+                *paid_commander_entry_counters(item, entry_card, entry_destination),
             ),
             self_entry_counter_amounts=(
                 frozen_amounts if frozen_amounts else None

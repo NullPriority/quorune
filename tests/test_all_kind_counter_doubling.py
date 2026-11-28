@@ -296,3 +296,160 @@ class AllKindCounterTests(unittest.TestCase):
             blockers=[b for r in ir.material_residuals for b in r.blockers]
             self.assertTrue(any('status:'+CAP+':blocked' in b for b in blockers),blockers)
             self.assertFalse(any('evidence_index:unverified' in b for b in blockers))
+
+
+class CounterInstructionOrderTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = AllKindCounterTests.session
+    add = AllKindCounterTests.add
+    prepare = AllKindCounterTests.prepare
+    checkpoint = AllKindCounterTests.checkpoint
+    resolve = AllKindCounterTests.resolve
+    replay = AllKindCounterTests.replay
+    binding = AllKindCounterTests.binding
+    cast = AllKindCounterTests.cast
+    reject = AllKindCounterTests.reject
+    pir_name = "Pir, Imaginative Rascal"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory()
+        path = Path(cls.temp.name) / "counter-instruction-order.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "all-kind-counter-cards.json", "counter-instruction-order-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Counter instruction order", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temp.cleanup()
+
+    def test_pir_source_requires_a_singleton_team_profile_and_exact_order_scope(self):
+        from quorune.compiler.counter_replacement_templates import static_counter_quantity_replacement_handler
+        from quorune.replacement.model import COUNTER_INSTRUCTION_ORDER_FIELD, ReplacementEffect, ReplacementEffectError
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.counter_replacements import (
+            CounterQuantityReplacementV2Handler, CounterReplacementSourceContext,
+        )
+
+        record = self.db.lookup(self.pir_name, fuzzy=False)
+        line = record.oracle_text.splitlines()[1]
+        template, descriptor, capability = static_counter_quantity_replacement_handler(
+            line, capability_profile="commander_review",
+        )
+        self.assertEqual(1, descriptor[COUNTER_INSTRUCTION_ORDER_FIELD])
+        old = static_counter_quantity_replacement_handler(line.replace("your team controls", "you control"))
+        self.assertEqual(old, (template, {key: value for key, value in descriptor.items()
+                                        if key != COUNTER_INSTRUCTION_ORDER_FIELD}, capability))
+        for profile in (None, "two_headed_giant", "team_vs_team"):
+            self.assertIsNone(static_counter_quantity_replacement_handler(line, capability_profile=profile))
+        for mutated in (line.replace("that many plus one", "twice that many"),
+                        line.replace("permanent your team controls", "player on your team")):
+            self.assertIsNone(static_counter_quantity_replacement_handler(mutated, capability_profile="commander_review"))
+
+        handler = CounterQuantityReplacementV2Handler()
+        effect = handler.replacement_effect(descriptor, CounterReplacementSourceContext("source", "A"))
+        self.assertEqual(effect, ReplacementEffect.from_dict(effect.to_dict()))
+        unmarked = handler.replacement_effect(old[1], CounterReplacementSourceContext("source", "A"))
+        self.assertNotIn(COUNTER_INSTRUCTION_ORDER_FIELD, unmarked.to_dict())
+        for value in (None, True, 2, "1"):
+            with self.subTest(value=value):
+                with self.assertRaises(SemanticNodeError):
+                    handler.validate({**descriptor, COUNTER_INSTRUCTION_ORDER_FIELD: value})
+                with self.assertRaises(ReplacementEffectError):
+                    ReplacementEffect.from_dict({**effect.to_dict(), COUNTER_INSTRUCTION_ORDER_FIELD: value})
+
+    def counter_order(self, game, actor, effect_source, kinds):
+        self.assertEqual(["pilot:" + actor], game.pending_principals())
+        decision = game.packet("pilot:" + actor, full=True)["decision"]
+        self.assertEqual("replacement.order", decision["kind"])
+        context = decision["ctx"]
+        self.assertEqual(set(kinds), {row["kind"] for row in context["counter_instruction_placements"]})
+        chosen, = (row["id"] for row in context["options"] if row["source"] == effect_source.ref)
+        command = {"action_id": "choose", "replacement": chosen}
+        self.reject(game, command, "pilot:B")
+        outcome = game.act("pilot:" + actor, command)
+        self.assertTrue(outcome.ok, outcome.summary)
+
+    def skate_placement(self, game, *targets):
+        skate = self.add(game.engine, "Deepglow Skate", seat="B", zone="hand", ref="pir-skate")
+        self.assertTrue(self.binding(game, skate)["strict_capability_ready"])
+        self.prepare(game, actor="B", active="B", mana={"U": 1, "C": 4})
+        self.checkpoint(game)
+        self.cast(game, "B", skate)
+        pending = self.resolve(game)
+        self.assertEqual("semantic.target", pending.kind)
+        target = game.act("pilot:B", {"action_id": "choose", "targets": [card.ref for card in targets]})
+        self.assertTrue(target.ok, target.summary)
+        return self.resolve(game)
+
+    def test_actual_pir_preserves_all_positive_kinds_and_kind_specific_choices(self):
+        game = self.session(796220)
+        pir = self.add(game.engine, self.pir_name, ref="pir-composition")
+        self.add(game.engine, "Doubling Season", ref="pir-composition-season")
+        scales = self.add(game.engine, "Hardened Scales", ref="pir-composition-scales")
+        target = self.add(game.engine, "Generic Bound Body", ref="pir-composition-subject")
+        target.counters.update({"+1/+1": 1, "charge": 1})
+        opponent = self.add(game.engine, "Generic Bound Body", seat="C", ref="pir-composition-foreign")
+        opponent.counters.update({"+1/+1": 1, "charge": 1})
+        self.assertTrue(self.binding(game, pir)["strict_capability_ready"])
+        self.assertEqual("replacement.order", self.skate_placement(game, target, opponent).kind)
+        self.assertEqual({"+1/+1": 1, "charge": 1}, game.state.cards[target.object_id].counters)
+        game = self.replay(game, load=True)
+        self.counter_order(game, "A", scales, ("+1/+1", "charge"))
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        self.counter_order(game, "A", pir, ("+1/+1", "charge"))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({"+1/+1": 7, "charge": 5}, game.state.cards[target.object_id].counters)
+        self.assertEqual({"+1/+1": 2, "charge": 2}, game.state.cards[opponent.object_id].counters)
+        self.replay(game, load=True)
+
+    def test_actual_pir_keeps_distinct_permanent_placements_in_multiplayer_apnap_order(self):
+        game = self.session(796221)
+        providers = {}
+        subjects = {}
+        for seat in "AC":
+            pir = self.add(game.engine, self.pir_name, seat=seat, ref=f"pir-order-provider-{seat}")
+            season = self.add(game.engine, "Doubling Season", seat=seat, ref=f"pir-order-season-{seat}")
+            body = self.add(game.engine, "Generic Bound Body", seat=seat, ref=f"pir-order-subject-{seat}")
+            body.counters.update({"+1/+1": 1, "charge": 1})
+            providers[seat] = (pir, season)
+            subjects[seat] = body
+        self.assertEqual("replacement.order", self.skate_placement(game, subjects["A"], subjects["C"]).kind)
+        self.counter_order(game, "C", providers["C"][0], ("+1/+1", "charge"))
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        self.counter_order(game, "A", providers["A"][1], ("+1/+1", "charge"))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({"+1/+1": 5, "charge": 5}, game.state.cards[subjects["C"].object_id].counters)
+        self.assertEqual({"+1/+1": 4, "charge": 4}, game.state.cards[subjects["A"].object_id].counters)
+        self.replay(game, load=True)
+
+    def test_actual_pir_groups_prospective_entry_counters_into_one_choice(self):
+        game = self.session(796222)
+        pir = self.add(game.engine, self.pir_name, ref="pir-entry-provider")
+        self.add(game.engine, "Doubling Season", ref="pir-entry-season")
+        grumgully = self.add(game.engine, "Grumgully, the Generous", ref="pir-entry-counter-grant")
+        goblin = self.add(game.engine, "Putrid Goblin", ref="pir-entry-object")
+        rites = self.add(game.engine, "Village Rites", zone="hand", ref="pir-entry-spell")
+        for source in (pir, grumgully, goblin, rites):
+            binding = self.binding(game, source)
+            self.assertTrue(binding["strict_capability_ready"], (source.printed_name, binding["blockers"]))
+        self.prepare(game, mana={"B": 1})
+        self.checkpoint(game)
+        cast = game.act("pilot:A", {"action_id": f"cast:{rites.ref}", "sacrifice_cards": [goblin.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        self.assertEqual("graveyard", game.state.cards[goblin.object_id].zone)
+        game = self.replay(game, load=True)
+        self.counter_order(game, "A", pir, ("+1/+1", "-1/-1"))
+        self.assertIsNone(self.resolve(game))
+        entered = game.state.cards[goblin.object_id]
+        self.assertEqual("battlefield", entered.zone)
+        self.assertEqual({}, entered.counters)
+        self.replay(game, load=True)

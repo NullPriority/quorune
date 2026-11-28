@@ -31,6 +31,66 @@ NEXT_INSTANCE_BATCH_BLOCKER = "CR 615.8: source next-instance shields consume af
 
 
 class TargetSourceNextDamageTests(InheritedNativeFixture, unittest.TestCase):
+    def test_versioned_source_batch_preserves_legacy_wire_and_proves_exact_aftermath(self):
+        from types import SimpleNamespace
+        from quorune.compiler.prevention_templates import fixed_prevention_effect_template
+        from quorune.damage_modifier_state import (
+            DamageModifierError, DamageModifierDuration, DamagePreventionShield, DamageSubject,
+            GainLifePreventionAftermath, PreventionMode, SOURCE_NEXT_INSTANCE_BATCH_FIELD,
+        )
+        from quorune.damage_prevention import _shield_replacement_effect
+        from quorune.damage_prevention_creation import pin_chosen_damage_source
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.replacement import PreventAmount, PreventUsingShield
+        from quorune.rules.prevention_component_shapes import target_source_next_damage_runtime_dependencies
+
+        text = (
+            "The next time target creature would deal damage this turn, prevent that damage. "
+            "You gain life equal to the damage prevented this way."
+        )
+        template, effects, target_schema, _ = fixed_prevention_effect_template(text, card_name="Fixture Shield")
+        effect, = effects
+        self.assertEqual(1, effect[SOURCE_NEXT_INSTANCE_BATCH_FIELD])
+        data = dict(event="resolve", active_zone="stack", target_schema=target_schema, cost_schema=None,
+                    handlers=(), provenance={"template_id": template}, effects=effects, capability_dependencies=())
+        owners = target_source_next_damage_runtime_dependencies(SimpleNamespace(**data))
+        self.assertEqual({"damage.prevention.persistent_amount", "target.revalidate_resolution", "life.change.effect"}, set(owners))
+        altered = (
+            {key:value for key,value in effect.items() if key != SOURCE_NEXT_INSTANCE_BATCH_FIELD},
+            {**effect, SOURCE_NEXT_INSTANCE_BATCH_FIELD: True},
+            {**effect, "aftermath": [{**effect["aftermath"][0], "per_prevented": 2}]},
+        )
+        for changed in altered:
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                target_source_next_damage_runtime_dependencies(SimpleNamespace(**{**data, "effects": (changed,)}))
+        with patch("quorune.compiler.prevention_templates._target_source_next_damage_life_aftermath", return_value=None):
+            self.assertIsNone(fixed_prevention_effect_template(text, card_name="Fixture Shield"))
+
+        game = self.session(615080104)
+        demon = self.add(game.engine, "Pestilence Demon", seat="B")
+        source = pin_chosen_damage_source(
+            game.engine, source_ref=demon.ref, controller="A",
+            predicate=ObjectQuerySpec(zones=("battlefield",), known_to_actor=True),
+        )
+        legacy = DamagePreventionShield(
+            shield_id="legacy-next", source_id="fixture-shield", controller="A",
+            subject=DamageSubject("*", "any", "A"), mode=PreventionMode.NEXT_INSTANCE, remaining=None,
+            duration=DamageModifierDuration.UNTIL_END_OF_TURN, created_turn_sequence=game.state.turn_sequence,
+            chosen_source=source, aftermath=(GainLifePreventionAftermath("A", per_prevented=1),),
+        )
+        self.assertNotIn(SOURCE_NEXT_INSTANCE_BATCH_FIELD, legacy.to_dict())
+        self.assertEqual(legacy, DamagePreventionShield.from_dict(legacy.to_dict()))
+        self.assertIsInstance(_shield_replacement_effect(legacy).operations[0], PreventUsingShield)
+        marked = replace(legacy, source_next_instance_batch_version=1)
+        encoded = marked.to_dict()
+        self.assertEqual(marked, DamagePreventionShield.from_dict(encoded))
+        self.assertIsInstance(_shield_replacement_effect(marked).operations[0], PreventAmount)
+        for marker in (None, True, 0, 2):
+            with self.subTest(marker=marker), self.assertRaises(DamageModifierError):
+                DamagePreventionShield.from_dict({**encoded, SOURCE_NEXT_INSTANCE_BATCH_FIELD: marker})
+        with self.assertRaises(DamageModifierError):
+            replace(marked, mode=PreventionMode.ALL)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()

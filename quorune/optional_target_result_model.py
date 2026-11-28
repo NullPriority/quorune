@@ -6,6 +6,8 @@ OPTIONAL_TARGET_RESULT_FIELD = "optional_target_result"
 OPTIONAL_TARGET_RESULT_CAPABILITY = "resolution.effect_program.optional_target_result"
 OPTIONAL_TARGET_RESULT_MECHANIC = "fixed-optional-target-characteristic-result"
 OPTIONAL_TARGET_RESULT_TEMPLATE = "optional-target-characteristic-result-v1"
+OPTIONAL_LAND_CONTROLLER_SEARCH_CAPABILITY = "resolution.effect_program.optional_nonbasic_land_controller_search"
+OPTIONAL_LAND_CONTROLLER_SEARCH_TEMPLATE = "optional-target-controller-basic-land-search-v1"
 
 
 @dataclass(frozen=True, slots=True)

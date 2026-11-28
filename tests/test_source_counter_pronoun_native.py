@@ -1,7 +1,16 @@
 """Complete pinned originals, including their independent companion abilities."""
 import unittest
 import source_counter_pronoun_fixture as fixtures
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.record import authoritative_state_hash
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 class SourceCounterPronounNativeTests(fixtures.SourceCounterPronounFixture, unittest.TestCase):
@@ -122,3 +131,157 @@ class SourceCounterPronounNativeTests(fixtures.SourceCounterPronounFixture, unit
         self.step(s, 'A', 'beginning', 'upkeep');self.upkeep_choice(s, pay=False);self.settle(s)
         self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
         self.private(s);self.replay(s, load=True)
+
+class QuestingDruidCastCounterTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "questing-druid.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/source-counter-pronoun-cards.json",
+            ROOT / "tests/fixtures/fixed-stack-spell-copy-cards.json",
+            ROOT / "tests/fixtures/fixed-resolution-mana-cards.json",
+            ROOT / "tests/fixtures/closed-effect-program-cards.json",
+            ROOT / "tests/fixtures/life-gain-prohibition-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Spell color trigger witness",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def druid_counter_count(self, game, druid):
+        return game.state.cards[druid.object_id].counters.get("+1/+1", 0)
+
+    def druid_triggers(self, game, druid):
+        return [item for item in game.state.stack
+                if item.kind == "triggered_ability" and item.source_object_id == druid.object_id]
+
+    def test_actual_questing_druid_uses_committed_colors_and_one_multicolor_event(self):
+        game = self.session(60322201)
+        druid = self.add(game.engine, "Questing Druid // Seek the Beast")
+        creature = self.add(game.engine, "Grizzly Bears", seat="B")
+        spells = (
+            (self.add(game.engine, "Revitalize", zone="hand"), {"W"}, []),
+            (self.add(game.engine, "Unsummon", zone="hand"), {"U"}, [creature.ref]),
+            (self.add(game.engine, "Dark Ritual", zone="hand"), {"B"}, []),
+            (self.add(game.engine, "Shock", zone="hand"), {"R"}, ["C"]),
+            (self.add(game.engine, "Lightning Helix", zone="hand"), {"W", "R"}, ["D"]),
+        )
+        green = self.add(game.engine, "Llanowar Elves", zone="hand")
+        colorless = self.add(game.engine, "Sol Ring", zone="hand")
+        foreign = self.add(game.engine, "Shock", seat="B", zone="hand", ref="questing-foreign-cast")
+        self.assert_closed(game, druid)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 6, "W": 4, "U": 4, "B": 3, "R": 5, "G": 4})
+        game.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(game)
+
+        for count, (spell, colors, targets) in enumerate(spells, 1):
+            with self.subTest(spell=spell.printed_name):
+                self.cast(game, "A", spell, targets)
+                trigger, = self.druid_triggers(game, druid)
+                self.assertEqual("A", trigger.context["controller"])
+                self.assertEqual(colors, set(trigger.context["colors"]))
+                self.assertEqual(count - 1, self.druid_counter_count(game, druid))
+                if len(colors) > 1:
+                    game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(count, self.druid_counter_count(game, druid))
+
+        self.cast(game, "A", green)
+        self.assertFalse(self.druid_triggers(game, druid))
+        self.assertIsNone(self.resolve(game))
+        self.priority(game, "A")
+        offer = self.action(game, "A", colorless)
+        chosen = game.act("pilot:A", {
+            "action_id": offer["id"], "pay": "manual", "payment": {"U": 1}, "targets": [],
+        })
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertFalse(self.druid_triggers(game, druid))
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "B", foreign, ["D"])
+        self.assertFalse(self.druid_triggers(game, druid))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(5, self.druid_counter_count(game, druid))
+        self.replay(game, load=True)
+
+    def test_actual_questing_druid_ignores_uncast_spell_copy(self):
+        game = self.session(60322202)
+        druid = self.add(game.engine, "Questing Druid // Seek the Beast")
+        original = self.add(game.engine, "Revitalize", seat="B", zone="hand")
+        copier = self.add(game.engine, "Reverberate", zone="hand")
+        self.assert_closed(game, druid)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"R": 2})
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        self.cast(game, "B", original)
+        self.assertFalse(self.druid_triggers(game, druid))
+        self.cast(game, "A", copier, [game.state.stack[-1].ref])
+        self.assertEqual(1, len(self.druid_triggers(game, druid)))
+        self.resolve_top(game)
+        self.assertEqual(1, self.druid_counter_count(game, druid))
+        self.resolve_top(game)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual("A", copied.controller)
+        self.assertFalse(self.druid_triggers(game, druid))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, self.druid_counter_count(game, druid))
+        self.assertEqual(2, len(game.engine._current_turn_history("spell_cast")))
+        self.replay(game, load=True)
+
+    def test_actual_questing_druid_adventure_keeps_its_printed_play_window(self):
+        from quorune.adventure import ADVENTURE_PERMISSION
+
+        game = self.session(60322203)
+        source = self.add(game.engine, "Questing Druid // Seek the Beast", zone="hand")
+        land = self.add(game.engine, "Mountain", zone="library", ref="questing-impulse-land")
+        shock = self.add(game.engine, "Shock", zone="library", ref="questing-impulse-instant")
+        self.assert_closed(game, source)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 4, "R": 3, "G": 2})
+        self.checkpoint(game)
+
+        def legal():
+            return game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+
+        def accepted(request):
+            result = game.act("pilot:A", request)
+            self.assertTrue(result.ok, result.summary)
+
+        adventure, = (row for row in legal() if row.get("face") == "Seek the Beast")
+        accepted({"action_id": adventure["id"], "face": "Seek the Beast", "pay": "auto"})
+        self.assertEqual("Seek the Beast", game.state.stack[-1].chosen_face)
+        self.assertIsNone(self.resolve(game))
+        actual = game.state.cards[source.object_id]
+        self.assertEqual("exile", actual.zone)
+        self.assertEqual("Questing Druid", actual.annotations[ADVENTURE_PERMISSION]["normal_face"])
+        self.assertEqual({"exile"}, {game.state.cards[card.object_id].zone for card in (land, shock)})
+        game = self.replay(game, load=True)
+        self.priority(game, "A")
+        self.assertIn("cast:" + shock.ref, {row["id"] for row in legal()})
+        accepted({"action_id": "play-land:" + land.ref})
+        self.assertEqual("battlefield", game.state.cards[land.object_id].zone)
+        normal, = (row for row in legal() if row.get("card") == source.ref and row["id"].startswith("cast:"))
+        face = {"face": normal["face"]} if normal.get("face") else {}
+        accepted({"action_id": normal["id"], "pay": "auto", **face})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[source.object_id].zone)
+        self.assertEqual(0, self.druid_counter_count(game, source))
+        turn = game.state.turn_sequence
+        self.until(game, lambda view: view.state.step == "end_step" and view.state.active_player == "A")
+        self.assertEqual(turn, game.state.turn_sequence)
+        self.priority(game, "A")
+        self.assertNotIn("cast:" + shock.ref, {row["id"] for row in legal()})
+        self.assertEqual("exile", game.state.cards[shock.object_id].zone)
+        self.replay(game, load=True)

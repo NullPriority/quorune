@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed fixed all-damage shield as one ordered resolution component."""
 
 from collections.abc import Mapping
-from ..damage_modifier_state import DamagePreventionScope
+from ..damage_modifier_state import DamagePreventionScope, SOURCE_NEXT_INSTANCE_BATCH_FIELD
 from ..replacement.immutable import thaw_value
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
 
@@ -11,6 +11,160 @@ from .permanent_predicate_capability_shapes import direct_permanent_target_schem
 TARGET_SOURCE_NEXT_DAMAGE_FIELD = "target_source_next_damage_version"
 TARGET_SOURCE_NEXT_DAMAGE_CAPABILITY = "damage.prevention.target_source_next_instance"
 TARGET_COMBAT_MANA_VALUE_TEMPLATE = "target-combat-prevention-mana-value-toughness-v1"
+TARGET_FULL_COUNTER_TEMPLATE = "target-full-damage-counter-aftermath-v2"
+TARGET_FULL_COUNTER_CAPABILITY = "damage.prevention.target_full_counter_aftermath"
+COMBAT_TOKEN_AFTERMATH_TEMPLATE = "controller-combat-prevention-token-aftermath-v1"
+COMBAT_TOKEN_AFTERMATH_CAPABILITY = "damage.prevention.aftermath.token_creation"
+
+
+def decode_combat_token_aftermath(value):
+    """Normalize a token recipe at the prevention rule boundary."""
+    from ..damage_modifier_state import CreateTokensPreventionAftermath
+    from ..standard_token_abilities import standard_token_characteristics
+
+    if not isinstance(value, Mapping) or not isinstance(value.get("characteristics"), Mapping):
+        raise ValueError("Token aftermath requires a fixed creature definition")
+    return CreateTokensPreventionAftermath.from_dict({
+        **value, "characteristics": standard_token_characteristics(thaw_value(value["characteristics"])),
+    })
+
+
+def combat_token_aftermath_effect(recipe):
+    return {
+        "op": "create_damage_prevention_shield", "source": "$source", "subject": "$controller",
+        "mode": "all", "duration": "until_end_of_turn", "damage_kind": "combat",
+        "aftermath": [recipe.to_dict()],
+    }
+
+
+def _combat_token_aftermath_capabilities(effects, target_schema):
+    from ..util import stable_json
+    from .token_creation_capability_shapes import _fixed_token_effect_closure
+
+    if target_schema is not None or len(effects) != 1:
+        return ()
+    try:
+        raw, = effects[0]["aftermath"]
+        recipe = decode_combat_token_aftermath(raw)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    if stable_json(thaw_value(effects[0])) != stable_json(combat_token_aftermath_effect(recipe)):
+        return ()
+    token_effect = {"op": "create_token", "controller": "$controller", "quantity": 1,
+                    "name": recipe.name, "characteristics": thaw_value(recipe.characteristics)}
+    closure = _fixed_token_effect_closure(token_effect)
+    if closure is None:
+        return ()
+    return (COMBAT_TOKEN_AFTERMATH_CAPABILITY, "damage.prevention.persistent_amount", *closure[0])
+
+
+def _has_combat_token_aftermath(effect):
+    values = effect.get("aftermath") if isinstance(effect, Mapping) else None
+    return isinstance(values, (list, tuple)) and any(
+        isinstance(row, Mapping) and row.get("kind") == "create_tokens" for row in values
+    )
+
+
+def combat_token_aftermath_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    marked = any(_has_combat_token_aftermath(effect) for effect in nested_effects(program.effects))
+    if not marked and COMBAT_TOKEN_AFTERMATH_TEMPLATE not in str(program.provenance.get("template_id") or ""):
+        return ()
+    required = _combat_token_aftermath_capabilities(program.effects, program.target_schema)
+    if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.cost_schema is not None):
+        raise ValueError("Combat prevention tokens require their complete original spell")
+    return required
+
+
+def reflected_source_prevention_effects():
+    from ..damage_modifier_state import PREVENTED_SOURCE_REFLECTION
+
+    base = {
+        "op": "create_damage_prevention_shield", "source": "$source", "subject": "*",
+        "mode": "all", "duration": "until_end_of_turn", "damage_kind": "any",
+        "application_group_id": "$stack",
+    }
+    return tuple({
+        **base,
+        "aftermath": [
+            {"kind": "deal_damage", "source": "$source", "recipient": None,
+             "recipient_kind": PREVENTED_SOURCE_REFLECTION, "per_prevented": 1, "fixed_amount": 0},
+        ],
+        "scope": DamagePreventionScope(
+            source_controller_relation="opponent", target_controller_relation="source_controller",
+            target_kinds=(kind,), target_characteristics_all=traits,
+        ).to_dict(),
+    } for kind, traits in (("player", ()), ("permanent", ("planeswalker",))))
+
+
+def _reflected_source_prevention_capabilities(effects, target_schema, cost_schema=None):
+    from ..util import stable_json
+
+    if (target_schema is None and cost_schema is None and len(effects) == 2
+            and stable_json(thaw_value(effects)) == stable_json(reflected_source_prevention_effects())):
+        return ("damage.prevention.persistent_amount", "damage.prevention.aftermath.damage")
+    return ()
+
+
+def _reflected_source_prevention_runtime_dependencies(program):
+    from ..damage_modifier_state import PREVENTED_SOURCE_REFLECTION
+    from .effect_shape_walkers import nested_effects
+
+    if not any(
+        result.get("recipient_kind") == PREVENTED_SOURCE_REFLECTION
+        for effect in nested_effects((program.effects, program.handlers))
+        for result in effect.get("aftermath", ()) if isinstance(result, Mapping)
+    ):
+        return ()
+    required = _reflected_source_prevention_capabilities(program.effects, program.target_schema, program.cost_schema)
+    if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.event_condition is not None):
+        raise ValueError("Source reflection requires both original resolving protection scopes")
+    return required
+
+
+def target_full_counter_aftermath_effect():
+    return {"op": "create_damage_prevention_shield", "source": "$source", "subject": "$target.0",
+            "mode": "all", "duration": "until_end_of_turn", "aftermath": [
+                {"kind": "place_counters", "subject": "$target.0", "placing_player": "$controller",
+                 "counter_name": "+1/+1", "per_prevented": 1, "fixed_amount": 0, "schema_version": 2},
+            ]}
+
+
+def _target_full_counter_capabilities(*, effects, target_schema, cost_schema):
+    if cost_schema is not None or len(effects) != 1 or not effects[0].get("aftermath"):
+        return ()
+    from ..compiler.direct_target import direct_permanent_target_spec
+    from ..util import stable_json
+
+    expected = direct_permanent_target_spec("target creature you control").to_target_schema()
+    if (target_schema != expected or type(target_schema["count"]) is not int
+            or stable_json(thaw_value(effects)) != stable_json((target_full_counter_aftermath_effect(),))):
+        return ()
+    return (TARGET_FULL_COUNTER_CAPABILITY, "damage.prevention.persistent_amount", "target.revalidate_resolution",
+            "counter.placement.quantity_replacement")
+
+
+def _target_full_counter_aftermath_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    template = str(program.provenance.get("template_id") or "").split("+")
+    marked = any(
+        result.get("kind") == "place_counters" and "schema_version" in result
+        for effect in nested_effects(program.effects)
+        for result in effect.get("aftermath", ()) if isinstance(result, Mapping)
+    )
+    if not (marked or TARGET_FULL_COUNTER_TEMPLATE in template
+            or TARGET_FULL_COUNTER_CAPABILITY in program.capability_dependencies):
+        return ()
+    required = _target_full_counter_capabilities(
+        effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
+    )
+    if not required or (program.event, program.active_zone) != ("permanent.enter.self", "battlefield") or program.handlers:
+        raise ValueError("A full damage counter aftermath requires its exact self-entry and controlled creature target")
+    return required
 
 
 def targeted_outgoing_combat_shield():
@@ -51,12 +205,17 @@ def _target_combat_mana_value_capabilities(*, effects, target_schema, cost_schem
 
 def targeted_prevention_result_node_capabilities(*, effects, target_schema, cost_schema=None):
     values = {"effects": effects, "target_schema": target_schema, "cost_schema": cost_schema}
-    return target_source_next_damage_node_capabilities(**values) or _target_combat_mana_value_capabilities(**values)
+    return (target_source_next_damage_node_capabilities(**values) or _target_combat_mana_value_capabilities(**values)
+            or _target_full_counter_capabilities(**values))
 
 
 def targeted_prevention_result_runtime_dependencies(program):
+    if required := combat_token_aftermath_runtime_dependencies(program):
+        return required
     if program.provenance.get("template_id") != TARGET_COMBAT_MANA_VALUE_TEMPLATE:
-        return target_source_next_damage_runtime_dependencies(program)
+        return (_target_full_counter_aftermath_runtime_dependencies(program)
+                or target_source_next_damage_runtime_dependencies(program)
+                or _reflected_source_prevention_runtime_dependencies(program))
     required = _target_combat_mana_value_capabilities(
         effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
     )
@@ -66,40 +225,63 @@ def targeted_prevention_result_runtime_dependencies(program):
     return required
 
 
-def target_source_next_damage_effects():
+def _target_source_next_damage_shield():
     from ..compiler.prevention_templates import _source_predicate
+
+    return {
+        "op": "create_damage_prevention_shield", "source": "$source", "subject": "*",
+        "chosen_source": "$target.0", "mode": "next_instance", "duration": "until_end_of_turn",
+        "source_predicate": _source_predicate(None).to_dict(), TARGET_SOURCE_NEXT_DAMAGE_FIELD: 1,
+    }
+
+
+def target_source_next_damage_effects():
     from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
 
     return (
         {"op": "life", "player": "$controller",
          "delta": ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET, characteristic="power").to_dict()},
-        {"op": "create_damage_prevention_shield", "source": "$source", "subject": "*",
-         "chosen_source": "$target.0", "mode": "next_instance", "duration": "until_end_of_turn",
-         "source_predicate": _source_predicate(None).to_dict(), TARGET_SOURCE_NEXT_DAMAGE_FIELD: 1},
+        _target_source_next_damage_shield(),
     )
 
 
+def target_source_next_damage_life_aftermath_effect():
+    shield = _target_source_next_damage_shield()
+    del shield[TARGET_SOURCE_NEXT_DAMAGE_FIELD]
+    return {
+        **shield,
+        SOURCE_NEXT_INSTANCE_BATCH_FIELD: 1,
+        "aftermath": [
+            {"kind": "gain_life", "player": "$controller", "per_prevented": 1, "fixed_amount": 0},
+        ],
+    }
+
+
 def target_source_next_damage_node_capabilities(*, effects, target_schema, cost_schema=None):
-    if (cost_schema is not None or len(effects) != 2 or not isinstance(effects[1], Mapping)
-            or TARGET_SOURCE_NEXT_DAMAGE_FIELD not in effects[1]):
+    if (cost_schema is not None or len(effects) not in (1, 2) or not isinstance(effects[-1], Mapping)
+            or not {TARGET_SOURCE_NEXT_DAMAGE_FIELD, SOURCE_NEXT_INSTANCE_BATCH_FIELD}.intersection(effects[-1])):
         return ()
     from ..compiler.direct_target import direct_permanent_target_spec
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY
     from ..util import stable_json
 
     if (not isinstance(target_schema, Mapping) or type(target_schema.get("count")) is not int
-            or target_schema != direct_permanent_target_spec("target creature").to_target_schema()
-            or stable_json(thaw_value(effects)) != stable_json(target_source_next_damage_effects())):
+            or target_schema != direct_permanent_target_spec("target creature").to_target_schema()):
         return ()
-    return (TARGET_SOURCE_NEXT_DAMAGE_CAPABILITY, "damage.prevention.persistent_amount",
-            "target.revalidate_resolution", "life.change.effect", SCALAR_AMOUNT_CAPABILITY)
+    required = ("damage.prevention.persistent_amount", "target.revalidate_resolution", "life.change.effect")
+    encoded = stable_json(thaw_value(effects))
+    if encoded == stable_json((target_source_next_damage_life_aftermath_effect(),)):
+        return required
+    if encoded == stable_json(target_source_next_damage_effects()):
+        return (TARGET_SOURCE_NEXT_DAMAGE_CAPABILITY, *required, SCALAR_AMOUNT_CAPABILITY)
+    return ()
 
 
 def target_source_next_damage_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
 
     marked = any(
-        TARGET_SOURCE_NEXT_DAMAGE_FIELD in effect or (
+        {TARGET_SOURCE_NEXT_DAMAGE_FIELD, SOURCE_NEXT_INSTANCE_BATCH_FIELD}.intersection(effect) or (
             effect.get("op") == "create_damage_prevention_shield"
             and effect.get("chosen_source") == "$target.0" and effect.get("mode") == "next_instance"
         )
@@ -157,6 +339,8 @@ def paired_target_combat_prevention_capabilities(*, effects, target_schema, mech
 
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids):return ()
+    if reflected := _reflected_source_prevention_capabilities(effects, target_schema):
+        return reflected
     if len(effects)==2 and target_schema is None:
         from ..source_prevention import SOURCE_SUBJECT_VERSION,SOURCE_COMBAT_DIRECTION,source_prevention_dependencies
         if (all(isinstance(effect,Mapping) and effect.get(SOURCE_SUBJECT_VERSION)==3 for effect in effects)
@@ -165,6 +349,8 @@ def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids
             except (TypeError,ValueError):return ()
     if len(effects)!=1:return ()
     effect=effects[0]
+    if _has_combat_token_aftermath(effect):
+        return _combat_token_aftermath_capabilities(effects, target_schema)
     if isinstance(effect,Mapping) and {'source_controller_target_version','source_controller_target'}.intersection(effect):
         from .target_controller_prevention import targeted_controller_prevention_capabilities
         return targeted_controller_prevention_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

@@ -6,11 +6,13 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from .object_query import exact_numeric_characteristic
+from .counter_names import normalized_counter_name
 from .query_effect_amount_model import PublicQueryAmountError
 from .scalar_effect_amount_model import (
-    PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
-    PaidCreatureStatSnapshot, PaidSacrificeManaValueSnapshot,
-    SCALAR_REFERENCE_CONTEXT, ScalarAmountOrigin, ScalarEffectAmountSpec, scalar_amount_specs,
+    PAID_REVEALED_CREATURE_CONTEXT, PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
+    PaidCreatureStatSnapshot, PaidRevealedCreatureSnapshot, PaidSacrificeManaValueSnapshot,
+    SCALAR_REFERENCE_CONTEXT, SOURCE_COUNTER_KIND_COUNT_VERSION, ScalarAmountOrigin, ScalarEffectAmountSpec,
+    scalar_amount_specs,
 )
 from .turn_history import current_turn_history_events
 from .paid_sacrifice_conditions import (
@@ -25,7 +27,8 @@ class ScalarAmountHost(Protocol):
     def _type_parts(self, text: str) -> tuple[set[str], set[str], set[str]]: ...
 
 
-def _snapshot(host, card, *, characteristics=None, include_counters=False, requested_characteristic=None):
+def _snapshot(host, card, *, characteristics=None, include_counters=False, include_mutations=False,
+              requested_characteristic=None):
     data = dict(characteristics) if characteristics is not None else host._effective_card_data(card)
     values = {'power': None, 'toughness': None}
     if requested_characteristic != 'mana_value':
@@ -35,7 +38,17 @@ def _snapshot(host, card, *, characteristics=None, include_counters=False, reque
                   for field in ("power", "toughness")}
     values["mana_value"] = data.get("mana_value", data.get("cmc"))
     return {"object_id": card.object_id, "logical_object_id": card.logical_object_id,
-            "ref": card.ref, "zone": card.zone, **values, **({"counters":dict(card.counters)} if include_counters else {})}
+            "ref": card.ref, "zone": card.zone, **values,
+            **({"counters": dict(card.counters)} if include_counters else {}),
+            **({"mutation_count": _mutation_count(card)} if include_mutations else {})}
+
+
+def _mutation_count(card):
+    composition = card.permanent_composition
+    if composition is None:
+        return 0
+    composition.validate_carrier(card)
+    return composition.topology.mutation_count
 
 
 def _current_card(host, ref):
@@ -44,10 +57,21 @@ def _current_card(host, ref):
 
 def scalar_source_context(host, source, effects, *, characteristics=None):
     """Seed source identity/LKI before activation costs or departure discovery."""
-    if not any(spec.origin is ScalarAmountOrigin.SOURCE for spec in scalar_amount_specs(effects)):
+    specs = scalar_amount_specs(effects)
+    if not any(spec.origin is ScalarAmountOrigin.SOURCE for spec in specs):
         return {}
-    counters=any(spec.counter_name is not None for spec in scalar_amount_specs(effects))
-    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,include_counters=counters)}}
+    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,
+        include_counters=any(spec.reads_source_counters for spec in specs),
+        include_mutations=any(spec.reads_source_mutation_count for spec in specs))}}
+
+
+def _public_event_mana_value_reference(spec, item):
+    from .saga_lifecycle import FINAL_SAGA_CHAPTER_RESOLVED_EVENT
+
+    return (
+        spec.origin is ScalarAmountOrigin.EVENT_OBJECT and spec.characteristic == "mana_value"
+        and item.context.get("event") in {"permanent.enter", FINAL_SAGA_CHAPTER_RESOLVED_EVENT}
+    )
 
 
 def _reference(host, item, spec, *, use_phased_source_lki=False):
@@ -62,7 +86,8 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
             card = host.state.cards.get(item.source_object_id or item.card_object_id or "")
             if card is None or card.logical_object_id != item.context.get("source_logical_object_id"):
                 raise PublicQueryAmountError("Scalar source identity is unavailable")
-            initial = _snapshot(host, card,include_counters=spec.counter_name is not None)
+            initial = _snapshot(host, card, include_counters=spec.reads_source_counters,
+                                include_mutations=spec.reads_source_mutation_count)
     elif spec.origin in {
         ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
     }:
@@ -95,20 +120,28 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
                 "power": context.get("power"), "toughness": context.get("toughness"),
                 "mana_value": context.get("mana_value")}
     fields={"ref", "object_id", "logical_object_id", "zone", "power", "toughness", "mana_value"}
-    if not isinstance(initial, Mapping) or set(initial) not in (fields,fields|{'counters'}):
+    if spec.reads_source_mutation_count:
+        fields.add("mutation_count")
+    if not isinstance(initial, Mapping) or set(initial) not in (fields, fields | {"counters"}):
         raise PublicQueryAmountError("Scalar characteristic snapshot is malformed")
     if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE and (
             len(item.targets) != 1 or initial['ref'] != item.targets[0] or initial['zone'] != 'graveyard'):
         raise PublicQueryAmountError('Scalar graveyard snapshot lost its target or expected public zone')
+    if spec.reads_source_mutation_count and (initial["zone"] != "battlefield"
+            or initial["object_id"] != item.source_object_id
+            or initial["logical_object_id"] != item.context.get("source_logical_object_id")):
+        raise PublicQueryAmountError("The mutation count lost its original battlefield source identity")
     snapshots[key] = dict(initial)
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
         if card.phased_out:
-            if use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE:
+            if (use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE) or _public_event_mana_value_reference(spec, item):
                 return initial
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
-        return _snapshot(host, card,include_counters='counters' in initial or spec.counter_name is not None,
-            requested_characteristic='mana_value' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
+        return _snapshot(host, card, include_counters="counters" in initial or spec.reads_source_counters,
+            include_mutations="mutation_count" in initial or spec.reads_source_mutation_count,
+            requested_characteristic=spec.characteristic if _public_event_mana_value_reference(spec, item)
+            or spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
     return initial
 
 
@@ -152,9 +185,36 @@ def _reference_identity(host, item, spec):
     return card.object_id, context.get("card_object_identity"), "battlefield"
 
 
+def _shared_counter_result_amount(effects: Sequence[Any]):
+    from .fixed_token_production import FIXED_DISTRIBUTED_TOKEN_OPERATION
+
+    if len(effects) != 3 or tuple(effect.get("op") for effect in effects) != (
+        "place_counters", FIXED_DISTRIBUTED_TOKEN_OPERATION, "damage_fixed_set",
+    ):
+        return None
+    placement, production, damage = effects
+    token = production.get("token")
+    if not isinstance(token, Mapping):
+        return None
+    amount = token.get("quantity")
+    if (not isinstance(amount, Mapping) or amount != damage.get("amount")
+            or placement.get("card") != "$source.zone_object"
+            or damage.get("source") != "$source"):
+        return None
+    spec = ScalarEffectAmountSpec.from_dict(amount)
+    return amount if (spec.reads_source_counters and spec.binding_id is not None
+                      and spec.counter_name == placement.get("counter")) else None
+
+
 def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError, phase_out=False):
     """Use the original object immediately before a supported loss of availability."""
+    from .counter_placement_sets import uses_source_power_combat_counter_set
     from .library_bottom_result_model import library_bottom_uses_source_power
+    from .rules.opponent_event_mana_payment import uses_opponent_source_power_payment
+    from .rules.counter_scaled_annihilator import uses_counter_scaled_annihilator
+    from .rules.source_counter_kind_draw import uses_source_counter_kind_draw
+    from .rules.source_counter_mill_choice import OFFER_FIELD as SOURCE_COUNTER_MILL_OFFER
+    from .rules.source_power_firebending import uses_source_power_firebending
 
     try:
         departing = {card.object_id: card for card in cards if card.zone in {"battlefield", "graveyard"}}
@@ -165,15 +225,22 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is None:
                 continue
-            phased_source_lki = library_bottom_uses_source_power(program.effects)
-            if phase_out and not phased_source_lki:
-                continue
             specs = scalar_amount_specs(program.effects)
+            phased_source_lki = (any(spec.reads_source_mutation_count or spec.reads_source_counters for spec in specs)
+                or library_bottom_uses_source_power(program.effects)
+                or _shared_counter_result_amount(program.effects) is not None
+                or any(SOURCE_COUNTER_MILL_OFFER in effect for effect in program.effects)
+                or any(uses_source_counter_kind_draw(effect) for effect in program.effects)
+                or any(uses_source_power_combat_counter_set(effect) or uses_opponent_source_power_payment(effect)
+                       or uses_counter_scaled_annihilator(effect) or uses_source_power_firebending(effect)
+                       for effect in program.effects))
             selected = [spec for spec in specs if spec.origin in {
                 ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
                 ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER}]
             for spec in selected:
-                if phase_out and spec.origin is not ScalarAmountOrigin.SOURCE:
+                if phase_out and not (
+                    phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE or _public_event_mana_value_reference(spec, item)
+                ):
                     continue
                 identity = _reference_identity(host, item, spec)
                 if identity is None:
@@ -201,6 +268,14 @@ def library_bottom_source_power(host, item):
 
 
 def _history_amount(host, item, fact):
+    from .damage_turn_history import committed_damage_to_player_this_turn
+    from .scalar_effect_amount_model import CONTROLLER_DAMAGE_RECEIVED_FACT
+
+    if fact == CONTROLLER_DAMAGE_RECEIVED_FACT:
+        amount = committed_damage_to_player_this_turn(host.state, item.controller)
+        if amount is None:
+            raise PublicQueryAmountError("Scalar damage history is unavailable")
+        return amount
     history = host.state.turn_history
     if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
         raise PublicQueryAmountError("Scalar turn history is unavailable")
@@ -276,9 +351,27 @@ def resolve_paid_sacrifice_condition(value: Mapping, item) -> bool:
 
 
 def _paid_sacrifice_mana_value(item):
+    if item.kind == "activated_ability":
+        from .rules.activation.paid_characteristic_price import PAID_ENCHANTMENT_MANA_VALUE_CONTEXT
+
+        fact = item.context.get(PAID_ENCHANTMENT_MANA_VALUE_CONTEXT)
+        objects = item.context.get("cost_object_snapshots", ())
+        if (not isinstance(fact, Mapping) or set(fact) != {"program", "source_logical", "paid_object_id", "snapshot"}
+                or fact["program"] != item.semantic_key or fact["source_logical"] != item.context.get("source_logical_object_id")
+                or len(objects) != 1 or objects[0].get("object_id") != fact["paid_object_id"]):
+            raise PublicQueryAmountError("Paid enchantment mana value requires the verified activation and sacrifice")
+        return PaidSacrificeManaValueSnapshot.from_dict(fact["snapshot"]).mana_value
     snapshot = PaidSacrificeManaValueSnapshot.from_dict(item.context.get(PAID_SACRIFICE_MANA_VALUE_CONTEXT))
     _validate_paid_incarnation(item, snapshot.logical_object_id, 'Paid sacrifice mana-value facts')
     return snapshot.mana_value
+
+
+def _paid_revealed_creature_amount(item, characteristic):
+    snapshot = PaidRevealedCreatureSnapshot.from_dict(item.context.get(PAID_REVEALED_CREATURE_CONTEXT))
+    same_instance = item.ref == snapshot.stack_ref
+    if (item.kind, same_instance) not in {("spell", True), ("spell_copy", False)}:
+        raise PublicQueryAmountError("Paid reveal characteristics require the committed spell or its copy")
+    return getattr(snapshot, characteristic)
 
 
 def _reflexive_paid_creature_power(item, spec: ScalarEffectAmountSpec) -> int:
@@ -291,7 +384,7 @@ def _reflexive_paid_creature_power(item, spec: ScalarEffectAmountSpec) -> int:
     return snapshot.stats.power * (2 if spec.double_for_subtype in snapshot.subtypes else 1)
 
 
-def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item) -> int:
+def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item, *, use_phased_source_lki=False) -> int:
     spec = ScalarEffectAmountSpec.from_dict(value)
     from .cast_event_amounts import committed_cast_mana_value_facts
     cast_facts=committed_cast_mana_value_facts(item) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else None
@@ -311,10 +404,16 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     if spec.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE:
         from .activation_paid_characteristic_model import resolve_activation_paid_creature_stat
         amount = resolve_activation_paid_creature_stat(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.PAID_ACTIVATION_DAMAGE_MANA_VALUE:
+        from .rules.activation.paid_mana_value_damage import resolve_paid_damage_mana_value
+
+        return resolve_paid_damage_mana_value(item) + spec.offset
     elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
         amount = _paid_creature_stat_amount(item, spec.characteristic)
     elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
         amount = _paid_sacrifice_mana_value(item)
+    elif spec.origin is ScalarAmountOrigin.PAID_REVEALED_CREATURE:
+        amount = _paid_revealed_creature_amount(item, spec.characteristic)
     elif spec.origin is ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE:
         amount = _reflexive_paid_creature_power(item, spec)
     elif spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
@@ -336,12 +435,24 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
         try:
-            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate)
+            excluded_source = None
+            if spec.aggregate.schema_version == 3:
+                from .continuous_effect_model import ContinuousObjectIdentity
+
+                excluded_source = ContinuousObjectIdentity(
+                    item.source_object_id, item.context.get("source_logical_object_id"),
+                )
+            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate,
+                                                             excluded_source=excluded_source)
         except ValueError as exc:
             raise PublicQueryAmountError(str(exc)) from exc
     elif spec.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT:
         from .commander_cast_counts import controller_commander_cast_count
         amount = controller_commander_cast_count(host.state, item.controller)
+    elif spec.reads_source_mutation_count:
+        amount = _reference(host, item, spec, use_phased_source_lki=True).get("mutation_count")
+        if type(amount) is not int or amount < 0:
+            raise PublicQueryAmountError("The original source mutation count is unavailable or malformed")
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     elif spec.origin is ScalarAmountOrigin.HISTORY_COUNT:
@@ -349,12 +460,22 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
 
         amount = public_history_query_value(host.state, item.controller, spec.history_count)
     else:
-        reference=_reference(host,item,spec)
-        if spec.counter_name is not None:
+        count_kinds = spec.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION
+        if spec.reads_source_counters and spec.binding_id is not None:
+            program = host.semantics.get(item.semantic_key) if item.semantic_key else None
+            if program is not None and _shared_counter_result_amount(program.effects) == value:
+                use_phased_source_lki = True
+        reference = _reference(
+            host, item, spec, use_phased_source_lki=use_phased_source_lki or spec.reads_source_counters,
+        )
+        if spec.reads_source_counters:
             counters=reference.get('counters')
             if not isinstance(counters,Mapping) or any(type(v) is not int or v<0 for v in counters.values()):
                 raise PublicQueryAmountError("Scalar source counter snapshot is unavailable or malformed")
-            amount=counters.get(spec.counter_name,0)
+            if count_kinds:
+                amount = len({normalized_counter_name(name) for name, value in counters.items() if value > 0})
+            else:
+                amount = counters.get(spec.counter_name, 0)
         else:
             amount = reference.get(spec.characteristic)
         if spec.characteristic == "mana_value" and type(amount) is float and amount.is_integer():

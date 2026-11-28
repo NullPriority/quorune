@@ -1,0 +1,459 @@
+{
+  "cards": [
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "name": "Arena of Glory",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped unless you control a Mountain.\n{T}: Add {R}.\n{R}, {T}, Exert this land: Add {R}{R}. If any of that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Exert"
+      ],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Mons's Goblin Raiders",
+      "oracle_id": "a37159df-f6d7-4db6-85de-0ea77f425993",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2000-04-01",
+      "toughness": "1",
+      "type_line": "Creature — Goblin"
+    },
+    {
+      "oracle_id": "9cfe86ae-eebe-44aa-a956-4b3e9e621105",
+      "name": "Krenko's Command",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create two 1/1 red Goblin creature tokens.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Mana Reflection",
+      "oracle_id": "a3a8a044-283d-443e-bc40-c2f826d70c22",
+      "oracle_text": "If you tap a permanent for mana, it produces twice as much of that mana instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "name": "Hill Giant",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If an exerted permanent is already untapped during your next untap step (most likely because an effect untapped it), exert's effect preventing it from untapping expires without having done anything."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the mana generated with Arena of Glory's last ability is spent on two different creature spells, each of those spells (and resulting creatures) will gain haste until end of turn."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If mana generated with Arena of Glory's last ability is spent to cast a noncreature spell that creates tokens, those tokens won't gain haste."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The mana generated with Arena of Glory's last ability can be spent on anything, not just creature spells."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you gain control of another player's permanent until end of turn and exert it, and then that player regains control of it, it will untap during that player's untap step."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If mana generated with Arena of Glory's last ability is spent to pay any part of a creature spell's cost, including an alternative or additional cost, that creature spell (and the resulting creature) will gain haste until end of turn."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If mana generated with Arena of Glory's last ability is spent on a noncreature spell that becomes a creature later in the turn, that creature won't have haste."
+    },
+    {
+      "oracle_id": "63dfe794-5f56-41ec-9883-5523b41cc3e0",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You must already control a Mountain as Arena of Glory enters the battlefield for it to enter untapped. If it enters the battlefield at the same time as a Mountain when you control no other Mountains, it will enter tapped."
+    },
+    {
+      "comment": "If an ability triggers “whenever you tap” something for mana and produces mana, that triggered mana ability won't be affected by Mana Reflection.",
+      "oracle_id": "a3a8a044-283d-443e-bc40-c2f826d70c22",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mana Reflection doesn't produce any mana itself. Rather, it causes permanents you tap for mana to produce more mana. If the mana ability of that permanent puts any restrictions or riders on the mana it produces, that will apply to all the mana it produces this way.",
+      "oracle_id": "a3a8a044-283d-443e-bc40-c2f826d70c22",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Mana Reflections are cumulative. For example, if you have two Mana Reflections on the battlefield, you'll get four times the original amount and type of mana. If you have three, you'll get eight times the mana, and so on.",
+      "oracle_id": "a3a8a044-283d-443e-bc40-c2f826d70c22",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You're “tapping a permanent for mana” only if you're activating a mana ability of that permanent that includes the {T} symbol in its cost. A mana ability produces mana as part of its effect.",
+      "oracle_id": "a3a8a044-283d-443e-bc40-c2f826d70c22",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for priced exert mana witnesses"
+}

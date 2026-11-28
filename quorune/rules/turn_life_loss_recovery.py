@@ -1,20 +1,35 @@
 """Read existing authoritative turn facts; never infer loss from life totals."""
-from ..turn_history import current_turn_history_events
+from collections import Counter
 from collections.abc import Mapping
+from ..turn_history import current_turn_history_events
 from ..turn_life_loss_amount_model import (AllPlayerTurnLifeLossSpec,
     TURN_LIFE_LOSS_TOTAL_KIND as KIND,TURN_LIFE_LOSS_TOTAL_CAPABILITY as CAP)
 from ..query_effect_amount_model import PublicQueryAmountError
 
 
-def resolve_all_player_turn_life_loss(host,value,item):
-    AllPlayerTurnLifeLossSpec.from_dict(value)
-    history=host.state.turn_history;sequence=host.state.turn_sequence
+def _actual_current_turn_life_loss_events(state):
+    history = state.turn_history
+    sequence = state.turn_sequence
     if history is None or type(history.schema_version) is not int or history.schema_version!=1 or history.turn_sequence!=sequence:
         raise PublicQueryAmountError('Current-turn life-loss history is unavailable')
     events=current_turn_history_events(history,turn_sequence=sequence,kind='player_lost_life')
     if any(type(event.amount) is not int or event.amount<0 for event in events):
         raise PublicQueryAmountError('Actual life-loss history amounts must be nonnegative integers')
-    return sum(event.amount for event in events)
+    return events
+
+
+def resolve_all_player_turn_life_loss(host,value,item):
+    AllPlayerTurnLifeLossSpec.from_dict(value)
+    return sum(event.amount for event in _actual_current_turn_life_loss_events(host.state))
+
+
+def current_turn_life_loss_by_player(state):
+    amounts = Counter()
+    for event in _actual_current_turn_life_loss_events(state):
+        if type(event.target) is not str or not event.target:
+            raise PublicQueryAmountError('Actual life loss requires the affected player identity')
+        amounts[event.target] += event.amount
+    return amounts
 
 
 def turn_life_loss_value_dependencies(value):

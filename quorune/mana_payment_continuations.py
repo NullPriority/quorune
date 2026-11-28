@@ -6,6 +6,7 @@ from typing import Any, Mapping, Protocol
 
 from .damage_transaction import damage_proposal_continuation_fields
 from .errors import GameRuleError
+from .rules.mana_life_result import mana_life_replacement_event
 from .mana_undo import clear_mana_undo_stack
 from .additional_cost_vocabulary import BLIGHT_CAST_PAYMENT_FIELD
 from .rules.activation_zone_change_costs import (
@@ -73,6 +74,16 @@ def issue_mana_payment_replacement_choice(
     if action=='activate':
         from .rules.activation.random_discard_costs import freeze_random_discard_cost_response
         response=freeze_random_discard_cost_response(host,seat,response)
+        if isinstance(required, WholeZoneCostChoiceRequired):
+            from .rules.activation.whole_hand_mana_costs import validate_activation_frame
+
+            validate_activation_frame(required.frame, response)
+            response = {**response, WHOLE_ZONE_COST_FRAME_FIELD: required.frame.to_dict()}
+        from .rules.activation.mill_library_cost import freeze_mill_library_cost_response
+        from .rules.activation.counter_costs import freeze_source_counter_placement_response
+
+        response = freeze_mill_library_cost_response(host, seat, response)
+        response = freeze_source_counter_placement_response(host, seat, response)
     if action=='cast':
         from .rules.random_discard_additional_cost import freeze_random_spell_cost_response
         from .rules.casting.blight_costs import BlightCastPaymentChoiceRequired
@@ -98,6 +109,8 @@ def issue_mana_payment_replacement_choice(
         event_kinds and all(kind == "damage" for kind in event_kinds)
     ):
         resume_kind = "mana_payment"
+    elif mana_life_replacement_event(required.batch, response, seat) is not None:
+        resume_kind = "priority_action_cost"
     elif event_kinds == ("counter.place",) and action in {
         "cast",
         "activate",
@@ -113,7 +126,7 @@ def issue_mana_payment_replacement_choice(
         "stage_cast_lifecycle",
     }:
         resume_kind = "priority_action_cost"
-    elif action == "cast" and isinstance(required, WholeZoneCostChoiceRequired) and event_kinds and all(
+    elif action in {"cast", "activate"} and isinstance(required, WholeZoneCostChoiceRequired) and event_kinds and all(
         kind == "zone.change" for kind in event_kinds
     ):
         resume_kind = "priority_action_cost"
@@ -191,6 +204,7 @@ def execute_mana_choice_capable_priority_action(
         ORDERED_ZONE_COST_FRAME_FIELD,
         WHOLE_ZONE_COST_FRAME_FIELD,
         "_random_discard_cost_refs",
+        "_mill_library_cost_refs",
         "_waterbend_payment",
         BLIGHT_CAST_PAYMENT_FIELD,
         SPLICE_SELECTION,

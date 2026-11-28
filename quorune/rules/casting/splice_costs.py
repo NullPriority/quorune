@@ -57,7 +57,14 @@ def _printed_splice_source(host, card):
 
 
 def available_splice_sources(host, seat, spell, program, *, type_line=None):
-    if program is None or program.requires_arbiter or not host.semantic_program_is_current_trusted(program):
+    from ...gift_card_model import GIFT_CARD_COST_FIELD
+    from ..gift_fish_spells import GIFT_FISH_COST_FIELD
+    from ..main_phase_creature_cohort import uses_creature_cohort_addendum
+
+    if (program is None or program.requires_arbiter
+            or {GIFT_CARD_COST_FIELD, GIFT_FISH_COST_FIELD}.intersection(program.cost_schema or {})
+            or not host.semantic_program_is_current_trusted(program)
+            or any(uses_creature_cohort_addendum(effect) for effect in program.effects)):
         return {}
     characteristics = type_line if type_line is not None else host._effective_card_data(spell).get("type_line", "")
     types, subtypes, _ = host._type_parts(str(characteristics))

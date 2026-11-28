@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Crackle with Power",
+      "oracle_id": "273f5483-b67e-4dd6-bba8-c0a047fa34d7",
+      "mana_cost": "{X}{X}{X}{R}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Crackle with Power deals five times X damage to each of up to X targets.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "273f5483-b67e-4dd6-bba8-c0a047fa34d7",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you choose 1 for the value of X, Crackle with Power will cost {3}{R}{R} to cast and deal five damage to a single target. If you choose 2 for the value of X, it will cost {6}{R}{R} to cast and deal ten damage to each of up to two targets, and so on."
+    }
+  ]
+}

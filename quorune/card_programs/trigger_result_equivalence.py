@@ -108,11 +108,80 @@ def _optional_graveyard_search_views_equal(current, old):
     return actual == expected and bool(required) and set(required) <= set(current.capability_dependencies)
 
 
+def _fixed_mana_cumulative_upkeep_views_equal(current, old):
+    from ..rules.cumulative_upkeep_capability_shapes import fixed_mana_cumulative_upkeep_node_capabilities
+
+    if (current.event != "step.begin" or current.active_zone != "battlefield" or len(old.effects) != 1):
+        return False
+    required = fixed_mana_cumulative_upkeep_node_capabilities(
+        effects=current.effects, event_condition=current.event_condition,
+        target_schema=current.target_schema, mechanic_ids=current.coverage,
+    )
+    if not required or not set(required) <= set(current.capability_dependencies):
+        return False
+    effect, = current.effects
+    previous, = old.effects
+    if set(previous) != set(effect):
+        return False
+    current_cost, old_cost = effect["cost_per_counter"], previous["cost_per_counter"]
+    if (not isinstance(old_cost, Mapping) or not set(old_cost) <= set(current_cost)
+            or any(type(value) is not int for value in old_cost.values())):
+        return False
+    return previous == {**effect, "cost_per_counter": {key: current_cost[key] for key in old_cost}} and all(
+        not value or key in old_cost for key, value in current_cost.items()
+    )
+
+
+def _opponent_cast_payment_views_equal(current, old):
+    from ..rules.opponent_event_mana_payment import (
+        opponent_event_mana_payment_program_dependencies, uses_opponent_event_mana_payment,
+    )
+
+    if len(current.effects) != 1 or len(old.effects) != 1:
+        return False
+    effect, = current.effects
+    previous, = old.effects
+    if (not uses_opponent_event_mana_payment(effect) or current.event != "spell.cast"
+            or previous.get("op") != "remora_tax"
+            or tuple(child.get("op") for child in effect.get("declined_effects", ())) != ("offer_draw",)):
+        return False
+    try:
+        required = opponent_event_mana_payment_program_dependencies(current, effect)
+    except (ValueError, TypeError, KeyError):
+        return False
+    amount = effect["cost"]["GENERIC"]
+    old_cost = previous.get("cost")
+    return (set(required) <= set(current.capability_dependencies)
+            and isinstance(old_cost, Mapping) and type(old_cost.get("GENERIC")) is int
+            and previous == {"op": "remora_tax", "player": "$context.controller",
+                             "beneficiary": "$controller", "cost": {"GENERIC": amount}})
+
+
+def _source_bound_populate_views_equal(current, old):
+    from ..fixed_token_production import uses_source_bound_populate
+    from ..rules.token_creation_capability_shapes import source_bound_populate_runtime_dependencies
+
+    if (len(current.effects) != 1 or not uses_source_bound_populate(current.effects[0])
+            or tuple(old.effects) != ({"op": "populate_with_haste", "player": "$controller"},)):
+        return False
+    try:
+        required = source_bound_populate_runtime_dependencies(current)
+    except (TypeError, ValueError, KeyError):
+        return False
+    return bool(required) and set(required) <= set(current.capability_dependencies)
+
+
 def fixed_trigger_results_equal(current, old):
-    return (fixed_graveyard_exile_views_equal(current, old)
+    from ..rules.draw_step_drawing_settlement import draw_step_settlement_supersedes_reviewed
+
+    return (draw_step_settlement_supersedes_reviewed(current, old)
+        or fixed_graveyard_exile_views_equal(current, old)
         or _optional_graveyard_search_views_equal(current, old)
         or fixed_graveyard_self_entry_views_equal(current, old)
-        or fixed_token_choice_results_equal(current,old))
+        or fixed_token_choice_results_equal(current,old)
+        or _source_bound_populate_views_equal(current, old)
+        or _fixed_mana_cumulative_upkeep_views_equal(current, old)
+        or _opponent_cast_payment_views_equal(current, old))
 
 
 def _fixed_token_choice_results(program):
@@ -152,3 +221,47 @@ def fixed_token_choice_results_equal(current,old):
     if not required or not set(required)<=set(current.capability_dependencies):return False
     current_results,old_results = (_fixed_token_choice_results(program) for program in (current,old))
     return current_results is not None and current_results==old_results
+
+
+def ordered_sacrifice_or_entry_subtype_supersedes_reviewed(current, old):
+    """Match the complete earlier recipes while retaining their archived keys."""
+    from ..creature_subtypes import canonical_creature_subtype
+    from ..replacement.immutable import thaw_value
+    from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_program_dependencies
+    from ..rules.reanimation_entry_subtype import FIELD, entry_subtype_reanimation_program_dependencies
+
+    if current.event_condition != old.event_condition:
+        return False
+    try:
+        if ordered_opponent_sacrifice_program_dependencies(current):
+            if len(old.effects) != 1 or old.target_schema is not None:
+                return False
+            prior = thaw_value(old.effects[0])
+            prompt = prior.pop("prompt", None)
+            return (
+                type(prompt) is str and bool(prompt) and type(prior.get("count")) is int
+                and prior == {"op": "choose_cards_apnap", "players": "opponents", "actor": "$controller",
+                              "zone": "battlefield", "card_type": "creature", "count": 3, "then": "sacrifice"}
+            )
+        if not entry_subtype_reanimation_program_dependencies(current) or len(old.effects) != 2:
+            return False
+        schema = thaw_value(old.target_schema)
+        if not isinstance(schema, Mapping) or set(schema) != {"groups"} or len(schema["groups"]) != 1:
+            return False
+        group = dict(schema["groups"][0])
+        group_id = group.pop("id", None)
+        if (type(group_id) is not str or not group_id or group.get("creature") is not True
+                or type(group.get("min")) is not int or type(group.get("max")) is not int
+                or group != {"zones": ["graveyard"], "categories": ["card"], "creature": True, "min": 1, "max": 1}):
+            return False
+        prior_move, prior_subtype = map(thaw_value, old.effects)
+        reasons = (prior_move.pop("reason", ""), prior_subtype.pop("reason", ""))
+        subtype = prior_subtype.get("type")
+        return (
+            all(type(reason) is str for reason in reasons)
+            and prior_move == {"op": "reanimate", "card": "$target.0", "controller": "$controller"}
+            and type(subtype) is str and canonical_creature_subtype(subtype) == current.effects[0][FIELD]
+            and prior_subtype == {"op": "add_type", "card": "$target.0", "type": subtype}
+        )
+    except (TypeError, ValueError, KeyError):
+        return False

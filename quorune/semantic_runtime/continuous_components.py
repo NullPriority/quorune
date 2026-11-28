@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol
 from ..ability_fragments import (
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
+    GRANTED_TRIGGER_PROVIDER_VERSION,
     StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_to_dict,
@@ -145,8 +146,23 @@ class ContinuousEffectSourceContext:
     current_block_counterparts: tuple[ContinuousObjectIdentity, ...] = ()
     counter_placement_recipients: tuple[ContinuousObjectIdentity, ...] = ()
     linked_player: str | None = None
+    linked_color: str | None = None
+    linked_card_type: str | None = None
+    linked_characteristic_cards: tuple = ()
+    linked_ability_pair: str | None = None
+    source_commander_colors: tuple[str, ...] | None = None
+    recipient_attack_counts: tuple[tuple[ContinuousObjectIdentity, int], ...] | None = None
+    attachment_protection_cutoff: int | None = None
 
     def __post_init__(self) -> None:
+        facts = self.recipient_attack_counts
+        if facts is not None and (
+            type(facts) is not tuple
+            or any(type(row) is not tuple or len(row) != 2 or not isinstance(row[0], ContinuousObjectIdentity)
+                   or type(row[1]) is not int or row[1] < 1 for row in facts)
+            or len({identity for identity, _ in facts}) != len(facts)
+        ):
+            raise SemanticNodeError("Attack counts require positive values and unique recipient incarnations")
         counterparts = self.current_block_counterparts
         if (type(counterparts) is not tuple
                 or any(not isinstance(identity, ContinuousObjectIdentity) for identity in counterparts)
@@ -826,6 +842,9 @@ class FixedQueryAbilityGrantHandler:
                 "fixed query ability grants require typed declaration, activated, "
                 "triggered abilities or versioned static cost components"
             )
+        if any(isinstance(fragment, GrantedTriggeredAbilitySpec) and fragment.granting_source is not None
+               for fragment in fragments):
+            raise SemanticNodeError("A granted trigger descriptor cannot prebind its provider")
         if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version not in {2, 3} for fragment in fragments):
             raise SemanticNodeError('Static grants require a versioned cost component reference')
         if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version == 3 and fragment.grant_timestamp is not None for fragment in fragments):
@@ -850,6 +869,12 @@ class FixedQueryAbilityGrantHandler:
             exclude_source=node.exclude_source,
             context=context,
         )
+        fragments = []
+        for fragment in node.fragments:
+            if isinstance(fragment, GrantedTriggeredAbilitySpec) and fragment.schema_version == GRANTED_TRIGGER_PROVIDER_VERSION:
+                provider = ContinuousObjectIdentity(context.source_object_id, context.source_logical_object_id)
+                fragment = replace(fragment, granting_source=provider)
+            fragments.append(fragment)
         return (
             ContinuousEffect(
                 effect_id=f"{context.source_object_id}:{context.component_id}",
@@ -867,13 +892,89 @@ class FixedQueryAbilityGrantHandler:
                             "add_ability_fragment",
                             ability_fragment_to_dict(fragment),
                         )
-                        for fragment in node.fragments
+                        for fragment in fragments
                     ),
                 ),
                 origin=ContinuousEffectOrigin.STATIC_ABILITY,
                 applies=predicate,
             ),
         )
+
+
+def _ordinary_fixed_query_keywords(abilities, fragments, condition, predicate):
+    expected_triggered = tuple(
+        triggered[1] for ability in abilities
+        if (triggered := triggered_keyword_grant(ability)) is not None
+    )
+    actual_triggered = tuple(
+        ability_fragment_to_dict(fragment) for fragment in fragments
+        if not isinstance(fragment, (WardSpec, ProtectionSpec))
+    )
+    ward = tuple(fragment for fragment in fragments if isinstance(fragment, WardSpec))
+    ward_labels = tuple(fragment.fixed_query_grant_label for fragment in ward)
+    printed_ward = tuple(ability for ability in abilities if ability.startswith(("Ward {", "Ward—Pay ")))
+    if actual_triggered != expected_triggered or None in ward_labels or printed_ward != ward_labels:
+        raise SemanticNodeError("Keyword grant fragments must exactly match their typed keyword labels")
+    if any(fragment.life_payment is not None for fragment in ward):
+        creatures = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        if (len(ward) != 1 or abilities != ward_labels or condition["target_controller"] != "source_controller"
+                or condition["exclude_source"] is not True or predicate != creatures):
+            raise SemanticNodeError("Quoted life Ward is a single grant to the controller's other creatures")
+    return tuple(ability for ability in abilities if ability != "Protection" and ability not in ward_labels
+                 and triggered_keyword_grant(ability) is None)
+
+
+def _fixed_query_keyword_receiver(condition: Any) -> ObjectQuerySpec:
+    if not isinstance(condition, Mapping):
+        raise SemanticNodeError("runtime handler condition must be an object")
+    exact_fields(
+        condition,
+        {"target_controller", "predicate", "exclude_source"},
+        field="runtime handler condition",
+    )
+    if condition["target_controller"] not in {
+        "any",
+        "source_controller",
+        "source_opponents",
+        "source_owner",
+    }:
+        raise SemanticNodeError(
+            "fixed query keyword grants require a closed controller relation"
+        )
+    if type(condition["exclude_source"]) is not bool:
+        raise SemanticNodeError(
+            "fixed query keyword grant exclude_source must be boolean"
+        )
+    try:
+        predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+        validate_receiver_union_template(predicate)
+    except ObjectQueryError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    target_controller = condition["target_controller"]
+    if (
+        target_controller == "source_owner" or predicate.commander is not None
+    ) and (
+        predicate.commander is not True
+        or predicate.types_all != ("creature",)
+        or target_controller not in {"source_owner", "source_controller"}
+    ):
+        raise SemanticNodeError('Owner-relative keyword grants require designated commander creatures')
+    if (
+        predicate.owner is not None
+        or predicate.controller is not None
+        or predicate.excluded_controllers
+        or predicate.exclude_ref is not None
+        or predicate.known_to_actor is not None
+    ):
+        raise SemanticNodeError(
+            "fixed query keyword grants reserve owner, controller, visibility, "
+            "and source exclusion"
+        )
+    if predicate.zones not in {(), ("battlefield",)}:
+        raise SemanticNodeError(
+            "fixed query keyword grants apply only on the battlefield"
+        )
+    return predicate
 
 
 @dataclass(frozen=True, slots=True)
@@ -922,48 +1023,7 @@ class FixedQueryKeywordGrantHandler:
         if descriptor["event"] != self.event:
             raise SemanticNodeError(f"{self.handler_id} must handle {self.event}")
         condition = descriptor["condition"]
-        if not isinstance(condition, Mapping):
-            raise SemanticNodeError("runtime handler condition must be an object")
-        exact_fields(
-            condition,
-            {"target_controller", "predicate", "exclude_source"},
-            field="runtime handler condition",
-        )
-        if condition["target_controller"] not in {
-            "any",
-            "source_controller",
-            "source_opponents",
-            "source_owner",
-        }:
-            raise SemanticNodeError(
-                "fixed query keyword grants require a closed controller relation"
-            )
-        if type(condition["exclude_source"]) is not bool:
-            raise SemanticNodeError(
-                "fixed query keyword grant exclude_source must be boolean"
-            )
-        try:
-            predicate = ObjectQuerySpec.from_dict(condition["predicate"])
-            validate_receiver_union_template(predicate)
-        except ObjectQueryError as exc:
-            raise SemanticNodeError(str(exc)) from exc
-        if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
-            raise SemanticNodeError('Owner-relative keyword grants require designated commander creatures')
-        if (
-            predicate.owner is not None
-            or predicate.controller is not None
-            or predicate.excluded_controllers
-            or predicate.exclude_ref is not None
-            or predicate.known_to_actor is not None
-        ):
-            raise SemanticNodeError(
-                "fixed query keyword grants reserve owner, controller, visibility, "
-                "and source exclusion"
-            )
-        if predicate.zones not in {(), ("battlefield",)}:
-            raise SemanticNodeError(
-                "fixed query keyword grants apply only on the battlefield"
-            )
+        predicate = _fixed_query_keyword_receiver(condition)
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):
             raise SemanticNodeError("runtime handler modifier must be an object")
@@ -992,26 +1052,7 @@ class FixedQueryKeywordGrantHandler:
             raise SemanticNodeError(
                 "fixed query keyword grant fragments are malformed"
             ) from exc
-        expected_triggered = tuple(
-            triggered[1] for ability in abilities
-            if (triggered := triggered_keyword_grant(ability)) is not None
-        )
-        actual_triggered = tuple(
-            ability_fragment_to_dict(fragment) for fragment in fragments
-            if not isinstance(fragment, (WardSpec, ProtectionSpec))
-        )
-        if actual_triggered != expected_triggered or any(
-            isinstance(fragment, WardSpec) and fragment.generic_cost is None
-            for fragment in fragments
-        ):
-            raise SemanticNodeError('Keyword grant fragments must exactly match their typed keyword labels')
-        ward_labels = tuple(
-            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments if isinstance(fragment, WardSpec)
-        )
-        ordinary = tuple(
-            ability for ability in abilities if ability != 'Protection'
-            and not ability.startswith("Ward {") and triggered_keyword_grant(ability) is None
-        )
+        ordinary = _ordinary_fixed_query_keywords(abilities, fragments, condition, predicate)
         protection = tuple(fragment for fragment in fragments if isinstance(fragment, ProtectionSpec))
         if protection:
             if descriptor['schema_version'] != 2 or abilities != ('Protection',) or len(protection) != len(fragments):
@@ -1020,13 +1061,14 @@ class FixedQueryKeywordGrantHandler:
                 raise SemanticNodeError('Query protection fragments must be distinct')
         elif 'Protection' in abilities or descriptor['schema_version'] == 2:
             raise SemanticNodeError('Query protection has no complete typed fragment')
+        if "Read Ahead" in abilities:
+            from ..read_ahead import read_ahead_grant_descriptor_dependencies
+
+            read_ahead_grant_descriptor_dependencies(descriptor)
+            ordinary = ()
         if (
             not abilities
             or len(set(abilities)) != len(abilities)
-            or tuple(
-                ability for ability in abilities if ability.startswith("Ward {")
-            )
-            != ward_labels
             or any(
                 ability not in FIXED_CHARACTERISTIC_KEYWORDS
                 for ability in ordinary

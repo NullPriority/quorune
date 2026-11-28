@@ -8,6 +8,7 @@ from ..cast_cost_modifiers import (
     CHOSEN_TYPE_CAST_COST_CAPABILITY, CHOSEN_TYPE_CAST_COST_HANDLER_ID,
     CastCostAffectedController, CastCostModifierError, PublicCastCostModifierV2Spec,
 )
+from ..linked_card_type import CAPABILITY as LINKED_CARD_TYPE_CAPABILITY, COST_HANDLER, OPTIONS
 from ..morph import MORPH_FACE_DOWN_ANNOTATION, face_down_characteristics
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_query_result
@@ -62,6 +63,37 @@ class ChosenTypeSpellCostModifierHandler:
             return ()
         predicate = replace(modifier.predicates_any[0], subtypes_all=(chosen_type,))
         return (replace(modifier, predicates_any=(predicate,)),)
+
+
+def linked_card_type_cost_descriptor():
+    modifier = PublicCastCostModifierV2Spec(
+        affected_controller=CastCostAffectedController.SOURCE_CONTROLLER,
+        predicates_any=(ObjectQuerySpec(),),
+        mana_adjustment=(("GENERIC", -1),),
+    )
+    return {"handler_id": COST_HANDLER, "schema_version": 1, "event": "cast.cost.modify",
+            "modifier": modifier.to_dict()}
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedCardTypeSpellCostModifierHandler(ChosenTypeSpellCostModifierHandler):
+    handler_id: str = COST_HANDLER
+    rule_references: tuple[str, ...] = ("109.5", "118.7a", "205.2b", "601.2f", "607.2d", "707.6")
+    capability_dependencies: tuple[str, ...] = (LINKED_CARD_TYPE_CAPABILITY,)
+
+    def validate(self, descriptor):
+        modifier = ChosenTypeSpellCostModifierHandler.validate(self, descriptor)
+        if modifier.to_dict() != linked_card_type_cost_descriptor()["modifier"]:
+            raise SemanticNodeError("Linked card-type costs require the exact fixed own-spell reduction")
+        return modifier
+
+    def lower(self, descriptor, card_type):
+        modifier = self.validate(descriptor)
+        if card_type is None:
+            return ()
+        if card_type not in OPTIONS:
+            raise SemanticNodeError("Linked card-type reduction requires a legal entry choice")
+        return (replace(modifier, predicates_any=(ObjectQuerySpec(types_all=(card_type,)),)),)
 
 
 def chosen_type_cost_spell_row(host, caster, card, *, cast_type_line, face_down_method):

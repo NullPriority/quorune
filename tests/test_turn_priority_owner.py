@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 from common import keep_all, load_assets, make_session
 from quorune.errors import GameRuleError, StateInvariantError
@@ -199,6 +200,27 @@ class TurnPriorityDecisionOwnerTests(unittest.TestCase):
         engine.turn_priority.commit_priority_pass(plan, automatic=True)
         self.assertEqual("B", engine.state.priority_player)
         self.assertEqual(["A"], engine.state.priority_passes)
+
+    def test_attack_offer_reads_the_same_declaration_domains_once(self):
+        engine = self.make_engine(5001007)
+        state = engine.state
+        state.active_player = "A"
+        state.phase, state.step = "combat", "declare_attackers"
+        ref, = engine.create_token(
+            "A", name="Attacker fixture",
+            characteristics={
+                "type_line": "Token Creature — Soldier", "power": "1", "toughness": "1",
+                "colors": [], "keywords": ["Haste"],
+            },
+            reason="attack offer witness",
+        )
+        with patch.object(engine, "_attack_declaration_error", wraps=engine._attack_declaration_error) as legality:
+            engine._issue_attackers()
+        legality.assert_called_once()
+        self.assertEqual("combat.attackers", state.pending_decision.kind)
+        candidate, = state.pending_decision.payload_by_actor["A"]["candidates"]
+        self.assertEqual(ref, candidate["id"])
+        self.assertTrue(candidate["haste"])
 
     def test_yield_epochs_retain_game_record_v3_keys_and_invalidate(self):
         engine = self.make_engine(5001003)

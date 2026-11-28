@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import asdict, replace
 import hashlib
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Literal, Mapping
 
 from ..carddb import CardDatabase, CardRecord
 from ..compiler.program_generation import (
@@ -25,11 +25,80 @@ from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.capabilities import load_default_capability_registry
 from ..semantics import SemanticProgram, SemanticRegistry
+from ..util import stable_json
 from .model import CardProgram, CardProgramError, CardProgramFace
 from .reviewed_overlay import shadowed_reviewed_program_keys
 
 
 SEMANTIC_PACK_COMPATIBILITY_COMPILER = "semantic-pack-v3-card-program-v2"
+
+
+class CardProgramSourceMismatch(CardProgramError):
+    """Two implementations for one card were built against different data."""
+
+    def __init__(self, source: Literal["Oracle", "rulings"], oracle_id: str,
+                 programs: tuple[SemanticProgram, ...], card_name: str | None) -> None:
+        super().__init__(f"Semantic compatibility group has inconsistent {source} hashes")
+        self.source = source
+        self.oracle_id = oracle_id
+        self.card_name = card_name
+        self.program_sources = tuple(_program_source_identity(program) for program in sorted(programs, key=lambda row: row.key))
+        fingerprint = _text_hash(stable_json([source, oracle_id, self.program_sources]))[:16]
+        self.diagnostic_id = f"card-data-{fingerprint}"
+
+    def diagnostic(self, card_name: str) -> dict[str, Any]:
+        return {
+            "diagnostic_id": self.diagnostic_id,
+            "kind": f"{self.source.lower()}_source_mismatch",
+            "card": card_name,
+            "oracle_id": self.oracle_id,
+            "programs": [dict(identity) for identity in self.program_sources],
+        }
+
+
+def _program_source_identity(program: SemanticProgram) -> dict[str, str | None]:
+    provenance = program.provenance
+    author = str(provenance.get("authored_by") or "")
+    template = str(provenance.get("template_id") or "")
+    if template or author.startswith("oracle-ir-"):
+        origin = f"Generated program · {template or author}"
+    elif author:
+        origin = f"Reviewed program · {author}"
+    else:
+        origin = "Semantic program"
+    return {
+        "key": program.key,
+        "origin": origin,
+        "oracle_hash": str(provenance.get("source_oracle_hash") or "") or None,
+        "rulings_hash": str(provenance.get("source_rulings_hash") or "") or None,
+    }
+
+
+def _source_hashes(programs: Iterable[SemanticProgram], field: str) -> set[str]:
+    return {str(program.provenance.get(field) or "") for program in programs} - {""}
+
+
+def card_program_source_diagnostics(
+    record: CardRecord,
+    programs: Iterable[SemanticProgram],
+    *,
+    oracle_hash: str,
+    rulings_hash: str,
+) -> list[dict[str, Any]]:
+    values = tuple(programs)
+    diagnostics = []
+    sources = (
+        ("Oracle", "source_oracle_hash", oracle_hash),
+        ("rulings", "source_rulings_hash", rulings_hash),
+    )
+    for source, field, current in sources:
+        if len(_source_hashes(values, field)) > 1 or any(
+            program.trust_level == "trusted" and program.provenance.get(field) != current
+            for program in values
+        ):
+            mismatch = CardProgramSourceMismatch(source, record.oracle_id, values, record.name)
+            diagnostics.append(mismatch.diagnostic(record.name))
+    return diagnostics
 
 
 def _text_hash(value: str) -> str:
@@ -251,6 +320,42 @@ def compile_card_program(
     )
 
 
+def _matches_retained_card_form(retained: SemanticProgram, fresh: SemanticProgram) -> bool:
+    """Compare complete declarations while respecting the requested trust level."""
+    stored = retained.to_dict()
+    current = fresh.to_dict()
+    if stored == current:
+        return True
+    if fresh.trust_level != "provisional" or retained.trust_level != "trusted":
+        return False
+    # An ordinary retained form was compiled as trusted. Explicit provisional
+    # compilation keeps its own trust result while checking the same contract.
+    current["trust_level"] = "trusted"
+    current["requires_arbiter"] = False
+    current["provenance"] = {
+        **current["provenance"], "review_status": "capability_closure_verified",
+    }
+    return stored == current
+
+
+def _without_retained_card_forms(
+    programs: Iterable[SemanticProgram], forms: tuple[SemanticProgram, ...],
+) -> Iterable[SemanticProgram]:
+    if not forms:
+        return programs
+    forms_by_key = {program.key: program for program in forms}
+    overlay = []
+    for program in programs:
+        fresh = forms_by_key.get(program.key)
+        if fresh is None:
+            overlay.append(program)
+        elif not _matches_retained_card_form(program, fresh):
+            raise CardProgramError(
+                f"Retained card-form ability {program.key} conflicts with the current declaration"
+            )
+    return overlay
+
+
 def _compile_card_program_from_ir(
     db: CardDatabase, record: CardRecord, ir: Any, *,
     semantic_registry: SemanticRegistry | None,
@@ -282,11 +387,24 @@ def _compile_card_program_from_ir(
     }
     reviewed_keys: list[str] = []
     superseded_reviewed_keys: list[str] = []
+    ruling_hash = rulings_source_hash(db, record)
+    card_form_programs = _card_form_rule_programs(
+        record,
+        nodes=card_form_compilation.nodes,
+        oracle_source_hash=ir.oracle_hash,
+        rulings_hash=ruling_hash,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        trust_level=trust_level,
+    )
     if semantic_registry is not None:
+        overlay = _without_retained_card_forms(
+            semantic_registry.programs_for_oracle(record.oracle_id), card_form_programs,
+        )
         reviewed_programs = tuple(
             with_activated_ability_catalog(
                 record,
-                semantic_registry.programs_for_oracle(record.oracle_id),
+                overlay,
                 reference_programs=tuple(programs.values()),
             )
         )
@@ -316,16 +434,6 @@ def _compile_card_program_from_ir(
                         programs.pop(key)
             programs[program.key] = program
             reviewed_keys.append(program.key)
-    ruling_hash = rulings_source_hash(db, record)
-    card_form_programs = _card_form_rule_programs(
-        record,
-        nodes=card_form_compilation.nodes,
-        oracle_source_hash=ir.oracle_hash,
-        rulings_hash=ruling_hash,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-        trust_level=trust_level,
-    )
     abilities = _bind_program_faces(
         (*programs.values(), *card_form_programs), faces
     )
@@ -381,6 +489,23 @@ def _compile_card_program_from_ir(
             ),
         },
     )
+
+
+def retain_rules_only_card_program(db, record, ir, registry, *, capability_registry, capability_profile):
+    """Retain a complete rules-only card in the normal runtime view."""
+    if ir.status != "exact" or ir.material_residuals:
+        return
+    compiled = _compile_best_available_card_program_from_ir(
+        db, record, ir, semantic_registry=registry, capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    if compiled.residuals or compiled.trust_closure["trust_basis"] != "capability_closed":
+        return
+    if not compiled.abilities:
+        registry.retain_empty_card_program(compiled)
+    elif all("generated_card_form_rule" in ability.coverage for ability in compiled.abilities):
+        for ability in compiled.abilities:
+            registry.put(ability)
 
 
 def compile_best_available_card_program(
@@ -452,22 +577,13 @@ def card_program_from_semantic_programs(
         raise CardProgramError(
             "A semantic compatibility group requires one oracle_id"
         )
-    oracle_hashes = {
-        str(program.provenance.get("source_oracle_hash") or "")
-        for program in values
-    } - {""}
-    rulings_hashes = {
-        str(program.provenance.get("source_rulings_hash") or "")
-        for program in values
-    } - {""}
+    oracle_id = str(next(iter(oracle_ids)))
+    oracle_hashes = _source_hashes(values, "source_oracle_hash")
+    rulings_hashes = _source_hashes(values, "source_rulings_hash")
     if len(oracle_hashes) > 1:
-        raise CardProgramError(
-            "Semantic compatibility group has inconsistent Oracle hashes"
-        )
+        raise CardProgramSourceMismatch("Oracle", oracle_id, values, card_name)
     if len(rulings_hashes) > 1:
-        raise CardProgramError(
-            "Semantic compatibility group has inconsistent rulings hashes"
-        )
+        raise CardProgramSourceMismatch("rulings", oracle_id, values, card_name)
     face_ids = sorted({_program_face_id(program) for program in values})
     oracle_hash = (
         next(iter(oracle_hashes)) if oracle_hashes else _text_hash("")
@@ -487,7 +603,7 @@ def card_program_from_semantic_programs(
     abilities = _bind_program_faces(values, faces)
     return CardProgram.create(
         compiler_version=SEMANTIC_PACK_COMPATIBILITY_COMPILER,
-        oracle_id=str(next(iter(oracle_ids))),
+        oracle_id=oracle_id,
         card_name=card_name,
         faces=faces,
         oracle_source_hash=oracle_hash,

@@ -30,9 +30,22 @@ from .operations import (
     LinkedGraveyardEntryOperation,
     PreventUsingShield,
 )
-from .counted_entry_counters import TransferEntryCounters
+from .counted_entry_counters import (
+    ENTRY_COUNTER_TRANSFER_OPERATIONS, ENTRY_COUNTER_TRANSFER_RESULT, ChosenTransferEntryCounters,
+    TransferEntryCounters, entry_counter_transfer_receipt,
+)
 from .entry_reservations import share_entry_reservations
 from .entry_counter_types import project_entry_time_counter_types
+from .counter_instruction_grouping import (
+    combine_counter_instruction_choices,
+    direct_counter_instruction_indices,
+    entry_counter_instruction_indices,
+)
+from .damage_redirection import (
+    finite_damage_redirection,
+    split_finite_redirection,
+    exclusive_damage_scope_effects,
+)
 
 
 class ReplacementChoiceRequired(ReplacementEffectError):
@@ -71,13 +84,29 @@ def replacement_tree_choice(
                 if choice is not None:
                     return ReplacementTreeChoice(path=(*path,index),choice=choice)
         from .entry_counter_ordering import entry_counter_order_effects
+        from .entry_counter_types import redirected_battlefield_entry_counter
+
         choice = replacement_choice(current, entry_counter_order_effects(current, all_effects))
         if choice is not None:
             return ReplacementTreeChoice(path=path, choice=choice)
         for index, child in enumerate(current.children):
+            if redirected_battlefield_entry_counter(current, child):
+                continue
             nested = visit(child, (*path, index))
-            if nested is not None:
-                return nested
+            if nested is None:
+                continue
+            if nested.path == (*path, index):
+                siblings = entry_counter_instruction_indices(current, child, all_effects)
+                members = []
+                for sibling in siblings:
+                    candidate = current.children[sibling]
+                    if redirected_battlefield_entry_counter(current, candidate):
+                        continue
+                    applicable = replacement_choice(candidate, entry_counter_order_effects(candidate, all_effects))
+                    if applicable is not None:
+                        members.append(((*path, sibling), applicable))
+                return combine_counter_instruction_choices(nested, members)
+            return nested
         return None
 
     return visit(event, ())
@@ -125,45 +154,79 @@ def apply_tree_replacement(
             "Replacement tree choice is stale or out of order"
         )
     from .entry_counter_ordering import entry_counter_order_effects
+    if pending.counter_instruction_members:
+        result = event
+        for path, changed in _counter_instruction_updates(
+            pending, selected_effect_id, all_effects, objects=objects, card_name=card_name,
+        ):
+            result = _replace_event_at_path(result, path, changed)
+        return result
     adapted=entry_counter_order_effects(pending.choice.event, all_effects)
     changed=apply_replacement(pending.choice,adapted,selected_effect_id,objects=objects,card_name=card_name)
     return _replace_event_at_path(event, pending.path, changed)
 
 
+def _counter_instruction_updates(pending, selected_effect_id, effects, *, objects=None, card_name=None):
+    from .entry_counter_ordering import entry_counter_order_effects
+
+    choice = canonical_replacement_selection(pending.choice, selected_effect_id)
+    if objects is not None or card_name is not None:
+        raise ReplacementEffectError("A counter instruction accepts one replacement choice")
+    for path, member in pending.counter_instruction_members:
+        if choice in member.legal_selections:
+            adapted = entry_counter_order_effects(member.event, effects)
+            yield path, apply_replacement(member, adapted, choice)
+
+
 def _available_entry_counter_transfers(batch, effects):
     if not batch.journal:
         return effects
-    transfers = {effect.effect_id for effect in effects
-                 if any(isinstance(operation, TransferEntryCounters) for operation in effect.operations)}
-    if not transfers.intersection(selection.effect_id for selection in batch.journal):
+    committed = tuple(
+        entry_counter_transfer_receipt(event.payload[ENTRY_COUNTER_TRANSFER_RESULT])
+        for event in batch.events if ENTRY_COUNTER_TRANSFER_RESULT in event.payload
+    )
+    if not committed:
         return effects
-    return tuple(effect for effect in effects if effect.effect_id not in transfers)
+    claimed = {row.key for receipt in committed for row in receipt.removals}
+    all_permanents_consumed = any(isinstance(receipt, TransferEntryCounters) for receipt in committed)
+    available = []
+    for effect in effects:
+        if len(effect.operations) != 1 or not isinstance(effect.operations[0], ENTRY_COUNTER_TRANSFER_OPERATIONS):
+            available.append(effect)
+            continue
+        operation = effect.operations[0]
+        if all_permanents_consumed and isinstance(operation, TransferEntryCounters):
+            continue
+        removals = tuple(row for row in operation.removals if row.key not in claimed)
+        if removals:
+            available.append(effect if removals == operation.removals else replace(
+                effect, operations=(replace(operation, removals=removals),),
+            ))
+    return tuple(available)
+
+
+def _available_batch_effects(batch, effects):
+    from .chosen_basic_land_entry import available_basic_land_payments
+
+    eligible = available_basic_land_payments(batch, _available_entry_counter_transfers(batch, effects))
+    if not batch.journal:
+        return eligible
+    eligible = exclusive_damage_scope_effects(batch.journal, eligible)
+    used = {selection.effect_id for selection in batch.journal}
+    return tuple(effect for effect in eligible if effect.effect_id not in used or not (
+        finite_damage_redirection(effect) is not None
+        or any(isinstance(operation, PreventUsingShield) for operation in effect.operations)
+    ))
 
 
 def next_batch_replacement_choice(
     batch: ReplacementEventBatch,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementBatchChoice | None:
+    from .chosen_basic_land_entry import pending_basic_land_payment
     from .tribute import pending_tribute_entry_choice
     all_effects = canonical_effects(effects)
-    shield_effect_ids = {
-        effect.effect_id
-        for effect in all_effects
-        if any(
-            isinstance(operation, PreventUsingShield)
-            for operation in effect.operations
-        )
-    }
-    consumed_shields = {
-        selection.effect_id
-        for selection in batch.journal
-        if selection.effect_id in shield_effect_ids
-    }
-    available_effects = tuple(
-        effect
-        for effect in _available_entry_counter_transfers(batch, all_effects)
-        if effect.effect_id not in consumed_shields
-    )
+    available_effects = _available_batch_effects(batch, all_effects)
     order = {seat: index for index, seat in enumerate(batch.apnap_order)}
     candidates: list[tuple[int, str, int, ReplacementTreeChoice]] = []
     for event_index, event in enumerate(batch.events):
@@ -183,7 +246,8 @@ def next_batch_replacement_choice(
     chooser_index, event_id, event_index, pending = min(
         candidates,
         key=lambda value: (
-            not pending_tribute_entry_choice(value[3].choice.event),
+            not (pending_tribute_entry_choice(value[3].choice.event)
+                 or pending_basic_land_payment(value[3].choice.event)),
             value[0],
             value[1],
             value[3].path,
@@ -193,7 +257,7 @@ def next_batch_replacement_choice(
     one_shot_ids = {
         effect.effect_id
         for effect in available_effects
-        if any(
+        if finite_damage_redirection(effect) is not None or any(
             isinstance(operation, PreventUsingShield)
             and operation.remaining is None
             and operation.consume_on_application
@@ -223,10 +287,21 @@ def next_batch_replacement_choice(
     shared_entry_order = any(
         sum(any(isinstance(operation, operation_type) for effect_id in value[3].choice.options
                 for operation in by_id[effect_id].operations) for value in same_chooser) > 1
-        for operation_type in (DevourEntryOperation, TransferEntryCounters)
+        for operation_type in (DevourEntryOperation, ENTRY_COUNTER_TRANSFER_OPERATIONS)
     )
     if shared_entry_order:
         event_order_options = tuple(sorted({value[1] for value in same_chooser}))
+    if pending_basic_land_payment(pending.choice.event):
+        shared_entry_order = False
+        event_order_options = ()
+    if not pending.path and not event_order_options:
+        indices = direct_counter_instruction_indices(batch.events, pending.choice.event, available_effects)
+        if indices:
+            members = [
+                ((value[2],), value[3].choice) for value in same_chooser
+                if not value[3].path and value[2] in indices
+            ]
+            pending = combine_counter_instruction_choices(pending, members)
     result = _batch_choice_for_event(
         batch,
         all_effects=all_effects,
@@ -236,7 +311,7 @@ def next_batch_replacement_choice(
         pending=pending,
         event_order_options=event_order_options,
     )
-    if shared_entry_order:
+    if shared_entry_order or any(finite_damage_redirection(by_id[effect_id]) is not None for effect_id in shared_one_shot):
         result = replace(result, event_choices=tuple(
             (value[1], value[3].choice) for value in same_chooser if value[1] in event_order_options
         ))
@@ -327,15 +402,7 @@ def _batch_choice_for_event(
         )
     if not allocations:
         return base
-    return ReplacementBatchChoice(
-        batch_id=base.batch_id,
-        event_index=base.event_index,
-        event_id=base.event_id,
-        tree_choice=base.tree_choice,
-        prior_public_choices=base.prior_public_choices,
-        prevention_allocations=tuple(allocations),
-        event_order_options=base.event_order_options,
-    )
+    return replace(base, prevention_allocations=tuple(allocations))
 
 
 def _selection_parts(
@@ -545,24 +612,7 @@ def apply_batch_replacement(
             raise ReplacementEffectError(
                 "Selected replacement event no longer exists"
             )
-        shield_effect_ids = {
-            effect.effect_id
-            for effect in all_effects
-            if any(
-                isinstance(operation, PreventUsingShield)
-                for operation in effect.operations
-            )
-        }
-        consumed = {
-            selection.effect_id
-            for selection in batch.journal
-            if selection.effect_id in shield_effect_ids
-        }
-        available_effects = tuple(
-            effect
-            for effect in _available_entry_counter_transfers(batch, all_effects)
-            if effect.effect_id not in consumed
-        )
+        available_effects = _available_batch_effects(batch, all_effects)
         tree_choice = replacement_tree_choice(
             batch.events[selected_index], available_effects
         )
@@ -616,14 +666,22 @@ def apply_batch_replacement(
             "Only a durable prevention shield accepts an allocation"
         )
     events = list(batch.events)
-    events[pending.event_index] = apply_tree_replacement(
-        events[pending.event_index],
-        _available_entry_counter_transfers(batch, all_effects),
-        pending.tree_choice,
-        canonical_selection,
-        objects=supplied_objects,
-        card_name=card_name,
-    )
+    available_effects = _available_batch_effects(batch, all_effects)
+    finite = finite_damage_redirection(effect) if effect is not None else None
+    branches = (split_finite_redirection(pending.tree_choice, effect, finite, available_effects)
+                if finite is not None else None)
+    index = pending.event_index
+    if branches is not None:
+        events[index:index + 1] = branches
+    elif not pending.path and pending.tree_choice.counter_instruction_members:
+        for (member_index,), changed in _counter_instruction_updates(
+            pending.tree_choice, canonical_selection, available_effects,
+            objects=supplied_objects, card_name=card_name,
+        ):
+            events[member_index] = changed
+    else:
+        events[index] = apply_tree_replacement(events[index], available_effects, pending.tree_choice,
+                                               canonical_selection, objects=supplied_objects, card_name=card_name)
     return ReplacementEventBatch(
         batch_id=batch.batch_id,
         events=share_entry_reservations(events),
@@ -826,6 +884,9 @@ def _entry_object_choice_payload(choices, effects_by_id):
             if isinstance(operation, AmplifyEntryOperation):
                 refs = [card.ref for card in operation.eligible_cards(choice.event)]
                 labels.add("Cards to reveal for Amplify")
+            elif isinstance(operation, ChosenTransferEntryCounters):
+                refs = list(operation.eligible_refs(choice.event))
+                labels.add("Permanents to remove counters from")
             else:
                 scope = choice.event.entry_scope
                 eligible = set(scope.eligible_zone_choices(card.object_id for card in operation.candidates)) if scope else set()
@@ -919,8 +980,14 @@ def replacement_choice_payload(
     object_choices, object_schema = _entry_object_choice_payload(choices, by_id)
     if object_choices:
         choice_schema["replacement_objects"] = object_schema
+    members = pending.tree_choice.counter_instruction_members
+    placements = [
+        {"kind": member.event.payload["counter_name"], "amount": member.event.payload["amount"]}
+        for _, member in members
+    ]
     return {
         "chooser": pending.choice.chooser,
+        **({"counter_instruction_placements": placements} if placements else {}),
         "prompt": "Choose the next replacement or prevention effect.",
         "options": options,
         **({"card_name_choices": name_choices} if name_choices else {}),

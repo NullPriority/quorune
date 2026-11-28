@@ -412,7 +412,7 @@ class FixedAlternativeAdditionalCostRuntimeTests(unittest.TestCase):
         self.assertEqual("Pay 5 life", restricted[0]["label"])
 
         with patch(
-            "quorune.rules.casting.costs._static_generic_reduction",
+            "quorune.rules.casting.static_modifiers.fixed_generic_reduction",
             return_value=5,
         ):
             options = self.cast_action(engine, spell)["cost_options"]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence, TYPE_CHECKING
+from .characteristic_read_frames import characteristic_read_frame, characteristic_read_method
 from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
@@ -25,7 +26,9 @@ from .destruction import (
     prepare_destructions,
     request_for_card,
 )
-from .state_based_actions import PermanentSnapshot, StateBasedActionBatch, player_loss_seats
+from .state_based_actions import (
+    PermanentSnapshot, StateBasedActionBatch, evaluate_state_based_actions, player_loss_seats,
+)
 from .keyword_abilities import normalized_characteristic_keywords
 from .ability_fragments import counter_maximum_values
 from .saga_progression import saga_final_chapter_snapshot
@@ -35,23 +38,81 @@ from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 if TYPE_CHECKING:
     from .composition_departure_batch import PreparedCompositionDepartureBatch
     from .dungeon_runtime import DungeonCompletion
+    from .state_based_legend_model import LegendChoicePlan, LegendConflictSnapshot
 
 
-def synchronize_state_based_observers(host):
-    """Seal source-linked designations and timestamps before capturing CR 704 facts."""
+@dataclass(frozen=True, slots=True)
+class WorldTimestampChanges:
+    clears: tuple[str, ...]
+    gains: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class StateBasedActionRead:
+    batch: StateBasedActionBatch
+    pending_legend: LegendChoicePlan | None
+    legend_groups: tuple[LegendConflictSnapshot, ...]
+
+
+def _read_world_timestamp_changes(host) -> WorldTimestampChanges:
+    current_worlds = {
+        card.object_id for card in host.state.cards.values()
+        if card.zone == "battlefield" and host._has_world_supertype(card)
+    }
+    clears = []
+    gains = []
+    for card in host.state.cards.values():
+        if card.object_id in current_worlds:
+            if card.world_supertype_timestamp is None:
+                gains.append(card.object_id)
+        elif card.world_supertype_timestamp is not None:
+            clears.append(card.object_id)
+    return WorldTimestampChanges(tuple(clears), tuple(gains))
+
+
+def _read_state_based_action_inputs(host) -> StateBasedActionRead:
+    from .state_based_legend_choices import read_state_based_legend_inputs
+
+    batch = evaluate_state_based_actions(
+        permanents=host._permanent_sba_snapshots(),
+        objects=host._object_sba_snapshots(),
+    )
+    pending, groups = read_state_based_legend_inputs(host)
+    return StateBasedActionRead(batch, pending, groups)
+
+
+def synchronize_state_based_observers(host) -> StateBasedActionRead | None:
+    """Seal observers before CR 704 reads, or suspend for transform order."""
+
+    from .day_night import synchronize_day_night
     from .preparation import synchronize_preparation_copies
-    synchronize_preparation_copies(host)
+    from .rules.city_blessing import synchronize_citys_blessing
+    from .rules.state_triggers import (
+        has_public_state_trigger_subscribers, observe_public_state_triggers,
+    )
     from .soulbond_state import reconcile_soulbond_pairs
-    reconcile_soulbond_pairs(host)
     from .transform_order_model import TransformTimestampOrderRequired
-    try:host._synchronize_world_supertype_timestamps()
+
+    synchronize_preparation_copies(host)
+    reconcile_soulbond_pairs(host)
+    synchronize_citys_blessing(host, reason="before state-based actions")
+    try:
+        synchronize_day_night(host, reason="continuous day/night synchronization")
     except TransformTimestampOrderRequired as needed:
         from .transform_timestamp_order import begin_transform_timestamp_order
-        begin_transform_timestamp_order(host,needed.request,resume_kind='stabilize')
-        return True
-    from .rules.state_triggers import observe_public_state_triggers
+
+        begin_transform_timestamp_order(host, needed.request, resume_kind="stabilize")
+        return None
+
+    with characteristic_read_frame(host):
+        changes = _read_world_timestamp_changes(host)
+        if not changes.clears and not changes.gains and not has_public_state_trigger_subscribers(host):
+            return _read_state_based_action_inputs(host)
+
+    host._synchronize_world_supertype_timestamps(changes)
     observe_public_state_triggers(host)
-    return False
+    with characteristic_read_frame(host):
+        return _read_state_based_action_inputs(host)
 
 
 class StateBasedSnapshotHost(Protocol):
@@ -65,8 +126,11 @@ class StateBasedSnapshotHost(Protocol):
     def _attachment_is_legal(self, card: Any, *, subtypes: set[str]) -> bool: ...
 
 
+@characteristic_read_method
 def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnapshot]:
     """Capture one current public view before any state-based mutation."""
+    from .sacrifice_prohibition_model import sacrifice_is_prohibited
+
     snapshots: list[PermanentSnapshot] = []
     seen: set[str] = set()
     for seat in host.active_seats:
@@ -136,7 +200,8 @@ def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnaps
                         if "battle" in card_types
                         else False
                     ),
-                    saga=saga_final_chapter_snapshot(host, card),
+                    saga=(None if sacrifice_is_prohibited(host.state, card)
+                          else saga_final_chapter_snapshot(host, card)),
                     attached_to=card.attached_to,
                     attachment_legal=(
                         host._attachment_is_legal(
@@ -168,11 +233,27 @@ def commit_state_based_principal_changes(host: StateBasedPrincipalHost) -> bool:
     if synchronize_control_effects(host, reason="control effect changed"):
         return True
     losers = player_loss_seats(host.state, host.active_seats)
+    if losers:
+        from .drawing.transaction import consume_prevented_empty_draws
+        from .rules.match_outcome_restrictions import current_match_outcome_restrictions
+
+        prohibited = current_match_outcome_restrictions(host).loss_prohibited
+        consume_prevented_empty_draws(host.state, tuple(seat for seat in losers if seat in prohibited))
+        losers = tuple(seat for seat in losers if seat not in prohibited)
     if not losers:
         from .rules.player_speed_state import start_player_speeds
         return start_player_speeds(host)
     host._eliminate_players(losers, reason="state-based loss")
     return True
+
+
+def commit_game_win(host, seat: str) -> None:
+    """Close the match through the shared terminal outcome boundary."""
+    host.state.game_over = True
+    host.state.winner = seat
+    host.state.priority_player = None
+    host.permissions.invalidate_current()
+    host._log(seat, "game.win", f"{seat} won the game.", importance=3, changed_players=[seat])
 
 
 def commit_game_draw(host, *, reason: str) -> None:

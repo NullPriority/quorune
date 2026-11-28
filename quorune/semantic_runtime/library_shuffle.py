@@ -26,6 +26,8 @@ class FixedLibraryShuffleHandler:
             raise SemanticNodeError(str(exc)) from exc
         if not targeted and player != context.actor:
             raise SemanticNodeError('Fixed shuffle requires its resolving controller')
+        if targeted and context.query.require_known_seat(player) not in context.query.active_seats:
+            return IntentPlan(self.operation, self.handler_id, (), result_shape='by_player')
         context.query.require_active_seat(player)
         return IntentPlan(
             operation=self.operation,

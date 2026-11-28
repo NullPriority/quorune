@@ -1,29 +1,50 @@
 """Read current typed characteristics only within the actor's legal search window."""
 
+from dataclasses import replace
+
 from ..carddb_characteristics import library_card_rules_names, public_object_rules_names
 from ..errors import GameRuleError
 from ..library_search_model import TARGET_NAME_PERMANENT_TYPES, TARGET_NAME_SEARCH_SNAPSHOT, TargetNameLibrarySearchSpec
 from ..object_query import object_query_result, object_matches_query
 from ..qualified_library_search_model import QualifiedLibrarySearchSpec
 from ..named_search_model import LiteralNameBattlefieldSearchSpec, decode_literal_library_search
+from .current_face_keywords import library_card_keyword_abilities
 from .library_search_rules import library_search_object_ids
+
+
+_LIBRARY_FRONT_FACE_LAYOUTS = frozenset({"adventure", "flip", "modal_dfc", "prepare", "transform"})
 
 
 def qualified_library_card_matches(spec, row):
     return (object_matches_query(row, spec.query)
             and (spec.mana_value_max is None or row.mana_value <= spec.mana_value_max)
-            and (not spec.mana_values_any or row.mana_value in spec.mana_values_any))
+            and (not spec.mana_values_any or row.mana_value in spec.mana_values_any)
+            and (spec.stat_bound is None or spec.stat_bound.permits(
+                power=row.effective_power, toughness=row.effective_toughness)))
 
 
 def qualified_library_search_options(host, player, effect):
     spec = QualifiedLibrarySearchSpec.from_effect(effect)
     options = []
     for oid in library_search_object_ids(host, player, "library"):
-        card = host.state.cards[oid];effective = host._effective_card_data(card)
-        row = object_query_result(card, effective, type_parts=host._type_parts(str(effective.get("type_line") or "")),
-            known_to_actor=True, attached_to_ref=None)
-        if qualified_library_card_matches(spec, row):
-            options.append({"id": card.ref, "name": card.printed_name})
+        card = host.state.cards[oid]
+        if spec.stat_bound is not None:
+            record = host.card_record(card)
+            if record is None or card.is_token:
+                continue
+            if record.faces and record.layout in _LIBRARY_FRONT_FACE_LAYOUTS:
+                # Use the normal face while retaining the original library identity for live effects.
+                card = replace(card, active_face=record.faces[0]["name"])
+        effective = host._effective_card_data(card)
+        row = object_query_result(
+            card, effective, type_parts=host._type_parts(str(effective.get("type_line") or "")),
+            known_to_actor=True, attached_to_ref=None,
+        )
+        if not qualified_library_card_matches(spec, row):
+            continue
+        if spec.keywords_any and library_card_keyword_abilities(host, card).isdisjoint(spec.keywords_any):
+            continue
+        options.append({"id": card.ref, "name": card.printed_name})
     return options
 
 
@@ -93,3 +114,27 @@ def target_name_library_search_options(host, player, effect):
                 continue
         options.append({"id": card.ref, "name": card.printed_name})
     return options
+
+
+
+def move_subtype_search_results(host, owner, context, selected_cards, replacement_selections):
+    """Keep selected nonpermanents private and move the remaining results as one batch."""
+    from ..entry_counters import capture_prospective_entry_characteristics
+    from ..external_entry_state_model import PERMANENT_CARD_TYPES
+
+    entering = []
+    for card in selected_cards:
+        _, type_line = capture_prospective_entry_characteristics(host, card=card, enter_face=None)
+        if host._type_parts(type_line)[0] & PERMANENT_CARD_TYPES:
+            entering.append(card)
+    controllers = {card.object_id: context.seat for card in entering}
+    moved = owner.move_cards_simultaneously(
+        tuple((card.object_id, "battlefield") for card in entering),
+        destination_controllers=controllers,
+        putting_players=controllers,
+        reason=f"{context.item.label} search",
+        log=False,
+        replacement_selections=replacement_selections,
+    )
+    resulting = {card.object_id: card for card in moved}
+    return [resulting.get(card.object_id, card) for card in selected_cards]

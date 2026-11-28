@@ -45,10 +45,14 @@ def state_trigger_context(source,program):
     return {STATE_TRIGGER_IDENTITY:source.logical_object_id,'source_logical_object_id':source.logical_object_id} if program.event==STATE_TRIGGER_EVENT else {}
 
 
+def has_public_state_trigger_subscribers(host) -> bool:
+    registry = getattr(host, "semantics", None)
+    programs = getattr(registry, "programs_for_event", None)
+    return callable(programs) and bool(programs(STATE_TRIGGER_EVENT))
+
+
 def observe_public_state_triggers(host,*,trigger_batch=None):
-    registry=getattr(host,'semantics',None)
-    programs=getattr(registry,'programs_for_event',None)
-    if not callable(programs) or not programs(STATE_TRIGGER_EVENT):return []
+    if not has_public_state_trigger_subscribers(host):return []
     from ..cast_source_placement_model import cast_source_placement_version
     from ..errors import GameRuleError
     if cast_source_placement_version(getattr(host.state,'cast_source_placement_version',None))!=1:

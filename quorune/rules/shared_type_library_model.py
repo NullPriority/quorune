@@ -46,6 +46,8 @@ SHARED_TYPE_LIBRARY_MECHANIC = "private-top-shared-type-reveal"
 SHARED_TYPE_PLAY_OPERATION = "play_revealed_shared_type_library_card"
 SHARED_TYPE_PLAY_CAPABILITY = "library.top.revealed_shared_type.resolving_play"
 SHARED_TYPE_PLAY_MECHANIC = "private-top-shared-type-play"
+SHARED_TYPE_REVEAL_CAST_VERSION = 2
+SHARED_TYPE_REVEAL_CAST_CAPABILITY = "library.top.revealed_shared_creature_type_cast_or_bottom"
 
 
 
@@ -57,7 +59,7 @@ class SharedTypeLibraryResult:
 
     def __post_init__(self):
         from ..replacement.immutable import FrozenMap
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, SHARED_TYPE_REVEAL_CAST_VERSION}:
             raise ValueError("Shared-type library result version is unsupported")
         if (not isinstance(self.effects, (list, tuple)) or not 1 <= len(self.effects) <= 3
                 or not isinstance(self.mechanics, (list, tuple))
@@ -73,7 +75,7 @@ class SharedTypeLibraryResult:
             object.__setattr__(self, "effects", frozen)
             object.__setattr__(self, "mechanics", (SHARED_TYPE_PLAY_MECHANIC,))
             return
-        if any(e.get("op") not in allowed for e in frozen):
+        if self.schema_version != 1 or any(e.get("op") not in allowed for e in frozen):
             raise ValueError("Shared-type library result contains an unrepresented instruction")
         for e in frozen:
             if not shared_type_result_capabilities(e, self.mechanics):
@@ -82,7 +84,15 @@ class SharedTypeLibraryResult:
         object.__setattr__(self, "mechanics", tuple(sorted(self.mechanics)))
 
     @property
+    def mandatory_reveal(self):
+        return self.schema_version == SHARED_TYPE_REVEAL_CAST_VERSION
+
+    @property
     def capability_dependencies(self):
+        if self.mandatory_reveal:
+            return (SHARED_TYPE_LIBRARY_CAPABILITY, SHARED_TYPE_PLAY_CAPABILITY,
+                    SHARED_TYPE_REVEAL_CAST_CAPABILITY, "library.select.fixed_controller",
+                    "state_query.permanent.shared_creature_type", "trigger.placement.apnap")
         sequence = {"resolution.effect_program.closed_components"} if len(self.effects) > 1 else set()
         from .capabilities import capability_dependencies_for_node
         children = {cap for effect in self.effects for cap in shared_type_result_capabilities(effect, self.mechanics)}
@@ -92,7 +102,7 @@ class SharedTypeLibraryResult:
 
     def to_dict(self):
         from ..replacement.immutable import thaw_value
-        return {"schema_version": 1, "effects": [thaw_value(e) for e in self.effects],
+        return {"schema_version": self.schema_version, "effects": [thaw_value(e) for e in self.effects],
                 "mechanics": list(self.mechanics)}
 
     @classmethod
@@ -103,6 +113,12 @@ class SharedTypeLibraryResult:
 
     def effect(self, *, player="$controller"):
         return {"op": SHARED_TYPE_LIBRARY_OPERATION, "player": player, "result": self.to_dict()}
+
+
+def uses_mandatory_shared_type_reveal(effect):
+    result = effect.get("result")
+    return (effect.get("op") == SHARED_TYPE_LIBRARY_OPERATION and isinstance(result, Mapping)
+            and result.get("schema_version") == SHARED_TYPE_REVEAL_CAST_VERSION)
 
 
 def shared_type_result_capabilities(effect, mechanics):

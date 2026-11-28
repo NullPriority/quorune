@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "source": "Original synthetic fixtures for an identity-pinned library reveal",
+  "cards": [
+    {
+      "oracle_id": "73574d0a-a7eb-46d6-b894-df2943aed73a",
+      "name": "Fixture Forest Lens",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "{1}{G}: Reveal the top card of your library. If it’s a creature card, put it onto the battlefield. Otherwise, put it into your graveyard.",
+      "layout": "normal",
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "a92c52ba-8606-45cf-9b19-7d74dadec62a",
+      "name": "Fixture Sunset Signal",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of your end step, reveal the top card of your library. If it’s a permanent card, you may put it onto the battlefield. Otherwise, you may put it on the bottom of your library.",
+      "layout": "normal",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "37957760-ae83-4f23-bf46-58f5f0ee8047",
+      "name": "Fixture Dawn Watch",
+      "mana_cost": "{2}{G}",
+      "cmc": 3,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of your upkeep, reveal the top card of your library. If it’s a creature card, put it onto the battlefield. Otherwise, you may put that card on the bottom of your library.",
+      "layout": "normal",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

@@ -21,7 +21,10 @@ when its first lowered operation is direct damage.
 characteristic clause and a tap or untap instruction to `$source.zone_object`.
 Runtime admission requires the ordered pair's leaf and keyword capabilities.
 Historical source and generic clause production identities retain their
-existing binding contract.
+existing binding contract. An optional untargeted Equipment tap-state ability
+uses the current attached creature or the source's departure attachment.
+The resolving controller can decline or choose the available state change.
+An absent creature produces no decision.
 
 `damage_fixed_set` can carry a version-one `fixed_target_controller_damage`
 descriptor with positive `target_amount` and `controller_amount`. Resolution
@@ -36,11 +39,24 @@ in layer four. The same recipients get the fixed keyword and stat changes
 in layers six and seven. The query excludes phased-out and hidden objects,
 and checks current control again on each characteristic evaluation.
 
+A paid sorcery-speed activation can make one controlled artifact a copy of
+another distinct controlled artifact until end of turn. It keeps the
+ordered target roles and removes Legendary from the model's copiable
+values. Both target incarnations must be legal at resolution. Current
+records carry the typed copy descriptor and earlier records retain the
+unversioned result.
+
 A controller energy result can read the committed amount from its source's
 combat damage to a player. The binding checks the original source incarnation
 and reads damage after prevention and replacement. Counter placement uses
 the existing controller replacement owner and stays independent of later
 changes to the source.
+
+A fixed mill can precede a bounded creature return from the resolving
+controller's graveyard. The optional untargeted choice uses the current
+graveyard after mill replacements finish. It seals the selected card's
+incarnation and returns that card through the existing battlefield entry
+owner. A short or empty library leaves the optional choice available.
 
 A direct token result from a permanent's own cast trigger reads the exact
 spell occurrence and its current or recorded departure copiable values.
@@ -52,6 +68,13 @@ entry, death or departure event. This is the same typed `event_object` recipe
 as an explicit event-object reference. Resolution uses that incarnation's
 current copiable values or immediate departure information. Spell-cast
 references and unbound pronouns remain outside this production.
+
+A fixed artifact, instant, or sorcery cast predicate checks the committed
+spell types and distinguishes the source controller from every opponent. A
+printed once-per-turn clause limits each ability separately at trigger time.
+The cast-event spell copy uses the original spell's current or departure
+information and allows target changes when printed. The cast-event counter
+uses the exact original stack reference without announcing a target.
 
 Enchanted-creature token copies use recipe version three with an explicit
 version-two source attachment reference. The resolving ability controller
@@ -101,6 +124,13 @@ departure. Ordinary single-token and simultaneous batch encodings are retained.
 Source-pinned reviewed trigger views retire only when complete branch definitions,
 chooser, targets and trigger contracts agree with the normally admitted current
 program. Presentation IDs and prompts may differ; result instructions may not.
+
+A meld front can carry a standalone partner-name reminder. The compiler
+recognizes this form only in the meld layout. The reminder grants no meld
+operation. If a source-pinned reviewed modal entry trigger and empty
+permanent spell both match the strict typed front, the current registry
+uses the typed front while existing Game Records retain their recorded
+trigger keys and mode choices.
 
 Mixed own-graveyard card targets serialize canonical
 `characteristic_forms_any` leaves under the ordinary graveyard-card target
@@ -217,8 +247,27 @@ library of a player still in the game. The reveal uses the front face of a
 double-faced card. The resulting land and nonland counts drive the supported
 instructions in printed order before the ordinary APNAP draws. A draw
 replacement can change a later draw without changing the reveal results.
+An ordinary battlefield activation can schedule control of one target player
+during that player's next actual turn. The typed result requires the exact
+player target and lifetime scope before the activation catalog can admit it.
+
+A battlefield departure trigger can bind an owned artifact target to the
+departing permanent's sealed last-known mana value. Each committed move supplies
+its own ceiling. Trigger placement and resolution use the same strict bound.
+
+An ordinary fixed-mana Flashback keyword can share a spell with a fixed
+nonland-permanent sacrifice price and a closed result. The price belongs to the
+spell program and applies to each casting method. Flashback supplies its own
+alternative mana price and stack-exit rule.
+
 An activated ability that adds mana and instructs a draw uses the stack
 under CR 605.1a.
+
+The optional exact-pair search retains its private candidate list until the
+searcher selects two qualifying cards with distinct public rules names or
+finds none. A found pair is publicly revealed before the resolving player
+designates an opponent. The opponent selects the hand card, and the resolved
+hand and graveyard moves commit before the library shuffles.
 
 Current-turn conditions read committed casts, declared attacks, discards,
 permanent entries, graveyard arrivals and life changes from the existing
@@ -380,6 +429,12 @@ damage, token-entry, and graveyard-departure subscriptions use the same event
 and condition fields. Unsupported attachment, tap-state, first-time,
 once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
 residual.
+A closed creature-cast return binds the public names of the original stack
+incarnation. It reads the spell’s current names while that incarnation is on the
+stack and uses its captured public names after departure. Matching cards in
+each current graveyard enter together through the public zone-set owner in
+APNAP order, using each graveyard owner as the player putting their cards onto
+the battlefield.
 Fixed resolution payments retain their complete cost and if-paid clause before
 optional-result interpretation. A represented sacrifice, discard or mana cost
 with a paid source-counter result uses the existing typed payment and counter
@@ -434,6 +489,11 @@ consults display text. Fixed public declaration conditions reuse the shared
 public-state condition descriptor, while attached all-ability and nonmana
 activation prohibitions remain typed current fragments rather than runtime
 text. Source-controller restrictions retain their originating static source.
+
+The paid void-counter play ability resolves through an untargeted exile-card choice.
+Its chosen current incarnation receives ordinary spell or land play permission
+through the current turn, with the printed mana-cost waiver and ordinary
+additional costs. Choosing a face-down card requires existing look permission.
 
 ## Residual and override policy
 

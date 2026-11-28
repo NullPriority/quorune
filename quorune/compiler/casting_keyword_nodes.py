@@ -53,6 +53,10 @@ def casting_keyword_node(*, record, face_id, printed_power, **values):
         node = lower(**values)
         if node is not None:
             return node
+    if values["mechanics"] == ("harmonize",):
+        from .harmonize_nodes import harmonize_keyword_node
+
+        return harmonize_keyword_node(record=record, **values)
     lifecycle = fixed_cast_lifecycle_keyword_node(record=record, face_id=face_id, **values)
     if lifecycle is not None:
         return lifecycle

@@ -8,6 +8,7 @@ from . import regex_working_set as re
 
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, supports_next_turn_effect
 from .closed_effect_programs import closed_effect_program_template
+from .extra_turn_templates import fixed_end_turn_effect_template
 from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .blight_templates import normalized_blight_sequence
@@ -15,12 +16,15 @@ from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 from .source_tap_characteristics import tapped_source_characteristics_template
-from .source_tap_duration import match_tapped_source_duration, tapped_source_untap_restraint_template
+from .source_tap_duration import (
+    controlled_source_untap_restraint_template, match_tapped_source_duration, tapped_source_untap_restraint_template,
+)
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .reflexive_payment_templates import reflexive_payment_template
 from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_followup_template, targeted_controller_payment_template
+from .whole_hand_counter_payment import targeted_whole_hand_counter_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
 from .query_counter_sequences import ordered_quantity_sequence_template
@@ -75,17 +79,145 @@ def _next_turn_effect_template(
 
 
 def _damage_life_result(body, card_name, source_context, compile_fixed):
-    from .damage_templates import fixed_damage_dealt_life_template, targeted_dealt_life_gain_template
+    from .damage_templates import fixed_damage_dealt_life_template, targeted_dealt_life_gain_template, targeted_excess_trample_template
 
     permanent = source_context.get("source_is_permanent") is True
     fixed = fixed_damage_dealt_life_template(body, source_name=card_name, source_is_permanent=permanent)
     if fixed is not None or permanent:
         return fixed
+    fixed_damage = partial(compile_fixed, card_name=card_name, **source_context)
     query_damage = partial(
         public_query_effect_amount_template, source_name=card_name,
-        compile_fixed=partial(compile_fixed, card_name=card_name, **source_context),
+        compile_fixed=fixed_damage,
     )
-    return targeted_dealt_life_gain_template(body, compile_damage=query_damage)
+    return (targeted_dealt_life_gain_template(body, compile_damage=query_damage)
+            or targeted_excess_trample_template(body, compile_damage=fixed_damage))
+
+
+def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_payment: EffectCompiler):
+    from .controller_graveyard_mana_templates import controller_graveyard_mana_target_template
+    from .private_look_land_or_hand_templates import private_look_land_or_hand_template
+    from .exile_until_same_name_templates import exile_until_same_name_template
+    from .draw_templates import distinct_opponent_draw_template
+    from .discard_result_templates import selected_opponent_discard_draw_template
+    from .delayed_draw_templates import watched_combat_damage_draw_template
+    from .token_templates import announced_token_sweep_template
+    from ..rules.apnap_type_return import TYPE_RETURN_MECHANIC, type_return_effect
+
+    if " ".join(text.split()).casefold() == (
+        "each player chooses a creature type. each player returns all creature cards of a type chosen this way "
+        "from their graveyard to the battlefield."
+    ):
+        return "apnap-chosen-creature-type-return-v1", (type_return_effect(),), None, (TYPE_RETURN_MECHANIC,)
+    from .own_combat_modal_templates import conditional_own_combat_untap_template
+    from .delayed_draw_templates import controlled_player_damage_token_template
+    from .owned_commander_amount import owned_commander_amount_template
+    from .resolution_condition_templates import other_spell_draw_template
+    from .targeted_discard_spell_copy import targeted_discard_spell_copy_template, targeted_return_spell_copy_template
+    from .token_creation_reflexive_templates import token_creation_reflexive_template
+    from .targeted_turn_target_prohibition import targeted_turn_prohibition_template
+    from .loyalty_damage_templates import turn_creature_combat_multiplier_template
+
+    return (
+        controller_graveyard_mana_target_template(text)
+        or private_look_land_or_hand_template(text)
+        or turn_creature_combat_multiplier_template(text)
+        or exile_until_same_name_template(text)
+        or distinct_opponent_draw_template(text)
+        or selected_opponent_discard_draw_template(text)
+        or watched_combat_damage_draw_template(text)
+        or announced_token_sweep_template(text)
+        or conditional_own_combat_untap_template(text)
+        or controlled_player_damage_token_template(text)
+        or targeted_turn_prohibition_template(text)
+        or other_spell_draw_template(text, compile_component=compile_atomic)
+        or owned_commander_amount_template(text)
+        or token_creation_reflexive_template(text, compile_effect=compile_payment)
+        or targeted_discard_spell_copy_template(text)
+        or targeted_return_spell_copy_template(text)
+    )
+
+
+def _whole_contextual_effect_template(text, *, card_name, cast_x_available):
+    from ..temporary_graveyard_escape import targeted_escape_template
+    from .targeted_graveyard_cast_templates import targeted_graveyard_flashback_template
+    from .opponents_graveyards_exile_cast import opponents_graveyards_exile_cast_template
+    from .owned_graveyard_turn_play import owned_graveyard_turn_play_template
+    from .damage_templates import excess_damage_tapped_treasure_template
+
+    from .reveal_until_library_selection_templates import chosen_name_reveal_template
+    from .scheduled_turn_skip_templates import target_player_untap_skip_tap_template
+
+    result = (fixed_end_turn_effect_template(text) or targeted_escape_template(text)
+            or chosen_name_reveal_template(text) or target_player_untap_skip_tap_template(text)
+            or targeted_graveyard_flashback_template(text)
+            or opponents_graveyards_exile_cast_template(text)
+            or owned_graveyard_turn_play_template(text))
+    if result is None and cast_x_available:
+        return excess_damage_tapped_treasure_template(text, source_name=card_name)
+    return result
+
+
+def _contextual_library_result(
+    body: str,
+    *,
+    card_name: str,
+    source_context: Mapping[str, Any],
+    cast_x_available: bool,
+    forbid_public_x: bool,
+) -> CompiledEffectTemplate | None:
+    from .reveal_until_library_selection_templates import (
+        reveal_until_library_selection_effect_template,
+    )
+
+    reveal_until = reveal_until_library_selection_effect_template(
+        body, allow_reflexive=source_context.get("source_is_permanent") is False,
+    )
+    if reveal_until is not None:
+        return reveal_until
+    from .discover_templates import discover_effect_template
+
+    discover = discover_effect_template(
+        body, source_name=card_name, cast_x_available=cast_x_available,
+        forbid_public_x=forbid_public_x, **source_context,
+    )
+    if discover is not None:
+        return discover
+    from .library_battlefield_templates import library_battlefield_selection_effect_template
+
+    battlefield = library_battlefield_selection_effect_template(body)
+    if battlefield is not None:
+        return battlefield
+    from .variable_library_selection_templates import variable_library_selection_effect_template
+
+    return variable_library_selection_effect_template(
+        body, source_name=card_name, cast_x_available=cast_x_available,
+        forbid_public_x=forbid_public_x, **source_context,
+    )
+
+
+def _contextual_payment_result(text, *, compile_atomic, compile_payment, source_is_permanent):
+    # Keep the certified version-one payment before the typed alternatives.
+    legacy_payment = fixed_optional_mana_payment_template(text, compile_effect=compile_atomic)
+    if legacy_payment is not None:
+        from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
+
+        if fixed_optional_mana_payment_node_capabilities(
+            effects=legacy_payment.effects, target_schema=legacy_payment.target_schema,
+            mechanic_ids=legacy_payment.mechanics,
+        ):
+            return legacy_payment.compiled()
+    reflexive = reflexive_payment_template(text, compile_effect=compile_payment)
+    if reflexive is not None:
+        return reflexive
+    from .targeted_life_decline import targeted_life_decline_template
+
+    context = {"compile_effect": compile_payment, "source_is_permanent": source_is_permanent}
+    return (
+        targeted_life_decline_template(text)
+        or fixed_effect_payment_template(text, **context)
+        or fixed_effect_payment_with_mandatory_prefix(text, **context)
+    )
 
 
 def reviewed_contextual_effect_template(
@@ -98,13 +230,34 @@ def reviewed_contextual_effect_template(
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
+    # These instructions own the complete resolving operation.
+    from .reanimation_templates import returned_creature_counters_template
+
+    whole = returned_creature_counters_template(text) or _whole_contextual_effect_template(text, card_name=card_name, cast_x_available=cast_x_available and not source_context.get("source_is_permanent"))
+    if whole is not None:
+        return whole
+    if source_context.get("source_is_permanent") is False:
+        from .event_optional_draw_results import tempting_draw_token_template
+
+        if offer := tempting_draw_token_template(text):
+            return offer
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .fight_excess_mana_templates import fight_excess_mana_template
+
+        if fight := fight_excess_mana_template(body):
+            return fight
+        from .experience_results import experience_pump_template
+
+        if source_context.get("source_is_permanent") and (experience := experience_pump_template(body, card_name)):
+            return experience
         if dealt_life := _damage_life_result(body, card_name, source_context, compile_fixed):
             return dealt_life
         from .mana_value_destruction import mana_value_destruction_template
         mana_value=mana_value_destruction_template(body,source_name=card_name,cast_x_available=cast_x_available)
         if mana_value is not None:return mana_value
+        if controlled_restraint := controlled_source_untap_restraint_template(body, source_context=source_context, card_name=card_name):
+            return controlled_restraint
         duration = match_tapped_source_duration(body, card_name=card_name, source_context=source_context)
         if duration is not None:
             tapped = tapped_source_untap_restraint_template(duration) or tapped_source_characteristics_template(
@@ -118,20 +271,12 @@ def reviewed_contextual_effect_template(
         )
         if timed is not None:
             return timed
-        from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
-        reveal_until=reveal_until_library_selection_effect_template(body)
-        if reveal_until is not None:return reveal_until
-        from .discover_templates import discover_effect_template
-        discover=discover_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
-            forbid_public_x=forbid_public_x,**source_context)
-        if discover is not None:return discover
-        from .library_battlefield_templates import library_battlefield_selection_effect_template
-        battlefield=library_battlefield_selection_effect_template(body)
-        if battlefield is not None:return battlefield
-        from .variable_library_selection_templates import variable_library_selection_effect_template
-        inspection=variable_library_selection_effect_template(body,source_name=card_name,
-            cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,**source_context)
-        if inspection is not None:return inspection
+        library = _contextual_library_result(
+            body, card_name=card_name, source_context=source_context,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+        )
+        if library is not None:
+            return library
         from .incubate_templates import incubate_effect_template
         incubate=incubate_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
             forbid_public_x=forbid_public_x,**source_context)
@@ -192,29 +337,17 @@ def reviewed_contextual_effect_template(
         if replacement is not None:
             return replacement
 
-    # Preserve the certified v1 one-mana/one-leaf payload before using v2.
     from .source_animation_prevention import source_animation_prevention_template
     animation = source_animation_prevention_template(text, card_name=card_name,
         source_context=source_context, compile_clause=atomic_with_characteristics)
     if animation is not None:return animation
-    legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)
-    if legacy_payment is not None:
-        from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
-        if fixed_optional_mana_payment_node_capabilities(effects=legacy_payment.effects,target_schema=legacy_payment.target_schema,mechanic_ids=legacy_payment.mechanics):
-            return legacy_payment.compiled()
     def payment_body(body: str) -> CompiledEffectTemplate:
         return reviewed_effect_template_composition(body,source_name=card_name,
             compile_atomic=atomic_with_characteristics,
             compile_fixed=partial(compile_fixed,card_name=card_name,**source_context))
-    reflexive = reflexive_payment_template(text, compile_effect=payment_body)
-    if reflexive is not None:
-        return reflexive
-    payment_context = {"compile_effect": payment_body, "source_is_permanent": source_context.get("source_is_permanent")}
-    from .targeted_life_decline import targeted_life_decline_template
-    fixed_payment = (
-        targeted_life_decline_template(text)
-        or fixed_effect_payment_template(text, **payment_context)
-        or fixed_effect_payment_with_mandatory_prefix(text, **payment_context)
+    fixed_payment = _contextual_payment_result(
+        text, compile_atomic=atomic_with_characteristics, compile_payment=payment_body,
+        source_is_permanent=source_context.get("source_is_permanent"),
     )
     if fixed_payment is not None:
         return fixed_payment
@@ -227,12 +360,7 @@ def reviewed_contextual_effect_template(
         )
 
     if source_context.get("source_is_permanent") is False:
-        from .token_creation_reflexive_templates import token_creation_reflexive_template
-        from .resolution_condition_templates import other_spell_draw_template
-        spell_only = (
-            other_spell_draw_template(text, compile_component=atomic_with_characteristics)
-            or token_creation_reflexive_template(text, compile_effect=payment_body)
-        )
+        spell_only = targeted_whole_hand_counter_payment_template(text) or _spell_only_result(text, atomic_with_characteristics, payment_body)
         if spell_only is not None:
             return spell_only
     compiled = compose(text, card_name=card_name)
@@ -254,12 +382,31 @@ def reviewed_effect_template_composition(
     allow_conditions: bool = True,
 ) -> CompiledEffectTemplate:
     """Preserve owned linked instructions before generic clause composition."""
+    from .permanent_resolution_choices import permanent_resolution_choice_template
+    from .mill_templates import committed_mill_card_template
+
+    from .proliferate_templates import counter_snapshot_proliferate_template
+
+    if snapshot := counter_snapshot_proliferate_template(text):
+        return snapshot
+    from .tempt_draw_token_templates import tempt_draw_token_template
+
+    if tempting := tempt_draw_token_template(text):
+        return tempting
+    if chosen_permanent := permanent_resolution_choice_template(text):
+        return chosen_permanent
+    if committed_mill := committed_mill_card_template(text):
+        return committed_mill
+    if cast_x_available and text.casefold().startswith("each player mills x cards."):
+        from .mill_templates import committed_milled_creature_token_template
+        if milled := committed_milled_creature_token_template(text):
+            return milled
     from .graveyard_exile_branch_templates import graveyard_exile_branch_template
 
     from .graveyard_exile_token_templates import graveyard_exile_token_template
     from .graveyard_exile_type_outcome_templates import graveyard_exile_type_outcome_template
 
-    owned_exile = (graveyard_exile_branch_template(text) or graveyard_exile_token_template(text)
+    owned_exile = (graveyard_exile_branch_template(text, source_name=source_name) or graveyard_exile_token_template(text)
         or graveyard_exile_type_outcome_template(text))
     if owned_exile is not None:
         return owned_exile
@@ -300,6 +447,16 @@ def reviewed_effect_template_composition(
     return named if named is not None else _reviewed_effect_template_composition(text, **context)
 
 
+def _has_committed_followup(text):
+    return (
+        "destroyed this way" in text or "died this way" in text or "dies this way" in text or "exiled this way" in text
+        or "permanent put into a graveyard this way, its controller creates" in text
+        or "the controller of each of those artifacts gains life" in text
+        or "if that land was nonbasic, untap this creature" in text
+        or text.startswith("exile all attacking creatures target player controls.")
+    )
+
+
 def _reviewed_effect_template_composition(
     text: str,
     *,
@@ -334,13 +491,12 @@ def _reviewed_effect_template_composition(
         ))
         if death_exile is not None:
             return death_exile
-    if "card revealed this way" in folded and "each player reveals" in folded:
-        from .revealed_library_top_templates import reveal_top_result_template
+    if "the top card" in folded:
+        from .revealed_library_top_templates import public_top_reveal_template
 
-        reveal_top = reveal_top_result_template(text, compile_literal=compile_atomic)
-        if reveal_top is not None:
-            return reveal_top
-    if "destroyed this way" in folded or "exiled this way" in folded:
+        if public_top_reveal := public_top_reveal_template(text, folded=folded, compile_literal=compile_atomic):
+            return public_top_reveal
+    if _has_committed_followup(folded):
         from .destruction_followup_templates import destruction_followup_template
         from .public_exile_followup_templates import public_exile_followup_template
         from .targeted_exile_token_templates import targeted_exile_token_template
@@ -445,7 +601,7 @@ def _reviewed_effect_template_composition(
     )
     if sequence is not None:
         return sequence.compiled()
-    bound = bound_effect_program_template(text, compile_component=compile_atomic)
+    bound = bound_effect_program_template(text, compile_component=compile_atomic, source_name=source_name)
     if bound is not None:
         return bound.compiled()
     program = closed_effect_program_template(

@@ -9,12 +9,16 @@ from ..continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from .match_outcome_restrictions import MATCH_OUTCOME_RESTRICTION_HANDLER, MatchOutcomeRestrictionSpec
 
 
 def granted_characteristic_handlers_are_closed(handlers):
     if len(handlers) != 1:
         return False
     descriptor = handlers[0]
+    if descriptor.get('handler_id') == MATCH_OUTCOME_RESTRICTION_HANDLER:
+        MatchOutcomeRestrictionSpec.from_descriptor(descriptor)
+        return True
     if descriptor.get('handler_id') == 'continuous.attached.fixed-characteristics.v1':
         from ..semantic_runtime.attached_continuous import AttachedFixedCharacteristicsHandler
         node = AttachedFixedCharacteristicsHandler().validate(descriptor)

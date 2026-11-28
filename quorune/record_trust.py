@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 import copy
+import hashlib
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -18,22 +21,27 @@ from .stack_resolution import trusted_generic_empty_resolution, physical_stack_r
 from .stack_resolution_inputs import StackResolutionInputs, capture_stack_resolutions
 
 
+class RecordRulesMismatch(ValueError):
+    """A record pins an engine or rules authority this runtime does not match."""
+
+
 def verified_replay_inputs(
     directory: Path, *, semantics_path: str | Path | None, record_schema: int,
     engine_version: str, fingerprint_semantics: Callable[[SemanticRegistry], str],
 ) -> tuple[dict[str, Any], SemanticRegistry]:
     """Validate one record's immutable manifest and semantic trust inputs."""
     manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
-    if int(manifest.get("schema_version", 0)) != record_schema:
+    if not isinstance(manifest, dict) or int(manifest.get("schema_version", 0)) != record_schema:
         raise ValueError("Replay requires a Game Record v3 directory")
-    semantics = SemanticRegistry(semantics_path or directory / "semantics.json")
     if manifest.get("engine_version") != engine_version:
-        raise ValueError(
+        raise RecordRulesMismatch(
             f"Engine version mismatch: record={manifest.get('engine_version')} runtime={engine_version}"
         )
+    _validate_runtime_trust_provenance(manifest.get("runtime_trust"), context="record manifest")
+    semantics = SemanticRegistry(semantics_path or directory / "semantics.json")
     if manifest.get("semantics_fingerprint") != fingerprint_semantics(semantics):
         raise ValueError("Semantic registry fingerprint does not match the record")
-    validate_manifest_runtime_provenance(manifest, semantics)
+    _validate_manifest_card_programs(manifest, semantics)
     return manifest, semantics
 
 
@@ -44,11 +52,27 @@ def capture_stack_resolution_inputs(state: Any) -> StackResolutionInputs:
     return StackResolutionInputs(MappingProxyType(items),MappingProxyType(cards))
 
 
-def submit_with_resolution_capture(engine, initial, *, token, principal, action, payload):
+def submit_with_resolution_capture(engine, initial, *, token, principal, action, payload, priority_window_holds=None):
     """Submit through the authoritative port while observing actual resolutions."""
-    with capture_stack_resolutions(engine, initial) as capture:
-        result = engine.try_submit(token=token, principal=principal, action=action, payload=payload)
+    owner = engine.turn_priority
+    previous_holds = owner.window_holds
+    owner.window_holds = priority_window_holds or {}
+    try:
+        with capture_stack_resolutions(engine, initial) as capture:
+            result = engine.try_submit(token=token, principal=principal, action=action, payload=payload)
+    finally:
+        owner.window_holds = previous_holds
     return result, capture.snapshot()
+
+
+def submit_recorded_command(engine, command, principal, token):
+    from .turn_priority_model import PRIORITY_WINDOW_HOLDS_FIELD, priority_window_holds_from_record
+
+    holds = priority_window_holds_from_record(command.get(PRIORITY_WINDOW_HOLDS_FIELD, {}), engine.state.turn_order)
+    return submit_with_resolution_capture(engine, capture_stack_resolution_inputs(engine.state), token=token,
+        principal=principal, action=str(command["action"]), payload=deepcopy(dict(command.get("payload") or {})),
+        priority_window_holds=holds,
+    )
 
 
 def command_card_program_fingerprints(
@@ -105,22 +129,57 @@ def _resolved_stack_inputs(events, before_event_sequence, captured, *, require_c
         yield item, captured.physical_cards.get(stack_ref) if isinstance(captured, StackResolutionInputs) else None
 
 
+def _canonical_hash(value: Any) -> str:
+    compact = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(compact.encode("utf-8")).hexdigest()
+
+
+def semantics_fingerprint(registry: SemanticRegistry) -> str:
+    programs = {
+        key: registry.get(key).to_dict()
+        for key in registry.keys()
+        if registry.get(key) is not None
+    }
+    return _canonical_hash({"schema_version": 1, "programs": programs})
+
+
 def card_program_trust_provenance(
     semantics: SemanticRegistry,
+    *,
+    saved_programs: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, dict[str, Any]]:
+    if saved_programs is None:
+        programs = (
+            (program.oracle_id, program.fingerprint, program.trust_closure)
+            for program in semantics.card_programs()
+        )
+    else:
+        programs = (
+            (oracle_id, program["fingerprint"], program["trust_closure"])
+            for oracle_id, program in saved_programs.items()
+        )
     return {
-        program.oracle_id: {
-            "fingerprint": program.fingerprint,
-            "trust_basis": program.trust_closure["trust_basis"],
-            "trust_closure_fingerprint": program.trust_closure[
-                "fingerprint"
-            ],
-            "strict_capability_ready": program.trust_closure[
-                "strict_capability_ready"
-            ],
+        oracle_id: {
+            "fingerprint": fingerprint,
+            "trust_basis": trust["trust_basis"],
+            "trust_closure_fingerprint": trust["fingerprint"],
+            "strict_capability_ready": trust["strict_capability_ready"],
         }
-        for program in semantics.card_programs()
+        for oracle_id, fingerprint, trust in programs
     }
+
+
+def record_semantics_provenance(
+    semantics: SemanticRegistry, saved_semantics: Mapping[str, Any] | None
+) -> tuple[str, dict[str, dict[str, Any]]]:
+    if saved_semantics is None:
+        return semantics_fingerprint(semantics), card_program_trust_provenance(semantics)
+    registry_hash = _canonical_hash(
+        {"schema_version": 1, "programs": saved_semantics["programs"]}
+    )
+    return registry_hash, card_program_trust_provenance(
+        semantics, saved_programs=saved_semantics["card_programs"]
+    )
 
 
 def runtime_trust_provenance() -> dict[str, Any]:
@@ -276,7 +335,7 @@ def _validate_runtime_trust_provenance(
     if not isinstance(recorded, Mapping):
         raise ValueError(f"{context} runtime trust provenance is malformed")
     if type(recorded.get('schema_version')) is not int or copy.deepcopy(dict(recorded)) != runtime_trust_provenance():
-        raise ValueError(f"Runtime trust provenance mismatch in {context}")
+        raise RecordRulesMismatch(f"Runtime trust provenance mismatch in {context}")
 
 
 def validate_resolution_provenance(recorded, semantics, *, engine, events, before_event_sequence,
@@ -303,7 +362,7 @@ def validate_resolution_provenance(recorded, semantics, *, engine, events, befor
         require_runtime_provenance=True, sequence=sequence, implicit_provenance=implicit)
 
 
-def validate_manifest_runtime_provenance(
+def _validate_manifest_card_programs(
     manifest: Mapping[str, Any],
     semantics: SemanticRegistry,
 ) -> None:
@@ -320,6 +379,13 @@ def validate_manifest_runtime_provenance(
         semantics,
         context="record manifest",
     )
+
+
+def validate_manifest_runtime_provenance(
+    manifest: Mapping[str, Any],
+    semantics: SemanticRegistry,
+) -> None:
+    _validate_manifest_card_programs(manifest, semantics)
     _validate_runtime_trust_provenance(
         manifest.get("runtime_trust"),
         context="record manifest",

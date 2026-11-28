@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Source-spanned state conditions with the existing mandatory source sacrifice."""
+"""Lower source-spanned state conditions and intervening upkeep wins."""
 
 from dataclasses import replace
 from . import regex_working_set as re
@@ -15,6 +15,7 @@ from ..rules.source_references import SourceReferenceSpec
 from .public_state_queries import fixed_public_state_condition
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import OracleNode,append_residual
+from .upkeep_game_win_nodes import upkeep_game_win_node
 
 
 def _state_condition(text,source_name):
@@ -34,6 +35,17 @@ def _state_condition(text,source_name):
 
 def public_state_trigger_node(*,node_id,line,material_line,span,card_name,type_line,
         capability_registry,capability_profile,residuals):
+    if material_line.casefold().startswith(("when a creature with mana value ", "whenever a creature with mana value ")):
+        from .graveyard_aura_entry_nodes import graveyard_aura_entry_node
+
+        return graveyard_aura_entry_node(node_id=node_id, line=line, material_line=material_line, span=span,
+                                        type_line=type_line, capability_registry=capability_registry,
+                                        capability_profile=capability_profile, residuals=residuals)
+    if material_line.casefold().rstrip(".").endswith("you win the game"):
+        return upkeep_game_win_node(
+            node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name,
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        )
     match=re.fullmatch(r'When (?P<condition>you control .+?|there are no .+? on the battlefield), sacrifice (?P<source>.+)\.',material_line,re.I)
     if match is None or not re.search(r'\b(?:creature|artifact|enchantment|land|planeswalker|battle)\b',type_line,re.I):return None
     source=match['source']

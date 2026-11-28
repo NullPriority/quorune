@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol
 
 from .carddb import CardDatabase
 from .commander_pairing import validated_commander_counts
+from .rules.commander_companion_roles import validate_commander_companion_roles
 from .deck import DeckDefinition
 from .commander_damage_identity_model import PhysicalCommanderDamageIdentity,PhysicalCommanderDamageIdentities
 from .model import (
@@ -19,6 +20,7 @@ from .model import (
 )
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
 from .spell_resolution_name_model import SpellResolutionNameLedger
+from .spell_cast_name_model import SpellCastNameHistory
 
 
 COMMANDER_DAMAGE_IDENTITY_VERSION = 2
@@ -131,6 +133,17 @@ def _composed_commander_cards(card):
     return tuple(result)
 
 
+def current_commander_objects(state, player):
+    """Find current objects carrying this player\'s physical commanders."""
+    for card in state.cards.values():
+        if (not card.is_commander or getattr(card, "phased_out", False)
+                or card.zone not in {"battlefield", "command", "exile", "graveyard", "hand", "library", "stack"}):
+            continue
+        parts = _composed_commander_cards(card)
+        if (card.owner == player if parts is None else any(part["owner"] == player for part in parts)):
+            yield card
+
+
 def physical_commander_damage_identities(card):
     """Read merged physical cards without assigning a designation to the root."""
     cards=_composed_commander_cards(card)
@@ -184,6 +197,85 @@ def commander_damage_losers(state: Any) -> tuple[str, ...]:
             for amount in state.players[seat].commander_damage_received.values()
         )
     )
+
+
+def _register_commander_deck(
+    card_db: CardDatabase,
+    semantics: Any | None,
+    deck: DeckDefinition,
+    config: GameConfig,
+    player: PlayerState,
+    all_seats: list[str],
+    cards: dict[str, CardInstance],
+) -> list[str]:
+    """Validate one deck and populate its physical command and library zones."""
+    from .rules.name_stickers import ACCESS, registration
+
+    seat = player.seat
+    commander_ids: list[str] = []
+    sheets = registration(card_db, deck, seed=config.seed, seat=seat)
+    if sheets is not None:
+        player.stats[ACCESS] = sheets
+    validate_commander_companion_roles(card_db, deck)
+    commander_remaining = validated_commander_counts(
+        card_db, semantics, deck,
+        strict_profile=config.review_profile if config.semantic_policy == "trusted_only" else None,
+    )
+    commander_ordinal = 0
+    serial = 0
+    for entry in deck.entries:
+        if entry.board not in {"mainboard", "commander"}:
+            continue
+        for _ in range(entry.quantity):
+            serial += 1
+            record = card_db.lookup(entry.name)
+            if record.type_line == "Stickers":
+                from .errors import GameRuleError
+
+                raise GameRuleError("Sticker sheets register separately from the starting cards")
+            is_commander = entry.board == "commander"
+            if (
+                not is_commander
+                and commander_remaining.get(record.name, 0) > 0
+            ):
+                is_commander = True
+            if (
+                is_commander
+                and commander_remaining.get(record.name, 0) > 0
+            ):
+                commander_remaining[record.name] -= 1
+            if is_commander:
+                commander_ordinal += 1
+            object_id = uuid.uuid4().hex
+            ref = f"{seat}{serial:02d}"
+            zone = "command" if is_commander else _LIBRARY_ZONE
+            card = CardInstance(
+                object_id=object_id,
+                ref=ref,
+                oracle_id=record.oracle_id,
+                printed_name=record.name,
+                owner=seat,
+                controller=seat,
+                zone=zone,
+                printing=entry.printing,
+                is_commander=is_commander,
+                commander_designation_id=(
+                    commander_designation_id(seat, commander_ordinal)
+                    if is_commander
+                    else None
+                ),
+                known_to=[] if zone == _LIBRARY_ZONE else list(all_seats),
+                revealed_to=(
+                    [] if zone == _LIBRARY_ZONE else list(all_seats)
+                ),
+            )
+            cards[object_id] = card
+            player.zones[zone].append(object_id)
+            if is_commander:
+                commander_ids.append(record.oracle_id)
+    randomizer = random.Random(f"{config.seed}|{seat}|initial")
+    randomizer.shuffle(player.zones[_LIBRARY_ZONE])
+    return commander_ids
 
 
 def initial_commander_state(
@@ -244,64 +336,12 @@ def initial_commander_state(
         for seat in all_seats
     }
     cards: dict[str, CardInstance] = {}
-    commander_ids: dict[str, list[str]] = {seat: [] for seat in all_seats}
     deck_names = {seat: decks[seat].name for seat in all_seats}
 
-    for seat in all_seats:
-        deck = decks[seat]
-        commander_remaining = validated_commander_counts(
-            card_db, semantics, deck,
-            strict_profile=config.review_profile if config.semantic_policy == "trusted_only" else None,
-        )
-        commander_ordinal = 0
-        serial = 0
-        for entry in deck.entries:
-            if entry.board not in {"mainboard", "commander"}:
-                continue
-            for _ in range(entry.quantity):
-                serial += 1
-                record = card_db.lookup(entry.name)
-                is_commander = entry.board == "commander"
-                if (
-                    not is_commander
-                    and commander_remaining.get(record.name, 0) > 0
-                ):
-                    is_commander = True
-                if (
-                    is_commander
-                    and commander_remaining.get(record.name, 0) > 0
-                ):
-                    commander_remaining[record.name] -= 1
-                if is_commander:
-                    commander_ordinal += 1
-                object_id = uuid.uuid4().hex
-                ref = f"{seat}{serial:02d}"
-                zone = "command" if is_commander else _LIBRARY_ZONE
-                card = CardInstance(
-                    object_id=object_id,
-                    ref=ref,
-                    oracle_id=record.oracle_id,
-                    printed_name=record.name,
-                    owner=seat,
-                    controller=seat,
-                    zone=zone,
-                    is_commander=is_commander,
-                    commander_designation_id=(
-                        commander_designation_id(seat, commander_ordinal)
-                        if is_commander
-                        else None
-                    ),
-                    known_to=[] if zone == _LIBRARY_ZONE else list(all_seats),
-                    revealed_to=(
-                        [] if zone == _LIBRARY_ZONE else list(all_seats)
-                    ),
-                )
-                cards[object_id] = card
-                players[seat].zones[zone].append(object_id)
-                if is_commander:
-                    commander_ids[seat].append(record.oracle_id)
-        randomizer = random.Random(f"{config.seed}|{seat}|initial")
-        randomizer.shuffle(players[seat].zones[_LIBRARY_ZONE])
+    commander_ids = {
+        seat: _register_commander_deck(card_db, semantics, decks[seat], config, players[seat], all_seats, cards)
+        for seat in all_seats
+    }
 
     return GameState(
         game_id=uuid.uuid4().hex,
@@ -314,8 +354,8 @@ def initial_commander_state(
         current_turn=None,
         last_normal_turn_player=None,
         departed_turn_boundary_version=1,
-        mandatory_linked_loop=MandatoryLinkedLoopWatch(),
-        spell_resolution_name_ledger=SpellResolutionNameLedger(),
+        mandatory_linked_loop=MandatoryLinkedLoopWatch(schema_version=2),
+        spell_resolution_name_ledger=SpellResolutionNameLedger(schema_version=2, cast_history=SpellCastNameHistory()),
         commander_damage_identity_version=(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),
@@ -329,7 +369,12 @@ def initial_commander_state(
             committed_occurrence_history_version=1, damage_life_history_version=1,
             permanent_death_history_version=1, death_name_history_version=1, public_movement_history_version=1,
             first_life_gain_history_version=1, venture_history_version=1,
-            plus_one_counter_placement_history_version=1),
+            plus_one_counter_placement_history_version=1, land_play_history_version=1,
+            controlled_creature_counter_history_version=1, creature_counter_placement_history_version=1,
+            permanent_counter_receipt_history_version=1, draw_identity_history_version=1,
+            exert_occurrence_history_version=1,
+            equip_activation_history_version=1,
+            permanent_entry_token_history_version=1),
         active_player=None,
         phase="setup",
         step="mulligan",

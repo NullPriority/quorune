@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
+from ..apnap_object_payment import ORDER_GRAVEYARD_ARRIVALS
 from ..composition_batch_order_model import CompositionDepartureBatchRequest
 from ..composition_departure_batch import PreparedCompositionDepartureBatch, prepare_composition_departure_batch
 from ..errors import GameRuleError
@@ -39,6 +40,7 @@ class ApnapCompositionOrder:
             or self.continuation.effect.get("op") != APNAP_OBJECT_COMMIT_OPERATION
             or self.continuation.effect.get("actor") != self.continuation.semantic_frame.controller
             or not isinstance(self.request, CompositionDepartureBatchRequest)
+            or self.request.schema_version != (2 if self.continuation.effect.get(ORDER_GRAVEYARD_ARRIVALS) is True else 1)
             or not isinstance(self.replacement_selections, tuple)
             or any(not isinstance(value, (str, Mapping)) for value in self.replacement_selections)
             or not isinstance(self.orders, tuple) or any(not isinstance(value, tuple) for value in self.orders)
@@ -124,9 +126,10 @@ def prepare_apnap_composition_movement(
             raise SemanticChoiceError("APNAP physical movement disappeared before completion")
         return None, False
     cards = tuple(host._resolve_object(intent.actor, ref, zones={"battlefield"}) for ref in intent.object_refs)
-    if not any(card.permanent_composition is not None for card in cards):
+    ordered_sacrifice = continuation.effect.get(ORDER_GRAVEYARD_ARRIVALS) is True
+    if not cards or (not ordered_sacrifice and not any(card.permanent_composition is not None for card in cards)):
         if saved is not None:
-            raise SemanticChoiceError("APNAP physical movement no longer contains a merged permanent")
+            raise SemanticChoiceError("APNAP physical movement no longer requires its saved order")
         return None, False
     item = _resolving_item(host, continuation)
     if item.controller != intent.actor:
@@ -138,7 +141,7 @@ def prepare_apnap_composition_movement(
     )
     batch = prepare_composition_departure_batch(
         ZoneTransitionOwner(host), changes, actor=item.controller, reason=intent.reason,
-        transition_kinds=kinds, prepared_replacements=replacement_plans,
+        transition_kinds=kinds, prepared_replacements=replacement_plans, ordered_sacrifice=ordered_sacrifice,
     )
     if saved is not None:
         if saved.continuation != continuation or saved.request != batch.request or saved.current_choice is not None:

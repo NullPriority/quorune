@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and ruling subset",
+  "cards": [
+    {
+      "name": "Charming Prince",
+      "oracle_id": "c48d844c-3976-4fa5-8e0d-3f0e535e7619",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Noble",
+      "oracle_text": "When this creature enters, choose one —\n• Scry 2.\n• You gain 3 life.\n• Exile another target creature you own. Return it to the battlefield under your control at the beginning of the next end step.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "c48d844c-3976-4fa5-8e0d-3f0e535e7619",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist. Once the exiled creature returns, it's considered a new object with no relation to the object that it was."
+    },
+    {
+      "oracle_id": "c48d844c-3976-4fa5-8e0d-3f0e535e7619",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Charming Prince's third mode can target any creature you own, including those another player controls."
+    },
+    {
+      "oracle_id": "c48d844c-3976-4fa5-8e0d-3f0e535e7619",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    }
+  ]
+}

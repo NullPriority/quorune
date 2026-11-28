@@ -129,6 +129,11 @@ def temporary_keyword_removal_capabilities(*,effects,target_schema,mechanic_ids)
         return ()
     damage_dependencies = ()
     if len(effects) == 2:
+        from ..target_combat_damage_multiplier_model import turn_multiplier_instruction
+        if effects[1] == turn_multiplier_instruction():
+            from .loyalty_damage import turn_combat_multiplier_capabilities
+
+            return turn_combat_multiplier_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         ordered = damage_then_fixed_keyword_removal_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
         )

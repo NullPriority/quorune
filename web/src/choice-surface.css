@@ -1,0 +1,61 @@
+.choice-filter { display: grid; gap: .25rem; min-width: 0; margin-block: .35rem .55rem; }
+.choice-filter > span { color: var(--muted); font-size: .75rem; }
+.choice-filter > input { width: 100%; box-sizing: border-box; }
+.creature-type-tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
+.creature-type-tools .choice-filter { flex: 1 1 13rem; }
+.creature-type-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr)); gap: .4rem; }
+.creature-type-options .choice-option { min-width: 0; overflow-wrap: anywhere; }
+
+.game-shell .contextual-decision > .contextual-fields { max-block-size: min(30dvh, 20rem); overflow: auto; }
+.game-shell .contextual-decision .card-choice-options { max-height: min(30dvh, 20rem); }
+.game-shell .decision-panel > .contextual-decision:not(.combat-decision):has(> .contextual-fields) {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(min(3.5rem, 14dvh), 1fr) auto;
+}
+.game-shell .decision-panel > .contextual-decision:not(.combat-decision):has(> .contextual-fields) > footer {
+  grid-column: 1;
+}
+.game-shell .expanded-table-choice {
+  box-sizing: border-box;
+  width: min(75rem, calc(100vw - 1rem));
+  max-width: none;
+  max-height: calc(100dvh - 1rem);
+  overflow: auto;
+  padding: clamp(.75rem, 2vw, 1.4rem);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: inherit;
+  background: var(--surface);
+}
+.expanded-table-choice::backdrop { background: rgb(2 6 4 / 80%); }
+.game-shell .expanded-table-choice .contextual-decision {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: min(27rem, 86dvh);
+}
+.game-shell .expanded-table-choice .contextual-decision > .contextual-fields { max-block-size: min(66dvh, 45rem); }
+.game-shell .expanded-table-choice .card-choice-options { max-height: min(56dvh, 35rem); }
+.game-shell .expanded-table-choice .contextual-decision > footer { grid-column: 1; }
+.game-shell .choice-dialog:has(.choice-form-fields) { width: min(68rem, 100%); }
+
+.pinned-table-viewer {
+  position: fixed;
+  inset-block-start: .75rem;
+  inset-inline-end: .75rem;
+  z-index: 26;
+  display: grid;
+  gap: .4rem;
+  width: min(21rem, calc(100vw - 1.5rem));
+  max-height: calc(100dvh - 1.5rem);
+  overflow: auto;
+  padding: .55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  user-select: text;
+}
+.pinned-viewer-toolbar { display: flex; align-items: center; justify-content: space-between; gap: .35rem; }
+.pinned-table-viewer .inspector-art img { max-height: min(16rem, 38dvh); object-fit: contain; }
+.pinned-table-viewer .inspector-text { user-select: text; }
+.game-shell:has(.pinned-table-viewer) .floating-card-preview { display: none; }

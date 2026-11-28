@@ -45,6 +45,7 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
     fields = {
         "creature": {"types_any": ["creature"]},
         "artifact": {"types_any": ["artifact"]},
+        "equipment": {"types_any": ["artifact"], "subtypes_any": ["equipment"]},
         "artifact creature": {
             "types_all": ["artifact", "creature"],
         },
@@ -63,6 +64,7 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
             "types_none": ["land"],
         },
         "artifact or creature": {"types_any": ["artifact", "creature"]},
+        "artifact or enchantment": {"types_any": ["artifact", "enchantment"]},
         "creature or enchantment": {
             "types_any": ["creature", "enchantment"]
         },
@@ -113,6 +115,10 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
         "legendary creature": {
             "types_any": ["creature"],
             "supertypes_any": ["legendary"],
+        },
+        "nonlegendary creature": {
+            "types_any": ["creature"],
+            "supertypes_none": ["legendary"],
         },
     }.get(text)
     if fields is not None:
@@ -216,8 +222,9 @@ class FixedTargetReanimationManaValueLossTemplate:
 
 def fixed_target_reanimation_mana_value_loss_template(text: str) -> FixedTargetReanimationManaValueLossTemplate | None:
     match = re.fullmatch(
-        r"(?P<move>(?:Put|Return) target creature card from (?:a|any) graveyard (?:onto|to) "
-        r"the battlefield under your control\.) You lose life equal to that card['’]s mana value\.",
+        r"(?P<move>(?:(?:Put|Return) target creature card from (?:a|any) graveyard (?:onto|to) "
+        r"the battlefield under your control|Return target creature card from your graveyard to the battlefield)\.) "
+        r"You lose life equal to that card['’]s mana value\.",
         " ".join(text.split()), re.I,
     )
     if match is None:
@@ -282,6 +289,27 @@ def fixed_target_reanimation_effect_template(
         tapped=bool(match.group("tapped")),
         owner_controls=controller == "its owner's",
     )
+
+
+def returned_creature_counters_template(text):
+    normalized = " ".join(text.split())
+    match = re.fullmatch(
+        r"(?P<move>Return up to two target creature cards with power [0-9]+ or less from your graveyard "
+        r"to the battlefield\.) Put a \+1/\+1 counter on each of those creatures\.?",
+        normalized, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..rules.reanimation_followup import RETURNED_CREATURE_COUNTER_MECHANIC, RETURNED_CREATURE_COUNTER_VERSION
+    from .fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+
+    base = fixed_homogeneous_target_set_effect_template(match["move"])
+    if base is None:
+        return None
+    _, (move,), target, mechanics = base.compiled()
+    return ("return-target-creatures-and-counter-v1",
+            ({**move, "schema_version": RETURNED_CREATURE_COUNTER_VERSION},), target,
+            (*mechanics, RETURNED_CREATURE_COUNTER_MECHANIC, "cr-122-counters"))
 
 
 _RELATIVE_REANIMATION = re.compile(

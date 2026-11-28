@@ -49,8 +49,17 @@ def occurrence_power_damage_result(binding, body):
 
 
 def entry_permanent_result(binding, body):
+    from .attacking_token_results import attacking_entry_copy_result
+
+    if copy := attacking_entry_copy_result(binding, body):
+        return copy, True
+    from .fixed_control_templates import entry_control_exchange_result_template
+
+    exchange = entry_control_exchange_result_template(binding, body)
+    if exchange is not None:
+        return exchange, False
     from ..rules.entry_permanent_results import (
-        ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_MECHANIC,
+        ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_MECHANIC, TAPPED_ENTRY_UNTAP_OPERATION,
         entry_permanent_result_binding, entry_permanent_result_effect,
     )
     from ..saddle import SADDLE_OPERATION
@@ -58,11 +67,43 @@ def entry_permanent_result(binding, body):
     operation = {
         "it becomes an artifact creature until end of turn.": ENTRY_ANIMATION_OPERATION,
         "it becomes saddled until end of turn.": SADDLE_OPERATION,
+        "untap it.": TAPPED_ENTRY_UNTAP_OPERATION,
     }.get(body.casefold())
     if operation is None or not entry_permanent_result_binding(binding.event.value, binding.event_condition, operation):
         return None
     return ('fixed-entry-permanent-result-v1', (entry_permanent_result_effect(operation),), None,
         (ENTRY_PERMANENT_RESULT_MECHANIC,)), True
+
+
+def entry_aura_attachment_result(binding, body):
+    from ..event_counter_reference import EVENT_ENTRY_OBJECT
+    from ..rules.attachment_actions import (
+        CREATE_AND_OFFER_ENTRY_AURA,
+        controlled_enchantment_entry,
+        validate_created_entry_aura_attachment,
+    )
+    from .token_templates import fixed_token_creation_effect_template
+
+    if not controlled_enchantment_entry(binding.event.value, binding.active_zone, binding.event_condition):
+        return None
+    match = re.fullmatch(
+        r"(?P<creation>Create [^.]+)\. If that enchantment is an Aura, you may attach it to the token\.",
+        body, re.I,
+    )
+    if match is None:
+        return None
+    token = fixed_token_creation_effect_template(match["creation"])
+    if token is None or token.target_schema is not None:
+        return None
+    effect = {
+        "op": CREATE_AND_OFFER_ENTRY_AURA, "schema_version": 1, "controller": "$controller",
+        "aura": EVENT_ENTRY_OBJECT, "token": dict(token.effect), "token_mechanics": list(token.mechanics),
+    }
+    try:
+        validate_created_entry_aura_attachment(effect)
+    except ValueError:
+        return None
+    return ("create-token-then-optional-entry-aura-attachment-v1", (effect,), None, ("cr-701-3-attach",)), True
 
 
 def entry_equipment_attachment_result(binding, body, *, card_name, effect_template):
@@ -128,21 +169,27 @@ def _optional_combat_dealer_blink_result(binding, body, *, card_name):
 
 
 def occurrence_object_result(binding,body,*,effect_template,card_name):
+    from ..rules.tap_state_capability_shapes import MANA_TAPPED_LAND_UNTAP_VARIANT, mana_tapped_land_untap_effect
+
+    if binding.variant == MANA_TAPPED_LAND_UNTAP_VARIANT and body == binding.body:
+        return ("mana-tapped-land-untap-v1", (mana_tapped_land_untap_effect(),), None, ("tap-and-untap",)), True
     if blink := _optional_combat_dealer_blink_result(binding, body, card_name=card_name):
         return blink
     from ..rules.optional_counter_capability_shapes import (
-        RECIPIENT_DAMAGE_COUNTER_VARIANT, opponent_damage_source_counter_effect,
+        RECIPIENT_DAMAGE_COUNTER_VARIANT, damage_source_counter_effect, opponent_damage_source_counter_effect,
     )
 
-    if binding.variant in {"opponent_damage_optional_source_counters", RECIPIENT_DAMAGE_COUNTER_VARIANT} and re.fullmatch(
-        r"put that many \+1/\+1 counters on this creature\.", body, re.I,
-    ):
+    if binding.variant in {"opponent_damage_optional_source_counters", RECIPIENT_DAMAGE_COUNTER_VARIANT}:
+        from .damage_permanent_event_bindings import recipient_damage_source_counter_kind
 
-        return (
-            binding.template_id, (opponent_damage_source_counter_effect(),), None,
-            ("cr-122-counters", "fixed-public-event-source-counter",
-             "scalar-effect-amount"),
-        ), binding.variant == RECIPIENT_DAMAGE_COUNTER_VARIANT
+        counter = recipient_damage_source_counter_kind(body)
+        any_dealer = binding.variant == RECIPIENT_DAMAGE_COUNTER_VARIANT
+        if counter == "+1/+1" or (any_dealer and counter == "charge"):
+            effect = damage_source_counter_effect(counter) if any_dealer else opponent_damage_source_counter_effect()
+            return (
+                binding.template_id, (effect,), None,
+                ("cr-122-counters", "fixed-public-event-source-counter", "scalar-effect-amount"),
+            ), any_dealer
     from ..rules.occurrence_object_results import (
         DAMAGE_DEALER_RESULT_TEMPLATE, DAMAGE_DEALER_RESULT_VARIANTS, damage_dealer_result_effects,
     )

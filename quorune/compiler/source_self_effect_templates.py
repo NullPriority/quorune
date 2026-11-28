@@ -34,7 +34,161 @@ def bound_source_fixed_damage(binding, body):
     return damage.compiled() if damage is not None else None
 
 
+_RANDOM_OPPONENT_CREATURE_DAMAGE = re.compile(
+    r"(?:it|this creature) deals (?P<amount>[1-9][0-9]*) damage to a creature "
+    r"an opponent controls chosen at random\.?",
+    re.IGNORECASE,
+)
+
+
+def _battlefield_departure_entry_phase_out(body):
+    text = " ".join(body.split()).casefold()
+    if text == ("untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. "
+                "put a time counter on this enchantment for each creature that phased out this way."):
+        from ..phasing_model import PHASE_OUT_MECHANIC, creature_set_phase_hold_effect
+        from ..rules.counted_creature_phase_hold import COUNTED_CREATURE_PHASE_HOLD_MECHANIC
+
+        return ("entry-untap-counted-creature-phase-hold-v1", (creature_set_phase_hold_effect(),),
+                None, (PHASE_OUT_MECHANIC, COUNTED_CREATURE_PHASE_HOLD_MECHANIC), None)
+    if text != ("target creature phases out until this enchantment leaves the battlefield. "
+                "tap that creature as it phases in this way."):
+        return None
+    from ..phasing_model import PHASE_OUT_MECHANIC, battlefield_phase_out_effect
+    from ..replacement.immutable import thaw_value
+    from ..rules.battlefield_phase_hold import BATTLEFIELD_PHASE_HOLD_MECHANIC, BATTLEFIELD_PHASE_HOLD_SCHEMA
+
+    return ("entry-phase-out-until-source-departs-v1", (battlefield_phase_out_effect(),),
+            thaw_value(BATTLEFIELD_PHASE_HOLD_SCHEMA), (PHASE_OUT_MECHANIC, BATTLEFIELD_PHASE_HOLD_MECHANIC, "cr-115-targets"), None)
+
+
+def _optional_entry_target_effect(body):
+    from .airbend_templates import entry_targeted_airbend_template
+
+    if airbend := entry_targeted_airbend_template(body):
+        return airbend
+    if " ".join(body.split()).casefold() != "up to one target creature phases out.":
+        return None
+    from ..phasing_model import PHASE_OUT_MECHANIC, optional_entry_phase_out_effect, optional_entry_phase_out_schema
+
+    return ("optional-single-creature-entry-phase-out-v1", (optional_entry_phase_out_effect(),),
+            optional_entry_phase_out_schema(), (PHASE_OUT_MECHANIC, "cr-115-targets"), None)
+
+def source_death_hand_return_template(body):
+    from ..delayed_object_model import (
+        DELAYED_OBJECT_MECHANIC, SOURCE_DEATH_HAND_TEMPLATE, source_death_hand_return_effect,
+    )
+
+    if re.fullmatch(
+        r"return (?:it|this card) to its owner['’]s hand at the beginning of the next end step\.?",
+        body.strip(), re.I,
+    ):
+        return (SOURCE_DEATH_HAND_TEMPLATE, (source_death_hand_return_effect(),),
+                None, (DELAYED_OBJECT_MECHANIC,), None)
+    return None
+
+
+def source_death_enchantment_return_template(body):
+    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC, event_enchantment_return_effect
+
+    normalized = " ".join(body.split()).casefold().replace("’", "'")
+    normalized = normalized.removesuffix(" (it's not a creature.)")
+    if normalized != "if it was a creature, return it to the battlefield under its owner's control. it's an enchantment.":
+        return None
+    return ("fixed-event-death-enchantment-return-v1", (event_enchantment_return_effect(),), None,
+            (EVENT_BATTLEFIELD_RETURN_MECHANIC,), None)
+
+
+def _owner_departure_counter_token_result(body, event_phrase):
+    if event_phrase == "leaves the battlefield" and re.fullmatch(
+        r"its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it\.",
+        " ".join(body.split()), re.I,
+    ):
+        from ..rules.owner_departure_tokens import owner_departure_token_effect
+        from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+        return ("owner-departure-counter-token-v1", (owner_departure_token_effect(),), None,
+                ("cr-111-tokens", "fixed-token-production", SCALAR_AMOUNT_MECHANIC), None)
+    return None
+
+
+def commander_battlefield_entry_result(body):
+    if " ".join(body.casefold().split()) != (
+        "you may put a commander you own from the command zone onto the battlefield. "
+        "it gains haste. return it to the command zone at the beginning of the next end step."
+    ):
+        return None
+    from ..rules.commander_return_choice import (
+        COMMANDER_BATTLEFIELD_ENTRY_MECHANIC, COMMANDER_BATTLEFIELD_ENTRY_TEMPLATE,
+        commander_battlefield_entry_effect,
+    )
+
+    return (COMMANDER_BATTLEFIELD_ENTRY_TEMPLATE, (commander_battlefield_entry_effect(),), None,
+            (COMMANDER_BATTLEFIELD_ENTRY_MECHANIC,), None)
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if event_phrase == "dies" and re.fullmatch(
+        r"you may pay any amount of \{r\}\. when you do, it deals that much damage to any target\.",
+        " ".join(body.casefold().split()),
+    ):
+        from ..rules.departing_x_reflexive import RED_DEATH_MECHANIC, RED_DEATH_VERSION, instruction
+
+        return "death-variable-red-reflexive-damage-v1", (instruction(RED_DEATH_VERSION),), None, (RED_DEATH_MECHANIC,), None
+    if event_phrase == "leaves the battlefield" and re.fullmatch(
+        r"you may pay \{x\}\. when you do, (?:he|she|it|this creature) deals x damage to target player\.",
+        " ".join(body.casefold().split()),
+    ):
+        from ..rules.departing_x_reflexive import MECHANIC, instruction
+
+        return "departure-x-reflexive-player-damage-v1", (instruction(),), None, (MECHANIC,), None
+    if event_phrase == "enters" and " ".join(body.casefold().split()) == (
+        "you draw a card and target opponent may draw a card."
+    ):
+        from ..rules.target_entry_draw import target_entry_draw_effects, target_entry_draw_schema
+
+        return ("fixed-source-entry-then-target-opponent-draw-v1", target_entry_draw_effects(),
+                target_entry_draw_schema(),
+                ("cr-121-drawing-a-card", "cr-115-targets", "fixed-event-player-optional-draw"), None)
+    if owner_tokens := _owner_departure_counter_token_result(body, event_phrase):
+        return owner_tokens
+    if event_phrase == "enters":
+        from ..rules.name_stickers import MECHANIC, instruction
+
+        normalized = " ".join(body.casefold().split()).removesuffix(" (the vowels are a, e, i, o, u, and y.)")
+        if normalized == "you may put a name sticker on it. add {r} for each unique vowel on that sticker.":
+            return ("name-sticker-entry-vowels-v1", (instruction(),), None, (MECHANIC,), None)
+    if event_phrase == "enters" and " ".join(body.casefold().split()) == (
+        "search your library for a card, exile it face down, then shuffle. "
+        "for as long as that card remains exiled, you may play it."
+    ):
+        from ..rules.private_search_play import PRIVATE_SEARCH_PLAY_MECHANIC, private_search_play_effect
+
+        return ("entry-private-search-play-v1", (private_search_play_effect(),), None,
+                (PRIVATE_SEARCH_PLAY_MECHANIC,), None)
+    if event_phrase == "enters" and (optional := _battlefield_departure_entry_phase_out(body)
+            or _optional_entry_target_effect(body) or commander_battlefield_entry_result(body)) is not None:
+        return optional
+    if event_phrase == "enters":
+        from .searched_pair_templates import searched_pair_entry_template
+
+        if pair := searched_pair_entry_template(body, card_name=card_name):
+            return (*pair, None)
+    if event_phrase == "dies":
+        from .library_search_templates import creature_subset_mana_value_search_template
+        from ..rules.revival_return import revival_death_result
+
+        if source_return := source_death_hand_return_template(body) or source_death_enchantment_return_template(body):
+            return source_return
+        if revival := revival_death_result(body):
+            return revival
+        if search := creature_subset_mana_value_search_template(body):
+            return (*search, None)
+        random_damage = _RANDOM_OPPONENT_CREATURE_DAMAGE.fullmatch(body.strip())
+        if random_damage is not None:
+            from ..rules.random_opponent_damage import random_opponent_damage_instruction
+
+            effect = random_opponent_damage_instruction(int(random_damage["amount"]))
+            return "damage-source-death-random-opponent-creature-v1", (effect,), None, ("cr-120-damage",), None
     if (event_phrase == "dies"
         and body.strip().casefold() == "destroy all permanents at the beginning of the next end step."):
         from ..rules.destruction_result_model import next_end_step_destruction_effect
@@ -46,27 +200,56 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         SOURCE_ENTRY_CAST_HAND_MECHANIC)
     condition=None
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
-    if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+    if guard is not None:
+        body = guard['body']
+        condition = source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+        if not guard['origin'] and body.casefold() == 'you gain protection from everything until your next turn.':
+            from ..rules.next_personal_turn_protection import (
+                CAST_ENTRY_PROTECTION_MECHANIC, CAST_ENTRY_PROTECTION_TEMPLATE, cast_entry_protection_effect,
+            )
+
+            return (CAST_ENTRY_PROTECTION_TEMPLATE, (cast_entry_protection_effect(),), None,
+                    (SOURCE_ENTRY_CAST_MECHANIC, CAST_ENTRY_PROTECTION_MECHANIC), condition)
     if event_phrase == 'enters':
-        from .discard_result_templates import selected_land_discard_result_template
-        if condition is None and (land_discard := selected_land_discard_result_template(body)) is not None:
-            return (*land_discard, None)
+        from .discard_result_templates import (
+            selected_land_discard_result_template, source_entry_creature_discard_or_exile_template,
+        )
+        if condition is None:
+            discard = source_entry_creature_discard_or_exile_template(body) or selected_land_discard_result_template(body)
+            if discard is not None:
+                return (*discard, None)
         from .manifest_templates import manifest_equipment_entry_template
         from .target_opponent_counter_choice import target_opponent_counter_choice_result
         from .keep_three_sacrifice_templates import keep_three_land_entry_template
         from .collective_source_damage_templates import collective_source_damage_entry_template
+        from .optional_source_damage_templates import optional_milled_mana_damage_entry_template
         from .protected_attack_payment_templates import next_turn_attack_payment_template
         from .library_search_templates import (
-            optional_literal_name_any_number_search_template, recruiting_library_search_template,
+            optional_literal_name_any_number_search_template, optional_subtype_graveyard_search_template,
+            recruiting_library_search_template,
         )
+        from .variable_library_selection_templates import devotion_library_win_template
+
+        from .qualified_library_search_templates import creature_stat_library_search_template
 
         if condition is None:
-            library_search = (optional_literal_name_any_number_search_template(body)
-                              or recruiting_library_search_template(body))
+            from ..rules.black_devotion_library_search import black_devotion_search_result
+
+            if devotion_search := black_devotion_search_result(body):
+                return (*devotion_search, None)
+            if devotion_win := devotion_library_win_template(body):
+                return (*devotion_win, None)
+            library_search = (
+                creature_stat_library_search_template(body)
+                or optional_literal_name_any_number_search_template(body)
+                or optional_subtype_graveyard_search_template(body)
+                or recruiting_library_search_template(body)
+            )
             if library_search is not None:
                 return (*library_search, None)
             entry_result = (target_opponent_counter_choice_result(body) or keep_three_land_entry_template(body)
                             or collective_source_damage_entry_template(body, card_name=card_name)
+                            or optional_milled_mana_damage_entry_template(body, card_name=card_name)
                             or next_turn_attack_payment_template(body, card_name=card_name))
             if entry_result is not None:
                 return (*entry_result, None)
@@ -105,6 +288,18 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     if condition is not None:mechanics=tuple(dict.fromkeys((*mechanics,SOURCE_ENTRY_CAST_MECHANIC)))
     if condition is not None and condition.get('origin')=='hand':mechanics=(*mechanics,SOURCE_ENTRY_CAST_HAND_MECHANIC)
     return template,effects,schema,mechanics,condition
+
+
+def normalized_source_self_zone_event(event_phrase, template):
+    from ..delayed_object_model import SOURCE_DEATH_HAND_EVENT, SOURCE_DEATH_HAND_TEMPLATE
+
+    if template == SOURCE_DEATH_HAND_TEMPLATE:
+        return SOURCE_DEATH_HAND_EVENT
+    return {
+        "enters": "permanent.enter.self",
+        "dies": "creature.dies.self",
+        "leaves the battlefield": "permanent.leave.self",
+    }[event_phrase]
 
 
 def _source_self_reflexive_payment(body, *, card_name, event_phrase, effect_template):

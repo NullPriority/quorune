@@ -106,3 +106,63 @@ class ReceivedDamageOccurrence:
             'combat_amount': self.combat_amount,
             'combat': combat_only or self.combat_amount == self.amount,
         }
+
+
+RECEIVED_DAMAGE_WATCH_FIELD = "received_damage_watch"
+RECEIVED_DAMAGE_WATCH_LABEL = "The watched creature deals the damage it received"
+
+
+@dataclass(frozen=True, slots=True)
+class ReceivedDamageWatch:
+    """One original battlefield incarnation and the resolving spell that named it."""
+
+    object_id: str
+    logical_object_id: str
+    source_stack_ref: str
+
+    def __post_init__(self):
+        if (
+            any(type(value) is not str or not value for value in (
+                self.object_id, self.logical_object_id, self.source_stack_ref,
+            ))
+            or self.logical_object_id.rpartition("@")[0] != self.object_id
+        ):
+            raise ValueError("A received damage watch requires the original object and spell identities")
+
+    def to_dict(self):
+        return {
+            "schema_version": 1, "object_id": self.object_id,
+            "logical_object_id": self.logical_object_id, "source_stack_ref": self.source_stack_ref,
+        }
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {
+                "schema_version", "object_id", "logical_object_id", "source_stack_ref",
+        } or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise ValueError("A received damage watch requires its exact versioned fields")
+        return cls(value["object_id"], value["logical_object_id"], value["source_stack_ref"])
+
+    @property
+    def condition(self):
+        return {"target_kind": "permanent", "target_object_id": self.object_id,
+                "target_logical_object_id": self.logical_object_id}
+
+    @property
+    def stack_template(self):
+        return {"label": RECEIVED_DAMAGE_WATCH_LABEL, RECEIVED_DAMAGE_WATCH_FIELD: self.to_dict()}
+
+    @classmethod
+    def from_trigger(cls, trigger):
+        watch = cls.from_dict(trigger.stack_template.get(RECEIVED_DAMAGE_WATCH_FIELD))
+        if (
+            trigger.event_kind != RECEIVED_DAMAGE_EVENT or trigger.once is not False
+            or type(trigger.created_turn_sequence) is not int or trigger.created_turn_sequence < 0
+            or type(trigger.expires_turn_sequence) is not int
+            or trigger.expires_turn_sequence != trigger.created_turn_sequence
+            or trigger.condition != watch.condition or trigger.stack_template != watch.stack_template
+            or trigger.label != RECEIVED_DAMAGE_WATCH_LABEL
+            or tuple(trigger.referred_object_ids) != (watch.object_id,)
+        ):
+            raise ValueError("A received damage watch requires the original this-turn repeating schedule")
+        return watch

@@ -5,9 +5,19 @@ from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face, prospective_face_view
+from ..commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
 from ..entry_counter_model import (
+    COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY,
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
+    INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
+    CAST_REVIVAL_ENTRY_CAPABILITY,
+    DynamicEntryCounterCalculation,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
+    ENTRY_CREATURE_VALUE_CAPABILITY,
+    ENTRY_CREATURE_VALUE_SOURCES,
+    EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterValueSource,
     EntryCounterError,
@@ -30,6 +40,7 @@ from .zone_replacement_model import (
 
 SELF_ENTRY_COUNTER_HANDLER_ID = "replacement.zone.self-entry-counter.v1"
 ENTRY_COUNTER_TRANSFER_HANDLER_ID = "zone.entry.permanent-counter-transfer.v1"
+CHOSEN_ENTRY_COUNTER_TRANSFER_HANDLER_ID = "zone.entry.chosen-permanent-counter-transfer.v1"
 ENTRY_COUNTER_TRANSFER_DEPENDENCIES = (
     "counter.removal.all_effect", "counter.placement.quantity_replacement",
     "zone.change.destination_replacement",
@@ -77,16 +88,52 @@ class EntryCounterTransferHandler:
         ),)
 
 
+@dataclass(frozen=True, slots=True)
+class ChosenEntryCounterTransferHandler(EntryCounterTransferHandler):
+    handler_id: str = CHOSEN_ENTRY_COUNTER_TRANSFER_HANDLER_ID
+
+    def subject_replacement_effects(self, descriptor, *, subject, component_id, host, simultaneous_departures=()):
+        self.validate(descriptor)
+        if subject.destination != "battlefield" or subject.origin == "battlefield":
+            return ()
+        if host is None or subject.destination_controller not in host.active_seats:
+            raise SemanticNodeError("Chosen entry counter transfer requires a live destination controller")
+        from ..counter_removal import snapshot_all_permanent_counter_removals
+        from ..replacement.counted_entry_counters import ChosenTransferEntryCounters
+
+        types = {"artifact", "creature", "enchantment"}
+        candidates = tuple(sorted(
+            (card.ref, card.object_id) for card in host.state.cards.values()
+            if card.zone == "battlefield" and not card.phased_out
+            and types.intersection(host._effective_type_parts(card)[0])
+        ))
+        objects = {object_id for _, object_id in candidates}
+        removals = tuple(sorted(
+            (row for row in snapshot_all_permanent_counter_removals(host) if row.object_id in objects),
+            key=lambda row: row.key,
+        ))
+        if not removals:
+            return ()
+        operation = ChosenTransferEntryCounters(subject.object_ref, subject.destination_controller, candidates, removals)
+        return (ReplacementEffect(
+            effect_id=f"{self.handler_id}:{subject.object_ref}:{component_id}",
+            source_id=subject.object_ref, event_kind=self.event, replacement_class=ReplacementClass.OTHER,
+            conditions={"destination": {"eq": "battlefield"}, "object_ref": {"eq": subject.object_ref}},
+            operations=(operation,), optional=True,
+            label=f"{subject.object_ref}: choose permanents to remove counters from",
+        ),)
+
+
 def entry_counter_transfer_runtime_dependencies(program):
-    descriptors = tuple(row for row in program.handlers
-                        if row.get("handler_id") == ENTRY_COUNTER_TRANSFER_HANDLER_ID)
+    handlers = {handler.handler_id: handler for handler in (EntryCounterTransferHandler(), ChosenEntryCounterTransferHandler())}
+    descriptors = tuple(row for row in program.handlers if row.get("handler_id") in handlers)
     if not descriptors:
         return ()
     if (len(program.handlers) != 1 or (program.event, program.active_zone) != ("zone.change", "all")
             or program.target_schema is not None or program.cost_schema is not None or program.effects
             or program.event_condition is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
         raise ValueError("Entry counter transfer needs its original untargeted intrinsic component")
-    EntryCounterTransferHandler().validate(descriptors[0])
+    handlers[descriptors[0]["handler_id"]].validate(descriptors[0])
     return ENTRY_COUNTER_TRANSFER_DEPENDENCIES
 
 
@@ -219,15 +266,28 @@ class SelfTappedCounterEntryHandler(SelfEntryCounterHandler):
         return replace(effect,operations=(SetField('tapped',True),*effect.operations))
 
 
-def current_life_entry_runtime_dependencies(program):
+def typed_dynamic_entry_counter_runtime_dependencies(program):
     handler = DynamicSelfEntryCounterHandler()
+    required = set()
     for descriptor in program.handlers:
         if descriptor.get("handler_id") != DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID:
             continue
-        spec = handler.validate(descriptor).amount_spec
-        if spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
-            return (CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,)
-    return ()
+        source = handler.validate(descriptor).amount_spec.value_source
+        if source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT:
+            required.update((COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY, COMMANDER_CAST_COUNT_CAPABILITY))
+        if source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS:
+            required.update((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query"))
+        if source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
+            required.add(CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY)
+        if source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER:
+            required.add(CAST_REVIVAL_ENTRY_CAPABILITY)
+        if source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES:
+            required.add(PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY)
+        if source in ENTRY_CREATURE_VALUE_SOURCES:
+            required.add(ENTRY_CREATURE_VALUE_CAPABILITY)
+        if source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE:
+            required.add(EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY)
+    return tuple(sorted(required))
 
 
 @dataclass(frozen=True, slots=True)
@@ -314,12 +374,41 @@ class DynamicSelfEntryCounterHandler:
             )
         except (EntryCounterError, TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS and (
+            descriptor["counter_name"] != "loyalty" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Spell-cast entry counts require the additional-loyalty instruction")
         if amount_spec.mana_color is not None and not complete:
             raise SemanticNodeError('Paid-color entry counters require complete-card admission')
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT and (
+            not complete or descriptor["counter_name"] != "loyalty" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Commander history entry requires the complete loyalty counter instruction")
         if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL and (
             not complete or descriptor["counter_name"] != "charge" or descriptor["rule_id"] != "614.1c"
         ):
             raise SemanticNodeError("Life-total entry counters require the exact complete charge counter instruction")
+        if amount_spec.value_source in ENTRY_CREATURE_VALUE_SOURCES and (
+            not complete or descriptor["counter_name"] != "+1/+1" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Entry creature values require the exact complete +1/+1 instruction")
+        if amount_spec.value_source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE and (
+            not complete or descriptor["counter_name"] != "+1/+1" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Exile mana value requires the exact complete +1/+1 entry instruction")
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER and (
+            not complete or descriptor["counter_name"] != "revival" or descriptor["rule_id"] != "614.1c"
+            or amount_spec != DynamicEntryCounterAmountSpec(
+                DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER,
+                DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST, coefficient=8, minimum=1,
+            )
+        ):
+            raise SemanticNodeError("Cast entry requires the complete eight-revival-counter contract")
+        maximum_counter = PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES.get(amount_spec.value_source)
+        if maximum_counter is not None and (
+            not complete or descriptor["counter_name"] != maximum_counter or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Maximum entry counts require the exact complete counter instruction")
         return DynamicSelfEntryCounterNode(
             counter_name=descriptor["counter_name"],
             amount_spec=amount_spec,
@@ -520,7 +609,7 @@ def subject_dynamic_self_entry_amounts(
 
 def intrinsic_entry_counter_handlers():
     return (
-        DynamicSelfEntryCounterHandler(), EntryCounterTransferHandler(),
+        DynamicSelfEntryCounterHandler(), EntryCounterTransferHandler(), ChosenEntryCounterTransferHandler(),
         SelfEntryCounterHandler(), SelfTappedCounterEntryHandler(),
     )
 

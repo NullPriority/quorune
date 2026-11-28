@@ -46,6 +46,8 @@ class AnyNumberPhaseOutRuntimeTests(unittest.TestCase):
             "bound-effect-program-cards.json",
             "ability-kind-cost-modifier-cards.json",
             "any-number-phase-out-cards.json",
+            "ability-source-counter-cards.json",
+            "activation-view-equivalence-cards.json",
         )], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -139,3 +141,169 @@ class AnyNumberPhaseOutRuntimeTests(unittest.TestCase):
                 with patch("quorune.compiler.any_number_target_sets.any_number_target_set_template", return_value=None):
                     omitted = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
                     self.assertNotEqual("exact", omitted.status)
+
+    def _talon_activation_offer(self, session, source):
+        for _ in range(8):
+            if session.pending_principals() == ["pilot:A"]:
+                break
+            accepted = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        else:
+            self.fail("The hand source controller did not receive priority")
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        return next(row for row in context["legal"]["actions"] if row.get("source") == source.ref
+                    and row.get("from") == "hand" and row["id"].startswith("activate:"))
+
+    def _talon_activate(self, session, source):
+        action = self._talon_activation_offer(session, source)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        return session.state.stack[-1]
+
+    def _talon_resolve_top(self, session):
+        reference = session.state.stack[-1].ref
+        for _ in range(12):
+            if not any(item.ref == reference for item in session.state.stack):
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            accepted = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.fail("Top stack item did not resolve")
+
+    def test_talon_hand_offer_reveal_and_optional_entry_targets_use_normal_replay(self):
+        for take_target in (False, True):
+            with self.subTest(take_target=take_target):
+                session = self.session(702_290 + take_target)
+                source = self.add(session.engine, "Talon Gates of Madara", zone="hand", ref="talon-source")
+                basic = self.add(session.engine, self.land, zone="hand", ref="first-played-land")
+                creature = self.add(session.engine, self.creature, seat="B", ref="phase-creature")
+                other = self.add(session.engine, "Generic Bound Growth", zone="hand", ref="talon-private")
+                artifact = self.add(session.engine, self.artifact, seat="B", ref="unphase-artifact")
+                before_incarnation = creature.logical_object_id
+                bound = self.binding(session, source)
+                self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+                self.prepare(session, mana={"C": 4})
+                self.checkpoint(session)
+                play = session.act("pilot:A", {"action_id": "play-land:" + basic.ref})
+                self.assertTrue(play.ok, play.summary)
+                action = self._talon_activation_offer(session, source)
+                self.assertEqual(4, action["cost_summary"]["m"]["GENERIC"])
+                packet = session.packet("pilot:B", full=True)
+                self.assertNotIn(source.ref, json.dumps(packet))
+                self.assertNotIn(other.ref, json.dumps(packet))
+                before = authoritative_state_hash(session.state)
+                wrong = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+                self.assertFalse(wrong.ok, wrong.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                item = self._talon_activate(session, source)
+                self.assertEqual([], item.targets)
+                self.assertEqual("hand", session.state.cards[source.object_id].zone)
+                self.assertIn("B", session.state.cards[source.object_id].revealed_to)
+                after = json.dumps(session.packet("pilot:B", full=True))
+                self.assertIn(source.ref, after)
+                self.assertNotIn(other.ref, after)
+                session = self.replay(session, load=True)
+                self.assertEqual("semantic.target", self.resolve(session).kind)
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                offered = session.state.pending_decision.payload_by_actor["A"]["target_schema"]
+                self.assertEqual(1, offered["up_to"])
+                self.assertIn(creature.ref, offered["legal_refs"])
+                self.assertNotIn(artifact.ref, offered["legal_refs"])
+                before = authoritative_state_hash(session.state)
+                invalid = session.act("pilot:A", {"action_id": "choose", "targets": [artifact.ref]})
+                self.assertFalse(invalid.ok, invalid.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                result = session.act("pilot:A", {"action_id": "choose",
+                    "targets": [creature.ref] if take_target else []})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                target = session.state.cards[creature.object_id]
+                self.assertEqual((take_target, "battlefield", before_incarnation),
+                                 (target.phased_out, target.zone, target.logical_object_id))
+                self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+                self.replay(session)
+
+    def test_talon_countered_activation_ends_only_its_stack_reveal(self):
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        session = self.session(702_293)
+        source = self.add(session.engine, "Talon Gates of Madara", zone="hand", ref="countered-talon")
+        stifle = self.add(session.engine, "Stifle", seat="B", zone="hand")
+        prior = tuple(source.revealed_to)
+        session.state.players["B"].mana_pool["U"] = 1
+        self.prepare(session, actor="A", active="B", mana={"C": 4})
+        self.checkpoint(session)
+        item = self._talon_activate(session, source)
+        self.assertIn("B", session.state.cards[source.object_id].revealed_to)
+        SelfPublicZoneRuntimeTests.cast(self, session, "B", stifle, [item.ref])
+        self.assertIsNone(self.resolve(session))
+        physical = session.state.cards[source.object_id]
+        self.assertEqual(("hand", prior, source.logical_object_id),
+                         (physical.zone, tuple(physical.revealed_to), physical.logical_object_id))
+        self.replay(session)
+
+    def test_talon_activation_cannot_move_the_returned_hand_incarnation(self):
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        session = self.session(702_294)
+        source = self.add(session.engine, "Talon Gates of Madara", zone="hand", ref="stale-talon")
+        bounce = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+        self.add(session.engine, self.creature, seat="B", ref="optional-creature")
+        original_hand_incarnation = source.logical_object_id
+        session.state.players["B"].mana_pool["U"] = 2
+        self.prepare(session, mana={"C": 8})
+        self.checkpoint(session)
+        older = self._talon_activate(session, source)
+        newer = self._talon_activate(session, source)
+        self.assertNotEqual(older.ref, newer.ref)
+        self._talon_resolve_top(session)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        empty = session.act("pilot:A", {"action_id": "choose", "targets": []})
+        self.assertTrue(empty.ok, empty.summary)
+        while session.state.stack[-1].ref != older.ref:
+            self._talon_resolve_top(session)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        SelfPublicZoneRuntimeTests.cast(self, session, "B", bounce, [source.ref])
+        self._talon_resolve_top(session)
+        returned = session.state.cards[source.object_id]
+        self.assertEqual("hand", returned.zone)
+        new_incarnation = returned.logical_object_id
+        self.assertNotEqual(original_hand_incarnation, new_incarnation)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(("hand", new_incarnation), (current.zone, current.logical_object_id))
+        self.assertFalse(session.state.stack)
+        self.replay(session)
+
+    def test_talon_fixed_optional_phase_and_revealed_land_price_fail_closed(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.phasing_model import OPTIONAL_ENTRY_PHASE_OUT_CAPABILITY
+        from quorune.rules.revealed_hand_zone_move import CAPABILITY
+
+        card = self.db.lookup("Talon Gates of Madara")
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        exact = compile_oracle_card(card, **options)
+        self.assertEqual("exact", exact.status, exact.material_residuals)
+        session = self.session(702_295)
+        self.add(session.engine, card.name, zone="hand")
+        programs = session.engine.semantics.programs_for_oracle(card.oracle_id)
+        phase, = (program for program in programs if OPTIONAL_ENTRY_PHASE_OUT_CAPABILITY in program.capability_dependencies)
+        land, = (program for program in programs if CAPABILITY in program.capability_dependencies)
+        for program in (
+            replace(phase, target_schema={**phase.target_schema, "count": 2}),
+            replace(phase, event="permanent.leave"),
+            replace(land, effects=({**land.effects[0], "revealed_hand_land_entry": True},)),
+            replace(land, cost_schema={**land.cost_schema, "text": "{1}"}),
+        ):
+            bound = bind_semantic_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(bound["strict"])
+        for producer in (
+            "quorune.compiler.source_self_effect_templates._optional_entry_phase_out",
+            "quorune.compiler.activated_mana_nodes.compile_self_zone_move",
+        ):
+            with patch(producer, return_value=None):
+                omitted = compile_oracle_card(card, **options)
+            self.assertNotEqual("exact", omitted.status)

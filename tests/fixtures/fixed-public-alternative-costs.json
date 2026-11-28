@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Synthetic exact grammar witnesses for fixed public alternative costs",
+  "source": "Exact fixed public alternative-cost grammar witnesses and pinned Force of Will data",
   "cards": [
     {
       "oracle_id": "00000000-0000-4000-8000-000000701001",
@@ -162,6 +162,62 @@
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
       "faces": []
+    },
+    {
+      "oracle_id": "956381ba-6d37-4a8a-846c-bad79222dbee",
+      "name": "Force of Will",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Instant",
+      "oracle_text": "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "banned",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": []
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "956381ba-6d37-4a8a-846c-bad79222dbee",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as the alternative cost of Force of Will), add any cost increases, then apply any cost reductions. Force of Will's mana value is always 5, no matter what you paid to cast it."
     }
   ]
 }

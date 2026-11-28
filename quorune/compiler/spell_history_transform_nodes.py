@@ -14,7 +14,7 @@ from ..spell_history_transform_model import (
     SPELL_HISTORY_TRANSFORM_MECHANIC_ID,
     SpellHistoryTransformSpec,
 )
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capabilities_gate, explicit_capability_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
 
@@ -102,4 +102,42 @@ def previous_turn_transform_trigger_node(
     )
 
 
-__all__ = ["previous_turn_transform_trigger_node"]
+def paid_noncreature_counter_transform_node(
+    *, node_id, line, material_line, span, card_name, capability_registry,
+    capability_profile, residuals, **_,
+):
+    from ..rules.paid_noncreature_counter_transform import (
+        COVERAGE, DEPENDENCIES, MECHANIC, TEMPLATE, event_condition, ordered_effects,
+    )
+
+    source = SourceReferenceSpec(card_name).regex_pattern
+    if re.fullmatch(
+        rf"Whenever you cast a noncreature spell, if at least four mana was spent to cast it, "
+        rf"put a \+1/\+1 counter on {source}\. Then if it has three or more \+1/\+1 counters on it, transform it\.",
+        material_line, re.IGNORECASE,
+    ) is None:
+        return None
+    gate = explicit_capabilities_gate(
+        DEPENDENCIES, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    rejected = ()
+    if gate.blockers:
+        rejected = (append_residual(
+            residuals, kind="dependency_contract", text=line, span=span,
+            reason="The paid noncreature cast requires the committed occurrence and its ordered transform",
+            blockers=gate.blockers,
+        ),)
+    closure = gate.closure
+    return OracleNode(
+        node_id=node_id, kind="triggered_ability", text=line, span=span,
+        active_zone="battlefield", event="spell.cast", lowerable=True, exact=not rejected,
+        template_id=TEMPLATE, effects=ordered_effects(), event_condition=event_condition(),
+        runtime_coverage=COVERAGE, mechanics=(MECHANIC,), residual_ids=rejected,
+        capability_dependencies=gate.capabilities,
+        capability_closure=closure.reachable if closure else (),
+        capability_profile=closure.profile if closure else None,
+        capability_fingerprint=closure.fingerprint if closure else None,
+    )
+
+
+__all__ = ["paid_noncreature_counter_transform_node", "previous_turn_transform_trigger_node"]

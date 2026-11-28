@@ -1,0 +1,80 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G}",
+      "name": "Selvala, Heart of the Wilds",
+      "oracle_id": "1d725121-e50c-42f0-9128-56802f07c89e",
+      "oracle_text": "Whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power.\n{G}, {T}: Add X mana in any combination of colors, where X is the greatest power among creatures you control.",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-01-23",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Elf Scout"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If the new creature isn't on the battlefield as the first ability resolves, use its power when it left the battlefield to determine whether its controller may draw a card. Note that effects that reduced its power before it left the battlefield will apply.",
+      "oracle_id": "1d725121-e50c-42f0-9128-56802f07c89e",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Selvala's last ability is a mana ability. It doesn't use the stack and can't be responded to. If the greatest power among creatures you control is 0 or less at that time, no mana is added.",
+      "oracle_id": "1d725121-e50c-42f0-9128-56802f07c89e",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The new creature's power is compared to the power of each other creature on the battlefield as the first ability resolves. If another creature has the same or higher power than the new creature's power, no one may draw a card.",
+      "oracle_id": "1d725121-e50c-42f0-9128-56802f07c89e",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

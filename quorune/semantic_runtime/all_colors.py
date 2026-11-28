@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-"""Typed all-colors fragment in the existing ability-component registry."""
+"""Typed all-zone characteristic fragments in the ability-component registry."""
 
 from dataclasses import dataclass
 from ..all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS_HANDLER,ALL_COLORS_CAPABILITY
+from ..basic_land_types import (
+    ALL_NONBASIC_LAND_TYPES_CAPABILITY, ALL_NONBASIC_LAND_TYPES_HANDLER, AllNonbasicLandTypesDefinitionSpec,
+)
 
 
 @dataclass(frozen=True,slots=True)
@@ -20,3 +23,24 @@ class AllColorsDefinitionHandler:
         return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=AllColorsCharacteristicDefinitionSpec)
 
     def lower(self,descriptor,context):return (self.validate(descriptor),)
+
+
+
+
+@dataclass(frozen=True, slots=True)
+class AllNonbasicLandTypesDefinitionHandler:
+    handler_id: str = ALL_NONBASIC_LAND_TYPES_HANDLER
+    schema_version: int = 1
+    family: str = ALL_NONBASIC_LAND_TYPES_CAPABILITY
+    event: str = "continuous"
+    rule_references: tuple[str, ...] = ("205.3i", "305.6", "604.3", "604.3a", "613.1d", "613.3")
+    capability_dependencies: tuple[str, ...] = (ALL_NONBASIC_LAND_TYPES_CAPABILITY,)
+
+    def validate(self, descriptor):
+        from .ability_fragments import _fragment
+
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event,
+                         expected_type=AllNonbasicLandTypesDefinitionSpec)
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)

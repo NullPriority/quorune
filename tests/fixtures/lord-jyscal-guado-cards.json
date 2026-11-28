@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "6556a15b-be4b-45ea-867d-3a8e26202b42",
+      "name": "Fume Spitter",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Creature — Phyrexian Horror",
+      "oracle_text": "Sacrifice this creature: Put a -1/-1 counter on target creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-12-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "52791629-0f22-4023-bb04-c829d1600568",
+      "name": "Lord Jyscal Guado",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Spirit Cleric",
+      "oracle_text": "Flying\nAt the beginning of each end step, if you put a counter on a creature this turn, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Investigate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "6556a15b-be4b-45ea-867d-3a8e26202b42",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "Fume Spitter can be the target of its own ability. The ability won’t resolve since it won’t have a legal target, and no counter will be put on any creature, but this does allow you to sacrifice Fume Spitter without another creature to target if you want to."
+    },
+    {
+      "oracle_id": "52791629-0f22-4023-bb04-c829d1600568",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Lord Jyscal Guado's last ability checks at the moment it would trigger to see if you put a counter on a creature this turn. If you didn't, the ability won't trigger at all. Once your end step begins, it's too late to put a counter on a creature in order to cause this ability to trigger."
+    }
+  ]
+}

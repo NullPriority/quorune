@@ -11,9 +11,11 @@ from .destruction_regeneration_capability_shapes import regeneration_covered_mec
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities, DISCARD_FAMILY_CAPABILITIES, DISCARD_FAMILY_SHAPE_GATED_MECHANICS
 from .endure_model import ENDURE_CAPABILITY, ENDURE_MECHANIC
 from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
+from .opponent_blight import OPPONENT_BLIGHT_CAPABILITY, OPPONENT_BLIGHT_MECHANIC
 from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
 from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY,FACE_UP_EFFECT_MECHANIC
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
+from .spell_self_exile import TERMINAL_SPELL_MOVE_CAPABILITIES
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -26,11 +28,13 @@ import re
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..fixed_token_production import AFTERLIFE_CAPABILITY_ID, AFTERLIFE_MECHANIC_ID, INVESTIGATE_CAPABILITY_ID, INVESTIGATE_MECHANIC_ID
-from ..class_levels import (
-    CLASS_LIFECYCLE_CAPABILITY_ID,
-    CLASS_MECHANIC_ID,
+from ..class_levels import CLASS_LIFECYCLE_CAPABILITY_ID, CLASS_MECHANIC_ID
+from .capability_graph import (
+    AGGREGATE_FIELDS as _AGGREGATE_FIELDS, APPLICABILITY_FIELDS as _APPLICABILITY_FIELDS,
+    CAPABILITY_FIELDS as _CAPABILITY_FIELDS, REGISTRY_FIELDS as _REGISTRY_FIELDS,
+    require_exact_capability_fields, validate_capability_graph, validate_trusted_capability,
 )
-from .component_resolution import implementation_component_resolves
+from .component_resolution import _component_source_snapshot, implementation_component_resolves
 from .effect_shape_walkers import (
     contains_aftermath_kind as _contains_aftermath_kind,
     contains_nested_key as _contains_nested_key,
@@ -54,7 +58,21 @@ from .public_zone_move_capability_shapes import (
 from .reanimation_capability_shapes import fixed_target_reanimation_covered_mechanics, fixed_target_reanimation_node_capabilities
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
+from ..block_capacity_rule_model import REQUIRED_BLOCK_CAPACITY, REQUIRED_BLOCK_CAPACITY_MECHANIC
 from ..fixed_top_exile import FIXED_TOP_EXILE_MECHANIC_CAPABILITIES
+from .departing_x_reflexive import (
+    CAPABILITY as DEPARTURE_X_CAPABILITY, MECHANIC as DEPARTURE_X_MECHANIC,
+    RED_DEATH_CAPABILITY, RED_DEATH_MECHANIC,
+)
+from .departing_x_reflexive import CAPABILITY as DEPARTURE_X_CAPABILITY, MECHANIC as DEPARTURE_X_MECHANIC
+from .name_stickers import CAPABILITY as NAME_STICKER_CAPABILITY, MECHANIC as NAME_STICKER_MECHANIC
+from ..resolving_cast_budget_model import CAPABILITY as BUDGETED_CAST_CAPABILITY, MECHANIC as BUDGETED_CAST_MECHANIC
+from .controller_private_top_exile_model import (
+    CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY, CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC,
+)
+from ..cast_lifecycles import FIXED_CAST_LIFECYCLE_MECHANICS as _FIXED_CAST_LIFECYCLE_MECHANICS
+from ..landwalk_vocabulary import BASIC_LANDWALK_TYPES
+_BASIC_LANDWALK_MECHANICS = tuple(keyword for keyword, _ in BASIC_LANDWALK_TYPES)
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -133,6 +151,7 @@ from ..compiler.fixed_library_selection_templates import (
 )
 from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
 from .modal_node_capabilities import fixed_modal_capability_dependencies as _fixed_modal_capability_dependencies
+from .special_node_shapes import SAGA_CHAPTER_GRANT_MECHANIC_DEPENDENCIES
 from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY,
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -241,20 +260,7 @@ _SUNBURST_MECHANIC = "sunburst"
 _ECHO_MECHANIC = "echo"
 _UNEARTH_MECHANIC = "unearth"
 _KICKER_MECHANIC = "kicker"
-_FIXED_CAST_LIFECYCLE_MECHANICS = (
-    "buyback",
-    "dash",
-    "retrace",
-    "warp",
-)
 _DEVOID_MECHANIC = "devoid"
-_BASIC_LANDWALK_MECHANICS = (
-    "plainswalk",
-    "islandwalk",
-    "swampwalk",
-    "mountainwalk",
-    "forestwalk",
-)
 _FIRST_STRIKE_MECHANIC = "first strike"
 _DOUBLE_STRIKE_MECHANIC = "double strike"
 _EXILE_MECHANIC = "exile"
@@ -265,41 +271,65 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    "trigger-event-normalized-phase-in": ("trigger.event.normalized_phase_in",),
+    "fixed-phase-out-until-battlefield-departure": ("permanent.phasing.until_battlefield_departure",),
+    "fixed-untap-and-counted-creature-phasing-hold": ("permanent.phasing.untap_creature_set_until_battlefield_departure",),
+    "fixed-spell-target-occurrence-phase-out": ("trigger.effect.spell_target_occurrence_phase_out",),
+    "target-graveyard-flashback-until-cleanup": ("casting.flashback.target_graveyard_until_cleanup",),
     'fixed-target-color-scope': ('zone.object.fixed_resolution_color_scope',),
     'fixed-compound-target-set': ('resolution.effect.fixed_compound_target_set',),
     'fixed-target-role-damage': ('damage.batch.fixed_target_roles',),
     'conditional-library-search-placement':('library.search.conditional_placement',),
     'sequential-public-conditions':('resolution.effect_program.sequential_public_conditions',),
     'fixed-recipient-control':('continuous.control.fixed_recipient',),
+    'trigger-event-committed-public-nonland-mill': ('trigger.event.committed_public_nonland_mill',),
     'public-player-unique-maximum':('condition.player.unique_maximum',),
     'fixed-owner-control-restoration':('continuous.control.fixed_owner_restoration',),
     'temporary-cast-prohibition': ('casting.prohibition.resolution_until_end_of_turn',),
     'temporary-library-search-prohibition': ('library.search.prohibition.resolution_until_end_of_turn',),
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
+    'excess-damage-tapped-treasures': ('damage.target.excess_tapped_treasures',),
+    'committed-excess-power-and-trample': ('damage.result.committed_excess_power_and_trample',),
+    'fight-opposing-creature-excess-red': ('damage.result.fight_opposing_creature_excess_red',),
+    'retain-all-red-until-cleanup': ('damage.result.fight_opposing_creature_excess_red',),
+    'fixed-experience-discard-and-pump': ('counter.producer.discarding_player_experience_and_pump',),
     'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
-    'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
-    'spell-resolution-self-shuffle': ('zone.shuffle.resolving_spell',),
-    'spell-resolution-self-bottom': ('zone.library_bottom.resolving_spell',),
+    'each-graveyard-return-after-mill': ('zone.reanimate.each_graveyard_choice',),
+    'directional-nonland-control': ('continuous.control.directional_nonland_rotation',),
+    'owned-commander-entry-and-delayed-return': ('zone.move.owned_commander_entry_and_return',),
+    **TERMINAL_SPELL_MOVE_CAPABILITIES,
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
+    'announced-x-destroy-or-life-modal': ('choice.modal.announced_x_destroy_or_life',),
     'any-number-target-set': ('target.cardinality.any_number',),
     'selected-player-result-set': ('resolution.target_set.selected_player_results',),
     'quantified-counter-target-set': ('counter.producer.quantified_target_set',),
+    'announced-three-counter-target-allocation': ('counter.producer.announced_three_target_allocation',),
+    'next-eligible-spell-alternative-cost': ('casting.cost.next_eligible_spell_alternative',),
     'all-kind-counter-doubling': ('counter.producer.all_kind_doubling',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
     'paid-entry-copy-squad': ('casting.additional.squad_fixed_mana',),
     'mana-source-counter-depletion': ('mana.activated.counter_depletion_result',),
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
+    'half-target-library-draw': ('zone.draw.half_library',),
     'third-current-player-life-loss': ('life.loss.third_current_player',),
     'event-player-fixed-creature-stat-set': ('resolution.event_player.fixed_creature_stat_set',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
     'alternative-quality-discard': ('choice.affected_player.alternative_discard',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
+    'fixed-tiered-mode-costs': ('casting.additional_cost.tiered_fixed_modes',),
+    'fixed-pawprint-mode-budget': ('casting.modal.pawprint_budget',),
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
+    'fixed-extra-combat-after-untap': ('turn.phase.extra_combat_after_current',),
     'sequential-reciprocal-power-damage': ('damage.creature_power.reciprocal_sequence',),
     'conditional-target-power-preparation': ('resolution.effect_program.conditional_target_preparation',),
     'current-target-self-replacement': ('resolution.effect.current_target_self_replacement',),
+    'cast-x-library-graveyard-creature-search': ('library.search.cast_x_library_graveyard',),
+    'entry-x-nonhuman-library-graveyard-search': ('library.search.entry_x_nonhuman_library_graveyard',),
+    'entry-private-search-play': ('library.search.private_face_down_play',),
+    'announced-x-mixed-apnap-payment': ('choice.apnap.repeated_mixed_payment',),
+    'loyalty-fixed-discard-apnap-payment': ('choice.apnap.repeated_loyalty_discard_payment',),
     'named-library-graveyard-search': ('library.search.named_library_graveyard',),
     'qualified-library-card-search': ('library.search.qualified_card',),
     'fixed-target-library-inspection': ('library.inspect.fixed_target_player',),
@@ -310,10 +340,13 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-awaken-paid-body': ('casting.alternative_cost.awaken_fixed_mana',),
     'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
+    'second-cast-copy-and-suspend': ('stack.copy.second_cast_suspend_original',),
+    'controlled-subtype-opponents-damage-batch': ('trigger.event.controlled_subtype_damaged_opponents',),
+    'controlled-subtype-combat-player-damage-batch': ('trigger.event.controlled_subtype_combat_damage_player',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     ENTRY_PERMANENT_RESULT_MECHANIC: (ENTRY_PERMANENT_RESULT_CAPABILITY,),
     **RESOLUTION_STAT_MECHANIC_CAPABILITIES,
-    'ascend':('player.designation.citys_blessing',),
+    'ascend':('player.designation.citys_blessing',), 'cloak':('keyword_action.cloak.library',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
@@ -356,22 +389,33 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'variable-resolution-mana-choice':('mana.production.variable_resolution_choice',),
     'ravenous':('keyword.ravenous.entry_x_and_draw',),
+    'artifact-graveyard-departure-return': ('target.mana_value.artifact_graveyard_departure',),
+    'trigger-event-first-own-turn-life-loss': ('trigger.event.first_own_turn_life_loss',),
     'source-entry-x-result-amount':('quantity_expression.source_entry_x',),
     'fixed-attacking-token-result':('token.creation.fixed_attacking_definition',),
     'fixed-per-opponent-attacking-token-result':('token.creation.fixed_per_opponent_attacking_definition',),
     'ordinary-created-token-cleanup':('token.creation.fixed_definition_cleanup',),
     'created-token-counter-followup':('token.creation.post_creation_counter',),
+    'announced-x-created-token-destruction': ('token.creation.announced_x_other_creature_destruction',),
     'incubate':('token.creation.incubate',),
     'discover':('library.discover.controller',),
     'exile-until-nonland-cast': ('library.exile_until_nonland.cast_without_mana',),
     'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
+    'stack-counter-different-name-exile-cast': ('stack.counter.different_name_exile_cast',),
     **FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
+    DEPARTURE_X_MECHANIC: (DEPARTURE_X_CAPABILITY,),
+    RED_DEATH_MECHANIC: (RED_DEATH_CAPABILITY,),
+    DEPARTURE_X_MECHANIC: (DEPARTURE_X_CAPABILITY,),
+    NAME_STICKER_MECHANIC: (NAME_STICKER_CAPABILITY,),
+    BUDGETED_CAST_MECHANIC: (BUDGETED_CAST_CAPABILITY,),
+    CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC: (CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY,),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
     REANIMATION_FOLLOWUP_MECHANIC: (REANIMATION_FOLLOWUP_CAPABILITY,),
     'variable-library-selection':('library.select.variable_controller',),
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
+    'fixed-control-target-players-next-turn': ('turn.control.target_players_next_turn',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     **FIXED_RULE_ACTION_CAPABILITIES,
     **DISCARD_FAMILY_CAPABILITIES,
@@ -438,7 +482,35 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _VIGILANCE_MECHANIC: ("combat.attack.vigilance",),
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
+    "target-opponent-draw-or-source-counter-mill": ("zone.mill.target_opponent_draw_or_source_counters",),
+    "repeat-revealed-top-hand-life": ("library.top.repeated_revealed_hand_life",),
+    "recipient-counter-placement-damage": ("damage.counter_placement.single_recipient_total",),
+    "target-controller-graveyard-mana-value": ("target.mana_value.current_controller_graveyard",),
+    "fixed-repeatable-mode-choices": ("casting.modal.fixed_repeatable_choices",),
+    "committed-nonland-discard-damage": ("resolution.effect.committed_nonland_discard_damage",),
+    "look-land-or-hand-random-bottom": ("library.select.private_land_or_hand_random_bottom",),
+    "apnap-chosen-creature-type-return": ("zone.graveyard.return_apnap_chosen_type_union",),
+    "prior-qualified-controller-cast-copy": ("stack.copy.prior_qualified_controller_casts",),
+    "magecraft-rummage-ordinal": ("resolution.effect.magecraft_rummage_ordinal",),
+    "repeat-revealed-top-hand-life": ("library.top.repeated_revealed_hand_life",),
+    "magecraft-rummage-ordinal": ("resolution.effect.magecraft_rummage_ordinal",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
+    "distinct-opponent-draw-result": ("zone.draw.distinct_opponents_committed_followup", "zone.draw.library_to_hand"),
+    "targeted-return-land-sacrifice-copy": ("stack.copy.targeted_return_land_sacrifice",),
+    "selected-opponent-discard-draw-result": (
+        "zone.discard.opponent_choice_committed_draw", "choice.affected_player.fixed_discard",
+        "zone.change.destination_replacement", "zone.draw.library_to_hand",
+    ),
+    "watched-combat-damage-draw": (
+        "trigger.delayed.watched_combat_damage_draw", "trigger.event.normalized_damage",
+        "trigger.placement.apnap", "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution", "zone.draw.library_to_hand",
+    ),
+    "other-controlled-creature-entry-pump": ("resolution.event_object.other_controlled_creature_pump",),
+    "death-return-as-enchantment": ("zone.return.death_as_enchantment",),
+    "cast-x-created-tokens-sweep": ("permanent.destroy.except_created_cast_x_tokens",),
+    "controlled-opponent-combat-token-this-turn": ("trigger.delayed.controlled_opponent_combat_token",),
+    "targeted-return-land-sacrifice-copy": ("stack.copy.targeted_return_land_sacrifice",),
     **_query.AMOUNT_MECHANIC_CAPABILITIES,
     "declared-effect-amount": ("quantity_expression.declared_effect_amount",),
     "mana-value-permanent-filter": ("state_query.permanent.mana_value_filter",),
@@ -450,6 +522,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _LIFELINK_MECHANIC: ("damage.result.lifelink",),
     _TOXIC_MECHANIC: ("damage.result.toxic",),
     "wither": ("damage.result.wither",),
+    "departure_counter_transfer": ("counter.producer.departure_snapshot_transfer",),
+    "counter-recipient-opponent-blockers": ("combat.declaration.counter_recipient_opponent_blockers",),
+    "counter-recipient-current-controller-result": ("trigger.counter_recipient.current_controller_branch",),
+    "source-power-damage-each-opponent": ("damage.creature_power.source_opponents",),
     "trigger-event-normalized-zone-change": (
         "trigger.event.normalized_zone_change",
     ),
@@ -464,10 +540,16 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "trigger.event.normalized_self_attack",
     ),
     "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
+    "final-saga-mana-value-life": ("trigger.event.final_saga_chapter_resolved",),
+    "source-mana-tap-damage": ("trigger.event.source_tap_for_mana",),
     'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "scheduled-player-event-result": ("trigger.event.scheduled_player_result",),
     "fixed-action-reflexive-trigger": ("trigger.reflexive.fixed_action_result",),
+    "entrant-announced-x-reflexive-counters": ("trigger.reflexive.entrant_announced_x_counters",),
+    "subtype-tap-attack-result": ("choice.attack.subtype_tap_pump_and_damage",),
+    "grouped-library-creature-arrival-return": ("trigger.event.owned_library_creature_arrival_group",),
+    "fixed-extra-combat-main-after-untap": ("turn.phase.extra_combat_and_main_after_main",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),
@@ -486,6 +568,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-saga-chapter": (
         "counter.producer.saga_lore",
     ),
+    **SAGA_CHAPTER_GRANT_MECHANIC_DEPENDENCIES,
     "fixed-counter-event-trigger": (
         "counter.producer.fixed_event_trigger",
     ),
@@ -509,7 +592,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     ),
     "fixed-temporary-defender-permission": ("combat.attack.defender_permission.temporary",),
     "fixed-temporary-block-capacity": ("combat.block.capacity.temporary",),
+    REQUIRED_BLOCK_CAPACITY_MECHANIC: (REQUIRED_BLOCK_CAPACITY,),
     "fixed-temporary-keyword-removal": ("continuous.resolution.fixed_keyword_removal",),
+    "apnap-counter-payment-attack-truce": ("choice.apnap.optional_counter_attack_truce",),
     "temporary-as-unblocked-assignment": ("combat.damage.assignment.as_unblocked",),
     "temporary-toughness-assignment": ("combat.damage.assignment.toughness",),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
@@ -532,7 +617,19 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        "subtype-tap-attack-result",
+        "grouped-library-creature-arrival-return",
+        "controlled-subtype-combat-player-damage-batch",
+        "excess-damage-tapped-treasures",
         'attachment-departure-source-return',
+        'attachment-death-return-and-transform',
+        'cast-x-library-graveyard-creature-search',
+        'entry-x-nonhuman-library-graveyard-search',
+        'entry-private-search-play',
+        'announced-x-mixed-apnap-payment',
+        'loyalty-fixed-discard-apnap-payment',
+        'announced-x-created-token-destruction',
+        'apnap-counter-payment-attack-truce',
         *SELF_ZONE_MOVE_SHAPE_GATED_MECHANICS,
         'fixed-bounded-hand-free-cast',
         'fixed-event-player-optional-draw',
@@ -545,6 +642,11 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-target-entry-counter-reanimation',
         REANIMATION_FOLLOWUP_MECHANIC,
         *FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
+        DEPARTURE_X_MECHANIC,
+        RED_DEATH_MECHANIC,
+        DEPARTURE_X_MECHANIC,
+        NAME_STICKER_MECHANIC,
+        BUDGETED_CAST_MECHANIC,
         FIXED_TARGET_COLOR_MECHANIC,
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
@@ -563,15 +665,18 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',
         'own-graveyard-return-choice',
+        'each-graveyard-return-after-mill',
         'commander-learn',
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
         'half-current-player-life-loss',
+        'half-target-library-draw',
         'third-current-player-life-loss',
         'event-player-fixed-creature-stat-set',
         'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
+        'fixed-tiered-mode-costs',
         'fixed-entwine-mode-costs',
         'sequential-reciprocal-power-damage',
         'conditional-target-power-preparation',
@@ -580,6 +685,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         ENTRY_PERMANENT_RESULT_MECHANIC,
         *RESOLUTION_STAT_MECHANIC_CAPABILITIES,
         'ascend',
+        "fixed-control-target-players-next-turn",
         "fixed-extra-turn-after-current",
         *FIXED_RULE_ACTION_CAPABILITIES,
         "declared-effect-amount",
@@ -598,7 +704,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
-        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment", "fixed-temporary-block-capacity", "fixed-temporary-keyword-removal",
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment", "fixed-temporary-block-capacity", REQUIRED_BLOCK_CAPACITY_MECHANIC, "fixed-temporary-keyword-removal",
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
@@ -622,39 +728,6 @@ _SHAPE_GATED_MECHANICS = frozenset(
 )
 _CAPABILITY_ID = re.compile(r"^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$")
 _EFFECTIVE_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-_REGISTRY_FIELDS = {
-    "schema_version",
-    "registry_version",
-    "effective_date",
-    "source_sha256",
-    "profiles",
-    "aggregates",
-    "capabilities",
-}
-_AGGREGATE_FIELDS = {"mechanic_id", "capabilities"}
-_CAPABILITY_FIELDS = {
-    "id",
-    "version",
-    "official_rules",
-    "supported_profiles",
-    "applicability",
-    "dependencies",
-    "implementation_components",
-    "positive_tests",
-    "negative_tests",
-    "interaction_tests",
-    "multiplayer_tests",
-    "privacy_tests",
-    "replay_tests",
-    "required_evidence",
-    "dependency_fail_closed_status",
-    "dependency_fail_closed_rationale",
-    "implementation_mutation_status",
-    "implementation_mutation_rationale",
-    "blockers",
-    "status",
-}
-_APPLICABILITY_FIELDS = {"summary", "inputs", "outputs", "exclusions"}
 DEFAULT_CAPABILITY_REGISTRY = (
     Path(__file__).resolve().with_name("capability-registry.json")
 )
@@ -665,72 +738,19 @@ class CapabilityRegistryError(ValueError):
 
 
 def _validate_trusted_capability(
-    capability_id: str,
-    row: Mapping[str, Any],
-    *,
-    dependency_status: str,
-    implementation_mutation_status: str,
+    capability_id: str, row: Mapping[str, Any], *,
+    dependency_status: str, implementation_mutation_status: str,
 ) -> None:
-    if row["blockers"]:
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} cannot retain blockers"
-        )
-    components = row["implementation_components"]
-    if not components:
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} requires an implementation"
-        )
-    if not any(
-        implementation_component_resolves(component)
-        for component in components
-    ):
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} requires a resolvable "
-            "implementation component"
-        )
-    if row["dependencies"] and dependency_status != "passed":
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} requires passed dependency "
-            "fail-closed evidence"
-        )
-    if implementation_mutation_status != "killed":
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} requires killed implementation "
-            "mutation evidence"
-        )
-    missing_minimum = MINIMUM_TRUSTED_REGISTRY_EVIDENCE - set(
-        row["required_evidence"]
+    validate_trusted_capability(
+        capability_id, row, dependency_status=dependency_status,
+        implementation_mutation_status=implementation_mutation_status,
+        resolve_component=implementation_component_resolves, error_type=CapabilityRegistryError,
+        minimum_evidence=MINIMUM_TRUSTED_REGISTRY_EVIDENCE, evidence_fields=EVIDENCE_FIELDS,
     )
-    if missing_minimum:
-        raise CapabilityRegistryError(
-            f"Trusted {capability_id} must require minimum evidence: "
-            + ", ".join(sorted(missing_minimum))
-        )
-    for evidence in row["required_evidence"]:
-        field = EVIDENCE_FIELDS[evidence]
-        if not row[field]:
-            raise CapabilityRegistryError(
-                f"Trusted {capability_id} requires {field}"
-            )
 
 
-def _require_exact_fields(
-    value: Mapping[str, Any],
-    expected: set[str],
-    *,
-    field: str,
-) -> None:
-    actual = set(value)
-    missing = sorted(expected - actual)
-    unknown = sorted(actual - expected)
-    if missing:
-        raise CapabilityRegistryError(
-            f"{field} is missing required fields: {', '.join(missing)}"
-        )
-    if unknown:
-        raise CapabilityRegistryError(
-            f"{field} has unknown fields: {', '.join(unknown)}"
-        )
+def _require_exact_fields(value: Mapping[str, Any], expected: set[str], *, field: str) -> None:
+    require_exact_capability_fields(value, expected, field=field, error_type=CapabilityRegistryError)
 
 
 def _strings(
@@ -790,14 +810,16 @@ class CapabilityRegistry:
     available for migration reporting, but they do not gate a smaller closure.
     """
 
-    def __init__(self, value: Mapping[str, Any]):
-        raw = json.loads(json.dumps(dict(value)))
+    @_component_source_snapshot()
+    def __init__(
+        self, value: Mapping[str, Any], *, _owns_document: bool = False
+    ):
+        raw = dict(value)
+        if not _owns_document:
+            raw = json.loads(json.dumps(raw))
         _require_exact_fields(raw, _REGISTRY_FIELDS, field="registry")
-        if type(raw.get("schema_version")) is not int or raw[
-            "schema_version"
-        ] != (
-            CAPABILITY_REGISTRY_SCHEMA_VERSION
-        ):
+        schema_version = raw.get("schema_version")
+        if type(schema_version) is not int or schema_version != CAPABILITY_REGISTRY_SCHEMA_VERSION:
             raise CapabilityRegistryError(
                 "Unsupported capability registry schema_version"
             )
@@ -866,8 +888,7 @@ class CapabilityRegistry:
                 required=True,
             )
 
-        self._validate_references()
-        self._validate_acyclic()
+        validate_capability_graph(self._capabilities, self._aggregates, CapabilityRegistryError)
         self._raw = raw
         self._fingerprint = _hash(raw)
         self._evidence_fingerprint: str | None = None
@@ -1009,50 +1030,13 @@ class CapabilityRegistry:
             )
         return row
 
-    def _validate_references(self) -> None:
-        known = set(self._capabilities)
-        for capability_id, row in self._capabilities.items():
-            missing = sorted(set(row["dependencies"]) - known)
-            if missing:
-                raise CapabilityRegistryError(
-                    f"{capability_id} has unknown dependencies: "
-                    + ", ".join(missing)
-                )
-        for mechanic_id, dependencies in self._aggregates.items():
-            missing = sorted(set(dependencies) - known)
-            if missing:
-                raise CapabilityRegistryError(
-                    f"{mechanic_id} aggregate has unknown capabilities: "
-                    + ", ".join(missing)
-                )
-
-    def _validate_acyclic(self) -> None:
-        visiting: list[str] = []
-        complete: set[str] = set()
-
-        def visit(capability_id: str) -> None:
-            if capability_id in complete:
-                return
-            if capability_id in visiting:
-                start = visiting.index(capability_id)
-                cycle = [*visiting[start:], capability_id]
-                raise CapabilityRegistryError(
-                    "Capability dependency cycle: " + " -> ".join(cycle)
-                )
-            visiting.append(capability_id)
-            for dependency in self._capabilities[capability_id][
-                "dependencies"
-            ]:
-                visit(str(dependency))
-            visiting.pop()
-            complete.add(capability_id)
-
-        for capability_id in sorted(self._capabilities):
-            visit(capability_id)
-
     @classmethod
     def from_path(cls, path: str | Path) -> "CapabilityRegistry":
-        return cls(json.loads(Path(path).read_text(encoding="utf-8")))
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+        if cls is CapabilityRegistry:
+            # JSON decoding produced fresh data owned by this registry.
+            return cls(value, _owns_document=True)
+        return cls(value)
 
     @property
     def fingerprint(self) -> str:
@@ -1200,19 +1184,19 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    if mechanics.intersection(
-        {
-            FIXED_CHOOSE_ONE_MODAL_MECHANIC,
-            FIXED_NONREPEATING_MODAL_MECHANIC,
-        }
-    ):
-        from .spree_capability_shapes import modal_cost_capabilities
-        return modal_cost_capabilities(effects=effects, target_schema=target_schema,
-            mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
+    from .special_node_shapes import special_or_modal_node_capabilities
+    special = special_or_modal_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics,
+        mechanic_values=mechanic_values, cost_schema=cost_schema,
+        modal_mechanics=(FIXED_CHOOSE_ONE_MODAL_MECHANIC, FIXED_NONREPEATING_MODAL_MECHANIC),
+        modal_resolver=_fixed_modal_capability_dependencies,
+    )
+    if special is not None:
+        return special
 
-    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
-    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
-    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
+    from .paired_token_creators import paired_token_node_capabilities, uses_paired_token_creators
+    if any(uses_paired_token_creators(effect) for effect in effects):
+        return paired_token_node_capabilities(effects, target_schema, cost_schema)
 
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
@@ -1328,6 +1312,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     from ..resolution_conditions import CAST_FACT_CONDITION_MECHANICS
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
+    from .affected_library_search_batch import EXILE_LAND_SEARCH_CAPABILITY, EXILE_LAND_SEARCH_MECHANIC
     from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
     from ..event_card_return import DEATH_LAND_EXILE_CAPABILITY, DEATH_LAND_EXILE_MECHANIC
 
@@ -1336,6 +1321,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         DEATH_LAND_EXILE_CAPABILITY: DEATH_LAND_EXILE_MECHANIC,
         DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
         PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
+        EXILE_LAND_SEARCH_CAPABILITY: EXILE_LAND_SEARCH_MECHANIC,
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
@@ -1367,6 +1353,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         'zone.return.attachment_departure_source': 'attachment-departure-source-return',
+        'zone.return.attachment_death_and_transform': 'attachment-death-return-and-transform',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         "library.select.fixed_controller": FIXED_LIBRARY_SELECTION_MECHANIC,
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
@@ -1374,6 +1361,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         CHAMPION_CAPABILITY: CHAMPION_MECHANIC,
         ENDURE_CAPABILITY: ENDURE_MECHANIC,
         BLIGHT_CAPABILITY: BLIGHT_MECHANIC,
+        OPPONENT_BLIGHT_CAPABILITY: OPPONENT_BLIGHT_MECHANIC,
         EVENT_PLAYER_CHOICE_CAPABILITY: EVENT_PLAYER_CHOICE_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
@@ -1402,11 +1390,7 @@ def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
         FIXED_CHOOSE_ONE_MODAL_CAPABILITY: FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_CAPABILITY: FIXED_NONREPEATING_MODAL_MECHANIC,
     }
-    return {
-        mechanic
-        for capability, mechanic in mapping.items()
-        if capability in supplied
-    }
+    return {mechanic for capability, mechanic in mapping.items() if capability in supplied}
 
 
 def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
@@ -1434,6 +1418,12 @@ def capability_covered_mechanics(
         for mechanic, required in MECHANIC_CAPABILITY_DEPENDENCIES.items()
         if set(required).issubset(supplied)
     }
+    from .tempt_draw_token import CAPABILITY as tempt_capability, MECHANIC as tempt_mechanic
+    if tempt_capability in supplied:
+        covered.add(tempt_mechanic)
+    from .artifact_search_exchange import ARTIFACT_SEARCH_EXCHANGE_CAPABILITY, ARTIFACT_SEARCH_EXCHANGE_MECHANIC
+    if ARTIFACT_SEARCH_EXCHANGE_CAPABILITY in supplied:
+        covered.add(ARTIFACT_SEARCH_EXCHANGE_MECHANIC)
     from ..resolution_conditions import RESOLUTION_CONDITION_CAPABILITY, RESOLUTION_CONDITION_MECHANIC
     if RESOLUTION_CONDITION_CAPABILITY in supplied:
         covered.add(RESOLUTION_CONDITION_MECHANIC)
@@ -1558,7 +1548,7 @@ def capability_covered_mechanics(
         covered.add("cr-601-casting-spells")
     from .cumulative_upkeep_capability_shapes import cumulative_upkeep_covered_mechanics
     covered.update(cumulative_upkeep_covered_mechanics(supplied))
-    if "trigger.keyword.echo.fixed_mana" in supplied:
+    if supplied.intersection({"trigger.keyword.echo.fixed_mana", "trigger.keyword.echo.discard_one"}):
         covered.add(_ECHO_MECHANIC)
     if "keyword_action.explore.single" in supplied:
         covered.add("explore")

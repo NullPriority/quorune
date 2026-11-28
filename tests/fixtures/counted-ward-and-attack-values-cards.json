@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864081",
+      "name": "Trial Half-Library Cartographer",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "When you cast this spell, target opponent exiles the top half of his or her library, rounded up.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864082",
+      "name": "Trial Two-Tribute Sentinel",
+      "mana_cost": "{5}",
+      "cmc": 5,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "Ward—Sacrifice 2 permanents.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Ward"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864083",
+      "name": "Trial Exile-Size Scout",
+      "mana_cost": "{7}",
+      "cmc": 7,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "This creature enters with a number of +1/+1 counters on it equal to the highest mana value among cards in exile.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864084",
+      "name": "Trial Counter-Bound Ravager",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "This creature has annihilator X, where X is the number of +1/+1 counters on it.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864085",
+      "name": "Trial Sealed Leviathan",
+      "mana_cost": "{11}",
+      "cmc": 11,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864086",
+      "name": "Trial Public Colossus",
+      "mana_cost": "{6}",
+      "cmc": 6,
+      "type_line": "Creature — Construct",
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864087",
+      "name": "Trial Counter Pair",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Put two +1/+1 counters on target creature.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864088",
+      "name": "Trial Sudden Dispersal",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Return target creature to its owner's hand.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864089",
+      "name": "Trial Sudden Insight",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Draw a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864090",
+      "name": "Trial Forest",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land — Forest",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "produced_mana": [
+        "G"
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000864091",
+      "name": "Trial Island",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land — Island",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "produced_mana": [
+        "U"
+      ]
+    }
+  ]
+}

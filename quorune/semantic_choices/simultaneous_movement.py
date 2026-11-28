@@ -5,11 +5,19 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+from ..semantic_runtime.zone_move_intent import (
+    FrontFaceGraveyardCreatureReturnIntent,
+    ReturnedCreatureCounterIntent,
+    LinkedGraveyardManaExileIntent,
+)
 from ..rules.committed_quantity_followups import CommittedQuantityFollowup, token_followup_from_committed_controllers
 from ..semantic_runtime.targeted_exile_token_intent import (
     CommittedTargetExileIntent, OpponentExileDrawIntent, TargetedExileTokensIntent,
 )
 from ..semantic_runtime.targeted_power_sacrifice_life_intent import TargetedPowerSacrificeLifeIntent
+from ..semantic_runtime.counted_sacrifice_token_intent import CountedSacrificeIntent, CountedSacrificeTokenIntent
+from ..rules.counted_sacrifice_tokens import committed_sacrifice_count, token_followup_after_sacrifices
+from ..rules.any_number_sacrifice import resolve_any_number_sacrifice_followup
 from ..rules.targeted_power_sacrifice_life import capture_sacrifice_life_amount, committed_sacrifice_life_amount
 
 
@@ -31,16 +39,61 @@ def _commit_physical_movement(host, intent, changes, prepared):
     return commit_prepared_composition_departures(ZoneTransitionOwner(host), prepared)
 
 
+def _graveyard_creature_front_faces(host, cards) -> dict[str, str]:
+    """Seal any MDFC's lawful front before entry replacements are measured."""
+    from ..errors import GameRuleError
+
+    faces = {}
+    for card in cards:
+        record = host.card_record(card)
+        if record is None or not card.is_card_object:
+            raise GameRuleError("Graveyard creature entry requires the original card record")
+        if record.layout != "modal_dfc":
+            continue
+        face = record.faces[0] if record.faces else {}
+        name = face.get("name")
+        types, _, _ = host._type_parts(str(face.get("type_line") or ""))
+        if type(name) is not str or not name or "creature" not in types:
+            raise GameRuleError("A returned modal card requires its printed creature front")
+        faces[card.object_id] = name
+    return faces
+
+
+def _prepare_private_hand_entry(host, intent, cards, entry):
+    from ..errors import GameRuleError
+    from ..object_query import object_matches_query, object_query_result
+    from ..zone_transitions import ZoneTransitionOwner
+    move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+    selected_rows = []
+    for card in cards:
+        effective = host._effective_card_data(card)
+        row = object_query_result(card, effective,
+            type_parts=host._type_parts(str(effective.get('type_line') or '')),
+            known_to_actor=True, attached_to_ref=None)
+        if (card.logical_object_id != intent.selected_identities[card.ref]
+                or not object_matches_query(row, intent.selection.query)):
+            raise GameRuleError('Selected hand entry changed its incarnation or predicate')
+        selected_rows.append(row)
+    if any(len(group["refs"]) > group["maximum"] for group in intent.selection.card_type_limits(selected_rows)):
+        raise GameRuleError("Selected hand cards no longer fit distinct creature and land slots")
+    entry['aura_target_refs'] = dict(intent.aura_target_refs)
+    return move_batch
+
+
 def commit_simultaneous_movement(
     host: Any, intent: MoveObjectsSimultaneouslyIntent, *, graveyard_orders=None, require_graveyard_order=False,
     prepared_composition=None,
 ) -> tuple[str, ...] | CommittedQuantityFollowup | int:
+    from ..semantic_runtime.linked_landfall_settlement_intent import LinkedLandfallSettlementIntent
+    if isinstance(intent,LinkedLandfallSettlementIntent):
+        from .linked_landfall_settlement import commit_linked_settlement
+        return commit_linked_settlement(host,intent)
     from ..semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
 
     if isinstance(intent, TargetedGraveyardExileOutcomeIntent):
-        from ..rules.targeted_graveyard_outcomes import commit_targeted_graveyard_exiles, creature_exile_followup
+        from ..rules.targeted_graveyard_outcomes import commit_targeted_graveyard_outcome
 
-        return creature_exile_followup(intent.result, commit_targeted_graveyard_exiles(host, intent))
+        return commit_targeted_graveyard_outcome(host, intent)
     from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
     if isinstance(intent, GraveyardExileLifeResultIntent):
         from ..rules.graveyard_exile_results import commit_graveyard_exile_life_result
@@ -51,14 +104,23 @@ def commit_simultaneous_movement(
         return commit_graveyard_library_cost(host, intent)
     cards = tuple(
         host._resolve_object(
-            intent.actor,
-            ref,
-            zones=set(intent.expected_zones),
-            owned_only=intent.owned_only,
-            controlled_only=intent.controlled_only,
+            intent.actor, ref, zones=set(intent.expected_zones),
+            owned_only=intent.owned_only, controlled_only=intent.controlled_only,
         )
         for ref in intent.object_refs
     )
+    if isinstance(intent, LinkedGraveyardManaExileIntent):
+        from ..rules.linked_graveyard_mana import validate_linked_graveyard_mana_exile_commit
+
+        validate_linked_graveyard_mana_exile_commit(host, intent)
+    counted_origins = ()
+    if isinstance(intent, CountedSacrificeIntent):
+        from ..errors import GameRuleError
+
+        selected = intent.payload["selected_incarnations"]
+        if any(card.phased_out or card.logical_object_id != selected[card.ref] for card in cards):
+            raise GameRuleError("A selected counted sacrifice changed its public incarnation")
+        counted_origins = tuple((card.object_id, card.logical_object_id) for card in cards)
     sacrifice_life_amount = None
     if isinstance(intent, TargetedPowerSacrificeLifeIntent):
         sacrifice_life_amount = capture_sacrifice_life_amount(host, intent, cards[0])
@@ -71,20 +133,28 @@ def commit_simultaneous_movement(
             for card in cards}}
     from ..semantic_runtime.private_hand_entry_intent import PrivateHandEntryIntent
     move_batch = host._move_cards_simultaneously
+    if isinstance(intent, FrontFaceGraveyardCreatureReturnIntent):
+        faces = _graveyard_creature_front_faces(host, cards)
+        if faces:
+            from ..zone_transitions import ZoneTransitionOwner
+
+            move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+            entry["entry_faces"] = faces
+    if intent.entry_life_payment_refs:
+        from ..zone_transitions import ZoneTransitionOwner
+
+        move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+        entry["entry_pay_life"] = {card.object_id: True for card in cards if card.ref in intent.entry_life_payment_refs}
     if isinstance(intent, PrivateHandEntryIntent):
-        from ..errors import GameRuleError
-        from ..object_query import object_matches_query, object_query_result
+        move_batch = _prepare_private_hand_entry(host, intent, cards, entry)
+    from ..semantic_runtime.revealed_remainder_intent import RevealedBattlefieldMoveIntent, RevealedRemainderMoveIntent
+    if isinstance(intent, RevealedBattlefieldMoveIntent):
         from ..zone_transitions import ZoneTransitionOwner
         move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
-        for card in cards:
-            effective = host._effective_card_data(card)
-            row = object_query_result(card, effective,
-                type_parts=host._type_parts(str(effective.get('type_line') or '')),
-                known_to_actor=True, attached_to_ref=None)
-            if (card.logical_object_id != intent.selected_identities[card.ref]
-                    or not object_matches_query(row, intent.selection.query)):
-                raise GameRuleError('Selected hand entry changed its incarnation or predicate')
-        entry['aura_target_refs'] = dict(intent.aura_target_refs)
+        from .revealed_entry_choices import revealed_battlefield_entry_options
+        entry.update(revealed_battlefield_entry_options(host, cards, intent))
+    if isinstance(intent, RevealedRemainderMoveIntent):
+        graveyard_orders, require_graveyard_order = intent.graveyard_orders, True
     if graveyard_orders is not None or require_graveyard_order:
         from ..errors import GameRuleError
         from ..zone_transitions import ZoneTransitionOwner
@@ -100,6 +170,10 @@ def commit_simultaneous_movement(
         )
     if intent.discard_effect_origin is not None:
         entry["discard_effect_origin"] = intent.discard_effect_origin
+    return_origins = (
+        {card.object_id: card.logical_object_id for card in cards}
+        if isinstance(intent, ReturnedCreatureCounterIntent) else {}
+    )
     exile_controllers = {}
     if isinstance(intent, CommittedTargetExileIntent):
         exile_controllers = {card.object_id: (card.logical_object_id, card.controller) for card in cards}
@@ -125,16 +199,41 @@ def commit_simultaneous_movement(
             from ..errors import GameRuleError
             raise GameRuleError("APNAP physical departures require their own complete arrival plan")
         moved = _commit_physical_movement(host, intent, changes, prepared_composition)
+    if isinstance(intent, ReturnedCreatureCounterIntent):
+        from ..rules.reanimation_followup import returned_creature_counter_followup
+
+        return returned_creature_counter_followup(host, moved, return_origins, source_ref=intent.source_ref)
+    if isinstance(intent, LinkedGraveyardManaExileIntent):
+        from ..linked_ability_exile_state import record_linked_ability_exile
+        from ..linked_exile_return_model import ExiledObjectIdentity
+
+        record_linked_ability_exile(host, source=intent.source, ability_pair=intent.pair, objects=tuple(
+            ExiledObjectIdentity(card.object_id, card.ref, card.logical_object_id)
+            for card in moved if card.zone == "exile" and card.is_card_object
+        ))
     if isinstance(intent, CommittedTargetExileIntent):
         committed = dict.fromkeys(card.object_id for card in moved
             if card.zone == "exile" and card.object_id in exile_controllers
             and card.logical_object_id != exile_controllers[card.object_id][0])
         creators = tuple(exile_controllers[object_id][1] for object_id in committed)
+        from ..semantic_runtime.targeted_exile_token_intent import ExileControllerLandSearchIntent
+
+        if isinstance(intent, ExileControllerLandSearchIntent):
+            from ..rules.affected_library_search_batch import committed_exile_land_search
+
+            return committed_exile_land_search(host, intent.actor, creators)
         if isinstance(intent, TargetedExileTokensIntent):
             return token_followup_from_committed_controllers(intent.followup.token, creators)
         from ..rules.opponent_exile_draw_results import opponent_exile_draw_followup
 
         return opponent_exile_draw_followup(tuple(seat for seat in host.apnap_order() if seat in creators))
+    if counted_origins:
+        if isinstance(intent, CountedSacrificeTokenIntent):
+            return token_followup_after_sacrifices(host, intent.payload["token"], counted_origins)
+        return resolve_any_number_sacrifice_followup(
+            host, intent.payload["followup"], committed_sacrifice_count(host, counted_origins),
+            target=intent.payload.get("target"), committed_members=tuple(identity for _, identity in counted_origins), actor=intent.actor,
+        )
     if sacrifice_life_amount is not None:
         return committed_sacrifice_life_amount(host, intent, cards[0].object_id, sacrifice_life_amount)
     return tuple(card.ref for card in cards)

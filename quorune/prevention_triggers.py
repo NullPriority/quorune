@@ -16,6 +16,9 @@ class PreventionTriggerError(ValueError):
     """A CR 615.13 prevention-trigger value is malformed or stale."""
 
 
+PREVENTION_OTHER_TARGET_FIELD = "exclude_source_incarnation"
+
+
 def _exact_fields(
     value: Mapping[str, Any], expected: set[str], *, label: str
 ) -> None:
@@ -523,6 +526,7 @@ def prevention_trigger_stack_item(
     ref: str,
     stack_id: str,
     visibility: Sequence[str],
+    target_source_context: Mapping[str, Any] | None = None,
 ) -> "StackItem":
     """Materialize one CR 615.13 occurrence as an ordinary stack object."""
 
@@ -533,6 +537,8 @@ def prevention_trigger_stack_item(
             "A prevention-trigger stack object requires stable identity"
         )
     target_schema = thaw_value(occurrence.ability.target_schema)
+    if isinstance(target_schema, Mapping) and PREVENTION_OTHER_TARGET_FIELD in target_schema and not target_source_context:
+        raise PreventionTriggerError("A prevention trigger with an excluded source requires that source binding")
     context: dict[str, Any] = {
         "event": "damage.prevented",
         "effect_id": occurrence.effect_id,
@@ -542,6 +548,7 @@ def prevention_trigger_stack_item(
         "dynamic_effects": [
             dict(effect) for effect in occurrence.runtime_effects()
         ],
+        **dict(target_source_context or {}),
     }
     if target_schema:
         context.update(

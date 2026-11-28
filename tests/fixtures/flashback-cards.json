@@ -4,6 +4,35 @@
   "source": "Scryfall Oracle subset for typed Flashback tests",
   "cards": [
     {
+      "oracle_id": "4f65e6a9-0d90-44b9-9b76-00814db2dbd8",
+      "name": "Laughing Mad",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards.\nFlashback {3}{R} (You may cast this card from your graveyard for its flashback cost and any additional costs. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
       "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
       "name": "Think Twice",
       "mana_cost": "{1}{U}",
@@ -15,11 +44,20 @@
       "defense": null,
       "layout": "normal",
       "released_at": "2026-06-26",
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Flashback"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
       "produced_mana": [],
-      "legalities": {"commander": "legal", "duel": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
       "faces": [],
       "cmc": 2.0
     },
@@ -35,11 +73,20 @@
       "defense": null,
       "layout": "normal",
       "released_at": "2026-06-26",
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Flashback"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
       "produced_mana": [],
-      "legalities": {"commander": "legal", "duel": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
       "faces": [],
       "cmc": 4.0
     },
@@ -55,11 +102,20 @@
       "defense": null,
       "layout": "normal",
       "released_at": "2019-08-23",
-      "colors": ["R"],
-      "color_identity": ["R"],
-      "keywords": ["Flashback"],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
       "produced_mana": [],
-      "legalities": {"commander": "legal", "duel": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
       "faces": [],
       "cmc": 1.0
     },
@@ -75,14 +131,424 @@
       "defense": null,
       "layout": "normal",
       "released_at": "2002-02-04",
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Flashback"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
       "produced_mana": [],
-      "legalities": {"commander": "legal", "duel": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
       "faces": [],
       "cmc": 2.0
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "name": "Snapcaster Mage",
+      "mana_cost": "{1}{U}",
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Flash\nWhen this creature enters, target instant or sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost. (You may cast that card from your graveyard for its flashback cost. Then exile it.)",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "cmc": 2.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "69ac3757-66f8-47d4-af7b-dda66c96c254",
+      "name": "Lost in Memories",
+      "mana_cost": "{1}{R}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Flash\nEnchant creature you control\nEnchanted creature gets +1/+1 and has \"Whenever this creature deals combat damage to a player, target instant or sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.\" (You may cast that card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "cmc": 2.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Enchant",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Dread Return",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.\nFlashback—Sacrifice three creatures. (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Purify the Grave",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "oracle_text": "Exile target card from a graveyard.\nFlashback {W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-08-23",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a split card gains flashback, you pay only the cost of the half you're casting."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast an instant or sorcery with {X} in its mana cost this way, you still choose the value of X as part of casting the spell and pay that cost."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you cast a spell with flashback, you can't pay any alternative costs such as overload costs. You can pay additional costs such as kicker costs. If the spell has any mandatory additional costs, you must pay those to cast the spell with flashback."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card has multiple instances of flashback, you may choose any of its flashback costs to pay."
+    },
+    {
+      "oracle_id": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with no mana cost gains flashback, it has no flashback cost. It can't be cast this way."
+    },
+    {
+      "comment": "If it's your turn, and you cast a spell with flashback from your hand, you'll have priority to cast that spell again using flashback before any other player has priority to cast Purify the Grave in order to remove that card from your graveyard.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Purify the Grave can't be used in response to a spell being cast with flashback or a spell that requires cards to exiled from a graveyard as an additional cost to try and counter the spell or prevent it from being cast.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "1dafc03b-6c45-4f28-8a1f-b4f1044adc97",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose the target for Dread Return before paying any of its costs, so it's not possible to cast it using flashback and bring back one of the creatures you sacrifice.",
+      "oracle_id": "352b64d2-2ae5-44ee-a64f-94932ef545d3",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    }
+  ]
 }

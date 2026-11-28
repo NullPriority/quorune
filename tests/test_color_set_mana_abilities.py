@@ -877,6 +877,8 @@ class CommanderIdentityManaTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             ROOT / "tests/fixtures/bound-effect-program-cards.json",
             ROOT / "tests/fixtures/commander-identity-mana-cards.json",
+            ROOT / "tests/fixtures/tap-for-mana-production-multipliers-cards.json",
+            ROOT / "tests/fixtures/attached-characteristic-closure-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -980,6 +982,248 @@ class CommanderIdentityManaTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("graveyard", game.state.cards[sphere.object_id].zone)
         self.assertEqual(hand_size + 1, len(game.state.players["A"].zones["hand"]))
         self.replay(game, load=True)
+
+
+    def _paired_session(self, seed):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        pair = ["Thrasios, Triton Hero", "Vial Smasher the Fierce"]
+        deck = DeckDefinition("Path partner witness",
+            [*(DeckEntry(name, 1, "commander") for name in pair), DeckEntry("Island", 30)], pair)
+        with mock.patch.object(self, "deck", deck):
+            return self.session(seed)
+
+    def _path_tap(self, game, path, color=None):
+        _, command = self._activation(game, path)
+        if color is not None:
+            command["mana_output"] = {color: 1}
+        outcome = game.act(f"pilot:{path.controller}", command)
+        self.assertTrue(outcome.ok, outcome.summary)
+
+    def _resolve_path_scry(self, game, *, reload=False):
+        decision = self.resolve(game)
+        self.assertIsNotNone(decision)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        schema = decision.payload_by_actor["A"]["legal_actions"][0]["choice_schema"]
+        self.assertEqual("ordered_partition", schema["shape"])
+        card_ref, = schema["legal_refs"]
+        self.assertIn(card_ref, json.dumps(game.packet("pilot:A", full=True)))
+        for seat in "BCD":
+            self.assertNotIn(card_ref, json.dumps(game.packet(f"pilot:{seat}", full=True)))
+        if reload:
+            game = self.replay(game, load=True)
+        command = {"action_id": "choose", "cards": {"top": [], "bottom": [card_ref]}}
+        self.assertFalse(game.act("pilot:B", command).ok)
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        library = game.state.players["A"].zones["library"]
+        self.assertEqual(card_ref, game.state.cards[library[0]].ref)
+        return game
+
+    def test_path_scry_closes_only_the_printed_rider_with_trusted_dependencies(self):
+        from quorune.color_set_mana_abilities import (
+            COMMANDER_IDENTITY_MANA_HANDLER_ID, COMMANDER_TYPE_SCRY_MANA_HANDLER_ID,
+        )
+        from quorune.mana_spend_rules import COMMANDER_TYPE_SCRY_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.color_set_mana_abilities import ColorSetActivatedManaAbilityHandler
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        original = self.db.lookup("Path of Ancestry", fuzzy=False)
+        compiled = compile_oracle_card(original, capability_registry=self.registry,
+                                       capability_profile="commander_review")
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        handler, = (handler for face in compiled.faces for node in face.nodes for handler in node.handlers
+                    if handler["handler_id"] == COMMANDER_TYPE_SCRY_MANA_HANDLER_ID)
+        self.assertIs(handler["ability"]["commander_type_scry"], True)
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.preflight import semantic_preflight
+
+        ready = semantic_preflight(self.db, DeckDefinition("Path admission", [DeckEntry(original.name)], []))
+        row, = ready["cards"]
+        self.assertEqual("fully_playable", row["status"], row["unresolved"])
+        self.assertTrue(row["card_program_strict_capability_ready"])
+        ordinary = ColorSetActivatedManaAbilityHandler(handler_id=COMMANDER_IDENTITY_MANA_HANDLER_ID)
+        with self.assertRaises(SemanticNodeError):
+            ordinary.validate({**handler, "handler_id": COMMANDER_IDENTITY_MANA_HANDLER_ID})
+        invalid = compiled_spec().to_dict()
+        with self.assertRaises(ColorSetManaAbilityError):
+            ColorSetActivatedManaAbilitySpec.from_dict({**invalid, "commander_type_scry": True})
+        for changed in ("scry 2.", "draw a card.", "scry 1. Draw a card."):
+            with self.subTest(changed=changed):
+                raw = original.oracle_text.replace("scry 1.", changed, 1)
+                card = replace(original, oracle_text=raw, faces=tuple(
+                    {**face, "oracle_text": face["oracle_text"].replace("scry 1.", changed, 1)}
+                    for face in original.faces))
+                self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=self.registry,
+                    capability_profile="commander_review").status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        next(row for row in raw["capabilities"] if row["id"] == COMMANDER_TYPE_SCRY_CAPABILITY).update(
+            status="blocked", blockers=["Commander Scry withdrawal witness"])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=withdrawn,
+            capability_profile="commander_review").status)
+        control = self.db.lookup("Command Tower", fuzzy=False)
+        self.assertEqual("exact", compile_oracle_card(control, capability_registry=withdrawn,
+            capability_profile="commander_review").status)
+
+    def test_actual_path_enters_tapped_and_colorless_or_absent_commanders_produce_nothing(self):
+        from quorune.mana_provenance import mana_provenance_lots
+
+        game = self.session(63212901)
+        path = self.add(game.engine, "Path of Ancestry", zone="hand")
+        self.assert_closed(game, path)
+        self.prepare(game)
+        self.checkpoint(game)
+        entered = game.act("pilot:A", {"action_id": f"play-land:{path.ref}"})
+        self.assertTrue(entered.ok, entered.summary)
+        self.assertTrue(game.state.cards[path.object_id].tapped)
+        self.replay(game, load=True)
+        for names in ((), ("Ulamog, the Ceaseless Hunger",)):
+            with self.subTest(names=names):
+                game = self.session(63212902 + len(names))
+                path = self.add(game.engine, "Path of Ancestry")
+                self.assert_closed(game, path)
+                game.state.commander_oracle_ids["A"] = [self.db.lookup(name, fuzzy=False).oracle_id for name in names]
+                self.prepare(game)
+                self.checkpoint(game)
+                self._path_tap(game, path)
+                self.assertTrue(game.state.cards[path.object_id].tapped)
+                self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+                self.assertFalse(mana_provenance_lots(game.state.players["A"]))
+                self.assertFalse(game.state.stack)
+                self.replay(game, load=True)
+
+    def test_actual_path_compares_both_current_commanders_across_zones(self):
+        from quorune.replacement.ordering import ReplacementChoiceRequired
+
+        for index, name, color in ((0, "Merfolk of the Pearl Trident", "U"),
+                                   (1, "Putrid Goblin", "B")):
+            with self.subTest(card=name):
+                game = self._paired_session(63212905 + index)
+                path = self.add(game.engine, "Path of Ancestry")
+                spell = self.add(game.engine, name, zone="hand")
+                commander_id = game.state.commander_oracle_ids["A"][index]
+                commander = next(card for card in game.state.cards.values()
+                                 if card.owner == "A" and card.oracle_id == commander_id and card.is_commander)
+                with self.assertRaises(ReplacementChoiceRequired) as replacement:
+                    game.engine.move_card(commander.object_id, "hand")
+                redirect, = replacement.exception.pending.choice.options
+                game.engine.move_card(commander.object_id, "hand",
+                    replacement_selections=[f"decline:{redirect}"])
+                self.assertEqual("hand", game.state.cards[commander.object_id].zone)
+                self.assert_closed(game, path)
+                self.assert_closed(game, spell)
+                self.prepare(game, mana={"C": index})
+                self.checkpoint(game)
+                offer, _ = self._activation(game, path)
+                self.assertEqual([{"U": 1}, {"B": 1}, {"R": 1}, {"G": 1}],
+                                 [option["value"] for option in offer["choice_schema"]["mana_output"]["options"]])
+                self._path_tap(game, path, color)
+                self.cast_for(game, "A", spell)
+                self.assertEqual(["spell", "triggered_ability"], [item.kind for item in game.state.stack])
+                game = self._resolve_path_scry(game, reload=True)
+                self.assertIsNone(self.resolve(game))
+                self.replay(game, load=True)
+
+    def test_actual_doubled_path_auto_payment_gives_two_separate_private_scry_actions(self):
+        game = self._paired_session(63212907)
+        deck_owner = self.add(game.engine, "Path of Ancestry", seat="B")
+        game.state.players["B"].zones["battlefield"].remove(deck_owner.object_id)
+        game.state.players["A"].zones["battlefield"].append(deck_owner.object_id)
+        deck_owner.controller = "A"
+        spell = self.add(game.engine, "Putrid Goblin", zone="hand")
+        amplifier = self.add(game.engine, "Mana Reflection")
+        for card in (deck_owner, spell, amplifier):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertTrue(game.state.cards[deck_owner.object_id].tapped)
+        decision = game.state.pending_decision
+        self.assertEqual("trigger.order", decision.kind)
+        refs = [row["id"] for row in decision.payload_by_actor["A"]["triggers"]]
+        self.assertEqual(2, len(refs))
+        self.assertEqual(2, len(set(refs)))
+        ordered = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertEqual([deck_owner.object_id] * 2,
+                         [item.source_object_id for item in game.state.stack if item.kind == "triggered_ability"])
+        game = self._resolve_path_scry(game, reload=True)
+        game = self._resolve_path_scry(game)
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+    def test_actual_path_uses_cast_time_types_and_mana_spent_on_an_ability_cannot_trigger(self):
+        for index, variant in enumerate(("unrelated", "matching", "spent on equip")):
+            with self.subTest(variant=variant):
+                game = self._paired_session(63212908 + index)
+                path = self.add(game.engine, "Path of Ancestry")
+                equipment = self.add(game.engine, "Runed Stalactite")
+                bears = self.add(game.engine, "Grizzly Bears", zone="hand")
+                commander = next(card for card in game.state.cards.values()
+                                 if card.owner == "A" and card.printed_name == "Thrasios, Triton Hero" and card.is_commander)
+                game.engine.move_card(commander.object_id, "battlefield")
+                for card in (path, equipment, bears):
+                    self.assert_closed(game, card)
+                self.prepare(game, mana={"C": 2, "G": 1})
+                self.checkpoint(game)
+                self._path_tap(game, path, "G")
+                if variant != "unrelated":
+                    equip = next(ability for ability in game.engine._activated_abilities(equipment)
+                                 if not ability.mana_ability)
+                    payment = {"C": 1, "G": 1} if variant == "spent on equip" else {"C": 2}
+                    result = game.act("pilot:A", {
+                        "a": "activate", "source": equipment.ref, "ability": equip.ability_id,
+                        "targets": [commander.ref], "pay": "manual", "payment": payment,
+                    })
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual(1, len(game.state.stack))
+                    self.assertIsNone(self.resolve(game))
+                self.cast_for(game, "A", bears)
+                if variant == "matching":
+                    game = self._resolve_path_scry(game)
+                self.assertIsNone(self.resolve(game))
+                self.replay(game, load=True)
+
+    def test_actual_path_spent_mana_keeps_its_departed_source_incarnation(self):
+        game = self._paired_session(63212914)
+        path = self.add(game.engine, "Path of Ancestry")
+        merfolk = self.add(game.engine, "Merfolk of the Pearl Trident", zone="hand")
+        bounce = self.add(game.engine, "Boomerang", seat="B", zone="hand")
+        for card in (path, merfolk, bounce):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool["U"] = 2
+        self.prepare(game)
+        self.checkpoint(game)
+        original_source = path.logical_object_id
+        self._path_tap(game, path, "U")
+        self.priority(game, "B")
+        self.cast(game, "B", bounce, [path.ref])
+        self.assertIsNone(self.resolve(game))
+        departed = game.state.cards[path.object_id]
+        self.assertEqual("hand", departed.zone)
+        self.assertNotEqual(original_source, departed.logical_object_id)
+        self.cast_for(game, "A", merfolk)
+        trigger, = (item for item in game.state.stack if item.kind == "triggered_ability")
+        self.assertEqual(path.object_id, trigger.source_object_id)
+        self.assertEqual(original_source, trigger.context["source_logical_object_id"])
+        self.assertEqual("A", trigger.controller)
+        game = self._resolve_path_scry(game, reload=True)
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+    def test_path_native_count_mutation_loses_one_required_scry(self):
+        from quorune.rules.casting.mana_spend_triggers import spent_mana_cast_triggers
+
+        def collapsed(host, event, payments):
+            return spent_mana_cast_triggers(host, event, payments)[:1]
+
+        with mock.patch("quorune.rules.casting.mana_spend_triggers.spent_mana_cast_triggers",
+                        side_effect=collapsed), self.assertRaisesRegex(AssertionError, "trigger.order"):
+            self.test_actual_doubled_path_auto_payment_gives_two_separate_private_scry_actions()
 
 
     def test_actual_hidden_hideout_enters_tapped_and_checks_counters_for_lifelink(self):

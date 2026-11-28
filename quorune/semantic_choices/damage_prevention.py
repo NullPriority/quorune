@@ -91,17 +91,38 @@ def _candidates(
     )
 
 
+def _chosen_source_followup(effect):
+    if "redirection" in effect:
+        from ..rules.chosen_damage_redirection import (
+            chosen_redirection_source_predicate, validate_chosen_redirection_result,
+        )
+
+        redirection = effect["redirection"]
+        try:
+            validate_chosen_redirection_result(redirection)
+            if "shield" in effect or thaw_value(effect.get("source_predicate")) != chosen_redirection_source_predicate():
+                raise ValueError("A chosen redirection requires its exact source choice")
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return redirection
+    shield = effect.get("shield")
+    if not isinstance(shield, Mapping) or shield.get("op") != "create_damage_prevention_shield":
+        raise SemanticChoiceError("A chosen source must continue into a prevention shield")
+    return shield
+
+
 @dataclass(frozen=True, slots=True)
 class ChooseDamageSourceHandler:
     operation: str = "choose_damage_source"
     handler_id: str = "choice.damage.choose-source.v1"
     schema_version: int = 1
-    rule_references: tuple[str, ...] = ("CR 609.7a", "CR 615.1")
+    rule_references: tuple[str, ...] = ("CR 609.7a", "CR 614.9", "CR 615.1")
     capability_dependencies: tuple[str, ...] = (
         "damage.prevention.persistent_amount",
     )
     continuation_fields: tuple[str, ...] = (
         "shield",
+        "redirection",
         "source_predicate",
         "_legal_refs",
     )
@@ -114,10 +135,12 @@ class ChooseDamageSourceHandler:
     mutation_path: tuple[str, ...] = (
         "PreventionShieldCreationRequest",
         "commit_prevention_shield_creation",
+        "create_damage_redirection",
     )
     replay_fixture: str = "damage-prevention-chosen-source"
     test_modules: tuple[str, ...] = (
         "tests.test_damage_prevention_creation",
+        "tests.test_damage_redirection",
     )
 
     def prepare(
@@ -125,13 +148,7 @@ class ChooseDamageSourceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        shield = effect.get("shield")
-        if not isinstance(shield, Mapping) or shield.get("op") != (
-            "create_damage_prevention_shield"
-        ):
-            raise SemanticChoiceError(
-                "A chosen source must continue into a prevention shield"
-            )
+        followup = _chosen_source_followup(effect)
         from ..designation_prevention import unavailable_designation
         if unavailable_designation(effect.get('source_predicate')):
             return SemanticChoicePreparation(request=None,
@@ -139,9 +156,9 @@ class ChooseDamageSourceHandler:
                 auto_continue=AutoContinue(reason='No source entry designation was made'))
         predicate = _source_predicate(effect)
         from ..attached_prevention_model import BOUND_SUBJECT_VERSION, validate_bound_prevention_version
-        if BOUND_SUBJECT_VERSION in shield:
-            validate_bound_prevention_version(shield[BOUND_SUBJECT_VERSION])
-            if shield.get('subject') is None:
+        if BOUND_SUBJECT_VERSION in followup:
+            validate_bound_prevention_version(followup[BOUND_SUBJECT_VERSION])
+            if followup.get('subject') is None:
                 return SemanticChoicePreparation(request=None,
                     continuation_effect=FrozenMap({**effect,'source_predicate':predicate.to_dict(),'_legal_refs':[]}),
                     auto_continue=AutoContinue(reason='The attached recipient is unavailable'))
@@ -224,16 +241,12 @@ class ChooseDamageSourceHandler:
             raise SemanticChoiceError(
                 "The selected damage source is no longer a legal candidate"
             )
-        shield = continuation.effect.get("shield")
-        if not isinstance(shield, Mapping):
-            raise SemanticChoiceError(
-                "The chosen-source continuation lost its shield"
-            )
+        followup = _chosen_source_followup(continuation.effect)
         return SemanticChoiceCompletion(
             prepend_effects=(
                 FrozenMap(
                     {
-                        **thaw_value(shield),
+                        **thaw_value(followup),
                         "chosen_source": selected,
                         "source_predicate": predicate.to_dict(),
                     }

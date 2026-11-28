@@ -15,7 +15,7 @@ from .continuous_effect_state import (
 from .continuous_effects import order_continuous_effects
 from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuityHistory, SourceContinuitySnapshot
-from .source_tap_effect import SOURCE_TAP_EFFECT_FIELD
+from .source_tap_effect import OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION, SOURCE_CONTROL_UNTAP_FIELD, SOURCE_TAP_EFFECT_FIELD
 from .source_untap_rule_model import ResolvedSourceUntapRestraint
 from .stack_target_change_model import STACK_SPELL_CONTROL_CONTEXT, StackSpellControlHistory
 from .model import CONTROL_HISTORY_VERSION
@@ -46,6 +46,7 @@ _ORIGIN_PREFIX = "control-origin:"
 _EFFECT_PREFIX = "control-effect:"
 _DURATIONS = {
     ContinuousEffectDuration.UNTIL_END_OF_TURN,
+    ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN,
     ContinuousEffectDuration.ZONE_OBJECT,
     *(duration for duration in ContinuousEffectDuration if duration.source_bound),
 }
@@ -73,11 +74,18 @@ def _commit_control_change(host: ControlEffectHost, object_id: str, controller: 
     if card.zone != "battlefield":
         raise GameRuleError("Only battlefield permanents have controllers")
     previous = card.controller
+    changed_objects = [object_id]
     if previous != controller:
         host._remove_object_from_combat(card, reason="control changed")
         host.state.players[previous].zones["battlefield"].remove(object_id)
         host.state.players[controller].zones["battlefield"].append(object_id)
         card.controller = controller
+        from .hideaway_model import has_current_hideaway_source
+
+        if has_current_hideaway_source(card):
+            from .rules.hideaway_library import grant_hideaway_control_view
+
+            changed_objects.extend(grant_hideaway_control_view(host, card, controller))
     control_history.record_control_change(
         host.state, card, host._next_zone_timestamp, previous_controller=previous,
     )
@@ -85,7 +93,7 @@ def _commit_control_change(host: ControlEffectHost, object_id: str, controller: 
     host._log(
         None, "control.change", f"Control of {card.ref} changed {previous} → {controller}.",
         {"object": card.ref, "from": previous, "to": controller, "reason": reason},
-        importance=2, changed_objects=[object_id], changed_players=[previous, controller],
+        importance=2, changed_objects=changed_objects, changed_players=[previous, controller],
     )
 
 
@@ -103,6 +111,9 @@ def _apply_stack_control_history(host, spell, history):
         raise ControlEffectError("The selected spell's physical card is unavailable")
     spell.context[STACK_SPELL_CONTROL_CONTEXT] = history.to_dict()
     if spell.controller != history.controller:
+        from .cast_lifecycles import expire_granted_suspend_haste
+
+        expire_granted_suspend_haste(spell)
         spell.controller = history.controller
         spell.context["targets_revalidated"] = False
         if card is not None:
@@ -171,7 +182,16 @@ def source_continuity_snapshot(card: Any) -> SourceContinuitySnapshot:
 
 def _contains_source_duration(value: Any) -> bool:
     if isinstance(value, Mapping):
-        if value.get(SOURCE_TAP_EFFECT_FIELD) is True:
+        from .source_control_phase_in_model import uses_source_control_phase_out
+        from .stack_counter import COUNTERED_ABILITY_SOURCE_LOSS_FIELD
+
+        if uses_source_control_phase_out(value):
+            return True
+        if value.get("op") == "counter_stack_target" and value.get(COUNTERED_ABILITY_SOURCE_LOSS_FIELD) == 1:
+            return True
+        if value.get(SOURCE_TAP_EFFECT_FIELD) is True or (
+            value.get("op") == "tap" and value.get(SOURCE_CONTROL_UNTAP_FIELD) in (1, OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION)
+        ):
             return True
         if value.get("op") == "gain_control":
             try:
@@ -305,6 +325,40 @@ def prepare_source_presence_duration(state, source):
     return source_continuity_snapshot(card) if card is not None else None
 
 
+def prepare_tracked_source_presence_duration(
+    state: Any, source: ResolutionEffectSource, snapshot: SourceContinuitySnapshot | None,
+    resolution_timestamp: int | None,
+) -> SourceContinuitySnapshot | None:
+    card = _current_duration_source(state, source)
+    if card is None:
+        return None
+    if not isinstance(snapshot, SourceContinuitySnapshot) or type(resolution_timestamp) is not int:
+        raise ControlEffectError("Tracked source-presence duration requires its original continuity")
+    if not _duration_condition(
+        card, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES, card.controller,
+        snapshot, resolution_timestamp=resolution_timestamp,
+    ):
+        return None
+    return card.source_continuity.snapshot()
+
+
+def prepare_controlled_source_untap_duration(
+    state: Any, source: ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot | None,
+    resolution_timestamp: int, controller: str,
+) -> SourceContinuitySnapshot | None:
+    card = _current_duration_source(state, source)
+    if card is None:
+        return None
+    if not isinstance(snapshot, SourceContinuitySnapshot):
+        raise ControlEffectError("Controlled-source untap duration requires its original continuity")
+    if not _duration_condition(
+        card, ContinuousEffectDuration.UNTIL_SOURCE_CONTROL_CHANGES, controller,
+        snapshot, resolution_timestamp=resolution_timestamp,
+    ):
+        return None
+    return card.source_continuity.snapshot()
+
+
 def source_battlefield_exit_pending(state: Any, source: ContinuousObjectIdentity) -> bool:
     return _current_duration_source(state, source, include_phased=True) is not None
 
@@ -324,6 +378,27 @@ def tapped_source_duration_is_current(
     )
 
 
+def controlled_source_duration_is_current(state, source, snapshot, controller):
+    card = _current_duration_source(state, source)
+    return card is not None and _duration_condition(
+        card, ContinuousEffectDuration.UNTIL_SOURCE_CONTROL_CHANGES, controller, snapshot,
+    )
+
+
+def controlled_declaration_source_is_current(state, binding):
+    return binding is None or controlled_source_duration_is_current(
+        state, binding.identity, binding.history, binding.controller,
+    )
+
+
+def source_untap_restraint_is_current(state: Any, effect: ResolvedSourceUntapRestraint) -> bool:
+    if effect.duration_controller is None:
+        return tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+    return controlled_source_duration_is_current(
+        state, effect.duration_source, effect.duration_history, effect.duration_controller,
+    )
+
+
 def has_control_origin(state: Any, card: Any) -> bool:
     """Whether this incarnation has a journaled initial controller."""
     key = _ORIGIN_PREFIX + card.logical_object_id
@@ -337,6 +412,7 @@ def _control_effect(
     duration_source: ContinuousObjectIdentity | None = None,
     duration_controller: str | None = None,
     duration_history: SourceContinuitySnapshot | None = None,
+    controller_cleanup_turn: int | None = None,
 ) -> ContinuousEffect:
     return ContinuousEffect(
         effect_id=effect_id, source_id=source_id, layer=Layer.CONTROL,
@@ -346,6 +422,7 @@ def _control_effect(
         applies=ObjectQuerySpec(zones=("battlefield",)), locked_objects=identities,
         duration_source=duration_source, duration_controller=duration_controller,
         duration_history=duration_history,
+        controller_cleanup_turn=controller_cleanup_turn,
     )
 
 
@@ -435,6 +512,8 @@ def gain_control_of_assignments(
         duration_source=(ContinuousObjectIdentity(source_card.object_id,source_card.logical_object_id) if source_card is not None else None),
         duration_controller=actor if duration.requires_source_controller else None,
         duration_history=source_card.source_continuity.snapshot() if source_card is not None else None,
+        controller_cleanup_turn=(host.state.players[controller].turns_begun + 1
+                                 if duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN else None),
     ) for controller,affected in grouped.items())
     effect_ids=tuple(_EFFECT_PREFIX+host._next_ref('CE') for _prototype in prototypes)
     timestamp=host._next_zone_timestamp()
@@ -547,8 +626,12 @@ def _next_source_expiration(host: ControlEffectHost, ending: Sequence[Continuous
 
 
 def _expired_characteristic_source_duration(state, effect) -> bool:
+    from .declaration_rule_effects import ResolutionDeclarationRuleEffect
+
+    if isinstance(effect, ResolutionDeclarationRuleEffect):
+        return not controlled_declaration_source_is_current(state, effect.controlled_source)
     if isinstance(effect, ResolvedSourceUntapRestraint):
-        return not tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+        return not source_untap_restraint_is_current(state, effect)
     return (isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
             and effect.duration_source is not None
             and not characteristic_source_duration_is_current(
@@ -704,6 +787,71 @@ def _execute_two_controller_creature_transfer(host, intent):
     return refs
 
 
+def execute_source_upkeep_handoff(host, intent) -> tuple[str, ...]:
+    from .sacrifice_prohibition_model import ResolvedSacrificeProhibition, sacrifice_is_prohibited
+    from .tap_state import dispatch_tap_state_group, untap_permanent
+
+    stack = next((item for item in host.state.stack if item.ref == intent.source.stack_ref), None)
+    if (stack is None or stack.controller != intent.actor or stack.kind != "triggered_ability"
+            or stack.context.get("currently_resolving") is not True
+            or stack.context.get("event") != "step.begin" or stack.context.get("step") != "upkeep"
+            or stack.context.get("player") != intent.controller
+            or stack.source_object_id != intent.source.object_id
+            or stack.context.get("source_logical_object_id") != intent.source.logical_object_id):
+        raise ControlEffectError("The handoff must use its original resolving upkeep trigger")
+    card = _current_duration_source(host.state, intent.source)
+    if card is None or card.ref != intent.object_ref:
+        return ()
+    if intent.controller not in host.active_seats:
+        raise ControlEffectError("The captured upkeep opponent is unavailable")
+    gain_control_of_refs(
+        host, actor=intent.actor, object_refs=(card.ref,), controller=intent.controller,
+        duration=intent.duration, source=intent.source, reason=intent.reason,
+    )
+    if untap_permanent(host, card, actor=intent.actor, reason=intent.reason):
+        dispatch_tap_state_group(host, (card,), tapped=False, reason=intent.reason)
+    types, _, _ = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+    if "creature" in types:
+        host.apply_effect({"op": "goad", "card": card.ref, "reason": intent.reason}, actor=intent.actor)
+    if not sacrifice_is_prohibited(host.state, card):
+        commit_continuous_effect(host.state, ResolvedSacrificeProhibition(
+            effect_id=f"cannot-sacrifice:{intent.source.stack_ref}", timestamp=host._next_zone_timestamp(),
+            subject=ContinuousObjectIdentity(card.object_id, card.logical_object_id),
+        ))
+    return (card.ref,)
+
+
+def execute_single_control_intent(host: Any, intent: Any):
+    """Apply one retained control intent through its rules owner."""
+    from .semantic_runtime.control_intents import (
+        GainSpellControlIntent, ReflexiveSourceControlIntent, UpkeepSourceHandoffIntent,
+    )
+
+    if isinstance(intent, ReflexiveSourceControlIntent):
+        from .rules.source_control_reflexive import commit_source_control_reflexive
+
+        return commit_source_control_reflexive(host, intent)
+    if isinstance(intent, UpkeepSourceHandoffIntent):
+        return execute_source_upkeep_handoff(host, intent)
+    if isinstance(intent, GainSpellControlIntent):
+        return gain_control_of_stack_spell(
+            host, stack_ref=intent.object_ref, actor=intent.actor, source=intent.source, reason=intent.reason,
+        )
+    identity = getattr(intent, "recipient_identity", None)
+    if identity is not None:
+        card = host.state.cards.get(identity.object_id)
+        if (card is None or card.ref != intent.object_ref or card.zone != "battlefield" or card.phased_out
+                or card.logical_object_id != identity.logical_object_id):
+            return ()
+    return gain_control_of_refs(
+        host, actor=intent.actor, object_refs=(intent.object_ref,),
+        controller=intent.controller, duration=intent.duration,
+        source=intent.source, reason=intent.reason,
+        history_snapshot=intent.history_snapshot,
+        resolution_timestamp=intent.resolution_timestamp,
+    )
+
+
 def execute_control_set(host: Any, intent: Any) -> tuple[str, ...]:
     """Retain this instruction's complete set across its printed substeps."""
     from .continuous_effect_state import (
@@ -716,9 +864,14 @@ def execute_control_set(host: Any, intent: Any) -> tuple[str, ...]:
         raise ControlEffectError("Control-set execution requires a typed retained intent")
     if intent.opponent is not None:
         return _execute_two_controller_creature_transfer(host, intent)
-    if not control_set_query_is_closed(intent.predicate, actor=intent.actor):
+    if intent.target_refs is None and not control_set_query_is_closed(intent.predicate, actor=intent.actor):
         raise ControlEffectError("Control-set query is outside the public closed family")
     cards = matching_battlefield_objects(host, intent.predicate)
+    if intent.target_refs is not None:
+        by_ref = {card.ref: card for card in cards}
+        if any(ref not in by_ref for ref in intent.target_refs):
+            raise ControlEffectError("A revalidated creature target is no longer present")
+        cards = tuple(by_ref[ref] for ref in intent.target_refs)
     identities = tuple(ContinuousObjectIdentity(card.object_id, card.logical_object_id) for card in cards)
     for step in intent.steps:
         current = tuple(

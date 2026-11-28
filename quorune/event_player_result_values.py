@@ -63,6 +63,48 @@ class SpellCastCountLifeSpec:
         return spec
 
 
+EQUIPPED_COMBAT_HAND_COUNT_KIND = "equipped_combat_hand_count"
+
+
+@dataclass(frozen=True, slots=True)
+class EquippedCombatHandCountSpec:
+    role: str
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (type(self.role) is not str or self.role not in {"damaged_player", "trigger_controller"}
+                or type(self.schema_version) is not int or self.schema_version != 1):
+            raise ValueError("Equipped combat hand size requires its exact result role and version")
+
+    @property
+    def amount_field(self):
+        return "amount" if self.role == "damaged_player" else "delta"
+
+    def effect(self):
+        amount = {"kind": EQUIPPED_COMBAT_HAND_COUNT_KIND, "schema_version": self.schema_version, "role": self.role}
+        if self.role == "damaged_player":
+            return {"op": "damage", "source": "$source", "target": "$context.target", "amount": amount}
+        return {"op": "life", "player": "$controller", "delta": amount}
+
+    @classmethod
+    def from_effect(cls, effect):
+        amount = effect.get("amount", effect.get("delta"))
+        if (not isinstance(amount, Mapping) or set(amount) != {"kind", "schema_version", "role"}
+                or amount["kind"] != EQUIPPED_COMBAT_HAND_COUNT_KIND):
+            raise ValueError("Equipped combat hand size requires its original amount operand")
+        spec = cls(amount["role"], amount["schema_version"])
+        if thaw_value(effect) != spec.effect():
+            raise ValueError("Equipped combat hand size requires its matching exact result and participant")
+        return spec
+
+
+def uses_equipped_combat_hand_count(effect):
+    return isinstance(effect, Mapping) and any(
+        isinstance(effect.get(field), Mapping) and effect[field].get("kind") == EQUIPPED_COMBAT_HAND_COUNT_KIND
+        for field in ("amount", "delta")
+    )
+
+
 def uses_spell_cast_count_life(effect):
     return isinstance(effect, Mapping) and any(
         isinstance(effect.get(field), Mapping) and effect[field].get("kind") == SPELL_CAST_COUNT_LIFE_KIND

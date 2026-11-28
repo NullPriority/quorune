@@ -45,12 +45,18 @@ class PrivateHandCollectionHandler:
             return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(reason="no matching hand cards"))
         maximum = len(rows) if spec.maximum is None else min(spec.maximum, len(rows))
+        limits = spec.card_type_limits(rows)
+        prompt = (
+            "Choose up to one creature card and up to one land card from your hand to put onto the battlefield together."
+            if limits else "Choose cards from your hand to put onto the battlefield together."
+        )
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
-                prompt="Choose cards from your hand to put onto the battlefield together.",
+                prompt=prompt,
                 choice=ObjectChoice(field_name="cards", legal_refs=tuple(row.ref for row in rows),
                     zones=("hand",), minimum=0, maximum=maximum, optional=True,
-                    visibility="actor_private", owner_relation="actor", predicates=FrozenMap(spec.query.canonical_dict())),
+                    visibility="actor_private", owner_relation="actor", predicates=FrozenMap(spec.query.canonical_dict()),
+                    schema_extras=FrozenMap({"subset_maxima": limits} if limits else {})),
                 public_context=FrozenMap({"stack": context.stack_ref, "operation": self.operation,
                     "objects": [{"id": row.ref, "name": row.printed_name} for row in rows]}),
             ),
@@ -80,11 +86,15 @@ class PrivateHandCollectionHandler:
                        for ref, identity in identities.items())
                 or any(ref not in identities for ref in selected)):
             raise SemanticChoiceError("Selected hand collection is outside its authoritative choices")
+        selected_rows = []
         for ref in selected:
             row = query.object(ref, zones=("hand",))
             if (row is None or row.owner != actor or row.logical_object_id != identities[ref]
                     or not object_matches_query(row, spec.query)):
                 raise SemanticChoiceError("Selected hand card changed its incarnation or predicate")
+            selected_rows.append(row)
+        if any(len(group["refs"]) > group["maximum"] for group in spec.card_type_limits(selected_rows)):
+            raise SemanticChoiceError("Selected hand cards must fit distinct creature and land slots")
         if not selected:
             return SemanticChoiceCompletion()
         return SemanticChoiceCompletion(prepend_effects=(FrozenMap({

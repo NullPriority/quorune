@@ -3,9 +3,11 @@ import test from "node:test";
 
 import {
   activeFields,
+  choiceCompatibilityErrors,
   choicesWithDefaults,
   executableChoices,
   initialChoices,
+  restoreCastChoices,
   updateModalTargetSelection,
   validateChoices,
   selectedTargetCostLabel,
@@ -65,6 +67,39 @@ test("A target requirement uses the chosen count and the complete set of modes",
   }).join(), /Choose at least one Flagbearer/);
 });
 
+test("required controls from newer forms block commitment with a version message", () => {
+  const required = form([{ name: "future", label: "Choose a value", control: "future_control", required: true }]);
+  assert.match(validateChoices(required, {})[0], /Update Quorune.*required control/);
+  assert.deepEqual(choiceCompatibilityErrors(required, {}), validateChoices(required, {}));
+  assert.match(validateChoices({ ...required, v: 2 }, {})[0], /version of the action form/);
+  assert.deepEqual(choiceCompatibilityErrors({ ...required, v: 2 }, {}), validateChoices({ ...required, v: 2 }, {}));
+  const ordinary = form([{ name: "name", label: "Name", control: "text", required: true }]);
+  assert.match(validateChoices(ordinary, {})[0], /required/);
+  assert.deepEqual(choiceCompatibilityErrors(ordinary, {}), []);
+  const variants = {
+    ...form([]),
+    variants: { field: "cost_option", default: "normal", options: [
+      { value: "normal", fields: [] },
+      { value: "future", fields: required.fields },
+    ] },
+  };
+  assert.deepEqual(choiceCompatibilityErrors(variants, { cost_option: "normal" }), []);
+  assert.match(choiceCompatibilityErrors(variants, { cost_option: "future" })[0], /required control/);
+});
+
+test("resuming a cast keeps offered targets and costs and clears choices that expired", () => {
+  const current = form([
+    { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 1, max: 2, legal_refs: ["B", "C"] }] } },
+    { name: "cost_cards", control: "refs", minimum: 1, maximum: 1, legal_refs: ["A1"] },
+    { name: "mana_pool_payment", control: "mana_pool_payment", rows: [{ id: "new-pool", maximum: 1 }] },
+  ]);
+  const restored = restoreCastChoices(current, {
+    targets: { target: ["B", "D"] }, cost_cards: ["A1"], mana_pool_payment: { "old-pool": 1 },
+  });
+  assert.deepEqual(restored, { targets: { target: ["B"] }, cost_cards: ["A1"] });
+  assert.deepEqual(validateChoices(current, restored), []);
+});
+
 test("Exact pool payment submits only bounded quantities from offered mana classes", () => {
   const payment = form([{
     name: "mana_pool_payment", control: "mana_pool_payment", required: false,
@@ -99,6 +134,23 @@ test("Announced damage is editable and only submitted for its active target form
   assert.deepEqual(validateChoices(choices, { targets: { target: [] } }), []);
   assert.deepEqual(executableChoices(choices, { targets: { target: [] } }).damage_allocation, {});
   assert.equal(choicesWithDefaults(choices, edited).damage_allocation, undefined);
+  assert.deepEqual(executableChoices(form([]), edited), {});
+});
+
+test("Announced counter shares use a distinct target form and preserve a selected split", () => {
+  const choices = form([{ name: "targets", control: "targets", schema: {
+    groups: [{ id: "target", min: 1, max: 3, legal_refs: ["first", "second", "third"] }],
+    target_counter_allocation: { schema_version: 1, total: 3 },
+  } }]);
+  const targets = { target: ["first", "second"] };
+  assert.deepEqual(executableChoices(choices, { targets }), {
+    targets, target_counter_allocation: { first: 2, second: 1 },
+  });
+  const edited = { targets, target_counter_allocation: { first: 1, second: 2 } };
+  assert.deepEqual(validateChoices(choices, edited), []);
+  assert.deepEqual(executableChoices(choices, edited), edited);
+  const invalid = { targets, target_counter_allocation: { first: 3, second: 0 } };
+  assert.match(validateChoices(choices, invalid).join(), /all three counters/);
   assert.deepEqual(executableChoices(form([]), edited), {});
 });
 
@@ -187,10 +239,21 @@ test("Declared X uses the server's minimum and maximum for each target", () => {
   ]);
   assert.deepEqual(validateChoices(choices, { x: 0, targets: { target: ["LOW"] } }), []);
   assert.deepEqual(validateChoices(choices, { x: 3, targets: { target: ["HIGH"] } }), []);
-  assert.ok(validateChoices(choices, { x: 1, targets: { target: ["HIGH"] } }).length);
+  assert.deepEqual(validateChoices(choices, { x: 1, targets: { target: ["HIGH"] } }), [
+    "Choose an X within the offered range for each target.",
+  ]);
   assert.ok(validateChoices(choices, { x: 3, targets: { target: ["LOW"] } }).length);
   const schema = activeFields(choices, { x: 3 })[1].schema as { groups: { legal_refs: string[] }[] };
   assert.deepEqual(schema.groups[0].legal_refs, ["HIGH"]);
+});
+
+test("A stale ordinary target receives one readable group message", () => {
+  const choices = form([{ name: "targets", control: "targets", schema: {
+    groups: [{ id: "raw_target_group", min: 1, max: 1, legal_refs: ["A"] }],
+  } }]);
+  assert.deepEqual(validateChoices(choices, { targets: { raw_target_group: ["stale"] } }), [
+    "Targets changed. Choose from the current targets.",
+  ]);
 });
 
 test("Declared X updates the exact graveyard payment count", () => {
@@ -822,4 +885,27 @@ test("copy targets preserve defaults and validate each copy", () => {
   assert.deepEqual(validateChoices(copies, choices), []);
   choices.copy_targets = [{ target: ["C01"] }, { target: [] }];
   assert.match(validateChoices(copies, choices)[0], /Copy 2/);
+});
+
+test("A nontarget allocation accepts any legal positive shares within the available total", () => {
+  const action = form([{
+    name: "counter_allocation", control: "quantity_map", minimum_each: 1, maximum_total: 4,
+    options: [{ value: "your-creature" }, { value: "other-creature" }],
+  }]);
+  const empty = initialChoices(action);
+  assert.deepEqual(empty, { counter_allocation: {} });
+  assert.deepEqual(validateChoices(action, empty), []);
+  assert.deepEqual(executableChoices(action, empty), empty);
+  const legal = { counter_allocation: { "your-creature": 2, "other-creature": 1 } };
+  assert.deepEqual(validateChoices(action, legal), []);
+  assert.deepEqual(executableChoices(action, legal), legal);
+  for (const counter_allocation of [
+    { "your-creature": 2, "other-creature": 3 },
+    { "your-creature": 0 },
+    { "your-creature": 0.5 },
+    { "your-creature": "1" },
+    { "unoffered-card": 1 },
+  ]) {
+    assert.match(validateChoices(action, { counter_allocation }).join(), /allows up to 4/);
+  }
 });

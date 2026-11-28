@@ -4,6 +4,7 @@ from . import regex_working_set as re
 from typing import Iterable
 
 from .ir_model import SourceSpan
+from ..characteristic_evaluation import type_parts
 
 
 _ORDINARY_SAGA_RULES_REMINDER = re.compile(
@@ -14,9 +15,23 @@ _ORDINARY_SAGA_RULES_REMINDER = re.compile(
 _TRANSFORM_REMINDER = re.compile(
     r"\(Transforms from [^)]+\.\)", re.IGNORECASE
 )
+_SIEGE_REMINDER = re.compile(
+    r"\(As a Siege enters, choose an opponent to protect it\. You and others can attack it\. "
+    r"When it['’]s defeated, exile it, then cast it transformed\.\)",
+    re.IGNORECASE,
+)
+_MELD_PARTNER_NAME_WORD = r"(?:[A-Z][\w'’‐-]*|[dl]['’][A-Z][\w'’‐-]*|and|by|de|of|the)"
+_MELD_PARTNER_REMINDER = re.compile(
+    rf"\(Melds with [A-Z][\w'’‐-]*(?:,? {_MELD_PARTNER_NAME_WORD})*\.\)"
+)
 _DRYAD_ARBOR_REMINDER = (
     "(This land isn't a spell, it's affected by summoning sickness, and it "
     'has "{T}: Add {G}.")'
+)
+_LEGENDARY_SPELL_REMINDER = re.compile(
+    r"\(You may cast a legendary (?P<spell>instant|sorcery) only if you control "
+    r"a legendary creature or planeswalker\.\)",
+    re.IGNORECASE,
 )
 _HYBRID_MANA_REMINDER = re.compile(
     r"\(\{(?P<first>[WUBRGC])/(?P<second>[WUBRGC])\} can be paid with "
@@ -114,17 +129,31 @@ def is_standalone_parenthetical_reminder(text: str) -> bool:
     return saw_group and depth == 0
 
 
+def is_passive_meld_partner_reminder(text: str) -> bool:
+    """Recognize a single partner-name clause in the printed reminder form."""
+    return _MELD_PARTNER_REMINDER.fullmatch(text.strip()) is not None
+
+
 def is_nonexecuting_standalone_reminder(
     text: str,
     *,
     transform: bool = False,
+    meld: bool = False,
     dryad_arbor: bool = False,
+    type_line: str = "",
+    legendary_sorcery: bool = False,
+    siege: bool = False,
 ) -> bool:
     """Recognize reminders whose authority is already carried structurally."""
+    from ..rules.legendary_sorcery import REMINDER
 
     stripped = text.strip()
     if not is_standalone_parenthetical_reminder(stripped):
         return False
+    legendary = _LEGENDARY_SPELL_REMINDER.fullmatch(stripped)
+    if legendary is not None:
+        types, _, supertypes = type_parts(type_line)
+        return "legendary" in supertypes and legendary["spell"].casefold() in types
     return bool(
         _HYBRID_MANA_REMINDER.fullmatch(stripped)
         or _PHYREXIAN_MANA_REMINDER.fullmatch(stripped)
@@ -132,7 +161,10 @@ def is_nonexecuting_standalone_reminder(
         or _COLORLESS_MANA_REMINDER.fullmatch(stripped)
         or _SNOW_MANA_REMINDER.fullmatch(stripped)
         or (transform and _TRANSFORM_REMINDER.fullmatch(stripped))
+        or (siege and _SIEGE_REMINDER.fullmatch(stripped))
+        or (meld and is_passive_meld_partner_reminder(stripped))
         or (dryad_arbor and stripped == _DRYAD_ARBOR_REMINDER)
+        or (legendary_sorcery and stripped.casefold() == REMINDER)
     )
 
 
@@ -143,8 +175,15 @@ def material_source_lines(
     layout: str = "",
     type_line: str = "",
 ) -> Iterable[tuple[str, str, SourceSpan]]:
-    """Yield material Oracle rows while omitting the ordinary Saga reminder."""
+    """Yield source-spanned material rows, skipping recognized reminders."""
 
+    from ..rules.legendary_sorcery import is_legendary_sorcery
+
+    legendary_sorcery = is_legendary_sorcery(type_line)
+    from ..characteristic_evaluation import type_parts
+
+    types, subtypes, _ = type_parts(type_line) if layout == "transform" else ((), (), ())
+    siege = "battle" in types and "siege" in subtypes
     for line, span in source_lines(text):
         material_line = without_parenthetical_reminder(line)
         if (
@@ -152,6 +191,10 @@ def material_source_lines(
             and is_nonexecuting_standalone_reminder(
                 line,
                 transform=layout == "transform",
+                siege=siege,
+                meld=layout == "meld",
+                type_line=type_line,
+                legendary_sorcery=legendary_sorcery,
                 dryad_arbor=(
                     "land creature" in type_line.replace("—", " ").casefold()
                     and "forest dryad" in type_line.casefold()
@@ -170,6 +213,7 @@ def material_source_lines(
 
 __all__ = [
     "is_nonexecuting_standalone_reminder",
+    "is_passive_meld_partner_reminder",
     "is_standalone_parenthetical_reminder",
     "material_source_lines",
     "source_lines",

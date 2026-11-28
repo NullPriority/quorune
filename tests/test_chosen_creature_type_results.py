@@ -28,9 +28,11 @@ from test_controller_creature_keyword_absence import register_card
 
 FEAR = "Crippling Fear"
 MELODY = "Distant Melody"
+PALISADE = "Raise the Palisade"
 ORIGINALS = {
     FEAR: ChosenCreatureTypeResult.NONMATCHING_CREATURE_STATS,
     MELODY: ChosenCreatureTypeResult.CONTROLLED_PERMANENT_DRAW,
+    PALISADE: ChosenCreatureTypeResult.NONMATCHING_CREATURE_RETURN,
 }
 PROFILE = "commander_review"
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -47,11 +49,13 @@ class ChosenCreatureTypeResultTests(InheritedNativeFixture, unittest.TestCase):
             },
             "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth", "Frost Lynx"},
             "characteristic-query-union-cards.json": {"Universal Automaton"},
+            "attacking-creature-exile-optional-search-cards.json": {"Slippery Bogle"},
             "creature-subtype-addition-cards.json": {"Boggart Shenanigans", "Goblin Piker", "Raging Goblin"},
             "temporary-source-keyword-cards.json": {"Mistform Wall"},
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
         }
-        parts = [FIXTURES / "chosen-creature-type-results-cards.json"]
+        parts = [FIXTURES / "chosen-creature-type-results-cards.json",
+                 FIXTURES / "chosen-type-owner-return-cards.json"]
         for name, names in support.items():
             document = json.loads((FIXTURES / name).read_bytes())
             document["cards"] = [card for card in document["cards"] if card["name"] in names]
@@ -208,6 +212,68 @@ class ChosenCreatureTypeResultTests(InheritedNativeFixture, unittest.TestCase):
         for seat in "ABC":
             self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
         self.replay(game, load=True)
+
+    def test_actual_palisade_reads_effective_types_and_returns_one_owner_hand_batch(self):
+        game = self.session(6500151)
+        spell = self.add(game.engine, PALISADE, zone="hand")
+        wall = self.add(game.engine, "Mistform Wall")
+        cat = self.add(game.engine, "Frost Lynx", seat="D")
+        changeling = self.add(game.engine, "Universal Automaton", seat="C")
+        borrowed = self.add(game.engine, "Grizzly Bears", seat="B", ref="palisade-borrowed-bear")
+        borrowed.owner = "C"
+        hexproof = self.add(game.engine, "Slippery Bogle", seat="B")
+        land = self.add(game.engine, "Generic Bound Plains", seat="B")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="palisade-private")
+        for card in (spell, wall, changeling, hexproof):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 10, "U": 3})
+        self.checkpoint(game)
+
+        offer = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"] == "cast:" + spell.ref)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {
+            "action_id": offer["id"], "targets": [hexproof.ref], "pay": "auto",
+        }).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast(game, "A", spell)
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.priority(game, "A")
+        activation, = [row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                       if row["id"].startswith(f"activate:{wall.ref}:")]
+        result = game.act("pilot:A", {"action_id": activation["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self._choose(game, "Cat")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+
+        game = self.replay(game, load=True)
+        self._choose(game, "Cat")
+        self.assertIsNone(self.resolve(game))
+        for card in (wall, cat, changeling, land):
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+        for card, owner in ((borrowed, "C"), (hexproof, "B")):
+            self.assertEqual("hand", game.state.cards[card.object_id].zone)
+            self.assertIn(card.object_id, game.state.players[owner].zones["hand"])
+        timestamps = {game.state.cards[card.object_id].zone_timestamp for card in (borrowed, hexproof)}
+        self.assertEqual(1, len(timestamps))
+        for viewer in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + viewer, full=True)))
+        self.replay(game, load=True)
+
+    def test_palisade_scope_is_untargeted_and_closed_to_creature_owner_hand_return(self):
+        from test_bound_effect_programs import record
+
+        material = "Choose a creature type. Return all creatures that aren't of the chosen type to their owners' hands."
+        outcome = compile_oracle_card(record(material, "Sorcery"), capability_registry=self.registry)
+        self.assertEqual("exact", outcome.status, outcome.material_residuals)
+        node, = outcome.faces[0].nodes
+        self.assertIsNone(node.target_schema)
+        self.assertIn("zone.move.fixed_public_set", node.capability_dependencies)
+        for changed in (material.replace("creatures", "permanents"),
+                        material.replace("their owners' hands", "your hand")):
+            self.assertNotEqual("exact", compile_oracle_card(record(changed, "Sorcery"),
+                                                            capability_registry=self.registry).status)
 
     def test_omitting_the_typed_result_recognizer_restores_each_whole_spell_residual(self):
         with patch.object(fixed_resolution_characteristics, "_chosen_creature_type_result_template", return_value=None):

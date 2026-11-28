@@ -226,7 +226,7 @@ class TargetedGraveyardExileOutcomeReceiptTests(unittest.TestCase):
             self.assertEqual(0, commit_targeted_graveyard_exiles(host, intent))
 
         assert_no_creature_exiled()
-        with patch('quorune.rules.targeted_graveyard_outcomes._count_exiled_creatures', return_value=1):
+        with patch('quorune.rules.targeted_graveyard_outcomes._partition_exiled_cards', return_value=(1, 0)):
             with self.assertRaisesRegex(AssertionError, '0 != 1'):
                 assert_no_creature_exiled()
 
@@ -670,7 +670,7 @@ class TargetedGraveyardExileOutcomeNativeTests(InheritedNativeFixture, unittest.
             self.finish(session, private)
 
         journey(739072)
-        with patch('quorune.rules.targeted_graveyard_outcomes._count_exiled_creatures', return_value=1):
+        with patch('quorune.rules.targeted_graveyard_outcomes._partition_exiled_cards', return_value=(1, 0)):
             with self.assertRaisesRegex(AssertionError, 'A noncreature counts as zero'):
                 journey(739073)
 

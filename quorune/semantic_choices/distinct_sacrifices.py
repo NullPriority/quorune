@@ -54,7 +54,7 @@ def _progress(effect, roles, candidates):
 def _current_choices(effect, roles, actor, query):
     candidates = {row.ref: (row.logical_object_id, row.types)
                   for row in query.objects(zones=("battlefield",), controller=actor)
-                  if set(row.types).intersection(roles)}
+                  if not row.sacrifice_prohibited and set(row.types).intersection(roles)}
     index, selected, used = _progress(effect, roles, candidates)
     remaining = {ref: row for ref, row in candidates.items() if ref not in used}
     tail = roles[index:]

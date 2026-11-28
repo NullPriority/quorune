@@ -19,10 +19,10 @@ def controller_reference_index(value):
     return value['index']
 
 
-def damage_dealer_controller_reference():
-    return {"kind": DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND, "schema_version": 1}
+def damage_dealer_controller_reference(version=1):
+    return {"kind": DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND, "schema_version": version}
 
 
-def is_damage_dealer_controller_reference(value):
+def is_damage_dealer_controller_reference(value, *, version=1):
     return (isinstance(value, Mapping) and type(value.get("schema_version")) is int
-            and value == damage_dealer_controller_reference())
+            and value == damage_dealer_controller_reference(version))

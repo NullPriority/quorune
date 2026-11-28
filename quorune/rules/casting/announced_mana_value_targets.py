@@ -1,4 +1,4 @@
-"""Price and announce a single battlefield target limited by the cast's X."""
+"""Price and announce target mana-value limits from the cast's X."""
 
 from __future__ import annotations
 
@@ -8,12 +8,14 @@ from ..announced_mana_value_target import (
     ANNOUNCED_MANA_VALUE_LIMIT,
     bind_announced_mana_value_limit,
     has_announced_mana_value_limit,
+    has_cast_x_equality,
+    has_distinct_own_graveyard_mana_value_limit,
 )
 from ...targets import target_plan
 from .spell_text import CAST_TEXT_FRAMES
 
 
-def bind_announced_target_cost_option(schema, option, response, *, hint, has_mana_x):
+def bind_announced_target_cost_option(schema, option, response, *, hint, has_mana_x, target_limit=None):
     if not has_announced_mana_value_limit(schema):
         return option
     if not has_mana_x or option.get("target_schema") is not None:
@@ -26,7 +28,11 @@ def bind_announced_target_cost_option(schema, option, response, *, hint, has_man
     except (TypeError, ValueError):
         return None
     if hint and not zero_price:
-        target.pop("mana_value_max")
+        target.pop("mana_value" if has_cast_x_equality(schema) else "mana_value_max")
+        if target.get("distinct_mana_values"):
+            if type(target_limit) is not int or target_limit < 0:
+                return None
+            target["up_to"] = target_limit
     return {**option, "target_schema": target, ANNOUNCED_MANA_VALUE_LIMIT: True}
 
 
@@ -53,27 +59,49 @@ def quote_announced_mana_value_target(host, option, schema, *, declared_x=None):
         maximum = declared_x
         if "x" in raw.get("choice_schema", {}):
             raw["choice_schema"]["x"].update(minimum=maximum, maximum=maximum, default=maximum)
-    cap = bind_announced_mana_value_limit(schema, maximum)["mana_value_max"]
+    equality = has_cast_x_equality(schema)
+    bound = bind_announced_mana_value_limit(schema, maximum)
+    cap = bound["mana_value" if equality else "mana_value_max"]
+    exact_quote = equality and (declared_x is not None or raw.get("x_value_policy") == "zero")
+    field = "mana_value" if exact_quote else "mana_value_max"
+    distinct_values = has_distinct_own_graveyard_mana_value_limit(schema)
     if CAST_TEXT_FRAMES in raw:
+        if distinct_values:
+            # This declaration needs a separately assured composed target price.
+            return None
         group_id, = raw[CAST_TEXT_FRAMES][0]["groups"].values()
         composed = raw["target_schema"]
         raw["target_schema"] = {
             **composed,
             "groups": [
-                {**group, "mana_value_max": cap} if group["id"] == group_id else group
+                {**group, field: cap} if group["id"] == group_id else group
                 for group in composed["groups"]
             ],
         }
     else:
-        raw["target_schema"]["mana_value_max"] = cap
-        group_id = target_plan(raw["target_schema"]).groups[0].group_id
+        target = raw["target_schema"]
+        target[field] = cap
+        if distinct_values:
+            target["up_to"] = min(target["up_to"], bound["up_to"])
+        group_id = target_plan(target).groups[0].group_id
     raw["x_bound_group"] = group_id
+    if equality:
+        raw["announced_x_equality"] = True
     witness = raw.get("target_cost_witness")
     if witness is not None:
-        reference, = witness["targets"][group_id]
-        if _required_x(host, reference) > maximum:
+        references = witness["targets"][group_id]
+        if not distinct_values and len(references) != 1:
             return None
-        raw["target_x_maxima"] = {reference: maximum}
+        if any(_required_x(host, ref) > maximum for ref in references):
+            return None
+        if equality:
+            exact_values = {ref: _required_x(host, ref) for ref in references}
+            if any(host._target_snapshot(ref)["mana_value"] != x or (exact_quote and x != maximum)
+                   for ref, x in exact_values.items()):
+                return None
+            raw["target_x_maxima"] = exact_values
+        else:
+            raw["target_x_maxima"] = dict.fromkeys(references, maximum)
     return type(option).from_dict(raw)
 
 
@@ -85,7 +113,17 @@ def with_announced_target_ranges(host, public_schema, option):
     target_maxima = option.get("target_x_maxima", {})
     group_id = option["x_bound_group"]
     target = next(group for group in public_schema["groups"] if group["id"] == group_id)
+    equality = option.get("announced_x_equality") is True
+    legal_values = {ref: _required_x(host, ref) for ref in target["legal_refs"]}
+    if equality:
+        legal_values = {ref: x for ref, x in legal_values.items() if host._target_snapshot(ref)["mana_value"] == x}
+        if len(legal_values) != len(target["legal_refs"]):
+            groups = [{**row, "legal_refs": list(legal_values)} if row["id"] == group_id else row
+                      for row in public_schema["groups"]]
+            available = {ref for row in groups for ref in row["legal_refs"]}
+            public_schema = {**public_schema, "groups": groups,
+                             "legal_refs": [ref for ref in public_schema["legal_refs"] if ref in available]}
     return {**public_schema, "x_bound_group": group_id, "x_bounds_by_ref": {
-        ref: {"minimum": _required_x(host, ref), "maximum": target_maxima.get(ref, maximum)}
-        for ref in target["legal_refs"]
+        ref: {"minimum": minimum, "maximum": minimum if equality else target_maxima.get(ref, maximum)}
+        for ref, minimum in legal_values.items()
     }}

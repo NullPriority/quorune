@@ -1,0 +1,86 @@
+{
+  "cards": [
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{U}{U}",
+      "name": "Agent of Treachery",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "oracle_text": "When this creature enters, gain control of target permanent.\nAt the beginning of your end step, if you control three or more permanents you don't own, draw three cards.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "3",
+      "type_line": "Creature — Human Rogue"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Agent of Treachery's effect lasts indefinitely. It doesn't wear off during the cleanup step, and it doesn't expire if Agent of Treachery leaves the battlefield. In a multiplayer game, it does expire if you leave the game.",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't control three permanents you don't own as your end step begins, Agent of Treachery's last ability doesn't trigger. If you no longer control three permanents you don't own as it resolves, you won't draw three cards. Those don't have to be the same three permanents each time.",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of a permanent \"until end of turn,\" that effect will wear off during the cleanup step, after the end step. You'll control that permanent while considering Agent of Treachery's last ability.",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it. Gaining control of an Aura or Equipment doesn't change what it's currently attached to.",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "A token's owner is the player who created it.",
+      "oracle_id": "4cd82c7a-86df-4d29-b578-c009208c0d4b",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests"
+}

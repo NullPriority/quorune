@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Resolution-created subtype additions pinned to one battlefield incarnation."""
 
-from typing import Any, Protocol
+from typing import Any, Mapping, Protocol
 
 from .continuous_effect_model import (
     ContinuousEffect,
@@ -16,6 +16,47 @@ from .continuous_effect_state import (
     create_resolution_continuous_effect,
 )
 from .creature_subtypes import canonical_creature_subtype
+
+
+LOCKED_CREATURE_SUBTYPE_CAPABILITY = "continuous.resolution.locked_creature_subtype_addition"
+LOCKED_CREATURE_SUBTYPE_VERSION = 2
+
+
+def locked_creature_subtype_effect(subtype):
+    normalized = canonical_creature_subtype(subtype)
+    if normalized is None:
+        raise ValueError("An indefinite creature subtype addition requires a canonical subtype")
+    return {"op": "add_subtype", "schema_version": LOCKED_CREATURE_SUBTYPE_VERSION,
+            "controller": "$controller", "subtype": normalized}
+
+
+def locked_creature_subtype_from_effect(effect, *, actor="$controller"):
+    if (not isinstance(effect, Mapping)
+            or set(effect) != {"op", "schema_version", "controller", "subtype"}
+            or type(effect["schema_version"]) is not int
+            or type(effect["subtype"]) is not str
+            or dict(effect) != {**locked_creature_subtype_effect(effect["subtype"]), "controller": actor}):
+        raise ValueError("The locked subtype addition requires its exact controller and scope")
+    return effect["subtype"]
+
+
+def commit_controlled_creature_subtype_addition(host, *, controller, source, subtype):
+    from .continuous_effect_state import matching_battlefield_objects
+    from .object_predicate import ObjectQuerySpec
+
+    cards = matching_battlefield_objects(host, ObjectQuerySpec(
+        zones=("battlefield",), controller=controller, types_all=("creature",),
+    ))
+    if not cards:
+        return ()
+    effect = create_resolution_continuous_effect(
+        host, source=source, targets=cards, layer=Layer.TYPE, sublayer="4",
+        operations=(ContinuousOperation("add_types", (subtype.title(),), field="subtypes"),),
+        duration=ContinuousEffectDuration.ZONE_OBJECT, required_types=("creature",),
+    )
+    if effect is None:
+        raise ZoneObjectSubtypeGrantError("Locked creature subtype additions require the continuous journal")
+    return tuple(card.ref for card in cards)
 
 
 class ZoneObjectSubtypeGrantError(ValueError):

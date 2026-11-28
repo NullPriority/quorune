@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
 from ..errors import GameRuleError
-from ..library_order_model import LibraryArrivalOrder
+from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder, RandomGraveyardBottomOrder
 
 if TYPE_CHECKING:
     from ..model import CardInstance
@@ -99,6 +99,21 @@ def commit_ordered_library_partition(
     library[:] = [*bottom, *untouched, *reversed(top)]
 
 
+def validated_library_search_results(state, seat, object_ids, *, public, expected_zone, announce):
+    if (type(public) is not bool or expected_zone not in {"library", "hand"}
+            or type(announce) is not bool or (announce and not public)):
+        raise GameRuleError("Search-result visibility is malformed")
+    if any(type(object_id) is not str or object_id not in state.cards for object_id in object_ids):
+        raise GameRuleError("Search-result identities are unavailable")
+    if len(object_ids) != len(set(object_ids)):
+        raise GameRuleError("Search-result identities must be unique")
+    cards = [state.cards[object_id] for object_id in object_ids]
+    if any(card.owner != seat or card.zone != expected_zone
+            or card.object_id not in state.players[seat].zones[expected_zone] for card in cards):
+        raise GameRuleError("Search-result visibility requires the expected owned zone")
+    return cards
+
+
 def publish_library_search_reveal(host, seat, cards, *, announce):
     shown = sorted(cards, key=lambda card: card.ref) if announce else cards
     public_details = {"objects": [card.ref for card in shown]}
@@ -126,6 +141,16 @@ def place_revealed_library_search_results_on_top(host, owner, seat, top_first, *
             card.revealed_to = [seat]
 
 
+def place_private_library_find_on_top(state, seat, object_id):
+    """Advance private positional knowledge after shuffling around a found card."""
+    card, = validated_library_search_results(
+        state, seat, (object_id,), public=False, expected_zone="library", announce=False,
+    )
+    commit_ordered_library_partition(state.players[seat].zones["library"], top_top_first=(object_id,))
+    card.known_to = [seat]
+    card.revealed_to = []
+
+
 def validate_ordered_library_destination(host, cards_by_id, changes, order: LibraryArrivalOrder) -> str:
     if not isinstance(order, LibraryArrivalOrder) or (
         len(changes) != len(order.members) or set(changes) != {(member, "library") for member in order.members}
@@ -139,9 +164,7 @@ def validate_ordered_library_destination(host, cards_by_id, changes, order: Libr
     if len(owners) != 1:
         raise GameRuleError("Ordered library movements require a single library")
     owner, = owners
-    from ..library_order_model import DepartedLibraryArrivalOrder
-
-    if isinstance(order, DepartedLibraryArrivalOrder) and order.chooser != owner:
+    if isinstance(order, (DepartedLibraryArrivalOrder, RandomGraveyardBottomOrder)) and order.chooser != owner:
         raise GameRuleError("The library owner must order a departed card group")
     return owner
 
@@ -149,7 +172,7 @@ def validate_ordered_library_destination(host, cards_by_id, changes, order: Libr
 def commit_ordered_library_arrivals(
     library: list[str], order: LibraryArrivalOrder, committed: Iterable[CardInstance],
 ) -> None:
-    """Place arriving cards and grant knowledge of their private permutation."""
+    """Place actual arrivals and apply the ordering operation's positional knowledge."""
     arrivals = {card.object_id: card for card in committed if card.zone == "library"}
     ordered = tuple(member for member in order.members if member in arrivals)
     if not ordered:
@@ -166,8 +189,12 @@ def commit_ordered_library_arrivals(
             bottom_bottom_first=ordered if order.position == "bottom" else (),
         )
     if len(ordered) > 1:
+        random_bottom = isinstance(order, RandomGraveyardBottomOrder)
         for member in ordered:
-            arrivals[member].known_to = [order.chooser]
+            card = arrivals[member]
+            card.known_to = [] if random_bottom else [order.chooser]
+            if random_bottom:
+                card.revealed_to = []
 
 
 __all__ = [

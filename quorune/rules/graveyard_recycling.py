@@ -1,15 +1,21 @@
-"""Recycle public graveyards through canonical movement and shuffle ports."""
+"""Recycle public graveyards through canonical movement and library ordering."""
 from collections.abc import Mapping
+from random import Random
+
 from ..graveyard_recycling_model import (
     GraveyardRecyclingSpec, GRAVEYARD_RECYCLING_OPERATION, GRAVEYARD_RECYCLING_CAPABILITY,
-    HAND_GRAVEYARD_RECYCLING_CAPABILITY,
+    HAND_GRAVEYARD_RECYCLING_CAPABILITY, RANDOM_GRAVEYARD_BOTTOM_CAPABILITY,
+    random_graveyard_bottom_target_schema,
 )
 
 _PLAYER_SCHEMA = {'zones': ['player'], 'categories': ['player'], 'player_relation': 'any', 'count': 1}
 
 
-def _target_schema_matches(schema, scope):
-    if scope == 'target_player':
+def _target_schema_matches(schema, spec):
+    if spec.random_bottom:
+        return (isinstance(schema, Mapping) and dict(schema) == random_graveyard_bottom_target_schema()
+                and type(schema['groups'][0]['min']) is int and type(schema['groups'][0]['max']) is int)
+    if spec.scope == 'target_player':
         return isinstance(schema, Mapping) and type(schema.get('count')) is int and dict(schema) == _PLAYER_SCHEMA
     return schema is None or isinstance(schema, Mapping) and not schema
 
@@ -22,6 +28,9 @@ def _compiled_recycling_dependencies(value):
     player = {'controller': '$controller', 'target_player': '$target.0', 'all_players': 'all'}[spec.scope]
     if value['player'] != player:
         raise ValueError('Compiled recycling recipient differs from its declared scope')
+    if spec.random_bottom:
+        return spec, (GRAVEYARD_RECYCLING_CAPABILITY, RANDOM_GRAVEYARD_BOTTOM_CAPABILITY, 'zone.change.destination_replacement',
+                      'target.revalidate_resolution')
     return spec, (GRAVEYARD_RECYCLING_CAPABILITY, 'zone.change.destination_replacement',
         *(('target.revalidate_resolution',) if spec.scope == 'target_player' else ()),
         *((HAND_GRAVEYARD_RECYCLING_CAPABILITY,) if spec.include_hand else ()))
@@ -34,7 +43,7 @@ def graveyard_recycling_node_capabilities(*, effects, target_schema, mechanic_id
         spec, dependencies = _compiled_recycling_dependencies(effects[-1])
     except (TypeError, ValueError):
         return ()
-    if (not _target_schema_matches(target_schema, spec.scope)
+    if (not _target_schema_matches(target_schema, spec)
             or 'fixed-owner-zone-move' not in mechanic_ids
             or spec.scope == 'target_player' and 'cr-115-targets' not in mechanic_ids):
         return ()
@@ -67,7 +76,7 @@ def graveyard_recycling_runtime_dependencies(program):
         if isinstance(value, Mapping):
             if value.get('op') == GRAVEYARD_RECYCLING_OPERATION:
                 spec, dependencies = _compiled_recycling_dependencies(value)
-                if not _target_schema_matches(program.target_schema, spec.scope):
+                if not _target_schema_matches(program.target_schema, spec):
                     raise ValueError('Recycling requires its exact complete player-target declaration')
                 if spec.include_source:
                     dependencies = graveyard_recycling_node_capabilities(
@@ -92,6 +101,8 @@ def _recycling_players(host, spec, player, actor):
     active = tuple(host.public_zone_move_active_seats())
     if actor not in active:
         raise ValueError('Graveyard recycling requires the actual active resolving controller')
+    if spec.random_bottom and player is None:
+        return ()
     if spec.scope == 'all_players':
         if player != 'all': raise ValueError('All-player recycling has no individual player operand')
         order = tuple(host.public_zone_move_apnap_order())
@@ -113,6 +124,36 @@ def _present_recycling_source(host, source_context):
     return None
 
 
+def _resolve_random_graveyard_bottom(host, player, *, actor, reason, selections, source_context):
+    from ..library_order_model import RandomGraveyardBottomOrder
+    from ..zone_transitions import ZoneTransitionOwner
+
+    members = tuple(host.state.players[player].zones['graveyard'])
+    cards = tuple(host.state.cards.get(member) for member in members)
+    if (len(set(members)) != len(members)
+            or any(card is None or card.owner != player or card.zone != 'graveyard' for card in cards)):
+        raise ValueError('Whole graveyard membership changed before random-bottom movement')
+    card_ids = tuple(card.object_id for card in cards if card.is_card_object)
+    if not card_ids:
+        if selections:
+            raise ValueError('Empty graveyards have no per-object replacement selections')
+        return ()
+
+    private_order = list(card_ids)
+    Random(f'{host.state.config.seed}|{player}|graveyard-bottom-v1|{source_context.stack_ref}').shuffle(private_order)
+    order = RandomGraveyardBottomOrder(player, 'bottom', tuple(private_order))
+    moved = ZoneTransitionOwner(host).move_cards_simultaneously(
+        tuple((object_id, 'library') for object_id in card_ids), reason=reason, log=False,
+        replacement_selections=selections, library_order=order,
+    )
+    arrivals = tuple(card for card in moved if card.zone == 'library' and card.owner == player)
+    host._log(actor, 'graveyard.bottom',
+              f'{player} put {len(arrivals)} graveyard card(s) on the bottom in a random order.',
+              {'player': player, 'count': len(arrivals), 'reason': reason}, importance=2,
+              changed_objects=[card.object_id for card in arrivals], changed_players=[player])
+    return arrivals
+
+
 def resolve_graveyard_recycling(host, effect, *, actor, reason, source_context=None):
     if (not isinstance(effect, Mapping) or effect.get('op') != GRAVEYARD_RECYCLING_OPERATION
             or set(effect) - {'op', 'recycling', 'player', 'reason', '_runtime_source', '_replacement_selections'}
@@ -120,13 +161,22 @@ def resolve_graveyard_recycling(host, effect, *, actor, reason, source_context=N
         raise ValueError('Graveyard recycling instruction fields are incomplete or unknown')
     spec = GraveyardRecyclingSpec.from_dict(effect['recycling'])
     players = _recycling_players(host, spec, effect['player'], actor)
-    if spec.include_source:
+    if spec.requires_source_context:
         from ..semantic_runtime.context import SemanticSourceContext
 
         if not isinstance(source_context, SemanticSourceContext):
-            raise ValueError("Source recycling requires its original activation frame")
+            raise ValueError('This recycling instruction requires its original resolution frame')
     elif source_context is not None:
         raise ValueError("Historical recycling cannot carry a source object")
+    selections = tuple(effect.get('_replacement_selections') or ())
+    if spec.random_bottom:
+        if players:
+            return _resolve_random_graveyard_bottom(
+                host, players[0], actor=actor, reason=reason, selections=selections, source_context=source_context,
+            )
+        if selections:
+            raise ValueError('Omitted targets have no per-object replacement selections')
+        return ()
     references = []
     seen = set()
     for player in players:
@@ -146,7 +196,6 @@ def resolve_graveyard_recycling(host, effect, *, actor, reason, source_context=N
             references.append(original.ref)
             origins = (*origins, "battlefield")
             shuffle_players.add(original.owner)
-    selections = tuple(effect.get('_replacement_selections') or ())
     if not references and selections:
         raise ValueError('Empty graveyards have no per-object replacement selections')
     moved = ()

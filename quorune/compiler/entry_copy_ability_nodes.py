@@ -10,6 +10,16 @@ from .attached_granted_ability_nodes import attached_granted_ability_plan
 from .entry_copy_templates import entry_copy_node,entry_copy_spec
 
 
+def _controlled_enchantment_upkeep_return(spec, quoted):
+    from ..object_predicate import ObjectQuerySpec
+    from .linked_exile_return_templates import canonical_optional_enchantment_return
+
+    upkeep = "at the beginning of your upkeep, "
+    return (spec.selection == ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), controller="$controller")
+            and quoted.casefold().startswith(upkeep)
+            and canonical_optional_enchantment_return(quoted[len(upkeep):]) is not None)
+
+
 def _conditional_vanishing_copy_nodes(*, record, face_id, node_id, line, material_line, span,
         source_name, capability_registry, capability_profile):
     match = re.fullmatch(
@@ -107,10 +117,54 @@ def _face_status_copy_nodes(*, record, face_id, node_id, line, material_line, sp
     return parent,replace(child,kind=plan.node_kind)
 
 
+def _retained_legend_partner_copy(*, record, face_id, node_id, line, material_line, span, source_name,
+                                  capability_registry, capability_profile, material_line_for):
+    from ..commander_pairing import CommanderPairingKind, pairing_kind_for_material_line
+    from ..entry_copy import EntryCopySpec, RETAINED_LEGEND_PARTNER_COPY_QUERY
+    from ..rules.source_references import SourceReferenceSpec
+    from ..token_copy_recipes import (
+        RETAINED_LEGEND_PARTNER_VERSION, TokenCopyExceptionSpec, retained_legend_rule_fragment,
+    )
+    from .legend_rule_templates import legend_rule_exemption_spec
+
+    match = re.fullmatch(
+        r"You may have (?P<source>.+?) enter as a copy of another creature you control, "
+        r"except it has (?P<retained>.+?)['’]s other abilities\.?",
+        " ".join(material_line.split()), re.I,
+    )
+    if match is None or face_id != 'front' or record.layout != 'normal' or record.faces:
+        return None
+    source = SourceReferenceSpec(source_name)
+    if not source.matches(match["source"]) or not source.matches(match["retained"]):
+        return None
+    printed = tuple(material_line_for(text) for text in record.oracle_text.splitlines() if text.strip())
+    if len(printed) != 3 or printed[0] != material_line:
+        return None
+    legend = legend_rule_exemption_spec(printed[1])
+    if legend != retained_legend_rule_fragment() or pairing_kind_for_material_line(printed[2]) != CommanderPairingKind.PARTNER:
+        return None
+    exception = TokenCopyExceptionSpec(
+        schema_version=RETAINED_LEGEND_PARTNER_VERSION, add_keywords=("Partner",),
+        add_ability_fragments=(ability_fragment_to_dict(legend),),
+    )
+    spec = EntryCopySpec(RETAINED_LEGEND_PARTNER_COPY_QUERY, exception)
+    return entry_copy_node(node_id=node_id, line=line, material_line=material_line, span=span,
+                           source_name=source_name, capability_registry=capability_registry,
+                           capability_profile=capability_profile, residuals=[], spec=spec)
+
+
 def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
         source_name,trusted_mechanics,capability_registry,capability_profile,
         compile_inner,effect_template,trigger_effect_template,material_line_for,keyword_node_compiler):
     if capability_registry is None:return None
+    if material_line.casefold().rstrip(".").endswith(" other abilities"):
+        retained = _retained_legend_partner_copy(
+            record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+            source_name=source_name, capability_registry=capability_registry, capability_profile=capability_profile,
+            material_line_for=material_line_for,
+        )
+        if retained is not None and retained.exact:
+            return (retained,)
     if "doesn't copy" in material_line.casefold().replace("’", "'"):
         from .color_retaining_copy import retained_color_copy_nodes
 
@@ -147,7 +201,9 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
     shell=crew_shell['shell']+", except it's a Vehicle artifact and it loses all other card types" if crew_shell else match['shell']+(', except '+match['exception'] if match['exception'] else '')
     shell=re.sub(r"it isn't legendary, is an artifact in addition to its other types$","it isn't legendary and it's an artifact in addition to its other types",shell,flags=re.I)
     spec=entry_copy_spec(shell,source_name=source_name)
-    if spec is None or spec.selection.types_all!=('creature',):return None
+    if spec is None:return None
+    enchantment = _controlled_enchantment_upkeep_return(spec, quoted)
+    if spec.selection.types_all!=('creature',) and not enchantment:return None
     residuals=[];child_id=node_id+':copy-ability';children=[];fragments=[];added_keywords=()
     if keyword_match or crew_shell:
         added_keywords=('Haste',) if quoted.casefold()=='haste and dethrone' else ()
@@ -174,14 +230,16 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
                     runtime_coverage=tuple(v for v in inner.runtime_coverage if v!=CURRENT_ABILITY_FRAGMENT_COVERAGE)))
             else:return None
     else:
+        copied_name = "Copied enchantment" if enchantment else "Copied creature"
+        copied_type = "Enchantment" if enchantment else "Artifact" if spec.exception.card_types == ("artifact",) else "Creature"
         inner=compile_inner(node_id=child_id,line=quoted,material_line=material_line_for(quoted),
-            span=span,card_name='Copied creature',type_line='Artifact' if spec.exception.card_types==('artifact',) else 'Creature',keywords=(),
+            span=span,card_name=copied_name,type_line=copied_type,keywords=(),
             trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,
             capability_profile=capability_profile,residuals=residuals,
             effect_template=effect_template,trigger_effect_template=trigger_effect_template)
         if inner is None or not inner.exact or residuals:return None
         plan=attached_granted_ability_plan(node=inner,quoted_text=quoted,oracle_id=record.oracle_id,
-            face_id=face_id,source_line=span.line,card_name='Copied creature',keywords=(),node_id=child_id)
+            face_id=face_id,source_line=span.line,card_name=copied_name,keywords=(),node_id=child_id)
         if plan is None:return None
         fragments.append(plan.fragment);children.append(replace(inner,node_id=child_id,kind=plan.node_kind,text=quoted,span=span,residual_ids=()))
         compiled=(inner,)

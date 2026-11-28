@@ -9,10 +9,12 @@ from common import (
     keep_all,
     load_assets,
     make_session,
+    pass_current,
     set_fixture_turn,
 )
 from quorune.model import CombatState, StackItem
 from quorune.preflight import card_semantic_status
+from quorune.record import authoritative_state_hash
 from quorune.projection import StateProjector
 from quorune.semantic_runtime.player_target_protection import current_player_target_keywords
 from quorune.targets import TargetGroup
@@ -368,7 +370,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
         before_insects = sum(
             card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Insect"
+            and card.printed_name == "Insect Token"
             for card in engine.state.cards.values()
         )
         engine.move_card(
@@ -382,10 +384,172 @@ class ExactZimoneClosureTests(unittest.TestCase):
         after_insects = sum(
             card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Insect"
+            and card.printed_name == "Insect Token"
             for card in engine.state.cards.values()
         )
         self.assertEqual(before_insects + 1, after_insects)
+
+    def springheart_landfall(self, seed, *, zero=False, replace_copy=False, queued=False, sacrifice_mana=False):
+        from common import pass_current, register_current_fixture_programs
+        from quorune.continuous_effect_model import ContinuousOperation, Layer
+        from quorune.continuous_effect_state import ResolutionEffectSource, create_resolution_continuous_effect
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+
+        session = self.make_session(seed)
+        engine = session.engine
+        source = self.card(engine, "B", "Springheart Nantuko")
+        land = self.card(engine, "B", "Island")
+        if zero:
+            name = "Utopia Sprawl"
+            register_current_fixture_programs(self.db, engine.semantics, (self.db.lookup(name),))
+            model = BoundEffectProgramRuntimeTests.add(self, engine, name, seat="B", ref="copiable-aura-model")
+            fixture_source = ResolutionEffectSource("fixture:noncopiable-animation")
+            for layer, sublayer, operations in (
+                (Layer.TYPE, "4", (ContinuousOperation("set_types", ["Creature"], field="card_types"),
+                                   ContinuousOperation("set_types", [], field="subtypes"))),
+                (Layer.POWER_TOUGHNESS, "7b", (ContinuousOperation("set_power_toughness", [3, 3]),)),
+            ):
+                create_resolution_continuous_effect(engine, source=fixture_source, targets=(model,),
+                    layer=layer, sublayer=sublayer, operations=operations)
+            self.assertIn("creature", engine._type_parts(engine._effective_card_data(model)["type_line"])[0])
+            self.assertIn("aura", engine._type_parts(engine._copyable_characteristics(model)["type_line"])[1])
+        elif sacrifice_mana:
+            name = "Wild Cantor"
+            register_current_fixture_programs(self.db, engine.semantics, (self.db.lookup(name),))
+            model = BoundEffectProgramRuntimeTests.add(self, engine, name, seat="B", ref="springheart-sacrifice-model")
+        else:
+            model = self.card(engine, "B", "Birds of Paradise")
+            engine.move_card(model.object_id, "battlefield", controller="B")
+        if replace_copy:
+            name = "Divine Visitation"
+            register_current_fixture_programs(self.db, engine.semantics, (self.db.lookup(name),))
+            BoundEffectProgramRuntimeTests.add(self, engine, name, seat="B", ref="springheart-replacement")
+        for card in (source, land):
+            engine.move_card(card.object_id, "hand")
+        self.prepare_main(engine, "B")
+        engine.state.players["B"].mana_pool.update({"C": 2, "G": 2})
+        engine._issue_priority("B", engine._priority_action_hints("B"))
+        cast = next(row for row in session.packet("pilot:B")["decision"]["legal_actions"]
+                    if row.get("card") == source.ref and row["action"] == "cast")
+        result = session.act("pilot:B", {"action_id": cast["id"], "cost_option": "bestow",
+            "targets": [model.ref], "pay": "manual", "payment": {"C": 1, "G": 1}})
+        self.assertTrue(result.ok, result.summary)
+        while engine.state.stack:
+            pass_current(session)
+        self.assertEqual(model.object_id, source.attached_to)
+        if queued:
+            return self.springheart_land_then_depart(session, source, model, land)
+        play = next(row for row in session.packet("pilot:B")["decision"]["legal_actions"]
+                    if row.get("card") == land.ref and row["action"] == "play_land")
+        result = session.act("pilot:B", {"action_id": play["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(engine.state.stack))
+        self.assertEqual("B", engine.state.stack[-1].controller)
+        return session, source, model
+
+    def springheart_land_then_depart(self, session, source, model, land):
+        from common import pass_current
+        from quorune.record import checkpoint_envelope
+
+        engine = session.engine
+        effects = [
+            {"op": "move_if_in_zone", "card": card.ref, "from": origin, "destination": destination}
+            for card, origin, destination in (
+                (land, "hand", "battlefield"), (source, "battlefield", "graveyard"),
+                (model, "battlefield", "graveyard"),
+            )
+        ]
+        engine.state.stack.append(StackItem(stack_id="fixture:land-then-depart", ref="F1",
+            kind="triggered_ability", controller="B", label="Put a land onto the battlefield, then move its observers",
+            visibility=list(engine.seats), context={"dynamic_effects": effects}))
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_passes = []
+        engine._issue_priority("B", engine._priority_action_hints("B"))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        while any(item.ref == "F1" for item in engine.state.stack):
+            pass_current(session)
+        self.assertEqual("graveyard", engine.state.cards[source.object_id].zone)
+        self.assertEqual("graveyard", engine.state.cards[model.object_id].zone)
+        self.assertEqual(1, len(engine.state.stack))
+        self.assertEqual(source.object_id, engine.state.stack[-1].source_object_id)
+        return session, source, model
+
+    def test_springheart_publishes_a_pending_departure_snapshot_and_replays(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from quorune.record import authoritative_state_hash, replay_record
+
+        session, _, _ = self.springheart_landfall(11701, queued=True)
+        self.assertEqual(["Birds of Paradise"], self.springheart_resolve_and_pay(session))
+        with TemporaryDirectory() as temporary:
+            path = Path(temporary) / "springheart-pending-departure"
+            session.save(path)
+            replay = replay_record(path, self.db, verify=True)
+        self.assertTrue(replay["ok"])
+        self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
+
+    def springheart_resolve_and_pay(self, session, *, should_offer=True):
+        from common import pass_current
+        from quorune.record import authoritative_state_hash
+
+        while session.state.stack and session.state.pending_decision.kind != "semantic.choice":
+            pass_current(session)
+        decision = session.state.pending_decision
+        self.assertEqual(should_offer, decision is not None and decision.kind == "semantic.choice")
+        if should_offer:
+            self.assertNotIn("attached_copy_payment_v1", repr(session.packet("pilot:B", full=True)))
+            before = authoritative_state_hash(session.state)
+            self.assertFalse(session.act("pilot:A", {"action_id": "choose", "pay": True}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            result = session.act("pilot:B", {"action_id": "choose", "pay": True})
+            self.assertTrue(result.ok, result.summary)
+        return sorted(card.printed_name for card in session.state.cards.values()
+                      if card.is_token and card.zone == "battlefield")
+
+    def test_springheart_qualifies_the_original_trigger_controller_through_attachment_changes(self):
+        for mode in ("aura_control", "source_departure", "both_depart", "lost_model", "phased_model"):
+            with self.subTest(mode=mode):
+                session, source, model = self.springheart_landfall(11630 + len(mode))
+                engine = session.engine
+                if mode == "aura_control":
+                    engine.change_control(source.object_id, "A")
+                elif mode == "both_depart":
+                    engine._move_cards_simultaneously([(source.object_id, "graveyard"), (model.object_id, "graveyard")],
+                                                       reason="depart together")
+                elif mode == "lost_model":
+                    engine.move_card(model.object_id, "graveyard", semantic_events=True)
+                else:
+                    engine.move_card(source.object_id, "graveyard", semantic_events=True)
+                    if mode == "phased_model":
+                        model.phased_out = True
+                self.assertNotIn("attached_copy_payment_v1", repr(session.packet("pilot:A", full=True)))
+                eligible = mode not in ("lost_model", "phased_model")
+                expected = "Birds of Paradise" if eligible else "Insect Token"
+                self.assertEqual([expected], self.springheart_resolve_and_pay(session, should_offer=eligible))
+
+    def test_springheart_copies_its_sealed_recipient_after_mana_sacrifice(self):
+        session, _, model = self.springheart_landfall(11681, sacrifice_mana=True)
+        engine = session.engine
+        self.card(engine, "B", "Island").tapped = True
+        engine.state.players["B"].mana_pool["G"] = 0
+        self.assertTrue(engine._cost_is_affordable("B", {"GENERIC": 1, "G": 1}))
+        self.assertEqual(["Wild Cantor"], self.springheart_resolve_and_pay(session))
+        self.assertEqual("graveyard", engine.state.cards[model.object_id].zone)
+
+    def test_springheart_uses_real_zero_copy_and_nonzero_replacement_outcomes(self):
+        for zero in (True, False):
+            with self.subTest(zero=zero):
+                session, _, _ = self.springheart_landfall(11661 + zero, zero=zero, replace_copy=not zero)
+                before = session.state.event_sequence
+                tokens = self.springheart_resolve_and_pay(session)
+                self.assertEqual(["Insect Token"] if zero else ["Angel Token"], tokens)
+                self.assertEqual(0, session.state.players["B"].mana_pool["G"])
+                records = [event for event in session.state.events
+                    if event.event_id > before and event.code == "token.create" and event.actor == "B"]
+                self.assertEqual([0, 1] if zero else [1], [len(event.details["objects"]) for event in records])
 
     def test_animate_dead_reanimates_attaches_modifies_power_and_sacrifices_on_leave(
         self,
@@ -416,8 +580,8 @@ class ExactZimoneClosureTests(unittest.TestCase):
         self.assertEqual(creature.object_id, aura.attached_to)
         self.assertNotIn("enchant_target_schema", aura.annotations)
         self.assertEqual(
-            creature.object_id,
-            aura.annotations["animate_dead_creature"],
+            {"object_id": creature.object_id, "logical_object_id": creature.logical_object_id},
+            aura.annotations[engine._compiled_enchant_spec(aura).link_annotation],
         )
         self.assertEqual(0, engine._numeric_stat(creature.object_id, "power"))
 
@@ -545,9 +709,16 @@ class ExactZimoneClosureTests(unittest.TestCase):
     def test_sylvan_library_draws_two_and_enforces_life_or_top_choices(
         self,
     ):
+        from quorune.semantics import SemanticRegistry
+
         session = self.make_session(1022)
         engine = session.engine
         sylvan = self.card(engine, "B", "Sylvan Library")
+        # Exercise the archived program against the current runtime as well.
+        for program in engine.semantics.programs_for_oracle(sylvan.oracle_id):
+            engine.semantics.remove(program.key)
+        for program in SemanticRegistry().programs_for_oracle(sylvan.oracle_id):
+            engine.semantics.put(program)
         engine.move_card(sylvan.object_id, "battlefield", controller="B")
         engine.state.active_player = "B"
         engine.state.phase = "beginning"
@@ -748,7 +919,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "objects": [bird.ref],
+                "card": bird.ref,
                 "plan": "RECUR_CREATURE",
                 "reason": "Return the qualifying mana creature.",
             },
@@ -763,6 +934,15 @@ class ExactZimoneClosureTests(unittest.TestCase):
         engine = session.engine
         dauthi = self.card(engine, "B", "Dauthi Voidwalker")
         opponent_spell = self.card(engine, "A", "Sol Ring")
+        # Pin the historical target-bearing descriptor for this compatibility witness.
+        from quorune.compiler.activated_ability_catalog import with_activated_ability_catalog
+        from quorune.semantics import SemanticRegistry
+
+        key = f"{dauthi.oracle_id}:ability:ab3"
+        legacy = SemanticRegistry().get(key)
+        record = self.db.by_oracle_id(dauthi.oracle_id)
+        (legacy,) = with_activated_ability_catalog(record, (legacy,))
+        engine.semantics.put(legacy)
         engine.move_card(dauthi.object_id, "battlefield", controller="B")
         dauthi.acquired_control_turn_count = -1
 
@@ -850,16 +1030,17 @@ class ExactZimoneClosureTests(unittest.TestCase):
             for option in action["cost_options"]
             if option["id"] == "evoke"
         )
+        exile_field = "exile_cards" if "exile_cards" in evoke["choice_schema"] else "exile_card"
         self.assertIn(
             green_card.ref,
-            evoke["choice_schema"]["exile_card"]["legal_refs"],
+            evoke["choice_schema"][exile_field]["legal_refs"],
         )
         engine._cast(
             "B",
             {
                 "card": endurance.ref,
                 "cost_option": "evoke",
-                "exile_card": green_card.ref,
+                exile_field: [green_card.ref] if exile_field == "exile_cards" else green_card.ref,
                 "pay": "manual",
                 "payment": {},
             },
@@ -873,7 +1054,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
         enter_ref = next(
             value["id"]
             for value in triggers
-            if value["label"] == "Endurance enter trigger"
+            if "evoke sacrifice" not in value["label"].lower()
         )
         evoke_ref = next(
             value["id"]
@@ -1242,7 +1423,7 @@ class ExactZimoneClosureTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.controller == "B"
-            and card.printed_name == "Plant"
+            and card.printed_name == "Plant Token"
             and card.zone == "battlefield"
         ]
         self.assertEqual(1, len(plants))
@@ -1274,6 +1455,94 @@ class ExactZimoneClosureTests(unittest.TestCase):
             plants[0].ref,
             {source.ref for source in engine.available_mana_sources("B")},
         )
+
+    def test_insidious_roots_looks_back_across_a_simultaneous_departure(self):
+        for source_was_present, destination in ((False, "battlefield"), (True, "exile")):
+            with self.subTest(source_was_present=source_was_present):
+                session = self.make_session(1071 + source_was_present)
+                engine = session.engine
+                roots = self.card(engine, "B", "Insidious Roots")
+                creature = self.card(engine, "B", "Gravecrawler")
+                engine.move_card(roots.object_id, "battlefield" if source_was_present else "graveyard")
+                engine.move_card(creature.object_id, "graveyard")
+                engine._move_cards_simultaneously(
+                    [(roots.object_id, destination), (creature.object_id, "battlefield")],
+                    reason="simultaneous movement",
+                )
+                self.assertFalse(engine._stabilize())
+                self.assertEqual(int(source_was_present), len(engine.state.stack))
+                if source_was_present:
+                    self.assertEqual("B", engine.state.stack[-1].controller)
+                    self.resolve_top(engine)
+                    plants = [
+                        permanent for permanent in engine.state.cards.values()
+                        if permanent.is_token and permanent.printed_name == "Plant Token"
+                    ]
+                    self.assertEqual(1, len(plants))
+                    self.assertEqual(1, plants[0].counters["+1/+1"])
+
+    def test_insidious_roots_cast_departure_is_committed_once_and_rollback_safe(self):
+        session = self.make_session(1073)
+        engine = session.engine
+        roots = self.card(engine, "B", "Insidious Roots")
+        crawler = self.card(engine, "B", "Gravecrawler")
+        zombie = self.card(engine, "B", "Wight of the Reliquary")
+        engine.move_card(roots.object_id, "battlefield", controller="B")
+        engine.move_card(zombie.object_id, "battlefield", controller="B")
+        engine.move_card(crawler.object_id, "graveyard")
+        self.prepare_main(engine, "B")
+        engine.state.players["B"].mana_pool["B"] = 1
+        engine._issue_priority("B", engine._priority_action_hints("B"))
+        offer = next(
+            row for row in session.packet("pilot:B")["decision"]["legal_actions"]
+            if row.get("action") == "cast" and row.get("card") == crawler.ref
+        )
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act("pilot:B", {"action_id": offer["id"], "pay": "manual", "payment": {"U": 1}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertEqual([], engine.state.stack)
+        self.assertEqual("graveyard", engine.state.cards[crawler.object_id].zone)
+
+        accepted = session.act("pilot:B", {"action_id": offer["id"], "pay": "manual", "payment": {"B": 1}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(["spell", "triggered_ability"], [item.kind for item in engine.state.stack])
+        self.assertEqual(roots.object_id, engine.state.stack[-1].source_object_id)
+        while engine.state.stack:
+            pass_current(session)
+        plants = [card for card in engine.state.cards.values() if card.is_token and card.printed_name == "Plant Token"]
+        self.assertEqual(1, len(plants))
+        self.assertEqual(1, plants[0].counters["+1/+1"])
+
+    def test_insidious_roots_counters_follow_live_creation_and_only_its_controller(self):
+        session = self.make_session(1074)
+        engine = session.engine
+        roots = self.card(engine, "B", "Insidious Roots")
+        first = self.card(engine, "B", "Birds of Paradise")
+        second = self.card(engine, "B", "Elves of Deep Shadow")
+        noncreature = self.card(engine, "B", "Forest")
+        opponent_creature = self.card(engine, "A", "Goblin Engineer")
+        plant_definition = {"type_line": "Token Creature \u2014 Plant", "power": "1", "toughness": "1"}
+        own, = engine.create_token("B", name="Existing Plant", characteristics=plant_definition)
+        opponent, = engine.create_token("A", name="Opponent Plant", characteristics=plant_definition)
+        engine.move_card(roots.object_id, "battlefield", controller="B")
+        for card in (first, second, noncreature, opponent_creature):
+            engine.move_card(card.object_id, "graveyard")
+        for card in (noncreature, opponent_creature):
+            engine.move_card(card.object_id, "exile", semantic_events=True)
+        self.assertFalse(engine._stabilize())
+        self.assertEqual([], engine.state.stack)
+        for expected, card in enumerate((first, second), 1):
+            engine.move_card(card.object_id, "exile", reason="same public cause", semantic_events=True)
+            self.assertFalse(engine._stabilize())
+            self.assertEqual(expected, len(engine.state.stack))
+        self.resolve_top(engine)
+        self.resolve_top(engine)
+        current = {card.ref: card for card in engine.state.cards.values() if card.is_token}
+        self.assertEqual(2, current[own].counters["+1/+1"])
+        self.assertNotIn("+1/+1", current[opponent].counters)
+        created = [card for card in current.values() if card.printed_name == "Plant Token"]
+        self.assertEqual([1, 2], sorted(card.counters["+1/+1"] for card in created))
 
     @patch("quorune.compiler.temporary_player_rule_templates._next_cast_protection_template", new=lambda text: None)
     def test_mistrise_marks_only_the_next_spell_uncounterable(self):

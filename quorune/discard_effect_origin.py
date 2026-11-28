@@ -43,10 +43,14 @@ def opponent_discard_origin(raw, *, discarding_player, opponents):
     return source
 
 
+DISCARDED_CARD_CAST = "cast_discarded_card_after_source_counters"
 DISCARD_EFFECT_ORIGIN_VERSION = 1
 DISCARD_EFFECT_ORIGIN_VERSION_FIELD = "discard_effect_origin_version"
 BOUND_DISCARD_EFFECT_ORIGIN = "_discard_effect_origin"
 OPPONENT_SOURCE_DISCARD_EVENT = "card.discarded.opponent_effect"
+DISCARD_BATCH_EVENT = 'card.discarded.batch'
+DISCARD_BATCH_CAPABILITY = 'trigger.event.normalized_discard_batch'
+DISCARD_BATCH_VARIANT = 'controller_discards_one_or_more_cards'
 PUBLIC_DISCARD_DESTINATION_SCOPE = "public_discard_destination"
 
 
@@ -104,7 +108,9 @@ def origin_for_resolving_hand_choice(state, item, effect):
     if item is None:
         return None
     operation = effect.get("op")
+
     hand_choices = {
+        DISCARDED_CARD_CAST,
         "fixed_hand_inspection",
         "connive",
         "discard_draw_up_to",

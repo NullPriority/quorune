@@ -1,8 +1,11 @@
 from __future__ import annotations
+from ..rules.opponent_blight import OpponentBlightBatchIntent
 from .token_creation_intents import execute_token_creation_intent
+from ..semantic_runtime.stack_execution import execute_stack_copy
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..semantic_runtime.control_intents import (
+    DirectionalControlIntent,
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
     ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
@@ -20,9 +23,7 @@ from ..counter_placement import (
     place_counters,
 )
 from ..counter_doubling import resolve_effect_counters_on_refs as place_counters_on_refs
-from ..counter_placement_sets import (
-    CounterPlacementSetError,
-)
+from ..counter_placement_sets import CounterPlacementSetError
 from ..counter_doubling import resolve_effect_counter_set as resolve_counter_placement_set
 from ..counter_placement_targets import (
     CounterPlacementTargetSetError,
@@ -43,14 +44,8 @@ from ..counter_state import player_counter_snapshot
 from ..continuous_effect_state import ResolutionEffectSource
 from ..errors import GameRuleError
 from ..trigger_processing import schedule_delayed_trigger
-from ..fixed_damage_set import (
-    FixedDamageSetError,
-    resolve_fixed_damage_set,
-)
-from ..destruction_sets import (
-    DestructionSetError,
-    resolve_destruction_set,
-)
+from ..fixed_damage_set import FixedDamageSetError, resolve_fixed_damage_set
+from ..destruction_sets import DestructionSetError, resolve_destruction_set
 from ..effect_runtime import dispatch_effect
 from ..effect_runtime.hand_inspection import commit_hand_inspection
 from ..life_change import (
@@ -69,13 +64,8 @@ from ..permanent_designations import (
     become_renowned,
 )
 from ..carddb_characteristics import library_reveal_printed_identity
-from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 from ..semantic_runtime.intents import RevealEachLibraryTopIntent
 from ..rules.library_scry import ScryError, commit_scry_arrangement
-from ..rules.library_selection import (
-    LibrarySelectionError,
-    commit_library_selection,
-)
 from ..rules.library_surveillance import (
     SurveilError,
     commit_surveil_arrangement,
@@ -96,6 +86,7 @@ from ..semantic_runtime import (
     CreateTokenIntent,
     DomainEffectIntent,
     EliminatePlayersIntent,
+    WinGameIntent,
     ExploreCompletedIntent,
     GrantZoneObjectKeywordIntent,
     InspectHandIntent,
@@ -130,20 +121,13 @@ from ..zone_object_keyword_grants import (
     ZoneObjectKeywordGrantError,
     commit_zone_object_keyword_grant,
 )
-from ..public_zone_moves import (
-    PublicZoneMoveError,
-    resolve_public_zone_move_set,
-)
+from .public_zone_move_intent import commit_public_zone_move_intent
 from ..zone_object_subtype_grants import (
     ZoneObjectSubtypeGrantError,
     commit_zone_object_subtype_addition,
 )
-from ..semantic_runtime.zone_replacements import (
-    prepare_zone_change_replacement,
-)
-from ..semantic_runtime.life_replacements import (
-    collect_life_change_replacement_effects,
-)
+from ..semantic_runtime.zone_replacements import prepare_zone_change_replacement
+from ..semantic_runtime.life_replacements import collect_life_change_replacement_effects
 
 
 _REASON_FIELD = "reason"
@@ -152,29 +136,24 @@ from ..util import unique_preserving_order
 
 class SemanticChoiceIntentHostMixin:
     def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent | GainSpellControlIntent):
-        from ..control_effects import ControlEffectError, gain_control_of_refs, gain_control_of_stack_spell
+        from ..control_effects import ControlEffectError, execute_single_control_intent
+
         try:
-            if isinstance(intent, GainSpellControlIntent):
-                return gain_control_of_stack_spell(
-                    self, stack_ref=intent.object_ref, actor=intent.actor, source=intent.source, reason=intent.reason,
-                )
-            return gain_control_of_refs(
-                self, actor=intent.actor, object_refs=(intent.object_ref,),
-                controller=intent.controller, duration=intent.duration,
-                source=intent.source, reason=intent.reason,
-                history_snapshot=intent.history_snapshot,
-                resolution_timestamp=intent.resolution_timestamp,
-            )
+            return execute_single_control_intent(self, intent)
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 
     def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent
-                                | RestoreOwnerControlIntent | ExchangePermanentControlIntent):
+                                | RestoreOwnerControlIntent | ExchangePermanentControlIntent | DirectionalControlIntent):
         from ..control_effects import (
             ControlEffectError, execute_control_set, execute_owner_control_restoration,
             execute_permanent_control_exchange, execute_recipient_control_set,
         )
         try:
+            if isinstance(intent, DirectionalControlIntent):
+                from ..rules.directional_control import execute_directional_control
+
+                return execute_directional_control(self, intent)
             if isinstance(intent, ExchangePermanentControlIntent):
                 return execute_permanent_control_exchange(self, intent)
             if isinstance(intent,RestoreOwnerControlIntent):return execute_owner_control_restoration(self,intent)
@@ -271,7 +250,9 @@ class SemanticChoiceIntentHostMixin:
             return resolve_destruction_set(
                 self,
                 actor=intent.actor,
+                ordered_exclusion=intent.ordered_exclusion,
                 followup=intent.followup,
+                excluded_created_tokens=intent.excluded_created_tokens,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
@@ -288,22 +269,7 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: MovePublicZoneSetIntent,
     ):
-        try:
-            return resolve_public_zone_move_set(
-                self,
-                actor=intent.actor,
-                followup=intent.followup,
-                spec=intent.spec,
-                reason=intent.reason,
-                source_ref=intent.source_ref,
-                aura_target_refs=thaw_value(intent.aura_target_refs) if intent.aura_target_refs is not None else None,
-                replacement_selections=tuple(
-                    thaw_value(value)
-                    for value in intent.replacement_selections
-                ),
-            )
-        except PublicZoneMoveError as exc:
-            raise GameRuleError(str(exc)) from exc
+        return commit_public_zone_move_intent(self, intent)
 
     def apply_domain_effect_intent(self, intent: DomainEffectIntent) -> Any:
         try:
@@ -350,23 +316,24 @@ class SemanticChoiceIntentHostMixin:
             )
         card = self._resolve_object(intent.actor, intent.object_ref)
         annotation_key = intent.designation
-        card.annotations[annotation_key] = intent.value
+        note = annotation_key == "last_noted_mana_type"
+        value = {"logical_object_id": card.logical_object_id, "mana_type": intent.value} if note else intent.value
+        card.annotations[annotation_key] = value
         if intent.apply_as_subtype:
             card.annotations["chosen_creature_type_adds_subtype"] = True
-        event_code = (
-            "card.name.chosen"
-            if annotation_key == "chosen_name"
-            else "color.chosen" if annotation_key == "chosen_color" else "creature_type.chosen"
-        )
-        detail_key = (
-            "card_name"
-            if annotation_key == "chosen_name"
-            else "color" if annotation_key == "chosen_color" else "creature_type"
-        )
+        event_code, detail_key = {
+            "chosen_name": ("card.name.chosen", "card_name"),
+            "chosen_color": ("color.chosen", "color"),
+            "chosen_creature_type": ("creature_type.chosen", "creature_type"),
+            "chosen_basic_land_type": ("land_type.chosen", "basic_land_type"),
+            "chosen_faction": ("faction.chosen", "faction"),
+            "chosen_jeskai_temur_faction": ("faction.chosen", "faction"),
+            "last_noted_mana_type": ("mana.type.noted", "mana_type"),
+        }[annotation_key]
         self._log(
             intent.actor,
             event_code,
-            f"{intent.actor} chose {intent.value} for {card.ref}.",
+            f"{intent.actor} {'noted' if note else 'chose'} {intent.value} for {card.ref}.",
             {
                 "source": card.ref,
                 detail_key: intent.value,
@@ -504,12 +471,42 @@ class SemanticChoiceIntentHostMixin:
             thaw_value(value) for value in intent.replacement_selections
         )
         prepared_replacement = None
-        if intent.manifest_entry:
+        if intent.entry_enchantment is not None:
+            from ..zone_transitions import ZoneTransitionOwner
+
+            if intent.new_controller != card.owner:
+                raise GameRuleError("Enchantment return requires its original owner's control")
+            ZoneTransitionOwner(self).move_card(
+                card.object_id, "battlefield", controller=card.owner, tapped=tapped, reason=intent.reason,
+                semantic_events=intent.semantic_events, putting_player=intent.actor,
+                replacement_selections=replacement_selections, resolution_entry_enchantment=intent.entry_enchantment,
+            )
+            return card.ref if card.zone == "battlefield" else ""
+        if intent.library_face_down_entry:
             from ..zone_transitions import ZoneTransitionOwner
             ZoneTransitionOwner(self).move_card(card.object_id, 'battlefield', controller=intent.actor,
-                manifest_entry=True, reason=intent.reason, semantic_events=True, putting_player=intent.actor,
+                manifest_entry=intent.manifest_entry, cloak_entry=intent.cloak_entry,
+                reason=intent.reason, semantic_events=True, putting_player=intent.actor,
                 replacement_selections=replacement_selections)
             return card.ref if card.zone == 'battlefield' and card.face_down else ''
+        from ..semantic_runtime.entry_enchantment_return_intent import EntryEnchantmentReturnIntent
+
+        if isinstance(intent, EntryEnchantmentReturnIntent):
+            from ..rules.entry_enchantment_setting import EntryEnchantmentSetting
+            from ..zone_transitions import ZoneTransitionOwner
+
+            if not card.is_card_object or card.is_token or card.owner != intent.new_controller:
+                return ""
+            moved = ZoneTransitionOwner(self).move_card(
+                card.object_id, "battlefield", controller=card.owner, tapped=tapped, reason=intent.reason,
+                semantic_events=True, putting_player=intent.actor, replacement_selections=replacement_selections,
+                resolution_entry_enchantment=EntryEnchantmentSetting(intent.entry_source_ref),
+            )
+            return moved.ref if moved.zone == "battlefield" else ""
+        if intent.transformed_entry:
+            from ..linked_exile_return import return_tapped_transformed_graveyard_card
+
+            return return_tapped_transformed_graveyard_card(self, card, intent, replacement_selections)
         if intent.effect_entry_counters:
             prepared_replacement = prepare_zone_change_replacement(
                 self,
@@ -724,8 +721,22 @@ class SemanticChoiceIntentHostMixin:
         *,
         public_top_name: str | None = None,
     ) -> tuple[str, ...]:
+        if type(intent.announce_public_top) is not bool or intent.announce_public_top and (
+            not intent.public or intent.player != intent.actor or intent.viewer != intent.actor
+            or len(intent.refs_top_first) != 1 or public_top_name is not None
+        ):
+            raise GameRuleError("A controller's public top reveal has one exact actor and card")
+        if type(intent.retain_public_top_visibility) is not bool or (
+            intent.retain_public_top_visibility and not (intent.announce_public_top or intent.announce_public_prefix)
+        ):
+            raise GameRuleError("Only an announced public library reveal can stay revealed")
         if public_top_name is not None and (not intent.public or len(intent.refs_top_first) != 1):
             raise GameRuleError("A public top-card announcement requires one public reveal")
+        if type(intent.announce_public_prefix) is not bool or intent.announce_public_prefix and (
+            not intent.public or intent.player != intent.actor or intent.viewer != intent.actor
+            or not intent.refs_top_first or intent.announce_public_top or public_top_name is not None
+        ):
+            raise GameRuleError("A public prefix announcement requires the library player's exact public reveal")
         self._require_seat(intent.player, in_game=True)
         self._require_seat(intent.viewer, in_game=True)
         library = self.state.players[intent.player].zones["library"]
@@ -736,6 +747,17 @@ class SemanticChoiceIntentHostMixin:
         ) if refs else ()
         if current != refs:
             raise GameRuleError("The inspected library top changed")
+        if intent.announce_public_prefix:
+            from .library_selection_intent_commit import announce_public_library_prefix
+
+            if not intent.retain_public_top_visibility:
+                return announce_public_library_prefix(self, intent, tuple(reversed(library[-len(refs):])))
+        if intent.announce_public_top:
+            card = self.state.cards[library[-1]]
+            if card.object_kind != "card":
+                public_top_name = card.printed_name
+            else:
+                public_top_name, _ = library_reveal_printed_identity(self.card_db.by_oracle_id(card.oracle_id))
         object_ids: list[str] = []
         for ref in refs:
             card = self._resolve_object(
@@ -746,11 +768,13 @@ class SemanticChoiceIntentHostMixin:
             )
             viewers = set(self.seats) if intent.public else {intent.viewer}
             card.known_to = sorted(set(card.known_to).union(viewers))
-            if intent.public and public_top_name is None:
+            if intent.public and (public_top_name is None or intent.retain_public_top_visibility):
                 card.revealed_to = sorted(
                     set(card.revealed_to).union(viewers)
                 )
             object_ids.append(card.object_id)
+        if intent.announce_public_prefix:
+            return announce_public_library_prefix(self, intent, tuple(object_ids))
         if public_top_name is not None:
             self._log(
                 intent.actor, "library.top.reveal", f"{intent.player} revealed {public_top_name}.",
@@ -812,6 +836,10 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: MoveLibraryCardsToBottomIntent,
     ) -> tuple[str, ...]:
+        if intent.random_source_stack_ref is not None:
+            from .library_selection_intent_commit import commit_private_random_library_bottom
+
+            return commit_private_random_library_bottom(self, intent)
         library = self.state.players[intent.player].zones["library"]
         object_ids: list[str] = []
         for ref in intent.refs:
@@ -877,45 +905,11 @@ class SemanticChoiceIntentHostMixin:
             raise GameRuleError(str(exc)) from exc
 
     def library_selection_intent(
-        self,
-        intent: LibrarySelectionIntent,
-    ) -> tuple[str, ...]:
-        try:
-            looked = commit_library_selection(
-                self,
-                actor=intent.actor,
-                player=intent.player,
-                arrangement=intent.arrangement,
-                reason=intent.reason,
-                source_stack_ref=intent.source_stack_ref,
-                looked_are_public=intent.looked_are_public,
-                selected_are_public=intent.selected_are_public,
-                replacement_selections=intent.replacement_selections,
-            )
-        except LibrarySelectionError as exc:
-            raise GameRuleError(str(exc)) from exc
-        from ..library_selection_knowledge_model import remainder_knowledge_viewers
-        viewers = remainder_knowledge_viewers(
-            version=getattr(self.state,'library_selection_knowledge_version',None), player=intent.player,
-            looked_are_public=intent.looked_are_public, order=intent.arrangement.remainder_order,
-            count=len(intent.arrangement.remainder_refs))
-        if intent.arrangement.remainder_destination == "library_bottom" and viewers is not None:
-            for ref in intent.arrangement.remainder_refs:
-                card = self._resolve_object(
-                    intent.actor,
-                    ref,
-                    zones={"library"},
-                    owned_only=True,
-                )
-                card.known_to = list(viewers)
-                card.revealed_to = []
-        if intent.looked_are_public or intent.selected_are_public:
-            viewers = sorted(set(self.seats))
-            for ref in intent.arrangement.selected_refs:
-                card = self._resolve_object(intent.actor, ref)
-                card.known_to = sorted(set(card.known_to).union(viewers))
-                card.revealed_to = sorted(set(card.revealed_to).union(viewers))
-        return looked
+        self, intent: LibrarySelectionIntent,
+    ) -> tuple[str, ...] | CommittedQuantityFollowup:
+        from .library_selection_intent_commit import commit_library_selection_intent
+
+        return commit_library_selection_intent(self, intent)
 
     def reorder_library_top_intent(
         self,
@@ -944,6 +938,21 @@ class SemanticChoiceIntentHostMixin:
             raise GameRuleError(
                 "Can only reorder the exact known cards currently on top"
             )
+        if type(intent.shuffle_remainder) is not bool:
+            raise GameRuleError("Private top ordering needs a typed shuffle instruction")
+        if intent.shuffle_remainder:
+            if intent.actor != intent.player or intent.viewer != intent.player or not 1 <= len(ids) <= 5:
+                raise GameRuleError("Shuffle and restore requires the controller's exact looked group")
+            from ..zone_transitions import ZoneTransitionOwner
+
+            ZoneTransitionOwner(self).shuffle_library(
+                intent.player, reason=intent.reason, excluded_object_ids=tuple(ids),
+            )
+            if len(ids) > 1:
+                for object_id in ids:
+                    card = self.state.cards[object_id]
+                    card.known_to = [intent.viewer]
+                    card.revealed_to = []
         for object_id in ids:
             library.remove(object_id)
         library.extend(reversed(ids))
@@ -959,13 +968,16 @@ class SemanticChoiceIntentHostMixin:
         return intent.refs_top_first
 
     def pay_mana_cost_intent(self, intent: PayManaCostIntent) -> None:
+        from ..rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
+
         requirements = self._mana_vector(dict(intent.requirements))
         if not self._cost_is_affordable(intent.player, requirements):
             raise GameRuleError("The optional payment is no longer payable")
         self._pay_for_cost(
             intent.player,
             requirements,
-            {"pay": "auto"},
+            ({"pay": "auto"} if intent.pool_payment is None
+             else {MANA_POOL_PAYMENT_FIELD: thaw_value(intent.pool_payment)}),
         )
         changed_objects: list[str] = []
         if intent.changed_object_ref:
@@ -1003,16 +1015,23 @@ class SemanticChoiceIntentHostMixin:
             self.state.cards[result.object_id].ref for result in results
         )
 
+    def place_opponent_blight_batch_intent(self, intent: OpponentBlightBatchIntent) -> tuple[str, ...]:
+        from .blight import commit_opponent_blight_batch
+
+        return commit_opponent_blight_batch(self, intent)
+
     def place_counter_batch_intent(
         self,
         intent: PlaceCounterBatchIntent,
     ) -> tuple[str, ...]:
         try:
-            card = self._resolve_object(
-                intent.actor,
-                intent.object_ref,
-                zones={"battlefield"},
-            )
+            cards = tuple(self._resolve_object(intent.actor, ref, zones={"battlefield"})
+                          for ref in intent.object_refs)
+            if intent.recipient_identity is not None and (
+                    cards[0].logical_object_id != intent.recipient_identity
+                    or not intent.source_departure and cards[0].controller != intent.actor
+                    or cards[0].phased_out):
+                return ()
             results = place_counters(
                 self,
                 tuple(
@@ -1024,6 +1043,7 @@ class SemanticChoiceIntentHostMixin:
                         placing_player=intent.actor,
                         source_ref=intent.source_ref,
                     )
+                    for card in cards
                     for placement in intent.placements
                 ),
                 selections=intent.replacement_selections,
@@ -1162,6 +1182,8 @@ class SemanticChoiceIntentHostMixin:
                 reason=intent.reason,
                 source_ref=intent.source_ref,
                 paired_loyalty_source=intent.paired_loyalty_source,
+                source_and_subtype_identity=intent.source_and_subtype_identity,
+                declared_attack_members=intent.declared_attack_members,
                 replacement_selections=tuple(
                     thaw_value(value)
                     for value in intent.replacement_selections
@@ -1183,6 +1205,7 @@ class SemanticChoiceIntentHostMixin:
                 maximum_targets=intent.maximum_targets,
                 counter_name=intent.counter_name,
                 amount=intent.amount,
+                target_shares=intent.target_shares,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
                 replacement_selections=tuple(
@@ -1200,6 +1223,11 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: PlacePlayerCountersIntent,
     ) -> tuple[str, ...]:
+        from ..rad_counter_model import RAD_COUNTER
+        from ..rad_counters import require_rad_authority
+
+        if intent.counter_name == RAD_COUNTER:
+            require_rad_authority(self)
         for player in intent.player_ids:
             if player not in self.active_seats:
                 raise GameRuleError(
@@ -1229,6 +1257,23 @@ class SemanticChoiceIntentHostMixin:
     def counter_stack_intent(self, intent: CounterStackIntent) -> None:
         if not any(item.ref == intent.stack_ref for item in self.state.stack):
             return
+        if intent.activation_prohibition is not None:
+            from ..stack_counter import counter_ability_with_activation_lock
+
+            prohibition = intent.activation_prohibition
+            counter_ability_with_activation_lock(
+                self, intent.stack_ref, source=prohibition.source,
+                actor=intent.actor, reason=intent.reason, mode=prohibition.mode,
+            )
+            return
+        if intent.ability_source_loss is not None:
+            from ..stack_counter import counter_ability_with_source_loss
+
+            counter_ability_with_source_loss(
+                self, intent.stack_ref, source=intent.ability_source_loss,
+                actor=intent.actor, reason=intent.reason,
+            )
+            return
         if intent.counter_destination is not None:
             from ..stack_counter import counter_stack_item
 
@@ -1243,44 +1288,20 @@ class SemanticChoiceIntentHostMixin:
             source_controller=intent.source_controller,
         )
 
-    def eliminate_players_intent(self, intent: EliminatePlayersIntent) -> None:
-        self._eliminate_players(list(intent.players), reason=intent.reason)
+    def player_outcome_intent(self, intent: EliminatePlayersIntent | WinGameIntent) -> None:
+        from ..rules.match_outcome_restrictions import current_match_outcome_restrictions
+        from ..state_based_execution import commit_game_win
 
-    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str:
-        from ..rules.event_spell_copy import resolve_event_spell_copy_source
-        bound=resolve_event_spell_copy_source(self,{'stack':intent.target_stack_ref,'copy_source':intent.copy_source}) if intent.copy_source is not None else None
-        target = next(
-            (item for item in self.state.stack if item.ref == intent.target_stack_ref),
-            None,
-        )
-        if bound is not None:target=bound.item()
-        if target is None:
-            raise GameRuleError(
-                "The stack object selected for copying no longer exists"
-            )
-        characteristics = thaw_value(bound.characteristics) if bound is not None else None
-        if intent.permanent_copy is not None:
-            from ..rules.stack_spell_copy_shapes import apply_permanent_spell_copy_exception
+        restrictions = current_match_outcome_restrictions(self)
+        if isinstance(intent, WinGameIntent):
+            if intent.player in self.active_seats and intent.player not in restrictions.win_prohibited:
+                commit_game_win(self, intent.player)
+            return
+        allowed = [seat for seat in intent.players if seat not in restrictions.loss_prohibited]
+        self._eliminate_players(allowed, reason=intent.reason)
 
-            if characteristics is None:
-                original = self.state.cards.get(target.card_object_id or "")
-                if original is None:
-                    raise GameRuleError("Permanent spell copy lost its original card or snapshot")
-                characteristics = self._spell_copy_characteristics(original)
-            try:
-                characteristics = apply_permanent_spell_copy_exception(intent.permanent_copy, characteristics)
-            except (TypeError, ValueError) as exc:
-                raise GameRuleError(str(exc)) from exc
-        copied = self._copy_stack_item(
-            controller=intent.controller,
-            target=target,
-            targets=list(intent.targets),
-            target_groups=thaw_value(intent.target_groups),
-            reason=intent.reason,
-            target_snapshots=thaw_value(intent.target_snapshots) if intent.target_snapshots is not None else None,
-            copiable_characteristics=characteristics,
-        )
-        return copied.ref
+    def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str | None:
+        return execute_stack_copy(self, intent)
 
     def retarget_stack_item_intent(
         self,
@@ -1341,8 +1362,15 @@ class SemanticChoiceIntentHostMixin:
             zones={"battlefield"},
             controlled_only=True,
         )
+        from ..entry_results import record_persistent_copy
+
+        current_copy = intent.schema_version == 2
         if not original.is_token:
             raise GameRuleError("Token-copy choice requires a token")
+        if current_copy and (
+            original.phased_out or original.controller != intent.controller or intent.controller != intent.actor
+        ):
+            raise GameRuleError("Token-copy choice requires a present controlled token")
         characteristics = self._copyable_characteristics(original)
         changed: list[str] = []
         for object_id in tuple(
@@ -1353,11 +1381,14 @@ class SemanticChoiceIntentHostMixin:
                 token.controller != intent.controller
                 or not token.is_token
                 or token.object_id == original.object_id
+                or (current_copy and token.phased_out)
             ):
                 continue
-            token.annotations["copy_overrides"] = copy.deepcopy(
-                characteristics
-            )
+            if current_copy:
+                record_persistent_copy(token, characteristics, host=self)
+            else:
+                # Archived mandatory-copy payloads retain their original state transition.
+                token.annotations["copy_overrides"] = copy.deepcopy(characteristics)
             changed.append(token.object_id)
         changed_refs = tuple(
             self.state.cards[object_id].ref for object_id in changed
@@ -1469,7 +1500,7 @@ class SemanticChoiceIntentHostMixin:
         )
         return card.ref
 
-    def proliferate_intent(self, intent: ProliferateIntent) -> None:
+    def proliferate_intent(self, intent: ProliferateIntent) -> CommittedQuantityFollowup | None:
         requests: list[CounterPlacementRequest] = []
         for subject in intent.subjects:
             if subject.subject_kind == "player":
@@ -1555,3 +1586,8 @@ class SemanticChoiceIntentHostMixin:
             changed_objects=changed_objects,
             changed_players=changed_players,
         )
+        if intent.choose_phase_out:
+            from ..rules.proliferate_phase_out import committed_proliferate_phase_choice
+
+            return committed_proliferate_phase_choice(self, intent.actor, results)
+        return None

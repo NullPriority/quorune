@@ -105,7 +105,13 @@ class SelfZoneMoveEffectHandler:
         if FIELD in effect:
             try:decode_self_entry_followup(effect)
             except (ValueError, TypeError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-        allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections"}
+        from ..rules.revealed_hand_zone_move import FIELD as HAND_ENTRY_FIELD, revealed_hand_entry_payload_dependencies
+
+        try:
+            revealed_hand_entry_payload_dependencies(effect, runtime=True)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections", HAND_ENTRY_FIELD}
         allowed.add(FIELD)
         from ..source_self_entry_counter_model import FIELD as COUNTER_FIELD, source_self_entry_counter_from_effect
         entry_counter = None
@@ -116,6 +122,15 @@ class SelfZoneMoveEffectHandler:
         allowed.add(GRAVEYARD_SELF_RETURN_VERSION)
         allowed.add(GRAVEYARD_SELF_ENTRY_VERSION)
         allowed.add('_aura_target_ref')
+        from ..rules.graveyard_aura_entry import GRAVEYARD_AURA_ENTRY_FIELD, validate_bound_graveyard_aura_entry
+
+        aura_reference, aura_identity = effect.get('_aura_target_ref'), None
+        if GRAVEYARD_AURA_ENTRY_FIELD in effect:
+            allowed.add(GRAVEYARD_AURA_ENTRY_FIELD)
+            try:
+                aura_reference, aura_identity = validate_bound_graveyard_aura_entry(effect)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         if set(effect) - allowed or not {"op", "origin", "destination", "tapped", "source_form"}.issubset(effect):
             raise SemanticNodeError("Self-zone-move effect has an invalid shape")
         if effect["op"] != self.operation:
@@ -138,9 +153,10 @@ class SelfZoneMoveEffectHandler:
                 tapped=effect["tapped"],
                 source_form=effect["source_form"],
                 replacement_selections=tuple(selections),
-                aura_target_ref=effect.get('_aura_target_ref'),
+                aura_target_ref=aura_reference,
                 effect_entry_counters=((entry_counter.materialize(actor=context.actor, source=source.stack_ref),)
                                        if entry_counter is not None else ()),
+                aura_target_logical_object_id=aura_identity,
             )
         except SelfZoneMoveError as exc:
             raise SemanticNodeError(str(exc)) from exc

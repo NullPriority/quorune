@@ -159,3 +159,201 @@ class UntargetedUntapCompilerTests(unittest.TestCase):
         def witness():self.assertEqual('exact',compile_oracle_card(replace(query_record('Untap up to three lands.'),type_line='Instant'),capability_registry=load_default_capability_registry()).status)
         witness()
         with patch('quorune.compiler.untargeted_untap_templates.fixed_land_untap_choice_template',return_value=None),self.assertRaises(AssertionError):witness()
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+FINALE = "Finale of Revelation"
+
+
+class AnnouncedXDrawReplacementNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "untargeted-untap-cards.json": {FINALE},
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth", "Generic Bound Body"},
+            "event-spell-copy-cards.json": {"Counterspell"},
+            "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
+        }
+        files = []
+        for filename, names in support.items():
+            doc = json.loads((ROOT / "tests" / "fixtures" / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in ids]
+            part = folder / filename
+            part.write_text(json.dumps(doc), encoding="utf-8")
+            files.append(part)
+        db = folder / "announced-x-draw.sqlite3"
+        build_fixture_database(files, db)
+        cls.db = CardDatabase(db)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Announced-X draw replacement", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def announce(self, game, source, x):
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": x, "U": 2})
+        self.checkpoint(game)
+        offer = self.action(game, "A", source)
+        outcome = game.act("pilot:A", {"action_id": offer["id"], "x": x, "pay": "auto"})
+        self.assertTrue(outcome.ok, outcome.summary)
+        item, = game.state.stack
+        self.assertEqual((x, []), (item.x_value, item.targets))
+        self.assertEqual("stack", game.state.cards[source.object_id].zone)
+        return item
+
+    def reject(self, game, seat, command):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_actual_below_threshold_draws_exactly_x_and_exiles_including_zero(self):
+        from quorune.maximum_hand_size import effective_maximum_hand_size
+
+        for x in (0, 9):
+            with self.subTest(x=x):
+                game = self.session(10703010 + x)
+                source = self.add(game.engine, FINALE, zone="hand", ref="finale-low")
+                grave = self.add(game.engine, "Generic Bound Growth", zone="graveyard", ref="finale-low-grave")
+                land = self.add(game.engine, "Generic Bound Plains", seat="B", ref="finale-low-land")
+                land.tapped = True
+                self.announce(game, source, x)
+                before = len(game.state.players["A"].zones["hand"])
+                shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(before + x, len(game.state.players["A"].zones["hand"]))
+                self.assertEqual(shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertEqual("graveyard", game.state.cards[grave.object_id].zone)
+                self.assertTrue(game.state.cards[land.object_id].tapped)
+                self.assertEqual(7, effective_maximum_hand_size(game.engine, "A"))
+                self.assertEqual("exile", game.state.cards[source.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_actual_threshold_shuffles_then_draws_opts_up_to_five_and_keeps_game_hand_rule(self):
+        from quorune.maximum_hand_size import effective_maximum_hand_size
+
+        game = self.session(10703020)
+        source = self.add(game.engine, FINALE, zone="hand", ref="finale-high")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="finale-hidden-d")
+        decoy = self.add(game.engine, "Generic Bound Body", ref="finale-not-land")
+        lands = [self.add(game.engine, "Generic Bound Plains", seat=seat, ref=f"finale-land-{i}")
+                 for i, seat in enumerate("AABBCC")]
+        for land in lands:
+            land.tapped = True
+        for object_id in tuple(game.state.players["A"].zones["library"])[:-3]:
+            game.engine.move_card(object_id, "outside", log=False, semantic_events=False)
+        recycling = [self.add(game.engine, "Generic Bound Growth", zone="graveyard", ref=f"finale-recycle-{i}")
+                     for i in range(9)]
+        self.assertEqual(3, len(game.state.players["A"].zones["library"]))
+        original = self.announce(game, source, 10)
+        player = game.state.players["A"]
+        before, shuffles = len(player.zones["hand"]), player.stats.get("shuffle_count", 0)
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        self.assertEqual(original.ref, game.state.stack[-1].ref)
+        self.assertEqual("stack", game.state.cards[source.object_id].zone)
+        self.assertEqual(shuffles + 1, player.stats.get("shuffle_count", 0))
+        self.assertEqual(before + 10, len(player.zones["hand"]))
+        self.assertFalse(player.zones["graveyard"])
+        self.assertTrue(all(game.state.cards[card.object_id].zone in {"hand", "library"} for card in recycling))
+        ctx = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        schema = ctx["legal_actions"][0]["choice_schema"]
+        self.assertEqual((0, 5, True), (schema["minimum"], schema["maximum"], schema["optional"]))
+        self.assertEqual({card.ref for card in lands}, set(schema["legal_refs"]))
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        self.assertEqual(7, effective_maximum_hand_size(game.engine, "A"))
+        objects = [card.ref for card in lands]
+        self.reject(game, "B", {"action_id": "choose", "objects": objects[:5]})
+        self.reject(game, "A", {"action_id": "choose", "objects": objects})
+        self.reject(game, "A", {"action_id": "choose", "objects": [decoy.ref]})
+
+        zero = self.replay(game, load=True)
+        result = zero.act("pilot:A", {"action_id": "choose", "objects": []})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("exile", zero.state.cards[source.object_id].zone)
+        self.assertTrue(all(zero.state.cards[land.object_id].tapped for land in lands))
+        self.assertIsNone(effective_maximum_hand_size(zero.engine, "A"))
+        self.replay(zero, load=True)
+
+        result = game.act("pilot:A", {"action_id": "choose", "objects": objects[:5]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("exile", game.state.cards[source.object_id].zone)
+        self.assertEqual([False] * 5 + [True], [game.state.cards[land.object_id].tapped for land in lands])
+        self.assertIsNone(effective_maximum_hand_size(game.engine, "A"))
+        self.assertEqual(7, effective_maximum_hand_size(game.engine, "B"))
+        original_turn = game.state.turn_sequence
+        self.until(game, lambda current: current.state.turn_sequence > original_turn)
+        self.assertEqual(before + 10, len(game.state.players["A"].zones["hand"]))
+        self.assertIsNone(effective_maximum_hand_size(game.engine, "A"))
+        self.replay(game, load=True)
+
+    def test_actual_countered_finale_keeps_the_ordinary_graveyard_destination(self):
+        from quorune.maximum_hand_size import effective_maximum_hand_size
+
+        game = self.session(10703022)
+        source = self.add(game.engine, FINALE, zone="hand")
+        counter = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+        self.assert_closed(game, counter)
+        game.state.players["B"].mana_pool["U"] = 2
+        original = self.announce(game, source, 10)
+        player = game.state.players["A"]
+        before = len(player.zones["hand"])
+        shuffles = player.stats.get("shuffle_count", 0)
+        self.cast_for(game, "B", counter, [original.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual((before, shuffles, 7), (len(player.zones["hand"]), player.stats.get("shuffle_count", 0),
+                                               effective_maximum_hand_size(game.engine, "A")))
+        self.replay(game, load=True)
+
+    def test_whole_spell_preserves_exile_and_rejects_changed_threshold_or_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler import announced_x_draw_replacement
+        from quorune.rules.announced_x_draw_replacement import CAPABILITY, FIELD, announced_x_draw_replacement_payload_dependencies
+        from quorune.rules.spell_self_exile import SELF_EXILE
+
+        real = self.db.lookup(FINALE, fuzzy=False)
+        oracle = compile_oracle_card(real, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        node, = oracle.faces[0].nodes
+        self.assertEqual((0, len(real.oracle_text)), (node.span.start, node.span.end))
+        self.assertTrue({CAPABILITY, SELF_EXILE.capability} <= set(node.capability_dependencies))
+        effect, = node.effects
+        for variant in ({**effect, FIELD: {**effect[FIELD], "schema_version": True}},
+                        {**effect, "cast_fact": 10}, {**effect, "minimum": 11}):
+            with self.assertRaises(ValueError):
+                announced_x_draw_replacement_payload_dependencies(variant)
+        for altered in (replace(real, mana_cost="{10}{U}{U}"),
+                        replace(real, oracle_text=real.oracle_text.replace("10 or more", "more than 10")),
+                        replace(real, oracle_text=real.oracle_text.replace("five lands", "five lands you control"))):
+            self.assertNotEqual("exact", compile_oracle_card(altered, capability_registry=self.registry).status)
+        with patch.object(announced_x_draw_replacement, "announced_x_draw_replacement_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(real, capability_registry=self.registry).status)
+        game = self.session(10703021)
+        source = self.add(game.engine, FINALE, zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual("exile", program.destination)
+        for cap in (CAPABILITY, SELF_EXILE.capability):
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            mutated = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{cap}", binding["blockers"])

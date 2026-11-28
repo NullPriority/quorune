@@ -22,6 +22,11 @@ def third_life_node_capabilities(*,effects,target_schema,mechanic_ids):
 
 
 def third_life_program_dependencies(program):
+    from .third_player_rounds import third_player_rounds_program_dependencies
+
+    if owned := third_player_rounds_program_dependencies(program):
+        return owned
+
     def contains(value):
         if isinstance(value,Mapping):
             return value.get('kind')==THIRD_QUANTITY_KIND or any(contains(v) for v in value.values())

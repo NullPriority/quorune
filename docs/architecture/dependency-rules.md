@@ -95,6 +95,11 @@ capture that model once before mutation. The `CommanderEngine` compatibility
 facades delegate zone membership to the canonical `ZoneTransitionOwner`, so
 replacement discovery cannot become a competing state owner.
 
+Trigger discovery keeps occurrence matching and enqueue order. It delegates
+capture of current or last-known source attachment and designation information
+to the read-only `quorune/rules/trigger_source_information.py` owner while
+building the trigger's existing stack context.
+
 Every production Python module has one generated exact classification covering
 layer, owner, allowed dependency layers, GameState access, specificity,
 visibility, and replay participation. A new unclassified module fails CI.

@@ -13,6 +13,17 @@ from ..compiler.activated_costs import activated_ability_cost
 from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
 
 
+def reviewed_rulings_match(program, current_hash):
+    """Match the pinned ruling source or an explicitly reviewed equivalent revision."""
+    original = program.provenance.get("source_rulings_hash")
+    if not original or not current_hash:
+        return False
+    if original == current_hash:
+        return True
+    equivalents = program.provenance.get("reviewed_equivalent_rulings_hashes", ())
+    return isinstance(equivalents, (list, tuple)) and current_hash in equivalents
+
+
 def _same_current_source(record,current,old,*,compare_targets=True):
     return (current.oracle_id==old.oracle_id==record.oracle_id and current.trust_level==old.trust_level=='trusted'
         and current.capability_closure and current.capability_closure.get('trusted') is True
@@ -58,12 +69,18 @@ def shadowed_reviewed_reanimation_life_loss_keys(record, generated_programs, rev
 
 
 def _catalog_preserves_cost(current,old):
-    if current.handlers!=old.handlers or len(current.handlers)!=1:return False
-    descriptor=current.handlers[0]
+    handlers = current.handlers
+    from ..land_mana_potential import LAND_MANA_POTENTIAL_HANDLER_ID
+
+    if len(handlers) == 2 and handlers[0].get("handler_id") == LAND_MANA_POTENTIAL_HANDLER_ID:
+        handlers = handlers[1:]
+    if handlers != old.handlers or len(handlers) != 1:
+        return False
+    descriptor = handlers[0]
     if descriptor.get('handler_id')!='activation.catalog.pinned.v1':return False
     ability=descriptor.get('ability');cost=current.cost_schema
     if not isinstance(ability,Mapping) or not isinstance(cost,Mapping) or ability.get('uncompiled_costs'):return False
-    try:parsed=activated_abilities_from_descriptors(current.handlers)
+    try:parsed=activated_abilities_from_descriptors(handlers)
     except (TypeError,ValueError):return False
     if len(parsed)!=1 or thaw_value(cost)!=activated_ability_cost(parsed[0]):return False
     return old.cost_schema is None or old.cost_schema==cost
@@ -151,5 +168,40 @@ def shadowed_reviewed_upkeep_type_count_keys(record,generated_programs,reviewed_
         for old in reviewed_programs:
             if (_same_current_source(record,current,old) and not old.handlers and old.cost_schema is None
                     and scope==_upkeep_type_count(old.event_condition) and result==_upkeep_life_result(old)):
+                shadowed.add(old.key)
+    return shadowed
+
+
+
+def shadowed_reviewed_greatest_artifact_upkeep_keys(record, generated_programs, reviewed_programs):
+    if not reviewed_programs:
+        return set()
+
+    from ..continuous_conditions import GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY
+    from ..rules.cumulative_object_upkeep import CONTROLLER_UPKEEP
+    from ..rules.event_subscriptions import (
+        LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD, greatest_artifact_upkeep_runtime_dependencies,
+    )
+
+    old_condition = {"all": [*CONTROLLER_UPKEEP["all"], {
+        "field": LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD, "op": "truthy",
+    }]}
+    old_draw = ({"op": "draw", "player": "$controller", "count": 1},)
+    shadowed = set()
+    for current in generated_programs:
+        if GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY not in current.capability_dependencies:
+            continue
+        try:
+            required = greatest_artifact_upkeep_runtime_dependencies(current)
+        except (TypeError, ValueError):
+            continue
+        if not required or not set(required) <= set(current.capability_dependencies):
+            continue
+        for old in reviewed_programs:
+            if (_same_current_source(record, current, old) and not old.handlers
+                    and old.cost_schema is None and old.trigger_limit is None
+                    and "intervening_condition" in old.coverage
+                    and thaw_value(old.event_condition) == old_condition
+                    and tuple(thaw_value(old.effects)) == old_draw):
                 shadowed.add(old.key)
     return shadowed

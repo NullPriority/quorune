@@ -186,6 +186,10 @@ deletions cannot reuse an older test inventory.
 Compact dependency discovery shares parsed source, ordered AST enumerations and
 immutable function inventories within one report build. Alias, wrapper,
 parameter and database-mode contexts still resolve separately for each module.
+The report traces static deck entries in tests using the shared compact database
+and checked-in fixture paths used by local builders. Local files can remain
+separate from the shared compact database. Runtime-selected inputs use explicit
+declarations where the scanner cannot resolve them.
 Architecture analysis similarly shares each read-only source tree's enumerations
 and parent links across its existing guards. A new invocation reads current
 files again; failed reads and parses are not cached. Complete report and guard
@@ -446,6 +450,24 @@ change:
 .\.venv\Scripts\python.exe scripts\finalize_generated.py --write
 ```
 
+The required generated and architecture job audits retained card-program
+fingerprints before the broader generated checks. It reuses the governed card
+database cache. The audit checks each stored Oracle ID once, groups every
+unresolved mismatch by card, and uploads the full JSON report even when the
+check fails. Existing compiler-corpus verification binds the reports for
+programs generated on demand to the exact certification inputs.
+ Reviewed dungeon room equivalents preserve the sealed room
+programs when a marker change leaves their rules intact.
+
+If a release will use an additional approved snapshot, check both snapshots
+before merging. Repeat `--db` to include multiple data files in one report.
+The full local merge gate accepts the same set through repeated `--card-db`
+arguments. Its behavioral suites use their separate compact fixture database.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/audit_card_program_fingerprints.py --db data/scryfall-current.sqlite3 --db path/to/release.sqlite3 --output local/card-program-fingerprints.json
+```
+
 Compiler, capability, CardProgram, and card-support changes require the pinned
 database census in the same finalization run:
 
@@ -568,34 +590,34 @@ receipts replace duplicate automatic-owner checks in this tail; assembly never
 reruns an owner. A main run then requires the assembled bytes to match the
 commit.
 
-Ordinary feature branches run this workflow automatically when opened,
-reopened, or synchronized:
+Generate a source-only checkpoint on its reserved remote ref before
+updating the pull request branch. The generation dispatch binds owner
+planning to the full comparison with the planned PR base.
 
 ```powershell
+$source = (git rev-parse HEAD).Trim()
+$base = (git rev-parse origin/main).Trim()
+$generationRef = "quorune-cloud-source/$source"
 $env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON = "seed exact-source cloud generation"
-git push -u origin <branch>
-Remove-Item Env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON
-gh run list --workflow generated-artifacts.yml --limit 10
-gh run download <run-id> --name cloud-generated-<source-sha> `
-  --dir local\cloud-generated-download
-.\.venv\Scripts\python.exe scripts\cloud_generated_artifacts.py install-bundle `
-  --bundle-dir local\cloud-generated-download --expected-commit <source-sha>
+try { git push origin "HEAD:refs/heads/$generationRef" }
+finally { Remove-Item Env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON }
+gh workflow run generated-artifacts.yml --ref $generationRef -f "ref=$source" -f "base=$base"
+gh run download <run-id> --name "cloud-generated-$source" --dir local/cloud-generated-download
+./.venv/Scripts/python.exe scripts/cloud_generated_artifacts.py install-bundle --bundle-dir local/cloud-generated-download --expected-commit $source
 ```
 
-The named checkpoint mode is restricted to non-`main` branches. It still runs
-test-shard/dependency validation and the compiler-identity sentinel, but allows
-the intermediate push before the expensive generated bundle and final receipt
-exist. Its pre-push gate requires a clean tracked worktree so the local
-pre-corpus validation reads the same bytes as the pushed commit. Commit cheap
-source-policy outputs such as new module classifications first; stash or remove
-other tracked partial-finalizer output. Never use checkpoint mode for the
-subsequent generated-output push or as merge evidence.
+The pre-push hook accepts checkpoint mode for one outgoing ref whose name
+and object ID both match the checked-out non-main commit. This leaves the
+pull request head available for protected certification after its outputs
+are installed. The source push requires a clean tracked worktree and runs
+the repository, dependency and compiler sentinels. Commit policies such as
+module classifications before dispatching generation.
 
-For recovery or diagnosis only, a manual exact-ref dispatch remains available:
-
-```powershell
-gh workflow run generated-artifacts.yml --ref main -f ref=<source-sha>
-```
+After verifying and committing the bundle, push to the PR branch with
+ordinary pre-push validation. That route compares the actual outgoing
+branch tip with the checked-out commit and runs the same architecture
+source-readiness check as PR / Plan. A failed local check prevents the
+stale head from reaching required CI.
 
 The installer accepts only the current `HEAD`, validates the bundle receipt,
 the canonical manifest output set, the source-tree fingerprint, and each file
@@ -891,9 +913,10 @@ exact source path and symbol, with sorted card, Oracle-ID, deck, or fixture
 requirements and a nonempty rationale. Undeclared dynamics and stale
 declarations both fail closed. Do not add another fixture list or compact
 database builder. The generated
-`coverage/compact-ci-card-dependencies.json` and `.md` companions record the
-current identities, owners, source provenance, and per-shard closure. The JSON
-report stores each distinct resolution once. The audit readers expand those
+`coverage/compact-ci-card-dependencies.json.gz` and `.md` companions record the
+current identities, owners, source provenance, and per-shard closure. The
+losslessly compressed JSON report stores each distinct resolution once.
+The audit readers expand those
 references to recover all fixture owners and requirement records, and still
 accept earlier inline reports.
 

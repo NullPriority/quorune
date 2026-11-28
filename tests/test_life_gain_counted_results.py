@@ -107,6 +107,33 @@ class LifeGainCounterPaymentTests(unittest.TestCase):
             effects=(effect,), target_schema=result[2], cost_schema=None, handlers=(), coverage=())
         with self.assertRaises(ValueError): life_gain_counter_payment_program_dependencies(Row(**values))
 
+    def test_well_of_lost_dreams_payment_requires_original_controller_event_and_amount(self):
+        from quorune.compiler.life_gain_counted_results import capped_life_gain_draw_payment
+        from quorune.rules.life_gain_counted_results import capped_life_gain_draw_program_dependencies
+
+        text = ("You may pay {X}, where X is less than or equal to the amount of life you gained. "
+                "If you do, draw X cards.")
+        result, _ = capped_life_gain_draw_payment(text, binding=binding())
+        _, effects, schema, _ = result
+        values = dict(event="life.gained", active_zone="battlefield", event_condition=binding().event_condition,
+                      effects=effects, target_schema=schema, cost_schema=None, handlers=(), coverage=(),
+                      ability_id="trigger:front:n1")
+        self.assertIn("zone.draw.library_to_hand", capped_life_gain_draw_program_dependencies(Row(**values)))
+        for bad in (text.replace("less than or equal to", "less than"), text.replace("you gained", "they gained"),
+                    text.replace("draw X cards", "draw two cards"), text + " Scry 1."):
+            with self.subTest(body=bad):
+                self.assertIsNone(capped_life_gain_draw_payment(bad, binding=binding()))
+        self.assertIsNone(capped_life_gain_draw_payment(text, binding=binding(variant="opponent_life_gain")))
+        changes = (
+            {"event": "spell.cast"}, {"event_condition": None}, {"active_zone": "hand"},
+            {"effects": ({**effects[0], "schema_version": 17.0},)},
+            {"effects": ({**effects[0], "schema_version": 2},)},
+            {"effects": ({**effects[0], "payment": {**effects[0]["payment"], "limit": 9}},)},
+        )
+        for change in changes:
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                capped_life_gain_draw_program_dependencies(Row(**(values | change)))
+
     def test_resolved_projection_keeps_sealed_positive_count_and_rejects_unresolved_amount(self):
         from copy import deepcopy
         from quorune.rules.life_gain_counted_results import LIFE_GAIN_COUNTER_RESULT_FIELD as FIELD, life_gain_counter_payment_projection
@@ -142,7 +169,8 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
         base = json.loads((ROOT / 'tests/fixtures/bound-effect-program-cards.json').read_text(encoding='utf-8'))
         base['cards'] = [r for r in base['cards'] if r['name'] == 'Generic Bound Plains']; base['rulings'] = []
         basic = folder / 'basic.json'; basic.write_text(json.dumps(base), encoding='utf-8')
-        build_fixture_database([basic, ROOT / 'tests/fixtures/life-gain-counted-result-cards.json'], folder / 'life-gain.sqlite3')
+        build_fixture_database([basic, ROOT / 'tests/fixtures/life-gain-counted-result-cards.json',
+            ROOT / 'tests/fixtures/cast-counter-and-source-depletion-threshold-cards.json'], folder / 'life-gain.sqlite3')
         cls.db = CardDatabase(folder / 'life-gain.sqlite3'); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Life event counted counters', [DeckEntry('Sliver Hivelord', 1, 'commander'),
             DeckEntry('Generic Bound Plains', 30)], ['Sliver Hivelord'])
@@ -185,6 +213,103 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
                 capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
             bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile='commander_review')
             self.assertFalse(bound['strict']); self.assertIn('capability:undeclared_runtime_dependency:' + cap, bound['blockers'])
+
+    def test_actual_well_of_lost_dreams_uses_committed_gain_after_replacement_and_source_departure(self):
+        from quorune.record import authoritative_state_hash
+
+        session, private = self.start(728030)
+        engine = session.engine
+        well = self.add(engine, "Well of Lost Dreams")
+        reflection = self.add(engine, "Boon Reflection")
+        gain = self.add(engine, "Revitalize", zone="hand")
+        answer = self.add(engine, "Disenchant", seat="B", zone="hand")
+        for card in (well, reflection, gain, answer):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 9, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", gain)
+        self.resolve_top(session)
+        self.assertEqual(46, session.state.players["A"].life)
+        self.assertEqual(1, self.trigger_count(session, well))
+        self.cast(session, "B", answer, [well.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[well.object_id].zone)
+
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        actor = session.packet("pilot:A", full=True)["decision"]
+        from quorune.choice_forms import build_action_form
+
+        action, = actor["ctx"]["legal_actions"]
+        self.assertEqual({"field": "x", "type": "integer", "minimum": 0, "maximum": 6, "default": 0},
+                         action["choice_schema"])
+        form = build_action_form(action, decision_kind="semantic.choice", context=actor["ctx"])
+        field, = form["fields"]
+        self.assertEqual(("x", "integer", 0, 6), (field["name"], field["control"], field["minimum"], field["maximum"]))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for seat, amount in (("A", -1), ("A", True), ("A", 7), ("B", 4)):
+            denied = session.act("pilot:" + seat, {"action_id": "choose", "x": amount})
+            self.assertFalse(denied.ok, denied.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+        player = session.state.players["A"]
+        previous_hand = set(player.zones["hand"])
+        drawn = set(player.zones["library"][-4:])
+        previous_mana = sum(player.mana_pool.values())
+        result = session.act("pilot:A", {"action_id": "choose", "x": 4})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(previous_mana - 4, sum(session.state.players["A"].mana_pool.values()))
+        self.assertEqual(drawn, set(session.state.players["A"].zones["hand"]) - previous_hand)
+        for seat in "ABCD":
+            view = json.dumps(session.packet("pilot:" + seat, full=True)["state"])
+            for value in drawn:
+                reference = json.dumps(session.state.cards[value].ref)
+                if seat == "A":
+                    self.assertIn(reference, view)
+                else:
+                    self.assertNotIn(reference, view)
+        self.finish(session, private)
+
+    def test_actual_well_of_lost_dreams_quotes_only_payable_x_and_can_decline(self):
+        from quorune.record import authoritative_state_hash
+
+        session, private = self.start(728031)
+        well = self.add(session.engine, "Well of Lost Dreams")
+        other_gain = self.add(session.engine, "Revitalize", seat="B", zone="hand", ref="foreign-well-heal")
+        own_gain = self.add(session.engine, "Revitalize", zone="hand", ref="well-controller-heal")
+        for card in (well, own_gain, other_gain):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "B", other_gain)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(43, session.state.players["B"].life)
+        self.assertEqual(0, self.trigger_count(session, well))
+
+        self.cast(session, "A", own_gain)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(43, session.state.players["A"].life)
+        decision = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual(2, decision["legal_actions"][0]["choice_schema"]["maximum"])
+        before = authoritative_state_hash(session.state)
+        too_much = session.act("pilot:A", {"action_id": "choose", "x": 3})
+        self.assertFalse(too_much.ok, too_much.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        session = self.replay(session, load=True)
+        player = session.state.players["A"]
+        previous_hand = list(player.zones["hand"])
+        previous_mana = dict(player.mana_pool)
+        result = session.act("pilot:A", {"action_id": "choose", "x": 0})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(previous_hand, session.state.players["A"].zones["hand"])
+        self.assertEqual(previous_mana, session.state.players["A"].mana_pool)
+        self.finish(session, private)
 
     def test_actual_printed_cast_and_gain_choose_target_before_one_white_mana_payment_and_replay_privately(self):
         s, private, source, gain, own, foreign = self.world(728001)
@@ -275,6 +400,116 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
                 for card in (own, foreign): self.assertEqual(0, s.state.cards[card.object_id].counters.get('+1/+1', 0))
                 self.finish(s, private)
 
+    def test_prize_pig_executes_settled_life_and_ribbon_transactions_with_exact_replay(self):
+        from quorune.card_programs.adapters import compile_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+
+        record = self.db.lookup("Prize Pig")
+        plans = []
+        for profile in ("traditional", "commander_duel", "commander_review"):
+            program = compile_card_program(self.db, record, capability_registry=self.registry,
+                                           capability_profile=profile, trust_level="trusted")
+            binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+            self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+            trigger, = (ability for ability in program.abilities if ability.event == "life.gained")
+            plans.append((trigger.effects, trigger.event_condition, trigger.capability_dependencies))
+        self.assertEqual([plans[0]] * 3, plans)
+        cases = (
+            ("Boon Reflection", 0, True, False, 6, (6, 6), 0, False),
+            ("Doubling Season", 0, True, True, 3, (3, 6), 0, True),
+            ("Solemnity", 2, True, False, 3, None, 2, True),
+            ("Solemnity", 3, False, False, 3, None, 0, False),
+            ("Havoc Festival", 3, True, False, 0, None, 3, True),
+        )
+        for index, (name, ribbons, tapped, stunned, life, placement, expected_ribbons, expected_tap) in enumerate(cases):
+            with self.subTest(replacement=name, initial_ribbons=ribbons):
+                game, private = self.start(728100 + index)
+                pig = self.add(game.engine, "Prize Pig")
+                gain = self.add(game.engine, "Revitalize", zone="hand")
+                modifier = self.add(game.engine, name, seat="B" if name == "Havoc Festival" else "A")
+                for card in (pig, gain, modifier):
+                    self.assert_closed(game, card)
+                pig.tapped = tapped
+                pig.counters["+1/+1"] = 1
+                if ribbons:
+                    pig.counters["ribbon"] = ribbons
+                if stunned:
+                    pig.counters["stun"] = 1
+                self.prepare(game, mana={"C": 1, "W": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", gain)
+                self.resolve_top(game)
+                self.assertEqual(40 + life, game.state.players["A"].life)
+                trigger = [item for item in game.state.stack if item.source_object_id == pig.object_id]
+                self.assertEqual(int(life > 0), len(trigger))
+                if trigger:
+                    self.assertEqual(life, trigger[0].context["amount"])
+                self.assertIsNone(self.resolve(game))
+                additions = [(event.details["requested"], event.details["placed"]) for event in game.state.events
+                             if event.code == "counter.add" and event.details.get("object") == pig.ref
+                             and event.details.get("counter") == "ribbon" and event.details["placed"] > 0]
+                self.assertEqual([placement] if placement is not None else [], additions)
+                self.assertEqual(expected_ribbons, pig.counters.get("ribbon", 0))
+                self.assertEqual(1, pig.counters["+1/+1"])
+                self.assertEqual(0, pig.counters.get("stun", 0))
+                self.assertEqual(expected_tap, pig.tapped)
+                self.finish(game, private)
+
+    def test_prize_pig_old_trigger_replays_without_following_a_departed_source(self):
+        game, private = self.start(728105)
+        pig = self.add(game.engine, "Prize Pig")
+        gain = self.add(game.engine, "Revitalize", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        for card in (pig, gain, bounce):
+            self.assert_closed(game, card)
+        pig.tapped = True
+        pig.counters["ribbon"] = 2
+        self.prepare(game, mana={"C": 1, "W": 1})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast(game, "A", gain)
+        self.resolve_top(game)
+        self.assertEqual(1, len([item for item in game.state.stack if item.source_object_id == pig.object_id]))
+        self.cast(game, "B", bounce, [pig.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", pig.zone)
+        self.assertFalse([event for event in game.state.events if event.code == "counter.add"
+                          and event.details.get("object") == pig.ref])
+        self.finish(game, private)
+
+    def test_prize_pig_requires_exact_threshold_compiler_and_named_counter_authority(self):
+        from copy import deepcopy
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        card = self.db.lookup("Prize Pig")
+        profiles = ("traditional", "commander_duel", "commander_review")
+        for profile in profiles:
+            result = compile_oracle_card(card, capability_registry=self.registry, capability_profile=profile)
+            self.assertEqual("exact", result.status)
+        with patch("quorune.compiler.life_gain_counted_results.life_gain_counter_reset_result", return_value=None):
+            for profile in profiles:
+                result = compile_oracle_card(card, capability_registry=self.registry, capability_profile=profile)
+                self.assertNotEqual("exact", result.status)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+        for capability in ("quantity_expression.source_counter_kind_count", "counter.removal.all_named_source_effect"):
+            changed = deepcopy(raw)
+            row = next(value for value in changed["capabilities"] if value["id"] == capability)
+            row.update(status="blocked", blockers=["Independently withdrew the named-counter authority"])
+            registry = CapabilityRegistry(changed)
+            evidence = build_index(registry_value=changed, declaration_source=declarations, discovered_test_ids=discovered)
+            registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+            for profile in profiles:
+                result = compile_oracle_card(card, capability_registry=registry, capability_profile=profile)
+                self.assertNotEqual("exact", result.status)
+
     def test_actual_post_counter_commit_fault_restores_payment_choice_mana_and_counters_then_retries(self):
         import quorune.counter_placement as owner
         from quorune.errors import GameRuleError
@@ -338,3 +573,139 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
 
 if __name__ == '__main__':
     unittest.main()
+
+
+NIV = "Niv-Mizzet, Ghost Counsel"
+
+
+class LifeGainLifeDrawNativeTests(InheritedNativeFixture, unittest.TestCase):
+    reject = recovery_helpers.TurnLifeLossRecoveryNativeTests.reject
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "life-gain-life-draw.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/life-gain-counted-result-cards.json",
+            ROOT / "tests/fixtures/life-total-prohibition-cards.json",
+            ROOT / "tests/fixtures/live-combat-counterpart-lifelink-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Sliver Hivelord"
+        cls.deck = DeckDefinition("Life-gain life payment", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def test_niv_exact_original_controller_amount_draw_and_mutation(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.life_gain_counted_results import LIFE_GAIN_LIFE_DRAW_CAPABILITY, life_gain_life_draw_effect
+        from quorune.semantics import SemanticRegistry
+
+        profile = "commander_review"
+        record = self.db.lookup(NIV, fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertEqual(3, len(ir.faces[0].nodes))
+        node, = [node for node in ir.faces[0].nodes if node.event == "life.gained"]
+        self.assertEqual([life_gain_life_draw_effect()], list(node.effects))
+        self.assertIn(LIFE_GAIN_LIFE_DRAW_CAPABILITY, node.capability_dependencies)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile=profile)
+        proof = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+        self.assertTrue(proof["strict_capability_ready"], proof["blockers"])
+        for text in (
+            record.oracle_text.replace("you gain life", "an opponent gains life"),
+            record.oracle_text.replace("that much life", "the life you gained this turn"),
+            record.oracle_text.replace("that many cards", "two cards"),
+            record.oracle_text.replace("If you do, draw that many cards.", "If you do, draw that many cards and scry 1."),
+        ):
+            changed = compile_oracle_card(replace(record, oracle_text=text),
+                capability_registry=self.registry, capability_profile=profile)
+            self.assertTrue(changed.material_residuals)
+        with patch("quorune.compiler.life_gain_counted_results.life_gain_life_draw_payment", return_value=None):
+            omitted = compile_oracle_card(record, capability_registry=self.registry, capability_profile=profile)
+        self.assertTrue(omitted.material_residuals)
+
+    def quote(self, game, *, payable=True):
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        quote = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("life", quote["payment_kind"])
+        self.assertEqual(payable, quote["payable"])
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        return quote["life_payment"]
+
+    def test_niv_separate_committed_lifelink_amounts_allow_pay_and_decline_privately(self):
+        game = self.session(11904001)
+        source = self.add(game.engine, NIV)
+        first = self.add(game.engine, "Vault Skirge")
+        second = self.add(game.engine, "Child of Night")
+        multiplier = self.add(game.engine, "Boon Reflection")
+        for card in (source, first, second, multiplier):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, [(first, "B"), (second, "B")])
+        self.until(game, lambda s: self.trigger_count(s, source) == 2)
+        self.assertEqual((46, 37), tuple(game.state.players[seat].life for seat in "AB"))
+        self.assertEqual([2, 4], sorted(item.context["amount"] for item in game.state.stack
+            if item.source_object_id == source.object_id and item.kind == "triggered_ability"))
+        magnitudes = []
+        for _ in range(2):
+            amount = self.quote(game)
+            magnitudes.append(amount)
+            game = self.replay(game, load=True)
+            self.reject(game, "B", {"action_id": "choose", "pay": True})
+            self.reject(game, "A", {"action_id": "choose", "pay": amount})
+            player = game.state.players["A"]
+            old_life, old_hand, old_mana = player.life, set(player.zones["hand"]), dict(player.mana_pool)
+            paid = amount == 4
+            draws = set(player.zones["library"][-amount:]) if paid else set()
+            result = game.act("pilot:A", {"action_id": "choose", "pay": paid})
+            self.assertTrue(result.ok, result.summary)
+            player = game.state.players["A"]
+            self.assertEqual(old_life - (amount if paid else 0), player.life)
+            self.assertEqual(draws, set(player.zones["hand"]) - old_hand)
+            self.assertEqual(old_mana, dict(player.mana_pool))
+            for seat in "ABCD":
+                view = json.dumps(game.packet("pilot:" + seat, full=True)["state"])
+                for object_id in draws:
+                    ref = json.dumps(game.state.cards[object_id].ref)
+                    self.assertEqual(seat == "A", ref in view)
+        self.assertEqual([2, 4], sorted(magnitudes))
+        self.assertEqual(42, game.state.players["A"].life)
+        self.replay(game, load=True)
+
+    def test_niv_activated_drain_keeps_quote_when_life_payment_becomes_prohibited(self):
+        game = self.session(11904002)
+        source = self.add(game.engine, NIV)
+        flash = self.add(game.engine, "Vedalken Orrery")
+        prohibition = self.add(game.engine, "Platinum Emperion", zone="hand")
+        for card in (source, flash, prohibition):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 8})
+        self.checkpoint(game)
+        self.priority(game, "A")
+        rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [row for row in rows if row["id"].startswith(f"activate:{source.ref}:")]
+        accepted = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.resolve_top(game)
+        self.assertEqual((41, 39, 39, 39), tuple(game.state.players[seat].life for seat in "ABCD"))
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.cast_for(game, "A", prohibition)
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[prohibition.object_id].zone)
+        self.assertEqual(1, self.quote(game, payable=False))
+        game = self.replay(game, load=True)
+        self.reject(game, "A", {"action_id": "choose", "pay": True})
+        before = tuple(game.state.players["A"].zones["hand"])
+        accepted = game.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(41, game.state.players["A"].life)
+        self.assertEqual(before, tuple(game.state.players["A"].zones["hand"]))
+        self.replay(game, load=True)

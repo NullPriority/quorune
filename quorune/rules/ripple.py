@@ -2,6 +2,10 @@
 from collections.abc import Mapping
 from ..replacement.immutable import FrozenMap
 from ..ripple_model import RippleSpec,RippleCastSnapshot,RIPPLE_CAPABILITY
+from .revealed_library_cast import (
+    MANA_VALUE_CAST_FIELD, decode_mana_value_cast_instruction, mana_value_cast_payload_dependencies,
+    mana_value_cast_program_dependencies,
+)
 
 RIPPLE_FIELD = 'ripple'
 RIPPLE_CAST_CONTEXT = 'ripple_cast_snapshot'
@@ -35,13 +39,27 @@ def decode_ripple_instruction(effect,*,actor='$controller',allow_symbolic=True):
     return spec,RippleCastSnapshot.from_dict(raw)
 
 
+def uses_revealed_library_cast(effect):
+    return isinstance(effect, Mapping) and (RIPPLE_FIELD in effect or MANA_VALUE_CAST_FIELD in effect)
+
+
+def decode_revealed_library_cast(effect, *, actor, allow_symbolic):
+    if MANA_VALUE_CAST_FIELD in effect:
+        return None, decode_mana_value_cast_instruction(effect, actor=actor, allow_symbolic=allow_symbolic)
+    return decode_ripple_instruction(effect, actor=actor, allow_symbolic=allow_symbolic)
+
+
 def ripple_payload_dependencies(effect):
-    if not isinstance(effect,Mapping) or RIPPLE_FIELD not in effect:return ()
+    if not uses_revealed_library_cast(effect):return ()
+    if MANA_VALUE_CAST_FIELD in effect:
+        return mana_value_cast_payload_dependencies(effect)
     decode_ripple_instruction(effect)
     return RIPPLE_TRIGGER_CAPABILITIES
 
 
 def ripple_program_dependencies(program):
+    if any(isinstance(e, Mapping) and MANA_VALUE_CAST_FIELD in e for e in program.effects):
+        return mana_value_cast_program_dependencies(program)
     if not any(isinstance(e,Mapping) and RIPPLE_FIELD in e for e in program.effects):return ()
     if (len(program.effects)!=1 or program.target_schema is not None
             or program.event!='spell.cast' or program.active_zone!='stack'

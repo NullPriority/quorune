@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709627",
+      "name": "Kiln Alcove // Rook Loft",
+      "layout": "split",
+      "type_line": "Enchantment — Room // Enchantment — Room",
+      "mana_cost": "{R} // {R}",
+      "cmc": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Kiln Alcove",
+          "type_line": "Enchantment — Room",
+          "mana_cost": "{R}",
+          "colors": [
+            "R"
+          ],
+          "oracle_text": "At the beginning of your first main phase, add {R}{R}. Spend this mana only to cast Room spells and unlock doors."
+        },
+        {
+          "name": "Rook Loft",
+          "type_line": "Enchantment — Room",
+          "mana_cost": "{R}",
+          "colors": [
+            "R"
+          ],
+          "oracle_text": "When you unlock this door, create an X/X red Bird creature token with flying, where X is the number of unlocked doors among Rooms you control."
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709628",
+      "name": "Pinprick Bolt",
+      "layout": "normal",
+      "type_line": "Instant",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "oracle_text": "Pinprick Bolt deals 1 damage to any target.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

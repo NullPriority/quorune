@@ -6,9 +6,11 @@ from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
 from .flashback import (
     FixedManaFlashbackSpec,
-    FLASHBACK_MECHANIC_ID,
+    FixedSacrificeFlashbackSpec, SACRIFICE_FLASHBACK_HANDLER_ID,
+    FLASHBACK_HANDLER_ID, FLASHBACK_MECHANIC_ID,
     FLASHBACK_RUNTIME_EVENT,
 )
+from .harmonize import HANDLER_ID as HARMONIZE_HANDLER_ID, MECHANIC as HARMONIZE_MECHANIC, HarmonizeSpec
 from .semantic_runtime.flashback import default_fixed_mana_flashback_registry
 from .semantic_runtime.casting_activation_metadata import (
     compiled_self_zone_cast_permission,
@@ -38,6 +40,10 @@ def compiled_ordinary_zone_cast_permission(
         return True
     if card.owner != seat:
         return False
+    from .rules.owned_graveyard_turn_play import owned_graveyard_turn_play_permission
+
+    if owned_graveyard_turn_play_permission(host, seat, card):
+        return True
     if card.zone in set(card.annotations.get("cast_from") or []):
         return True
     if compiled_self_zone_cast_permission(host, seat, card):
@@ -51,20 +57,27 @@ def compiled_ordinary_zone_cast_permission(
 def compiled_fixed_mana_flashback_spec(
     host: CompiledFlashbackHost,
     card: Any,
-) -> FixedManaFlashbackSpec | None:
+) -> FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | None:
     """Return one current, complete-card-admitted printed Flashback spec."""
 
+    return _compiled_graveyard_alternative(host, card, keyword=FLASHBACK_MECHANIC_ID, handler_ids=(FLASHBACK_HANDLER_ID, SACRIFICE_FLASHBACK_HANDLER_ID))
+
+
+def compiled_harmonize_spec(host: CompiledFlashbackHost, card: Any) -> HarmonizeSpec | None:
+    return _compiled_graveyard_alternative(host, card, keyword=HARMONIZE_MECHANIC, handler_ids=(HARMONIZE_HANDLER_ID,))
+
+
+def _compiled_graveyard_alternative(host, card, *, keyword, handler_ids):
     record = host.card_record(card)
     if (
         record is None
-        or FLASHBACK_MECHANIC_ID
-        not in {str(value).casefold() for value in record.keywords}
+        or keyword not in {str(value).casefold() for value in record.keywords}
         or card.object_kind != "card"
         or card.annotations.get("copy_overrides") is not None
     ):
         return None
     registry = default_fixed_mana_flashback_registry()
-    result: list[FixedManaFlashbackSpec] = []
+    result: list[FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | HarmonizeSpec] = []
     for program in host.semantics.runtime_handler_programs_for_oracle(
         record.oracle_id,
         active_zone="all",
@@ -77,7 +90,7 @@ def compiled_fixed_mana_flashback_spec(
         ):
             continue
         for descriptor in program.handlers:
-            if registry.describe(str(descriptor.get("handler_id") or "")) is not None:
+            if descriptor.get("handler_id") in handler_ids:
                 result.extend(registry.lower(descriptor, None))
     return result[0] if len(result) == 1 else None
 

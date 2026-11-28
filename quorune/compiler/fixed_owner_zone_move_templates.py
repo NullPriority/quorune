@@ -14,7 +14,10 @@ from ..attachment_references import (
     AttachmentReferenceSpec,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC, GRAVEYARD_LIBRARY_TARGET_FIELD
+from ..public_zone_moves import (
+    FIXED_OWNER_ZONE_MOVE_MECHANIC, GRAVEYARD_LIBRARY_TARGET_FIELD,
+    owned_permanent_library_bottom_target_schema,
+)
 from ..rules.source_references import (
     SourceReferenceSpec,
     source_self_permanent_type,
@@ -22,6 +25,12 @@ from ..rules.source_references import (
 from ..targets import TargetGroup
 from ..util import stable_json
 from .fixed_entry_return_requirements import FixedEntryReturnRequirementSpec
+from ..rules.opponent_spell_or_permanent_return import (
+    ENTRY_SUBJECT, SUBJECT as OPPONENT_RETURN_SUBJECT, effect as opponent_return_effect,
+    entry_effect, entry_target_schema, target_schema as opponent_return_target_schema,
+    SPELL_SUBJECT, spell_return_effect, spell_return_target_schema,
+    OPPOSING_SPELL_SUBJECT, spell_effect, spell_target_schema,
+)
 from .direct_target import direct_permanent_target_spec
 from .return_to_hand_templates import _own_graveyard_characteristic_target
 from ..rules.graveyard_card_targets import (
@@ -138,6 +147,14 @@ class FixedOwnerZoneMoveTemplate:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.subject_id == ENTRY_SUBJECT:
+            return (entry_effect(),)
+        if self.subject_id == OPPOSING_SPELL_SUBJECT:
+            return (spell_effect(),)
+        if self.subject_id == OPPONENT_RETURN_SUBJECT:
+            return (opponent_return_effect(),)
+        if self.subject_id == SPELL_SUBJECT:
+            return (spell_return_effect(),)
         if self.reference is FixedOwnerZoneMoveReference.PUBLIC_CHOICE:
             assert self.choice_query is not None
             choice = deepcopy(
@@ -242,24 +259,10 @@ def _battlefield_owner_zone_target_schema(
         ]
         return schema
     if normalized == "nonland historic permanent":
+        from ..target_forms import HISTORIC_TARGET_FORMS
+
         schema["types_none"] = ["land"]
-        schema["characteristic_forms_any"] = [
-            {
-                "types_all": ["artifact"],
-                "subtypes_any": [],
-                "supertypes_any": [],
-            },
-            {
-                "types_all": [],
-                "subtypes_any": [],
-                "supertypes_any": ["legendary"],
-            },
-            {
-                "types_all": [],
-                "subtypes_any": ["saga"],
-                "supertypes_any": [],
-            },
-        ]
+        schema["characteristic_forms_any"] = [form.to_dict() for form in HISTORIC_TARGET_FORMS]
         return schema
     direct = direct_permanent_target_spec("target " + subject)
     return direct.to_target_schema() if direct is not None else None
@@ -268,6 +271,15 @@ def _battlefield_owner_zone_target_schema(
 def _targeted_owner_library_move(
     text: str,
 ) -> FixedOwnerZoneMoveTemplate | None:
+    if re.fullmatch(r"Put target permanent you own on the bottom of your library\.",
+                    " ".join(text.strip().split()), re.IGNORECASE):
+        return FixedOwnerZoneMoveTemplate(
+            reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="library",
+            subject_id="battlefield-permanent-owned-by-controller",
+            target_schema=owned_permanent_library_bottom_target_schema(),
+            library_position="bottom",
+        )
     match = re.fullmatch(
         r"Put target (?P<subject>.+?) "
         r"(?:(?P<edge>on top of|on the bottom of) its owner['’]s library|"
@@ -384,15 +396,20 @@ def _targeted_public_card_owner_move(
             target_schema=schema,
             library_position="bottom",
         )
-    if re.fullmatch(
+    shuffle_exiled_card = re.fullmatch(
+        r"Choose target face-up exiled card\. Its owner shuffles it into their library\.",
+        normalized, re.IGNORECASE,
+    ) is not None
+    if shuffle_exiled_card or re.fullmatch(
         r"Put target face-up exiled card into its owner['’]s graveyard\.?",
         normalized,
         re.IGNORECASE,
     ):
         return FixedOwnerZoneMoveTemplate(
             reference=FixedOwnerZoneMoveReference.TARGET,
-            destination="graveyard",
+            destination="library" if shuffle_exiled_card else "graveyard",
             subject_id="face-up-exiled-card",
+            shuffle=shuffle_exiled_card,
             target_schema={
                 "zones": ["exile"],
                 "categories": ["card"],
@@ -506,7 +523,32 @@ def _public_choice_owner_hand_move(
 
 def _targeted_owner_hand_move(
     text: str,
+    *,
+    source_is_permanent: bool | None,
 ) -> FixedOwnerZoneMoveTemplate | None:
+    if source_is_permanent is False and re.fullmatch(
+        r"Return target spell to its owner['’]s hand\.?", text.strip(), re.I,
+    ):
+        return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="hand", subject_id=SPELL_SUBJECT, target_schema=spell_return_target_schema())
+    if source_is_permanent is True and re.fullmatch(
+        r"Return target spell or permanent to its owner['’]s hand\.?", text.strip(), re.I,
+    ):
+        return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="hand", subject_id=ENTRY_SUBJECT, target_schema=entry_target_schema())
+    if source_is_permanent is False and re.fullmatch(
+        r"Return target spell or nonland permanent an opponent controls to its owner['’]s hand\.?",
+        text.strip(), re.IGNORECASE,
+    ):
+        return FixedOwnerZoneMoveTemplate(
+            reference=FixedOwnerZoneMoveReference.TARGET, destination="hand",
+            subject_id=OPPONENT_RETURN_SUBJECT, target_schema=opponent_return_target_schema(),
+        )
+    if source_is_permanent is not False and re.fullmatch(
+        r"Return target spell you don['’]t control to its owner['’]s hand\.?", text.strip(), re.I,
+    ):
+        return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="hand", subject_id=OPPOSING_SPELL_SUBJECT, target_schema=spell_target_schema())
     match = re.fullmatch(
         r"Return target (?P<subject>creature or Vehicle) "
         r"to its owner['’]s hand\.?",
@@ -536,7 +578,7 @@ def fixed_owner_zone_move_effect_template(
         _targeted_owner_library_move(text)
         or _targeted_public_card_owner_move(text)
         or _targeted_bounded_graveyard_library_move(text)
-        or _targeted_owner_hand_move(text)
+        or _targeted_owner_hand_move(text, source_is_permanent=source_is_permanent)
         or _public_choice_owner_hand_move(text)
         or _source_or_attachment_owner_move(
             text,

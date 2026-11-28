@@ -3,7 +3,9 @@ from __future__ import annotations
 """Read-only selected zone-cost forms and declared cardinality validation."""
 
 from typing import Any, Mapping
-from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
+from ...additional_cost_vocabulary import (
+    DISCARD_ONE_COST, EXILE_ONE_FROM_GRAVEYARD_COST, SACRIFICE_ONE_COST, ZONE_CHANGE_COST_KIND,
+)
 from ...public_alternative_costs import (
     ANNOUNCED_X_PITCH_POLICY, ANNOUNCED_X_PITCH_PRICE_VERSION, FixedPublicAlternativeCostError,
     FixedPublicAlternativeCostSpec,
@@ -15,6 +17,7 @@ from ..casting_additional_costs import (
 
 
 ANNOUNCED_PITCH_X = "announced_pitch_x"
+GRANTED_ESCAPE_ORIGINS_FIELD = "granted_escape_cost_origins"
 
 
 def _hand_mana_values(host, seat, candidate_refs):
@@ -86,14 +89,12 @@ def _fixed_zone_change_selection(
     choice_schema: dict[str, Any],
     option: dict[str, Any],
     allow_generic_refs: bool = True,
+    candidate_refs: tuple[str, ...] | None = None,
 ) -> tuple[bool, dict[str, Any] | None]:
     candidates = list(
         fixed_zone_change_cost_candidates(
-            host,
-            actor=seat,
-            cost=cost,
-            exclude_object_id=source_object_id,
-        )
+            host, actor=seat, cost=cost, exclude_object_id=source_object_id,
+        ) if candidate_refs is None else candidate_refs
     )
     if option.get("x_value_policy") == ANNOUNCED_X_PITCH_POLICY:
         value = option.get(ANNOUNCED_PITCH_X)
@@ -137,10 +138,17 @@ def _fixed_zone_change_selection(
     values = list(raw_values)
     if (
         len(values) != count
-        or len(set(values)) != count
         or any(type(value) is not str or value not in candidates for value in values)
+        or len(set(values)) != count
     ):
         return False, None
+    if cost.island_pair:
+        from ..island_pair_discard_cost import selected_discard_has_island
+
+        if ("discard_cards" in response and "cost_cards" in response) or not selected_discard_has_island(
+            host, seat, values, exclude_object_id=source_object_id,
+        ):
+            return False, None
     selected = {
         "kind": ZONE_CHANGE_COST_KIND,
         "operation": cost.operation,
@@ -152,6 +160,88 @@ def _fixed_zone_change_selection(
     return True, selected
 
 
+def granted_escape_zone_costs(option, costs):
+    """Recognize the granted three-card price and independently typed earlier payments."""
+    from ...cast_lifecycles import GRANTED_ESCAPE_USE_FIELD, escape_other_card_cost_descriptor
+    from ..fixed_payment_groups import (
+        FIXED_DISCARD_SACRIFICE_FIELD, WHOLE_DISCARD_SACRIFICE_VERSION, fixed_life_zone_costs,
+    )
+
+    if GRANTED_ESCAPE_USE_FIELD not in option:
+        return ()
+    if not isinstance(costs, (tuple, list)) or not 1 <= len(costs) <= 3:
+        raise ValueError("Granted Escape requires its declared cost group")
+    if costs[-1] != escape_other_card_cost_descriptor(3):
+        raise ValueError("Granted Escape requires the exact three other graveyard cards")
+    if option.get(FIXED_DISCARD_SACRIFICE_FIELD) == WHOLE_DISCARD_SACRIFICE_VERSION:
+        raise ValueError("Granted Escape cannot change an automatic whole-zone payment")
+    if fixed_life_zone_costs(costs):
+        return ((len(costs) - 1, fixed_zone_change_additional_cost(costs[-1])),)
+    priced = tuple((position, fixed_zone_change_additional_cost(raw)) for position, raw in enumerate(costs))
+    producers = tuple(cost for _, cost in priced[:-1])
+    if (
+        any(cost is None or cost.operation not in {DISCARD_ONE_COST, SACRIFICE_ONE_COST}
+            or cost.count_parameter is not None for cost in producers)
+        or len({cost.origin_zone for cost in producers}) != len(producers)
+    ):
+        raise ValueError("Granted Escape requires independently represented earlier zone payments")
+    return priced
+
+
+def _escape_card_for_graveyard(card, *, owner):
+    return card.owner == owner and card.is_card_object and not card.is_token
+
+
+def _escape_exile_candidates(host, seat, source, costs, response, *, hint, by_ref):
+    graveyard = tuple(
+        ref for ref in fixed_zone_change_cost_candidates(
+            host, actor=seat, cost=costs[-1][1], exclude_object_id=source.object_id,
+        )
+        if _escape_card_for_graveyard(by_ref[ref], owner=seat)
+    )
+    prospective = []
+    payable = len(graveyard)
+    for _, cost in costs[:-1]:
+        refs = fixed_zone_change_cost_candidates(host, actor=seat, cost=cost, exclude_object_id=source.object_id)
+        if not hint:
+            selected = response.get(cost.choice_field)
+            if (
+                not isinstance(selected, (tuple, list)) or len(selected) != cost.count
+                or any(type(ref) is not str or ref not in refs for ref in selected)
+                or len(set(selected)) != len(selected)
+            ):
+                return ()
+            refs = selected
+        arriving = [ref for ref in refs if _escape_card_for_graveyard(by_ref[ref], owner=seat)]
+        prospective.extend(arriving)
+        payable += min(cost.count, len(arriving))
+    return (*graveyard, *prospective) if payable >= 3 else ()
+
+
+def _select_granted_escape_zone_cost(host, seat, source, option, costs, response, *, position, hint, choice_schema):
+    try:
+        prices = granted_escape_zone_costs(option, costs)
+        cost = dict(prices)[position]
+    except (AdditionalCostError, KeyError, TypeError, ValueError):
+        return False, None
+    by_ref = {card.ref: card for card in host.state.cards.values()}
+    candidates = (
+        _escape_exile_candidates(host, seat, source, prices, response, hint=hint, by_ref=by_ref)
+        if position == prices[-1][0] else None
+    )
+    valid, selected = _fixed_zone_change_selection(
+        host, seat=seat, source_object_id=source.object_id, cost=cost, cost_position=position,
+        response=response, hint=hint, choice_schema=choice_schema, option=option,
+        allow_generic_refs=False, candidate_refs=candidates,
+    )
+    if valid and selected is not None:
+        refs = (selected["card"],) if "card" in selected else tuple(selected["cards"])
+        selected[GRANTED_ESCAPE_ORIGINS_FIELD] = [
+            [ref, by_ref[ref].logical_object_id, by_ref[ref].zone] for ref in refs
+        ]
+    return valid, selected
+
+
 def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,position,hint,choice_schema):
     """Select a closed price without paying it or choosing a random subset."""
     from ..random_discard_additional_cost import RANDOM_SPELL_COST_KIND,select_random_spell_cost
@@ -160,6 +250,11 @@ def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,
     try:cost=fixed_zone_change_additional_cost(costs[position])
     except AdditionalCostError:return False,None
     if cost is None:return None
+    from ...cast_lifecycles import GRANTED_ESCAPE_USE_FIELD
+
+    if GRANTED_ESCAPE_USE_FIELD in option:
+        return _select_granted_escape_zone_cost(host, seat, source, option, costs, response,
+            position=position, hint=hint, choice_schema=choice_schema)
     from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_discard_sacrifice_order, fixed_life_zone_costs
     from ..fixed_payment_groups import FIXED_DISCARD_SACRIFICE_FIELD, WHOLE_DISCARD_SACRIFICE_VERSION
     if option.get(FIXED_DISCARD_SACRIFICE_FIELD) == WHOLE_DISCARD_SACRIFICE_VERSION:
@@ -169,7 +264,10 @@ def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,
     tap_zone = fixed_color_tap_zone_costs(costs)
     try: ordered_pair = fixed_discard_sacrifice_order(option, costs)
     except ValueError: return False, None
+    from ...public_alternative_costs import is_life_and_blue_hand_exile_price_option
+
     if (len(costs) != 1 and not fixed_life_zone_costs(costs)
+        and not is_life_and_blue_hand_exile_price_option(option, costs)
         and not distinct_kicker_zone_costs(option, costs) and not tap_zone and not ordered_pair):
         return False, None
     if tap_zone:

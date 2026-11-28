@@ -2,16 +2,21 @@ from __future__ import annotations
 
 """Canonical provenance for mana whose source or spend restriction matters."""
 
+from collections import Counter
 from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, MutableMapping, Sequence
 
 from .util import normalize_mana_bundle
 from .mana_restrictions import mana_spend_haste_lifetime, mana_spend_protects_spell
-from .mana_spend_rules import PAID_MANA_PROTECTION_FIELD, decode_mana_spend_rule, remember_paid_mana_haste
-from .rules.mana_pool_payment import ManaPoolAllocation, unit_for_lot
+from .mana_spend_rules import (
+    PAID_MANA_PROTECTION_FIELD, decode_source_bound_cast_mana,
+    decode_mana_spend_rule, remember_paid_mana_haste,
+)
+from .rules.mana_pool_payment import ManaPoolAllocation, PoolManaUnit, unit_for_lot
 
 
 MANA_PROVENANCE_KEY = "mana_provenance_v1"
+RETAIN_RED_MANA_UNTIL_CLEANUP = "retain_red_mana_until_cleanup"
 _RESTRICTED_MANA_KEY = "restricted_mana"
 _COLORS = "WUBRGC"
 
@@ -59,12 +64,13 @@ class ManaProvenanceLot:
                 "mana provenance restriction is invalid"
             )
         try:
+            decode_source_bound_cast_mana(self.restriction)
             rule = decode_mana_spend_rule(self.restriction)
         except ValueError as exc:
             raise ManaProvenanceError(str(exc)) from exc
         if rule is not None and rule.is_template:
             raise ManaProvenanceError("A mana lot requires its production-bound choice")
-        if self.retention not in {None, "end_of_combat"}:
+        if self.retention not in {None, "end_of_combat", "end_of_turn"}:
             raise ManaProvenanceError("mana provenance retention is invalid")
         if (
             not self.snow
@@ -398,7 +404,7 @@ def spend_mana(
     restriction_allows: Callable[[str, str | None], bool],
     spend_context: str | None,
     pool_allocation: ManaPoolAllocation | None = None,
-) -> None:
+) -> ManaPoolAllocation:
     total_spent = normalize_mana_bundle(spent)
     snow_spent = normalize_mana_bundle(snow_payment)
     if any(
@@ -412,19 +418,15 @@ def spend_mana(
         _spend_allocated_pool_mana(
             player, pool_allocation, total_spent, snow_spent, restriction_allows, spend_context,
         )
-        return
+        return pool_allocation
     lots = [
-        {
-            "bundle": normalize_mana_bundle(dict(lot.bundle)),
-            "snow": lot.snow,
-            "restriction": lot.restriction,
-            "retention": lot.retention,
-        }
+        (lot, normalize_mana_bundle(dict(lot.bundle)))
         for lot in mana_provenance_lots(player)
     ]
+    consumed: Counter[PoolManaUnit] = Counter()
     pool = normalize_mana_bundle(player.mana_pool)
     untracked = {
-        color: pool[color] - sum(lot["bundle"][color] for lot in lots)
+        color: pool[color] - sum(bundle[color] for _, bundle in lots)
         for color in _COLORS
     }
     if any(amount < 0 for amount in untracked.values()):
@@ -432,12 +434,8 @@ def spend_mana(
             "mana provenance exceeds the authoritative pool"
         )
 
-    def eligible(lot: Mapping[str, Any]) -> bool:
-        restriction = lot["restriction"]
-        return restriction is None or restriction_allows(
-            restriction,
-            spend_context,
-        )
+    def eligible(lot: ManaProvenanceLot) -> bool:
+        return lot.restriction is None or restriction_allows(lot.restriction, spend_context)
 
     def consume(
         color: str,
@@ -447,19 +445,20 @@ def spend_mana(
         retained: bool,
     ) -> int:
         remaining = amount
-        for lot in lots:
+        for lot, bundle in lots:
             if remaining <= 0:
                 break
             if (
-                bool(lot["snow"]) is not snow
-                or (lot["retention"] is not None) is not retained
+                lot.snow is not snow
+                or (lot.retention is not None) is not retained
                 or not eligible(lot)
             ):
                 continue
-            bundle = lot["bundle"]
             use = min(remaining, bundle[color])
-            bundle[color] -= use
-            remaining -= use
+            if use:
+                consumed[unit_for_lot(color, lot)] += use
+                bundle[color] -= use
+                remaining -= use
         return amount - remaining
 
     for color in _COLORS:
@@ -489,8 +488,9 @@ def spend_mana(
         )
         remaining -= used_nonsnow
         use_untracked = min(remaining, untracked[color])
-        untracked[color] -= use_untracked
-        remaining -= use_untracked
+        if use_untracked:
+            consumed[PoolManaUnit(color)] += use_untracked
+            remaining -= use_untracked
         if remaining:
             used_retained = consume(
                 color,
@@ -524,20 +524,15 @@ def spend_mana(
             raise ManaProvenanceError(
                 "mana payment exceeds the authoritative pool"
             )
-    remaining_lots = []
-    for raw in lots:
-        if not any(raw["bundle"].values()):
-            continue
-        remaining_lots.append(
-            ManaProvenanceLot.create(
-                raw["bundle"],
-                snow=raw["snow"],
-                restriction=raw["restriction"],
-                retention=raw["retention"],
-            )
-        )
+    remaining_lots = [
+        replace(lot, bundle=tuple((color, bundle[color]) for color in _COLORS if bundle[color]))
+        for lot, bundle in lots
+        if any(bundle.values())
+    ]
+    allocation = ManaPoolAllocation(tuple(consumed.items()))
     player.mana_pool = pool
     _store_lots(player, remaining_lots)
+    return allocation
 
 
 def clear_mana_provenance(stats: MutableMapping[str, Any]) -> None:
@@ -553,21 +548,34 @@ def lose_all_unspent_mana(player: Any) -> dict[str, int]:
     return {color: amount for color, amount in pool.items() if amount}
 
 
+TURN_POOL_COLOR_STAT = "retain_red_through_turn"
+
+
 def clear_step_mana(
     player: Any,
     *,
     phase: str,
     step: str,
+    preserve_colors: Sequence[str] = (),
+    turn_sequence: int | None = None,
 ) -> dict[str, int]:
-    """Clear the pool while retaining only unspent end-of-combat lots."""
+    """Clear the pool except for mana retained by duration or current static rules."""
 
     pool = normalize_mana_bundle(player.mana_pool)
     preserve_combat = phase == "combat" and step != "end_combat"
-    kept_lots = tuple(
-        lot
-        for lot in mana_provenance_lots(player)
-        if preserve_combat and lot.retention == "end_of_combat"
-    )
+    preserve_turn = (phase, step) != ("ending", "cleanup")
+    retained_red = player.stats.get(TURN_POOL_COLOR_STAT)
+    if type(retained_red) is int and retained_red == turn_sequence and preserve_turn:
+        if "R" not in preserve_colors:
+            preserve_colors = (*preserve_colors, "R")
+    else:
+        player.stats.pop(TURN_POOL_COLOR_STAT, None)
+    kept_lots = []
+    for lot in mana_provenance_lots(player):
+        if (preserve_combat and lot.retention == "end_of_combat") or (preserve_turn and lot.retention == "end_of_turn"):
+            kept_lots.append(lot)
+        elif bundle := tuple(pair for pair in lot.bundle if pair[0] in preserve_colors):
+            kept_lots.append(replace(lot,bundle=bundle,retention=None))
     kept = normalize_mana_bundle(None)
     for lot in kept_lots:
         for color, amount in lot.bundle:
@@ -576,6 +584,8 @@ def clear_step_mana(
         raise ManaProvenanceError(
             "retained mana provenance exceeds the authoritative pool"
         )
+    for color in preserve_colors:
+        kept[color] = pool[color]
     lost = {
         color: pool[color] - kept[color]
         for color in _COLORS
@@ -695,9 +705,8 @@ class ManaProvenanceHostMixin:
         *,
         snow_payment: Mapping[str, int] | None = None,
         pool_allocation: ManaPoolAllocation | None = None,
-    ) -> None:
-        before = self._restricted_mana(seat)
-        spend_mana(
+    ) -> ManaPoolAllocation:
+        allocation = spend_mana(
             self.state.players[seat],
             spent,
             snow_payment=snow_payment,
@@ -705,9 +714,9 @@ class ManaProvenanceHostMixin:
             spend_context=spend_context,
             pool_allocation=pool_allocation,
         )
-        after = self._restricted_mana(seat)
-        consumed = tuple(restriction for restriction, bundle in before.items()
-                         if sum(bundle.values()) > sum(after.get(restriction, {}).values()))
+        consumed = dict.fromkeys(
+            unit.restriction for unit, _ in allocation.units if unit.restriction is not None
+        )
         if "legendary_spell_uncounterable" in consumed:
             _mark_uncounterable_spell_payment(self.state.players[seat])
         if any(mana_spend_protects_spell(restriction, spend_context) for restriction in consumed):
@@ -716,6 +725,7 @@ class ManaProvenanceHostMixin:
             lifetime = mana_spend_haste_lifetime(restriction, spend_context)
             if lifetime is not None:
                 remember_paid_mana_haste(self.state.players[seat].stats, lifetime)
+        return allocation
 
 
 __all__ = [

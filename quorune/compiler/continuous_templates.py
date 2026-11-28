@@ -37,7 +37,7 @@ from .query_characteristic_templates import query_characteristic_quantity
 from .collection_quantity_templates import recipient_attachment_quantity
 from .attached_ability_templates import (
     _ATTACHED_SUPPORTED_ABILITIES, _attached_abilities,
-    _attached_granted_abilities, _attached_ability_capabilities, _toxic_ability_fragments,
+    _attached_granted_abilities, _attached_ability_capabilities, _toxic_ability_fragments, _fixed_query_granted_abilities,
 )
 from ..rules.source_references import SourceReferenceSpec
 from ..continuous_conditions import (
@@ -222,6 +222,9 @@ def fixed_power_toughness_anthem_handler(
     if match is None:
         return None
     subject = match.group("subject")
+    if subject.casefold() == "each legendary creature you control":
+        subject = "Legendary creatures you control"
+        text = f"{subject} get {match['power']}/{match['toughness']}."
     parsed = fixed_power_toughness_battlefield_query(subject, text)
     if parsed is None:
         return None
@@ -230,6 +233,13 @@ def fixed_power_toughness_anthem_handler(
     toughness = int(match.group("toughness"))
     if power == 0 and toughness == 0:
         return None
+    capability = "continuous.power_toughness.fixed_anthem"
+    if predicate.state_predicate is not None and predicate.state_predicate.face_down is True:
+        from ..object_predicate import FACE_DOWN_CREATURE_QUERY_CAPABILITY
+
+        capability = (capability, FACE_DOWN_CREATURE_QUERY_CAPABILITY)
+    elif predicate.commander is True:
+        capability = (capability, "state_query.commander.designation")
     return (
         "continuous-fixed-query-anthem-v2",
         {
@@ -243,7 +253,7 @@ def fixed_power_toughness_anthem_handler(
             },
             "modifier": {"power": power, "toughness": toughness},
         },
-        ('continuous.power_toughness.fixed_anthem','state_query.commander.designation') if predicate.commander is True else "continuous.power_toughness.fixed_anthem",
+        capability,
     )
 
 
@@ -287,12 +297,16 @@ def fixed_query_keyword_grant_handler(
     if commander is not None:
         parsed = ('source_owner' if commander['relation'].casefold() == 'own' else 'source_controller',
                   ObjectQuerySpec(zones=('battlefield',), commander=True), bool(commander['other']))
+    from .ability_qualified_query_grants import ability_qualified_query_subject
+    qualified = ability_qualified_query_subject(subject, match["abilities"])
+    if qualified is not None:
+        parsed, qualified_dependencies, qualified_template = qualified
     if parsed is None:
         return None
     relation, predicate, exclude_source = parsed
     abilities_text = match.group("abilities")
 
-    granted = _attached_granted_abilities(abilities_text)
+    granted, ward_capability = _fixed_query_granted_abilities(abilities_text, relation, predicate, exclude_source)
     if granted is None or any(
         ability.startswith("Toxic ")
         for ability in granted[0]
@@ -305,7 +319,8 @@ def fixed_query_keyword_grant_handler(
         return None
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
-        *_attached_ability_capabilities(abilities),
+        *_attached_ability_capabilities(abilities), *ward_capability,
+        *(qualified_dependencies if qualified is not None else ()),
         *(('state_query.commander.designation',) if predicate.commander is True and predicate.types_all else ()),
         *(('continuous.ability.disjoint_negative_keyword_grant',) if negative else ()),
     }
@@ -321,6 +336,7 @@ def fixed_query_keyword_grant_handler(
         capabilities.update(placement_handler.capability_dependencies)
     return (
         "continuous-counter-placement-keyword-grant-v1" if placement is not None else
+        qualified_template if qualified is not None else
         "continuous-fixed-query-keyword-grant-v2",
         {
             "handler_id": (placement_handler.handler_id if placement is not None else
@@ -905,6 +921,12 @@ def attached_fixed_characteristics_handler(
     special=attached_protection_exception_handler(oracle_line,source_name=source_name)
     if special is not None:return special
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    if re.fullmatch(
+        r"Equipped permanent isn['’]t a planeswalker and is a creature in addition to its other types\.?",
+        text,
+        re.I,
+    ):
+        return _equipped_creature_type_modifier()
     match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
     object_keyword = _ATTACHED_OBJECT_KEYWORD_GRANT.fullmatch(text) if match is None else None
     if object_keyword is not None:match=object_keyword
@@ -991,6 +1013,20 @@ def attached_fixed_characteristics_handler(
         or modifier["quantity"] is not None
     ):
         return None
+    return _attached_characteristics_descriptor(subject_types_all, modifier)
+
+
+def _equipped_creature_type_modifier():
+    modifier = _attached_modifier()
+    modifier["type_operations"] = [
+        {"op": "add_types", "field": "card_types", "values": ["Creature"]},
+        {"op": "remove_planeswalker_card_type"},
+    ]
+    modifier["default_creature_stats"] = True
+    return _attached_characteristics_descriptor([], modifier)
+
+
+def _attached_characteristics_descriptor(subject_types_all, modifier):
     return (
         "continuous-attached-fixed-characteristics-v1",
         {
@@ -1389,6 +1425,11 @@ def fixed_public_state_characteristics_handler(
         is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
         else ('variant.speed.player',) if source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED else ()
     )
+    if any(leaf.fact is not None and leaf.fact.value == "controller_unlocked_room_doors"
+           for leaf in source_condition.leaf_conditions()):
+        from ..shared_type_doors import ROOM_UNLOCKED_COUNT_CAPABILITY
+
+        condition_capabilities = (*condition_capabilities, ROOM_UNLOCKED_COUNT_CAPABILITY)
     if any(leaf.fact is not None and leaf.fact.value == 'source_renowned' for leaf in source_condition.leaf_conditions()):
         condition_capabilities = (*condition_capabilities,'permanent.designation.renowned')
     return (
@@ -1474,6 +1515,13 @@ def controlled_characteristic_until_end_of_turn_effect(
     )
     if existing is not None:
         return existing
+    protection = re.fullmatch(
+        r"creatures you control gain (?P<keywords>.+?),? and protection from each color",
+        body,
+        flags=re.IGNORECASE,
+    )
+    if protection is not None:
+        body = f"Creatures you control gain {protection['keywords']}"
     normalized = re.sub(
         r"\bgain\b",
         "have",
@@ -1517,9 +1565,12 @@ def controlled_characteristic_until_end_of_turn_effect(
             {
                 "cr-611-continuous-effects",
                 *(keyword.casefold() for keyword in keywords),
+                *(("protection",) if protection is not None else ()),
             }
         )
     )
+    if protection is not None:
+        from ..rules.fixed_resolution_characteristic_shapes import EACH_COLOR_PROTECTION_FIELD
     return (
         "modify-controlled-fixed-characteristics-eot-v2",
         (
@@ -1529,6 +1580,7 @@ def controlled_characteristic_until_end_of_turn_effect(
                 "power": int(modifier.get("power", 0)),
                 "toughness": int(modifier.get("toughness", 0)),
                 "keywords": list(keywords),
+                **({EACH_COLOR_PROTECTION_FIELD: True} if protection is not None else {}),
             },
         ),
         mechanics,

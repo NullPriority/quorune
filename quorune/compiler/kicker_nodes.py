@@ -5,16 +5,37 @@ from typing import Any
 from ..kicker import (
     compile_fixed_kicked_entry,
     compile_fixed_mana_kicker,
+    compile_positive_generic_kicker,
+    supports_positive_generic_kicker,
     kicked_entry_handler_descriptor,
     kicker_cost_handler_descriptor,
     KICKED_ENTRY_CAPABILITY_ID,
     KICKER_CAPABILITY_ID,
     KICKER_MECHANIC_ID,
     KICKER_RUNTIME_EVENT,
+    POSITIVE_GENERIC_KICKER_CAPABILITY,
 )
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import explicit_capability_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
+from .oracle_source_text import without_parenthetical_reminder
+
+
+def single_positive_generic_kicker_for_source(record, face_id):
+    if not supports_positive_generic_kicker(record, face_id) or not any(
+        keyword.casefold() == KICKER_MECHANIC_ID for keyword in record.keywords
+    ):
+        return None
+    kicker_lines = tuple(
+        (index, line) for index, line in enumerate(record.oracle_text.splitlines())
+        if line.strip().casefold().startswith(("kicker ", "kicker—"))
+    )
+    if len(kicker_lines) != 1:
+        return None
+    (index, line), = kicker_lines
+    return compile_positive_generic_kicker(
+        material_line=without_parenthetical_reminder(line), oracle_line=line, line_index=index,
+    )
 
 
 def fixed_mana_kicker_keyword_node(
@@ -27,9 +48,11 @@ def fixed_mana_kicker_keyword_node(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
     residuals: list[OracleResidual],
+    record: Any = None,
+    face_id: str = "front",
     **_unused: Any,
 ) -> OracleNode | None:
-    """Lower one single fixed ordinary-mana Kicker ability."""
+    """Lower one ordinary-mana Kicker or exact positive generic X."""
 
     if mechanics != (KICKER_MECHANIC_ID,):
         return None
@@ -42,6 +65,10 @@ def fixed_mana_kicker_keyword_node(
         oracle_line=line,
         line_index=span.line - 1,
     )
+    if spec is None:
+        variable = single_positive_generic_kicker_for_source(record, face_id)
+        if variable is not None and variable.line_index == span.line - 1:
+            spec = variable
     if spec is None:
         residual_id = append_residual(
             residuals,
@@ -68,7 +95,7 @@ def fixed_mana_kicker_keyword_node(
             residual_ids=(residual_id,),
         )
     gate = explicit_capability_gate(
-        KICKER_CAPABILITY_ID,
+        POSITIVE_GENERIC_KICKER_CAPABILITY if spec.has_positive_generic_x else KICKER_CAPABILITY_ID,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -79,7 +106,7 @@ def fixed_mana_kicker_keyword_node(
                 kind="dependency_contract",
                 text=line,
                 span=span,
-                reason="fixed-mana Kicker lacks trusted capability closure",
+                reason="Kicker lacks trusted capability closure",
                 blockers=gate.blockers,
             ),
         )
@@ -95,7 +122,8 @@ def fixed_mana_kicker_keyword_node(
         event=KICKER_RUNTIME_EVENT,
         lowerable=True,
         exact=not residual_ids,
-        template_id="single-fixed-mana-kicker-v1",
+        template_id=("single-positive-generic-x-kicker-v2" if spec.has_positive_generic_x
+                     else "single-fixed-mana-kicker-v1"),
         handlers=(kicker_cost_handler_descriptor(spec),),
         runtime_coverage=("optional_additional_mana_cost", "kicked_cast_fact"),
         mechanics=mechanics,

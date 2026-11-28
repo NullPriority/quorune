@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import Any, Iterable
 
 from ..carddb import CardRecord
-from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.event_subscriptions import (
+    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, FixedEventSubscription, FixedEventSubscriptionSet,
+)
 from ..semantics import SemanticProgram
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import canonical_creature_subtype
@@ -46,7 +48,6 @@ def _same_trigger_body(
         and generated.cost_schema == reviewed.cost_schema
         and generated.destination == reviewed.destination
         and generated.requires_arbiter == reviewed.requires_arbiter
-        and reviewed.event_condition is None
     )
 
 
@@ -71,6 +72,20 @@ def _reviewed_self_event_matches_subscription(
     )
 
 
+def _same_reviewed_subscription(
+    record: CardRecord, reviewed: SemanticProgram, subscription: FixedEventSubscription,
+) -> bool:
+    if subscription.condition == _SOURCE_REF_EVENT_CONDITION:
+        return reviewed.event_condition is None and _reviewed_self_event_matches_subscription(
+            record, reviewed.event, subscription.event,
+        )
+    return (
+        subscription.event == reviewed.event == DRAW_EXCEPT_FIRST_OWN_STEP_EVENT
+        and subscription.condition is not None
+        and subscription.condition == reviewed.event_condition
+    )
+
+
 def shadowed_reviewed_multi_event_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -87,9 +102,16 @@ def shadowed_reviewed_multi_event_keys(
         if subscriptions is None or generated.trust_level != "trusted":
             continue
         if any(
-            subscription.condition is None
-            or dict(subscription.condition) != _SOURCE_REF_EVENT_CONDITION
+            subscription.condition != _SOURCE_REF_EVENT_CONDITION
+            and subscription.event != DRAW_EXCEPT_FIRST_OWN_STEP_EVENT
             for subscription in subscriptions.subscriptions
+        ):
+            continue
+        has_draw_subscription = subscriptions.subscription_for(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT) is not None
+        if has_draw_subscription and (
+            generated.oracle_id != record.oracle_id
+            or (generated.capability_closure or {}).get("trusted") is not True
+            or "trigger.event.normalized_card_draw" not in generated.capability_dependencies
         ):
             continue
         body_matches = tuple(
@@ -97,17 +119,21 @@ def shadowed_reviewed_multi_event_keys(
             for reviewed in reviewed_values
             if reviewed.trust_level == "trusted"
             and _same_trigger_body(generated, reviewed)
+            and (not has_draw_subscription or (
+                reviewed.oracle_id == record.oracle_id
+                and all(
+                    generated.provenance.get(field)
+                    and generated.provenance[field] == reviewed.provenance.get(field)
+                    for field in ("source_oracle_hash", "source_rulings_hash")
+                )
+            ))
         )
         matched: list[SemanticProgram] = []
         for subscription in subscriptions.subscriptions:
             candidates = tuple(
                 reviewed
                 for reviewed in body_matches
-                if _reviewed_self_event_matches_subscription(
-                    record,
-                    reviewed.event,
-                    subscription.event,
-                )
+                if _same_reviewed_subscription(record, reviewed, subscription)
             )
             if len(candidates) != 1:
                 matched = []
@@ -191,6 +217,25 @@ def _same_announced_x_search(generated, reviewed):
     return {**actual, "selector": selector} == expected
 
 
+def _same_cast_x_zone_search(generated, reviewed):
+    from ..replacement.immutable import thaw_value
+    from ..rules.cast_x_zone_searches import is_closed_cast_x_zone_search_program
+
+    if (not is_closed_cast_x_zone_search_program(generated) or len(reviewed.effects) != 2
+            or generated.destination != reviewed.destination
+            or not _same_search_cost(generated.cost_schema, reviewed.cost_schema)):
+        return False
+    old_search, old_pump = map(thaw_value, reviewed.effects)
+    expected_search = {
+        "op": "search", "searching_player": "$controller", "zone": ["library", "graveyard"],
+        "selector": {"types": ["Creature"], "mana_value": {"maximum": "$x"}},
+        "count": {"minimum": 0, "maximum": 1}, "destination": "battlefield",
+        "reveal": False, "shuffle_after": True, "optional": True,
+    }
+    expected_pump = {**thaw_value(generated.effects[1]), "amount": "$x"}
+    return old_search == expected_search and old_pump == expected_pump
+
+
 def shadowed_reviewed_counted_search_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -202,14 +247,17 @@ def shadowed_reviewed_counted_search_keys(
     applies while assembling current programs, with matching source hashes,
     events, targets, costs and effect semantics rather than a card identity.
     """
+    from ..cast_x_search_model import CAST_X_ZONE_SEARCH_CAPABILITY
+
     reviewed = {program.key: program for program in reviewed_programs}
     shadowed = set()
+    search_capabilities = {FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, CAST_X_ZONE_SEARCH_CAPABILITY}
     for generated in generated_programs:
         old = reviewed.get(generated.key)
         if (
             old is None or generated.trust_level != "trusted"
             or old.trust_level != "trusted"
-            or FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID not in generated.capability_dependencies
+            or not search_capabilities.intersection(generated.capability_dependencies)
         ):
             continue
         if not generated.capability_closure or generated.capability_closure.get("trusted") is not True:
@@ -227,6 +275,10 @@ def shadowed_reviewed_counted_search_keys(
             or generated.provenance[field] != old.provenance.get(field)
             for field in ("source_oracle_hash", "source_rulings_hash")
         ):
+            continue
+        if CAST_X_ZONE_SEARCH_CAPABILITY in generated.capability_dependencies:
+            if _same_cast_x_zone_search(generated, old):
+                shadowed.add(old.key)
             continue
         if _same_announced_x_search(generated, old):
             shadowed.add(old.key)
@@ -478,6 +530,38 @@ def _shadowed_reviewed_turn_color_protection_keys(record, generated, reviewed):
     return shadowed
 
 
+def _shadowed_reviewed_target_owner_shuffle_reveal_keys(record, generated, reviewed):
+    from ..rules.library_result_capability_shapes import is_closed_target_permanent_shuffle_reveal_program
+
+    legacy_effects = (
+        {"op": "shuffle_into_library", "card": "$target.0"},
+        {"op": "reveal_top_permanent", "player": "$target.owner.0"},
+    )
+    fields = (
+        "active_zone", "event", "event_condition", "target_schema", "cost_schema",
+        "handlers", "destination", "requires_arbiter",
+    )
+    hashes = ("source_oracle_hash", "source_rulings_hash")
+    reviewed_by_key = {program.key: program for program in reviewed}
+    shadowed = set()
+    for program in generated:
+        prior = reviewed_by_key.get(program.key)
+        if (
+            prior is not None
+            and program.oracle_id == prior.oracle_id == record.oracle_id
+            and program.trust_level == prior.trust_level == "trusted"
+            and program.capability_closure
+            and program.capability_closure.get("trusted") is True
+            and is_closed_target_permanent_shuffle_reveal_program(program)
+            and tuple(prior.effects) == legacy_effects
+            and all(getattr(program, field) == getattr(prior, field) for field in fields)
+            and all(program.provenance.get(field) and program.provenance[field] == prior.provenance.get(field)
+                    for field in hashes)
+        ):
+            shadowed.add(prior.key)
+    return shadowed
+
+
 def shadowed_reviewed_program_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -487,19 +571,37 @@ def shadowed_reviewed_program_keys(
     """Apply shared current-program precedence in both assembly paths."""
     generated = tuple(generated_programs)
     reviewed = tuple(reviewed_programs)
-    from .alternative_price_overlay import shadowed_reviewed_pitch_counter_keys, shadowed_reviewed_zero_price_keys
+    from ..rules.artifact_search_exchange import shadowed_reviewed_artifact_exchange_keys
+    from .alternative_price_overlay import (
+        shadowed_reviewed_hand_exile_evoke_keys, shadowed_reviewed_pitch_counter_keys, shadowed_reviewed_zero_price_keys,
+    )
     from .current_view_equivalence import (
-        shadowed_reviewed_fixed_search_keys, shadowed_reviewed_reanimation_life_loss_keys, shadowed_reviewed_upkeep_type_count_keys,
+        shadowed_reviewed_fixed_search_keys, shadowed_reviewed_greatest_artifact_upkeep_keys,
+        shadowed_reviewed_reanimation_life_loss_keys, shadowed_reviewed_upkeep_type_count_keys,
     )
     from .kicker_view_equivalence import shadowed_reviewed_kicker_target_keys
-    from .modal_catalog_equivalence import shadowed_reviewed_color_modal_keys, shadowed_reviewed_modal_catalog_keys
+    from .modal_catalog_equivalence import (
+        shadowed_reviewed_color_modal_keys, shadowed_reviewed_meld_modal_keys, shadowed_reviewed_modal_catalog_keys,
+    )
     from .resolution_mana_overlay import shadowed_reviewed_resolution_mana_keys
+    from .stack_counter_overlay import shadowed_reviewed_pact_counter_keys, shadowed_reviewed_stack_mana_keys
     from .additional_token_equivalence import shadowed_reviewed_additional_token_keys
     from .empty_permanent_equivalence import shadowed_reviewed_empty_permanent_keys
     from .trigger_view_equivalence import shadowed_reviewed_trigger_view_keys
     from .activation_view_equivalence import shadowed_reviewed_activation_view_keys
     from .attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
+    from .grouped_graveyard_departure_overlay import shadowed_reviewed_grouped_graveyard_departure_keys
+    from .distinct_land_entry_overlay import shadowed_reviewed_distinct_land_entry_keys
     from .overload_view_equivalence import shadowed_reviewed_overload_keys
+    from .saga_chapter_equivalence import shadowed_reviewed_saga_chapter_keys
+    from .void_counter_play_overlay import shadowed_reviewed_void_counter_replacement_keys
+    from .attached_copy_payment_overlay import shadowed_reviewed_attached_copy_payment_keys
+    void_replacement = shadowed_reviewed_void_counter_replacement_keys(
+        record, generated, reviewed, capability_registry=capability_registry, capability_profile=capability_profile,
+    ) | shadowed_reviewed_attached_copy_payment_keys(
+        record, generated, reviewed, capability_registry=capability_registry,
+        capability_profile=capability_profile, oracle_ir=oracle_ir,
+    )
     self_type = shadowed_reviewed_self_chosen_subtype_keys(
         record, generated, reviewed, capability_registry=capability_registry,
         capability_profile=capability_profile, oracle_ir=oracle_ir,
@@ -509,7 +611,29 @@ def shadowed_reviewed_program_keys(
         capability_profile=capability_profile, oracle_ir=oracle_ir,
     )
     color_modal = shadowed_reviewed_color_modal_keys(record, generated, reviewed)
-    return self_type | card_name | color_modal | shadowed_reviewed_reanimation_life_loss_keys(record, generated, reviewed) | _shadowed_reviewed_turn_color_protection_keys(record,generated,reviewed) | shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
+    meld_modal = shadowed_reviewed_meld_modal_keys(
+        record, generated, reviewed, capability_registry=capability_registry,
+        capability_profile=capability_profile, oracle_ir=oracle_ir,
+    )
+    stack_mana = (shadowed_reviewed_stack_mana_keys(record, generated, reviewed)
+                  | shadowed_reviewed_pact_counter_keys(record, generated, reviewed))
+    distinct_names = shadowed_reviewed_distinct_land_entry_keys(
+        record, generated, reviewed, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    owner_shuffle = _shadowed_reviewed_target_owner_shuffle_reveal_keys(record, generated, reviewed)
+    saga_chapters = shadowed_reviewed_saga_chapter_keys(record, generated, reviewed)
+    grouped_departure = shadowed_reviewed_grouped_graveyard_departure_keys(
+        record, generated, reviewed, capability_registry=capability_registry,
+        capability_profile=capability_profile, oracle_ir=oracle_ir,
+    )
+    hand_exile_evoke = shadowed_reviewed_hand_exile_evoke_keys(record, generated, reviewed)
+    from .linked_graveyard_aura_equivalence import shadowed_reviewed_linked_graveyard_aura_keys
+
+    linked_aura = shadowed_reviewed_linked_graveyard_aura_keys(
+        generated, reviewed, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    artifact_upkeep = shadowed_reviewed_greatest_artifact_upkeep_keys(record, generated, reviewed)
+    return artifact_upkeep | linked_aura | grouped_departure | hand_exile_evoke | void_replacement | owner_shuffle | self_type | card_name | color_modal | meld_modal | stack_mana | distinct_names | saga_chapters | shadowed_reviewed_reanimation_life_loss_keys(record, generated, reviewed) | _shadowed_reviewed_turn_color_protection_keys(record,generated,reviewed) | shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
         capability_profile=capability_profile) | shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
@@ -517,7 +641,7 @@ def shadowed_reviewed_program_keys(
     ) | shadowed_reviewed_event_return_keys(record, generated, reviewed) | shadowed_reviewed_subtype_anthem_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_attached_grant_keys(record, generated, reviewed) | shadowed_reviewed_zero_price_keys(record, generated, reviewed) | shadowed_reviewed_pitch_counter_keys(record, generated, reviewed) | shadowed_reviewed_fixed_search_keys(
-        record,generated,reviewed) | shadowed_reviewed_upkeep_type_count_keys(record,generated,reviewed) | shadowed_reviewed_kicker_target_keys(record,generated,reviewed) | shadowed_reviewed_modal_catalog_keys(record,generated,reviewed) | shadowed_reviewed_resolution_mana_keys(record,generated,reviewed) | shadowed_reviewed_additional_token_keys(record,generated,reviewed) | shadowed_reviewed_empty_permanent_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile,oracle_ir=oracle_ir) | shadowed_reviewed_trigger_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile) | shadowed_reviewed_activation_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile)
+        record,generated,reviewed) | shadowed_reviewed_upkeep_type_count_keys(record,generated,reviewed) | shadowed_reviewed_kicker_target_keys(record,generated,reviewed) | shadowed_reviewed_modal_catalog_keys(record,generated,reviewed) | shadowed_reviewed_resolution_mana_keys(record,generated,reviewed) | shadowed_reviewed_additional_token_keys(record,generated,reviewed) | shadowed_reviewed_empty_permanent_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile,oracle_ir=oracle_ir) | shadowed_reviewed_trigger_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile) | shadowed_reviewed_activation_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile) | shadowed_reviewed_artifact_exchange_keys(record, generated, reviewed)
 
 
 def retire_reviewed_programs(record, generated_programs, registry, *,

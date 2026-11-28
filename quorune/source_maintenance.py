@@ -72,3 +72,28 @@ class SourceMaintenanceSpec:
               if self.decline == "tap" else ("zone.change.destination_replacement",)),
             *(self.payment.capabilities if self.payment else ()),
         }))
+
+
+def source_maintenance_node_capabilities(
+    effect: Mapping[str, Any],
+    *,
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: set[str],
+) -> tuple[str, ...]:
+    """Bind only source maintenance for the controller and its source incarnation."""
+    if target_schema is not None or SOURCE_MAINTENANCE_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        spec = SourceMaintenanceSpec.from_effect(effect)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    if effect["player"] != "$controller" or effect["source"] != "$source.zone_object":
+        return ()
+    payment = spec.payment
+    if payment is not None and (
+        payment.kind in {"discard", "exile", "mana_discard"} and payment.predicate.owner != "$controller"
+        or payment.kind in {"sacrifice", "tap"} and payment.predicate.controller != "$controller"
+        or payment.kind in {"remove_source_counter", "source_sacrifice"} and payment.source_ref != "$source.zone_object"
+    ):
+        return ()
+    return spec.capabilities

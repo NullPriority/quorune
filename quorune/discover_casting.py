@@ -2,11 +2,17 @@ from __future__ import annotations
 
 """Current resolving-cast permission over canonical exile casting and zones."""
 
-from .discover_model import (ExileCastProgress, discover_spell_qualifies, discover_options_fingerprint,
+from .discover_model import (DISCOVER_TREASURE_DIFFERENCE_CAPABILITY, ExileCastProgress,
+    discover_spell_qualifies, discover_options_fingerprint,
     QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_STEP_OPERATION, validate_qualified_scan_effect)
 from .errors import GameRuleError,StateInvariantError
-from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
-    RESOLVING_TOP_PLAY_SCOPE, fixed_top_exile_result_rows, validate_fixed_top_exile)
+from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPES, OPPONENT_CHOSEN_IMPULSE_SCOPE,
+    FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
+    ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE, DAMAGE_WINDOW_CAST_SCOPE, RESOLVING_TOP_PLAY_SCOPE,
+    RESOLVING_TOP_PLAY_SCOPES, fixed_top_exile_result_rows, validate_fixed_top_exile)
+from .land_exile_source_return_model import LAND_EXILE_RETURN_SCOPE
+from .rules.bargain_search import was_search_spell_bargained
+from .targeted_exile_land_entry import TARGETED_EXILE_LAND_ENTRY_SCOPE, uses_targeted_exile_land_entry
 from .rules.land_play_permissions import resolving_exile_land_play_options
 from .replacement.immutable import thaw_value
 from .rules.casting.face_queries import offered_cast_methods, prospective_cast_card
@@ -15,17 +21,26 @@ from .rules.resolving_cast_payments import commit_resolving_exile_cast
 
 
 def resolving_exile_library_refs(host, *, actor, effect):
-    """Expose the next supplied identity solely to the server's scan snapshot."""
+    """Expose the bounded supplied identities solely to the server's scan snapshot."""
+    from .rules.elected_nonland_exile import ELECTED_NONLAND_EXILE_SCOPE
+
     operation = effect.get('op')
     if operation == FIXED_TOP_EXILE_OPERATION:
         scope = validate_fixed_top_exile(effect, resolved=True)
         if effect["player"] != actor:
             raise StateInvariantError("The fixed top exile controller changed")
-        owners = host.active_seats if scope == "each_library" else (
-            (effect["supplier"],) if scope == "cast_event_library" else ())
+        supplied = {"cast_event_library", LAND_EXILE_RETURN_SCOPE, TARGETED_EXILE_LAND_ENTRY_SCOPE,
+                    OPPONENT_CHOSEN_IMPULSE_SCOPE, ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE}
+        owners = host.active_seats if scope in {"each_library", ELECTED_NONLAND_EXILE_SCOPE} else (
+            (effect["supplier"],) if scope in supplied else ())
+        count = effect["count"] if scope in {
+            TARGETED_EXILE_LAND_ENTRY_SCOPE, OPPONENT_CHOSEN_IMPULSE_SCOPE, ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE,
+        } else 1
+        if count == 0:
+            return {}
         if any(owner not in host.state.players for owner in owners):
             raise StateInvariantError("Fixed top exile names an unknown supplying player")
-        return {owner: [host.state.cards[key].ref for key in host.state.players[owner].zones["library"][-1:]]
+        return {owner: [host.state.cards[key].ref for key in host.state.players[owner].zones["library"][-count:]]
                 for owner in owners if owner != actor and owner in host.active_seats}
     return qualified_scan_library_refs(host, actor=actor, effect=effect)
 
@@ -40,6 +55,7 @@ def qualified_scan_library_refs(host, *, actor, effect):
     if operation == QUALIFIED_SCAN_OPERATION:
         validate_qualified_scan_effect(effect, resolved=True)
         supplier = effect['supplier']
+        exclusive_mana_value = effect.get("exclusive_mana_value")
     else:
         if (set(effect) != {'op', 'schema_version', 'player', 'progress', 'pending'}
                 or type(effect['schema_version']) is not int or effect['schema_version'] != 1):
@@ -48,6 +64,14 @@ def qualified_scan_library_refs(host, *, actor, effect):
         if progress.step_operation != operation:
             raise StateInvariantError('The supplied scan progress changed its search rule')
         supplier = progress.supplier
+        exclusive_mana_value = progress.exclusive_mana_value
+    if exclusive_mana_value is not None:
+        from .rules.next_cast_library_access import require_next_cast_library_resolution
+
+        if supplier != actor:
+            raise StateInvariantError("Next-cast access requires the caster's own library")
+        item = next((item for item in reversed(host.state.stack) if item.context.get("currently_resolving")), None)
+        require_next_cast_library_resolution(item, actor, exclusive_mana_value)
     if supplier not in host.state.players:
         raise StateInvariantError('The supplied scan names an unknown player')
     if supplier not in host.active_seats:
@@ -56,11 +80,51 @@ def qualified_scan_library_refs(host, *, actor, effect):
     return {supplier: [host.state.cards[library[-1]].ref] if library else []}
 
 
-def require_discover_resolution(host,*,actor,stack_ref):
-    item=next((item for item in host.state.stack if item.ref==stack_ref),None)
-    if item is None or item.controller!=actor or not item.context.get('currently_resolving'):
+def require_discover_resolution(host, *, actor, stack_ref, progress=None):
+    item = next((item for item in host.state.stack if item.ref == stack_ref), None)
+    if item is None or not item.context.get('currently_resolving'):
         raise GameRuleError('The current Discover resolution changed')
+    scan = progress.name_scan if progress is not None else None
+    if scan is None:
+        if item.controller != actor:
+            raise GameRuleError('The current Discover resolution changed')
+        if progress is not None:
+            _require_discover_treasure_source(host, item, progress)
+        if progress is not None and progress.exclusive_mana_value is not None:
+            from .rules.next_cast_library_access import require_next_cast_library_resolution
+
+            require_next_cast_library_resolution(item, actor, progress.exclusive_mana_value)
+        return item
+    from .rules.stack_counter_name_scan import counter_name_scan_node_capabilities
+
+    program = host.semantics.get(item.semantic_key)
+    if (item.kind not in {'spell', 'spell_copy'} or program is None
+            or not host.semantic_program_is_current_trusted(program)
+            or not counter_name_scan_node_capabilities(program.effects, program.target_schema, program.coverage)):
+        raise GameRuleError('The different-name permission has no trusted original spell')
+    try:
+        scan.require_resolution(actor=actor, stack_ref=stack_ref, targets=item.targets)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     return item
+
+
+def _require_discover_treasure_source(host, item, progress):
+    from .rules.discover_capability_shapes import validate_discover_treasure_program
+
+    program = host.semantics.get(item.semantic_key)
+    requires_result = program is not None and DISCOVER_TREASURE_DIFFERENCE_CAPABILITY in program.capability_dependencies
+    if requires_result != (progress.recorded_card is not None):
+        raise GameRuleError('The Discover continuation changed its recorded-result scope')
+    if not requires_result:
+        return
+    if item.kind not in {'spell', 'spell_copy'} or not host.semantic_program_is_current_trusted(program):
+        raise GameRuleError('The recorded Discover result lost its original trusted spell')
+    try:
+        if validate_discover_treasure_program(program) != progress.amount:
+            raise ValueError('The recorded Discover result changed its printed threshold')
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
 
 
 def require_discover_exile(host,progress,*,actor,include_candidate=True):
@@ -85,18 +149,34 @@ def require_discover_exile(host,progress,*,actor,include_candidate=True):
 
 def _discover_cast_option_pairs(host,*,item,actor,effect):
     if item is None:return ()
-    require_discover_resolution(host,actor=actor,stack_ref=item.ref)
-    progress=ExileCastProgress.from_dict(effect['progress'])
+    progress = ExileCastProgress.from_dict(effect['progress'])
+    require_discover_resolution(host, actor=actor, stack_ref=item.ref, progress=progress)
     if progress.copy_parent_ref is not None and progress.copy_parent_ref != item.ref:
         raise GameRuleError("An exiled copy is authorized only during its original resolution")
     require_discover_exile(host,progress,actor=actor)
     if progress.candidate is None:return ()
     card=host.state.cards[progress.candidate.object_id];record=host.card_record(card)
+    if progress.private_search_parent is not None:
+        if (progress.private_search_parent != item.ref or item.kind not in {"spell", "spell_copy"}
+                or not card.face_down or card.known_to != [actor]):
+            raise GameRuleError("A private search cast requires its original face-down exile result")
+        if not was_search_spell_bargained(item.context):
+            return ()
     if progress.fixed_top_payment is not None:
-        return _fixed_top_cast_option_pairs(host, actor=actor, card=card, progress=progress)
+        from .rules.hideaway_play import authorized_hideaway_exile
+
+        hideaway = progress.fixed_top_payment == "free" and authorized_hideaway_exile(
+            host, item=item, actor=actor, card=card,
+        )
+        return _fixed_top_cast_option_pairs(host, actor=actor, card=card, progress=progress,
+                                            authorized_face_down=hideaway)
     options=host._one_shot_exile_cast_options(actor=actor,card=card,maximum_mana_value=None)
     result=[]
-    if progress.supplier is not None:
+    if progress.private_search_parent is not None:
+        prefix = 'bargain-search:'
+    elif progress.name_scan is not None:
+        prefix = 'countered-spell-different-name:'
+    elif progress.supplier is not None:
         prefix = 'exile-until-instant-or-sorcery:'
     else:
         prefix = 'exile-until-nonland:' if progress.amount is None else 'discover:'
@@ -121,8 +201,19 @@ def discover_cast_options(host,*,item,actor,effect):
 def fixed_top_exile_cast_options(host, *, item, actor, effect):
     if item is None:
         return ()
+    from .rules.elected_nonland_exile import ELECTION_FIELD, is_nonland_election_offer, validate_nonland_election_offer
+
+    election = is_nonland_election_offer(effect)
+    if election:
+        offered = {key: value for key, value in effect.items() if key not in {"_stack_ref", "_options_fingerprint"}}
+        if validate_nonland_election_offer(offered)[0] != "cast":
+            return ()
     require_discover_resolution(host, actor=actor, stack_ref=item.ref)
+    if uses_targeted_exile_land_entry(effect.get("instruction")):
+        return ()
     fields = {"op", "instruction", "results"}
+    if election:
+        fields.add(ELECTION_FIELD)
     if (set(effect) not in (fields, fields | {"_stack_ref", "_options_fingerprint"})
             or effect.get("_stack_ref", item.ref) != item.ref
             or effect.get("op") != FIXED_TOP_EXILE_OFFER_OPERATION):
@@ -133,8 +224,26 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
     if instruction["player"] != actor:
         raise GameRuleError("Fixed top exile casting controller changed")
     scope = instruction["scope"]
-    if scope == CHOSEN_IMPULSE_SCOPE:
+    from .rules.random_graveyard_returns import EXILE_CAST_SCOPE, is_closed_random_exile_cast_program
+
+    if scope == EXILE_CAST_SCOPE:
+        program = host.semantics.get(item.semantic_key)
+        if (item.kind not in {"spell", "spell_copy"} or program is None
+                or not host.semantic_program_is_current_trusted(program)
+                or not is_closed_random_exile_cast_program(program)):
+            raise GameRuleError("The random exile cast requires its original resolving spell")
+    if scope == DAMAGE_WINDOW_CAST_SCOPE:
+        from .rules.blocked_damage_cast import resolving_window
+
+        try:
+            resolving_window(host, stack_ref=item.ref, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if scope in CHOSEN_IMPULSE_SCOPES or scope == LAND_EXILE_RETURN_SCOPE:
         return ()
+    foreign = scope == ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE
+    if foreign:
+        require_announced_opponent_resolution(host, item, supplier=instruction["supplier"], count=instruction["count"])
     payment = "paid" if scope in {"controller_library", RESOLVING_TOP_PLAY_SCOPE} else "free"
     options = []
     for owner, identity in rows:
@@ -151,13 +260,25 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
                 continue
         progress = ExileCastProgress(None, (identity,), identity.ref, owner, payment)
         options.extend(public for public, _ in _fixed_top_cast_option_pairs(host, actor=actor, card=card, progress=progress))
-        if scope == RESOLVING_TOP_PLAY_SCOPE:
-            options.extend(resolving_exile_land_play_options(host, actor, card))
+        if scope in RESOLVING_TOP_PLAY_SCOPES:
+            options.extend(resolving_exile_land_play_options(host, actor, card, supplier=owner if foreign else None))
     return tuple(options)
 
 
-def _fixed_top_cast_option_pairs(host, *, actor, card, progress):
-    if card.face_down:
+def require_announced_opponent_resolution(host, item, *, supplier, count):
+    from .rules.announced_hand_discard import announced_hand_discard_activation_dependencies
+
+    program = host.semantics.get(item.semantic_key)
+    if (item.kind not in {"activated_ability", "activated_ability_copy"}
+            or type(item.x_value) is not int or item.x_value != count
+            or tuple(item.targets) != (supplier,)
+            or program is None or not host.semantic_program_is_current_trusted(program)
+            or not announced_hand_discard_activation_dependencies(program)):
+        raise GameRuleError("Announced opponent exile lost its original resolution")
+
+
+def _fixed_top_cast_option_pairs(host, *, actor, card, progress, authorized_face_down=False):
+    if card.face_down and not authorized_face_down:
         return ()
     prefix = (f"graveyard-copy:{card.ref}:" if progress.copy_parent_ref is not None
               else f"fixed-top:{progress.fixed_top_payment}:{card.ref}:")
@@ -188,7 +309,7 @@ def _fixed_top_cast_option_pairs(host, *, actor, card, progress):
 
 
 def execute_discover_cast(host,intent):
-    item=require_discover_resolution(host,actor=intent.actor,stack_ref=intent.stack_ref)
+    item = require_discover_resolution(host, actor=intent.actor, stack_ref=intent.stack_ref, progress=intent.progress)
     pairs=_discover_cast_option_pairs(host,item=item,actor=intent.actor,effect={'progress':intent.progress.to_dict()})
     options=tuple(public for public,_canonical in pairs)
     if discover_options_fingerprint(options)!=intent.options_fingerprint:
@@ -208,18 +329,46 @@ def execute_discover_cast(host,intent):
         if method is not None:
             response["cast_method"] = method
         producer = "graveyard-copy" if intent.progress.copy_parent_ref is not None else "fixed-top-exile"
+    elif intent.progress.private_search_parent is not None:
+        if response.get("cast_method") is not None:
+            raise GameRuleError("The private search cast uses its offered free price and face")
+        producer = "bargain-search"
+    elif intent.progress.name_scan is not None:
+        producer = 'countered-spell-different-name'
     elif intent.progress.supplier is not None:
         producer = 'exile-until-instant-or-sorcery'
     else:
         producer = 'exile-until-nonland' if intent.progress.amount is None else 'discover'
-    commit_resolving_exile_cast(host,actor=intent.actor,response=response,
-        payment_id=f'{intent.stack_ref}:{producer}:{intent.progress.candidate.logical_object_id}',
-        replacement_selections=intent.replacement_selections,
-        force_without_mana_cost=intent.progress.fixed_top_payment != "paid")
+    from contextlib import nullcontext
+    from .rules.hideaway_play import authorized_hideaway_exile
+
+    reveal = (card.face_down and intent.progress.fixed_top_payment == "free"
+              and authorized_hideaway_exile(host, item=item, actor=intent.actor, card=card))
+    with host.transaction() if reveal else nullcontext():
+        if reveal:
+            from .zone_object_state import reveal_exiled_card
+
+            reveal_exiled_card(card, viewers=host.seats)
+        commit_resolving_exile_cast(host,actor=intent.actor,response=response,
+            payment_id=f'{intent.stack_ref}:{producer}:{intent.progress.candidate.logical_object_id}',
+            replacement_selections=intent.replacement_selections,
+            force_without_mana_cost=intent.progress.fixed_top_payment != "paid")
     spell = next((stack for stack in host.state.stack if stack.ref not in before
                   and stack.kind == "spell" and stack.card_object_id == card.object_id), None)
     if spell is None:
         raise StateInvariantError('The Discover choice created no spell')
+    if intent.progress.fixed_top_payment == "free":
+        from .rules.random_graveyard_returns import is_closed_random_exile_cast_program
+
+        program = host.semantics.get(item.semantic_key)
+        if program is not None and host.semantic_program_is_current_trusted(program) and is_closed_random_exile_cast_program(program):
+            from .rules.cast_grant_riders import CastGrantRiderBinding
+            from .zone_object_state import mark_cast_grant_rider
+
+            cast_card = host.state.cards[card.object_id]
+            mark_cast_grant_rider(cast_card, CastGrantRiderBinding(
+                "graveyard_exile", cast_card.logical_object_id, intent.actor, item.ref, owner=cast_card.owner,
+            ))
     if intent.progress.copy_parent_ref is not None and spell.default_destination == "battlefield":
         from .zone_object_state import mark_resolving_graveyard_copy
         mark_resolving_graveyard_copy(host.state.cards[card.object_id], item.ref, zone="stack")

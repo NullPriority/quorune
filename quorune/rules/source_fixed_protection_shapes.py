@@ -6,7 +6,10 @@ from collections.abc import Mapping
 
 from ..ability_fragments import ProtectionSpec, ability_fragment_from_dict
 from ..compiler.source_fixed_protection import CAPABILITY, MECHANIC
-from .temporary_ability_grant import decode_temporary_ability_grant
+from .temporary_ability_grant import (
+    TEMPORARY_EACH_COLOR_PROTECTION_CAPABILITY, decode_temporary_ability_grant,
+    temporary_quoted_grant_node_capabilities,
+)
 
 
 def source_fixed_protection_capabilities(*, effects, target_schema, mechanic_ids):
@@ -31,7 +34,29 @@ def source_fixed_protection_capabilities(*, effects, target_schema, mechanic_ids
         'continuous.resolution.fixed_characteristics_until_end_of_turn')))
 
 
+def _declares_each_color_protection(program):
+    if TEMPORARY_EACH_COLOR_PROTECTION_CAPABILITY in program.capability_dependencies:
+        return True
+    if len(program.effects) != 1:
+        return False
+    effect, = program.effects
+    fragments = effect.get("ability_fragments")
+    return (effect.get("op") == "apply_source_characteristics_until_end_of_turn"
+            and (effect.get("schema_version") == 8
+                 or effect.get("schema_version") == 7 and effect.get("card") == "$target.0")
+            and isinstance(fragments, (list, tuple))
+            and any(isinstance(fragment, Mapping) and fragment.get("kind") == "protection" for fragment in fragments))
+
+
 def source_fixed_protection_runtime_dependencies(program):
+    if _declares_each_color_protection(program):
+        required = temporary_quoted_grant_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (TEMPORARY_EACH_COLOR_PROTECTION_CAPABILITY not in required
+                or (program.event, program.active_zone) != ("resolve", "stack") or program.handlers):
+            raise ValueError("Protection from each color requires its closed resolving spell and recipient scope")
+        return required
     marked = MECHANIC in program.coverage or any(
         effect.get('op') == 'apply_source_characteristics_until_end_of_turn'
         and effect.get('schema_version') == 7

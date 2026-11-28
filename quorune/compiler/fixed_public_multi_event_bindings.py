@@ -6,14 +6,20 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.event_subscriptions import (
-    FixedEventSubscription,
+    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, FixedEventSubscription,
     COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES, COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE,
     COMBAT_PARTICIPANT_DAMAGE_VARIANT, combat_participant_damage_condition,
     GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
     GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, fixed_event_subscription_condition,
+    OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES, OPPONENT_ATTACK_DRAW_CAST_TEMPLATE,
+    OPPONENT_ATTACK_DRAW_CAST_VARIANT, opponent_attack_draw_cast_condition,
     graveyard_creature_transition_condition, graveyard_creature_transition_damage_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
+from ..rules.target_announcements import (
+    SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES, SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE,
+    SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT, source_attack_or_spell_target_condition,
+)
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
     _face_transition_spec,
@@ -42,7 +48,7 @@ _SOURCE_ARTIFACT_ENTRY_SACRIFICE = re.compile(
     re.IGNORECASE,
 )
 _ENCHANTED_CREATURE_ATTACK_BLOCK = re.compile(
-    r"^Whenever enchanted creature attacks or blocks, (?P<body>.+)$",
+    r"^Whenever enchanted creature (?P<pair>attacks or blocks|blocks or becomes blocked), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_ATTACK_BLOCK_DINOSAUR = re.compile(
@@ -216,6 +222,14 @@ def _scheduled_top_card_result(heads, body):
     return isinstance(template, ChosenTypeTopSelectionEffectTemplate) and template.may_put_in_graveyard
 
 
+def _scheduled_attached_control_result(heads, body):
+    from .fixed_control_templates import is_attached_temporary_control_body
+
+    return (tuple(head.casefold() for head in heads)
+            == ("when this aura enters", "at the beginning of your upkeep")
+            and is_attached_temporary_control_body(body))
+
+
 def _scheduled_pair_spec(material_line, *, card_name):
     """Compose a step and a closed entry/cast head without sharing predicates."""
     match = re.fullmatch(
@@ -235,7 +249,8 @@ def _scheduled_pair_spec(material_line, *, card_name):
     if (re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
             r'that spell|this way|that much)\b', match['body'], re.I)
             and not _scheduled_pair_has_local_linked_target(match['body'], card_name)
-            and not _scheduled_top_card_result(heads, match['body'])):
+            and not _scheduled_top_card_result(heads, match['body'])
+            and not _scheduled_attached_control_result(heads, match['body'])):
         return None
     from .fixed_counter_trigger_nodes import (
         fixed_counter_trigger_binding, _public_state_source_self_trigger_binding,
@@ -356,6 +371,17 @@ def _color_cast_or_land_entry_spec(material_line):
 
 
 def _entry_or_cast_origin_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.exile_origin_creature_counters import BODY, DEPENDENCIES, TEMPLATE, exile_origin_counter_condition
+
+    match = re.fullmatch(
+        r"Whenever you cast a spell from exile and whenever a permanent you control enters from exile, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is not None and match["body"].casefold() == BODY:
+        return _spec(
+            "spell.cast", "independent_dual_event", match["body"], TEMPLATE, "trigger-event-normalized-zone-change",
+            condition=exile_origin_counter_condition(), capabilities=DEPENDENCIES,
+        )
     match = _ENTRY_OR_CAST_SHARED_ORIGIN.fullmatch(material_line)
     if match is None or match["first"].casefold() == match["second"].casefold():
         return None
@@ -430,6 +456,22 @@ def _independent_pair_spec(independent, card_name):
             source_entry['source'].casefold() in {'this artifact', 'this creature', 'this enchantment', 'this permanent', 'this land'}
             or card_name and SourceReferenceSpec(card_name).matches(source_entry['source'])):
         return None
+    opponent_draw = re.fullmatch(
+        r"whenever an opponent draws a card except the first one they draw in each of their draw steps",
+        independent["second"], re.I,
+    )
+    if opponent_draw is not None:
+        return _spec(
+            "permanent.enter", "independent_dual_event", independent["body"],
+            "fixed-independent-dual-event-trigger-v1", "trigger-event-normalized-zone-change",
+            condition=fixed_event_subscription_condition((
+                FixedEventSubscription("permanent.enter", _source_condition()),
+                FixedEventSubscription(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, {
+                    "field": "player", "op": "ne", "value": "$source.controller",
+                }),
+            )),
+            capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_card_draw"),
+        )
     # Each complete prefix keeps its own typed predicate and controller.
     # Calling the ordinary parser is bounded: child lines lack this separator.
     from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding, _public_state_source_self_trigger_binding
@@ -510,6 +552,63 @@ def _combat_participant_damage_spec(material_line: str):
     )
 
 
+def _source_attack_or_spell_target_spec(material_line, *, card_name):
+    from .token_templates import _single_fixed_token_creation_effect_template
+
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<source>.+?) attacks or becomes the target of a spell, (?P<body>.+)",
+        " ".join(material_line.split()), re.I,
+    )
+    if (match is None or (match['source'].casefold() != 'this creature'
+            and not (card_name and SourceReferenceSpec(card_name).matches(match['source'])))):
+        return None
+    token = _single_fixed_token_creation_effect_template(match['body'])
+    if token is None or token.effect.get('op') != 'create_token':
+        return None
+    return _spec(
+        'creature.attacks', SOURCE_ATTACK_OR_SPELL_TARGET_VARIANT, match['body'],
+        SOURCE_ATTACK_OR_SPELL_TARGET_TEMPLATE, 'trigger-event-normalized-public-action',
+        condition=source_attack_or_spell_target_condition(), capabilities=SOURCE_ATTACK_OR_SPELL_TARGET_CAPABILITIES,
+    )
+
+
+def _source_combat_or_spell_target_spec(material_line, *, card_name):
+    from ..rules.source_power_opponent_damage import (
+        SOURCE_POWER_OPPONENT_DAMAGE_BODY, SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES,
+        SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, SOURCE_POWER_OPPONENT_DAMAGE_VARIANT,
+        source_combat_or_spell_target_condition,
+    )
+
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<source>.+?) attacks, blocks, or becomes the target of a spell, (?P<body>.+)",
+        " ".join(material_line.split()), re.I,
+    )
+    if (match is None or match["body"].casefold() != SOURCE_POWER_OPPONENT_DAMAGE_BODY
+            or (match["source"].casefold() != "this creature"
+                and not (card_name and SourceReferenceSpec(card_name).matches(match["source"])))):
+        return None
+    return _spec(
+        "creature.attacks", SOURCE_POWER_OPPONENT_DAMAGE_VARIANT, match["body"],
+        SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, "trigger-event-normalized-public-action",
+        condition=source_combat_or_spell_target_condition(), capabilities=SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES,
+    )
+
+
+def opponent_attack_draw_cast_binding_spec(material_line: str):
+    from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+
+    if re.fullmatch(
+        r"Whenever an opponent attacks you with two or more creatures, draws their second card each turn, "
+        r"or casts their second spell each turn, you draw a card\.", material_line, re.I,
+    ):
+        return _spec(
+            DIRECT_PLAYER_ATTACK_EVENT, OPPONENT_ATTACK_DRAW_CAST_VARIANT, "you draw a card.",
+            OPPONENT_ATTACK_DRAW_CAST_TEMPLATE, "trigger-event-normalized-public-action",
+            condition=opponent_attack_draw_cast_condition(), capabilities=OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES,
+        )
+    return None
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -519,10 +618,15 @@ def fixed_public_multi_event_binding_spec(
 
     if transitions := graveyard_creature_transition_binding(material_line, card_name=card_name):
         return transitions
-    paired = (_source_block_pair_spec(material_line)
+    from .cast_or_attack_source_exile import cast_or_attack_source_exile_binding
+
+    paired = (cast_or_attack_source_exile_binding(material_line, card_name=card_name)
+              or _source_block_pair_spec(material_line)
               or _color_cast_or_land_entry_spec(material_line)
               or _entry_or_cast_origin_spec(material_line)
-              or _combat_participant_damage_spec(material_line))
+              or _combat_participant_damage_spec(material_line)
+              or _source_attack_or_spell_target_spec(material_line, card_name=card_name)
+              or _source_combat_or_spell_target_spec(material_line, card_name=card_name))
     if paired is not None:return paired
 
     cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)
@@ -588,6 +692,13 @@ def fixed_public_multi_event_binding_spec(
         )
     enchanted = _ENCHANTED_CREATURE_ATTACK_BLOCK.fullmatch(material_line)
     if enchanted is not None:
+        if enchanted["pair"].casefold() == "blocks or becomes blocked":
+            from ..rules.attack_event_results import ATTACHED_BLOCK_GROWTH_VARIANT, attached_block_growth_condition
+
+            return _spec("creature.blocks", ATTACHED_BLOCK_GROWTH_VARIANT, enchanted["body"],
+                "fixed-counter-public-multi-event-trigger-v1", "trigger-event-normalized-public-action",
+                condition=attached_block_growth_condition(),
+                capabilities=("trigger.subscription.fixed_multi_event", "attachment.reference.current_or_lki"))
         attached_condition = {
             "field": "source_attachment_target_ref",
             "op": "eq",

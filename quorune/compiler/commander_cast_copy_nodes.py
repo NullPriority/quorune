@@ -30,7 +30,7 @@ def commander_cast_copy_node(*, node_id, line, material_line, span,
 
 def cast_source_copy_node(*, printed_card_types, source_name, **scope):
     """Lower the exact cast-origin copy production proved by the source line."""
-    for compiler in (_fixed_source_target_copy_node, _creature_set_spell_copy_node):
+    for compiler in (_attacking_source_cast_copy_node, _fixed_source_target_copy_node, _creature_set_spell_copy_node):
         node = compiler(source_name=source_name, **scope)
         if node is not None:
             return node
@@ -39,6 +39,33 @@ def cast_source_copy_node(*, printed_card_types, source_name, **scope):
         if node is not None:
             return node
     return commander_cast_copy_node(**scope)
+
+
+def _attacking_source_cast_copy_node(*, source_name, node_id, line, material_line, span,
+                                    capability_registry, capability_profile, residuals):
+    from ..event_spell_copy_model import EVENT_SPELL_COPY_MECHANIC, event_spell_copy_effect
+    from ..rules.event_spell_copy import (
+        ATTACK_CAST_COPY_COVERAGE, attacking_cast_copy_condition, attacking_cast_copy_dependencies,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    name = SourceReferenceSpec(source_name).regex_pattern
+    if not re.fullmatch(
+        rf"Whenever you cast a spell while (?:{name}|this creature) is attacking, "
+        r"copy that spell\. You may choose new targets for the copy\.",
+        material_line.strip(), re.I,
+    ):
+        return None
+    return _cast_copy_trigger_node(
+        node_id=node_id, line=line, span=span, condition=attacking_cast_copy_condition(),
+        effect=event_spell_copy_effect(), active_zone="battlefield",
+        template_id="attacking-source-controller-cast-copy-v1", dependencies=attacking_cast_copy_dependencies,
+        dependency_reason="The controller's cast needs its original attacking source and observed spell",
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        coverage=(ATTACK_CAST_COPY_COVERAGE,),
+        mechanics=(EVENT_SPELL_COPY_MECHANIC, "cr-707-copying-objects", "cr-115-targets",
+                   "trigger-event-normalized-spell-cast", "cr-603-handling-triggered-abilities"),
+    )
 
 
 def _direct_cast_token_node(*, printed_card_types, node_id, line, material_line, span,
@@ -156,17 +183,19 @@ def _creature_set_spell_copy_node(*, source_name, node_id, line, material_line, 
 
 
 def _cast_copy_trigger_node(*, node_id, line, span, condition, effect, active_zone, template_id,
-                     dependencies, dependency_reason, capability_registry, capability_profile, residuals, mechanics=None):
-    from types import SimpleNamespace
-
+                     dependencies, dependency_reason, capability_registry, capability_profile, residuals, mechanics=None,
+                     coverage=()):
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     from ..fixed_token_production import FIXED_TOKEN_PRODUCTION_MECHANIC_ID
+    from ..semantics import SemanticProgram
     from .dependency_gate import explicit_capabilities_gate
     from .ir_model import OracleNode, append_residual
 
-    scope = SimpleNamespace(effects=(effect,),event="spell.cast",event_condition=condition,
-                            target_schema=None,active_zone=active_zone,coverage=())
-    gate = explicit_capabilities_gate(dependencies(scope),
+    program = SemanticProgram(
+        key=node_id, label=line, effects=[effect], active_zone=active_zone,
+        event="spell.cast", event_condition=condition, coverage=coverage,
+    )
+    gate = explicit_capabilities_gate(dependencies(program),
         capability_registry=capability_registry,capability_profile=capability_profile)
     blocked = (append_residual(residuals,kind="dependency_contract",text=line,span=span,
         reason=dependency_reason,blockers=gate.blockers),) if gate.blockers else ()
@@ -174,7 +203,7 @@ def _cast_copy_trigger_node(*, node_id, line, span, condition, effect, active_zo
     return OracleNode(node_id=node_id,kind="triggered_ability",text=line,span=span,active_zone=active_zone,
         event="spell.cast",event_condition=condition,target_schema=None,effects=(effect,),
         lowerable=True,exact=not blocked,template_id=template_id,
-        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),residual_ids=blocked,
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE, *coverage),residual_ids=blocked,
         mechanics=mechanics if mechanics is not None else (
             FIXED_TOKEN_PRODUCTION_MECHANIC_ID,"fixed-token-copy","cr-707-copying-objects",
             "cr-111-tokens","trigger-event-normalized-spell-cast","cr-603-handling-triggered-abilities"),

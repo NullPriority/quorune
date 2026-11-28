@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import tempfile
+from types import SimpleNamespace
 import unittest
 import uuid
 
@@ -14,6 +15,97 @@ from quorune import (
     ProtocolError,
 )
 from common import keep_all, load_assets, make_session
+from quorune.model import CardInstance, Event
+from quorune.projection import StateProjector
+
+
+class ProjectionCollectionTests(unittest.TestCase):
+    def test_visible_definition_scan_resolves_each_prefix_once_in_registry_order(self):
+        class CardRegistry(dict):
+            scans = 0
+
+            def values(self):
+                self.scans += 1
+                return super().values()
+
+        oracles = ("00000000-hidden", "aaaaaaaa-first", "aaaaaaaa-later", "bbbbbbbb-selected")
+        cards = CardRegistry({oid: SimpleNamespace(oracle_id=oid) for oid in oracles})
+        projector = StateProjector(None, SimpleNamespace(cards=cards))
+        snapshot = {"rows": [{"cid": "aaaaaaaa"}] * 800}
+        previews = [{"cid": "bbbbbbbb-selected"}, {"n": "?"}]
+        self.assertEqual(
+            {"aaaaaaaa-first", "bbbbbbbb-selected"},
+            projector._visible_oracles(snapshot, previews),
+        )
+        self.assertEqual(1, cards.scans)
+
+
+    def test_zone_activity_uses_public_causes_and_conceals_hidden_combat_sources(self):
+        def card(ref, name, zone, *, face_down=False):
+            return CardInstance(ref, ref, f"{len(ref):08d}-{ref}", name, "A", "A", zone,
+                                face_down=face_down)
+
+        source = card("A01", "Public attacker", "outside")
+        source.known_to = ["A", "B"]
+        other_source = card("A002", "Hidden blocker", "battlefield", face_down=True)
+        victim = card("A0003", "Defending creature", "graveyard")
+        def event(number, code, details, summary="fixture"):
+            return Event(number, 5, 2, "A", "combat", "combat_damage", None,
+                         code, summary, details, importance=2)
+
+        hits = event(1, "combat.damage", {"damage_events": [
+            {"source": source.ref, "target": victim.ref, "amount": 3},
+            {"source": other_source.ref, "target": victim.ref, "amount": 1},
+        ]})
+        death = event(2, "permanent.destroyed", {
+            "object": victim.ref, "destination": "graveyard", "cause": "state_based_action",
+        })
+        zone = event(3, "state.commander_zone", {
+            "commander": victim.ref, "origin": "graveyard", "choice": "command",
+        })
+        private = event(4, "zone.move.private", {"object": other_source.ref}, "Hidden blocker")
+        private.visibility = ["A", "analyst"]
+        departing = card("A005", "Previously named card", "outside")
+        departing.annotations["hidden_after_owner_left"] = True
+        move = event(5, "zone.move", {"object": departing.ref, "from": "battlefield", "to": "graveyard"},
+                     f"{departing.ref} {departing.printed_name}: battlefield \u2192 graveyard.")
+        attack = event(6, "combat.attack", {"attackers": {source.ref: "B", other_source.ref: "B"}})
+        state = SimpleNamespace(
+            players={"A": None, "B": None}, events=[hits, death, zone, private, move, attack], event_sequence=6,
+            pending_decision=None, capabilities={}, stack=[],
+            cards={card.ref: card for card in (source, other_source, victim, departing)},
+        )
+        projector = StateProjector(None, state)
+        public = projector.event_page("spectator")["events"]
+        self.assertEqual([1, 2, 3, 5, 6], [entry["id"] for entry in public])
+        self.assertIn("Defending creature was destroyed after taking combat damage", public[1]["summary"])
+        self.assertIn("3 from Public attacker", public[1]["summary"])
+        self.assertIn("the graveyard", public[1]["summary"])
+        self.assertEqual(["Defending creature", "Public attacker"], [row["n"] for row in public[1]["cards"]])
+        self.assertNotIn("Hidden blocker", json.dumps(public))
+        self.assertEqual("Defending creature moved from the graveyard to the command zone.", public[2]["summary"])
+        self.assertEqual("Previously named card", public[3]["cards"][0]["n"])
+        self.assertIn("Public attacker toward Seat B", public[4]["summary"])
+        self.assertEqual(["Public attacker"], [row["n"] for row in public[4]["cards"]])
+
+    def test_elimination_activity_explains_public_loss_facts(self):
+        reasons = [
+            (SimpleNamespace(life=0, poison=0, attempted_empty_draw=False, commander_damage_received={}), "reaching 0 life"),
+            (SimpleNamespace(life=9, poison=10, attempted_empty_draw=False, commander_damage_received={}), "10 poison counters"),
+            (SimpleNamespace(life=9, poison=0, attempted_empty_draw=True, commander_damage_received={}), "empty library"),
+        ]
+        for player, expected in reasons:
+            with self.subTest(expected=expected):
+                player.in_game = False
+                loss = Event(1, 5, 2, "A", "combat", "combat_damage", "B",
+                             "player.eliminated", "B left the game: state-based loss.",
+                             {"reason": "state-based loss"}, importance=3)
+                state = SimpleNamespace(
+                    players={"A": None, "B": player}, cards={}, stack=[], events=[loss], event_sequence=1,
+                    config=SimpleNamespace(poison_to_lose=10, commander_damage_to_lose=21),
+                )
+                (public,) = StateProjector(None, state).event_page("spectator")["events"]
+                self.assertIn(expected, public["summary"])
 
 
 class PermissionProjectionTests(unittest.TestCase):
@@ -78,6 +170,27 @@ class PermissionProjectionTests(unittest.TestCase):
                 ],
                 damage,
             )
+
+    def test_public_battlefield_stats_include_counters_and_report_damage_separately(self):
+        session = make_session(self.db, self.mishra, self.zimone, seed=232)
+        commander = next(
+            card for card in session.state.cards.values()
+            if card.owner == "A" and card.is_commander
+        )
+        session.engine._remove_from_zone(commander)
+        session.engine._reset_zone_change(commander, "battlefield")
+        commander.zone = "battlefield"
+        session.state.players["A"].zones["battlefield"].append(commander.object_id)
+        commander.counters["+1/+1"] = 1
+        commander.marked_damage = 2
+
+        for principal in ("pilot:A", "pilot:B", "spectator"):
+            with self.subTest(principal=principal):
+                packet = session.packet(principal, full=True)
+                projected, = packet["state"]["players"]["A"]["bf"]
+                self.assertEqual(commander.ref, projected["id"])
+                self.assertEqual((6, 5), (projected["p"], projected["q"]))
+                self.assertEqual(2, projected["dmg"])
 
     def test_public_spell_on_stack_includes_visible_card_definition(self):
         from quorune.model import StackItem

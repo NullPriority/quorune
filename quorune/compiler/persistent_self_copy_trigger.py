@@ -16,10 +16,12 @@ from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC
 
 
 def copy_trigger_node(*, printed_card_types, **scope):
+    from .attack_trigger_copy_nodes import attack_trigger_copy_node
     from .commander_cast_copy_nodes import cast_source_copy_node
 
     return (
-        cast_source_copy_node(printed_card_types=printed_card_types, **scope)
+        attack_trigger_copy_node(**scope)
+        or cast_source_copy_node(printed_card_types=printed_card_types, **scope)
         or _persistent_self_copy_trigger_node(**scope)
     )
 

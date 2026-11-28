@@ -98,6 +98,29 @@ def fixed_mill_node_capabilities(
     effect = effects[0]
     if effect.get("op") != "mill":
         return ()
+    from .milled_permanent_recovery import milled_permanent_recovery_node_capabilities, uses_milled_permanent_recovery
+
+    if uses_milled_permanent_recovery(effect):
+        return milled_permanent_recovery_node_capabilities(effect, target_schema)
+    if "followup" in effect:
+        from .milled_creature_land_to_hand import mill_hand_node_capabilities, uses_milled_creature_land_to_hand
+
+        if uses_milled_creature_land_to_hand(effect):
+            return mill_hand_node_capabilities(effects, target_schema)
+        from .committed_mill_cards import committed_mill_card_node_capabilities, uses_committed_mill_result
+        from .mill_paid_hand_return import mill_paid_hand_node_capabilities, uses_mill_paid_hand_return
+        from .milled_creature_tokens import milled_creature_token_node_capabilities
+        from .milled_permanent_battlefield import (
+            milled_permanent_battlefield_node_capabilities, uses_milled_permanent_battlefield,
+        )
+
+        if uses_mill_paid_hand_return(effect):
+            return mill_paid_hand_node_capabilities(effects, target_schema)
+        if uses_milled_permanent_battlefield(effect):
+            return milled_permanent_battlefield_node_capabilities(effects, target_schema)
+        if uses_committed_mill_result(effect):
+            return committed_mill_card_node_capabilities(effects, target_schema)
+        return milled_creature_token_node_capabilities(effects, target_schema)
     count = effect.get("count")
     caps = (MILL_CAPABILITY_ID,)
     if isinstance(count, Mapping) and count.get("kind") == OPPONENT_HAND_MILL_KIND:
@@ -210,6 +233,25 @@ def mill_covered_mechanics(supplied):
     if EVENT_MILL_RECIPIENT_CAPABILITY in supplied and TARGET_CONTROLLER_INFORMATION_CAPABILITY in supplied:
         covered.add(ATTACKER_CONTROLLER_MILL_MECHANIC)
     return covered
+
+
+def committed_mill_followup_program_dependencies(program):
+    from .milled_creature_land_to_hand import mill_hand_program_dependencies
+
+    hand_dependencies = mill_hand_program_dependencies(program)
+    if hand_dependencies:
+        return hand_dependencies
+    from .committed_mill_cards import committed_mill_card_program_dependencies
+    from .mill_paid_hand_return import mill_paid_hand_program_dependencies
+    from .milled_creature_tokens import milled_creature_token_program_dependencies
+    from .milled_permanent_battlefield import milled_permanent_battlefield_program_dependencies
+
+    return (
+        mill_paid_hand_program_dependencies(program)
+        or milled_permanent_battlefield_program_dependencies(program)
+        or committed_mill_card_program_dependencies(program)
+        or milled_creature_token_program_dependencies(program)
+    )
 
 
 __all__ = ["fixed_mill_node_capabilities","mill_covered_mechanics"]

@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
+from ..replacement.immutable import FrozenMap, thaw_value
+
 from ..compiler.hand_inspection_templates import (
     FIXED_HAND_INSPECTION_CAPABILITY,
     FIXED_HAND_INSPECTION_MECHANIC,
@@ -13,6 +15,8 @@ from .hand_inspection import (
     DEFENDING_HAND_OBSERVATION_CAPABILITY,
     DEFENDING_HAND_OBSERVATION_MECHANIC,
     FIXED_HAND_INSPECTION_OPERATION,
+    SELECTED_HAND_REVEAL_DISCARD_CAPABILITY,
+    selected_hand_reveal_discard_effect,
     HandCardPredicateSpec,
     HandInspectionAction,
     HandInspectionError,
@@ -21,6 +25,24 @@ from .hand_inspection import (
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .node_capability_shapes import fixed_scry_node_capabilities
+
+
+def selected_hand_reveal_discard_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("inspection") == HandInspectionMode.REVEAL_SELECTED_THREE.value
+               for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    scope = fixed_hand_inspection_node_capabilities(
+        effects=program.effects, target_schema=thaw_value(FrozenMap(program.target_schema)) if program.target_schema else None,
+        mechanic_ids=program.coverage,
+    )
+    if (SELECTED_HAND_REVEAL_DISCARD_CAPABILITY not in scope
+            or (program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:") or program.handlers
+            or program.event_condition is not None or program.cost_schema is not None):
+        raise ValueError("Selected hand reveal requires the original target and complete resolving spell")
+    return scope
 
 
 def fixed_hand_inspection_node_capabilities(
@@ -62,6 +84,13 @@ def fixed_hand_inspection_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    if effect.get("inspection") == HandInspectionMode.REVEAL_SELECTED_THREE.value:
+        if (len(effects) != 1 or target_schema.get("player_relation") != "any"
+                or type(target_schema.get("count")) is not int
+                or thaw_value(FrozenMap(effect)) != selected_hand_reveal_discard_effect()):
+            return ()
+        return (FIXED_HAND_INSPECTION_CAPABILITY, SELECTED_HAND_REVEAL_DISCARD_CAPABILITY,
+                "target.revalidate_resolution", "zone.change.destination_replacement")
     if (
         set(effect)
         != {

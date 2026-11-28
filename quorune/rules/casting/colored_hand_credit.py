@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from ...continuous_effect_model import Layer
 from ...errors import GameRuleError
 from ..casting_additional_costs import fixed_zone_change_cost_candidates
 from ..colored_hand_credit import ColoredHandCredit, colored_hand_credit_from_cost_schema
@@ -15,6 +16,15 @@ HAND_CREDIT_CHOICE = "_colored_hand_credit_choice"
 HAND_CREDIT_AMOUNT = "colored_hand_credit_amount"
 
 
+def _eligible_hand_credit_refs(host, seat, card, spec):
+    # This typed price reads color through CR 613.1e. Ability grants to the
+    # candidates in hand do not participate in its predicate.
+    return fixed_zone_change_cost_candidates(
+        host, actor=seat, cost=spec.leaf, exclude_object_id=card.object_id,
+        maximum_layer=Layer.COLOR,
+    )
+
+
 def bind_hand_credit(host, seat, card, option, cost_schema, response, *, hint):
     try:
         spec = colored_hand_credit_from_cost_schema(cost_schema)
@@ -22,7 +32,7 @@ def bind_hand_credit(host, seat, card, option, cost_schema, response, *, hint):
         return False
     if spec is None:
         return True
-    eligible = fixed_zone_change_cost_candidates(host, actor=seat, cost=spec.leaf, exclude_object_id=card.object_id)
+    eligible = _eligible_hand_credit_refs(host, seat, card, spec)
     option[HAND_CREDIT_CHOICE] = {
         "type": "object_ref_array", "minimum": 0, "maximum": len(eligible), "legal_refs": list(eligible),
         "zone": "hand", "destination": "exile", "payment": "exile", "generic_credit_per_card": spec.credit_per_card,
@@ -67,7 +77,7 @@ def selected_hand_credit_objects(host, proposal, card, program, option):
             or type(option.get(HAND_CREDIT_AMOUNT)) is not int
             or option[HAND_CREDIT_AMOUNT] != spec.credit_per_card * len(raw["objects"])):
         raise CastProposalError("The colored hand-exile payment changed", reason="stale_hand_credit")
-    eligible = set(fixed_zone_change_cost_candidates(host, actor=proposal.seat, cost=spec.leaf, exclude_object_id=card.object_id))
+    eligible = set(_eligible_hand_credit_refs(host, proposal.seat, card, spec))
     selected = []
     seen = set()
     for row in raw["objects"]:

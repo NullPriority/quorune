@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import replace
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION
-from .continuous_effect_model import Layer
+from .continuous_effect_model import Layer, ContinuousObjectIdentity
+from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult,exact_numeric_characteristic,object_matches_query,object_query_result
 from .public_characteristic_aggregate_model import (
     CONTROLLED_CREATURES_POWER_QUERY, PUBLIC_STAT_AGGREGATE_CAPABILITY, PublicCharacteristicAggregateSpec,
@@ -48,9 +49,35 @@ def current_creature_power_control(
     return controllers == {controller} if require_all else controller in controllers
 
 
-def current_public_characteristic_aggregate(host,controller:str,spec:PublicCharacteristicAggregateSpec):
+_BATTLEFIELD_ARTIFACTS = ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",))
+
+
+def current_greatest_artifact_mana_value_control(state, controller: str, public_object_resolver) -> bool | None:
+    """Whether this controller has a member tied at the current battlefield maximum."""
+    if public_object_resolver is None:
+        return None
+    entries = []
+    try:
+        for card in state.cards.values():
+            if card.zone != "battlefield" or card.phased_out:
+                continue
+            row = public_object_resolver(card)
+            if row is None:
+                return None
+            if object_matches_query(row, _BATTLEFIELD_ARTIFACTS):
+                entries.append((row.controller, public_mana_value({"mana_value": row.mana_value})))
+    except ValueError:
+        return None
+    maximum = max((value for _, value in entries), default=None)
+    return any(seat == controller and value == maximum for seat, value in entries)
+
+
+def current_public_characteristic_aggregate(host,controller:str,spec:PublicCharacteristicAggregateSpec,
+                                            *, excluded_source: ContinuousObjectIdentity | None = None):
     if controller not in host.state.players:
         raise ValueError('Public stat aggregate controller is unavailable')
+    if (spec.schema_version == 3) != isinstance(excluded_source, ContinuousObjectIdentity):
+        raise ValueError("Other permanent mana value requires the captured source incarnation")
     graveyard = spec.query.zones == ('graveyard',)
     if graveyard and getattr(host.state, 'characteristic_query_boundary_version', None) != PUBLIC_ZONE_FRONT_FACE_VERSION:
         raise ValueError('Distinct graveyard mana values require the current public face view')
@@ -68,6 +95,9 @@ def current_public_characteristic_aggregate(host,controller:str,spec:PublicChara
             if card.object_kind != 'card' or card.face_down:
                 continue
         elif card.zone != 'battlefield' or card.phased_out:
+            continue
+        if (excluded_source is not None and card.object_id == excluded_source.object_id
+                and card.logical_object_id == excluded_source.logical_object_id):
             continue
         data = (host._effective_card_data(card, maximum_layer=Layer.COLOR)
                 if spec.characteristic == 'mana_value' else host._effective_card_data(card))

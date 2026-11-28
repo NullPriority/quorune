@@ -8,6 +8,8 @@ from enum import StrEnum
 import re
 from typing import Literal
 
+from .basic_land_types import BASIC_LAND_MANA
+from .basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .util import normalize_card_name, stable_json
 
@@ -15,15 +17,29 @@ from .util import normalize_card_name, stable_json
 
 ENTRY_DESIGNATION_HANDLER_ID = "replacement.zone.entry-designation.v1"
 ENTRY_DESIGNATION_CAPABILITY = "zone.entry.public_designation"
+ENTRY_FACTION_CAPABILITY = "zone.entry.faction_designation"
+ENTRY_FACTIONS = ("Brotherhood", "Enclave")
+ENTRY_MARDU_JESKAI_CAPABILITY = "zone.entry.mardu_jeskai_designation"
+MARDU_JESKAI_FACTIONS = ("Mardu", "Jeskai")
+ENTRY_JESKAI_TEMUR_CAPABILITY = "zone.entry.jeskai_temur_designation"
 ENTRY_OPPONENT_HANDLER_ID = "replacement.zone.linked-entry-opponent.v1"
 ENTRY_OPPONENT_FIELD = "entry_chosen_opponent"
 LINKED_ENTRY_OPPONENT_FIELD = "linked_entry_opponent"
 LINKED_ENTRY_OPPONENT_TEMPLATE = "linked-entry-opponent-v1"
 ENTRY_PLAYER_HANDLER_ID = "replacement.zone.linked-entry-player.v2"
+ENTRY_CONTROL_OPPONENT_HANDLER_ID = "replacement.zone.entry-control-opponent.v3"
+ENTRY_CONTROL_OPPONENT_TEMPLATE = "entry-control-opponent-v1"
+ENTRY_CONTROL_OPPONENT_CAPABILITY = "zone.entry.opponent_controller_choice"
 LINKED_ENTRY_PLAYER_TEMPLATE = "linked-entry-player-v2"
 LINKED_PLAYER_PROTECTION_HANDLER_ID = "continuous.characteristics.linked-player-protection.v1"
 LINKED_PLAYER_PROTECTION_TEMPLATE = "linked-entry-player-protection-v1"
 LINKED_PLAYER_PROTECTION_CAPABILITIES = (ENTRY_DESIGNATION_CAPABILITY, "protection.typed.debt")
+LINKED_COLOR_PROTECTION_HANDLER_ID = "continuous.characteristics.linked-color-protection.v1"
+LINKED_COLOR_PROTECTION_TEMPLATE = "linked-entry-color-protection-v1"
+LINKED_COLOR_PROTECTION_CAPABILITY = "continuous.characteristics.linked_entry_color_protection"
+LINKED_COLOR_PROTECTION_CAPABILITIES = (
+    ENTRY_DESIGNATION_CAPABILITY, "protection.typed.debt", LINKED_COLOR_PROTECTION_CAPABILITY,
+)
 LINKED_PLAYER_DAMAGE_HANDLER_ID = "replacement.damage.quantity.chosen-player.v3"
 LINKED_PLAYER_DAMAGE_TEMPLATE = "linked-entry-player-damage-quantity-v1"
 LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE = "fixed-counter-linked-player-received-damage-v1"
@@ -56,7 +72,17 @@ COUNTED_CREATURE_TYPE_ENTRY_CAPABILITY = "zone.entry.chosen_creature_type_counte
 SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID = "replacement.zone.entry-self-chosen-subtype.v5"
 SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID = "continuous.characteristics.self-chosen-subtype.v1"
 SELF_CHOSEN_SUBTYPE_CAPABILITY = "continuous.characteristics.self_chosen_creature_type_addition"
+BASIC_LAND_ENTRY_HANDLER_ID = "replacement.zone.entry-chosen-basic-land-type.v1"
+CHOSEN_BASIC_LAND_HANDLER_ID = "continuous.characteristics.chosen-basic-land-type.v1"
+BASIC_LAND_ENTRY_CAPABILITY = "zone.entry.linked_basic_land_type"
+BASIC_LAND_ENTRY_CAPABILITIES = (
+    BASIC_LAND_ENTRY_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
+    BASIC_TYPE_SETTING_CAPABILITY, "zone.entry.tapped_state",
+)
+BASIC_LAND_ENTRY_LIFE_FIELD = "entry_basic_land_type_life_available"
+BASIC_LAND_ENTRY_PAID_FIELD = "entry_basic_land_type_life_decided"
 ENTRY_DESIGNATION_HANDLER_IDS = (
+    BASIC_LAND_ENTRY_HANDLER_ID,
     ENTRY_DESIGNATION_HANDLER_ID, EXCLUDED_COLOR_ENTRY_HANDLER_ID,
     LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID, COUNTED_CREATURE_TYPE_ENTRY_HANDLER_ID,
     SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID,
@@ -71,10 +97,24 @@ CONDITIONAL_CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.cond
 class EntryDesignationKind(StrEnum):
     COLOR = "color"
     CREATURE_TYPE = "creature_type"
+    BASIC_LAND_TYPE = "basic_land_type"
+    FACTION = "faction"
+    MARDU_JESKAI_FACTION = "mardu_jeskai_faction"
+    JESKAI_TEMUR_FACTION = "jeskai_temur_faction"
 
     @property
-    def annotation(self) -> Literal["chosen_color", "chosen_creature_type"]:
-        return "chosen_color" if self is self.COLOR else "chosen_creature_type"
+    def annotation(self) -> Literal[
+        "chosen_color", "chosen_creature_type", "chosen_faction", "chosen_jeskai_temur_faction",
+        "chosen_basic_land_type",
+    ]:
+        return {
+            self.COLOR: "chosen_color",
+            self.CREATURE_TYPE: "chosen_creature_type",
+            self.BASIC_LAND_TYPE: "chosen_basic_land_type",
+            self.FACTION: "chosen_faction",
+            self.MARDU_JESKAI_FACTION: "chosen_faction",
+            self.JESKAI_TEMUR_FACTION: "chosen_jeskai_temur_faction",
+        }[self]
 
     @property
     def event_field(self) -> str:
@@ -82,11 +122,15 @@ class EntryDesignationKind(StrEnum):
 
     @property
     def values(self) -> tuple[str, ...]:
-        return (
-            tuple("WUBRG")
-            if self is self.COLOR
-            else tuple(sorted(CREATURE_SUBTYPES))
-        )
+        if self is self.BASIC_LAND_TYPE:
+            return tuple(BASIC_LAND_MANA)
+        if self is self.FACTION:
+            return ENTRY_FACTIONS
+        if self is self.MARDU_JESKAI_FACTION:
+            return MARDU_JESKAI_FACTIONS
+        if self is self.JESKAI_TEMUR_FACTION:
+            return ("Jeskai", "Temur")
+        return tuple("WUBRG") if self is self.COLOR else tuple(sorted(CREATURE_SUBTYPES))
 
 
 def validate_counted_entry_counter_name(value: object) -> str:
@@ -180,6 +224,19 @@ def validate_designation(kind: EntryDesignationKind, value: object) -> str:
     if kind is EntryDesignationKind.COLOR:
         if value not in tuple("WUBRG"):
             raise ValueError("A chosen color must be one WUBRG color")
+    elif kind is EntryDesignationKind.FACTION:
+        # The shared stored field distinguishes both exact entry option sets by value.
+        if value not in (*ENTRY_FACTIONS, *MARDU_JESKAI_FACTIONS):
+            raise ValueError("A stored faction must be in one of the supported entry option sets")
+    elif kind is EntryDesignationKind.MARDU_JESKAI_FACTION:
+        if value not in MARDU_JESKAI_FACTIONS:
+            raise ValueError("This entry choice requires Mardu or Jeskai")
+    elif kind is EntryDesignationKind.JESKAI_TEMUR_FACTION:
+        if value not in kind.values:
+            raise ValueError("This faction choice must be Jeskai or Temur")
+    elif kind is EntryDesignationKind.BASIC_LAND_TYPE:
+        if value not in BASIC_LAND_MANA:
+            raise ValueError("A chosen basic land type must use the pinned vocabulary")
     elif canonical_creature_subtype(value) != value:
         raise ValueError("A chosen creature type must use the pinned vocabulary")
     return value
@@ -195,14 +252,14 @@ def linked_player_damage_descriptor() -> dict:
 
 @dataclass(frozen=True, slots=True)
 class EntryOpponentChoice:
-    """The historical field stores a version-one opponent or a version-two player."""
+    """One player designation or prospective opponent-controller choice."""
     seat: str
     component_id: str
     schema_version: int = 1
 
     def __post_init__(self) -> None:
         if (
-            type(self.schema_version) is not int or self.schema_version not in (1, 2)
+            type(self.schema_version) is not int or self.schema_version not in (1, 2, 3)
             or type(self.seat) is not str or not self.seat or self.seat != self.seat.strip()
             or type(self.component_id) is not str or not self.component_id
             or not self.component_id.endswith(":0")
@@ -212,6 +269,10 @@ class EntryOpponentChoice:
     @property
     def any_player(self) -> bool:
         return self.schema_version == 2
+
+    @property
+    def changes_entry_controller(self) -> bool:
+        return self.schema_version == 3
 
     @property
     def entry_program_key(self) -> str:
@@ -228,7 +289,9 @@ class EntryOpponentChoice:
 
 
 def entry_opponent_effect_id(object_ref: str, choice: EntryOpponentChoice) -> str:
-    handler = ENTRY_PLAYER_HANDLER_ID if choice.any_player else ENTRY_OPPONENT_HANDLER_ID
+    handler = {
+        1: ENTRY_OPPONENT_HANDLER_ID, 2: ENTRY_PLAYER_HANDLER_ID, 3: ENTRY_CONTROL_OPPONENT_HANDLER_ID,
+    }[choice.schema_version]
     return f"{handler}:{object_ref}:{choice.component_id}:{choice.seat}"
 
 

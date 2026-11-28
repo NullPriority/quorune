@@ -141,6 +141,20 @@ def _attached_granted_abilities(
     return tuple(granted_abilities), tuple(fragments)
 
 
+def _fixed_query_granted_abilities(text, relation, predicate, exclude_source):
+    from ..object_predicate import ObjectQuerySpec
+    from .ward_cost_templates import quoted_fixed_life_ward_spec
+
+    life_ward = quoted_fixed_life_ward_spec(text)
+    if life_ward is None:
+        return _attached_granted_abilities(text), ()
+    creatures = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+    if (relation, predicate, exclude_source) != ("source_controller", creatures, True):
+        return None, ()
+    abilities = (life_ward.fixed_query_grant_label,), (ability_fragment_to_dict(life_ward),)
+    return abilities, (life_ward.capability_id,)
+
+
 def _attached_ability_capabilities(
     abilities: tuple[str, ...],
 ) -> set[str]:

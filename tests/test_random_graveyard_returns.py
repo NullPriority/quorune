@@ -20,6 +20,74 @@ import test_scheduled_player_triggers as upkeep_controls
 from quorune.rules.evidence_storage import read_evidence_document
 
 
+class RandomExileCastCompilerTests(unittest.TestCase):
+    def test_random_exile_cast_closes_the_complete_spell_and_rejects_shape_mutations(self):
+        from test_granted_skulk import record
+        from quorune.compiler.random_graveyard_returns import random_graveyard_exile_cast_template
+        from quorune.rules.random_graveyard_returns import EXILE_CAST_CAPABILITY, random_exile_cast_program_requirements
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.semantics import SemanticProgram
+
+        printed = ("Exile an instant or sorcery card with mana value 3 or less from your graveyard at random. "
+                   "You may cast it without paying its mana cost. If that spell would be put into a graveyard, "
+                   "exile it instead.")
+        registry = load_default_capability_registry()
+
+        def compile_text(text):
+            return compile_oracle_card(record(text,"Sorcery"),capability_registry=registry,capability_profile="commander_review")
+
+        ir = compile_text(printed)
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        self.assertIn(EXILE_CAST_CAPABILITY,ir.faces[0].nodes[0].capability_dependencies)
+        for changed in (
+            printed.replace("your graveyard","a graveyard"), printed.replace(" at random",""),
+            printed.replace("3 or less","3 or more"), printed.replace("may cast","cast"),
+            printed.replace("exile it instead","return it to hand instead"),
+        ):
+            with self.subTest(changed=changed):
+                self.assertNotEqual("exact",compile_text(changed).status)
+        _,effects,_,mechanics=random_graveyard_exile_cast_template(printed)
+        program=SemanticProgram(key="random-exile",label="Random exile",effects=list(effects),
+                                coverage=list(mechanics),destination="graveyard")
+        self.assertTrue(random_exile_cast_program_requirements(program))
+        for changed in (
+            replace(program, event="permanent.enter.self",active_zone="battlefield"),
+            replace(program, effects=[{**effects[0],"count":2}]),
+            replace(program, effects=[{**effects[0],"selection":{**effects[0]["selection"],"maximum_mana_value":True}}]),
+        ):
+            with self.subTest(changed=changed),self.assertRaises(ValueError):
+                random_exile_cast_program_requirements(changed)
+
+        from types import SimpleNamespace
+        from quorune.rules.random_graveyard_returns import RandomGraveyardReturnIntent, RandomGraveyardReturnSpec
+        from quorune.semantic_runtime.random_graveyard_returns import _execute_random_exile_cast
+
+        spec=RandomGraveyardReturnSpec("instant or sorcery card",schema_version=2,maximum_mana_value=3)
+        intent=RandomGraveyardReturnIntent("A",1,spec,"stack@one|0","Random graveyard exile")
+        for zone, counter in (("hand",2),("exile",1),("exile",2)):
+            with self.subTest(zone=zone,counter=counter):
+                row=SimpleNamespace(object_id="card-1",ref="card-ref",owner="A",zone="graveyard",
+                                    zone_change_counter=1,logical_object_id="card-1@1",face_down=False,is_card_object=True)
+
+                def move(_intent):
+                    row.zone=zone
+                    row.zone_change_counter=counter
+                    row.logical_object_id=f"card-1@{counter}"
+
+                host=SimpleNamespace(state=SimpleNamespace(cards={row.object_id:row}),
+                                    _resolve_object=lambda *args,**kwargs:row,
+                                    move_objects_simultaneously_intent=move)
+                with patch("quorune.semantic_runtime.random_graveyard_returns.resolve_random_graveyard_return",
+                           side_effect=lambda host,intent,commit_batch:commit_batch((row.ref,))):
+                    result=_execute_random_exile_cast(host,intent)
+                if zone=="exile" and counter==2:
+                    offer,=result.effects
+                    self.assertEqual(row.logical_object_id,offer["results"][0]["identity"]["logical_object_id"])
+                else:
+                    self.assertEqual((),result.effects)
+
+
+
 class RandomGraveyardReturnTests(unittest.TestCase):
     register_fixture_cards_on_add=True
     session=controls.SelfExileReturnSpellTests.session
@@ -48,6 +116,95 @@ class RandomGraveyardReturnTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
+
+    def _storm_cast_choice(self, game, expected):
+        self.assertEqual(["pilot:A"],game.pending_principals())
+        self.assertEqual("semantic.choice",game.state.pending_decision.kind)
+        ctx=game.packet("pilot:A",full=True)["decision"]["ctx"]
+        options=ctx["cast_options"]
+        self.assertEqual({expected.ref},{option["card"] for option in options})
+        option,=options
+        return option
+
+    def test_actual_storm_copies_bind_separate_random_casts_and_replay_departure(self):
+        game=self.session(751241)
+        source=self.add(game.engine,"Storm of Memories",zone="hand")
+        prior=self.add(game.engine,"Lightning Bolt",zone="hand",ref="storm-prior-bolt")
+        second=self.add(game.engine,"Lightning Bolt",zone="graveyard",ref="storm-other-bolt")
+        expensive=self.add(game.engine,"Surreal Memoir",zone="graveyard",ref="storm-over-value")
+        foreign=self.add(game.engine,"Lightning Bolt",seat="B",zone="graveyard",ref="storm-foreign")
+        self.assertTrue(self.binding(game,source)["strict_capability_ready"])
+        game.state.config.semantic_policy="trusted_only"
+        self.prepare(game,mana={"R":4,"C":2})
+        self.checkpoint(game)
+        self.cast(game,"A",prior,["C"],{"R":1})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard",game.state.cards[prior.object_id].zone)
+        self.cast(game,"A",source,payment={"R":3,"C":2})
+        self.assertIsNotNone(self.resolve(game))
+        candidate,=(card for card in (prior,second) if game.state.cards[card.object_id].zone=="exile")
+        unchosen,=(card for card in (prior,second) if card is not candidate)
+        option=self._storm_cast_choice(game,candidate)
+        self.assertTrue(any(item.kind=="spell_copy" for item in game.state.stack))
+        self.assertEqual(0,game.state.players["A"].mana_pool["R"])
+        before=authoritative_state_hash(game.state)
+        illegal={"action_id":"choose","choice":"cast","cast":{"cost_option":"forged","targets":["D"]}}
+        self.assertFalse(game.act("pilot:A",illegal).ok)
+        self.assertEqual(before,authoritative_state_hash(game.state))
+        game=self.replay(game,load=True)
+        request={"action_id":"choose","choice":"cast","cast":{"cost_option":option["id"],"targets":["D"]}}
+        self.assertFalse(game.act("pilot:B",request).ok)
+        life=game.state.players["D"].life
+        cast=game.act("pilot:A",request)
+        self.assertTrue(cast.ok,cast.summary)
+        self.assertEqual(candidate.object_id,game.state.stack[-1].card_object_id)
+        game=self.replay(game,load=True)
+        self.assertIsNotNone(self.resolve(game))
+        self.assertEqual(life-3,game.state.players["D"].life)
+        self.assertEqual("exile",game.state.cards[candidate.object_id].zone)
+        self._storm_cast_choice(game,unchosen)
+        decline=game.act("pilot:A",{"action_id":"choose","choice":"decline"})
+        self.assertTrue(decline.ok,decline.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile",game.state.cards[unchosen.object_id].zone)
+        self.assertEqual("graveyard",game.state.cards[source.object_id].zone)
+        self.assertEqual("graveyard",game.state.cards[foreign.object_id].zone)
+        self.assertEqual("graveyard",game.state.cards[expensive.object_id].zone)
+        self.replay(game,load=True)
+
+    def test_actual_storm_leaves_card_exiled_if_its_additional_cost_cannot_be_paid(self):
+        for may_pay in (False, True):
+            with self.subTest(may_pay=may_pay):
+                game=self.session(751242+may_pay)
+                source=self.add(game.engine,"Storm of Memories",zone="hand")
+                rites=self.add(game.engine,"Village Rites",zone="graveyard",ref="storm-rites")
+                cost=self.add(game.engine,"Grizzly Bears",ref="storm-rites-payment") if may_pay else None
+                self.assertTrue(self.binding(game,source)["strict_capability_ready"])
+                self.assertTrue(self.binding(game,rites)["strict_capability_ready"])
+                game.state.config.semantic_policy="trusted_only"
+                self.prepare(game,mana={"R":3,"C":2})
+                drawn=len(game.state.players["A"].draw_history)
+                self.checkpoint(game)
+                self.cast(game,"A",source,payment={"R":3,"C":2})
+                decision=self.resolve(game)
+                if may_pay:
+                    self.assertIsNotNone(decision)
+                    option=self._storm_cast_choice(game,rites)
+                    request={"action_id":"choose","choice":"cast","cast":{"cost_option":option["id"]}}
+                    before=authoritative_state_hash(game.state)
+                    self.assertFalse(game.act("pilot:A",request).ok)
+                    self.assertEqual(before,authoritative_state_hash(game.state))
+                    game=self.replay(game,load=True)
+                    accepted=game.act("pilot:A",{**request,"cast":{**request["cast"],"sacrifice_cards":[cost.ref]}})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    self.assertEqual("graveyard",game.state.cards[cost.object_id].zone)
+                    self.assertIsNone(self.resolve(game))
+                else:
+                    self.assertIsNone(decision)
+                self.assertEqual(drawn+2*may_pay,len(game.state.players["A"].draw_history))
+                self.assertEqual("exile",game.state.cards[rites.object_id].zone)
+                self.assertEqual("graveyard",game.state.cards[source.object_id].zone)
+                self.replay(game,load=True)
 
     def original_return(self,name,seed,payment,*,x=None):
         session=self.session(seed);source=self.add(session.engine,name,zone='hand')

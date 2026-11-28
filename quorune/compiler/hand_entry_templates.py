@@ -174,6 +174,30 @@ def fixed_private_hand_entry_effect_template(
     )
 
 
+def _hand_entry_subtype_life_effect(entry, tail: str):
+    from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+    from ..rules.hand_entry_followup import (
+        HAND_ENTRY_SUBTYPE_LIFE_VERSION, HandEntrySubtypeLife, decode_hand_entry_followup,
+    )
+
+    match = re.fullmatch(
+        rf"If you put a Cave onto the battlefield this way, you gain (?P<amount>{FIXED_COUNT_PATTERN}) life",
+        tail, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    try:
+        followup = HandEntrySubtypeLife("cave", fixed_number(match["amount"]))
+        effect = {
+            **entry.effects[0], "schema_version": HAND_ENTRY_SUBTYPE_LIFE_VERSION,
+            "followup": followup.to_dict(),
+        }
+        decode_hand_entry_followup(effect)
+    except ValueError:
+        return None
+    return effect
+
+
 def fixed_draw_then_hand_entry_template(text: str):
     from .draw_templates import fixed_draw_effect_template
     match = re.fullmatch(
@@ -183,16 +207,21 @@ def fixed_draw_then_hand_entry_template(text: str):
     if match is None:
         return None
     draw = fixed_draw_effect_template(match['draw'] + '.')
-    entry = fixed_private_hand_entry_effect_template(match['entry'] + '.')
+    entry_text, separator, tail = match["entry"].partition(". ")
+    entry = fixed_private_hand_entry_effect_template(entry_text + ".")
     if (
         draw is None or entry is None or draw[2] is not None
         or len(draw[1]) != 1 or draw[1][0].get('op') != 'draw'
     ):
         return None
-    return (
-        'fixed-draw-then-private-hand-entry-v1', (*draw[1], *entry.effects), None,
-        tuple(dict.fromkeys(('closed-effect-program', *draw[3], *entry.mechanics))),
-    )
+    mechanics = tuple(dict.fromkeys(("closed-effect-program", *draw[3], *entry.mechanics)))
+    if separator:
+        conditional_entry = _hand_entry_subtype_life_effect(entry, tail)
+        if conditional_entry is None:
+            return None
+        return ("fixed-draw-then-private-hand-entry-subtype-life-v1",
+                (*draw[1], conditional_entry), None, mechanics)
+    return ("fixed-draw-then-private-hand-entry-v1", (*draw[1], *entry.effects), None, mechanics)
 
 
 def fixed_private_hand_entry_followup_template(text):

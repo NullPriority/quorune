@@ -6,7 +6,7 @@ from . import regex_working_set as re
 from ..targeted_spell_costs import TargetedSpellCostSpec,TargetedCostSubject,TARGETED_SPELL_COST_HANDLER,TARGETED_SPELL_COST_EVENT,TARGETED_SPELL_COST_CAPABILITY
 from ..rules.source_references import SourceReferenceSpec
 from ..targeted_spell_costs import SELF_TARGET_REDUCTION_CAPABILITY
-from ..targeted_spell_costs import BATTLEFIELD_TARGET_REDUCTION_CAPABILITY
+from ..targeted_spell_costs import BATTLEFIELD_TARGET_REDUCTION_CAPABILITY, TARGETED_SPELL_LIFE_COST_CAPABILITY
 from ..replacement.immutable import FrozenMap
 from .direct_target import direct_permanent_target_spec,stack_target_schema
 
@@ -61,8 +61,25 @@ def _legacy_targeted_spell_cost_template(text,*,source_name):
         'event':TARGETED_SPELL_COST_EVENT,'modifier':spec.to_dict()},TARGETED_SPELL_COST_CAPABILITY
 
 
+def _targeted_spell_life_cost_template(text, *, source_name):
+    match = re.fullmatch(
+        r"Spells your opponents cast that target (?P<subject>.+?) cost an additional 3 life to cast\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    subject = match["subject"]
+    if subject.casefold() != "this creature" and not SourceReferenceSpec(source_name).matches(subject):
+        return None
+    spec = TargetedSpellCostSpec(TargetedCostSubject.SOURCE, 0, 6, life=3)
+    return ("targeted-fixed-spell-life-cost-v1", {"handler_id": TARGETED_SPELL_COST_HANDLER,
+            "schema_version": 1, "event": TARGETED_SPELL_COST_EVENT, "modifier": spec.to_dict()},
+            (TARGETED_SPELL_COST_CAPABILITY, TARGETED_SPELL_LIFE_COST_CAPABILITY))
+
+
 def targeted_spell_cost_template(text,*,source_name):
     from .public_target_spell_costs import public_target_spell_cost_template
     from .distinct_target_costs import distinct_target_cost_template
-    return (_legacy_targeted_spell_cost_template(text,source_name=source_name)
+    return (_targeted_spell_life_cost_template(text, source_name=source_name)
+        or _legacy_targeted_spell_cost_template(text,source_name=source_name)
         or public_target_spell_cost_template(text,source_name=source_name) or distinct_target_cost_template(text))

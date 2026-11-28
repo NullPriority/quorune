@@ -396,6 +396,59 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "oracle_id": "fbb04a21-e513-4317-aac8-fa6df91c3438",
+      "name": "Witherbloom, the Balancer",
+      "mana_cost": "{6}{B}{G}",
+      "type_line": "Legendary Creature \u2014 Elder Dragon",
+      "oracle_text": "Affinity for creatures (This spell costs {1} less to cast for each creature you control.)\nFlying, deathtouch\nInstant and sorcery spells you cast have affinity for creatures.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Affinity"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0,
+      "layout": "normal",
+      "released_at": "2026-04-24"
     }
   ],
   "rulings": [
@@ -560,6 +613,24 @@
       "published_at": "2021-06-18",
       "source": "wotc",
       "comment": "A spell that's both red and green costs {1} less to cast."
+    },
+    {
+      "oracle_id": "fbb04a21-e513-4317-aac8-fa6df91c3438",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a spell has multiple instances of affinity, each one applies. For example, if you somehow control two Witherbloom, the Balancers and no other creatures, each instant and sorcery spell you cast will cost {4} less to cast."
+    },
+    {
+      "oracle_id": "fbb04a21-e513-4317-aac8-fa6df91c3438",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Affinity for creatures means \"This spell costs {1} less to cast for each creature you control.\""
+    },
+    {
+      "oracle_id": "fbb04a21-e513-4317-aac8-fa6df91c3438",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
     }
   ]
 }

@@ -1,0 +1,516 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Deeproot Wayfinder and exact combat, public destination and private Surveil witnesses.",
+  "cards": [
+    {
+      "oracle_id": "3ec767f2-40ba-46c9-b7cd-5821986dda0c",
+      "name": "Deeproot Wayfinder",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Merfolk Scout",
+      "oracle_text": "Whenever this creature deals combat damage to a player or battle, surveil 1, then you may return a land card from your graveyard to the battlefield tapped. (To surveil 1, look at the top card of your library. You may put that card into your graveyard.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Surveil"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "cc2b6e58-2d6f-495e-95f3-9496105c4cba",
+      "name": "Jace Beleren",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Legendary Planeswalker — Jace",
+      "oracle_text": "+2: Each player draws a card.\n−1: Target player draws a card.\n−10: Target player mills twenty cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "3",
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "name": "Invasion of Zendikar // Awakened Skyclave",
+      "mana_cost": "{3}{G} // ",
+      "type_line": "Battle — Siege // Creature — Elemental",
+      "oracle_text": "Invasion of Zendikar: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.\n//\nAwakened Skyclave: Vigilance, haste\nAs long as this creature is on the battlefield, it's a land in addition to its other types.\n{T}: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "transform",
+      "released_at": "2023-04-21",
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Haste"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": "3",
+          "loyalty": null,
+          "mana_cost": "{3}{G}",
+          "name": "Invasion of Zendikar",
+          "oracle_text": "(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Battle — Siege"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Awakened Skyclave",
+          "oracle_text": "Vigilance, haste\nAs long as this creature is on the battlefield, it's a land in addition to its other types.\n{T}: Add one mana of any color.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature — Elemental"
+        }
+      ]
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "name": "Rest in Peace",
+      "mana_cost": "{1}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "3ec767f2-40ba-46c9-b7cd-5821986dda0c",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "The land card you return from your graveyard, if any, isn’t a target of the ability. You choose that card as the ability is resolving, after you surveil 1. It can be a land card you just put into your graveyard or one that was already there."
+    },
+    {
+      "oracle_id": "cc2b6e58-2d6f-495e-95f3-9496105c4cba",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If there are fewer than twenty cards in the targeted player's library, that player puts all the cards from their library into their graveyard."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A Siege's controller can't be its protector. If a Siege's protector ever gains control of it, they choose a new player to be its protector. This is a state-based action."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be attacked by all players other than its protector. Notably, this means a Siege's controller can attack it."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle can be dealt damage and be target of spells and/or abilities that target \"any target.\""
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "A battle's \"defense\" is displayed in the bottom right corner of the card. A battle enters the battlefield with that number of defense counters. If another permanent enters the battlefield as a copy of a battle, it also enters with that number of defense counters."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "As a Siege enters the battlefield, its controller chooses an opponent to be its protector."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Awakened Skyclave is cast as a creature spell. It can be countered and otherwise responded to. It won't be a land in addition to its other types until it enters the battlefield."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Battles can't attack or block, even if one also becomes a creature. If an attacking or blocking creature somehow becomes a battle in addition to being a creature, it is removed from combat."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Damage dealt to a battle causes that many defense counters to be removed from it."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If Awakened Skyclave enters the battlefield, any ability that triggers whenever a land enters the battlefield will trigger."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a Siege never had defense counters on it (perhaps because a permanent became a copy of one), it can't have its last defense counter removed. It will be put into its owner's graveyard. You won't exile it or cast the other face."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle has no defense counters, and it isn't the source of a triggered ability that has triggered but not yet left the stack, that battle is put into its owner's graveyard. This is a state-based action. This doesn't cause a Siege's intrinsic triggered ability to trigger."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a battle that's being attacked somehow stops being a battle, it is removed from combat. Similarly, if its controller changes in the middle of combat, it is removed from combat."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a non-battle permanent that is already on the battlefield become a copy of a Siege, its controller chooses one of their opponents to be that battle's protector. However, it will most likely be put into its owner's graveyard because it has no defense counters (see below)."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a permanent that is represented by a transforming double-faced card becomes a copy of a Siege, it will be exiled as that Siege's triggered ability resolves, then it will be cast transformed. Note that this applies only to transforming double-faced cards, not to modal double-faced cards that can normally be played using either face."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "If a token or a card that isn't represented by a transforming double-faced card becomes a copy of a Siege, it can't be cast as its triggered ability resolves. It will remain in exile. If it's a token, it will cease to exist the next time state-based actions are performed."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if the protector of a battle leaves the game and that battle is not currently being attacked, its controller chooses a new protector for it as a state-based action. If it is being attacked, its controller chooses a new protector for it once no creatures are attacking it. This means that it continues to be attacked and can be dealt combat damage as normal."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Only creatures controlled by a battle's protector can block creatures that are attacking that battle. This means a Siege's controller can never assign creatures to block for it."
+    },
+    {
+      "oracle_id": "4b1874af-4ea5-4e22-a4d4-e718d75fe95e",
+      "published_at": "2023-04-14",
+      "source": "wotc",
+      "comment": "Sieges each have an intrinsic triggered ability. That ability is \"When the last defense counter is removed from this permanent, exile it, then you may cast it transformed without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If Rest in Peace is destroyed by a spell, Rest in Peace will be exiled and then the spell will be put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a card is discarded while Rest in Peace is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "While Rest in Peace is on the battlefield, abilities that trigger whenever a creature dies won't trigger because cards and tokens are never put into a player's graveyard."
+    }
+  ]
+}

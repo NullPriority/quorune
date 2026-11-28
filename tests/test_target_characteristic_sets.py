@@ -31,6 +31,23 @@ class TargetCharacteristicSetCompilerTests(unittest.TestCase):
             self.assertEqual(6,node.effects[0]['schema_version'])
             self.assertIn('continuous.resolution.fixed_target_characteristic_set',node.capability_dependencies)
 
+    def test_controlled_permanent_keyword_set_keeps_the_optional_printed_bound(self):
+        registry = load_default_capability_registry()
+        options = {"capability_registry": registry, "capability_profile": "commander_review"}
+        text = "Up to four target permanents you control gain indestructible until end of turn."
+        card = replace(query_record(text), type_line="Instant")
+        result = compile_oracle_card(card, **options)
+        self.assertEqual("exact", result.status, result.material_residuals)
+        node, = result.faces[0].nodes
+        self.assertEqual({"up_to": 4, "controller_relation": "you", "zones": ["battlefield"],
+                          "categories": ["permanent"]}, node.target_schema)
+        self.assertEqual(["Indestructible"], node.effects[0]["keywords"])
+        self.assertIn("continuous.resolution.fixed_target_characteristic_set", node.capability_dependencies)
+        for variant in (text.replace("four", "seven"), text.replace("indestructible", "ward {1}"),
+                        text.replace("gain indestructible", "get +1/+1")):
+            with self.subTest(variant=variant):
+                self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=variant), **options).status)
+
     def test_descriptor_unknown_quantities_and_dynamic_variants_fail_closed(self):
         effect={'op':'apply_source_characteristics_until_end_of_turn','schema_version':6,'cards':'$targets','maximum_targets':2,'power':2,'toughness':0,'keywords':[]}
         for changes in ({'schema_version':True},{'maximum_targets':7},{'power':'$x'},{'keywords':['Unknown']},{'extra':1}):

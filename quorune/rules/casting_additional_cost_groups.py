@@ -218,7 +218,10 @@ def fixed_additional_cost_leaf(
     reveal=fixed_reveal_additional_cost(value)
     if reveal is not None:return reveal
     behold=fixed_behold_additional_cost(value)
-    if behold is not None:return behold
+    if behold is not None:
+        if behold.linked_exile_pair is not None:
+            raise AdditionalCostError("Linked Behold is a mandatory permanent cost")
+        return behold
     tap=fixed_tap_additional_cost(value)
     if tap is not None:return tap
     try:
@@ -336,6 +339,9 @@ def fixed_zone_change_additional_cost_capability(
 ) -> str:
     """Return the one reviewed capability owned by a typed zone-change leaf."""
 
+    if cost.island_pair:
+        from .island_pair_discard_cost import ISLAND_PAIR_DISCARD_CAPABILITY
+        return ISLAND_PAIR_DISCARD_CAPABILITY
     if cost.schema_version == 8:
         from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
         return KEYWORD_SACRIFICE_CAPABILITY
@@ -451,8 +457,13 @@ def selected_zone_cost_payload_dependencies(value: Any) -> tuple[str, ...]:
             continue
         kind = raw.get("kind")
         if kind == BEHOLD_ADDITIONAL_COST_KIND:
-            FixedBeholdAdditionalCost.from_descriptor(thaw_value(freeze_value(raw)))
-            required.update(behold_cost_dependencies())
+            cost = FixedBeholdAdditionalCost.from_descriptor(thaw_value(freeze_value(raw)))
+            if cost.linked_exile_pair is None:
+                required.update(behold_cost_dependencies())
+            else:
+                from .behold_additional_cost import linked_behold_cost_dependencies
+
+                required.update(linked_behold_cost_dependencies(cost_schema=value))
             continue
         if kind not in {ZONE_CHANGE_COST_KIND, ALTERNATIVE_ADDITIONAL_COST_KIND}:
             continue
@@ -559,13 +570,18 @@ def fixed_additional_cost_node_capabilities(*, cost_schema):
         fixed_zone_change_additional_cost_node_capabilities,
     )
     from .colored_hand_credit import colored_hand_credit_dependencies
+    from .casting.optional_creature_payments import sacrifice_credit_dependencies
+    from .behold_additional_cost import linked_behold_cost_dependencies
     from .fixed_payment_groups import fixed_discard_sacrifice_dependencies
     from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities
 
-    dedicated = fixed_discard_sacrifice_dependencies(cost_schema) or colored_hand_credit_dependencies(cost_schema)
+    dedicated = (fixed_discard_sacrifice_dependencies(cost_schema)
+                 or colored_hand_credit_dependencies(cost_schema)
+                 or sacrifice_credit_dependencies(cost_schema))
     if dedicated:
         return dedicated
     owners = (
+        linked_behold_cost_dependencies,
         fixed_alternative_additional_cost_node_capabilities,
         fixed_tap_additional_cost_node_capabilities,
         fixed_counter_additional_cost_node_capabilities,
@@ -574,6 +590,20 @@ def fixed_additional_cost_node_capabilities(*, cost_schema):
         fixed_zone_change_additional_cost_node_capabilities,
     )
     return tuple(capability for owner in owners for capability in owner(cost_schema=cost_schema))
+
+
+def dynamic_additional_cast_cost_dependencies(cost_schema):
+    """Validate dependency receipts for typed dynamic and combined casting prices."""
+    from .casting.optional_creature_payments import sacrifice_credit_dependencies
+    from .colored_hand_credit import colored_hand_credit_dependencies
+    from .fixed_payment_groups import fixed_discard_sacrifice_dependencies
+    from .random_discard_additional_cost import random_spell_cost_dependencies
+
+    yield from announced_additional_cost_dependencies(cost_schema)
+    yield from fixed_discard_sacrifice_dependencies(cost_schema)
+    yield from colored_hand_credit_dependencies(cost_schema)
+    yield from sacrifice_credit_dependencies(cost_schema)
+    yield from random_spell_cost_dependencies(cost_schema)
 
 
 __all__ = [

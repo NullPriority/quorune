@@ -9,10 +9,28 @@ from ..rules.source_references import SourceReferenceSpec
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .qualified_zone_event_bindings import _subject_query,_subject_condition
 
-COUNTER_EVENT_VARIANTS=frozenset({'counter_placement_one_or_more','counter_placement_each_counter'})
+from ..recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
+from ..rules.recipient_counter_damage import RECIPIENT_COUNTER_VARIANT, recipient_counter_damage_condition
+
+COUNTER_EVENT_VARIANTS=frozenset({'counter_placement_one_or_more','counter_placement_each_counter',RECIPIENT_COUNTER_VARIANT})
+
+
+def _recipient_counter_binding(material_line):
+    match = re.fullmatch(
+        r"Whenever you put one or more counters on a permanent or player, (?P<body>.+)", material_line, re.I,
+    )
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event=RECIPIENT_COUNTER_EVENT, variant=RECIPIENT_COUNTER_VARIANT, body=match["body"],
+        template_id="fixed-recipient-counter-occurrence-v1", mechanic=COUNTER_EVENT_MECHANIC,
+        condition=recipient_counter_damage_condition(), capabilities=(COUNTER_EVENT_CAPABILITY,),
+    )
 
 
 def counter_placement_event_binding_spec(material_line,*,card_name=None):
+    if grouped := _recipient_counter_binding(material_line):
+        return grouped
     match=re.fullmatch(r'Whenever (?:(?P<actor>you) put (?P<active_count>one or more|a|one) (?:(?P<active_kind>.+?) )?counter(?P<active_plural>s?) on (?P<active_subject>.+?)|'
         r'(?P<passive_count>a|one or more) (?:(?P<passive_kind>.+?) )?counters? (?:is|are) put on (?P<passive_subject>.+?)), (?P<body>.+)',material_line,re.I)
     if match is None:

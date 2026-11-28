@@ -24,7 +24,7 @@ _MUTATING_TARGET_FIELDS = {
     **{operation: 'card' for operation in (
         'destroy', 'bounce', 'exile_permanent', 'tap', 'untap', 'place_counters',
         'remove_counters', 'remove_all_counters', 'gain_control', 'give_control', 'regenerate',
-        'sacrifice', 'apply_source_characteristics_until_end_of_turn',
+        'sacrifice', 'apply_source_characteristics_until_end_of_turn', 'grant_keyword_until_end_of_turn',
         'exile_public_graveyard_card_result',
         'exile_public_graveyard_card_branch', GRAVEYARD_EXILE_TOKEN_OPERATION, GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION,
         COMBAT_REMOVAL_OPERATION,
@@ -73,8 +73,11 @@ class DirectTargetFields:
 
 def bound_graveyard_return_target_snapshot(effect, item, resolve_reference):
     """Retain the original target identity across resolution-time prefixes."""
+    from ..event_card_return import DEATH_SOURCE_RETURN_TARGET_FIELD
+
     if (effect.get('op') != 'return_graveyard_card_to_owner_hand'
             and not (effect.get('op')=='reanimate' and effect.get('schema_version') in (*REANIMATION_ENTRY_COUNTER_VERSIONS, *REANIMATION_FOLLOWUP_VERSIONS))
+            and not (effect.get('op') == 'reanimate' and DEATH_SOURCE_RETURN_TARGET_FIELD in effect)
             and not (effect.get('op') == 'move' and effect.get('from') == 'graveyard' and 'attacking_entry' in effect)):
         return {}
     reference = effect.get('card')

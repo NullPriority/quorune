@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from ..rules.entrant_x_reflexive import ENTRANT_X_PAYMENT_VERSION
+
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
 from ..compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
+from ..echo import DISCARD_ECHO_VERSION, validate_discard_echo_effect
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..rules.entry_player_counter_payment import ENTRY_PLAYER_COUNTER_PAYMENT_FIELD
 from ..rules.stack_controller_payment_cost import (
@@ -42,6 +45,10 @@ from .model import (
 
 _MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 _CUMULATIVE_MODES = frozenset({"cumulative", "cumulative_life"})
+_OPTIONAL_PAYMENT_CONTINUATION_FIELDS = (
+    "player", "cost", "source", "stack", "beneficiary", "stage", "_choice_actor",
+    "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
+)
 
 
 def _requirements(value: Mapping[str, Any]) -> dict[str, int]:
@@ -320,19 +327,7 @@ class OptionalPaymentHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 118.12", "CR 608.2d")
     capability_dependencies: tuple[str, ...] = ()
-    continuation_fields: tuple[str, ...] = (
-        "player",
-        "cost",
-        "source",
-        "stack",
-        "beneficiary",
-        "stage",
-        "_choice_actor",
-        "_requirements",
-        "_source_ref",
-        "_source_logical_object_id",
-        "_stack_label",
-    )
+    continuation_fields: tuple[str, ...] = _OPTIONAL_PAYMENT_CONTINUATION_FIELDS
     private_data: tuple[str, ...] = ("actor payable mana",)
     projected_fields: tuple[str, ...] = (
         "prompt",
@@ -486,7 +481,7 @@ class OptionalPaymentHandler:
                 "Cumulative upkeep age counters are malformed"
             )
         life_cost = per_counter * age
-        payable = context.query.player_life(context.actor) >= life_cost
+        payable = context.query.player_life_for_payment(context.actor) >= life_cost
         continuation_effect = FrozenMap(
             {
                 **dict(effect),
@@ -527,6 +522,10 @@ class OptionalPaymentHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.whole_hand_counter_payment import marks_whole_hand_counter
+        if self.mode == "counter" and marks_whole_hand_counter(effect):
+            from .whole_hand_counter_payment import prepare_whole_hand_counter_payment
+            return prepare_whole_hand_counter_payment(effect, context)
         if self.mode == "cumulative_life":
             return self._prepare_cumulative_life(effect, context)
         if self.mode == "cumulative":
@@ -586,33 +585,11 @@ class OptionalPaymentHandler:
                     ),
                 )
         elif self.mode == "echo":
-            allowed = {"op", "player", "source", "cost"}
-            unknown = sorted(set(effect) - allowed)
-            required = allowed
-            missing = sorted(required - set(effect))
-            if missing or unknown:
-                details = []
-                if missing:
-                    details.append("missing " + ", ".join(missing))
-                if unknown:
-                    details.append("unknown " + ", ".join(unknown))
-                raise SemanticChoiceError(
-                    "Malformed Echo effect: " + "; ".join(details)
-                )
-            source_ref = str(effect.get("source") or "")
-            source = _current_pay_or_sacrifice_source(
-                context.query,
-                source_ref,
-                context.source_logical_object_id,
-            )
-            if source is None:
-                return SemanticChoicePreparation(
-                    request=None,
-                    continuation_effect=FrozenMap(effect),
-                    auto_continue=AutoContinue(
-                        reason="Echo source is no longer the same permanent"
-                    ),
-                )
+            if effect.get("schema_version") == DISCARD_ECHO_VERSION:
+                return _prepare_discard_echo(effect, context)
+            unavailable = _mana_echo_source_unavailable(effect, context)
+            if unavailable is not None:
+                return unavailable
         requirements, source_ref, age = self._cost_and_source(effect, context)
         payable = context.query.cost_is_affordable(
             context.actor,
@@ -686,7 +663,7 @@ class OptionalPaymentHandler:
                 "Cumulative upkeep life payment is malformed"
             )
         pay = _payment_choice(response)
-        if pay and query.player_life(actor) < life_payment:
+        if pay and query.player_life_for_payment(actor) < life_payment:
             raise SemanticChoiceError(
                 "The cumulative upkeep life payment is no longer payable"
             )
@@ -722,7 +699,13 @@ class OptionalPaymentHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        from ..rules.whole_hand_counter_payment import marks_whole_hand_counter
+        if self.mode == "counter" and marks_whole_hand_counter(effect):
+            from .whole_hand_counter_payment import complete_whole_hand_counter_payment
+            return complete_whole_hand_counter_payment(continuation, response, query)
         actor = str(effect["_choice_actor"])
+        if self.mode == "echo" and effect.get("schema_version") == DISCARD_ECHO_VERSION:
+            return _complete_discard_echo(continuation, response, query)
         if self.mode == "cumulative_life":
             return self._complete_cumulative_life(
                 effect, response, query, actor
@@ -852,6 +835,71 @@ class OptionalPaymentHandler:
         )
 
 
+def _echo_source_unavailable(effect):
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue(reason="Echo source is no longer the same permanent"),
+    )
+
+
+def _mana_echo_source_unavailable(effect, context):
+    fields = {"op", "player", "source", "cost"}
+    missing = sorted(fields - set(effect))
+    unknown = sorted(set(effect) - fields)
+    if missing or unknown:
+        details = []
+        if missing:
+            details.append("missing " + ", ".join(missing))
+        if unknown:
+            details.append("unknown " + ", ".join(unknown))
+        raise SemanticChoiceError("Malformed Echo effect: " + "; ".join(details))
+    source = _current_pay_or_sacrifice_source(
+        context.query, str(effect.get("source") or ""), context.source_logical_object_id,
+    )
+    return _echo_source_unavailable(effect) if source is None else None
+
+
+def _prepare_discard_echo(effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+    from .fixed_effect_payment import prepare_fixed_payment_cost
+
+    source_ref = str(effect.get("source") or "")
+    try:
+        spec = validate_discard_echo_effect(effect, player=context.actor, source=source_ref)
+    except (ValueError, TypeError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    source = _current_pay_or_sacrifice_source(context.query, source_ref, context.source_logical_object_id)
+    if source is None:
+        return _echo_source_unavailable(effect)
+    prepared = prepare_fixed_payment_cost(spec, effect, context)
+    request = replace(prepared.request, prompt="Discard a card to pay Echo, or sacrifice the permanent.")
+    return replace(prepared, request=request, continuation_effect=FrozenMap({
+        **dict(prepared.continuation_effect),
+        "_source_ref": source.ref,
+        "_source_logical_object_id": context.source_logical_object_id,
+    }))
+
+
+def _complete_discard_echo(continuation, response, query):
+    from .fixed_effect_payment import complete_fixed_payment_cost
+
+    effect = continuation.effect
+    actor = effect["_choice_actor"]
+    private_fields = {"_choice_actor", "_legal_objects", "_stack_label", "_source_ref", "_source_logical_object_id"}
+    if (not private_fields.issubset(effect) or actor != continuation.semantic_frame.controller
+            or effect.get("source") != effect.get("_source_ref")):
+        raise SemanticChoiceError("Discard Echo requires its original source and payer")
+    raw = {name: value for name, value in effect.items() if name not in private_fields}
+    try:
+        spec = validate_discard_echo_effect(raw, player=actor, source=effect["_source_ref"])
+    except (ValueError, TypeError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    completion = complete_fixed_payment_cost(spec, effect, response, query)
+    if completion.intents:
+        _pay_or_sacrifice_details("echo", effect, query, effect["_source_ref"])
+        return completion
+    return _declined_pay_or_sacrifice("echo", effect, actor, query)
+
+
 @dataclass(frozen=True, slots=True)
 class WardPaymentChoiceHandler:
     """Resolve one typed Ward payment or counter its targeting stack item."""
@@ -937,6 +985,10 @@ class WardPaymentChoiceHandler:
                     reason="Ward target is no longer on the stack"
                 ),
             )
+        if spec.blight_amount is not None:
+            from .blight import prepare_ward_blight
+
+            return prepare_ward_blight(effect, context, spec.blight_amount)
         if spec.sacrifice_scope is not None:
             from .ward_sacrifice import prepare_ward_sacrifice
             return prepare_ward_sacrifice(effect, context, spec.sacrifice_scope)
@@ -965,7 +1017,7 @@ class WardPaymentChoiceHandler:
             prompt = "Pay the Ward mana cost to prevent the stack item from being countered."
         elif spec.life_payment is not None:
             payable = (
-                context.query.player_life(context.actor)
+                context.query.player_life_for_payment(context.actor)
                 >= spec.life_payment
             )
             choice = ScalarChoice(
@@ -1074,9 +1126,15 @@ class WardPaymentChoiceHandler:
         target = str(effect.get("stack") or "")
         if query.stack_object(target) is None:
             return SemanticChoiceCompletion()
-        if spec.sacrifice_scope is not None:
-            from .ward_sacrifice import complete_ward_sacrifice
-            paid = complete_ward_sacrifice(effect, response, query, spec.sacrifice_scope, payer=actor)
+        if spec.sacrifice_scope is not None or spec.blight_amount is not None:
+            if spec.blight_amount is not None:
+                from .blight import complete_ward_blight
+
+                paid = complete_ward_blight(effect, response, query, spec.blight_amount, payer=actor)
+            else:
+                from .ward_sacrifice import complete_ward_sacrifice
+
+                paid = complete_ward_sacrifice(effect, response, query, spec.sacrifice_scope, payer=actor)
             return paid if paid.intents else self._counter_completion(
                 effect, actor=actor, source_controller=continuation.semantic_frame.controller, query=query, label=label,
             )
@@ -1114,7 +1172,7 @@ class WardPaymentChoiceHandler:
             if type(amount) is not int or amount != spec.life_payment:
                 raise SemanticChoiceError("Ward life payment is malformed")
             pay = _payment_choice(response)
-            if pay and query.player_life(actor) < amount:
+            if pay and query.player_life_for_payment(actor) < amount:
                 raise SemanticChoiceError("The Ward life cost is no longer payable")
             if pay:
                 return SemanticChoiceCompletion(
@@ -1173,7 +1231,39 @@ class WardPaymentChoiceHandler:
 class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
+    def requires_object_rows(self, effect: Mapping[str, Any]) -> bool:
+        from ..rules.opponent_event_mana_payment import uses_opponent_event_mana_payment
+
+        payment = effect.get("payment")
+        return not (
+            uses_opponent_event_mana_payment(effect)
+            and type(effect.get("schema_version")) is int
+            and effect["schema_version"] == 2
+            and isinstance(payment, Mapping)
+            and payment.get("kind") == "mana"
+        )
+
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        from ..rules.nonmana_activation_copy import marks_activation_copy_payment
+
+        if marks_activation_copy_payment(effect):
+            from .nonmana_activation_copy import prepare_nonmana_activation_copy_payment
+
+            return prepare_nonmana_activation_copy_payment(effect, context)
+        from ..rules.attached_copy_payment import uses_attached_copy_payment
+        if uses_attached_copy_payment(effect):
+            from .attached_copy_payment import prepare_attached_copy_payment
+            return prepare_attached_copy_payment(effect, context)
+        from ..rules.life_gain_counted_results import uses_capped_life_gain_draw, uses_life_gain_life_draw
+
+        if uses_life_gain_life_draw(effect):
+            from .life_gain_counted_results import prepare_life_gain_life_draw
+
+            return prepare_life_gain_life_draw(effect, context)
+        if uses_capped_life_gain_draw(effect):
+            from .life_gain_counted_results import prepare_capped_life_gain_draw
+
+            return prepare_capped_life_gain_draw(effect, context)
         from ..fixed_effect_payment import uses_mandatory_source_counter_followup
         if uses_mandatory_source_counter_followup(effect):
             from .fixed_effect_payment import prepare_mandatory_source_counter_followup
@@ -1215,7 +1305,7 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if effect.get('schema_version')==5:
             from .commander_learn import prepare_commander_learn
             return prepare_commander_learn(effect,context)
-        if effect.get('schema_version')==4:
+        if effect.get('schema_version') in {4, ENTRANT_X_PAYMENT_VERSION}:
             from .reflexive_payment import prepare_reflexive_payment
             return prepare_reflexive_payment(effect,context)
         if effect.get('schema_version')==3:
@@ -1227,6 +1317,22 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         return super().prepare(effect,context)
 
     def complete(self,continuation:SemanticChoiceContinuation,response:Mapping[str,Any],query:SemanticChoiceQuery)->SemanticChoiceCompletion:
+        from ..rules.nonmana_activation_copy import marks_activation_copy_payment
+
+        if marks_activation_copy_payment(continuation.effect):
+            from .nonmana_activation_copy import complete_nonmana_activation_copy_payment
+
+            return complete_nonmana_activation_copy_payment(continuation, response, query)
+        from ..rules.attached_copy_payment import uses_attached_copy_payment
+        if uses_attached_copy_payment(continuation.effect):
+            from .attached_copy_payment import complete_attached_copy_payment
+            return complete_attached_copy_payment(continuation, response, query)
+        from ..rules.life_gain_counted_results import uses_capped_life_gain_draw
+
+        if uses_capped_life_gain_draw(continuation.effect):
+            from .life_gain_counted_results import complete_capped_life_gain_draw
+
+            return complete_capped_life_gain_draw(continuation, response, query)
         from ..stack_target_change_model import STACK_TARGET_CHANGE_PAYMENT_VERSION
         if continuation.effect.get("schema_version") == STACK_TARGET_CHANGE_PAYMENT_VERSION:
             from .fixed_effect_payment import complete_stack_target_change_payment
@@ -1261,7 +1367,7 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if continuation.effect.get('schema_version')==5:
             from .commander_learn import complete_commander_learn
             return complete_commander_learn(continuation,response,query)
-        if continuation.effect.get('schema_version')==4:
+        if continuation.effect.get('schema_version') in {4, ENTRANT_X_PAYMENT_VERSION}:
             from .reflexive_payment import complete_reflexive_payment
             return complete_reflexive_payment(continuation,response,query)
         if continuation.effect.get('schema_version')==3:
@@ -1271,6 +1377,9 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
             from .fixed_effect_payment import complete_fixed_effect_payment
             return complete_fixed_effect_payment(continuation,response,query)
         return super().complete(continuation,response,query)
+
+
+from ..rules.opponent_event_mana_payment import OPPONENT_EVENT_MANA_PAYMENT_FIELD
 
 
 PAYMENT_CHOICE_HANDLERS = (
@@ -1306,6 +1415,7 @@ PAYMENT_CHOICE_HANDLERS = (
             "upkeep_graveyard_library_cost", "graveyard_cost_state",
             "reflexive_program",
             ENTRY_PLAYER_COUNTER_PAYMENT_FIELD,
+            OPPONENT_EVENT_MANA_PAYMENT_FIELD, "beneficiary",
             "_parent_stack_ref",
             "_legal_objects",
             "_legal_mana_options",
@@ -1321,6 +1431,7 @@ PAYMENT_CHOICE_HANDLERS = (
     ),
     OptionalPaymentHandler(
         operation="counter_unless_pay",
+        private_data=("actor payable mana", "actor private whole-hand payment snapshot"),
         handler_id="choice.payment.counter-unless.v1",
         mode="counter",
         prompt="Pay the stated cost to prevent the spell from being countered.",
@@ -1329,7 +1440,8 @@ PAYMENT_CHOICE_HANDLERS = (
         test_modules=("tests.test_targeted_counter_effect_clauses", "tests.test_stack_counter_rules", "tests.test_semantic_choice_characterization"),
         continuation_fields=("player", "cost", "source", "stack", "beneficiary", "stage",
             "_choice_actor", "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
-            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD, COUNTER_PAYMENT_FOLLOWUP_FIELD),
+            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD, COUNTER_PAYMENT_FOLLOWUP_FIELD,
+            "discard_whole_hand", "_whole_hand_payment_snapshot"),
     ),
     OptionalPaymentHandler(
         operation="cumulative_upkeep",
@@ -1401,6 +1513,11 @@ PAYMENT_CHOICE_HANDLERS = (
         default_cost=FrozenMap(),
         capability_dependencies=("trigger.keyword.echo.fixed_mana",),
         rule_references=("CR 118.12", "CR 603.4", "CR 702.30"),
+        continuation_fields=(*_OPTIONAL_PAYMENT_CONTINUATION_FIELDS, "schema_version", "payment", "_legal_objects"),
+        private_data=("actor payable mana", "actor hand candidates for discard Echo"),
+        projected_fields=("prompt", "cost", "payable", "objects", "legal_actions.choice_schema.legal_values"),
+        mutation_path=("PayManaCostIntent", "MoveObjectsSimultaneouslyIntent", "typed decline intent"),
+        test_modules=("tests.test_echo_rules", "tests.test_discard_echo"),
     ),
     OptionalPaymentHandler(
         operation="remora_tax",

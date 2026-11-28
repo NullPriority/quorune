@@ -4,17 +4,28 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 
-from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
+from ..discover_model import (DISCOVER_OPERATION, DISCOVER_TREASURE_DIFFERENCE_VERSION,
+    NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
     QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET)
 from ..replacement.immutable import thaw_value
 from ..fixed_top_exile import (
     CHOSEN_IMPULSE_MECHANIC, CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION,
-    RESOLVING_TOP_PLAY_MECHANIC, RESOLVING_TOP_PLAY_SCOPE,
+    RESOLVING_TOP_PLAY_MECHANIC, RESOLVING_TOP_PLAY_SCOPE, opponent_chosen_impulse_instruction,
 )
 from ..impulse_access_model import ImpulseAccessDuration
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from ..rules.controller_private_top_exile_model import (
+    CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC, ControllerPrivateTopExile,
+)
+from ..creature_subtypes import canonical_creature_subtype
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
+
+
+_DISCOVER_TREASURE_DIFFERENCE = re.compile(
+    r"Discover (?P<amount>[1-9][0-9]*)\. If the discovered card['’]s mana value is less than "
+    r"(?P=amount), create a number of tapped Treasure tokens equal to the difference\.?", re.I,
+)
 
 
 _FIRST_NONLAND_CAST = re.compile(
@@ -47,7 +58,7 @@ _PAID_TOP_CAST = re.compile(
 
 
 _CHOSEN_IMPULSE = re.compile(
-    rf"Exile the top (?P<count>{FIXED_COUNT_PATTERN}) cards of your library\. (?:Then )?choose one of them\. "
+    rf"Exile the top (?P<count>{FIXED_COUNT_PATTERN}) cards of your library(?:\. (?:Then )?|, then )choose one of them\. "
     r"(?:(?P<prefix>Until (?:the )?end of (?:your next turn|this turn|turn)), you may play (?:that card|it)|"
     r"You may play (?:that card|it) (?P<suffix>this turn|until (?:the )?end of your next turn))\.?", re.I,
 )
@@ -67,10 +78,22 @@ def _chosen_impulse_template(text):
     return "chosen-top-impulse-access-v1", (effect,), None, (CHOSEN_IMPULSE_MECHANIC,)
 
 
+_TARGETED_CHOSEN_IMPULSE = re.compile(
+    rf"Exile the top (?P<count>{FIXED_COUNT_PATTERN}) cards of target opponent['’]s library\. "
+    r"Choose one of them\. Until the end of your next turn, you may play that card, "
+    r"and you may spend mana as though it were mana of any color to cast it\.?", re.I,
+)
+
+
 def _fixed_top_exile_template(text, *, source_name, event):
     body = text.strip()
     if chosen := _chosen_impulse_template(body):
         return chosen
+    if match := _TARGETED_CHOSEN_IMPULSE.fullmatch(" ".join(body.split())):
+        count = fixed_number(match["count"])
+        if 2 <= count <= 10:
+            return ("opponent-chosen-top-impulse-v1", (opponent_chosen_impulse_instruction(count),),
+                    thaw_value(QUALIFIED_SCAN_TARGET), (CHOSEN_IMPULSE_MECHANIC,))
     if re.fullmatch(r"Exile the top two cards of your library\. You may play them\.?", body, re.I):
         effect = {"op": FIXED_TOP_EXILE_OPERATION, "schema_version": 3, "player": "$controller",
                   "scope": RESOLVING_TOP_PLAY_SCOPE, "count": 2}
@@ -122,7 +145,32 @@ def cast_event_fixed_top_exile(binding, body):
     return None
 
 
+_CONTROLLER_PRIVATE_TOP_PLAY = re.compile(
+    r"Look at the top two cards of your library and exile them face down\. "
+    r"For as long as they remain exiled, you may play them if you control an? (?P<subtype>[A-Za-z'’-]+)\.",
+    re.I,
+)
+
+
+def controller_private_top_play_template(text):
+    match = _CONTROLLER_PRIVATE_TOP_PLAY.fullmatch(" ".join(text.split()))
+    subtype = canonical_creature_subtype(match["subtype"]) if match else None
+    if subtype is None:
+        return None
+    return ("controller-private-top-conditional-play-v1", (ControllerPrivateTopExile(subtype).instruction(),),
+            None, (CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC,))
+
+
 def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid_public_x=False,**context):
+    if context.get("source_is_permanent") is False:
+        difference = _DISCOVER_TREASURE_DIFFERENCE.fullmatch(' '.join(text.split()))
+        if difference is not None:
+            return ('discover-tapped-treasure-difference-v1', ({'op': DISCOVER_OPERATION,
+                'schema_version': DISCOVER_TREASURE_DIFFERENCE_VERSION, 'player': '$controller',
+                'amount': int(difference['amount'])},), None, ('discover',))
+        private_play = controller_private_top_play_template(text)
+        if private_play is not None:
+            return private_play
     total_mana = _total_mana_exile_template(text)
     if total_mana is not None:return total_mana
     fixed_top = _fixed_top_exile_template(text, source_name=source_name, event=context.get("event"))
@@ -145,6 +193,26 @@ def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid
     return declared_effect_amount_template(text,source_name=source_name,compile_fixed=fixed,
         cast_x_available=cast_x_available,forbid_public_x=forbid_public_x) or scalar_effect_amount_template(
             text,source_name=source_name,compile_fixed=fixed,event=context.get('event'),source_event=context.get('source_event',False))
+
+
+def elected_nonland_exile_trigger_result(binding, text):
+    if binding.variant != "your upkeep" or binding.active_zone != "battlefield" or text != binding.body:
+        return None
+    return _elected_nonland_exile_template(text, event=binding.event.value)
+
+
+def _elected_nonland_exile_template(text, *, event):
+    if event != "step.begin" or re.fullmatch(
+        r"Each player exiles cards from the top of their library until they exile a nonland card\. "
+        r"An opponent chooses a nonland card exiled this way\. "
+        r"You may cast up to two spells from among the other cards exiled this way without paying their mana costs\.?",
+        " ".join(text.split()), re.I,
+    ) is None:
+        return None
+    from ..rules.elected_nonland_exile import ELECTED_NONLAND_EXILE_MECHANIC, elected_nonland_exile_instruction
+
+    return ("each-library-nonland-election-free-casts-v1", (elected_nonland_exile_instruction(),),
+            None, (FIXED_TOP_EXILE_MECHANIC, ELECTED_NONLAND_EXILE_MECHANIC))
 
 
 def _total_mana_exile_template(text):

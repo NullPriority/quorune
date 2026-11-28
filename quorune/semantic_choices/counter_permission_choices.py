@@ -18,7 +18,8 @@ def optional_counter_placement_possible(plan, query):
                 return True
             continue
         if isinstance(intent, PlaceCounterBatchIntent):
-            placements = ((intent.object_ref, item.counter_name, item.amount) for item in intent.placements)
+            placements = ((ref, item.counter_name, item.amount)
+                          for ref in intent.object_refs for item in intent.placements)
         elif isinstance(intent, (PlaceCountersIntent, PlaceCountersOnTargetsIntent)):
             placements = ((ref, intent.counter_name, intent.amount) for ref in intent.object_refs)
         elif isinstance(intent, PlaceCountersOnSetIntent):

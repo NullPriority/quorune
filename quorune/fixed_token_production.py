@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+import re
 from types import MappingProxyType
 from typing import Any, Mapping
 
@@ -22,6 +23,25 @@ FIXED_DELAYED_TOKEN_CAPABILITY_ID = "trigger.delayed.fixed_token_creation"
 TYPED_TOKEN_ABILITY_CAPABILITY_ID = "token.creation.typed_ability_definition"
 TYPED_TOKEN_ABILITY_MECHANIC_ID = "fixed-token-typed-ability-definition"
 TOKEN_LITERAL_NAME_VERSION_FIELD = "literal_token_name_version"
+TOKEN_MANA_LIFE_PROFILE = "tap_sac_red_or_green_gain_two_life_v1"
+TOKEN_MANA_LIFE_ABILITY = "{T}, Sacrifice this token: Add {R} or {G}. You gain 2 life."
+GOLD_TOKEN_MANA_PROFILE = "sac_any_color_mana_v1"
+GOLD_TOKEN_MANA_ABILITY = "Sacrifice this token: Add one mana of any color."
+GOLD_TOKEN_CHARACTERISTICS = MappingProxyType({
+    "type_line": "Token Artifact — Gold",
+    "display_text": GOLD_TOKEN_MANA_ABILITY,
+    "activated_ability_profile": GOLD_TOKEN_MANA_PROFILE,
+})
+_MANA_LIFE_TOKEN_NAME = r"[A-Za-z][A-Za-z' -]*"
+_MANA_LIFE_TOKEN_BODY = re.compile(
+    rf'(?:Create|Each player creates) a colorless artifact token named (?P<name>{_MANA_LIFE_TOKEN_NAME})'
+    rf' with ["“]{re.escape(TOKEN_MANA_LIFE_ABILITY)}["”]\.?', re.IGNORECASE,
+)
+TREASURE_TOKEN_CHARACTERISTICS = MappingProxyType({
+    "type_line": "Token Artifact — Treasure",
+    "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+    "activated_ability_profile": "tap_sac_any_color_mana_v1",
+})
 FOOD_TOKEN_CHARACTERISTICS = MappingProxyType({
     "type_line": "Token Artifact — Food",
     "display_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
@@ -33,10 +53,28 @@ class FixedTokenProductionError(ValueError):
     """A fixed token-production descriptor exceeds its closed grammar."""
 
 
+def mana_life_token_name(effect_text: str) -> str | None:
+    match = _MANA_LIFE_TOKEN_BODY.fullmatch(" ".join(effect_text.split()))
+    return match["name"].strip() if match else None
+
+
+def named_mana_life_token(name: str) -> dict[str, Any]:
+    if not isinstance(name, str) or re.fullmatch(_MANA_LIFE_TOKEN_NAME, name) is None or name != name.strip():
+        raise FixedTokenProductionError("A named mana token requires its exact printed name")
+    return {
+        "op": "create_token", "controller": "$controller", "name": name, "quantity": 1,
+        "characteristics": {
+            "type_line": "Token Artifact", "colors": [], "display_text": TOKEN_MANA_LIFE_ABILITY,
+            TOKEN_LITERAL_NAME_VERSION_FIELD: 1, "activated_ability_profile": TOKEN_MANA_LIFE_PROFILE,
+        },
+    }
+
+
 class FixedTokenCreatorScope(str, Enum):
     EACH_PLAYER = "each_player"
     EACH_OPPONENT = "each_opponent"
     CONTROLLER_AND_TARGET_OPPONENT = "controller_and_target_opponent"
+    CONTROLLER_AND_CHOSEN_OPPONENT = "controller_and_chosen_opponent"
 
 
 def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorScope:
@@ -44,10 +82,50 @@ def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorSco
     fields = {"op", "scope", "controller", "token"}
     if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT:
         fields.add("target")
+    elif scope is FixedTokenCreatorScope.CONTROLLER_AND_CHOSEN_OPPONENT:
+        fields.add("opponent")
     if (set(effect) != fields or effect["op"] != FIXED_DISTRIBUTED_TOKEN_OPERATION
             or not isinstance(effect["token"], Mapping)):
         raise FixedTokenProductionError("Distributed token creation has a closed effect shape")
     return scope
+
+
+def distributed_source_counter_token_amount(effect: Mapping[str, Any]):
+    """Decode the shared source-counter quantity in the all-player token slot."""
+    from .scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    token = effect.get("token")
+    quantity = token.get("quantity") if isinstance(token, Mapping) else None
+    if not isinstance(quantity, Mapping) or quantity.get("kind") != SCALAR_AMOUNT_KIND:
+        return None
+    spec = ScalarEffectAmountSpec.from_dict(quantity)
+    if (fixed_token_creator_scope(effect) is not FixedTokenCreatorScope.EACH_PLAYER
+            or spec.origin is not ScalarAmountOrigin.SOURCE or not spec.counter_name
+            or not spec.binding_id or spec.coefficient != 1):
+        raise FixedTokenProductionError("Distributed scalar tokens require one bound source counter count")
+    return spec
+
+
+CREATED_TOKEN_HASTE_FIELD = "created_token_haste_version"
+CREATED_TOKEN_HASTE_CAPABILITY = "token.creation.fixed_temporary_haste"
+CREATED_TOKEN_HASTE_LIFELINK_CAPABILITY = "token.creation.fixed_temporary_haste_lifelink"
+
+
+def temporary_haste_lifelink_goblin_effect():
+    return {
+        "op": "create_token", "controller": "$controller", "name": "Goblin Token", "quantity": 1,
+        "characteristics": {
+            "type_line": "Token Creature — Goblin", TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
+            "colors": ["R"], "power": "1", "toughness": "1",
+        },
+        CREATED_TOKEN_HASTE_FIELD: 2,
+    }
+
+
+def created_token_keyword_grant(version):
+    if type(version) is not int or version not in {1, 2}:
+        raise ValueError("Created-token keywords require a supported version")
+    return ("Haste",) if version == 1 else ("Haste", "Lifelink")
 
 
 def fixed_token_effect_shape_is_closed(
@@ -141,6 +219,14 @@ def predefined_token_identity(
     }
 
 
+def treasure_token_identity(*, legacy_name: bool = False) -> tuple[str, dict[str, Any]]:
+    return predefined_token_identity("Treasure", {
+        "type_line": "Token Artifact — Treasure",
+        "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile": "tap_sac_any_color_mana_v1",
+    }, legacy_name=legacy_name)
+
+
 def historical_unnamed_token_view(
     name: object, definition: Mapping[str, Any],
 ) -> tuple[str, dict[str, Any]] | None:
@@ -197,6 +283,27 @@ def food_token_effect(quantity: int) -> dict[str, Any]:
     }
 
 
+def treasure_token_effect(quantity: int) -> dict[str, Any]:
+    name, characteristics = predefined_token_identity("Treasure", {
+        "type_line":"Token Artifact — Treasure",
+        "display_text":"{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile":"tap_sac_any_color_mana_v1",
+    })
+    return {"op":"create_token", "controller":"$controller", "name":name,
+            "quantity":_fixed_count(quantity, label="Treasure"), "characteristics":characteristics}
+
+
+def gold_token_effect() -> dict[str, Any]:
+    name, characteristics = predefined_token_identity("Gold", GOLD_TOKEN_CHARACTERISTICS)
+    return {
+        "op": "create_token",
+        "controller": "$controller",
+        "name": name,
+        "quantity": 1,
+        "characteristics": characteristics,
+    }
+
+
 def afterlife_token_effect(quantity: int, *, legacy_name: bool = False) -> dict[str, Any]:
     """Return the canonical Spirit definition for one Afterlife instance."""
 
@@ -237,6 +344,58 @@ class FixedInvestigateSpec:
             "controller": "$controller",
             "count": self.count,
         }
+
+
+ANNOUNCED_POPULATE_CAPABILITY = "token.creation.populate_announced_x"
+ANNOUNCED_POPULATE_VERSION = 2
+SOURCE_BOUND_POPULATE_VERSION = 3
+
+
+def source_bound_populate_effect():
+    return {"op": "populate", "schema_version": SOURCE_BOUND_POPULATE_VERSION}
+
+
+def uses_source_bound_populate(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == "populate"
+            and effect.get("schema_version") == SOURCE_BOUND_POPULATE_VERSION)
+
+
+def announced_populate_effect():
+    from .query_effect_amount_model import CastXAmountSpec
+
+    return {"op": "populate", "schema_version": ANNOUNCED_POPULATE_VERSION,
+            "count": CastXAmountSpec().to_dict()}
+
+
+def announced_populate_count(effect, *, materialized=False):
+    from .query_effect_amount_model import CastXAmountSpec
+
+    if (set(effect) != {"op", "schema_version", "count"} or effect["op"] != "populate"
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != ANNOUNCED_POPULATE_VERSION):
+        raise ValueError("Repeated Populate requires its exact versioned instruction")
+    count = effect["count"]
+    if not materialized:
+        if CastXAmountSpec.from_dict(count) != CastXAmountSpec():
+            raise ValueError("Repeated Populate requires the spell's announced X")
+        return None
+    if type(count) is not int or count < 0:
+        raise ValueError("Repeated Populate requires a bound nonnegative announced count")
+    return count
+
+
+def announced_populate_runtime_dependencies(program):
+    if not any(effect.get("op") == "populate" and ("schema_version" in effect or "count" in effect)
+               and not uses_source_bound_populate(effect) for effect in program.effects):
+        return ()
+    from .query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+
+    if (len(program.effects) != 1 or program.target_schema is not None or program.cost_schema is not None
+            or program.handlers or program.event_condition is not None
+            or (program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:")):
+        raise ValueError("Repeated Populate requires its original complete untargeted spell")
+    announced_populate_count(program.effects[0])
+    return ("token.creation.fixed_copy", ANNOUNCED_POPULATE_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
 
 
 def sequential_investigate_count(

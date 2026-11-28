@@ -20,7 +20,7 @@ from ..damage import (
 )
 from ..damage_source import DamageSourceSnapshot
 from ..damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_FIELD
-from ..damage_death_exile_model import DamageDeathExileScope, damage_death_exile_scope
+from ..damage_death_exile_model import damage_death_exile_scope
 from ..fixed_damage_set_model import DEALT_LIFE_GAIN_FIELD, TARGETED_DEALT_LIFE_GAIN_VERSION
 from ..rules.committed_quantity_followups import damage_dealt_life_followup
 from ..rules.damage_death_exile import commit_damage_death_exile
@@ -46,15 +46,27 @@ def _apply_creature_power_damage(
 ) -> Any:
     if operation != "creature_power_damage":
         raise GameRuleError("Creature-power damage operation is unsupported")
+    from ..rules.fight_excess_mana import FIGHT_EXCESS_MANA_FIELD
+
+    excess_fight = FIGHT_EXCESS_MANA_FIELD in effect
+    target_identity = None
+    if excess_fight:
+        if type(effect[FIGHT_EXCESS_MANA_FIELD]) is not int or effect[FIGHT_EXCESS_MANA_FIELD] != 1 or effect.get("kind") != "fight":
+            raise GameRuleError("Excess mana requires one fixed fight result")
+        effect = {key: value for key, value in effect.items() if key != FIGHT_EXCESS_MANA_FIELD}
+        target = next((card for card in host.state.cards.values() if card.ref == effect["target"]), None)
+        target_identity = target.logical_object_id if target is not None else None
     try:
         result = resolve_creature_power_damage(
             host,
             effect,
             actor=actor,
             reason=reason,
+            collect_excess=excess_fight,
         )
     except CreaturePowerDamageError as exc:
         raise GameRuleError(str(exc)) from exc
+    dealt, excess = result if excess_fight and result else (result, ())
     host._log(
         actor,
         "effect.creature_power_damage",
@@ -63,11 +75,19 @@ def _apply_creature_power_damage(
             "kind": effect.get("kind"),
             "source": effect.get("source"),
             "target": effect.get("target"),
-            "dealt_amounts": list(result),
+            "dealt_amounts": list(dealt),
         },
         importance=2,
     )
-    return result
+    if excess_fight:
+        from ..replacement.immutable import FrozenMap
+        from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+
+        amount = sum(row.amount for row in excess if row.logical_object_id == target_identity)
+        return CommittedQuantityFollowup((FrozenMap({
+            "op": "mana", "player": actor, "color": "R", "amount": amount,
+        }),) if amount else ())
+    return dealt
 
 
 def _source_snapshot_override(host, effect):
@@ -91,7 +111,40 @@ def _apply_damage(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..life_gain_permission import has_dealt_damage_life_gain_prohibition
+    from ..semantic_runtime.life_prohibitions import (
+        commit_dealt_damage_life_gain_prohibition, dealt_damage_life_prohibition_source,
+    )
+    from ..turn_match_outcome_model import TURN_OUTCOME_FIELD
+    from ..excess_damage import EXCESS_TRAMPLE_FIELD, excess_trample_followup
+
+    try:
+        prohibit_gain = has_dealt_damage_life_gain_prohibition(effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if prohibit_gain and any(field in effect for field in (
+        TURN_OUTCOME_FIELD, DEALT_LIFE_GAIN_FIELD, TEMPORARY_DAMAGE_PROHIBITION_FIELD,
+    )):
+        raise GameRuleError("Dealt-damage life prohibition requires its separate damage result")
+
+    if TURN_OUTCOME_FIELD in effect:
+        from ..semantic_runtime.player_outcomes import apply_turn_match_outcome_protection
+
+        return apply_turn_match_outcome_protection(host, actor, effect)
+    from ..rules.excess_damage_treasure import (
+        EXCESS_TREASURE_FIELD, committed_creature_lethal_threshold, excess_treasure_after_damage, excess_treasure_recipe,
+    )
+    from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+
+    recipe = (excess_treasure_recipe(effect[EXCESS_TREASURE_FIELD], actor=actor)
+              if EXCESS_TREASURE_FIELD in effect else None)
     gain_life = DEALT_LIFE_GAIN_FIELD in effect
+    if gain_life and recipe is not None:
+        raise GameRuleError("Damage cannot use two separate committed-result recipes")
+    grant_trample = EXCESS_TRAMPLE_FIELD in effect
+    if grant_trample and (type(effect[EXCESS_TRAMPLE_FIELD]) is not int or effect[EXCESS_TRAMPLE_FIELD] != 1
+                          or gain_life or TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect):
+        raise GameRuleError("Committed excess damage requires its exact power and trample result")
     if gain_life and (
         type(effect[DEALT_LIFE_GAIN_FIELD]) is not int
         or effect[DEALT_LIFE_GAIN_FIELD] != TARGETED_DEALT_LIFE_GAIN_VERSION
@@ -108,13 +161,20 @@ def _apply_damage(
         raise GameRuleError("Damage cannot be negative")
     try:
         scope = damage_death_exile_scope(effect)
+        if prohibit_gain and scope is not None:
+            raise ValueError("Dealt-damage life prohibition has a separate result")
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     if amount == 0:
-        if scope is DamageDeathExileScope.TARGET:
+        if scope is not None and scope.original_target_types:
             commit_damage_death_exile(host, scope=scope, source_ref=effect['source'], events=(),
                                      original_target=recipient_snapshot(host, target, actor=actor))
+        if recipe is not None:
+            return CommittedQuantityFollowup(())
+        if grant_trample:
+            return excess_trample_followup(actor, 0)
         return damage_dealt_life_followup(0) if gain_life else 0
+    prohibition_source = dealt_damage_life_prohibition_source(host, actor) if prohibit_gain else None
     try:
         pinned_source = _source_snapshot_override(host, effect)
         effect_source = (
@@ -151,19 +211,32 @@ def _apply_damage(
             unpreventable=bool(effect.get("unpreventable", False)),
             source_override=pinned_source,
         )
+        lethal_threshold = committed_creature_lethal_threshold(host, proposal) if recipe is not None else None
         result = resolve_damage_batch(
             host,
             (proposal,),
             replacement_selections=tuple(
                 effect.get("_replacement_selections") or ()
             ),
+            collect_excess=grant_trample,
         )
     except DamageError as exc:
         raise GameRuleError(str(exc)) from exc
     if scope is not None:
         commit_damage_death_exile(host, scope=scope, source_ref=proposal.source.ref,
                                  events=result.events, original_target=proposal.recipient)
-    event = result.events[0]
+    for event in result.events:
+        _log_damage_effect_event(host, actor, reason, event, result)
+    if recipe is not None:
+        return excess_treasure_after_damage(recipe, proposal, result, lethal_threshold=lethal_threshold)
+    if prohibition_source is not None:
+        commit_dealt_damage_life_gain_prohibition(host, actor, source=prohibition_source, events=result.events)
+    if grant_trample:
+        return excess_trample_followup(actor, sum(row.amount for row in result.excess))
+    return damage_dealt_life_followup(result.dealt_amount) if gain_life else result.dealt_amount
+
+
+def _log_damage_effect_event(host, actor, reason, event, result):
     host._log(
         actor,
         (
@@ -190,7 +263,6 @@ def _apply_damage(
         changed_objects=result.changed_objects,
         changed_players=result.changed_players,
     )
-    return damage_dealt_life_followup(event.dealt_amount) if gain_life else event.dealt_amount
 
 
 
@@ -202,6 +274,10 @@ def _apply_damage_each_opponent(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.paid_discard_damage import PAID_NONLAND_DAMAGE_FIELD
+
+    if PAID_NONLAND_DAMAGE_FIELD in effect:
+        raise GameRuleError("Paid discard damage must be authorized by its resolving spell")
     op = operation
     amount = int(effect.get("amount", 0))
     if amount < 0:
@@ -338,14 +414,10 @@ def _apply_create_treasure(
     operation: str,
     reason: str,
 ) -> Any:
-    from ..fixed_token_production import predefined_token_identity
+    from ..fixed_token_production import treasure_token_identity
     from ..token_copy_value_model import predefined_token_name_mode
 
-    name, characteristics = predefined_token_identity("Treasure", {
-        "type_line": "Token Artifact — Treasure",
-        "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
-        "activated_ability_profile": "tap_sac_any_color_mana_v1",
-    }, legacy_name=predefined_token_name_mode(host) is None)
+    name, characteristics = treasure_token_identity(legacy_name=predefined_token_name_mode(host) is None)
     return host.create_token(
         str(effect.get("controller") or actor),
         name=name,
@@ -544,7 +616,10 @@ def _apply_sacrifice_if_present(
             raise GameRuleError(str(exc)) from exc
         if effect.get('card') != identity.object_ref or effect.get('current_controller_sacrifices') is not True:
             raise GameRuleError('Identity-bound sacrifice requires its exact reference and controller mode')
-        return resolve_ring_blocker_sacrifice(host, blocker=identity, reason=reason)
+        selections = effect.get("_replacement_selections", ()) if effect.get("sacrifice_replacement_resume") is True else ()
+        return resolve_ring_blocker_sacrifice(
+            host, blocker=identity, reason=reason, replacement_selections=selections,
+        )
     value = effect.get("card")
     if not value:
         return None
@@ -637,15 +712,31 @@ def _apply_control_next_turn(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..turn_priority_model import (
+        NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD, TURN_CONTROL_LIFETIME_VERSION_FIELD,
+        read_turn_control_lifetime_version,
+    )
+
+    try:
+        lifetime = read_turn_control_lifetime_version(effect)
+        if lifetime is not None and (
+            set(effect) - {"op", "player", "reason", "_runtime_source", TURN_CONTROL_LIFETIME_VERSION_FIELD}
+            or actor not in host.active_seats or not isinstance(effect.get("player"), str)
+        ):
+            raise ValueError("Current turn control requires one live controller and a designated player")
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     target = str(effect.get("player") or "")
     if target not in host.active_seats:
         raise GameRuleError(
             "Turn-control effect requires an active player"
         )
-    host.state.players[target].stats[
-        "next_turn_controlled_by"
-    ] = actor
+    stats = host.state.players[target].stats
+    stats["next_turn_controlled_by"] = actor
+    if lifetime is None:
+        stats.pop(NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD, None)
+    else:
+        stats[NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD] = lifetime
     host._log(
         actor,
         "turn.control.scheduled",
@@ -665,6 +756,21 @@ def _apply_control_next_turn(
 
 
 
+def _lock_life_until_next_turn(host, player, source):
+    from ..continuous_effect_model import ContinuousEffectDuration
+    from ..life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD
+    from ..semantic_runtime.life_prohibitions import apply_temporary_life_gain_prohibition
+
+    apply_temporary_life_gain_prohibition(host, player, {
+        "op": "life",
+        "source": source,
+        TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD: {
+            "schema_version": 3, "affected_player_relation": "controller",
+            "duration": ContinuousEffectDuration.UNTIL_NEXT_TURN.value,
+        },
+    })
+
+
 def _apply_protection_from_everything_until_next_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -673,9 +779,36 @@ def _apply_protection_from_everything_until_next_turn(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..errors import GameRuleError
+    from ..rules.targeted_opponent_protection import PROTECTION_VERSION, validate_resolving_opponent_protection
+
     seat = str(effect.get("player") or actor)
     host._require_seat(seat, in_game=True)
+    if effect.get("schema_version") == 2:
+        source = effect.get("source")
+        if (type(effect["schema_version"]) is not int or effect.get("preserve_life_total") is not True
+                or seat != actor or not any(item.ref == source and item.controller == actor
+                                           and item.context.get("currently_resolving") is True for item in host.state.stack)):
+            raise GameRuleError("Next-turn protection requires its original resolving controller and stack object")
+        _lock_life_until_next_turn(host, seat, source)
+    elif effect.get("schema_version") == PROTECTION_VERSION:
+        try:
+            validate_resolving_opponent_protection(host, effect, actor=actor)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        _lock_life_until_next_turn(host, seat, effect["source"])
+    elif "schema_version" in effect:
+        from ..rules.next_personal_turn_protection import (
+            ACTIVATED_PROTECTION_VERSION, validate_resolving_activated_protection, validate_resolving_cast_entry_protection,
+        )
+
+        validate = (validate_resolving_activated_protection
+                    if effect["schema_version"] == ACTIVATED_PROTECTION_VERSION
+                    else validate_resolving_cast_entry_protection)
+        try:
+            validate(host, effect, actor=actor)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
     host.state.players[seat].stats[
         "protection_from_everything_until_next_turn"
     ] = True
@@ -706,8 +839,12 @@ def _apply_end_turn(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
-    host._end_turn_now(actor=actor, reason=reason)
+    from ..compiler.extra_turn_templates import END_TURN_VERSION_FIELD
+
+    if END_TURN_VERSION_FIELD in effect:
+        host.turn_steps.end_turn_now(actor=actor, reason=reason, check_state_actions=True)
+    else:
+        host._end_turn_now(actor=actor, reason=reason)
     return None
 
 
@@ -799,19 +936,27 @@ def _apply_grant_ability_fragment(
         canonical_ability_fragments,
     )
 
-    source = host._resolve_object(
-        actor,
-        str(effect.get("source") or ""),
-        zones={"battlefield"},
-        controlled_only=True,
-    )
-    raw_fragment = effect.get("fragment")
-    if not isinstance(raw_fragment, Mapping):
-        raise GameRuleError("Ability grants require one typed fragment")
     try:
-        fragment = ability_fragment_from_dict(raw_fragment)
-        if not isinstance(fragment, GrantedActivatedAbilitySpec):
-            raise ValueError("only activated-ability fragments are supported")
+        if "schema_version" in effect:
+            from ..rules.saga_chapter_grants import validate_saga_chapter_grant
+
+            # The resolver adds its own source metadata to the already-bound effect.
+            body = {key: value for key, value in effect.items() if key != "_runtime_source"}
+            fragment = validate_saga_chapter_grant(body, resolved=True)
+            if body["source"] is None:
+                return None
+            source = host._resolve_object(actor, body["source"], zones={"battlefield"})
+        else:
+            # Existing recorded games contain the unversioned reviewed opcode.
+            source = host._resolve_object(
+                actor, str(effect.get("source") or ""), zones={"battlefield"}, controlled_only=True,
+            )
+            raw_fragment = effect.get("fragment")
+            if not isinstance(raw_fragment, Mapping):
+                raise GameRuleError("Ability grants require one typed fragment")
+            fragment = ability_fragment_from_dict(raw_fragment)
+            if not isinstance(fragment, GrantedActivatedAbilitySpec):
+                raise ValueError("only activated-ability fragments are supported")
         existing = canonical_ability_fragments(
             source.annotations.get("granted_ability_fragments", ())
         )
@@ -825,7 +970,8 @@ def _apply_grant_ability_fragment(
     host._log(
         actor,
         "ability.fragment.gained",
-        f"{source.ref} gained a typed activated ability.",
+        (f"{source.printed_name} gained an activated ability."
+         if "schema_version" in effect else f"{source.ref} gained a typed activated ability."),
         {
             "source": source.ref,
             "ability_id": fragment.ability_id,

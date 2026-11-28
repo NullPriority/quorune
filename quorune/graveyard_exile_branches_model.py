@@ -7,6 +7,7 @@ from enum import StrEnum
 
 GRAVEYARD_EXILE_BRANCH_OPERATION = 'exile_public_graveyard_card_branch'
 GRAVEYARD_EXILE_BRANCH_CAPABILITY = 'card.exile.public_graveyard_exclusive_outcome'
+GRAVEYARD_EXILE_LAND_MANA_CAPABILITY = 'card.exile.public_graveyard_land_mana_or_damage'
 GRAVEYARD_EXILE_BRANCH_BASE_DEPENDENCIES = (
     GRAVEYARD_EXILE_BRANCH_CAPABILITY,
     'card.exile.public_graveyard',
@@ -17,6 +18,7 @@ GRAVEYARD_EXILE_BRANCH_BASE_DEPENDENCIES = (
 class GraveyardExileBranchRecipe(StrEnum):
     CREATURE_LIFE_OR_DRAW = 'creature_life_or_draw'
     OPTIONAL_CREATURE_LIFE_OR_SOURCE_BOOST = 'optional_creature_life_or_source_boost'
+    LAND_MANA_OR_LIFE_AND_DAMAGE = 'land_mana_or_life_and_damage'
 
 
 class GraveyardExileConsequence(StrEnum):
@@ -32,10 +34,14 @@ class GraveyardExileBranchSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
-            raise ValueError('Exclusive graveyard exile requires schema version one')
         if not isinstance(self.recipe, GraveyardExileBranchRecipe):
             raise ValueError('Exclusive graveyard exile requires a typed outcome recipe')
+        if type(self.schema_version) is not int or self.schema_version != (2 if self.classifies_land else 1):
+            raise ValueError('Exclusive graveyard exile requires its recipe version')
+
+    @property
+    def classifies_land(self) -> bool:
+        return self.recipe is GraveyardExileBranchRecipe.LAND_MANA_OR_LIFE_AND_DAMAGE
 
     @property
     def optional(self) -> bool:
@@ -56,6 +62,8 @@ class GraveyardExileBranchSpec:
 
     def consequence(self, *, exile_committed: bool, creature_card: bool | None) -> GraveyardExileConsequence | None:
         """Select one outcome using already established public or last-known facts."""
+        if self.classifies_land:
+            raise ValueError('The land recipe requires the complete card-type classification')
         if type(exile_committed) is not bool:
             raise ValueError('Exile commitment must be explicit')
         if self.optional and not exile_committed:

@@ -83,12 +83,20 @@ def declared_cost_event_dependencies(condition):
 
 def declared_cost_copy_fields(context):
     from .scalar_effect_amount_model import (
-        PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
-        PaidCreatureStatSnapshot, PaidSacrificeManaValueSnapshot,
+        PAID_REVEALED_CREATURE_CONTEXT, PAID_SACRIFICE_MANA_VALUE_CONTEXT, PAID_SACRIFICE_STAT_CONTEXT,
+        PaidCreatureStatSnapshot, PaidRevealedCreatureSnapshot, PaidSacrificeManaValueSnapshot,
     )
     from .paid_sacrifice_conditions import PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PaidSacrificeCharacteristics
 
+    from .gift_card_model import GIFT_CARD_PROMISE_FIELD, GiftCardPromise
+
+    from .paid_discard_model import PAID_DISCARD_CONTEXT, PaidDiscardSnapshot
+
     fields = {}
+    if GIFT_CARD_PROMISE_FIELD in context:
+        fields[GIFT_CARD_PROMISE_FIELD] = GiftCardPromise.from_dict(context[GIFT_CARD_PROMISE_FIELD]).to_dict()
+    if PAID_DISCARD_CONTEXT in context:
+        fields[PAID_DISCARD_CONTEXT] = PaidDiscardSnapshot.from_dict(context[PAID_DISCARD_CONTEXT]).to_dict()
     if DECLARED_CAST_COSTS_FIELD in context:
         fields[DECLARED_CAST_COSTS_FIELD] = DeclaredCastCostFacts.from_dict(context[DECLARED_CAST_COSTS_FIELD]).to_dict()
     if PAID_SACRIFICE_STAT_CONTEXT in context:
@@ -99,4 +107,7 @@ def declared_cost_copy_fields(context):
     if PAID_SACRIFICE_CHARACTERISTICS_CONTEXT in context:
         snapshot = PaidSacrificeCharacteristics.from_dict(context[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT])
         fields[PAID_SACRIFICE_CHARACTERISTICS_CONTEXT] = snapshot.to_dict()
+    if PAID_REVEALED_CREATURE_CONTEXT in context:
+        snapshot = PaidRevealedCreatureSnapshot.from_dict(context[PAID_REVEALED_CREATURE_CONTEXT])
+        fields[PAID_REVEALED_CREATURE_CONTEXT] = snapshot.to_dict()
     return fields

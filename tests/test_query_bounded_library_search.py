@@ -2,7 +2,7 @@
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
-import json,tempfile,unittest
+import json,os,tempfile,unittest
 from unittest.mock import patch
 from common import ROOT
 from quorune.library_search_model import (
@@ -14,12 +14,14 @@ from quorune.compiler.query_bound_search_templates import query_bound_library_se
 from quorune.rules.query_bound_library_search import materialize_query_bound_search
 from quorune.rules.library_search_capability_shapes import fixed_counted_library_search_node_capabilities
 from quorune.model import CardInstance
+from quorune.object_query import exact_numeric_characteristic
 from quorune.errors import GameRuleError
 
 FIXTURE=ROOT/'tests/fixtures/query-bounded-library-search-cards.json'
 PREFIX='Search your library for up to X basic land cards, where X is '
 BF=', put those cards onto the battlefield tapped, then shuffle.'
 HAND='. Reveal those cards, put them into your hand, then shuffle.'
+GREATEST_POWER = 'the greatest power among creatures you control'
 
 def template(quantity='the number of lands you control',hand=False):
     return query_bound_library_search_template(PREFIX+quantity+(HAND if hand else BF))
@@ -27,7 +29,7 @@ def template(quantity='the number of lands you control',hand=False):
 class QueryBoundSearchModelTests(unittest.TestCase):
     def test_exact_supported_quantities_and_placements_keep_unknown_siblings_closed(self):
         for quantity in ('the number of lands you control','the number of tapped creatures you control',
-                'the number of creatures attacking you','the number of Shrines you control'):
+                'the number of creatures attacking you','the number of Shrines you control',GREATEST_POWER):
             spec=template(quantity);self.assertIsInstance(spec,QueryBoundLibrarySearchSpec)
             effect=spec.effect();self.assertEqual(VERSION,effect['schema_version'])
             self.assertEqual({'minimum':0,'maximum':None},effect['count'])
@@ -38,7 +40,9 @@ class QueryBoundSearchModelTests(unittest.TestCase):
         for bad in (PREFIX+'the number of lands you control'+BF+' Draw a card.',
                 (PREFIX+'the number of lands you control'+BF).replace('basic land','nonbasic land'),
                 (PREFIX+'the number of lands you control'+BF).replace('basic land','creature'),
-                PREFIX+'the greatest power among creatures you control'+BF,
+                PREFIX+GREATEST_POWER+HAND,
+                PREFIX+'the greatest power among creatures your opponents control'+BF,
+                PREFIX+'the greatest toughness among creatures you control'+BF,
                 PREFIX+'the number of cards in your hand'+BF):
             self.assertIsNone(query_bound_library_search_template(bad))
     def test_raw_transport_has_no_client_literal_limit_or_unowned_snapshot(self):
@@ -74,6 +78,35 @@ class QueryBoundSearchModelTests(unittest.TestCase):
                 SimpleNamespace(ref='STACK',controller='B',context=item.context)):
             with self.assertRaises(GameRuleError):materialize_query_bound_search(host,changed,resolved,2)
         with self.assertRaises(GameRuleError):materialize_query_bound_search(host,item,resolved,3)
+    def test_greatest_power_uses_the_exact_scalar_profile_and_frozen_receipt(self):
+        effect = template(GREATEST_POWER).effect()
+        for field, value in (('characteristic', 'toughness'), ('reduction', 'sum'),
+                ('controller_relation', 'source_opponents')):
+            changed = {**effect, 'bound': {**effect['bound'],
+                'aggregate': {**effect['bound']['aggregate'], field: value}}}
+            with self.assertRaises(ValueError):
+                QueryBoundLibrarySearchSpec.from_effect(changed)
+        host, item = self.host(1)
+        host._type_parts = lambda text: ({'creature'}, {'bear'}, set())
+        current_power = {'value': 15}
+        host._effective_card_data = lambda card: {
+            'type_line': 'Creature — Bear', 'colors': [], 'keywords': [],
+            'power': str(current_power['value']), 'toughness': '6',
+        }
+        result = materialize_query_bound_search(host, item, effect, 2)
+        self.assertEqual(15, result['count']['maximum'])
+        current_power['value'] = -3
+        self.assertEqual(result, materialize_query_bound_search(host, item, result, 2))
+        self.assertEqual(0, materialize_query_bound_search(host, item, effect, 3)['count']['maximum'])
+        for changed, changed_item, pointer in (
+                ({**result, 'count': {'minimum': 0, 'maximum': 16}}, item, 2),
+                (result, item, 3),
+                (result, SimpleNamespace(ref='STACK', controller='B', context=item.context), 2),
+                (result, SimpleNamespace(ref='STACK', controller='A', context={}), 2)):
+            with self.assertRaises(GameRuleError):
+                materialize_query_bound_search(host, changed_item, changed, pointer)
+        self.assertIn('quantity_expression.public_characteristic_aggregate', counted_search_bound_dependencies(effect))
+
     def test_payload_minimum_is_independent_of_coverage_and_resolved_internal_data_is_not_a_template(self):
         spec=template();effect=spec.effect()
         self.assertIn(CAP,counted_search_bound_dependencies(effect))
@@ -91,7 +124,8 @@ from quorune.rules.capabilities import load_default_capability_registry,Capabili
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.card_programs.binding import bind_card_program_runtime,bind_semantic_program_runtime
 from quorune.semantics import SemanticRegistry
-from quorune.record import authoritative_state_hash
+from quorune.record import authoritative_state_hash,replay_record
+from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
 import test_bound_effect_programs as compiler_controls
 import test_public_condition_self_replacements as controls
@@ -103,12 +137,13 @@ class QueryBoundSearchCompilerTests(unittest.TestCase):
     def setUpClass(cls):cls.registry=load_default_capability_registry()
     def test_complete_source_bound_and_sibling_sequence_compile_without_weakening(self):
         for text in (PREFIX+'the number of lands you control'+BF,
+                PREFIX+GREATEST_POWER+BF.replace(',', '.', 1),
                 PREFIX+'the number of creatures attacking you'+BF+' Prevent all combat damage that would be dealt this turn.'):
             ir=compile_oracle_card(compiler_controls.record(text),capability_registry=self.registry,capability_profile='commander_review')
             self.assertEqual('exact',ir.status,ir.material_residuals)
             node=ir.faces[0].nodes[0];self.assertIn(CAP,node.capability_dependencies)
             self.assertEqual(VERSION,node.effects[0]['schema_version'])
-        for text in (PREFIX+'the greatest power among creatures you control'+BF,
+        for text in (PREFIX+'the greatest power among other creatures you control'+BF,
                 PREFIX+'the number of lands you control'+BF+' Exile the top ten cards of your library.'):
             self.assertNotEqual('exact',compile_oracle_card(compiler_controls.record(text),capability_registry=self.registry).status)
     def test_lowering_and_new_capability_withdrawals_keep_old_fixed_search_supported(self):
@@ -135,7 +170,7 @@ class QueryBoundSearchRegistrationTests(unittest.TestCase):
                             promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
                         program=compile_best_available_card_program(db,card,semantic_registry=semantics,capability_registry=registry,capability_profile='commander_review')
                         bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
-                        self.assertEqual(name not in ('Traverse the Outlands',"Surveyor's Scope"),bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
+                        self.assertEqual(name != "Surveyor's Scope",bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
 
 class QueryBoundSearchRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
@@ -177,6 +212,102 @@ class QueryBoundSearchRuntimeTests(unittest.TestCase):
     def take(self,s,cards):
         result=s.act('pilot:A',{'action_id':'choose','search_cards':[c.ref for c in cards]})
         self.assertTrue(result.ok,result.summary);self.assertIsNone(self.resolve(s))
+    def replay_traverse(self, s, case, *, load=False):
+        saved = os.environ.get('QUORUNE_TRAVERSE_RECORD_PARENT')
+        directory = Path(saved or self.temp.name)
+        if saved:
+            fixture = directory / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = directory / ('traverse-' + case)
+        s.save(path)
+        manifest = json.loads((path / 'manifest.json').read_bytes())
+        self.assertEqual(3, manifest['schema_version'])
+        result = replay_record(path, self.db, verify=True)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        expected = authoritative_state_hash(s.state)
+        self.assertEqual(expected, result['final_state_hash'])
+        if saved:
+            proof = directory / (path.name + '.verification.json')
+            proof.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(expected, authoritative_state_hash(resumed.state))
+            return resumed
+
+    def test_traverse_reads_live_maximum_and_resumes_private_tapped_arrival(self):
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        s, spell, _, choices, nonbasic, secret = self.world('Traverse the Outlands', 927931)
+        bears = [self.add(s.engine, 'Grizzly Bears', ref=f'traverse-bear-{i}') for i in range(3)]
+        enemy = self.add(s.engine, 'Grizzly Bears', seat='B', ref='traverse-foreign-bear')
+        enemy.counters['+1/+1'] = 7
+        nonland = self.add(s.engine, 'Grizzly Bears', zone='library', ref='traverse-library-nonland')
+        growth = self.add(s.engine, 'Generic Bound Growth', zone='hand', ref='traverse-growth')
+        self.ready(s)
+        before_shuffle = s.state.players['A'].stats.get('shuffle_count', 0)
+        before_mana = sum(s.state.players['A'].mana_pool.values())
+        self.cast(s, spell)
+        self.assertEqual(before_mana - 5, sum(s.state.players['A'].mana_pool.values()))
+        self.assertEqual([], s.state.stack[-1].targets)
+        self.cast(s, growth, [bears[0].ref])
+        self.assertEqual('semantic.search', self.resolve(s).kind)
+        self.assertEqual(4, int(s.engine._effective_card_data(s.state.cards[bears[0].object_id])['power']))
+        foreign = s.state.cards[enemy.object_id]
+        self.assertEqual(9, exact_numeric_characteristic(foreign, s.engine._effective_card_data(foreign), 'power'))
+        schema = s.packet('pilot:A', full=True)['decision']['ctx']['legal_actions'][0]['choice_schema']
+        self.assertEqual((0, 4), (schema['minimum'], schema['maximum']))
+        self.assertTrue(all(card.ref in schema['legal_refs'] for card in choices))
+        self.assertNotIn(nonbasic.ref, schema['legal_refs'])
+        self.assertNotIn(nonland.ref, schema['legal_refs'])
+        self.assertNotIn(secret.ref, str(s.packet('pilot:A', full=True)))
+        for seat in 'BCD':
+            packet = str(s.packet('pilot:' + seat, full=True))
+            self.assertTrue(all(card.ref not in packet for card in choices))
+        self.reject(s, {'action_id': 'choose', 'search_cards': [card.ref for card in choices]}, 'A')
+        self.reject(s, {'action_id': 'choose', 'search_cards': [nonbasic.ref]}, 'A')
+        self.reject(s, {'action_id': 'choose', 'search_cards': [choices[0].ref]}, 'B')
+        s = self.replay_traverse(s, 'private-window', load=True)
+
+        observed = []
+        shuffle = ZoneTransitionOwner.shuffle_library
+
+        def fail_after_shuffle(owner, *args, **kwargs):
+            shuffle(owner, *args, **kwargs)
+            observed.append(tuple(s.state.cards[card.object_id].zone for card in choices[:2]))
+            raise GameRuleError('Injected post-search shuffle failure')
+
+        with patch.object(ZoneTransitionOwner, 'shuffle_library', fail_after_shuffle):
+            self.reject(s, {'action_id': 'choose', 'search_cards': [card.ref for card in choices[:2]]}, 'A')
+        self.assertEqual([('battlefield', 'battlefield')], observed)
+        self.take(s, choices[:2])
+        for card in choices[:2]:
+            current = s.state.cards[card.object_id]
+            self.assertEqual(('battlefield', 'A', True), (current.zone, current.controller, current.tapped))
+        self.assertTrue(all(s.state.cards[card.object_id].zone == 'library' for card in choices[2:]))
+        self.assertEqual(before_shuffle + 1, s.state.players['A'].stats['shuffle_count'])
+        self.replay_traverse(s, 'selected-lands')
+
+    def test_traverse_shuffles_once_for_no_creatures_and_negative_power(self):
+        for case in ('no-creatures', 'negative-power'):
+            with self.subTest(case=case):
+                s, spell, _, choices, _, _ = self.world('Traverse the Outlands', 927940 + (case == 'negative-power'))
+                self.add(s.engine, 'Grizzly Bears', seat='B', ref='traverse-excluded')
+                if case == 'negative-power':
+                    creature = self.add(s.engine, 'Generic Bound Body', ref='traverse-negative')
+                    creature.counters['-1/-1'] = 3
+                    data = s.engine._effective_card_data(creature)
+                    self.assertEqual(-1, exact_numeric_characteristic(creature, data, 'power'))
+                before_shuffle = s.state.players['A'].stats.get('shuffle_count', 0)
+                schema = self.begin(s, spell)['legal_actions'][0]['choice_schema']
+                self.assertEqual((0, 0), (schema['minimum'], schema['maximum']))
+                self.reject(s, {'action_id': 'choose', 'search_cards': [choices[0].ref]}, 'A')
+                self.take(s, [])
+                self.assertTrue(all(s.state.cards[card.object_id].zone == 'library' for card in choices))
+                self.assertEqual(before_shuffle + 1, s.state.players['A'].stats['shuffle_count'])
+                self.replay_traverse(s, case)
+
     def test_actual_boundless_search_freezes_count_rejects_overflow_and_preserves_private_replay(self):
         s,spell,own,choices,nonbasic,secret=self.world('Boundless Realms',927810)
         before=s.state.players['A'].stats.get('shuffle_count',0);ctx=self.begin(s,spell)

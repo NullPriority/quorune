@@ -14,17 +14,29 @@ from .entry_copy import COPIABLE_ORACLE_FIELD,COPIABLE_FACE_FIELD
 from .replacement.immutable import thaw_value
 
 
+def _composition_characteristic_parts(storage):
+    melded = storage.melded_face
+    emitted = False
+    for part in storage.parts:
+        if melded is not None and part.identity.object_id in melded.component_ids:
+            if not emitted:
+                yield melded.characteristics, melded.oracle_id
+                emitted = True
+        else:
+            yield part.copiable_values, part.card_state["oracle_id"]
+
+
 def composition_copiable_values(storage: PermanentCompositionStorage):
-    if not isinstance(storage, PermanentCompositionStorage) or not storage.merges:
-        raise ValueError('Composed characteristics require a current physical merge history')
-    values=thaw_value(storage.parts[0].copiable_values)
+    if not isinstance(storage, PermanentCompositionStorage) or not (storage.merges or storage.melded_face):
+        raise ValueError('Composed characteristics require a current physical merge or meld history')
+    parts = tuple(_composition_characteristic_parts(storage))
+    values=thaw_value(parts[0][0])
     keywords=[];fragments=[];abilities=[]
-    for ordinal,part in enumerate(storage.parts):
-        current=part.copiable_values
+    for ordinal,(current, original) in enumerate(parts):
         keywords.extend(current.get('keywords',()))
         current_fragments=canonical_ability_fragments(current.get('ability_fragments',()))
         fragments.extend(current_fragments)
-        oracle_id=current.get(COPIABLE_ORACLE_FIELD,part.card_state['oracle_id'])
+        oracle_id=current.get(COPIABLE_ORACLE_FIELD,original)
         if (not tracks_copied_static_instances(current_fragments)
                 and not oracle_id.startswith(('custom-token:','custom-copy:','custom-emblem:'))):
             fragments.append(CopiableProgramSourceSpec(oracle_id,current.get(COPIABLE_FACE_FIELD,'front')))
@@ -46,7 +58,15 @@ def composition_copy_effect(card):
     from .characteristic_evaluation import _copy_effect
     effect=_copy_effect(card,composition_copiable_values(storage))
     if effect is None:raise ValueError('A current composition requires its copiable characteristic effect')
-    return replace(effect,effect_id=f'{card.object_id}:composition',timestamp=storage.merges[-1].timestamp)
+    timestamp = storage.merges[-1].timestamp if storage.merges else storage.melded_face.timestamp
+    return replace(effect,effect_id=f'{card.object_id}:composition',timestamp=timestamp)
+
+
+def composition_values_for_copy(card, values):
+    melded = card.permanent_composition.melded_face
+    if melded is not None and values.get(COPIABLE_ORACLE_FIELD) == melded.oracle_id and values.get("mana_cost") == "":
+        return {**values, "mana_value": 0}
+    return values
 
 
 def copiable_source_trigger_programs(host,characteristics,active_zone):

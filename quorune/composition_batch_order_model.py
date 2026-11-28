@@ -21,7 +21,7 @@ class CompositionDepartureSubject:
         zones={'graveyard','library','hand','exile','command','outside'}
         if (not isinstance(self.card_state,Mapping) or self.requested_destination not in zones
                 or self.destination not in zones or type(self.ordering_actor) is not str or not self.ordering_actor
-                or self.transition_kind not in {'ordinary','sacrifice'}
+                or self.transition_kind not in {'ordinary','sacrifice','discard'}
                 or type(self.position) not in {str,int}
                 or type(self.position) is int and self.position<1
                 or type(self.position) is str and self.position not in {'top','bottom'}):
@@ -29,9 +29,13 @@ class CompositionDepartureSubject:
         state=FrozenMap(self.card_state)
         try:card=CardInstance.from_dict(thaw_value(state))
         except (ValueError,TypeError,KeyError) as exc:raise ValueError('Composition subject card is malformed') from exc
-        if (card.zone!='battlefield' or FrozenMap(card.to_dict())!=state
-                or any(type(value) is not str or not value for value in (card.object_id,card.ref,card.owner,card.controller))):
-            raise ValueError('Composition batch subjects require canonical battlefield objects')
+        expected_zone = "hand" if self.transition_kind == "discard" else "battlefield"
+        if (card.zone != expected_zone or FrozenMap(card.to_dict()) != state
+                or any(type(value) is not str or not value for value in (card.object_id,card.ref,card.owner,card.controller))
+                or expected_zone == "hand" and (
+                    card.permanent_composition is not None or self.requested_destination != "graveyard"
+                )):
+            raise ValueError("Composition batch subjects require canonical departures or accompanying discards")
         if self.destination in {'graveyard','library','hand','command'} and self.ordering_actor!=card.owner:
             raise ValueError('The physical owner orders this destination')
         object.__setattr__(self,'card_state',state)
@@ -93,7 +97,7 @@ class CompositionDepartureBatchRequest:
     schema_version: int=1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version!=1
+        if (type(self.schema_version) is not int or self.schema_version not in (1, 2)
                 or not isinstance(self.subjects,tuple) or not self.subjects
                 or any(not isinstance(subject,CompositionDepartureSubject) for subject in self.subjects)
                 or not isinstance(self.apnap_order,tuple) or not self.apnap_order
@@ -101,8 +105,15 @@ class CompositionDepartureBatchRequest:
                 or len(self.apnap_order)!=len(set(self.apnap_order))):
             raise ValueError('Composition departure batches require their closed current subjects and APNAP order')
         physical=[state for subject in self.subjects for state in subject.physical_states]
-        if not any(subject.card_state.get('permanent_composition') is not None for subject in self.subjects):
-            raise ValueError('A physical batch must contain a composed permanent')
+        if self.schema_version == 1 and not any(
+            subject.card_state.get("permanent_composition") is not None for subject in self.subjects
+        ):
+            raise ValueError("A version-one physical batch must contain a composed permanent")
+        if self.schema_version == 2 and any(
+            subject.transition_kind != "sacrifice" or subject.requested_destination != "graveyard"
+            for subject in self.subjects
+        ):
+            raise ValueError("An ordered sacrifice batch requires original battlefield sacrifices")
         for field in ('object_id','ref'):
             values=[state[field] for state in physical]
             if len(values)!=len(set(values)):raise ValueError('Physical departure identities must be unique')
@@ -120,7 +131,14 @@ class CompositionDepartureBatchRequest:
 
     @property
     def choices(self):
-        return tuple((group,refs) for group,refs in self.groups if len(refs)>1 and group[1] not in {'hand','command','outside'})
+        if self.schema_version == 1:
+            return tuple((group, refs) for group, refs in self.groups
+                         if len(refs) > 1 and group[1] not in {"hand", "command", "outside"})
+        physical = {state["ref"] for subject in self.subjects for state in subject.physical_states
+                    if state.get("object_kind", "card") == "card" and not state["is_token"]}
+        sortable = ((group, tuple(ref for ref in refs if ref in physical))
+                    for group, refs in self.groups if group[1] in {"graveyard", "library"})
+        return tuple((group, refs) for group, refs in sortable if len(refs) > 1)
 
     def ordered_ids(self,orders):
         if not isinstance(orders,(list,tuple)) or len(orders)!=len(self.choices):
@@ -136,7 +154,7 @@ class CompositionDepartureBatchRequest:
         for group,initial in self.groups:
             order=chosen.get(group,initial)
             if group[1]=='library' and group[2]=='bottom':order=tuple(reversed(order))
-            indices=[index for index,ref in enumerate(refs) if ref in initial]
+            indices=[index for index,ref in enumerate(refs) if ref in order]
             for index,ref in zip(indices,order):refs[index]=ref
         return tuple(states[ref]['object_id'] for ref in refs)
 
@@ -165,7 +183,7 @@ class CompositionStateBasedOrderContinuation:
     def __post_init__(self):
         fields={'active_player','phase','step','turn_sequence','stack_refs','battlefield','turn_order','active_seats'}
         if (type(self.schema_version) is not int or self.schema_version!=1
-                or not isinstance(self.request,CompositionDepartureBatchRequest)
+                or not isinstance(self.request,CompositionDepartureBatchRequest) or self.request.schema_version != 1
                 or not isinstance(self.state_based_frame,Mapping) or set(self.state_based_frame) not in (fields,fields|{'legend_choices'})
                 or not isinstance(self.orders,tuple) or len(self.orders)>len(self.request.choices)):
             raise ValueError('Composition state-based continuation fields are malformed')

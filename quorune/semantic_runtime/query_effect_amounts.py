@@ -6,12 +6,14 @@ from typing import Any, Mapping, Protocol
 from ..dynamic_characteristics import query_characteristic_count
 from ..live_battlefield_quantities import current_live_battlefield_count, current_live_attacking_shared_type_count
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+from ..shared_type_doors import RoomDoorQuantity
 from ..query_effect_amount_model import (
     PublicQueryAmountError,
     PublicQueryAmountSpec,
     CastXAmountSpec,
     ATTACK_SHARED_TYPE_AMOUNT_VERSION,
     SOURCE_SHARED_TYPE_AMOUNT_VERSION,
+    ENTRY_SHARED_TYPE_AMOUNT_VERSION,
 )
 
 
@@ -25,6 +27,8 @@ class PublicQueryAmountHost(Protocol):
         maximum_layer: Any | None = None,
         _enforce_static_component_applicability: bool = True,
     ) -> Mapping[str, Any]: ...
+
+    def _public_object_query_result(self, card: Any) -> Any: ...
 
     def _type_parts(
         self, type_line: str
@@ -64,17 +68,20 @@ def _relative_quantity(host, item, spec: PublicQueryAmountSpec):
     return quantity, None
 
 
-def _current_shared_source_type_count(host, item, spec, controller):
+def _current_shared_type_count(host, item, spec, controller):
     from ..continuous_effect_model import ContinuousObjectIdentity
     from ..object_query import query_objects
+    from ..rules.entry_creature_type_mana import current_or_last_entrant_creature_types
     from ..rules.shared_type_library import materialize_shared_type_source
     from ..shared_creature_type_model import (
         SharedCreatureTypeObject, canonical_creature_types, shared_creature_type_count,
     )
 
     if controller != item.controller:
-        raise PublicQueryAmountError("A shared source count requires the ability controller")
-    source = materialize_shared_type_source(host, item)
+        raise PublicQueryAmountError("A shared type count requires the ability controller")
+    is_entrant = spec.schema_version == ENTRY_SHARED_TYPE_AMOUNT_VERSION
+    subject = (current_or_last_entrant_creature_types(host, item) if is_entrant
+               else materialize_shared_type_source(host, item))
     query = replace(spec.quantity.query, controller=controller)
     peers = tuple(
         SharedCreatureTypeObject(
@@ -83,12 +90,18 @@ def _current_shared_source_type_count(host, item, spec, controller):
         )
         for row in query_objects(host.affected_permanent_object_rows(controller), query)
     )
-    return shared_creature_type_count(peers, recipient=source.identity, creature_types=source.creature_types)
+    return shared_creature_type_count(
+        peers, recipient=subject.identity, creature_types=subject.creature_types, exclude_recipient=not is_entrant,
+    )
 
 
 def _current_public_amount_count(host, item, spec, controller, stack_ref):
-    if spec.schema_version == SOURCE_SHARED_TYPE_AMOUNT_VERSION:
-        return _current_shared_source_type_count(host, item, spec, controller)
+    if isinstance(spec.quantity, RoomDoorQuantity):
+        from ..card_program_faces import controlled_unlocked_room_door_count
+
+        return controlled_unlocked_room_door_count(host.state, controller, host._public_object_query_result)
+    if spec.schema_version in {SOURCE_SHARED_TYPE_AMOUNT_VERSION, ENTRY_SHARED_TYPE_AMOUNT_VERSION}:
+        return _current_shared_type_count(host, item, spec, controller)
     if spec.schema_version == ATTACK_SHARED_TYPE_AMOUNT_VERSION:
         from ..event_counter_reference import resolve_event_counter_recipient
 

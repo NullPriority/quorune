@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Valgavoth, Terror Eater",
+      "oracle_id": "cae3ec72-436d-4086-9dcb-17b3d92ad5c4",
+      "mana_cost": "{6}{B}{B}{B}",
+      "cmc": 9.0,
+      "type_line": "Legendary Creature — Elder Demon",
+      "oracle_text": "Flying, lifelink\nWard—Sacrifice three nonland permanents.\nIf a card you didn't control would be put into an opponent's graveyard from anywhere, exile it instead.\nDuring your turn, you may play cards exiled with Valgavoth. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+      "power": "9",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Ward"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "cae3ec72-436d-4086-9dcb-17b3d92ad5c4",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "The spells you cast using the permission granted by Valgavoth's last ability have an alternative cost that's paying life equal to their mana value. You can't choose to pay their mana cost and may not pay any other alternative costs. You may still pay for additional costs, such as kicker costs, and you may pay mana for those as normal. If the spell has mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "cae3ec72-436d-4086-9dcb-17b3d92ad5c4",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "You follow all timing rules for spells cast and lands played using the permission granted by Valgavoth's last ability."
+    }
+  ]
+}

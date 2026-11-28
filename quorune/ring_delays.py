@@ -55,6 +55,7 @@ def schedule_ring_blocker_sacrifice(
 
 def resolve_ring_blocker_sacrifice(
     host: RingDelayHost, *, blocker: RingObjectIdentity, reason: str,
+    replacement_selections=(),
 ) -> tuple[str,str] | None:
     """The same blocker is sacrificed by its controller when this resolves."""
     if not isinstance(blocker,RingObjectIdentity) or type(reason) is not str or not reason.strip():
@@ -67,5 +68,8 @@ def resolve_ring_blocker_sacrifice(
         raise RingStateError('The blocking creature has no active current controller')
     controller = card.controller
     # Use the canonical sacrifice effect/zone transition, not a direct removal.
-    host.apply_effect({'op':'sacrifice','card':card.ref,'reason':reason},actor=controller)
+    effect = {"op": "sacrifice", "card": card.ref, "reason": reason}
+    if replacement_selections:
+        effect["_replacement_selections"] = replacement_selections
+    host.apply_effect(effect, actor=controller)
     return controller,card.ref

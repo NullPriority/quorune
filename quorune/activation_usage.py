@@ -28,6 +28,7 @@ class ActivationLimit(str, Enum):
 
 
 _ONCE_PER_TURN_FIELD = "once_per_turn_activations"
+_BOAST_SECOND_FIELD = "second_boast_activations"
 _EXHAUST_FIELD = "exhaust_activations"
 _ONCE_PER_OBJECT_FIELD='once_per_object_activations'
 _TRIGGER_ONCE_PER_TURN_FIELD = "once_per_turn_triggers"
@@ -100,12 +101,21 @@ def _annotations(source: Any) -> Mapping[str, Any]:
     return value
 
 
+def _second_boast_uses(annotations):
+    raw = annotations.get(_BOAST_SECOND_FIELD, {})
+    if not isinstance(raw, Mapping) or any(type(key) is not str or not key or type(turn) is not int or turn < 0
+                                           for key, turn in raw.items()):
+        raise ActivationUsageError("Second boast usage is malformed")
+    return raw
+
+
 def activation_usage_verdict(
     source: Any,
     *,
     ability_id: str,
     limit: ActivationLimit | None,
     turn_sequence: int,
+    maximum: int = 1,
 ) -> ActivationUsageVerdict:
     """Return whether one typed usage-limited ability may be activated."""
 
@@ -114,6 +124,9 @@ def activation_usage_verdict(
         raise ActivationUsageError(
             "Activation usage requires a nonnegative turn sequence"
         )
+    if type(maximum) is not int or maximum not in {1, 2} or (
+            maximum == 2 and limit is not ActivationLimit.ONCE_PER_TURN):
+        raise ActivationUsageError("A second use requires its once-per-turn activation limit")
     if limit is None:
         return ActivationUsageVerdict(True)
     annotations = _annotations(source)
@@ -126,6 +139,8 @@ def activation_usage_verdict(
             raise ActivationUsageError(
                 "Once-per-turn activation usage is malformed"
             )
+        if maximum == 2 and raw.get(identity) == turn_sequence and _second_boast_uses(annotations).get(identity) != turn_sequence:
+            return ActivationUsageVerdict(True)
         return (
             ActivationUsageVerdict(False, "already_activated_this_turn")
             if raw.get(identity) == turn_sequence
@@ -157,6 +172,7 @@ def commit_activation_usage(
     ability_id: str,
     limit: ActivationLimit | None,
     turn_sequence: int,
+    maximum: int = 1,
 ) -> None:
     """Commit one successful activation through the canonical usage owner."""
 
@@ -165,6 +181,7 @@ def commit_activation_usage(
         ability_id=ability_id,
         limit=limit,
         turn_sequence=turn_sequence,
+        maximum=maximum,
     )
     if not verdict.available:
         raise ActivationUsageError(
@@ -175,6 +192,9 @@ def commit_activation_usage(
     annotations = source.annotations
     if limit is ActivationLimit.ONCE_PER_TURN:
         values = dict(annotations.get(_ONCE_PER_TURN_FIELD, {}))
+        if values.get(ability_id) == turn_sequence:
+            annotations[_BOAST_SECOND_FIELD] = {**_second_boast_uses(annotations), ability_id: turn_sequence}
+            return
         values[ability_id] = turn_sequence
         annotations[_ONCE_PER_TURN_FIELD] = values
         return
@@ -191,11 +211,11 @@ def reset_copied_activation_usage(source, *, ability_ids) -> None:
         return
     annotations = _annotations(source)
     updated = {}
-    for field in (_ONCE_PER_TURN_FIELD, _ONCE_PER_OBJECT_FIELD, _EXHAUST_FIELD):
+    for field in (_ONCE_PER_TURN_FIELD, _BOAST_SECOND_FIELD, _ONCE_PER_OBJECT_FIELD, _EXHAUST_FIELD):
         if field not in annotations:
             continue
         stored = annotations[field]
-        if field == _ONCE_PER_TURN_FIELD:
+        if field in {_ONCE_PER_TURN_FIELD, _BOAST_SECOND_FIELD}:
             if not isinstance(stored, Mapping):
                 raise ActivationUsageError("Once-per-turn activation usage is malformed")
             updated[field] = {identity: turn for identity, turn in stored.items() if identity not in selected}

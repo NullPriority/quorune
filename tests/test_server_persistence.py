@@ -53,14 +53,27 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
         envelope = self.envelope(session)
         with tempfile.TemporaryDirectory() as tmp:
             persistence = DirectoryGamePersistence(Path(tmp) / "games")
+            service = GameService(session)
+            persistence.save(service)
+            record_dir = persistence.game_directory(session.state.game_id)
+            semantics_path = record_dir / "semantics.json"
+            semantics_bytes = semantics_path.read_bytes()
+            write_bytes = Path.write_bytes
+
+            def require_snapshot_reuse(path, data):
+                self.assertNotEqual(semantics_path.with_suffix(".json.tmp"), path)
+                return write_bytes(path, data)
+
             manager = GameManager()
-            actor = await manager.add(
-                GameService(session), persistence=persistence
-            )
-            receipt = await actor.command("pilot:A", envelope)
+            actor = await manager.add(service, persistence=persistence)
+            with mock.patch.object(Path, "write_bytes", require_snapshot_reuse), mock.patch(
+                "quorune.session.record_semantics_provenance",
+                side_effect=AssertionError("An unchanged saved snapshot already attested its provenance"),
+            ):
+                receipt = await actor.command("pilot:A", envelope)
             self.assertTrue(receipt.ok)
             self.assertTrue(persistence.exists(session.state.game_id))
-            record_dir = persistence.game_directory(session.state.game_id)
+            self.assertEqual(semantics_bytes, semantics_path.read_bytes())
             self.assertEqual(
                 1,
                 len(
@@ -87,6 +100,95 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(replayed.replayed)
             self.assertEqual(1, len(restored.session.commands))
 
+    def test_verified_recovery_reuses_runtime_trust_on_the_first_save(self):
+        from quorune.record import replay_record
+        from quorune.record_trust import runtime_trust_provenance
+
+        session = self.make_session(33016)
+        with tempfile.TemporaryDirectory() as tmp:
+            original = DirectoryGamePersistence(tmp)
+            original.save(GameService(session))
+            game_id = session.state.game_id
+            directory = original.game_directory(game_id)
+            manifest_path = directory / "manifest.json"
+            runtime = json.loads(manifest_path.read_bytes())["runtime_trust"]
+
+            fresh = DirectoryGamePersistence(tmp)
+            with mock.patch(
+                "quorune.persistence.runtime_trust_provenance",
+                side_effect=AssertionError("Recovery already validated this runtime trust"),
+            ):
+                restored = fresh.load(self.db, game_id, verify_rules=True)
+                command = self.envelope(restored.session, command_id="verified-recovery-keep")
+                receipt = restored.command(command, principal="pilot:A")
+                self.assertTrue(receipt.ok, receipt.summary)
+                fresh.save(restored)
+            self.assertEqual(runtime, json.loads(manifest_path.read_bytes())["runtime_trust"])
+            replay = replay_record(directory, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(1, replay["commands"])
+
+            for verify_rules in (False, True):
+                with self.subTest(legacy_manifest=verify_rules):
+                    if verify_rules:
+                        manifest = json.loads(manifest_path.read_bytes())
+                        manifest.pop("runtime_trust")
+                        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                    fresh = DirectoryGamePersistence(tmp)
+                    with mock.patch("quorune.persistence.runtime_trust_provenance",
+                                    wraps=runtime_trust_provenance) as derive:
+                        restored = fresh.load(self.db, game_id, verify_rules=verify_rules)
+                        derive.assert_not_called()
+                        fresh.save(restored)
+                        derive.assert_called_once()
+                    self.assertEqual(runtime, json.loads(manifest_path.read_bytes())["runtime_trust"])
+
+    async def test_semantic_snapshot_rechecks_nested_content_and_restored_file(self):
+        from quorune import record
+
+        session = self.make_session(33009)
+        card = session.engine.semantics.card_programs()[0]
+        card.provenance["save_probe"] = {"note": "original", "source": "test"}
+        with tempfile.TemporaryDirectory() as tmp:
+            persistence = DirectoryGamePersistence(tmp)
+            service = GameService(session)
+            persistence.save(service)
+            directory = persistence.game_directory(session.state.game_id)
+            snapshot = directory / "semantics.json"
+            original = snapshot.read_bytes()
+            original_manifest = (directory / "manifest.json").read_bytes()
+
+            card.provenance["save_probe"]["note"] = "updated in place"
+            write_journal = record._atomic_jsonl
+
+            def fail_after_snapshot(path, rows):
+                if path.name == "commands.jsonl":
+                    self.assertNotEqual(original, snapshot.read_bytes())
+                    raise OSError("Interrupted after writing the new semantic snapshot")
+                return write_journal(path, rows)
+
+            with mock.patch.object(record, "_atomic_jsonl", fail_after_snapshot):
+                with self.assertRaisesRegex(OSError, "Interrupted after writing"):
+                    persistence.save(service)
+            self.assertEqual(original, snapshot.read_bytes())
+            self.assertEqual(original_manifest, (directory / "manifest.json").read_bytes())
+
+            persistence.save(service)
+            committed = snapshot.read_bytes()
+            raw_program = json.loads(committed)["card_programs"][card.oracle_id]
+            self.assertEqual("updated in place", raw_program["provenance"]["save_probe"]["note"])
+            manifest = json.loads((directory / "manifest.json").read_bytes())
+            self.assertEqual(raw_program["fingerprint"], manifest["card_programs"]["fingerprints"][card.oracle_id])
+
+            snapshot.unlink()
+            persistence.save(service)
+            self.assertEqual(committed, snapshot.read_bytes())
+
+            card.provenance["save_probe"] = {"source": "test", "note": "updated in place"}
+            persistence.save(service)
+            saved = json.loads(snapshot.read_bytes())["card_programs"][card.oracle_id]["provenance"]
+            self.assertEqual(["source", "note"], list(saved["save_probe"]))
+
     async def test_live_save_defers_review_until_terminal_state(self):
         session = self.make_session(33004)
         with tempfile.TemporaryDirectory() as tmp:
@@ -94,10 +196,12 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             service = GameService(session)
             live_timing = persistence.save(service)
             record_dir = persistence.game_directory(session.state.game_id)
+            audit = record_dir / "hidden-information-audit.json"
 
             self.assertTrue((record_dir / "manifest.json").exists())
             self.assertFalse((record_dir / "review.json").exists())
             self.assertFalse((record_dir / "review.md").exists())
+            self.assertFalse(audit.exists())
             self.assertGreaterEqual(
                 live_timing["authoritative_seconds"], 0.0
             )
@@ -114,6 +218,7 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             paused_timing = persistence.save(service)
             self.assertTrue((record_dir / "review.json").exists())
             self.assertTrue((record_dir / "review.md").exists())
+            self.assertTrue(audit.exists())
             self.assertGreaterEqual(
                 paused_timing["derived_review_seconds"], 0.0
             )
@@ -122,6 +227,7 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             persistence.save(service)
             self.assertFalse((record_dir / "review.json").exists())
             self.assertFalse((record_dir / "review.md").exists())
+            self.assertFalse(audit.exists())
 
             session.state.game_over = True
             session.state.winner = "A"
@@ -130,6 +236,60 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
 
             self.assertTrue((record_dir / "review.json").exists())
             self.assertTrue((record_dir / "review.md").exists())
+            self.assertTrue(audit.exists())
+
+    async def test_new_persistence_restores_a_pending_save_after_interruption(self):
+        from quorune import persistence as storage
+
+        session = self.make_session(33008)
+        with tempfile.TemporaryDirectory() as tmp:
+            persistence = DirectoryGamePersistence(Path(tmp) / "games")
+            service = GameService(session)
+            persistence.save(service)
+            game_id = session.state.game_id
+            directory = persistence.game_directory(game_id)
+            before = {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()}
+            session.pause({"kind": "administrative_stop", "label": "Interrupted save"})
+            write_text = Path.write_text
+            restore_interrupted_record = storage._restore_interrupted_record
+
+            def tear_during_pilot_metadata(path, data, *args, **kwargs):
+                if path == directory / "cursors.json":
+                    self.assertNotEqual(before["manifest.json"], (directory / "manifest.json").read_bytes())
+                    write_text(path, "{", encoding="utf-8")
+                    raise OSError("Interrupted pilot metadata write")
+                return write_text(path, data, *args, **kwargs)
+
+            def interrupt_before_rollback(path):
+                if (path / storage._SAVE_RECOVERY_DIRECTORY).is_dir():
+                    raise OSError("Process stopped before rollback could finish")
+                return restore_interrupted_record(path)
+
+            with mock.patch.object(Path, "write_text", tear_during_pilot_metadata), mock.patch.object(
+                storage, "_restore_interrupted_record", side_effect=interrupt_before_rollback,
+            ), self.assertRaisesRegex(OSError, "Interrupted pilot metadata write") as error:
+                persistence.save(service)
+            self.assertIn("Record rollback deferred: OSError", error.exception.__notes__)
+            self.assertTrue((directory / storage._SAVE_RECOVERY_DIRECTORY).is_dir())
+
+            recovered = DirectoryGamePersistence(persistence.root).load(self.db, game_id)
+            self.assertIn(recovered.session.record_status, {"created", "in_progress"})
+            self.assertEqual(before, {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()})
+            self.assertFalse((directory / storage._SAVE_RECOVERY_DIRECTORY).exists())
+
+    async def test_incomplete_recovery_backup_leaves_current_record_alone(self):
+        from quorune import persistence as storage
+
+        with tempfile.TemporaryDirectory() as tmp:
+            persistence = DirectoryGamePersistence(tmp)
+            game_id = "incomplete-record-backup"
+            directory = persistence.game_directory(game_id)
+            (directory / storage._SAVE_RECOVERY_DIRECTORY).mkdir(parents=True)
+            checkpoint = directory / "checkpoint.json"
+            checkpoint.write_text("original checkpoint", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "backup is incomplete"):
+                persistence.recover_interrupted_save(game_id)
+            self.assertEqual("original checkpoint", checkpoint.read_text(encoding="utf-8"))
 
     async def test_interrupted_review_replace_preserves_prior_review(self):
         session = self.make_session(33005)

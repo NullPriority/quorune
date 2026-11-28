@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned_oracle_card",
+  "source": "Pinned Jugan and a constructed entrant with a normal cast response window.",
+  "cards": [
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "name": "Jugan Defends the Temple // Remnant of the Rising Star",
+      "mana_cost": "{2}{G} // ",
+      "type_line": "Enchantment — Saga // Enchantment Creature — Dragon Spirit",
+      "oracle_text": "Jugan Defends the Temple: (As this Saga enters and after your draw step, add a lore counter.)\nI — Create a 1/1 green Human Monk creature token with \"{T}: Add {G}.\"\nII — Put a +1/+1 counter on each of up to two target creatures.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nRemnant of the Rising Star: Flying\nWhenever another creature you control enters, you may pay {X}. When you do, put X +1/+1 counters on that creature.\nAs long as you control five or more modified creatures, this creature gets +5/+5 and has trample. (Equipment, Auras you control, and counters are modifications.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "transform",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Jugan Defends the Temple",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Create a 1/1 green Human Monk creature token with \"{T}: Add {G}.\"\nII — Put a +1/+1 counter on each of up to two target creatures.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Remnant of the Rising Star",
+          "oracle_text": "Flying\nWhenever another creature you control enters, you may pay {X}. When you do, put X +1/+1 counters on that creature.\nAs long as you control five or more modified creatures, this creature gets +5/+5 and has trample. (Equipment, Auras you control, and counters are modifications.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Enchantment Creature — Dragon Spirit"
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-603122600019",
+      "name": "Reflexive Flash Entrant",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "colors": [],
+      "color_identity": [],
+      "type_line": "Creature — Bear",
+      "oracle_text": "Flash",
+      "keywords": [
+        "Flash"
+      ],
+      "power": "2",
+      "toughness": "2",
+      "layout": "normal",
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "released_at": "2026-08-09"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A creature that is equipped is considered modified no matter who controls the Equipment that's attached to it."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Aura controlled by an opponent does not cause a creature you control to be modified."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A creature with a counter on it is considered modified no matter what kind of counter it is or which player put it on that creature."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "e70ac420-8540-4a69-820f-ae3e0274ca1a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up."
+    }
+  ]
+}

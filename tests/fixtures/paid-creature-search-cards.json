@@ -1,0 +1,459 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned paid creature library search and canonical interaction witnesses.",
+  "cards": [
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "name": "Rest in Peace",
+      "mana_cost": "{1}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "name": "Eldritch Evolution",
+      "mana_cost": "{1}{G}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nSearch your library for a creature card with mana value X or less, where X is 2 plus the sacrificed creature's mana value. Put that card onto the battlefield, then shuffle. Exile Eldritch Evolution.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "2c24b7c3-7c90-4109-a4aa-d9cae6febf34",
+      "name": "Orb of Dreams",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "Permanents enter tapped.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2005-02-04",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "68d0b5c0-df6a-4eea-8dea-20358270f916",
+      "name": "Kalonian Behemoth",
+      "mana_cost": "{5}{G}{G}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Shroud (This creature can't be the target of spells or abilities.)",
+      "power": "9",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Shroud"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 7.0
+    },
+    {
+      "oracle_id": "7b459306-149b-4f43-abc1-2dd70c748c0e",
+      "name": "Ravenous Chupacabra",
+      "mana_cost": "{2}{B}{B}",
+      "type_line": "Creature — Beast Horror",
+      "oracle_text": "When this creature enters, destroy target creature an opponent controls.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "name": "Isamaru, Hound of Konda",
+      "mana_cost": "{W}",
+      "type_line": "Legendary Creature — Dog",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "fd19a009-d1ab-4148-a829-3d4c3af1b0b2",
+      "name": "Archelos, Lagoon Mystic",
+      "mana_cost": "{1}{B}{G}{U}",
+      "type_line": "Legendary Creature — Turtle Shaman",
+      "oracle_text": "As long as Archelos is tapped, other permanents enter tapped.\nAs long as Archelos is untapped, other permanents enter untapped.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "fd19a009-d1ab-4148-a829-3d4c3af1b0b2",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Archelos's abilities don't apply to itself as it enters the battlefield, nor do they apply to any permanents entering the battlefield at the same time."
+    },
+    {
+      "oracle_id": "fd19a009-d1ab-4148-a829-3d4c3af1b0b2",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If another replacement effect says that a permanent enters the battlefield tapped while Archelos is untapped, the entering permanent's controller chooses whether the permanent enters tapped or untapped. If a permanent is simply put onto the battlefield tapped without a replacement effect being applied, it always enters untapped if Archelos is untapped."
+    },
+    {
+      "oracle_id": "fd19a009-d1ab-4148-a829-3d4c3af1b0b2",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If more than one Archelos is on the battlefield, the controller of an entering permanent chooses how to order the replacement effects."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "A creature's mana value is determined solely by the mana symbols printed in its upper right corner (unless that creature is the back face of a double-faced card, a melded card, or is copying something else; see below). If the mana cost includes {X}, X is considered to be 0. If it's a single-faced card with no mana symbols in its upper right corner (because it's an animated land, for example), its mana value is 0. Ignore any alternative costs or additional costs (such as kicker) paid when the creature was cast."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "A token that isn't a copy of another permanent has a mana value of 0. A token that is a copy or a creature that has become a copy of another permanent has the mana value of what it's copying."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "If a card in a library has {X} in its mana cost, X is considered to be 0. If you find such a card this way, you won't have an opportunity to spend mana on {X}."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "Once you begin to cast Eldritch Evolution, no player may take actions until you're done. Notably, opponents can't try to remove the creature you wish to sacrifice."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "Sacrificing a creature is part of Eldritch Evolution's cost. You can't sacrifice more creatures to search for more creature cards, and you can't cast Eldritch Evolution at all if you control no creatures."
+    },
+    {
+      "oracle_id": "0f77c0c9-4dc4-489a-b547-e93287c4d1a5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "The mana value of a permanent that's a double-faced card with its back face up is the mana value of its front face. The mana value of a melded permanent is the sum of the mana values of its front faces. A creature that's a copy of either has a mana value of 0."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If Rest in Peace is destroyed by a spell, Rest in Peace will be exiled and then the spell will be put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a card is discarded while Rest in Peace is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "While Rest in Peace is on the battlefield, abilities that trigger whenever a creature dies won't trigger because cards and tokens are never put into a player's graveyard."
+    }
+  ]
+}

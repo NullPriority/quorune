@@ -1,5 +1,6 @@
 import { expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
-import { startRoomGame } from "./support/startup";
+import { evidence } from "./support/playtest";
+import { completeCastGesture, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
   driveUntil,
@@ -38,11 +39,7 @@ async function submitDeck(
   await page.getByTestId("commander-name").fill(commander);
   await page.getByTestId("deck-list").fill(deck);
   await page.getByTestId("submit-deck").click();
-  await expect(
-    page.locator(".success-banner, .warning-banner").filter({
-      hasText: /Deck (validated|accepted)/,
-    }),
-  ).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole("button", { name: "Change deck", exact: true })).toBeVisible({ timeout: 90_000 });
 }
 
 async function submitImmediateAction(page: Page, actionId: string) {
@@ -64,8 +61,9 @@ async function actionIsReady(page: Page, testId: string): Promise<boolean> {
 }
 
 async function startDuel(browser: Browser) {
-  const hostContext = await browser.newContext();
-  const opponentContext = await browser.newContext();
+  const viewport = { width: 1366, height: 650 };
+  const hostContext = await browser.newContext({ viewport });
+  const opponentContext = await browser.newContext({ viewport });
   const host = await hostContext.newPage();
   const opponent = await opponentContext.newPage();
   await host.route(/\/api\/v1\/rooms$/, async (route) => {
@@ -112,9 +110,7 @@ test("@browser-rules @modal modal clicks preserve targets and submit printed ord
       testInfo,
       { label: "expose the zero-mana modal commander cast" },
     );
-    await host.getByTestId(castId).click();
-    await expect(host.getByTestId("choice-dialog")).toBeVisible();
-    await submitOpenChoice(host);
+    await completeCastGesture(host, () => host.getByTestId(castId).click());
     await driveUntil(
       pages,
       async () =>
@@ -145,22 +141,25 @@ test("@browser-rules @modal modal clicks preserve targets and submit printed ord
       await route.continue();
     });
     await host.getByTestId(activationId).click();
-    const dialog = host.getByTestId("choice-dialog");
-    await expect(dialog).toBeVisible();
+    const draft = host.getByTestId("public-action-draft");
+    await expect(draft).toBeVisible();
+    await expect(host.getByTestId("choice-dialog")).toHaveCount(0);
+    const modeOne = draft.locator(".draft-steps").getByRole("button", { name: /^Mode 1 ·/ });
+    const modeThree = draft.locator(".draft-steps").getByRole("button", { name: /^Mode 3 ·/ });
+    await expect(draft.getByTestId("submit-choice")).toBeDisabled();
 
     await host.getByTestId("choice-mode-mode_3").check();
-    const modeThreeTarget = dialog
-      .locator(".target-group")
-      .filter({ hasText: "mode_3_target_1" })
-      .getByRole("checkbox", { name: "Seat B" });
-    await modeThreeTarget.check();
+    await expect(modeThree).toHaveAttribute("aria-pressed", "true");
+    await host.getByRole("button", { name: /^Select Seat B,/ }).click();
+    await expect(modeThree).toContainText("Seat B");
     await host.getByTestId("choice-mode-mode_1").check();
-    await expect(modeThreeTarget).toBeChecked();
-    await dialog
-      .locator(".target-group")
-      .filter({ hasText: "mode_1_target_1" })
-      .getByRole("checkbox", { name: "Seat A" })
-      .check();
+    await expect(modeThree).toContainText("Seat B");
+    await expect(draft.locator(".draft-steps button").first()).toContainText("Mode 1");
+    await modeOne.click();
+    await host.getByRole("button", { name: /^Select Seat A,/ }).click();
+    await expect(modeOne).toContainText("Seat A");
+    await expect(host.getByTestId("target-arrow-layer")).toHaveAttribute("data-arrow-count", "2");
+    await evidence(host, testInfo, "modal-activation-targets");
     await submitOpenChoice(host);
 
     expect(submittedChoices).toEqual({

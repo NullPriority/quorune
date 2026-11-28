@@ -7,7 +7,9 @@ from collections import Counter
 from dataclasses import replace
 from typing import Mapping, Sequence
 
+from ..characteristic_fragments import CHOSEN_COLOR_DEFINITION_TEMPLATE
 from ..entry_designations import (
+    LINKED_COLOR_PROTECTION_CAPABILITIES, LINKED_COLOR_PROTECTION_TEMPLATE,
     CHOSEN_CHARACTERISTICS_CAPABILITY,
     CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE,
     CHOSEN_CHARACTERISTICS_HANDLER_ID,
@@ -42,6 +44,7 @@ from .continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .chosen_basic_land_entry import basic_land_entry_choice_handler, scope_basic_land_entry_pair
 from .ir_model import OracleFaceIR, append_residual
 
 
@@ -52,7 +55,8 @@ def scope_entry_designation_faces(
     result = []
     for original in faces:
         face = _scope_entry_player_pair(_scope_entry_opponent_pair(_compose_self_chosen_subtype_entry(original)))
-        face = _scope_entry_card_name(face)
+        face = scope_basic_land_entry_pair(_scope_entry_card_name(face))
+        face = _scope_chosen_entry_token_copy(face)
         declarations = Counter(
             descriptor["designation"]
             for node in face.nodes
@@ -115,7 +119,27 @@ def scope_entry_designation_faces(
     return tuple(_scope_linked_entry_targets(
         _scope_linked_entry_targets(face, "creature_type", CHOSEN_CREATURE_TYPE_TARGET_PREDICATE),
         "color", CHOSEN_COLOR_TARGET_PREDICATE,
-    ) for face in result)
+    ) for face in map(_scope_entry_color_characteristic, result))
+
+
+def _scope_entry_color_characteristic(face: OracleFaceIR) -> OracleFaceIR:
+    from ..triggered_mana_model import SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE
+
+    consumers = [node for node in face.nodes if node.template_id in {
+        CHOSEN_COLOR_DEFINITION_TEMPLATE, LINKED_COLOR_PROTECTION_TEMPLATE, SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE,
+    }]
+    if not consumers:
+        return face
+    choices = [node for node in face.nodes if any(
+        descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+        and descriptor.get("designation") == "color"
+        for descriptor in node.handlers
+    )]
+    return _scope_linked_entry_pair(
+        face, choices, consumers,
+        reason="This chosen-color ability requires one exact same-face entry choice",
+        blocker="linked entry color ownership",
+    )
 
 
 def _scope_entry_opponent_pair(face: OracleFaceIR) -> OracleFaceIR:
@@ -169,6 +193,26 @@ def _scope_entry_card_name(face: OracleFaceIR) -> OracleFaceIR:
         face, choices, consumers, complete=complete,
         reason="The entry card name requires its exact same-face restriction",
         blocker="linked entry card name ownership",
+    )
+
+
+def _scope_chosen_entry_token_copy(face):
+    from ..token_copy_recipes import uses_chosen_entry_token_copy
+
+    consumers = [
+        node for node in face.nodes if any(uses_chosen_entry_token_copy(effect) for effect in node.effects)
+    ]
+    if not consumers:
+        return face
+    choices = [
+        node for node in face.nodes
+        if any(descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+               and descriptor.get("designation") == "creature_type" for descriptor in node.handlers)
+    ]
+    return _scope_linked_entry_pair(
+        face, choices, consumers,
+        reason="Chosen-type token copying requires its exact same-face creature-type entry choice",
+        blocker="linked entry creature type ownership",
     )
 
 
@@ -321,12 +365,47 @@ def source_chosen_creature_type_target_template(text: str):
 def entry_designation_handler(text: str, *, source_name: str):
     from .entry_color_composition import composed_entry_color_designation_handler
 
-    return (composed_entry_color_designation_handler(text, source_name=source_name)
+    return (basic_land_entry_choice_handler(text)
+            or _entry_faction_handler(text)
+            or composed_entry_color_designation_handler(text, source_name=source_name)
             or _counted_entry_opponent_handler(text)
+            or _entry_control_opponent_handler(text)
             or _linked_entry_opponent_handler(text)
             or _entry_card_name_handler(text)
             or _counted_creature_type_entry_handler(text)
             or _plain_entry_designation_handler(text, source_name=source_name))
+
+
+def _entry_faction_handler(text: str):
+    from ..rules.jeskai_temur_faction import ENTRY_CAPABILITIES, entry_descriptor
+    from .jeskai_temur_faction import ENTRY
+
+    material = " ".join(text.casefold().split())
+    if material == ENTRY:
+        return "intrinsic-entry-jeskai-temur-v1", entry_descriptor(), ENTRY_CAPABILITIES
+    from ..entry_designations import ENTRY_FACTION_CAPABILITY, ENTRY_MARDU_JESKAI_CAPABILITY, EntryDesignationKind
+
+    scopes = {
+        "as this enchantment enters, choose brotherhood or enclave.":
+            (EntryDesignationKind.FACTION, ENTRY_FACTION_CAPABILITY),
+        "as this enchantment enters, choose mardu or jeskai.":
+            (EntryDesignationKind.MARDU_JESKAI_FACTION, ENTRY_MARDU_JESKAI_CAPABILITY),
+    }
+    selected = scopes.get(" ".join(text.casefold().split()))
+    if selected is None:
+        return None
+    kind, capability = selected
+
+    return (
+        "intrinsic-entry-faction-v1",
+        {
+            "handler_id": ENTRY_DESIGNATION_HANDLER_ID,
+            "schema_version": 1,
+            "event": "zone.change",
+            "designation": kind.value,
+        },
+        (ENTRY_DESIGNATION_CAPABILITY, capability),
+    )
 
 
 def _entry_card_name_handler(text: str):
@@ -352,6 +431,20 @@ def _counted_entry_opponent_handler(text: str):
         COUNTED_ENTRY_OPPONENT_TEMPLATE,
         {"handler_id": COUNTED_ENTRY_OPPONENT_HANDLER_ID, "schema_version": 1, "event": "zone.change"},
         COUNTED_ENTRY_OPPONENT_DEPENDENCIES,
+    )
+
+
+def _entry_control_opponent_handler(text: str):
+    from ..entry_designations import (
+        ENTRY_CONTROL_OPPONENT_CAPABILITY, ENTRY_CONTROL_OPPONENT_HANDLER_ID, ENTRY_CONTROL_OPPONENT_TEMPLATE,
+    )
+
+    if " ".join(text.casefold().split()) != "this artifact enters under the control of an opponent of your choice.":
+        return None
+    return (
+        ENTRY_CONTROL_OPPONENT_TEMPLATE,
+        {"handler_id": ENTRY_CONTROL_OPPONENT_HANDLER_ID, "schema_version": 3, "event": "zone.change"},
+        (ENTRY_CONTROL_OPPONENT_CAPABILITY,),
     )
 
 
@@ -447,6 +540,12 @@ def chosen_characteristics_handler(text: str, *, source_name: str = 'source'):
             LINKED_PLAYER_PROTECTION_TEMPLATE, linked_player_protection_descriptor(),
             LINKED_PLAYER_PROTECTION_CAPABILITIES,
         )
+    source = SourceReferenceSpec(source_name).regex_pattern
+    if re.fullmatch(rf"(?:this creature|{source}) has protection from the chosen color\.", text, re.I):
+        from ..semantic_runtime.chosen_characteristics import linked_color_protection_descriptor
+
+        return (LINKED_COLOR_PROTECTION_TEMPLATE, linked_color_protection_descriptor(),
+                LINKED_COLOR_PROTECTION_CAPABILITIES)
     return (conditional_chosen_characteristics_handler(text, source_name=source_name)
             or _fixed_chosen_characteristics_handler(text))
 

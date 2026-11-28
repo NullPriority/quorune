@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from ..combat_removal import (
     BLOCKED_ATTACKER_REFERENCE, COMBAT_REMOVAL_CAPABILITY, COMBAT_REMOVAL_MECHANIC,
     COMBAT_REMOVAL_OPERATION, combat_removal_instruction,
+    CONTROLLED_BLOCKED_ATTACKER, blocked_attacker_return_reference, is_optional_blocked_attacker_return,
 )
 from ..delayed_object_model import is_forced_block_status_effect
 from .effect_shape_walkers import nested_effect_operations, nested_effects
@@ -76,7 +77,22 @@ def _forced_block_status_runtime_dependencies(program, effect):
     raise ValueError("Blocked status requires its complete activation or spell with the fixed draw")
 
 
+def _optional_blocked_attacker_return_capabilities(effect, target_schema, mechanics):
+    if target_schema is not None or not {
+        'fixed-optional-effect-choice', 'return-to-owner-hand',
+    }.issubset(mechanics):
+        return ()
+    try:
+        blocked_attacker_return_reference(effect, actor='$controller')
+    except (TypeError, ValueError):
+        return ()
+    return (_OPTIONAL_CAPABILITY, _BLOCK_EVENT_CAPABILITY, 'permanent.return.owner_hand',
+            'resolution.event_object.fixed_result')
+
+
 def combat_removal_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) == 1 and is_optional_blocked_attacker_return(effects[0]):
+        return _optional_blocked_attacker_return_capabilities(effects[0], target_schema, mechanic_ids)
     if len(effects) == 1 and is_forced_block_status_effect(effects[0]) and 'cr-115-targets' in mechanic_ids:
         return _forced_block_status_capabilities(effects[0], target_schema)
     if COMBAT_REMOVAL_MECHANIC not in mechanic_ids:
@@ -86,6 +102,15 @@ def combat_removal_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 def combat_removal_runtime_dependencies(program):
     effects = program.effects
+    if any(is_optional_blocked_attacker_return(effect) for effect in effects):
+        if (len(effects) != 1 or (program.event, program.active_zone) != ('creature.becomes_blocked', 'battlefield')
+                or program.event_condition != CONTROLLED_BLOCKED_ATTACKER or program.handlers
+                or program.cost_schema is not None):
+            raise ValueError('The optional return needs its original controlled blocked attacker')
+        required = _optional_blocked_attacker_return_capabilities(effects[0], program.target_schema, program.coverage)
+        if not required:
+            raise ValueError('The optional blocked attacker return lost its exact owner-hand instruction')
+        return required
     forced = tuple(effect for effect in nested_effects(effects) if is_forced_block_status_effect(effect))
     if forced:
         if len(forced) != 1:

@@ -2,8 +2,9 @@
 from ..life_state import LifeChange
 from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,PlayerLifeLossRelation,
-    BOUND_PER_PLAYER_QUERY_LIFE_KIND,PoisonCounterThresholdLifeLoss,
+    BOUND_PER_PLAYER_QUERY_LIFE_KIND,PoisonCounterThresholdLifeLoss,TurnLifeLossHistory,
 )
+from ..rules.turn_life_loss_recovery import current_turn_life_loss_by_player
 from .context import ReadOnlyRulesQuery
 from .query_effect_amounts import resolve_public_query_amount
 
@@ -16,10 +17,14 @@ def resolve_per_player_query_life(host,value,item):
     spec=PerPlayerQueryLifeLossSpec.from_dict(value)
     active=tuple(host.active_seats);order=tuple(host.apnap_order())
     query=ReadOnlyRulesQuery(active,active,order);query.require_active_seat(item.controller)
+    history_amounts = (current_turn_life_loss_by_player(host.state)
+                       if spec.amount is TurnLifeLossHistory.ACTUAL_CURRENT_TURN_LOSS else None)
     changes=[]
     for player in order:
         if spec.relation is PlayerLifeLossRelation.OPPONENTS and player==item.controller:continue
-        if isinstance(spec.amount, PoisonCounterThresholdLifeLoss):
+        if history_amounts is not None:
+            quantity = history_amounts[player]
+        elif isinstance(spec.amount, PoisonCounterThresholdLifeLoss):
             quantity = host.state.players[player].poison
         else:
             quantity = resolve_public_query_amount(host, spec.amount.to_dict(), item, query_player=player)

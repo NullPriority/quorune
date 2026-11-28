@@ -67,22 +67,29 @@ def opponent_damage_to_controller_condition():
     ]}
 
 
-def opponent_damage_source_counter_effect():
+def damage_source_counter_effect(counter: str):
     from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
 
     return {
-        "op": "place_counters", "card": "$source.zone_object", "counter": "+1/+1",
+        "op": "place_counters", "card": "$source.zone_object", "counter": counter,
         "amount": ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT).to_dict(), "source": "$source",
     }
 
 
-def _opponent_damage_source_counter_matches(effects, target_schema):
+def opponent_damage_source_counter_effect():
+    return damage_source_counter_effect("+1/+1")
+
+
+def _damage_source_counter_matches(effects, target_schema, *, kinds=("+1/+1",)):
     from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
 
     if target_schema is not None or len(effects) != 1:
         return False
     child = effects[0]
-    if FrozenMap(child) != FrozenMap(opponent_damage_source_counter_effect()):
+    if not isinstance(child, Mapping):
+        return False
+    counter = child.get("counter")
+    if counter not in kinds or FrozenMap(child) != FrozenMap(damage_source_counter_effect(counter)):
         return False
     try:
         return ScalarEffectAmountSpec.from_dict(child["amount"]) == ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT)
@@ -90,11 +97,11 @@ def _opponent_damage_source_counter_matches(effects, target_schema):
         return False
 
 
-def _damage_source_counter_is_closed(event, condition, effects, target_schema, *, expected):
+def _damage_source_counter_is_closed(event, condition, effects, target_schema, *, expected, kinds=("+1/+1",)):
     return (
         event == "damage.dealt" and isinstance(condition, Mapping)
         and FrozenMap(condition) == FrozenMap(expected)
-        and _opponent_damage_source_counter_matches(effects, target_schema)
+        and _damage_source_counter_matches(effects, target_schema, kinds=kinds)
     )
 
 
@@ -105,7 +112,7 @@ def opponent_damage_source_counter_is_closed(event, condition, effects, target_s
 
 def recipient_damage_source_counter_is_closed(event, condition, effects, target_schema):
     return _damage_source_counter_is_closed(event, condition, effects, target_schema,
-        expected=damage_to_controller_condition())
+        expected=damage_to_controller_condition(), kinds=("+1/+1", "charge"))
 
 
 def _opponent_damage_source_counter_dependencies():
@@ -139,7 +146,7 @@ def opponent_damage_source_counter_runtime_dependencies(program):
     marked = _OPPONENT_DAMAGE_COUNTER_TEMPLATE in str(program.provenance.get("template_id") or "").split("+")
     if not marked and not (
         wrapper.get("op") == "offer_optional_counter_placement"
-        and _opponent_damage_source_counter_matches(nested, program.target_schema)
+        and _damage_source_counter_matches(nested, program.target_schema)
     ):
         return ()
     return _require_damage_source_counter_frame(program, wrapper, closed=opponent_damage_source_counter_is_closed(
@@ -148,10 +155,14 @@ def opponent_damage_source_counter_runtime_dependencies(program):
 
 def recipient_damage_source_counter_runtime_dependencies(program):
     templates = str(program.provenance.get("template_id") or "").split("+")
-    if _RECIPIENT_DAMAGE_COUNTER_TEMPLATE not in templates:
-        return ()
     wrapper, nested = _damage_source_counter_wrapper(program)
-    closed = (_OPPONENT_DAMAGE_COUNTER_TEMPLATE not in templates
+    marked = _RECIPIENT_DAMAGE_COUNTER_TEMPLATE in templates
+    if not marked and not (
+        wrapper.get("op") == "offer_optional_counter_placement"
+        and _damage_source_counter_matches(nested, None, kinds=("charge",))
+    ):
+        return ()
+    closed = (marked and _OPPONENT_DAMAGE_COUNTER_TEMPLATE not in templates
               and CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
               and recipient_damage_source_counter_is_closed(
                   program.event, program.event_condition, nested, program.target_schema))

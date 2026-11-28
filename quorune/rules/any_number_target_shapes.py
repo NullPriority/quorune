@@ -10,6 +10,7 @@ from ..library_order_model import GRAVEYARD_LIBRARY_ORDER_MECHANIC
 from ..target_cardinality import (
     ANY_NUMBER_TARGET_CAPABILITY, AnnouncedTargetCardinality,
     SELECTED_PLAYER_RESULT_CAPABILITY, SELECTED_PLAYER_RESULT_LAYOUTS, SELECTED_PLAYER_RESULT_MECHANIC,
+    SELECTED_PLAYER_SACRIFICE_MANA_DRAW_LAYOUT,
     bind_any_number_target_schema, validate_selected_target_count,
 )
 
@@ -38,18 +39,40 @@ def _selected_player_leaf_capabilities(effect):
     normalized = {key: value for key, value in effect.items() if key != "players"}
     schema = {"zones": ["player"], "categories": ["player"], "count": 1}
     mechanics = {"cr-115-targets"}
+    amount_dependencies = ()
     op = effect.get("op")
     if op == "mill" and set(normalized) == {"op", "count"}:
         normalized["player"] = "$target.0"
         resolver = fixed_mill_node_capabilities
         mechanics.add("mill")
-        if isinstance(effect.get("count"), Mapping):
-            mechanics.add("half-current-library-mill")
+        count = effect.get("count")
+        if isinstance(count, Mapping):
+            from ..selected_graveyard_mill_count import (
+                SELECTED_GRAVEYARD_MILL_CAPABILITY, SELECTED_GRAVEYARD_MILL_KIND, SelectedGraveyardMillCount,
+            )
+
+            if count.get("kind") == SELECTED_GRAVEYARD_MILL_KIND:
+                SelectedGraveyardMillCount.from_dict(count)
+                amount_dependencies = (SELECTED_GRAVEYARD_MILL_CAPABILITY,)
+                normalized["count"] = 1
+            else:
+                mechanics.add("half-current-library-mill")
     elif op in {"life", "lose_life"} and set(normalized) == {"op", "delta" if op == "life" else "amount"}:
         normalized["player"] = "$target.0"
         schema["player_relation"] = "any"
         resolver = fixed_life_node_capabilities
         mechanics.add("cr-119-life")
+    elif op == "choose_cards_apnap" and effect.get("then") == "sacrifice":
+        from ..object_predicate import ObjectQuerySpec
+        from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
+
+        creature = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        if "target" in effect or effect.get("count") != 1 or effect.get("predicate") != creature.to_dict():
+            return ()
+        normalized.update(players=["$target.0"], target="$target.0")
+        schema["player_relation"] = "any"
+        resolver = fixed_affected_player_sacrifice_node_capabilities
+        mechanics.update(("fixed-affected-player-sacrifice", "sacrifice"))
     elif op == "choose_cards_apnap" and set(normalized) == {
         "op", "actor", "zone", "predicate", "count", "then", "prompt", "hidden",
     }:
@@ -69,7 +92,6 @@ def _selected_player_leaf_capabilities(effect):
     else:
         return ()
     amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(op)
-    amount_dependencies = ()
     if isinstance(normalized.get(amount_field), Mapping):
         amount_dependencies = _selected_query_amount_dependencies(normalized[amount_field])
         if not amount_dependencies:
@@ -105,6 +127,16 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
         operations = tuple(effect.get("op") for effect in effects)
         if operations not in SELECTED_PLAYER_RESULT_LAYOUTS:
             return ()
+        if operations == SELECTED_PLAYER_SACRIFICE_MANA_DRAW_LAYOUT:
+            life, sacrifice, mana, draw = effects
+            if (target_schema["player_relation"] != "any" or life.get("amount") != 2
+                    or sacrifice.get("then") != "sacrifice" or mana.get("color") != "B"
+                    or mana.get("amount") != 2 or "spend_restriction" in mana
+                    or draw.get("player") != "$controller" or draw.get("count") != 1):
+                return ()
+        elif any(effect.get("op") == "choose_cards_apnap" and effect.get("then") == "sacrifice"
+                 for effect in effects):
+            return ()
         dependencies = set()
         for effect in effects:
             if effect.get("op") == "destroy_all":
@@ -112,6 +144,9 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
                 owned = mass_destruction_node_capabilities(
                     effects=(effect,), target_schema=None, mechanic_ids=set(mechanic_ids) - {"cr-115-targets"},
                 )
+            elif effect.get("op") == "mana":
+                from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
+                owned = fixed_resolution_mana_capabilities(effects=(effect,), target_schema=None, mechanic_ids=mechanic_ids)
             elif effect.get("op") == "draw":
                 from .node_capability_shapes import fixed_draw_node_capabilities
                 owned = fixed_draw_node_capabilities(effects=(effect,), target_schema=None, mechanic_ids=mechanic_ids)
@@ -126,6 +161,35 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .airbend import TARGETED_FIELD, airbend_node_capabilities
+
+    if any(TARGETED_FIELD in effect for effect in effects):
+        return airbend_node_capabilities(effects, target_schema, None)
+    from .announced_destruction_controller_tokens import (
+        announced_destruction_controller_token_dependencies, uses_announced_destruction_controller_tokens,
+    )
+
+    if len(effects) == 1 and isinstance(effects[0].get("copy_batch"), Mapping):
+        from ..token_copy_recipes import TokenCopyBatchKind, TokenCopyBatchSpec
+        from ..replacement.immutable import thaw_value
+
+        try:
+            spec = TokenCopyBatchSpec.from_effect(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        if spec.kind is TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES and ANY_NUMBER_TARGET_MECHANIC in mechanic_ids:
+            return spec.capability_dependencies if spec.target_schema == thaw_value(target_schema) else ()
+    if len(effects) == 1 and uses_announced_destruction_controller_tokens(effects[0]):
+        if ANY_NUMBER_TARGET_MECHANIC not in mechanic_ids:
+            return ()
+        try:
+            return announced_destruction_controller_token_dependencies(effects[0], target_schema)
+        except (TypeError, ValueError):
+            return ()
+    from .targeted_control_set import TARGETED_CONTROL_SET_VERSION, targeted_control_set_node_capabilities
+
+    if len(effects) == 1 and TARGETED_CONTROL_SET_VERSION in effects[0]:
+        return targeted_control_set_node_capabilities(effects=effects, target_schema=target_schema)
     from .temporary_copy_subject import TEMPORARY_COPY_SUBJECT_OPERATION, temporary_copy_subject_node_capabilities
 
     if len(effects) == 1 and effects[0].get("op") == TEMPORARY_COPY_SUBJECT_OPERATION:

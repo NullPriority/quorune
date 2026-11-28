@@ -6,9 +6,12 @@ from dataclasses import replace
 from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
+from ..permanent_event_state_model import supported_countered_combat_optional_result
+from ..rules.controlled_spell_counter import CONTROLLED_SPELL_COUNTER_EVENT
 from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
-    OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event, supported_optional_result_limit,
-    supported_trigger_limit_subscriptions)
+    OPTIONAL_RESULT_LIMIT_KIND, ENCHANTMENT_COPY_LIMIT_VERSION, departure_trigger_limit_event,
+    supported_enchantment_entry_copy_limit,
+    supported_optional_result_limit, supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..dungeon_progress import DUNGEON_VENTURE_FIELD
 from .dependency_gate import dependency_gate
@@ -16,6 +19,10 @@ from .ir_model import OracleNode, append_residual
 
 _LIMIT = re.compile(r"(?P<body>.+) This ability triggers only once each turn\.", re.IGNORECASE)
 _RESOLUTION_LIMIT = re.compile(r"(?P<body>.+) Do this only once each turn\.", re.IGNORECASE)
+_NONCREATURE_HAND_RETURN_GROUP = re.compile(
+    r"Whenever one or more noncreature permanents are returned to hand, (?P<body>draw a card\.)",
+    re.IGNORECASE,
+)
 _SACRIFICE_GROUP = re.compile(
     r"(?P<head>(?:When|Whenever) you sacrifice) one or more (?P<other>other )?"
     r"(?P<subject>[^,]+?)(?P<turn> during your turn)?, (?P<result>.+)",
@@ -47,10 +54,14 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         material = f"{group['head']} {article} {subject}{group['turn'] or ''}, {group['result']}"
     if graveyard_group is not None:
         material = f"Whenever a creature card is put into your graveyard from anywhere, {graveyard_group['result']}"
+    hand_return_group = _NONCREATURE_HAND_RETURN_GROUP.fullmatch(material) if resolution_match is None else None
+    if hand_return_group is not None:
+        material = f"Whenever a noncreature permanent is returned to hand, {hand_return_group['body']}"
     inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
     if (node is None or not node.exact or node.kind != "triggered_ability"
-            or node.active_zone != "battlefield" or node.trigger_limit is not None):
+            or node.active_zone != "battlefield" or node.trigger_limit is not None
+            or node.event == CONTROLLED_SPELL_COUNTER_EVENT):
         return None
     if group is not None:
         # The existing usage claim suppresses every later matching sacrifice.
@@ -69,11 +80,24 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
         if (node.event != "card.enter_graveyard" or node.target_schema is not None or len(node.effects) != 1
                 or node.effects[0].get("op") != "choose_option" or DUNGEON_VENTURE_FIELD not in node.effects[0]):
             return None
-    if resolution_match is not None:
-        if not (supported_trigger_limit_subscriptions(node.event, node.event_condition)
-                and supported_optional_result_limit(node)):
+    if hand_return_group is not None:
+        from .qualified_zone_event_bindings import noncreature_hand_return_condition
+
+        if (node.event != "permanent.leave" or node.event_condition != noncreature_hand_return_condition()
+                or node.target_schema is not None
+                or tuple(node.effects) != ({"op": "draw", "player": "$controller", "count": 1, "private": True},)):
             return None
-        limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
+    if resolution_match is not None:
+        if not supported_trigger_limit_subscriptions(node.event, node.event_condition):
+            return None
+        if supported_countered_combat_optional_result(node):
+            limit = TriggerLimitSpec(4, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        elif supported_enchantment_entry_copy_limit(node):
+            limit = TriggerLimitSpec(ENCHANTMENT_COPY_LIMIT_VERSION, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        elif supported_optional_result_limit(node):
+            limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        else:
+            return None
     elif supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
     elif departure_trigger_limit_event(node.event,node.event_condition):limit=TriggerLimitSpec(2,source_scope='event_incarnation')
     else:return None

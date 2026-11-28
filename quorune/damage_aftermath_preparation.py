@@ -45,3 +45,27 @@ def prepare_damage_aftermath(host: Any, events, effects, current_modifiers, *, d
         raise DamageError(str(exc)) from exc
     except ValueError as exc:
         raise DamageError(str(exc)) from exc
+
+
+def log_damage_result_replacements(host, prepared):
+    effects = {effect.effect_id: effect for effect in prepared.result_effects}
+    events = {event.event_id: event for event in prepared.result_events}
+    for selection in prepared.result_journal:
+        selected_id = str(selection.effect_id or "")
+        if selected_id.startswith("decline:"):
+            continue
+        effect = effects[selected_id]
+        event = events[selection.event_id]
+        host._log(
+            None,
+            "replacement.apply",
+            f"{effect.source_id} modified a damage-result event.",
+            {
+                "source": effect.source_id,
+                "effect_id": effect.effect_id,
+                "result_subject": event.payload.get("subject"),
+                "result_subject_kind": event.payload.get("subject_kind"),
+                "event_path": list(selection.path),
+            },
+            importance=2,
+        )

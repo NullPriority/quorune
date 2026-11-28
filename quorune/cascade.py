@@ -19,7 +19,9 @@ from .selection.exile_cast import (
 )
 from .rules.cast_cascade_grants import announced_cascade_instances
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
-from .semantic_runtime.battlefield_cascade_grants import CASCADE_GRANT_EVENT
+from .semantic_runtime.battlefield_cascade_grants import (
+    CASCADE_GRANT_EVENT, conditional_stack_cascade_programs, first_exile_cascade_specs_after_payment,
+)
 
 
 CASCADE_SEMANTIC_KEY = "builtin:cascade"
@@ -94,9 +96,12 @@ def cascade_trigger_items(
 ) -> tuple[StackItem, ...]:
     """Materialize one ordinary trigger occurrence per typed Cascade instance."""
 
+    if spell.kind != "spell":
+        return ()
     specs = compiled_cascade_specs(host, card)
     has_grants = bool(announced_cascade_instances(spell.context)
-                      or host.semantics.programs_for_event(CASCADE_GRANT_EVENT))
+                      or host.semantics.programs_for_event(CASCADE_GRANT_EVENT)
+                      or conditional_stack_cascade_programs(host, card))
     if not specs and not has_grants:
         return ()
     effective = host._effective_card_data(card)
@@ -104,6 +109,7 @@ def cascade_trigger_items(
         specs += tuple(fragment for fragment in spell_cast_keyword_trigger_specs(
             canonical_ability_fragments(effective.get("ability_fragments", ()))
         ) if fragment.kind is SpellCastKeywordTriggerKind.CASCADE)
+        specs += first_exile_cascade_specs_after_payment(host, spell)
     if not specs:
         return ()
     source_mana_value = mana_value_of_cost(

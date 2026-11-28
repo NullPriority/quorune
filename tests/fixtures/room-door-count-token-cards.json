@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709626",
+      "name": "Archive Corridor // Lantern Court",
+      "layout": "split",
+      "mana_cost": "{1}{W} // {2}{W}",
+      "cmc": 5,
+      "type_line": "Enchantment — Room // Enchantment — Room",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Archive Corridor",
+          "oracle_text": "When you unlock this door, you gain 1 life.",
+          "mana_cost": "{1}{W}",
+          "type_line": "Enchantment — Room",
+          "colors": [
+            "W"
+          ]
+        },
+        {
+          "name": "Lantern Court",
+          "oracle_text": "When you unlock this door, create an X/X white Bird creature token with flying, where X is the number of unlocked doors among Rooms you control.",
+          "mana_cost": "{2}{W}",
+          "type_line": "Enchantment — Room",
+          "colors": [
+            "W"
+          ]
+        }
+      ]
+    }
+  ],
+  "rulings": []
+}

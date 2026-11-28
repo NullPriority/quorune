@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from dataclasses import asdict, dataclass, fields
 
 from ...cost_payments import ExactManaReplacementReplay, sacrificing_mana_source_ids
-from ...mana_mode_effects import mana_damage_event_belongs_to_payment
+from ...mana_mode_effects import mana_result_event_belongs_to_payment
 from ...replacement.model import ReplacementEffectError
 from ...replacement.ordering import (
     ReplacementChoiceRequired,
@@ -131,7 +131,7 @@ def blight_cast_prior_mana_event_ids(response):
     if not isinstance(journal, Mapping):
         return set()
     payment_id = response.get("_mana_payment_id")
-    return {key for key in journal if mana_damage_event_belongs_to_payment(key, payment_id)}
+    return {key for key in journal if mana_result_event_belongs_to_payment(key, payment_id)}
 
 
 def blight_cast_cost_event_matches(batch, effects, response, *, seat):

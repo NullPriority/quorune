@@ -5,6 +5,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .characteristic_evaluation import type_parts
 from .replacement import (
+    AddAffectedObjectCounter,
     CreateAffectedObjectCounter,
     ReplacementClass,
     ReplacementEffect,
@@ -12,6 +13,8 @@ from .replacement import (
 from .entry_counter_model import (
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterValueSource,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
+    ENTRY_CREATURE_VALUE_SOURCES,
     EntryCounterError,
     EffectEntryCounter,
     IntrinsicEntryCounter,
@@ -21,6 +24,8 @@ from .turn_history import current_turn_history_events
 
 
 class EntryCharacteristicsQuery(Protocol):
+    state: Any
+
     def _effective_card_data(
         self,
         card: Any,
@@ -30,6 +35,18 @@ class EntryCharacteristicsQuery(Protocol):
 
 
 def _current_history_entry_value(host: Any, source: DynamicEntryCounterValueSource, controller: str) -> int:
+    if source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS:
+        from .public_history_query_model import PublicHistoryQuerySpec, public_history_query_value
+
+        query = PublicHistoryQuerySpec("spell_cast", types_any=("instant", "sorcery"))
+        value = public_history_query_value(host.state, controller, query)
+        if value is None:
+            raise EntryCounterError("Entry loyalty requires the current turn's typed cast history")
+        return value
+    if source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT:
+        from .commander_cast_counts import controller_commander_cast_count
+
+        return controller_commander_cast_count(host.state, controller)
     history = host.state.turn_history
     if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
         raise EntryCounterError("Entry turn history is unavailable")
@@ -44,6 +61,80 @@ def _current_history_entry_value(host: Any, source: DynamicEntryCounterValueSour
     if source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED:
         return sum(event.amount for event in events if event.target == controller)
     return sum(event.actor == controller for event in events)
+
+
+def _public_maximum_entry_value(host, card, destination_controller, source):
+    if source is DynamicEntryCounterValueSource.MAX_OPPONENT_DRAWS:
+        from .drawing.restrictions import drawn_this_turn
+
+        return max((drawn_this_turn(host, seat) for seat in host.active_seats
+                    if seat != destination_controller), default=0)
+
+    from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from .dynamic_characteristics import query_characteristic_count
+    from .object_predicate import ObjectQuerySpec
+
+    quantity = CharacteristicQuantitySpec(
+        CharacteristicQuantityScope.CONTROLLER_ZONE,
+        ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+    )
+    perspective = copy.copy(card)
+    counts = []
+    for seat in host.active_seats:
+        perspective.controller = seat
+        counts.append(query_characteristic_count(host, perspective, quantity))
+    return max(counts, default=0)
+
+
+def _current_creature_entry_value(host, entering_card, controller, source):
+    """Measure current public creatures before moving any object in the entry."""
+    from .counter_snapshot import permanent_counter_snapshot
+    from .object_query import exact_numeric_characteristic
+
+    player = host.state.players.get(controller)
+    if player is None or not player.in_game:
+        raise EntryCounterError("The entering controller is unavailable")
+    include_graveyard = source is DynamicEntryCounterValueSource.MAX_CONTROLLED_POWER_AND_GRAVEYARD
+    zones = ("battlefield", "graveyard") if include_graveyard else ("battlefield",)
+    creatures = []
+    for zone in zones:
+        for object_id in player.zones[zone]:
+            card = host.state.cards[object_id]
+            if card.zone != zone:
+                raise EntryCounterError("A public entry-quantity object changed zones")
+            if zone == "battlefield" and (
+                card.phased_out or card.controller != controller or object_id == entering_card.object_id
+            ):
+                continue
+            if zone == "graveyard" and (card.owner != controller or card.object_kind != "card"):
+                continue
+            data = host._effective_card_data(card)
+            types, _, _ = host._type_parts(str(data.get("type_line") or ""))
+            if "creature" in types:
+                creatures.append((card, data))
+    if source is DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_PLUS_COUNTERS:
+        return sum(permanent_counter_snapshot(card.counters).get("+1/+1", 0) for card, _ in creatures)
+    if source is DynamicEntryCounterValueSource.OTHER_CONTROLLED_RED_AND_GREEN_COUNTS:
+        return sum(color in data["colors"] for _, data in creatures for color in ("R", "G"))
+    use_sum = source is DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_TOUGHNESS
+    statistic = "toughness" if use_sum else "power"
+    values = [exact_numeric_characteristic(card, data, statistic) for card, data in creatures]
+    if any(value is None for value in values):
+        raise EntryCounterError("A matched creature statistic is unavailable")
+    return max(0, sum(values) if use_sum else max(values, default=0))
+
+
+def maximum_exiled_card_mana_value(host: EntryCharacteristicsQuery) -> int:
+    """Measure face-up cards in current exile before the entering card moves."""
+    maximum = 0
+    for card in host.state.cards.values():
+        if card.zone != "exile" or not card.is_card_object or card.face_down:
+            continue
+        mana_value = host._effective_card_data(card).get("mana_value")
+        if type(mana_value) not in {int, float} or not 0 <= mana_value < float("inf") or mana_value % 1:
+            raise EntryCounterError("A face-up exiled card has no supported mana value")
+        maximum = max(maximum, int(mana_value))
+    return maximum
 
 
 def dynamic_entry_counter_amount(
@@ -87,6 +178,17 @@ def dynamic_entry_counter_amount(
         if player is None or type(player.life) is not int:
             raise EntryCounterError("The entering controller's life total is unavailable")
         value = max(0, player.life)
+    elif source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE:
+        value = maximum_exiled_card_mana_value(host)
+    elif source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES:
+        value = _public_maximum_entry_value(host, card, destination_controller, source)
+    elif source in ENTRY_CREATURE_VALUE_SOURCES:
+        value = _current_creature_entry_value(host, card, destination_controller, source)
+    elif source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER:
+        from .rules.entry_cast_information import capture_stack_cast_receipt
+
+        receipt = capture_stack_cast_receipt(host, card) if was_cast else None
+        value = int(receipt is not None and receipt.caster == destination_controller)
     elif source is DynamicEntryCounterValueSource.CAST_FROM_HAND:
         value = int(
             was_cast and item.context.get("cast_origin") == "hand"
@@ -122,6 +224,8 @@ def dynamic_entry_counter_amount(
             amount_spec.quantity,
         )
     elif source in {
+        DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT,
+        DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS,
         DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT,
         DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
         DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,
@@ -284,11 +388,12 @@ def effect_entry_counter_effects(
                 "Effect entry counters require typed instructions"
             )
         conditions = {
-            "destination": {"eq": "battlefield"},
+            "destination": {"eq": counter.destination},
             "object_ref": {"eq": object_ref},
         }
         if counter.required_entry_type is not None:
             conditions["object_types"] = {"contains": counter.required_entry_type}
+        operation = AddAffectedObjectCounter if counter.additional else CreateAffectedObjectCounter
         effects.append(
             ReplacementEffect(
                 effect_id=(
@@ -301,12 +406,13 @@ def effect_entry_counter_effects(
                 replacement_class=ReplacementClass.SELF_REPLACEMENT,
                 conditions=conditions,
                 operations=(
-                    CreateAffectedObjectCounter(
+                    operation(
                         counter_name=counter.counter_name,
                         amount=counter.amount,
                         placing_player=counter.placing_player,
                         source_ref=counter.source_ref,
                         sequence=sequence,
+                        exile_only=counter.destination == "exile",
                     ),
                 ),
                 label=(

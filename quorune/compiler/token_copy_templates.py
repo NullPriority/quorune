@@ -9,7 +9,7 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..fixed_token_production import FIXED_TOKEN_PRODUCTION_MECHANIC_ID, FixedTokenCreationTemplate
 from ..rules.source_references import SourceReferenceSpec
 from ..token_copy_recipes import (
-    GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, GRAVEYARD_TARGET_TOKEN_COPY_VERSION,
+    GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, GRAVEYARD_TARGET_TOKEN_COPY_VERSION, NAMED_ADDITIVE_COPY_VERSION,
     TokenCopyExceptionSpec, TokenCopyRecipeSpec, graveyard_target_token_copy_schema,
 )
 from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY
@@ -19,6 +19,11 @@ from .fixed_numbers import fixed_number
 
 _COPY = re.compile(r"^Create (?P<count>a|one|two|three|four|five|[1-5]) (?P<tapped>tapped )?tokens? that(?:'s| are) (?:a copy|copies) of (?P<body>.+?)\.?$", re.I)
 _COLORS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G", "colorless": ""}
+_NAMED_ADDITIVE_COPY = re.compile(
+    r"^its name is (?P<name>[A-Za-z][A-Za-z0-9'\u2019-]*(?: [A-Za-z0-9'\u2019-]+)*) and "
+    r"(?P<addition>it's a [0-9]+/[0-9]+ [A-Za-z'-]+ artifact creature in addition to its other types)$", re.I,
+)
+_NONCREATURE_ARTIFACT_COPY_SUBJECT = "target noncreature artifact you control"
 
 
 def _fixed_exception(text: str) -> TokenCopyExceptionSpec | None:
@@ -93,23 +98,49 @@ def _token_copy_batch_template(text: str) -> FixedTokenCreationTemplate | None:
             TokenCopyBatchKind.CONTROLLER_ARTIFACT_CREATURES,
         "for each opponent, you create a token that's a copy of up to one target creature that player controls.":
             TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES,
+        ("choose any number of target creatures you control. for each of them, create a token that's a copy of "
+         "that creature, except it has haste. exile those tokens at the beginning of the next end step."):
+            TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES,
     }
     kind = kinds.get(text.casefold())
     if kind is None:
         return None
-    spec = TokenCopyBatchSpec(kind, schema_version=2 if kind is TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES else 1)
+    version = {TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES: 2,
+               TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES: 3}.get(kind, 1)
+    spec = TokenCopyBatchSpec(kind, schema_version=version)
     mechanics = (TOKEN_COPY_BATCH_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy",
                  "cr-111-tokens", "cr-707-copying-objects")
     if spec.uses_announced_models:
         from .any_number_target_sets import ANY_NUMBER_TARGET_MECHANIC
         from .per_player_target_sets import PER_PLAYER_TARGET_MECHANIC
 
-        mechanics = (*mechanics, "cr-115-targets", ANY_NUMBER_TARGET_MECHANIC, PER_PLAYER_TARGET_MECHANIC)
+        mechanics = (*mechanics, "cr-115-targets", ANY_NUMBER_TARGET_MECHANIC)
+        if kind is TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES:
+            mechanics = (*mechanics, PER_PLAYER_TARGET_MECHANIC)
     elif spec.targets_player:
         mechanics = (*mechanics, "cr-115-targets")
     return FixedTokenCreationTemplate(
         template_id="create-current-battlefield-copy-batch-v1", effect=spec.to_effect(),
         mechanics=mechanics, target_schema=spec.target_schema,
+    )
+
+
+def chosen_entry_token_copy_trigger_template(binding, body: str) -> FixedTokenCreationTemplate | None:
+    from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+    from ..token_copy_recipes import (
+        CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE, TOKEN_COPY_BATCH_MECHANIC, TokenCopyBatchKind, TokenCopyBatchSpec,
+    )
+
+    if ((binding.event.value, binding.active_zone) != ("step.begin", "battlefield")
+            or not is_controller_end_step_schedule(binding.event_condition)
+            or " ".join(body.casefold().split()) !=
+            "for each token you control of the chosen type that entered this turn, create a token that's a copy of it."):
+        return None
+    spec = TokenCopyBatchSpec(TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS, schema_version=4)
+    return FixedTokenCreationTemplate(
+        template_id=CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE, effect=spec.to_effect(), target_schema=None,
+        mechanics=(TOKEN_COPY_BATCH_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+                   "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"),
     )
 
 
@@ -146,6 +177,17 @@ def token_copy_recipe_template(text: str, *, source_name: str,
         return batch
     recipient = _target_player_copy_template(normalized, source_name=source_name)
     if recipient is not None:return recipient
+    if normalized.casefold().rstrip(".") == (
+        "populate. the token created this way gains haste. sacrifice it at the beginning of the next end step"
+    ):
+        from ..fixed_token_production import source_bound_populate_effect
+
+        if event != "step.begin":
+            return None
+        return FixedTokenCreationTemplate(template_id="populate-source-bound-haste-and-sacrifice-v1",
+            effect=source_bound_populate_effect(), target_schema=None,
+            mechanics=(FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-111-tokens",
+                       "cr-707-copying-objects", "haste"))
     if normalized.casefold().rstrip(".") == "populate":
         return FixedTokenCreationTemplate(template_id="populate-copiable-creature-token-v1",
             effect={"op":"populate"}, target_schema=None,
@@ -168,9 +210,20 @@ def token_copy_recipe_template(text: str, *, source_name: str,
     body = match["body"].rstrip(".")
     parts = re.split(r", except ", body, maxsplit=1, flags=re.I)
     subject = parts[0]
-    exception = _fixed_exception(parts[1] if len(parts) == 2 else "")
+    exception_text = parts[1] if len(parts) == 2 else ""
+    named = _NAMED_ADDITIVE_COPY.fullmatch(exception_text)
+    if named is not None and (
+        subject.casefold() != _NONCREATURE_ARTIFACT_COPY_SUBJECT
+        or fixed_number(match["count"]) != 1 or match["tapped"]
+        or cleanup != "sacrifice_next_end_step" or temporary_keywords != ("Haste",)
+        or keyword_duration != "until_end_of_turn"
+    ):
+        return None
+    exception = _fixed_exception(named["addition"] if named is not None else exception_text)
     if exception is None:
         return None
+    if named is not None:
+        exception = replace(exception, schema_version=3, name=named["name"])
     schema = None
     if subject.casefold() == "target creature card in your graveyard":
         if (fixed_number(match["count"]) != 1 or match["tapped"]
@@ -191,6 +244,14 @@ def token_copy_recipe_template(text: str, *, source_name: str,
         if source_is_permanent is not True:
             return None
         origin = "source"
+    elif subject.casefold() == "equipped creature":
+        from ..attachment_references import AttachmentReferenceKind
+        if (source_is_permanent is not True or source_attachment_relation is not AttachmentReferenceKind.EQUIPPED
+                or fixed_number(match["count"]) != 1 or match["tapped"]
+                or exception != TokenCopyExceptionSpec(remove_legendary=True) or cleanup != "none"
+                or temporary_keywords != ("Haste",) or keyword_duration != "zone_object"):
+            return None
+        origin = "source_attachment"
     elif subject.casefold() == "enchanted creature":
         from ..attachment_references import AttachmentReferenceKind
         if (source_is_permanent is not True
@@ -204,12 +265,17 @@ def token_copy_recipe_template(text: str, *, source_name: str,
         origin = "event_object"
     else:
         return None
+    from ..token_copy_recipes import EQUIPPED_TOKEN_COPY_VERSION
+
+    attachment_version = EQUIPPED_TOKEN_COPY_VERSION if subject.casefold() == "equipped creature" else 3
+    attachment_kind = "equipped" if attachment_version == EQUIPPED_TOKEN_COPY_VERSION else "enchanted"
     recipe = TokenCopyRecipeSpec(origin=origin, exception=exception, cleanup=cleanup,
                                  temporary_keywords=temporary_keywords, keyword_duration=keyword_duration,
-                                 **({"schema_version":3, "attachment_kind":"enchanted"}
+                                 **({"schema_version": attachment_version, "attachment_kind": attachment_kind}
                                     if origin == "source_attachment"
                                     else {"schema_version": GRAVEYARD_TARGET_TOKEN_COPY_VERSION}
-                                    if origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN else {}))
+                                    if origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN
+                                    else {"schema_version": NAMED_ADDITIVE_COPY_VERSION} if named is not None else {}))
     mechanics = {FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"}
     if schema is not None:
         mechanics.add("cr-115-targets")

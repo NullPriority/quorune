@@ -1,0 +1,195 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{B}{G}",
+      "name": "Narci, Fable Singer",
+      "oracle_id": "61bbf710-4eb4-4e11-be6e-700a0c6a41ee",
+      "oracle_text": "Lifelink\nWhenever you sacrifice an enchantment, draw a card.\nWhenever the final chapter ability of a Saga you control resolves, each opponent loses X life and you gain X life, where X is that Saga's mana value.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Human Bard"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Tom Bombadil",
+      "oracle_id": "89a2d5bc-df06-47e8-8b4a-6d1f0a63c78d",
+      "oracle_text": "As long as there are four or more lore counters among Sagas you control, Tom Bombadil has hexproof and indestructible.\nWhenever the final chapter ability of a Saga you control resolves, reveal cards from the top of your library until you reveal a Saga card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. This ability triggers only once each turn.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": "4",
+      "type_line": "Legendary Creature — God Bard"
+    },
+    {
+      "cmc": 3,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{2}{W}",
+      "name": "Final Chapter Test Saga",
+      "oracle_id": "10000000-0000-4000-8000-000000000911",
+      "oracle_text": "I — You gain 1 life.\nII — You gain 2 life.",
+      "type_line": "Enchantment — Saga"
+    },
+    {
+      "cmc": 3,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{2}{W}",
+      "name": "Final Chapter Return Saga",
+      "oracle_id": "10000000-0000-4000-8000-000000000912",
+      "oracle_text": "I — You gain 1 life.\nII — Return target creature card from your graveyard to the battlefield.",
+      "type_line": "Enchantment — Saga"
+    },
+    {
+      "cmc": 3,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{2}{W}",
+      "name": "Final Chapter Short Saga",
+      "oracle_id": "10000000-0000-4000-8000-000000000913",
+      "oracle_text": "I — You gain 1 life.",
+      "type_line": "Enchantment — Saga"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The final chapter ability of a Saga is the ability with the greatest chapter number among chapter abilities that Saga has.",
+      "oracle_id": "61bbf710-4eb4-4e11-be6e-700a0c6a41ee",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers when another ability resolves, such as Tom Bombadil's triggered ability, triggers when all of its instructions (as modified by applicable replacement effects) have been followed and it has been removed from the stack. For example, if Tom Bombadil is returned to the battlefield by the final chapter ability of Elspeth Conquers Death, it will be on the battlefield in time to see that final chapter ability finish resolving and get removed from the stack, and thus Tom Bombadil's last ability will trigger.",
+      "oracle_id": "89a2d5bc-df06-47e8-8b4a-6d1f0a63c78d",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to creatures remains on those creatures until the cleanup step or until an effect removes that damage. If you control Tom Bombadil with at least 4 damage on it as well as a single Saga which has four or more lore counters on it, and that Saga leaves the battlefield later in the turn, Tom Bombadil will be destroyed. This will be true even if that Saga leaves the battlefield as a result of its final chapter ability leaving the stack; state-based actions will be checked before Tom Bombadil's triggered ability could get you another Saga.",
+      "oracle_id": "89a2d5bc-df06-47e8-8b4a-6d1f0a63c78d",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The final chapter ability of a Saga is the ability with the greatest chapter number among chapter abilities that Saga has.",
+      "oracle_id": "89a2d5bc-df06-47e8-8b4a-6d1f0a63c78d",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

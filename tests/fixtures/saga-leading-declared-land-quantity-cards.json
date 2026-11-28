@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned_oracle_card",
+  "source": "Pinned Summon: Titan and a constructed response that changes the live land count.",
+  "cards": [
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "name": "Summon: Titan",
+      "mana_cost": "{3}{G}{G}",
+      "type_line": "Enchantment Creature — Saga Giant",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Mill five cards.\nII — Return all land cards from your graveyard to the battlefield tapped.\nIII — Until end of turn, another target creature you control gains trample and gets +X/+X, where X is the number of lands you control.\nReach, trample",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach",
+        "Trample",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2025-06-13",
+      "cmc": 5.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-608613400001",
+      "name": "Land-count Response",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target land.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "released_at": "2026-08-09"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Once the number of lore counters on a Saga is greater than or equal to the greatest number among its chapter abilities, the Saga's controller sacrifices it as soon as its chapter ability has left the stack, most likely by resolving or being countered. This state-based action doesn't use the stack."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "As a Saga enters, its controller puts a lore counter on it. As your first main phase begins (immediately after your draw step), you put another lore counter on each Saga you control. Putting a lore counter on a Saga in either of these ways doesn't use the stack."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Once a chapter ability has triggered, the ability on the stack won't be affected if the Saga gains or loses counters, or if it leaves the battlefield."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If multiple chapter abilities trigger at the same time, their controller puts them on the stack in any order. If any of them require targets, those targets are chosen as you put the abilities on the stack, before any of those abilities resolve."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Each symbol on the left of a Saga's text box represents a chapter ability. A chapter ability is a triggered ability that triggers when a lore counter that is put on the Saga causes the number of lore counters on the Saga to become equal to or greater than the ability's chapter number. Chapter abilities are put onto the stack and may be responded to."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "A chapter ability doesn't trigger if a lore counter is put on a Saga that already had a number of lore counters greater than or equal to that chapter's number. For example, the third lore counter put on a Saga causes the chapter III ability to trigger, but chapters I and II won't trigger again."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Due to a rules change that takes effect with this release (see below for details), a Saga that somehow loses all of its chapter abilities will not be sacrificed as a state-based action. It will also not gain a lore counter at the beginning of each of its controller's first main phases."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Removing lore counters won't cause a previous chapter ability to trigger. If lore counters are removed from a Saga, the appropriate chapter abilities will trigger again when the Saga receives more lore counters."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Saga creatures have two sections to their text boxes. The first section, above the type line, contains their chapter abilities, and the second section, below the type line, contains any other abilities (or italicized flavor text). Any abilities in the latter section aren't chapter abilities and apply no matter how many lore counters are on the creature."
+    },
+    {
+      "oracle_id": "66ce0c60-f406-4ece-915f-675da4e8b16d",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The value of X in Summon: Titan's third chapter ability is calculated only once, as the ability resolves."
+    }
+  ]
+}

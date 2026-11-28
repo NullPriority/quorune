@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..announced_counter_allocation import BOUND_COUNTER_SHARES
+
 """Strict typed lowering for fixed counter-placement effects."""
 
 from dataclasses import dataclass
@@ -41,9 +43,12 @@ def _fixed_counter_group_intent(
     effect: Mapping[str, Any],
     context: ReadOnlyHandlerContext,
 ) -> PlaceCountersIntent:
+    from ..rules.counter_marked_keep import COUNTER_NAME, KEEP_COUNTER_FIELD
+
     allowed = {
         "op",
         "cards",
+        KEEP_COUNTER_FIELD,
         "counter",
         "amount",
         "source",
@@ -67,10 +72,17 @@ def _fixed_counter_group_intent(
     if effect.get("op") != "place_counters":
         raise SemanticNodeError("Counter placement group operation is unsupported")
     raw_cards = effect.get("cards")
-    if not isinstance(raw_cards, (list, tuple)) or not 2 <= len(raw_cards) <= 3:
-        raise SemanticNodeError(
-            "Counter placement group requires two or three subject entries"
-        )
+    sealed = KEEP_COUNTER_FIELD in effect
+    if sealed and (
+        type(effect.get(KEEP_COUNTER_FIELD)) is not int or effect[KEEP_COUNTER_FIELD] != 1
+        or effect.get("counter") != COUNTER_NAME or type(effect.get("amount")) is not int or effect["amount"] != 1
+        or not isinstance(raw_cards, (list, tuple))
+        or any(type(ref) is not str or not ref for ref in raw_cards) or len(set(raw_cards)) != len(raw_cards)
+    ):
+        raise SemanticNodeError("Counter-marked retention requires its distinct literal chosen recipients")
+    maximum = len(context.query.active_seats) if sealed else 3
+    if not isinstance(raw_cards, (list, tuple)) or not 2 <= len(raw_cards) <= maximum:
+        raise SemanticNodeError("Counter placement group has an unsupported subject count")
     if any(
         value is not None and (type(value) is not str or not value)
         for value in raw_cards
@@ -147,6 +159,10 @@ class FixedCounterPlacementHandler:
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
         from ..reflexive_trigger_model import SOURCE_COUNTER_REFLEXIVE_FIELD
+        from ..rules.noted_mana import NOTED_MANA_EFFECT_FIELD, lower_noted_mana_charge
+
+        if NOTED_MANA_EFFECT_FIELD in effect:
+            return lower_noted_mana_charge(self, effect, context)
 
         if SOURCE_COUNTER_REFLEXIVE_FIELD in effect:
             from .source_counter_reflexive_intent import lower_source_counter_reflexive
@@ -232,6 +248,30 @@ class FixedCounterPlacementBatchHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..rules.death_counter_shuffle import DEATH_COUNTER_SHUFFLE_FIELD
+        from ..counter_placement_sets import (
+            SOURCE_TARGET_COUNTER_BATCH_CARD_FIELD, source_target_counter_batch_projection,
+            uses_source_target_counter_batch,
+        )
+
+        from ..rules.departure_counter_copy import departure_counter_copy_intent, uses_departure_counter_copy
+
+        if uses_departure_counter_copy(effect):
+            intent = departure_counter_copy_intent(effect, context)
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(() if intent is None else (intent,)))
+        paired_source = None
+        if uses_source_target_counter_batch(effect):
+            try:
+                paired_source = effect[SOURCE_TARGET_COUNTER_BATCH_CARD_FIELD]
+                effect = source_target_counter_batch_projection(effect, bound=True)
+            except (TypeError, ValueError, KeyError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+        departure = DEATH_COUNTER_SHUFFLE_FIELD in effect
+        if departure:
+            marker = effect[DEATH_COUNTER_SHUFFLE_FIELD]
+            if type(marker) is not int or marker != 1:
+                raise SemanticNodeError("Unsupported departure counter-placement version")
+            effect = {key: value for key, value in effect.items() if key != DEATH_COUNTER_SHUFFLE_FIELD}
         fields = validate_direct_target_effect(
             effect,
             context,
@@ -242,9 +282,9 @@ class FixedCounterPlacementBatchHandler:
             additional_allowed_fields=("placements", "source"),
         )
         raw_placements = effect.get("placements")
-        if not isinstance(raw_placements, (list, tuple)) or not 2 <= len(
-            raw_placements
-        ) <= 3:
+        if not isinstance(raw_placements, (list, tuple)) or (
+            not departure and not 2 <= len(raw_placements) <= 3
+        ):
             raise SemanticNodeError(
                 "Counter batch placement requires two or three entries"
             )
@@ -271,6 +311,10 @@ class FixedCounterPlacementBatchHandler:
             raise SemanticNodeError(
                 "Counter batch placement requires one nonempty source reference"
             )
+        if departure and not placements:
+            if fields.replacement_selections:
+                raise SemanticNodeError("An empty departure snapshot has no counter placement to replace")
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=())
         try:
             intent = PlaceCounterBatchIntent(
                 actor=context.actor,
@@ -279,6 +323,8 @@ class FixedCounterPlacementBatchHandler:
                 reason=fields.reason,
                 source_ref=source_ref,
                 replacement_selections=fields.replacement_selections,
+                paired_source_ref=paired_source,
+                source_departure=departure,
             )
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -313,10 +359,19 @@ class FixedCounterPlacementSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, paired_planeswalker_loyalty_dependencies
+        from ..counter_placement_sets import (
+            PAIRED_PLANESWALKER_LOYALTY_FIELD, SOURCE_AND_CONTROLLED_SUBTYPE_FIELD,
+            paired_planeswalker_loyalty_dependencies, source_and_controlled_subtype_dependencies,
+        )
+
+        from ..rules.attack_batches import (
+            DECLARED_ATTACK_COUNTER_FIELD, declared_attack_counter_set, resolved_declared_attack_counter_effect,
+        )
 
         allowed = {
             PAIRED_PLANESWALKER_LOYALTY_FIELD,
+            SOURCE_AND_CONTROLLED_SUBTYPE_FIELD,
+            DECLARED_ATTACK_COUNTER_FIELD,
             "op",
             "source",
             "set",
@@ -342,7 +397,10 @@ class FixedCounterPlacementSetHandler:
         if effect.get("op") != self.operation:
             raise SemanticNodeError("Counter-set operation is unsupported")
         try:
-            spec = AffectedPermanentSetSpec.from_dict(effect.get("set"))
+            if DECLARED_ATTACK_COUNTER_FIELD in effect:
+                spec = declared_attack_counter_set()
+            else:
+                spec = AffectedPermanentSetSpec.from_dict(effect.get("set"))
         except (AffectedPermanentSetError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         if spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
@@ -376,6 +434,20 @@ class FixedCounterPlacementSetHandler:
             )
         try:
             paired_loyalty_source = None
+            source_and_subtype_identity = None
+            declared_attack_members = None
+            if DECLARED_ATTACK_COUNTER_FIELD in effect:
+                instruction = {key: value for key, value in effect.items()
+                               if key not in {_REASON_FIELD, "_replacement_selections"}}
+                declared_attack_members = resolved_declared_attack_counter_effect(instruction, source_ref=source_ref)
+            if SOURCE_AND_CONTROLLED_SUBTYPE_FIELD in effect:
+                instruction = {key: value for key, value in effect.items()
+                               if key not in {_REASON_FIELD, "_replacement_selections"}}
+                source_and_controlled_subtype_dependencies(instruction, source_ref=source_ref)
+                original = context.source
+                if original is None or original.card_ref != source_ref or original.object_id is None:
+                    raise ValueError("Source and subtype counters lost the original resolving source identity")
+                source_and_subtype_identity = (original.object_id, original.logical_object_id)
             if PAIRED_PLANESWALKER_LOYALTY_FIELD in effect:
                 instruction = {key: value for key, value in effect.items()
                                if key not in {_REASON_FIELD, "_replacement_selections"}}
@@ -393,6 +465,8 @@ class FixedCounterPlacementSetHandler:
                 source_ref=source_ref,
                 replacement_selections=tuple(raw_selections),
                 paired_loyalty_source=paired_loyalty_source,
+                source_and_subtype_identity=source_and_subtype_identity,
+                declared_attack_members=declared_attack_members,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -445,7 +519,7 @@ class FixedCounterPlacementTargetSetHandler:
             _REASON_FIELD,
             "_replacement_selections",
         }
-        if versioned:allowed.update(('schema_version','announced_target_count'))
+        if versioned:allowed.update(('schema_version','announced_target_count',BOUND_COUNTER_SHARES))
         unknown = sorted(set(effect) - allowed)
         if unknown:
             raise SemanticNodeError(
@@ -530,6 +604,7 @@ class FixedCounterPlacementTargetSetHandler:
                 reason=raw_reason or context.default_reason,
                 source_ref=source_ref,
                 replacement_selections=tuple(raw_selections),
+                target_shares=effect.get(BOUND_COUNTER_SHARES),
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -575,9 +650,16 @@ class FixedPlayerCounterPlacementHandler:
             "_replacement_selections",
         }
         allowed = base_fields | ({"target"} if subject == "target" else set())
+        from ..rad_counter_model import RAD_PRODUCER_FIELD, versioned_rad_player_counter_effect
+
+        try:
+            if versioned_rad_player_counter_effect(effect):
+                allowed.add(RAD_PRODUCER_FIELD)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
         if 'zero_is_noop' in effect:
-            if effect['zero_is_noop'] is not True or subject != 'controller' or effect.get('counter') != 'energy':
-                raise SemanticNodeError('Only counted controller energy permits a zero result')
+            if effect['zero_is_noop'] is not True or subject != 'controller' or effect.get('counter') not in {'energy', 'experience'}:
+                raise SemanticNodeError('Only supported counted controller counters permit a zero result')
             allowed.add('zero_is_noop')
         unknown = sorted(set(effect) - allowed)
         if unknown:
@@ -640,7 +722,7 @@ class FixedPlayerCounterPlacementHandler:
             )
         if amount == 0:
             if raw_selections:
-                raise SemanticNodeError('Zero energy placement cannot select a replacement')
+                raise SemanticNodeError('A zero player-counter result cannot select a replacement')
             return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape='by_player')
         try:
             intent = PlacePlayerCountersIntent(

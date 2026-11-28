@@ -463,6 +463,31 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
                     )
                 )
 
+    def test_fixed_land_return_compiles_exact_incarnation_and_typed_turn_restriction(self):
+        from quorune.activation_condition_model import ActivationConditionKind
+        from quorune.compiler.activated_costs import parse_compiled_activated_abilities
+
+        text = "{0}: Return this land to its owner's hand. Activate only if it's not your turn."
+        ir = self.compile(text, type_line="Land")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual("bounce-self-land-v1", node.template_id)
+        self.assertEqual(({"op": "bounce", "card": "$source.zone_object"},), node.effects)
+        self.assertIsNone(node.target_schema)
+        self.assertIn("permanent.return.owner_hand", node.capability_dependencies)
+        ability, = parse_compiled_activated_abilities(card_name="Test Land", oracle_text=text, keywords=())
+        self.assertEqual((ActivationConditionKind.NOT_CONTROLLERS_TURN,),
+                         tuple(condition.kind for condition in ability.activation_conditions))
+        targeted, = self.compile(text.replace("this land", "target land"), type_line="Land").faces[0].nodes
+        self.assertEqual(({"op": "bounce", "card": "$target.0"},), targeted.effects)
+        self.assertIsNotNone(targeted.target_schema)
+        for changed in (
+            text.replace("its owner's", "its controller's"),
+            text.replace("if it's not your turn", "if no player has searched a library this game"),
+        ):
+            with self.subTest(text=changed):
+                self.assertTrue(self.compile(changed, type_line="Land").material_residuals)
+
     def test_unsupported_return_variants_remain_material_residuals(self):
         for text in (
             "Return target creature card from a library to its owner's hand.",

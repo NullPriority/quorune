@@ -694,3 +694,46 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
             if viewer != 'C':
                 self.assertNotIn(private.ref, packet)
         self.replay(session, load=True)
+
+class MoreThanMeetsTheEyeAuthorityTests(unittest.TestCase):
+    def test_converted_price_belongs_to_the_selected_back_face(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        from quorune.disturb_model import FixedManaDisturbSpec, MORE_THAN_MEETS_THE_EYE_COST_ID
+        from quorune.rules.casting.disturb_costs import with_more_than_meets_the_eye_base
+
+        requirements = {color: 0 for color in "WUBRGC"}
+        requirements.update(GENERIC=2, R=1)
+        spec = FixedManaDisturbSpec("front:converted:line:1", "Front", "Back", requirements)
+        front = SimpleNamespace(active_face="Front")
+        back = SimpleNamespace(active_face="Back")
+        independent_price = {"id": "independent", "requirements": dict(requirements)}
+        with patch("quorune.rules.casting.disturb_costs.compiled_more_than_meets_the_eye_spec", return_value=spec):
+            self.assertIsNone(with_more_than_meets_the_eye_base(None, front, None, suppressed=False))
+            offered = with_more_than_meets_the_eye_base(None, back, None, suppressed=False)
+            self.assertEqual((MORE_THAN_MEETS_THE_EYE_COST_ID, "alternate", requirements),
+                             (offered["id"], offered["kind"], offered["requirements"]))
+            self.assertIsNone(with_more_than_meets_the_eye_base(None, back, None, suppressed=True))
+            self.assertIs(with_more_than_meets_the_eye_base(None, back, independent_price, suppressed=False),
+                          independent_price)
+
+    def test_converted_declaration_requires_its_face_pair_and_complete_card(self):
+        from quorune.card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
+        from quorune.disturb_model import FixedManaDisturbSpec, MORE_THAN_MEETS_THE_EYE_HANDLER
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.disturb import MoreThanMeetsTheEyeHandler
+
+        requirements = {color: 0 for color in "WUBRGC"}
+        requirements.update(GENERIC=2, R=1)
+        spec = FixedManaDisturbSpec("front:converted:line:1", "Front", "Back", requirements)
+        declaration = {
+            "handler_id": MORE_THAN_MEETS_THE_EYE_HANDLER, "schema_version": 1, "event": "cast.cost",
+            REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True, "converted_cast": spec.to_dict(),
+        }
+        handler = MoreThanMeetsTheEyeHandler()
+        self.assertEqual((spec,), handler.lower(declaration, None))
+        with self.assertRaises(SemanticNodeError):
+            handler.validate({**declaration, REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: False})
+        with self.assertRaises(SemanticNodeError):
+            handler.validate({**declaration, "converted_cast": {**spec.to_dict(), "back_face": "Front"}})

@@ -8,6 +8,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .errors import GameRuleError
 from .fractional_quantity_model import HalfQuantitySpec
 from .query_effect_amount_model import OpponentHandMillCount
+from .selected_graveyard_mill_count import SelectedGraveyardMillCount
 from .model import CardInstance
 from .zone_transition_model import PUBLIC_ZONES
 from .zone_transitions import ZoneTransitionOwner
@@ -133,7 +134,7 @@ def event_mill_recipient_has_left(
 
 def mill_request(
     host: MillHost, *, actor: str, player: str,
-    count: int | HalfQuantitySpec | OpponentHandMillCount, reason: str,
+    count: int | HalfQuantitySpec | OpponentHandMillCount | SelectedGraveyardMillCount, reason: str,
 ) -> MillRequest:
     if isinstance(count, HalfQuantitySpec):
         host._require_seat(player, in_game=True)
@@ -146,6 +147,10 @@ def mill_request(
         if not isinstance(hand, list):
             raise GameRuleError("Current opponent hand count is unavailable")
         count = len(hand)
+    elif isinstance(count, SelectedGraveyardMillCount):
+        host._require_seat(player, in_game=True)
+        graveyard = host.state.players[player].zones["graveyard"]
+        count = sum(host.state.cards[object_id].object_kind == "card" for object_id in graveyard)
     return MillRequest(actor=actor, player=player, count=count, reason=reason)
 
 
@@ -208,7 +213,11 @@ def commit_mill(
         if object_ids
         else ()
     )
-    return _finish_mill(host, plan, object_ids, moved)
+    result = _finish_mill(host, plan, object_ids, moved)
+    from .rules.committed_nonland_mill import publish_committed_nonland_mill
+
+    publish_committed_nonland_mill(host, (result,))
+    return result
 
 
 def _finish_mill(
@@ -261,7 +270,34 @@ def mill_cards(
     return commit_mill(host, prepare_mill(host, request), replacement_selections=replacement_selections)
 
 
-def mill_player_batch(host: MillHost, requests: Sequence[MillRequest]) -> tuple[MillResult, ...]:
+def current_public_milled_cards(
+    host: MillHost, result: MillResult,
+) -> tuple[CardInstance, ...]:
+    """Find the exact milled cards that still occupy their public destinations."""
+
+    if not isinstance(result, MillResult):
+        raise GameRuleError("A linked Mill instruction requires the committed result")
+    cards = []
+    for outcome in result.cards:
+        if outcome.destination not in PUBLIC_ZONES:
+            continue
+        card = host.state.cards.get(outcome.identity.object_id)
+        if (
+            card is not None
+            and card.zone == outcome.destination
+            and card.logical_object_id == outcome.destination_logical_object_id
+            and card.owner == result.player
+            and card.is_card_object
+            and not card.face_down
+        ):
+            cards.append(card)
+    return tuple(cards)
+
+
+def mill_player_batch(
+    host: MillHost, requests: Sequence[MillRequest], *,
+    replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
+) -> tuple[MillResult, ...]:
     """Validate every player's top snapshot before one simultaneous zone move."""
     requests = tuple(requests)
     if any(not isinstance(request, MillRequest) for request in requests):
@@ -278,6 +314,7 @@ def mill_player_batch(host: MillHost, requests: Sequence[MillRequest]) -> tuple[
             [(object_id, "graveyard") for object_id in object_ids],
             reason=requests[0].reason,
             log=False,
+            replacement_selections=replacement_selections,
         ) if object_ids else ()
     )
     results = []
@@ -288,11 +325,16 @@ def mill_player_batch(host: MillHost, requests: Sequence[MillRequest]) -> tuple[
             if plan.request.count else MillResult(plan.request.player, 0, ())
         )
         offset += len(group)
-    return tuple(results)
+    committed = tuple(results)
+    from .rules.committed_nonland_mill import publish_committed_nonland_mill
+
+    publish_committed_nonland_mill(host, committed)
+    return committed
 
 
 __all__ = [
     "commit_mill",
+    "current_public_milled_cards",
     "MilledCardResult",
     "MillHost",
     "MillObjectIdentity",

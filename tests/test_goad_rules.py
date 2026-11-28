@@ -370,11 +370,123 @@ class GoadDepartedTurnTests(InheritedNativeFixture, unittest.TestCase):
             fixtures / "bound-effect-program-cards.json", fixtures / "fixed-goad-instruction-cards.json",
             fixtures / "fixed-extra-turn-cards.json", fixtures / "scheduled-turn-skip-cards.json",
             fixtures / "next-turn-duration-cards.json",
+            fixtures / "activated-self-transform-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Goad departure", [DeckEntry("Generic Bound Commander", 1, "commander"),
                                                       DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def test_actual_taunt_keeps_block_snapshot_across_control_and_zone_changes(self):
+        session = self.session(1937001)
+        engine = session.engine
+        spell = self.add(engine, "Taunt from the Rampart", zone="hand")
+        theft = self.add(engine, "Act of Treason", zone="hand")
+        blink = self.add(engine, "Ephemerate", seat="B", zone="hand")
+        late = self.add(engine, "Ambush Viper", seat="B", zone="hand")
+        attacker = self.add(engine, "Generic Bound Body", ref="taunt-owned")
+        attacker.acquired_control_turn_count = -1
+        stolen, reentered, stable = (
+            self.add(engine, "Generic Bound Body", seat="B", ref=ref)
+            for ref in ("taunt-stolen", "taunt-blink", "taunt-stable")
+        )
+        other = self.add(engine, "Generic Bound Body", seat="C", ref="taunt-other")
+        phased = self.add(engine, "Generic Bound Body", seat="D", ref="taunt-phased")
+        phased.phased_out = True
+        self.capabilities = self.registry
+        goad_prohibition = GoadRuleTests.add_typed_goad_prohibition(self, session, seat="D")
+        protected = self.add(engine, "Generic Bound Body", seat="D", ref="taunt-goad-protected")
+        for original in (spell, theft, blink, late):
+            self.assert_closed(session, original)
+        self.prepare(session, mana={"C": 5, "R": 2, "W": 1})
+        session.state.players["B"].mana_pool.update({"W": 1, "G": 1, "C": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", spell)
+        self.resolve_top(session)
+        rule, = session.state.continuous_effects
+        self.assertEqual((spell.object_id, "A"), (rule.source_id, rule.expires_on_next_turn_of))
+        self.assertEqual("until_next_turn", rule.duration.value)
+        identities = {card.logical_object_id for card in (stolen, reentered, stable, other, goad_prohibition, protected)}
+        self.assertEqual(identities, {identity.logical_object_id for identity in rule.locked_objects})
+        for card in (stolen, reentered, stable, other):
+            self.assertEqual(["A"], [entry.player for entry in card.goaded_by])
+        self.assertFalse(attacker.goaded_by)
+        self.assertFalse(phased.goaded_by)
+        self.assertFalse(goad_prohibition.goaded_by)
+        self.assertFalse(protected.goaded_by)
+        session = self.replay(session, load=True)
+        self.cast(session, "A", theft, [stolen.ref])
+        self.resolve_top(session)
+        self.cast(session, "B", blink, [reentered.ref])
+        self.resolve_top(session)
+        self.cast(session, "B", late)
+        self.resolve_top(session)
+        current_stolen = session.state.cards[stolen.object_id]
+        current_return = session.state.cards[reentered.object_id]
+        self.assertEqual(("A", stolen.logical_object_id), (current_stolen.controller, current_stolen.logical_object_id))
+        self.assertEqual(["A"], [entry.player for entry in current_stolen.goaded_by])
+        self.assertNotEqual(reentered.logical_object_id, current_return.logical_object_id)
+        self.assertFalse(current_return.goaded_by)
+        self.assertFalse(session.state.cards[late.object_id].goaded_by)
+        from quorune.rules.temporary_declaration_restrictions import current_declaration_restrictions
+
+        prohibited = {row.source.ref for row in current_declaration_restrictions(session.engine)
+                      if row.template.template_id == "intrinsic-block-prohibition-v1"}
+        self.assertEqual({card.ref for card in (stolen, stable, other, goad_prohibition, protected)}, prohibited)
+        self.attack(session, [(attacker, "B"), (stolen, "B")])
+        self.until(session, lambda game: game.state.pending_decision is not None
+                   and game.state.pending_decision.kind == "combat.blockers")
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:B", {"action_id": "block", "blocks": {stable.ref: attacker.ref}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"action_id": "block", "blocks": {
+            reentered.ref: attacker.ref, late.ref: stolen.ref,
+        }})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(session, load=True)
+
+    def test_actual_taunt_attack_and_block_rules_expire_on_owners_next_turn(self):
+        session = self.session(1937002)
+        engine = session.engine
+        spell = self.add(engine, "Taunt from the Rampart", zone="hand")
+        warps = [self.add(engine, "Time Warp", zone="hand", ref=f"taunt-warp-{i}") for i in range(2)]
+        attacker = self.add(engine, "Generic Bound Body", seat="B", ref="taunt-b-attacker")
+        blocker = self.add(engine, "Generic Bound Body", seat="C", ref="taunt-c-blocker")
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, spell)
+        self.assert_closed(session, warps[0])
+        self.prepare(session, mana={"C": 9, "R": 1, "W": 1, "U": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", spell)
+        self.resolve_top(session)
+        for warp, seat in zip(warps, ("A", "B"), strict=True):
+            self.cast(session, "A", warp, [seat])
+            self.resolve_top(session)
+        self.until(session, lambda game: game.state.active_player == "B"
+                   and game.state.pending_decision is not None
+                   and game.state.pending_decision.kind == "combat.attackers")
+        self.assertTrue(session.state.current_turn.extra)
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for attackers in ({}, {attacker.ref: "A"}):
+            result = session.act("pilot:B", {"action_id": "attack", "attackers": attackers})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        starting_life = session.state.players["C"].life
+        attacker_power = session.engine._numeric_stat(attacker.object_id, "power")
+        result = session.act("pilot:B", {"action_id": "attack", "attackers": {attacker.ref: "C"}})
+        self.assertTrue(result.ok, result.summary)
+        self.until(session, lambda game: game.state.phase == "postcombat_main"
+                   or game.state.pending_decision is not None and game.state.pending_decision.kind == "combat.blockers")
+        self.assertEqual("postcombat_main", session.state.phase, "C has no legal blocker and receives no declaration")
+        self.assertEqual(starting_life - attacker_power, session.state.players["C"].life)
+        self.until(session, lambda game: game.state.active_player == "A")
+        self.assertTrue(session.state.current_turn.extra)
+        self.assertFalse(session.state.continuous_effects)
+        for card in (attacker, blocker):
+            self.assertFalse(session.state.cards[card.object_id].goaded_by)
+        self.replay(session, load=True)
 
     def test_actual_goad_expires_before_survivors_extra_turn_after_departure(self):
         # CR 500.7, 701.15a, and 800.4m. The Strixhaven notes for Sly

@@ -5,7 +5,8 @@ from . import regex_working_set as re
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..creature_subtypes import canonical_creature_subtype
 from ..public_history_query_model import (
-    PublicHistoryQuerySpec, current_plus_one_counter_placement_query,
+    PublicHistoryQuerySpec, current_creature_counter_placement_query, current_plus_one_counter_placement_query,
+    current_source_counter_receipt_query,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..continuous_conditions import (
@@ -29,6 +30,21 @@ def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),
 
 
 def _counter_placement_condition(text, *, source_pattern):
+    if re.fullmatch(r"you(?:'ve| have)? put a counter on a creature this turn", text):
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+            amount=1,
+            schema_version=8,
+            history_query=current_creature_counter_placement_query(),
+        )
+    received = re.fullmatch(r"a counter was put on (?P<recipient>.+) this turn", text)
+    if received is not None and source_pattern is not None and re.fullmatch(source_pattern, received['recipient'], re.I):
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+            amount=1,
+            schema_version=8,
+            history_query=current_source_counter_receipt_query(),
+        )
     match = re.fullmatch(
         r"you(?:'ve| have) put one or more \+1/\+1 counters on (?P<recipient>.+) this turn",
         text,
@@ -133,6 +149,8 @@ def fixed_public_history_condition(text, *, source_pattern=None):
         return _condition('spell_cast',amount=amount,types_all=(kind,) if kind in {'artifact','creature'} else (),
             types_any=('instant','sorcery') if kind=='instant or sorcery' else (),excluded_types=('creature',) if kind=='noncreature' else ())
     if text=='you attacked this turn':return _condition('creature_attacked')
+    if text == "you haven't attacked this turn":
+        return _condition("creature_attacked", amount=0, at_most=True)
     if text in {'a permanent left the battlefield under your control this turn','a permanent you controlled left the battlefield this turn'}:
         return _condition('permanent_left')
     discard = re.fullmatch(r"(you|a player|an opponent) discarded a card this turn", text)

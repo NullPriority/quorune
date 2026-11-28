@@ -15,8 +15,10 @@ from common import ROOT
 from quorune.util import stable_json
 from scripts import build_test_database as database_builder
 from scripts.compact_ci_report import (
+    COMPACT_CI_REPORT_MARKDOWN_PATH,
     COMPACT_CI_REPORT_PATH,
     build_dependency_report,
+    dependency_report_bytes,
     dependency_report_json,
     load_dependency_report,
     report_markdown,
@@ -116,6 +118,147 @@ class TemporaryDependencyRepository:
         )
 
 
+class StaticBuilderDependencyTests(unittest.TestCase):
+    def test_lookup_wrapper_keeps_the_database_boundary_at_its_caller(self):
+        from scripts.compact_ci_dependencies import discover_module_requirements
+
+        source = """
+def register_card(db, name):
+    "Perform the first lookup on the caller's database."
+    return db.lookup(name)
+
+def register_on_another_database(db, name):
+    db = another_database()
+    return db.lookup(name)
+
+class Local:
+    def setUpClass(cls):
+        build_fixture_database([ROOT / "tests/fixtures/local.json"], local_path)
+        cls.db = CardDatabase(local_path)
+    def select(self, name):
+        return register_card(self.db, name)
+    def rebound(self, name):
+        return register_on_another_database(self.db, name)
+
+class Shared:
+    def setUpClass(cls):
+        cls.db = CardDatabase(DB_PATH)
+    def select(self):
+        return register_card(name="Pinned Card", db=self.db)
+    def unresolved(self, name):
+        return register_card(self.db, name)
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests/fixtures").mkdir(parents=True)
+            (root / "tests/fixtures/local.json").write_text("{}", encoding="utf-8")
+            (root / "tests/test_lookup_wrapper.py").write_text(source, encoding="utf-8")
+            static, dynamic, errors = discover_module_requirements("test_lookup_wrapper", root=root)
+            _, requested, requested_errors = discover_module_requirements(
+                "test_lookup_wrapper",
+                root=root / "tests" / "..",
+                declared_sites=frozenset({
+                    ("tests/test_lookup_wrapper.py", "Local.select"),
+                    ("tests/test_lookup_wrapper.py", "Local.absent"),
+                }),
+            )
+
+        self.assertFalse(errors)
+        self.assertFalse(requested_errors)
+        self.assertEqual(
+            {"Local.select", "Local.rebound", "Shared.unresolved"},
+            {row.symbol for row in requested},
+        )
+        self.assertEqual(
+            {("local_fixture_file", "tests/fixtures/local.json", "Local.setUpClass"),
+             ("card_name", "Pinned Card", "Shared.select")},
+            {(row.kind, row.value, row.provenance.symbol) for row in static},
+        )
+        self.assertEqual(
+            {("card_name", "Local.rebound"), ("card_name", "Shared.unresolved")},
+            {(row.kind, row.symbol) for row in dynamic},
+        )
+
+    def test_shared_compact_deck_entries_resolve_without_treating_local_decks_as_inputs(self):
+        from scripts.compact_ci_dependencies import discover_module_requirements
+
+        source = """
+COMMANDER = "Pinned Commander"
+class Shared:
+    def setUpClass(cls):
+        cls.db = CardDatabase(DB_PATH)
+    def session(self, unresolved):
+        return [DeckEntry(COMMANDER), DeckEntry(name="Pinned Card"), DeckEntry(unresolved)]
+    def shadowed(self, COMMANDER):
+        return DeckEntry(COMMANDER)
+class Local:
+    def setUpClass(cls):
+        cls.db = CardDatabase(own_fixture_path)
+    def session(self):
+        return [DeckEntry("Local Only")]
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            (root / "tests/test_deck_entries.py").write_text(source, encoding="utf-8")
+            static, dynamic, errors = discover_module_requirements("test_deck_entries", root=root)
+
+        self.assertFalse(errors)
+        self.assertFalse(dynamic)
+        self.assertEqual(
+            {("card_name", "Pinned Commander", "Shared.session"), ("card_name", "Pinned Card", "Shared.session")},
+            {(row.kind, row.value, row.provenance.symbol) for row in static},
+        )
+
+    def test_local_builder_keeps_checked_in_fixture_paths_with_independent_static_provenance(self):
+        from scripts.compact_ci_dependencies import discover_module_requirements
+
+        source = """
+FIXTURE = ROOT / "tests/fixtures/pinned.json"
+class Local:
+    def setUpClass(cls):
+        local_fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([FIXTURE, temp_generated], output)
+        build_fixture_database([local_fixtures / name for name in ("first.json", "second.json")], output)
+        build_fixture_database([ROOT / "outside.json", local_fixtures / "missing.json"], output)
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests/fixtures").mkdir(parents=True)
+            for relative in ("tests/fixtures/pinned.json", "tests/fixtures/first.json",
+                             "tests/fixtures/second.json", "outside.json"):
+                (root / relative).write_text("{}", encoding="utf-8")
+            (root / "tests/test_local_builder.py").write_text(source, encoding="utf-8")
+            static, dynamic, errors = discover_module_requirements("test_local_builder", root=root)
+
+        self.assertFalse(errors)
+        self.assertFalse(dynamic)
+        self.assertEqual(
+            {("local_fixture_file", f"tests/fixtures/{name}", "Local.setUpClass")
+             for name in ("pinned.json", "first.json", "second.json")},
+            {(row.kind, row.value, row.provenance.symbol) for row in static},
+        )
+
+
+    def test_local_builder_does_not_require_shared_compact_fixture_membership(self):
+        fixture = "tests/fixtures/local-only.json"
+        with tempfile.TemporaryDirectory() as directory:
+            repository = TemporaryDependencyRepository(
+                Path(directory),
+                cards=[card("Shared Card", "00000000-0000-4000-8000-000000000001")],
+                source=f'build_fixture_database([ROOT / "{fixture}"], output)\n',
+                extra_fixtures={fixture: []},
+            )
+            result = repository.report()
+
+        self.assertTrue(result["closed"])
+        self.assertEqual(1, result["fixture_count"])
+        self.assertEqual([], result["missing_fixture_requirements"])
+        local, = result["requirement_provenance"]
+        self.assertEqual("local_fixture_file", local["kind"])
+        self.assertEqual({"fixture_file": fixture}, local["resolution"])
+
+
 class CompactDependencyArtifactTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
@@ -147,7 +290,7 @@ class CompactDependencyArtifactTests(unittest.TestCase):
             "*.json text eol=lf\n*.md text eol=lf\n", encoding="utf-8",
         )
         self.json_output = self.root / COMPACT_CI_REPORT_PATH
-        self.markdown_output = self.json_output.with_suffix(".md")
+        self.markdown_output = self.root / COMPACT_CI_REPORT_MARKDOWN_PATH
         self.json_output.parent.mkdir()
         for path in (self.json_output, self.markdown_output, self.upstream):
             path.write_text("{}\n", encoding="utf-8")
@@ -159,9 +302,7 @@ class CompactDependencyArtifactTests(unittest.TestCase):
 
         self.report = build_dependency_report(root=self.root)
         self.assertTrue(self.report["closed"])
-        self.json_output.write_text(
-            dependency_report_json(self.report), encoding="utf-8", newline="\n",
-        )
+        self.json_output.write_bytes(dependency_report_bytes(self.report))
         self.markdown_output.write_text(report_markdown(self.report), encoding="utf-8", newline="\n")
 
     def cli(self, *arguments):
@@ -189,32 +330,41 @@ class CompactDependencyArtifactTests(unittest.TestCase):
         requirements.append({**requirement, "resolution": None})
         report = {**self.report, "requirement_provenance": requirements}
         legacy = stable_json(report) + "\n"
-        self.json_output.write_text(legacy, encoding="utf-8", newline="\n")
-        self.assertEqual(report, load_dependency_report(self.json_output))
+        historical_path = self.json_output.with_suffix("")
+        historical_path.write_text(legacy, encoding="utf-8", newline="\n")
+        self.assertEqual(report, load_dependency_report(historical_path))
 
         packed = dependency_report_json(report)
         stored = json.loads(packed)
         self.assertEqual([resolution], stored["requirement_resolutions"])
         self.assertLess(len(packed), len(legacy) // 2)
-        self.json_output.write_text(packed, encoding="utf-8", newline="\n")
+        historical_path.write_text(packed, encoding="utf-8", newline="\n")
+        self.assertEqual(report, load_dependency_report(historical_path))
+        compressed = dependency_report_bytes(report)
+        self.assertLess(len(compressed), len(packed))
+        self.json_output.write_bytes(compressed)
         self.assertEqual(report, load_dependency_report(self.json_output))
-        self.assertEqual(packed, dependency_report_json(load_dependency_report(self.json_output)))
+        self.assertEqual(compressed, dependency_report_bytes(load_dependency_report(self.json_output)))
 
         for bad_reference in (True, -1, 1):
             with self.subTest(reference=bad_reference):
                 stored["requirement_provenance"][0]["resolution"] = bad_reference
-                self.json_output.write_text(stable_json(stored), encoding="utf-8", newline="\n")
+                historical_path.write_text(stable_json(stored), encoding="utf-8", newline="\n")
                 with self.assertRaisesRegex(ValueError, "Invalid compact dependency resolution reference"):
-                    load_dependency_report(self.json_output)
+                    load_dependency_report(historical_path)
+        self.json_output.write_bytes(compressed[:-1])
+        with self.assertRaisesRegex(ValueError, "Invalid gzip compact dependency report"):
+            load_dependency_report(self.json_output)
 
     def test_compact_artifact_cli_checks_contents_and_preserves_consumer_line_endings(self):
         self.assertEqual(
             self.cli(), self.cli("--emit-artifact", str(self.artifact)),
         )
-        converted = {}
-        for path in (self.json_output, self.markdown_output):
-            converted[path] = path.read_bytes().replace(b"\n", b"\r\n")
-            path.write_bytes(converted[path])
+        converted = {
+            self.json_output: self.json_output.read_bytes(),
+            self.markdown_output: self.markdown_output.read_bytes().replace(b"\n", b"\r\n"),
+        }
+        self.markdown_output.write_bytes(converted[self.markdown_output])
         with mock.patch.object(
             database_builder, "build_dependency_report",
             side_effect=AssertionError("A verified artifact must avoid the full audit"),
@@ -395,7 +545,7 @@ class CompactDependencyArtifactTests(unittest.TestCase):
         result, writes = self.run_finalization(mutate)
         self.assertEqual(3, result["passes"])
         self.assertEqual(2, writes)
-        updated = json.loads(self.json_output.read_bytes())
+        updated = load_dependency_report(self.json_output)
         self.assertNotEqual(self.report["source_tree_fingerprint"], updated["source_tree_fingerprint"])
 
 

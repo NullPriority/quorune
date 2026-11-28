@@ -5,6 +5,7 @@ from dataclasses import replace
 
 from ..cycling_abilities import (
     CYCLING_MECHANIC_ID,
+    VARIABLE_CYCLING_CAPABILITY,
     compile_ordinary_cycling_ability,
     compile_typecycling_ability,
     ordinary_cycling_handler_descriptor,
@@ -142,8 +143,14 @@ def ordinary_cycling_keyword_node(
             mechanics=mechanics,
             residual_ids=(residual_id,),
         )
+    from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
+
+    variable = spec.announced_x_symbols is not None
+    direct = ("activation.cycling.hand", "zone.draw.library_to_hand")
+    if variable:
+        direct = (*direct, VARIABLE_CYCLING_CAPABILITY, ANNOUNCED_ACTIVATION_X_CAPABILITY)
     gate = explicit_capabilities_gate(
-        ("activation.cycling.hand", "zone.draw.library_to_hand"),
+        direct,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -172,7 +179,7 @@ def ordinary_cycling_keyword_node(
         event="activate",
         lowerable=True,
         exact=not residual_ids,
-        template_id="ordinary-cycling-activation-v1",
+        template_id="ordinary-cycling-activation-v2" if variable else "ordinary-cycling-activation-v1",
         cost=activated_ability_cost(spec.to_activated_ability()),
         effects=(
             {
@@ -201,5 +208,47 @@ def ordinary_cycling_keyword_node(
 __all__ = [
     "TYPECYCLING_CAPABILITY_ID",
     "ordinary_cycling_keyword_node",
+    "cycling_x_token_node",
     "typecycling_keyword_node",
 ]
+
+
+
+def cycling_x_token_node(
+    *, record, node_id, line, material_line, span, source_name, capability_registry, capability_profile,
+):
+    from . import regex_working_set as re
+    from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+    from ..rules.cycling_activation_x import TRIGGER_CAPABILITIES, cycling_x_token_effect
+
+    if not re.fullmatch(
+        r"When you cycle this card, create an X/X blue Shark creature token with flying\.",
+        material_line.strip(), re.I,
+    ):
+        return None
+    if capability_registry is None or record.faces:
+        return None
+    prices = [
+        compile_ordinary_cycling_ability(
+            material_line=re.sub(r"\s+\([^()]*\)\s*$", "", raw), oracle_line=raw, line_index=index,
+        )
+        for index, raw in enumerate(record.oracle_text.splitlines())
+    ]
+    if sum(price is not None and price.announced_x_symbols == 1 for price in prices) != 1:
+        return None
+    binding = fixed_counter_trigger_binding(material_line, card_name=source_name)
+    if binding is None or (binding.event.value, binding.variant) != ("card.cycled.self", "source_cycles"):
+        return None
+    gate = explicit_capabilities_gate(
+        TRIGGER_CAPABILITIES, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if gate.blockers or gate.closure is None:
+        return None
+    return OracleNode(
+        node_id=node_id, kind="triggered_ability", text=line, span=span, active_zone="hand",
+        event=binding.event.value, event_condition=binding.event_condition,
+        lowerable=True, exact=True, template_id="self-cycled-announced-x-shark-token-v1",
+        effects=(cycling_x_token_effect(),), mechanics=("cr-603-handling-triggered-abilities", *binding.event_mechanics),
+        capability_dependencies=gate.capabilities, capability_closure=gate.closure.reachable,
+        capability_profile=gate.closure.profile, capability_fingerprint=gate.closure.fingerprint,
+    )

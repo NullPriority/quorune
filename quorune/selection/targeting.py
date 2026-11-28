@@ -7,7 +7,8 @@ from ..continuous_effect_state import fixed_target_color_effects
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..announced_damage import announced_allocation_details
+from ..announced_counter_allocation import announce_target_allocations
+from ..entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD
 from ..errors import GameRuleError
 from ..model import CardInstance, StackItem
 from ..object_query import exact_numeric_characteristic
@@ -17,13 +18,18 @@ from ..object_predicate import (
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.modal_selection import canonical_modes
+from ..rules.private_opponent_top_exile import has_private_top_exile_designation
+from ..zone_object_state import face_down_exile_viewers
 from ..semantics import SemanticProgram
 from ..target_characteristics import TargetCharacteristicSnapshot
-from ..target_history import target_damage_history_matches, target_player_history_matches
+from ..target_history import (
+    target_damage_history_matches, target_graveyard_battlefield_arrival_matches, target_player_history_matches,
+)
 from ..target_predicates import TargetPredicateError, materialize_greatest_power_target_rows, target_predicate_matches
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
 from ..targets import (
+    DEFENDING_CONTROLLER_RELATION,
     TargetGroup,
     TargetPlan,
     available_modes,
@@ -41,9 +47,10 @@ from .target_query import (
     target_snapshot,
 )
 from .target_validation import (
-    CopyTargetValidation, target_choice_requirement, shared_permanent_type_pair_matches, shared_type_pair_candidates,
-    shared_type_pair_resolution_rejections, single_choice_required_target_candidates,
-    target_assignment_meets_requirement, validate_grouped_target_assignment,
+    CopyTargetValidation, graveyard_target_mana_value, target_choice_requirement, shared_permanent_type_pair_matches, shared_type_pair_candidates,
+    optional_player_controlled_target_groups, shared_type_pair_resolution_rejections,
+    single_choice_required_target_candidates,
+    target_assignment_meets_requirement, target_mana_value_matches_snapshot, validate_grouped_target_assignment,
 )
 
 
@@ -106,6 +113,7 @@ def _target_group_public_state_matches(
                 and card.entered_battlefield_turn_sequence == turn_sequence
             ),
             tapped=card.tapped,
+            attacking=card.attacking is not None,
             **dict(attachment_state or {}),
         )
     except ObjectQueryError as exc:
@@ -160,6 +168,9 @@ def _target_group_combat_state_matches(
         return attacking
     if group.combat_state == "attacking_or_tapped":
         return attacking or bool(card and card.tapped)
+    if group.combat_state == "blocked_attacking":
+        return bool(card and card.attacking is not None and card.object_id in combat.attackers
+                    and card.object_id in combat.blockers)
     if group.combat_state == "unblocked_attacking":
         from ..combat_relationship_state import is_unblocked_attacker_after_declaration
 
@@ -218,6 +229,9 @@ def _target_group_object_facts_match(
         )
     return bool(
         history_matches
+        and (not group.graveyard_from_battlefield_this_turn or target_graveyard_battlefield_arrival_matches(
+            history=history, turn_sequence=turn_sequence, actor=actor, card=card,
+        ))
         and (
             group.commander is None
             or bool(card and card.is_commander) == group.commander
@@ -314,6 +328,26 @@ class TargetSelectionOwnerMixin:
         return value is not None and value != controller
 
     @characteristic_read_method
+    def _stack_ability_source_predicate_fields(self, item, predicate):
+        from ..ability_source_information import (
+            ABILITY_SOURCE_FILTERS, complete_ability_source_information,
+            DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER, retains_ability_source_commander_status,
+        )
+
+        if predicate not in ABILITY_SOURCE_FILTERS:
+            return {}
+        needs_legendary = predicate == DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER
+        facts = None
+        if (item.kind in {"activated_ability", "triggered_ability"}
+                and complete_ability_source_information(self.state)):
+            facts = stack_targeting_source(self, item, phased_out_lki=needs_legendary)
+        fields = {"ability_source_types": facts.card_types if facts is not None else None}
+        if predicate == "colorless_ability_source":
+            fields["ability_source_colors"] = facts.colors if facts is not None else None
+        if needs_legendary and retains_ability_source_commander_status(self.state):
+            fields["ability_source_identity"] = facts
+        return fields
+
     def _target_candidate_rows(
         self,
         controller: str,
@@ -348,14 +382,6 @@ class TargetSelectionOwnerMixin:
                 stack_source_types, _, _ = self._type_parts(
                     str(source_data.get("type_line") or "")
                 )
-                ability_source_types = None
-                ability_source_colors = None
-                from ..ability_source_information import ABILITY_SOURCE_FILTERS, complete_ability_source_information
-                if group.predicate in ABILITY_SOURCE_FILTERS and item.kind in {'activated_ability','triggered_ability'}:
-                    if complete_ability_source_information(self.state):
-                        source_facts = stack_targeting_source(self,item)
-                        ability_source_types = source_facts.card_types
-                        ability_source_colors = source_facts.colors
                 characteristics = _target_characteristic_row_values(data, card=card)
                 if item.kind in {"spell", "spell_copy"}:
                     from .exile_cast import mana_value_of_cost
@@ -376,8 +402,7 @@ class TargetSelectionOwnerMixin:
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
-                        **({'ability_source_types':ability_source_types} if group.predicate in ABILITY_SOURCE_FILTERS else {}),
-                        **({'ability_source_colors':ability_source_colors} if group.predicate == 'colorless_ability_source' else {}),
+                        **self._stack_ability_source_predicate_fields(item, group.predicate),
                     }
                 )
         for zone in (
@@ -391,7 +416,12 @@ class TargetSelectionOwnerMixin:
             for seat in self.active_seats:
                 for object_id in self.state.players[seat].zones.get(zone, []):
                     card = self.state.cards[object_id]
-                    if card.face_down and controller not in card.known_to:
+                    if zone == "battlefield" and card.phased_out:
+                        continue
+                    known_viewers = card.known_to
+                    if zone == "exile" and card.face_down and has_private_top_exile_designation(card):
+                        known_viewers = face_down_exile_viewers(self.state, card)
+                    if card.face_down and controller not in known_viewers:
                         # A face-down object in a public zone remains a public,
                         # targetable object.  Candidate generation must use only
                         # its public characteristics and never its hidden front.
@@ -424,6 +454,26 @@ class TargetSelectionOwnerMixin:
         except TargetPredicateError as exc:
             raise GameRuleError(str(exc)) from exc
 
+    def _target_row_player_relations_match(self, controller, group, row, acting_source):
+        target_controller = str(row.get("controller"))
+        if group.controller_relation == DEFENDING_CONTROLLER_RELATION:
+            if (self.state.phase != "combat" or target_controller == self.state.active_player
+                    or target_controller not in self.active_seats):
+                return False
+        elif not self._relation_matches(target_controller, controller, group.controller_relation):
+            return False
+        if group.controller_seat is not None and str(row.get("controller")) != group.controller_seat:
+            return False
+        if group.owner_seat is not None and row.get("owner") != group.owner_seat:
+            return False
+        if group.owner_relation == "spell_owner":
+            from ..rules.spell_owner_targets import target_has_spell_owner
+            if not target_has_spell_owner(acting_source, row.get("owner"), row.get("category")):
+                return False
+        elif not self._relation_matches(str(row.get("owner")), controller, group.owner_relation):
+            return False
+        return row["category"] != "player" or self._relation_matches(str(row["ref"]), controller, group.player_relation)
+
     def _target_row_matches(
         self,
         controller: str,
@@ -439,6 +489,11 @@ class TargetSelectionOwnerMixin:
         if (group.source_exclusion or group.another) and ref == source_ref:
             return False
         card = row.get("card")
+        if group.exclude_source_incarnation:
+            if acting_source is None or acting_source.logical_object_id is None:
+                raise GameRuleError("Other-target legality requires the original source incarnation")
+            if isinstance(card, CardInstance) and card.logical_object_id == acting_source.logical_object_id:
+                return False
         if (
             row.get("category") == "card"
             and isinstance(card, CardInstance)
@@ -459,30 +514,13 @@ class TargetSelectionOwnerMixin:
             value.casefold() for value in group.categories
         }:
             return False
-        if not self._relation_matches(
-            str(row.get("controller")),
-            controller,
-            group.controller_relation,
-        ):
-            return False
-        if (
-            group.controller_seat is not None
-            and str(row.get("controller")) != group.controller_seat
-        ):
-            return False
-        if group.owner_relation=='spell_owner':
-            from ..rules.spell_owner_targets import target_has_spell_owner
-            if not target_has_spell_owner(acting_source,row.get('owner'),row.get('category')):
-                return False
-        elif not self._relation_matches(str(row.get('owner')),controller,group.owner_relation):
-            return False
-        if row["category"] == "player" and not self._relation_matches(
-            str(row["ref"]),
-            controller,
-            group.player_relation,
-        ):
+        if not self._target_row_player_relations_match(controller, group, row, acting_source):
             return False
         characteristics = TargetCharacteristicSnapshot.from_row(row)
+        if group.entry_exchange_target is not None and not group.entry_exchange_target.matches(
+            controller=row.get("controller"), types=characteristics.types,
+        ):
+            return False
         if not characteristics.matches(group):
             return False
         types = set(characteristics.types)
@@ -559,6 +597,7 @@ class TargetSelectionOwnerMixin:
                 source_incarnation=getattr(acting_source, "logical_object_id", None),
                 source_chosen_creature_type=getattr(acting_source, "chosen_creature_type", None),
                 source_chosen_color=getattr(acting_source, "chosen_color", None),
+                reserved_graveyard_source_id=getattr(acting_source, "reserved_graveyard_source_id", None),
             ):
                 return False
         except TargetPredicateError as exc:
@@ -648,6 +687,8 @@ class TargetSelectionOwnerMixin:
             for _ in range(group.min_targets)
         ]
 
+        optional_relations = optional_player_controlled_target_groups(plan)
+
         def choose(
             index: int,
             selected: dict[str, list[str]],
@@ -657,6 +698,8 @@ class TargetSelectionOwnerMixin:
                 for left_group, right_group in plan.same_player_groups:
                     left = selected.get(left_group, [])
                     right = selected.get(right_group, [])
+                    if left and not right and (left_group, right_group) in optional_relations:
+                        continue
                     if not left or not right:
                         return False
                     if any(
@@ -679,6 +722,12 @@ class TargetSelectionOwnerMixin:
                     continue
                 if group.distinct_controllers and any(self._target_snapshot(ref).get('controller')==self._target_snapshot(other).get('controller') for other in own):
                     continue
+                if group.distinct_mana_values:
+                    value = graveyard_target_mana_value(self._target_snapshot(ref))
+                    if value is None or any(
+                        value == graveyard_target_mana_value(self._target_snapshot(other)) for other in own
+                    ):
+                        continue
                 if plan.globally_distinct and ref in globally_used:
                     continue
                 if any(
@@ -708,6 +757,14 @@ class TargetSelectionOwnerMixin:
             return False
 
         return choose(0, {}, set())
+
+    def _public_target_group(self, group: TargetGroup, refs: Sequence[str]) -> dict[str, Any]:
+        public = group.public_dict(refs)
+        if group.distinct_mana_values:
+            values = {ref: graveyard_target_mana_value(self._target_snapshot(ref)) for ref in refs}
+            known = {ref: value for ref, value in values.items() if value is not None}
+            public.update(legal_refs=list(known), max=min(group.max_targets, len(set(known.values()))))
+        return public
 
     def _public_target_schema(
         self,
@@ -752,7 +809,7 @@ class TargetSelectionOwnerMixin:
                 legal_modes.append(mode)
                 mode_schemas[mode] = {
                     "groups": [
-                        group.public_dict(candidates[group.group_id])
+                        self._public_target_group(group, candidates[group.group_id])
                         for group in plan.groups
                     ]
                 }
@@ -823,13 +880,19 @@ class TargetSelectionOwnerMixin:
             )
             return None
         candidates = single_choice_required_target_candidates(plan, candidates, flagbearers)
+        for player_group, permanent_group in optional_player_controlled_target_groups(plan):
+            eligible_players = frozenset(candidates[player_group])
+            candidates[permanent_group] = [
+                ref for ref in candidates[permanent_group]
+                if self._target_snapshot(ref).get("controller") in eligible_players
+            ]
         result = copy.deepcopy(dict(schema))
         result["groups"] = [
-            group.public_dict(candidates[group.group_id])
+            self._public_target_group(group, candidates[group.group_id])
             for group in plan.groups
         ]
         if len(plan.groups) == 1:
-            result["legal_refs"] = list(candidates[plan.groups[0].group_id])
+            result["legal_refs"] = list(result["groups"][0]["legal_refs"])
         requirement = target_choice_requirement(self, plan, candidates, flagbearers)
         if requirement is not None:
             result["target_choice_requirement"] = requirement
@@ -994,8 +1057,32 @@ class TargetSelectionOwnerMixin:
         else:
             from ..rules.event_player_targets import bound_event_player_controller_schema
             schema=bound_event_player_controller_schema(program.target_schema,item.context) if program is not None else None
+        from ..rules.entry_control_exchange import bind_entry_exchange_target_schema
+        from ..rules.controlled_destruction_source_counters import bound_creature_role_schema
+        from ..rules.announced_x_modal import bind_announced_x_modal_stack_schema
+
+        from ..rules.gift_card_spells import bind_gift_stack_schema
+
+        try:
+            schema = bind_gift_stack_schema(program, item, schema)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        try:
+            schema = bind_announced_x_modal_stack_schema(program, item, schema)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        from ..rules.gift_fish_spells import bind_gift_fish_stack_schema
+
+        try:
+            schema = bind_gift_fish_stack_schema(program, item, schema)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        schema = bound_creature_role_schema(schema, item.context, self.seats)
+        schema = bind_entry_exchange_target_schema(self, item, program, schema)
         if schema is None:return None
+        from ..rules.modal_selection import bind_distinct_turn_trigger_modes
         from ..target_cardinality import bind_any_number_target_schema
+        schema = bind_distinct_turn_trigger_modes(self.state, item, schema)
         return bind_any_number_target_schema(schema,
             len(self.state.cards)+len(self.state.players)+len(self.state.stack))
 
@@ -1055,16 +1142,20 @@ class TargetSelectionOwnerMixin:
         )
         if item is None:
             raise GameRuleError("The targeted semantic object is no longer on the stack")
+        program = self.semantics.get(item.semantic_key)
+        target_schema = self._stack_target_schema(item, program)
+        legality_controller = seat
+        if continuation_payload.get("trigger_creation") and target_schema and ENTRY_EXCHANGE_TARGET_FIELD in target_schema:
+            from ..rules.entry_control_exchange import entry_exchange_target_chooser
+            if seat != entry_exchange_target_chooser(target_schema):
+                raise GameRuleError("The entry exchange target belongs to its entrant controller")
+            legality_controller = item.controller
         if "selection" in raw_continuation:
             if selection.source_ref != self._stack_source_ref(item):
                 raise GameRuleError("Semantic target source identity changed")
-            target_schema = self._stack_target_schema(
-                item,
-                self.semantics.get(item.semantic_key),
-            )
             current_public_schema = (
                 self._public_target_schema(
-                    seat,
+                    legality_controller,
                     target_schema,
                     source_ref=(
                         self._stack_source_ref(item)
@@ -1080,14 +1171,12 @@ class TargetSelectionOwnerMixin:
                 "public_schema"
             ):
                 raise GameRuleError("Semantic target candidates changed")
-        program = self.semantics.get(item.semantic_key)
         targets = self._normalize_target_submission(
             response.get("targets")
         )
         modes = [str(value) for value in response.get("modes") or []]
-        target_schema = self._stack_target_schema(item, program)
         validated, grouped = self._validate_semantic_targets(
-            seat,
+            legality_controller,
             program,
             targets,
             modes=modes,
@@ -1098,7 +1187,9 @@ class TargetSelectionOwnerMixin:
         if target_schema is None:
             raise GameRuleError("Semantic target schema is no longer available")
         try:
-            allocation = announced_allocation_details(target_schema, validated, response)
+            allocation = announce_target_allocations(
+                target_schema, validated, response, trigger_creation=continuation_payload.get("trigger_creation"),
+            )
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
         item.targets = validated
@@ -1116,6 +1207,12 @@ class TargetSelectionOwnerMixin:
         item.context["targets_revalidated"] = False
         item.context.update(allocation)
         if continuation_payload.get("trigger_creation"):
+            from ..rules.modal_selection import commit_distinct_turn_trigger_mode
+            from ..trigger_targeting import remove_declined_optional_trigger
+            commit_distinct_turn_trigger_mode(self, item, target_schema)
+            if remove_declined_optional_trigger(self, item, program):
+                self._grant_priority(self.state.active_player)
+                return
             from ..rules.target_announcements import dispatch_target_announcements
             dispatch_target_announcements(self, item)
             from ..rules.crime import record_crime_for_stack_placement
@@ -1126,15 +1223,26 @@ class TargetSelectionOwnerMixin:
         else:
             self._prepare_stack_resolution()
 
-    def _invalidate_changed_target_pair(self, item, plan, grouped, flattened):
-        rejected = shared_type_pair_resolution_rejections(self, plan.shared_permanent_type_pair, grouped)
-        for group_id, ref in rejected:
-            grouped[group_id] = [None]
+    def _invalidate_changed_target_pair(self, item, plan, announced, grouped, flattened):
+        from ..rules.paired_target_controllers import paired_controller_resolution_rejections
+
+        types = shared_type_pair_resolution_rejections(self, plan.shared_permanent_type_pair, grouped)
+        controllers = paired_controller_resolution_rejections(
+            self, plan, announced, grouped, item.context.get("target_snapshots", {}),
+        )
+        rejected = dict.fromkeys(types, "shared_permanent_type_changed")
+        rejected.update(dict.fromkeys(controllers, "paired_target_controllers_no_longer_distinct"))
+        for (group_id, ref), reason in rejected.items():
+            group = grouped[group_id]
+            group[group.index(ref)] = None
             flattened[flattened.index(ref)] = None
             self._increment_optimization(item.controller, "targets_became_illegal_on_resolution")
+            message = (f"{ref} no longer shares the required type for {item.ref}."
+                       if reason == "shared_permanent_type_changed"
+                       else f"{ref} no longer has a distinct controller for {item.ref}.")
             self._log(
-                item.controller, "target.illegal", f"{ref} no longer shares the required type for {item.ref}.",
-                {"stack": item.ref, "target": ref, "group": group_id, "reason": "shared_permanent_type_changed"},
+                item.controller, "target.illegal", message,
+                {"stack": item.ref, "target": ref, "group": group_id, "reason": reason},
                 importance=2,
             )
         return len(rejected)
@@ -1175,6 +1283,10 @@ class TargetSelectionOwnerMixin:
         valid_count = 0
         selected_count = 0
         current_groups: dict[str, list[Any]] = {}
+        related_players = {
+            permanent_group: next(iter(grouped.get(player_group, ())), None)
+            for player_group, permanent_group in optional_player_controlled_target_groups(plan)
+        }
         for group in plan.groups:
             legal = set(candidates[group.group_id])
             current: list[Any] = []
@@ -1194,7 +1306,10 @@ class TargetSelectionOwnerMixin:
                 )
                 from .target_validation import target_controller_matches_snapshot
                 controller_matches=target_controller_matches_snapshot(self,group,ref,original_snapshot)
-                if ref in legal and identity_matches and controller_matches:
+                if controller_matches and group.group_id in related_players:
+                    controller_matches = self._target_snapshot(ref).get("controller") == related_players[group.group_id]
+                mana_value_matches = target_mana_value_matches_snapshot(self, group, ref, original_snapshot)
+                if ref in legal and identity_matches and controller_matches and mana_value_matches:
                     current.append(ref)
                     updated.append(ref)
                     valid_count += 1
@@ -1222,7 +1337,7 @@ class TargetSelectionOwnerMixin:
                     importance=2,
                 )
             current_groups[group.group_id] = current
-        valid_count -= self._invalidate_changed_target_pair(item, plan, current_groups, updated)
+        valid_count -= self._invalidate_changed_target_pair(item, plan, grouped, current_groups, updated)
         item.targets = updated
         item.context["target_groups_current"] = current_groups
         item.context["targets_revalidated"] = True

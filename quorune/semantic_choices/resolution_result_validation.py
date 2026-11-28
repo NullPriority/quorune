@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from ..cast_origin_replacement import MAIN_PHASE_CAST_DISCARD_VERSION
+from ..graveyard_cast_reanimation_copy import GRAVEYARD_REANIMATION_COPY_VERSION
 from ..resolution_conditions import RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
 from .model import SemanticChoiceError
 
@@ -30,16 +32,32 @@ def _closed_apnap_result(child, actor, mechanics):
 
 def validate_resolution_result_children(effect, effects, otherwise, context):
     from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
-    from .optional_effect import _represented_effect
+    from .optional_effect import _represented_effect, _represented_targeted_player_discard
+
+    from ..cast_origin_replacement import MAIN_PHASE_OPTIONAL_EXILE_VERSION
+
+    if effect.get("schema_version") == MAIN_PHASE_OPTIONAL_EXILE_VERSION:
+        for child in (*effects, *otherwise):
+            exile = child["effects"][0] if child["op"] == "offer_optional_effect" else child
+            if exile["card"] is not None:
+                _represented_effect(exile, actor=context.actor, query=context.query)
+        return
 
     for children, mechanics in ((effects, effect['mechanic_ids']), (otherwise, effect.get('otherwise_mechanic_ids', ()))):
         for child in children:
+            if effect.get("schema_version") == GRAVEYARD_REANIMATION_COPY_VERSION and child.get("op") == "offer_optional_effect":
+                # Its complete optional self-copy child was decoded by the cast-origin validator.
+                continue
             try:
                 if controlled_creature_counter_choice_dependencies(child):
                     continue
             except (TypeError, ValueError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
-            if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') in {3, 4, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}:
+            if effect.get("schema_version") == MAIN_PHASE_CAST_DISCARD_VERSION:
+                _represented_targeted_player_discard(
+                    child, actor=context.actor, query=context.query, allow_targeted_four=True,
+                )
+            elif child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') in {3, 4, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}:
                 _closed_apnap_result(child, context.actor, mechanics)
             elif child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 2:
                 from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities

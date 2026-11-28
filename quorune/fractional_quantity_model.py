@@ -14,6 +14,8 @@ HALF_CHOICE_MECHANIC = 'half-affected-player-domain-choice'
 HALF_CHOICE_CAPABILITY = 'choice.affected_player.half_domain'
 HALF_MILL_MECHANIC = 'half-current-library-mill'
 HALF_MILL_CAPABILITY = 'zone.mill.half_library'
+HALF_LIBRARY_DRAW_MECHANIC = 'half-target-library-draw'
+HALF_LIBRARY_DRAW_CAPABILITY = 'zone.draw.half_library'
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,3 +46,23 @@ class HalfQuantitySpec:
                 or value['kind'] != HALF_QUANTITY_KIND):
             raise ValueError('Half quantity fields are missing or unknown')
         return cls(value['rounding'], value['divisor'], value['schema_version'])
+
+
+def is_half_library_draw(effect):
+    count = effect.get("count")
+    return (effect.get("op") == "draw" and isinstance(count, Mapping)
+            and count.get("kind") == HALF_QUANTITY_KIND)
+
+
+def half_library_draw_effect():
+    return {"op": "draw", "player": "$target.0", "count": HalfQuantitySpec("up").to_dict(), "private": True}
+
+
+def half_library_draw_fraction(effect):
+    if (set(effect) != {"op", "player", "count", "private"} or effect.get("op") != "draw"
+            or effect.get("player") != "$target.0" or effect.get("private") is not True):
+        raise ValueError("Half-library draw requires its original private player target")
+    fraction = HalfQuantitySpec.from_dict(effect["count"])
+    if fraction.rounding != "up":
+        raise ValueError("Half-library draw requires upward rounding")
+    return fraction

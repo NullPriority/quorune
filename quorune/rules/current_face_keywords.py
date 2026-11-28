@@ -5,10 +5,31 @@ from __future__ import annotations
 from ..card_program_faces import program_matches_face
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
-from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS
+from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS, keyword_type_terms
 
 _KNOWN_PRINTED_KEYWORDS = frozenset(str(value).casefold() for value in FIXED_CHARACTERISTIC_KEYWORDS) | {"protection"}
 _QUALIFIED_PRINTED_KEYWORDS = frozenset(QUALIFIED_LANDWALK_KEYWORDS) | QUALIFIED_HEXPROOF_KEYWORDS
+
+
+def _trusted_printed_face_keywords(host, card, record, *, prospective_name=None):
+    return {
+        keyword
+        for program in host.semantics.programs_for_oracle(record.oracle_id)
+        if program.provenance.get("template_id") == "printed-keyword-list-v1"
+        and program_matches_face(record, program, card, prospective_name=prospective_name)
+        and host.semantic_program_is_current_trusted(program)
+        for value in program.coverage
+        if (keyword := str(value).casefold()) in _KNOWN_PRINTED_KEYWORDS
+    }
+
+
+def library_card_keyword_abilities(host, card):
+    """Use the card's printed front-face ability declarations in a hidden library."""
+    record = host.card_record(card)
+    if record is None:
+        return frozenset()
+    front = str(record.faces[0]["name"]) if record.faces else None
+    return keyword_type_terms(_trusted_printed_face_keywords(host, card, record, prospective_name=front))
 
 
 def current_printed_face_keywords(host,card,record,base):
@@ -16,20 +37,10 @@ def current_printed_face_keywords(host,card,record,base):
         return base.get('keywords',[])
     if record is None or (record.faces and card.zone not in {'stack','battlefield'} and not card.annotations.get('prospective_cast_face')):
         return base.get('keywords',[])
-    current=set()
-    qualified=set()
+    current = _trusted_printed_face_keywords(host, card, record)
+    qualified = current & _QUALIFIED_PRINTED_KEYWORDS
     # The record keyword index combines faces; qualified Protection also needs
     # the current face's trusted printed declaration before retaining its label.
-    for program in host.semantics.programs_for_oracle(record.oracle_id):
-        if (program.provenance.get('template_id')=='printed-keyword-list-v1'
-                and program_matches_face(record,program,card)
-                and host.semantic_program_is_current_trusted(program)):
-            for value in program.coverage:
-                keyword = str(value).casefold()
-                if keyword in _KNOWN_PRINTED_KEYWORDS:
-                    current.add(keyword)
-                if keyword in _QUALIFIED_PRINTED_KEYWORDS:
-                    qualified.add(keyword)
     result = ([keyword for keyword in base.get('keywords',())
         if str(keyword).casefold() not in _KNOWN_PRINTED_KEYWORDS or str(keyword).casefold() in current]
         if record.faces else list(base.get('keywords',())))

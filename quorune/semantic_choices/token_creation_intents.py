@@ -11,10 +11,17 @@ def execute_token_creation_intent(
     intent: CreateTokenIntent,
 ) -> tuple[str, ...]:
     creator = self.create_token
+    temporary_keywords = intent.temporary_keywords
     if intent.token_cleanup is not None:
         from functools import partial
         from ..token_creation import create_tokens
         creator = partial(create_tokens, self, token_cleanup=intent.token_cleanup)
+        if intent.source_bound_haste_copy:
+            from ..continuous_effect_state import ResolutionEffectSource
+
+            source = ResolutionEffectSource(**intent.token_cleanup.source.to_dict())
+            creator = partial(creator, post_entry_haste_source=source, post_entry_haste_zone_object=True)
+            temporary_keywords = ()
     created_refs = tuple(
         creator(
             intent.controller,
@@ -27,7 +34,7 @@ def execute_token_creation_intent(
                 else None
             ),
             characteristics=thaw_value(intent.characteristics),
-            temporary_keywords=intent.temporary_keywords,
+            temporary_keywords=temporary_keywords,
             tapped=intent.tapped,
             attacking=(
                 intent.attacking_assignments

@@ -4,7 +4,8 @@ from . import regex_working_set as re
 from dataclasses import replace
 
 from ..attack_batch_model import (QualifiedAttackBatchSpec,QUALIFIED_ATTACK_BATCH_CAPABILITY,
-    QUALIFIED_ATTACK_BATCH_VARIANT,ATTACK_BATCH_CONDITION)
+    QUALIFIED_ATTACK_BATCH_VARIANT,ATTACK_BATCH_CONDITION,
+    ANY_PLAYER_ATTACK_BATCH_VARIANT, OPTIONAL_ATTACK_BATCH_STRIKE_CAPABILITY)
 from ..object_predicate import ObjectQuerySpec,PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristicSpec,TargetNumericCharacteristic,TargetNumericComparison
 from .fixed_numbers import fixed_number,FIXED_COUNT_PATTERN
@@ -42,6 +43,18 @@ def _batch_query(subject):
 
 def qualified_attack_batch_binding_spec(text):
     from .fixed_public_event_trigger_bindings import _spec,_all_conditions
+
+    any_attack = re.fullmatch(
+        r"Whenever one or more creatures attack, "
+        r"(?P<body>you may have target attacking creature gain double strike until end of turn\.)",
+        text, re.I,
+    )
+    if any_attack is not None:
+        return _spec(
+            "creature.attacks", ANY_PLAYER_ATTACK_BATCH_VARIANT, any_attack["body"],
+            "fixed-any-player-attack-batch-trigger-v1", "trigger-event-normalized-public-action",
+            capabilities=(OPTIONAL_ATTACK_BATCH_STRIKE_CAPABILITY,),
+        )
     count=rf'(?P<count>{FIXED_COUNT_PATTERN})'
     match=re.fullmatch(rf'Whenever you attack(?P<recipient> a player or planeswalker)? with {count} or more (?P<subject>.+?), (?P<body>.+)',text,re.I)
     if match is not None:

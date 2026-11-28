@@ -16,11 +16,30 @@ from ..library_order_model import (
     SHUFFLE_OPERATION,
     SHUFFLE_CAPABILITY,
     SHUFFLE_MECHANIC,
-    is_affected_hand_top_choice,
+    PAID_PRIVATE_TOP_CYCLE, is_affected_hand_top_choice, uses_paid_private_top_cycle,
+    validate_paid_private_top_cycle,
     validate_fixed_shuffle_effect,
     validate_graveyard_library_order_effect,
 )
+from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_CAPABILITY
 from ..replacement.immutable import FrozenMap, thaw_value
+from .effect_shape_walkers import nested_effects
+
+PAID_TOP_CYCLE_CAPABILITIES = (
+    TOP_ORDER_CAPABILITY, SHUFFLE_CAPABILITY, "library.select.fixed_controller",
+    FIXED_EFFECT_PAYMENT_CAPABILITY, "casting.additional_cost.fixed_life_payment",
+)
+
+
+def paid_private_top_cycle_runtime_dependencies(program):
+    if not any(PAID_PRIVATE_TOP_CYCLE in effect for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("resolve", "stack") or program.target_schema is not None
+            or program.event_condition is not None or program.cost_schema is not None
+            or program.handlers or len(program.effects) != 1):
+        raise ValueError("The life-paid top cycle must be the complete resolving spell")
+    validate_paid_private_top_cycle(program.effects[0])
+    return PAID_TOP_CYCLE_CAPABILITIES
 from ..target_cardinality import ANY_NUMBER_TARGET_CAPABILITY, AnnouncedTargetCardinality
 from .graveyard_card_targets import PublicGraveyardCardTargetKind, PublicGraveyardCardTargetSpec
 
@@ -75,6 +94,9 @@ def fixed_library_order_capabilities(*, effects, target_schema, mechanic_ids):
             )
         if target_schema is not None:
             return ()
+        if uses_paid_private_top_cycle(effect):
+            validate_paid_private_top_cycle(effect)
+            return PAID_TOP_CYCLE_CAPABILITIES if {TOP_ORDER_MECHANIC, SHUFFLE_MECHANIC} <= set(mechanic_ids) else ()
         if effect.get('op') == TOP_ORDER_OPERATION and TOP_ORDER_MECHANIC in mechanic_ids:
             FixedTopLibraryOrderSpec.from_effect(effect)
             return (TOP_ORDER_CAPABILITY,) if effect['player'] == '$controller' else ()
@@ -95,6 +117,9 @@ def library_order_payload_dependencies(value):
     if value.get("op") == GRAVEYARD_LIBRARY_ORDER_OPERATION:
         validate_graveyard_library_order_effect(value)
         return (GRAVEYARD_LIBRARY_ORDER_CAPABILITY,)
+    if uses_paid_private_top_cycle(value):
+        validate_paid_private_top_cycle(value)
+        return PAID_TOP_CYCLE_CAPABILITIES
     if value.get('op') == TOP_ORDER_OPERATION:
         FixedTopLibraryOrderSpec.from_effect(value)
         if value['player'] != '$controller':
@@ -119,6 +144,11 @@ def library_order_payload_dependencies(value):
 
 def is_closed_fixed_library_order_program(program):
     """Prove the leaf shape before provisional programs are promoted."""
+    if len(program.effects) == 1 and uses_paid_private_top_cycle(program.effects[0]):
+        try:
+            return set(paid_private_top_cycle_runtime_dependencies(program)) <= set(program.capability_dependencies)
+        except (TypeError, ValueError, KeyError):
+            return False
     required = fixed_library_order_capabilities(
         effects=program.effects,
         target_schema=program.target_schema,

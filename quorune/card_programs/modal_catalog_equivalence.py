@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from copy import deepcopy
+from hashlib import sha256
 from ..counter_placement_event_model import (
     PROLIFERATE_ORDER_VERSION_FIELD,
     has_canonical_proliferate_choice_order,
@@ -88,6 +89,82 @@ def shadowed_reviewed_modal_catalog_keys(record,generated_programs,reviewed_prog
         if new_modes is None or old_modes is None or stable_json(new_modes)!=stable_json(old_modes):continue
         shadowed.add(old.key)
     return shadowed
+
+def _matches_reviewed_meld_modal_modes(current, old):
+    if not isinstance(old.target_schema, Mapping) or old.target_schema.get("mode_count") != 1:
+        return False
+    if tuple(old.target_schema.get("modes") or ()) != ("draw", "weaken"):
+        return False
+    expected = [
+        (None, [{"op": "draw", "player": "$controller", "count": 2, "private": True}]),
+        ({"zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"]},
+         [{"op": "modify_stats_until_end_of_turn", "card": "$target.0", "power": -5, "toughness": -5}]),
+    ]
+    return all(stable_json(_mode_values(thaw_value(program.target_schema))) == stable_json(expected)
+               for program in (current, old))
+
+
+def shadowed_reviewed_meld_modal_keys(
+    record, generated, reviewed, *, capability_registry, capability_profile, oracle_ir=None,
+):
+    """Replace the paired reviewed front spell and modal entry views together."""
+    from ..compiler.modal_program_closure import is_closed_fixed_modal_program
+    from ..compiler.oracle_source_text import is_passive_meld_partner_reminder
+    from .admission import CompleteCardProgramAdmission
+    from .binding import bind_semantic_program_runtime
+
+    if (capability_registry is None or record.layout != "meld" or record.faces
+            or not record.is_permanent_spell or record.is_land
+            or not any(is_passive_meld_partner_reminder(line) for line in record.oracle_text.splitlines())):
+        return set()
+    legacy = [p for p in reviewed
+              if not str(p.provenance.get("authored_by", "")).startswith("oracle-ir-v")]
+    source_views = {p.ability_id: p for p in legacy}
+    triggers = [p for p in generated if (p.event, p.active_zone) == ("permanent.enter.self", "battlefield")]
+    if len(legacy) != 2 or source_views.keys() != {"trigger:enter", "spell:front"} or len(triggers) != 1:
+        return set()
+    old_trigger = source_views["trigger:enter"]
+    old_spell = source_views["spell:front"]
+    current = triggers[0]
+    shell = ("version", "semantic_schema_version", "event", "active_zone", "destination",
+             "event_condition", "cost_schema", "trigger_limit", "requires_arbiter")
+    if (current.effects or current.handlers or current.event_condition is not None
+            or old_trigger.effects or old_trigger.handlers
+            or any(getattr(current, key) != getattr(old_trigger, key) for key in shell)
+            or not is_closed_fixed_modal_program(current) or not _matches_reviewed_meld_modal_modes(current, old_trigger)):
+        return set()
+    if ((old_spell.event, old_spell.active_zone, old_spell.destination) != ("resolve", "stack", "battlefield")
+            or old_spell.effects or old_spell.handlers or old_spell.requires_arbiter
+            or any(getattr(old_spell, key) is not None
+                   for key in ("target_schema", "cost_schema", "event_condition", "trigger_limit"))):
+        return set()
+    oracle_hash = sha256(record.oracle_text.encode("utf-8")).hexdigest()
+    rulings_hash = current.provenance.get("source_rulings_hash")
+    if not rulings_hash or any(
+        p.oracle_id != record.oracle_id or p.trust_level != "trusted"
+        or p.provenance.get("source_oracle_hash") != oracle_hash
+        or p.provenance.get("source_rulings_hash") != rulings_hash
+        for p in (*generated, old_trigger, old_spell)
+    ):
+        return set()
+    if oracle_ir is None:
+        from ..oracle_ir import compile_oracle_card
+
+        oracle_ir = compile_oracle_card(record, capability_registry=capability_registry,
+                                       capability_profile=capability_profile)
+    if (oracle_ir.oracle_id != record.oracle_id or oracle_ir.oracle_hash != oracle_hash
+            or not CompleteCardProgramAdmission.from_oracle_ir(oracle_ir).admitted):
+        return set()
+    if not all(
+        str(p.provenance.get("authored_by", "")).startswith("oracle-ir-v")
+        and p.provenance.get("face_id") == "front"
+        and bind_semantic_program_runtime(p, capability_registry=capability_registry,
+                                          profile=capability_profile)["strict"]
+        for p in generated
+    ):
+        return set()
+    return {old_trigger.key, old_spell.key}
+
 
 def shadowed_reviewed_color_modal_keys(record, generated_programs, reviewed_programs):
     """Retire a source-matched legacy mode view from current admission."""

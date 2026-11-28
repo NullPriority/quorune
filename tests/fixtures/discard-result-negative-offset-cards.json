@@ -1,6 +1,53 @@
 {
   "cards": [
     {
+      "defense": null,
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Syphon Mind",
+      "oracle_id": "abc37d6c-6300-47b5-a679-9db5b83eb54f",
+      "oracle_text": "Each other player discards a card. You draw a card for each card discarded this way.",
+      "power": null,
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Sorcery",
+      "cmc": 4.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "produced_mana": []
+    },
+    {
       "cmc": 2.0,
       "color_identity": [
         "U"

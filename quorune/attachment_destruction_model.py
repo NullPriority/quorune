@@ -72,18 +72,41 @@ class AttachmentDestructionSetSpec(AffectedPermanentSetSpec):
             raise AffectedPermanentSetError('Attached destruction set is malformed') from exc
 
 
+def _public_attachment_row_card(host, row: ObjectQueryResult):
+    card = host.state.cards.get(row.object_id)
+    if (card is None or card.logical_object_id != row.logical_object_id
+            or card.ref != row.ref or card.zone != 'battlefield'):
+        raise AffectedPermanentSetError('Attachment projection requires its current public incarnation')
+    return card
+
+
 def current_attachment_destruction_rows(host, rows: Sequence[ObjectQueryResult]):
-    """Use the reciprocal attachment owner for this explicitly new set only."""
+    """Use reciprocal attachment edges for attachment-set selection."""
     result = []
     for row in rows:
         if row.zone != 'battlefield' or row.phased_out:
             continue
-        card = host.state.cards.get(row.object_id)
-        if (card is None or card.logical_object_id != row.logical_object_id
-                or card.ref != row.ref or card.zone != 'battlefield'):
-            raise AffectedPermanentSetError('Attachment projection requires its current public incarnation')
+        card = _public_attachment_row_card(host, row)
         result.append(replace(row, attached_to_ref=attachment_target_ref(
             host.state.cards, host.state.players, card)))
+    return tuple(result)
+
+
+def uses_enchanted_permanent_state(query: ObjectQuerySpec) -> bool:
+    predicate = query.state_predicate
+    return ((predicate is not None and predicate.enchanted is not None)
+            or any(uses_enchanted_permanent_state(branch) for branch in query.any_of))
+
+
+def current_enchanted_destruction_rows(host, rows: Sequence[ObjectQueryResult]):
+    """Project the existing effective Aura characterization onto live public rows."""
+    result = []
+    for row in rows:
+        if row.zone != 'battlefield' or row.phased_out:
+            continue
+        card = _public_attachment_row_card(host, row)
+        enchanted, _, _ = host._attachment_public_state(card)
+        result.append(replace(row, enchanted=enchanted))
     return tuple(result)
 
 

@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from .ability_resolution_ordinal import (
-    ABILITY_RESOLVED_HISTORY, is_ability_resolution_ordinal, is_second_ability_draw,
-    validate_ability_resolution_ordinal,
+    ABILITY_RESOLVED_HISTORY, is_ability_resolution_ordinal, is_triggered_ability_resolution_ordinal,
+    is_second_ability_scry_replacement, validate_ability_resolution_ordinal,
 )
 from .aura import aura_resolution_move_kwargs
 from .cast_lifecycles import (
@@ -78,9 +78,29 @@ class StackResolutionCompletionHost(Protocol):
         **kwargs: Any,
     ) -> CardInstance: ...
 
-    def shuffle_library(self, seat: str, *, reason: str, actor: str | None = None) -> None: ...
+    def shuffle_library(
+        self, seat: str, *, reason: str, actor: str | None = None, shuffling_player: str | None = None,
+    ) -> None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+
+def prepare_resolving_stack_effects(host, item, effects):
+    """Capture per-instruction subjects before any resolving effect moves them."""
+    from .rules.gift_card_spells import prepare_gift_card_resolution
+    from .rules.gift_occurrence import dispatch_resolving_spell_gift
+    from .rules.main_phase_creature_cohort import prepare_creature_cohort_addendum
+    from .target_permanent_shuffle_reveal_model import bind_target_permanent_shuffle_reveal_owner
+
+    prepared = bind_ability_resolution_ordinals(host, item, effects)
+    prepared = bind_target_permanent_shuffle_reveal_owner(host, item, prepared)
+    try:
+        prepared = prepare_gift_card_resolution(host, item, prepared)
+        prepared = prepare_creature_cohort_addendum(host, item, prepared)
+        dispatch_resolving_spell_gift(host, item)
+        return prepared
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
 
 
 def bind_ability_resolution_ordinals(host, item, effects):
@@ -88,16 +108,22 @@ def bind_ability_resolution_ordinals(host, item, effects):
     from .rules.third_resolved_source_trigger import ordinary_third_source_counter
 
     prepared = [dict(effect) for effect in effects]
+    from .rules.magecraft_rummage_ordinal import bind_magecraft_result
+
+    magecraft = bind_magecraft_result(host,item,prepared,_record_ability_resolution_ordinal)
+    if magecraft is not None:
+        return magecraft
     ordinary_counter = ordinary_third_source_counter(host, item, prepared)
     if ordinary_counter is not None:
         return ordinary_counter
     found = [index for index, effect in enumerate(prepared) if is_ability_resolution_ordinal(effect)]
     if not found:
         return prepared
-    if len(prepared) != 2 or found != [1]:
-        raise GameRuleError("An ability-resolution result requires its fixed prefix")
-    instruction = prepared[1]
-    expected_kind = "triggered_ability" if is_second_ability_draw(instruction) else "activated_ability"
+    instruction = prepared[found[0]]
+    prefix_count = 0 if is_second_ability_scry_replacement(instruction) else 1
+    if len(prepared) != prefix_count + 1 or found != [prefix_count]:
+        raise GameRuleError("An ability-resolution result requires its exact instruction sequence")
+    expected_kind = "triggered_ability" if is_triggered_ability_resolution_ordinal(instruction) else "activated_ability"
     if item.kind != expected_kind:
         raise GameRuleError("An ability-resolution result requires its exact stack ability kind")
     try:
@@ -173,6 +199,67 @@ def _intrinsic_empty_spell_provenance(host: GenericStackResolutionQuery, item: S
     if any(_has_intrinsic_empty_admission(program) for program in declarations):
         return "trusted_intrinsic_empty_spell"
     return None
+
+
+def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
+    """Validate the raw arbiter effects before registration or resolution."""
+    from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_OPERATION
+    from .counter_bound_attack_model import COUNTER_BOUND_ATTACK_OPERATION
+    from .rules.counter_marked_keep import KEEP_COUNTER_FIELD
+    from .extra_combat_model import uses_other_creature_extra_combat, uses_targeted_main_combat
+    from .creature_power_damage_model import uses_trample_bite
+    from .rules.announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD
+    from .rules.secret_number_choices import OPERATION as PRIVATE_NUMBER_OPERATION
+    from .rules.announced_permanent_reveal import OPERATION as ANNOUNCED_REVEAL_OPERATION
+    from .rules.artifact_mana_tap_control import FIELD as ARTIFACT_MANA_TAP_CONTROL
+    from .rules.discarded_card_exile import DISCARD_PLAY_VERSION
+    from .rules.effect_shape_walkers import nested_effects
+    from .chosen_attack_turn_model import (
+        CHOOSE as CHOSEN_ATTACK_CHOICE, COMMIT as CHOSEN_ATTACK_COMMIT, DESTROY as CHOSEN_ATTACK_DESTROY,
+    )
+    from .rules.apnap_counter_attack_truce import COMMIT as COUNTER_TRUCE_COMMIT, FIELD as COUNTER_TRUCE_FIELD
+    from .rules.event_optional_draw_shapes import (
+        ACCEPTED_TOKEN_CREATORS_FIELD, EVENT_OPTIONAL_DRAW_FIELD, TABLE_DRAW_ATTACK_RESTRICTION_VERSION,
+        TEMPTING_DRAW_TOKEN_VERSION,
+    )
+    from .rules.target_entry_draw import uses_target_entry_draw
+    from .rules.targeted_return_spell_copy import LAND_PAYMENT_FIELD, RETURN_TARGET_FIELD
+
+    effects = [dict(effect) for effect in raw or ()]
+    for effect in nested_effects(effects):
+        if effect["op"].casefold() in (CHOSEN_ATTACK_CHOICE, CHOSEN_ATTACK_COMMIT, CHOSEN_ATTACK_DESTROY):
+            raise GameRuleError("This resolution requires the original chosen-attacker activation")
+        if (effect["op"].startswith("$")
+                or EVENT_OPTIONAL_DRAW_FIELD in effect and type(effect[EVENT_OPTIONAL_DRAW_FIELD]) is not int):
+            raise GameRuleError("Raw effect operations and optional draw versions must be literal")
+        if KEEP_COUNTER_FIELD in effect or effect["op"] == COUNTER_BOUND_ATTACK_OPERATION:
+            raise GameRuleError("Counter-marked retention requires server-issued choices")
+        if uses_targeted_main_combat(effect):
+            raise GameRuleError("Targeted additional combat requires its registered spell")
+        if uses_other_creature_extra_combat(effect):
+            raise GameRuleError("The extra combat requires its committed linked Exert trigger")
+        if uses_trample_bite(effect):
+            raise GameRuleError("Creature-power excess damage requires the originating two-target spell")
+        if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in effect:
+            raise GameRuleError("Equal announced-X damage requires the original announced spell targets")
+        if (effect["op"] == ATTACK_RESTRICTION_OPERATION
+                or ACCEPTED_TOKEN_CREATORS_FIELD in effect
+                or effect.get(EVENT_OPTIONAL_DRAW_FIELD) in (TABLE_DRAW_ATTACK_RESTRICTION_VERSION, TEMPTING_DRAW_TOKEN_VERSION)
+                or uses_target_entry_draw(effect)):
+            raise GameRuleError("This resolution requires server-issued optional draw choices")
+        if LAND_PAYMENT_FIELD in effect or RETURN_TARGET_FIELD in effect:
+            raise GameRuleError("A return and copy resolution requires a bound card program")
+        if effect["op"] == PRIVATE_NUMBER_OPERATION:
+            raise GameRuleError("Secret numbers require an exact registered spell instruction")
+        if effect["op"] == ANNOUNCED_REVEAL_OPERATION:
+            raise GameRuleError("An announced permanent reveal requires its exact registered stack instruction")
+        if ARTIFACT_MANA_TAP_CONTROL in effect:
+            raise GameRuleError("Mana-tap artifact control requires a bound card program")
+        if DISCARD_PLAY_VERSION in effect:
+            raise GameRuleError("Discarded-card play requires a bound card program")
+        if effect["op"] == COUNTER_TRUCE_COMMIT or COUNTER_TRUCE_FIELD in effect:
+            raise GameRuleError("This resolution requires server-issued APNAP counter choices")
+    return effects
 
 
 def arbiter_resolution_program_key(
@@ -280,9 +367,13 @@ def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackI
         _complete_stack_resolution(host, item=item, destination=destination,
             prepared_replacement=prepared_replacement, library_position=library_position)
         if shuffle_owner is not None:
-            host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library", actor=item.controller)
+            host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library",
+                                 actor=item.controller, shuffling_player=item.controller)
         from .spell_resolution_names import finish_spell_resolution_names
         finish_spell_resolution_names(host, item)
+    from .saga_progression import dispatch_resolved_final_saga_chapter
+
+    dispatch_resolved_final_saga_chapter(host, item)
 
 
 def _complete_stack_resolution(
@@ -298,8 +389,10 @@ def _complete_stack_resolution(
     item.context.pop("currently_resolving", None)
     if item.card_object_id:
         from .zone_object_state import mark_resolving_cast_facts
+        from .beheld_exile_state import mark_resolving_beheld_exile
 
         mark_resolving_cast_facts(host.state.cards[item.card_object_id], item)
+        mark_resolving_beheld_exile(host, host.state.cards[item.card_object_id], item)
     from .rules.event_spell_copy import pin_event_spell_copy_departure
     pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)
@@ -391,12 +484,14 @@ def _complete_stack_resolution(
     from .adventure import complete_adventure_resolution
     complete_adventure_resolution(item,card)
     if final_destination == "library" and omen_resolution_binding(item) is not None:
-        host.shuffle_library(card.owner, reason="Omen resolved", actor=item.controller)
+        host.shuffle_library(card.owner, reason="Omen resolved", actor=item.controller,
+                             shuffling_player=item.controller)
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)
 
 
 __all__ = [
+    "arbiter_resolution_effects",
     "arbiter_resolution_program_key",
     "complete_stack_resolution",
     "EmptyStackResolution",

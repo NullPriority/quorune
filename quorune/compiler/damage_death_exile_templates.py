@@ -9,9 +9,14 @@ from ..rules.damage_capability_shapes import damage_death_exile_scope_is_closed
 
 
 _FOLLOWUP = re.compile(
-    r'(?P<body>.+\.) If (?P<subject>that creature|(?:a|any) creature dealt damage this way) '
+    r'(?P<body>.+\.) If (?P<subject>that creature(?: or planeswalker)?|(?:a|any) creature dealt damage this way) '
     r'would die this turn, exile it instead\.', re.I,
 )
+
+_TARGETED_FOLLOWUP_SCOPES = {
+    "that creature": DamageDeathExileScope.TARGET,
+    "that creature or planeswalker": DamageDeathExileScope.TARGET_CREATURE_OR_PLANESWALKER,
+}
 
 
 def damage_death_exile_template(text, *, compile_body):
@@ -24,8 +29,7 @@ def damage_death_exile_template(text, *, compile_body):
     # These intervening instructions cannot move an affected object before SBA.
     if any(effect.get('op') not in {'mana', 'apply_source_characteristics_until_end_of_turn'} for effect in effects[1:]):
         return None
-    scope = (DamageDeathExileScope.TARGET if match['subject'].casefold() == 'that creature'
-             else DamageDeathExileScope.DEALT_CREATURES)
+    scope = _TARGETED_FOLLOWUP_SCOPES.get(match['subject'].casefold(), DamageDeathExileScope.DEALT_CREATURES)
     damage = {**effects[0], DAMAGE_DEATH_EXILE_FIELD: scope.value}
     if not damage_death_exile_scope_is_closed(damage, schema):
         return None

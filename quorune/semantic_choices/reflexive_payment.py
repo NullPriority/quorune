@@ -47,6 +47,11 @@ def _validated(effect, actor, query, *, continuation):
 
 
 def prepare_reflexive_payment(effect, context):
+    from ..rules.entrant_x_reflexive import uses_entrant_x_payment
+
+    if uses_entrant_x_payment(effect):
+        from .entrant_x_reflexive import prepare_entrant_x_payment
+        return prepare_entrant_x_payment(effect, context)
     restored = bool(set(effect) & _LOCAL)
     payment, _ = _validated(effect, context.actor, context.query, continuation=restored)
     if restored and effect['_parent_stack_ref'] != context.stack_ref:
@@ -78,7 +83,12 @@ def _paid_creature_snapshot(intents, actor, query):
 
 
 def complete_reflexive_payment(continuation, response, query):
+    from ..rules.entrant_x_reflexive import uses_entrant_x_payment
+
     effect = continuation.effect
+    if uses_entrant_x_payment(effect):
+        from .entrant_x_reflexive import complete_entrant_x_payment
+        return complete_entrant_x_payment(continuation, response, query)
     actor = effect.get('_choice_actor')
     payment, program = _validated(effect, actor, query, continuation=True)
     if effect['_parent_stack_ref'] != continuation.stack_ref:

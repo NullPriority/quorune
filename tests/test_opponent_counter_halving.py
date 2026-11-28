@@ -104,6 +104,8 @@ class OpponentCounterHalvingTests(InheritedNativeFixture, unittest.TestCase):
         effect = half.replacement_effect(descriptor, CounterReplacementSourceContext("raider", "A"))
         self.assertEqual(effect.to_dict(), ReplacementEffect.from_dict(effect.to_dict()).to_dict())
         self.assertEqual(HalveCounterPlacementAmount(), operation_from_dict({"op": "halve_counter_placement_amount"}))
+        with self.assertRaisesRegex(ReplacementOperationError, "supported operation version"):
+            HalveCounterPlacementAmount(schema_version=2)
         with self.assertRaisesRegex(ReplacementOperationError, "unknown divisor"):
             operation_from_dict({"op": "halve_counter_placement_amount", "divisor": 3})
         invalid = replace(effect, event_kind="damage", conditions={})

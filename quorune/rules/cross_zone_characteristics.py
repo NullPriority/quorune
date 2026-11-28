@@ -9,9 +9,16 @@ from ..semantic_runtime.cross_zone_type_additions import (
     CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER, CROSS_ZONE_CHOSEN_CREATURE_TYPE_HANDLER,
     CROSS_ZONE_TYPE_ADDITION_HANDLER,
 )
+from ..semantic_runtime.subtype_composite_grants import (
+    FOOD_CREATURE_TYPE_OPERATIONS, SUBTYPE_COMPOSITE_GRANT_HANDLER,
+)
 
 
 _CROSS_ZONE_HANDLER_IDS = frozenset({CROSS_ZONE_TYPE_ADDITION_HANDLER, CROSS_ZONE_CHOSEN_CREATURE_TYPE_HANDLER})
+_SUBTYPE_ENTRY_HANDLER_IDS = _CROSS_ZONE_HANDLER_IDS | {
+    CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER,
+}
+_FOOD_ENTRY_HANDLER_IDS = frozenset({SUBTYPE_COMPOSITE_GRANT_HANDLER})
 
 
 def _scoped_type_addition_effects(host, handler_ids):
@@ -33,9 +40,14 @@ def _scoped_type_addition_effects(host, handler_ids):
     return memoized_characteristic_read(host, ("scoped-type-addition-effects", handler_ids), read)
 
 
-def controlled_chosen_subtype_entry_effects(host, controller):
-    effects = _scoped_type_addition_effects(host, frozenset({CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER}))
-    return tuple(effect for effect in effects if effect.applies.controller == controller)
+def battlefield_entry_type_addition_effects(host, controller):
+    """Select continuous type additions applicable to the prospective entrant."""
+    food = tuple(effect for effect in _scoped_type_addition_effects(host, _FOOD_ENTRY_HANDLER_IDS)
+                 if effect.applies.zones == ("battlefield",) and effect.operations == FOOD_CREATURE_TYPE_OPERATIONS)
+    controlled = _scoped_type_addition_effects(host, _SUBTYPE_ENTRY_HANDLER_IDS)
+    return (*food, *(effect for effect in controlled
+        if effect.applies.zones == ("battlefield",) and effect.applies.controller == controller
+        and any(operation.op == "add_types" and operation.field == "subtypes" for operation in effect.operations)))
 
 
 def cross_zone_type_effects_for_card(host, card, *, maximum_layer=None, prospective_controller=None):

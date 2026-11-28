@@ -13,7 +13,9 @@ from ..creature_power_damage_model import (
     OCCURRENCE_POWER_DAMAGE_CONTEXT, OCCURRENCE_POWER_DAMAGE_SOURCE, OCCURRENCE_POWER_DAMAGE_VERSION,
 )
 from ..entry_copy import copiable_oracle_id
+from ..graveyard_exile_branches_model import GRAVEYARD_EXILE_BRANCH_OPERATION, GraveyardExileBranchSpec
 from ..trigger_batches import PendingTriggerBatch
+from .committed_mill_cards import uses_milled_mana_damage
 from .damage_snapshots import source_snapshot
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
 
@@ -65,6 +67,26 @@ def bind_source_relative_damage(host, effect, item, *, resolve):
 
 def needs_stack_damage_source(value):
     if isinstance(value, Mapping):
+        from .linked_landfall_play import EXPLORE_SETTLE_FIELD
+
+        if EXPLORE_SETTLE_FIELD in value and value.get("source") == "$source":
+            return True
+        from .departing_x_reflexive import OPERATION
+
+        if value.get("op") == OPERATION:
+            return True
+        from ..impulse_access_model import POWER_COUNTED_IMPULSE_VERSION
+
+        if value.get("op") == "fixed_impulse_access" and value.get("schema_version") == POWER_COUNTED_IMPULSE_VERSION:
+            return True
+        from .departing_x_reflexive import OPERATION
+
+        if value.get("op") == OPERATION:
+            return True
+        if value.get("op") == GRAVEYARD_EXILE_BRANCH_OPERATION:
+            return GraveyardExileBranchSpec.from_dict(value.get("result")).classifies_land
+        if value.get("op") == "mill" and uses_milled_mana_damage(value):
+            return True
         if value.get("op") == "choose_option":
             from .collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD
             if COLLECTIVE_SOURCE_DAMAGE_FIELD in value:
@@ -123,6 +145,18 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
     try:
         departing = {(card.object_id, card.logical_object_id):card for card in cards}
         updates = {}; snapshots = {}
+        delayed_updates = []
+        for index, trigger in enumerate(host.state.delayed_triggers):
+            template = trigger.stack_template
+            context = template.get("context", {})
+            prior = context.get(SOURCE_DAMAGE_CONTEXT)
+            source = departing.get((trigger.source_object_id, trigger.source_logical_object_id))
+            if trigger.active and prior is not None and source is not None:
+                known = DamageSourceSnapshot.from_dict(dict(prior))
+                if (known.object_id, known.logical_object_id) != (source.object_id, source.logical_object_id):
+                    raise DamageError("Delayed damage source refers to another incarnation")
+                next_context = {**context, SOURCE_DAMAGE_CONTEXT: _public_source_snapshot(host, source).to_dict()}
+                delayed_updates.append((index, replace(trigger, stack_template={**template, "context": next_context})))
         frames = [item.to_dict() for item in host.state.stack]
         for batch in host.state.pending_trigger_batches:
             frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
@@ -165,9 +199,11 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
                 item.context[SOURCE_DAMAGE_CONTEXT] = deepcopy(updates[item.ref])
             if item.ref in dealer_updates:
                 item.context[EVENT_DAMAGE_SOURCE_CONTEXT] = deepcopy(dealer_updates[item.ref])
-        from ..trigger_processing import replace_pending_trigger_batch
+        from ..trigger_processing import replace_pending_trigger_batch, replace_waiting_delayed_trigger
         for index, batch in pending:
             replace_pending_trigger_batch(host, index, batch)
+        for index, trigger in delayed_updates:
+            replace_waiting_delayed_trigger(host, index, trigger)
     except (KeyError, TypeError, ValueError) as exc:
         raise error_type(str(exc)) from exc
 
@@ -194,9 +230,11 @@ def _departing_power_references(item, context, source_ids):
         yield OCCURRENCE_POWER_DAMAGE_CONTEXT, known
 
 
-def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError):
-    """Refresh ability-source and occurrence-source power before departure."""
+def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError, phase_out=False):
+    """Refresh represented damage-source power before losing the original public view."""
     from ..creature_power_damage import capture_creature_power_damage_source_lki, occurrence_creature_power_snapshot
+    from .effect_shape_walkers import nested_effects
+    from ..creature_power_damage_model import uses_source_power_opponent_damage
 
     try:
         departing = {(card.object_id, card.logical_object_id):card for card in cards}
@@ -206,6 +244,10 @@ def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError)
             frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
         snapshots = {}; updates = {}
         for item in frames:
+            if phase_out and not any(
+                uses_source_power_opponent_damage(effect) for effect in nested_effects(_frame_effects(host, item))
+            ):
+                continue
             context = item.get('context', {})
             for field, known in _departing_power_references(item, context, source_ids):
                 source = departing.get((known.object_id, known.logical_object_id))

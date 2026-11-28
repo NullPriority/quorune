@@ -15,7 +15,7 @@ def target_characteristic_set_template(text, *, include_single=False):
     if match['prefix']:result=result.rstrip('.')+' until end of turn.'
     verb='gets' if match['verb'].lower().startswith('get') else 'gains'
     if verb=='gets':result=re.sub(r'\band gain\b','and gains',result,flags=re.I)
-    subject=re.sub(r'\bcreatures\b','creature',match['subject'],flags=re.I)
+    subject=re.sub(r'\b(creature|permanent)s\b',r'\1',match['subject'],flags=re.I)
     singular=('another ' if match['other'] else '')+'target '+subject+' '+verb+' '+result
     template=fixed_target_characteristics_effect_template(singular,extended=True)
     if template is None or template.target_schema is None or any(v is not None and type(v) is not int for v in (template.power,template.toughness)):return None

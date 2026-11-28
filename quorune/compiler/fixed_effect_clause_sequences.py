@@ -9,6 +9,7 @@ from typing import Any, Callable, Mapping
 
 
 FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC = "fixed-effect-clause-sequence"
+FIXED_PROLIFERATE_SEQUENCE_TEMPLATE = "fixed-proliferate-sequence-v1"
 SOURCE_CHARACTERISTIC_TAP_TEMPLATE = 'fixed-source-characteristic-tap-sequence-v1'
 DAMAGE_ATTACK_REQUIREMENT_TEMPLATE = "fixed-source-damage-then-attack-requirement-v1"
 _DAMAGE_ATTACK_REQUIREMENT = re.compile(
@@ -23,6 +24,27 @@ CompiledEffectTemplate = tuple[
     tuple[str, ...],
 ]
 ClauseCompiler = Callable[[str], CompiledEffectTemplate]
+
+
+_FIXED_UPKEEP_PAYMENT = re.compile(
+    r"(?P<body>.+\.) At the beginning of your next upkeep, pay "
+    r"(?P<cost>(?:\{[1-9][0-9]*\})?(?:\{[WUBRGC]\})+)\. "
+    r"If you don['’]t, you lose the game\.",
+    re.IGNORECASE,
+)
+
+
+def _fixed_upkeep_payment_clauses(text, compile_clause):
+    match = _FIXED_UPKEEP_PAYMENT.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from ..delayed_triggers import fixed_next_upkeep_payment_effect
+    from ..fixed_mana_model import fixed_mana_variants
+
+    cost, = fixed_mana_variants(match["cost"].upper())
+    payment = fixed_next_upkeep_payment_effect({key: amount for key, amount in cost.items() if amount})
+    return (compile_clause(match["body"]),
+            ("fixed-own-upkeep-payment-v1", (payment,), None, ("cr-603-handling-triggered-abilities",)))
 
 
 def _period_sentence_clauses(text: str) -> tuple[str, str] | None:
@@ -185,6 +207,38 @@ class FixedEffectClauseSequenceTemplate:
         )
 
 
+def _optional_controlled_token_copy_clauses(text, compile_clause):
+    normalized = " ".join(text.split())
+    tail = (" Then you may choose a token you control. If you do, each other token you control "
+            "becomes a copy of that token.")
+    if not normalized.casefold().endswith(tail.casefold()):
+        return None
+    first = compile_clause(normalized[:-len(tail)])
+    if (first[0] is None or len(first[1]) != 1 or first[2] is not None
+            or first[1][0].get("op") != "create_token"
+            or type(first[1][0].get("quantity")) is not int or first[1][0]["quantity"] != 1):
+        return None
+    from ..token_copy_recipes import optional_controlled_token_copy_effect
+
+    return first, ("optional-controlled-token-copy-v1", (optional_controlled_token_copy_effect(),),
+                   None, ("cr-111-tokens",))
+
+
+def fixed_proliferate_sequence_template(text: str) -> CompiledEffectTemplate | None:
+    """Lower the complete fixed result to two ordinary Proliferate instructions."""
+    if not re.fullmatch(r"proliferate twice\.?", " ".join(text.split()), re.IGNORECASE):
+        return None
+    from .proliferate_templates import ProliferateEffectTemplate
+
+    leaf = ProliferateEffectTemplate()
+    return (
+        FIXED_PROLIFERATE_SEQUENCE_TEMPLATE,
+        (dict(leaf.effects[0]), dict(leaf.effects[0])),
+        leaf.target_schema,
+        (FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC, *leaf.mechanics),
+    )
+
+
 def fixed_effect_clause_sequence_template(
     text: str,
     *,
@@ -193,10 +247,13 @@ def fixed_effect_clause_sequence_template(
     """Lower two complete clauses already owned independently, in order."""
 
     shared = _DAMAGE_ATTACK_REQUIREMENT.fullmatch(" ".join(text.strip().split()))
-    clauses = (shared["damage"], "Target creature attacks this turn if able.") if shared else _two_sentence_clauses(text)
-    if clauses is None:
-        return None
-    compiled = tuple(compile_clause(clause) for clause in clauses)
+    compiled = (_fixed_upkeep_payment_clauses(text, compile_clause)
+                or _optional_controlled_token_copy_clauses(text, compile_clause))
+    if compiled is None:
+        clauses = (shared["damage"], "Target creature attacks this turn if able.") if shared else _two_sentence_clauses(text)
+        if clauses is None:
+            return None
+        compiled = tuple(compile_clause(clause) for clause in clauses)
     if any(
         template_id is None
         or len(effects) != 1

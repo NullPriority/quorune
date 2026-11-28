@@ -77,6 +77,60 @@ def _defining_life_quantity(host, source, scope):
     return (max(lives, default=0) + 1) // 2
 
 
+def opponent_chosen_color_permanent_count(host, source, *, enforce_applicability):
+    from .chosen_color_target_shapes import current_linked_entry_color
+
+    if source.zone != "battlefield" or source.face_down or source.phased_out:
+        return 0
+    color = current_linked_entry_color(source)
+    if color is None:
+        return 0
+    count = 0
+    for seat, player in host.state.players.items():
+        if seat == source.controller or not player.in_game:
+            continue
+        for object_id in player.zones["battlefield"]:
+            permanent = host.state.cards[object_id]
+            if permanent.phased_out:
+                continue
+            data = host._effective_card_data(
+                permanent, maximum_layer=Layer.COLOR,
+                _enforce_static_component_applicability=enforce_applicability,
+            )
+            if color in data["colors"]:
+                count += 1
+    return count
+
+
+def validate_chosen_color_definition_program(program, required):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..characteristic_fragments import (
+        CHOSEN_COLOR_DEFINITION_CAPABILITY, CHOSEN_COLOR_DEFINITION_TEMPLATE,
+        QueryPowerToughnessDefinitionSpec,
+    )
+
+    uses_quantity = CHOSEN_COLOR_DEFINITION_CAPABILITY in required
+    is_definition = program.provenance.get("template_id") == CHOSEN_COLOR_DEFINITION_TEMPLATE
+    if not uses_quantity and not is_definition:
+        return
+    if (
+        not uses_quantity or not is_definition or (program.event, program.active_zone) != ("continuous", "all")
+        or len(program.handlers) != 1 or program.effects or program.cost_schema is not None
+        or program.target_schema is not None or program.event_condition is not None
+        or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+    ):
+        raise ValueError("The chosen-color count requires its continuous characteristic definition")
+    handler = program.handlers[0]
+    fragment = handler.get("fragment", {})
+    if (
+        handler.get("handler_id") != "ability.static.query-power-toughness-definition.v1"
+        or not isinstance(fragment, Mapping) or fragment.get("kind") != "query_power_toughness_definition"
+        or QueryPowerToughnessDefinitionSpec.from_dict(fragment.get("value")).quantity.scope
+            is not CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS
+    ):
+        raise ValueError("The chosen-color count requires its exact statistic descriptor")
+
+
 def is_controller_turn_life_loss_modifier(descriptor):
     if descriptor.get("handler_id") != "ability.static.query-characteristic-modifier.v1":
         return False
@@ -120,12 +174,18 @@ def controller_turn_life_loss(state, controller):
 
 
 def current_modifier_quantity(host,source,quantity,*,enforce_applicability=True):
+    if quantity.scope is CharacteristicQuantityScope.SOURCE_LINKED_EXILE:
+        from ..conditional_exile_model import current_source_linked_exile_count
+
+        return current_source_linked_exile_count(source, host.state.cards)
     if quantity.scope in DEFINING_LIFE_SCOPES:
         return _defining_life_quantity(host, source, quantity.scope)
     if quantity.scope is CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD:
         from .linked_entry_opponent import current_linked_entry_player_graveyard_count
 
         return current_linked_entry_player_graveyard_count(host, source)
+    if quantity.scope is CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS:
+        return opponent_chosen_color_permanent_count(host, source, enforce_applicability=enforce_applicability)
     controller=host.state.players.get(source.controller)
     if controller is None:
         raise ValueError('Current quantity source controller is unavailable')
@@ -157,6 +217,10 @@ def current_modifier_quantity(host,source,quantity,*,enforce_applicability=True)
     if identity is None:
         raise ValueError('Current attached-object identity is unavailable')
     recipient=host.state.cards[identity.object_id]
+    if quantity.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
+        from ..counter_snapshot import permanent_counter_total
+
+        return permanent_counter_total(recipient.counters)
     data=host._effective_card_data(recipient,maximum_layer=Layer.COLOR,
         _enforce_static_component_applicability=enforce_applicability)
     if quantity.reduction is CharacteristicQuantityReduction.DISTINCT_COLORS:

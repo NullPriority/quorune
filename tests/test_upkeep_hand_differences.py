@@ -60,6 +60,30 @@ def pure_frame(count=6,direction=Direction.HAND_MINUS_CONSTANT):
 
 
 class UpkeepHandDifferenceFrameTests(unittest.TestCase):
+    def test_controller_surplus_runtime_rejects_changed_carrier_and_timing(self):
+        from quorune.rules.upkeep_hand_differences import controller_upkeep_hand_surplus_condition
+
+        host, item, program, _, amount = pure_frame()
+        item.controller = "B"
+        program.event_condition = controller_upkeep_hand_surplus_condition()
+        effect = {"op": "life", "player": "$context.player", "delta": amount}
+        program.effects = (effect,)
+        required = upkeep_hand_difference_program_dependencies(program)
+        self.assertIn("life.change.effect", required)
+        self.assertEqual(2, resolve_scalar_effect_amount(host, amount, item))
+        for changed in (
+            {**effect, "player": "$controller"},
+            {**effect, "op": "lose_life"},
+            {**effect, "delta": Difference(Direction.CONSTANT_MINUS_HAND, 3).scalar_amount()},
+        ):
+            program.effects = (changed,)
+            with self.assertRaises(ValueError):
+                upkeep_hand_difference_program_dependencies(program)
+        program.effects = (effect,)
+        item.controller = "A"
+        with self.assertRaises(PublicQueryAmountError):
+            resolve_scalar_effect_amount(host, amount, item)
+
     def test_reads_current_bound_public_count_without_targets_or_context_cache(self):
         host,item,program,_,amount=pure_frame();before=deepcopy(item.context)
         self.assertEqual(2,resolve_scalar_effect_amount(host,amount,item))
@@ -112,6 +136,33 @@ def upkeep_record(text,*,noun='artifact'):
 
 
 class UpkeepHandDifferenceCompilerTests(unittest.TestCase):
+    def test_controller_hand_count_only_admits_exact_upkeep_life_result(self):
+        registry = load_default_capability_registry()
+        body = "At the beginning of your upkeep, you gain X life, where X is the number of cards in your hand minus 4."
+        compile_body = lambda text: compile_oracle_card(
+            upkeep_record(text), capability_registry=registry, capability_profile="commander_review",
+        )
+        ir = compile_body(body)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual(("step.begin", "battlefield", None), (node.event, node.active_zone, node.target_schema))
+        self.assertEqual(("life", "$context.player"), (effect["op"], effect["player"]))
+        self.assertEqual(Difference(Direction.HAND_MINUS_CONSTANT, 4), Scalar.from_dict(effect["delta"]).hand_difference)
+        self.assertIn(CAP, node.capability_dependencies)
+        self.assertIn("life.change.effect", node.capability_dependencies)
+        for variant in (
+            body.replace("your upkeep", "your draw step"),
+            body.replace("your upkeep", "each player's upkeep"),
+            body.replace("your hand", "their hand"),
+            body.replace("minus 4", "minus 3"),
+            body.replace("gain X life", "lose X life"),
+            body + " Draw a card.",
+        ):
+            with self.subTest(variant=variant):
+                changed = compile_body(variant)
+                self.assertNotIn(CAP, {cap for face in changed.faces for item in face.nodes for cap in item.capability_dependencies})
+
     def test_both_directions_and_both_source_nouns_lower_to_one_nontargeted_scheduled_scalar(self):
         registry=load_default_capability_registry()
         for noun in ('artifact','creature'):
@@ -342,3 +393,69 @@ class UpkeepHandDifferenceGameplayTests(InheritedNativeFixture,unittest.TestCase
         from quorune.rules import upkeep_hand_differences as owned
         with patch.object(owned,'resolve_upkeep_hand_difference',return_value=0):
             with self.assertRaises(AssertionError):self.test_actual_opportunity_response_changes_current_hand_count_before_artifact_damage()
+
+    def ivory_tower_scene(self, seed, *, hand_at_trigger, response):
+        game = self.start(seed)
+        source = self.add(game.engine, "Ivory Tower", zone="hand")
+        instant = self.add(game.engine, response, zone="hand", ref="ivory-response")
+        self.fill(game, "A", hand_at_trigger - 1)
+        self.lands(game, "A", "Island" if response == "Opportunity" else "Plains",
+                   6 if response == "Opportunity" else 2)
+        self.prepare(game, mana={"C": 1})
+        self.checkpoint(game)
+        self.cast_closed(game, "A", source)
+        self.upkeep(game, "B")
+        self.assertFalse(any(entry.source_object_id == source.object_id for entry in game.state.stack))
+        self.upkeep(game, "A")
+        trigger = self.trigger(game, source)
+        self.assertEqual(("A", "A", []), (trigger.controller, trigger.context["player"], trigger.targets))
+        self.assertEqual(hand_at_trigger, len(self.hand(game, "A")))
+        return game, source, instant
+
+    def assert_ivory_tower_private_hand(self, game):
+        for principal in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            packet = json.dumps(game.packet(principal, full=True))
+            for card in self.hand(game, "A"):
+                self.assertNotIn(card.ref, packet)
+                self.assertNotIn(card.object_id, packet)
+
+    def assert_ivory_tower_response_uses_resolved_hand(self):
+        game, _, response = self.ivory_tower_scene(934201, hand_at_trigger=4, response="Opportunity")
+        self.assert_ivory_tower_private_hand(game)
+        self.cast_closed(game, "A", response, ["A"], top_only=True)
+        self.assertEqual(7, len(self.hand(game, "A")))
+        self.assertEqual(40, game.state.players["A"].life)
+        self.assert_ivory_tower_private_hand(game)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((43, 40, 40, 40), tuple(game.state.players[seat].life for seat in "ABCD"))
+        self.assert_ivory_tower_private_hand(game)
+        self.replay(game, load=True)
+
+    def test_actual_ivory_tower_reads_current_private_hand_count(self):
+        self.assert_ivory_tower_response_uses_resolved_hand()
+
+    def test_actual_ivory_tower_keeps_upkeep_recipient_after_source_departs(self):
+        for hand_at_trigger, expected_gain in ((5, 0), (6, 1)):
+            with self.subTest(hand_at_trigger=hand_at_trigger):
+                game, source, response = self.ivory_tower_scene(
+                    934210 + hand_at_trigger, hand_at_trigger=hand_at_trigger, response="Disenchant",
+                )
+                self.cast_closed(game, "A", response, [source.ref], top_only=True)
+                self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+                self.assertEqual(hand_at_trigger - 1, len(self.hand(game, "A")))
+                self.assert_ivory_tower_private_hand(game)
+                game = self.replay(game, load=True)
+                with patch.object(game.engine, "_dispatch_semantic_event", wraps=game.engine._dispatch_semantic_event) as dispatch:
+                    self.assertIsNone(self.resolve(game))
+                life_gains = [call for call in dispatch.call_args_list if call.args[0] == "life.gained"]
+                self.assertEqual(int(expected_gain > 0), len(life_gains))
+                self.assertEqual((40 + expected_gain, 40, 40, 40), tuple(game.state.players[seat].life for seat in "ABCD"))
+                self.replay(game, load=True)
+
+    def test_ivory_tower_response_witness_rejects_a_trigger_time_quantity(self):
+        from quorune.rules import upkeep_hand_differences
+
+        with patch.object(upkeep_hand_differences, "resolve_upkeep_hand_difference", return_value=0):
+            with self.assertRaisesRegex(AssertionError, r"\(43, 40, 40, 40\) != \(40, 40, 40, 40\)"):
+                self.assert_ivory_tower_response_uses_resolved_hand()

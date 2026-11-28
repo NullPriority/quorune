@@ -32,9 +32,9 @@ def keep_three_sacrifice_scope(effect: Mapping, *, actor: str = "$controller"):
     raise ValueError("Keep-three sacrifice changed the required set or player scope")
 
 
-def unkept_permanents_in_apnap_order(player_order, offered, kept, current):
+def unkept_permanents_in_apnap_order(player_order, offered, kept, current, *, quota=3):
     order = tuple(player_order)
-    if (not order or len(order) != len(set(order)) or any(type(seat) is not str or not seat for seat in order)
+    if (type(quota) is not int or quota not in (1, 3) or not order or len(order) != len(set(order)) or any(type(seat) is not str or not seat for seat in order)
             or any(not isinstance(table, Mapping) or set(table) != set(order)
                    for table in (offered, kept, current))):
         raise ValueError("Keep-three sacrifice requires a complete APNAP round")
@@ -50,7 +50,7 @@ def unkept_permanents_in_apnap_order(player_order, offered, kept, current):
             raise ValueError("A permanent or its current incarnation changed during the choice")
         seen.update(members)
         if (not isinstance(chosen, (list, tuple)) or any(type(ref) is not str for ref in chosen)
-                or len(chosen) != min(3, len(members)) or len(chosen) != len(set(chosen))
+                or len(chosen) != min(quota, len(members)) or len(chosen) != len(set(chosen))
                 or not all(ref in members for ref in chosen)):
             raise ValueError("Each player keeps exactly the available quota from their own set")
         protected = set(chosen)

@@ -153,3 +153,42 @@ def day_night_keyword_node(
 
 
 __all__ = ["day_night_keyword_node"]
+
+
+def initial_day_entry_node(*, node_id, line, span, material_line, source_name, capability_registry,
+                           capability_profile, residuals):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..day_night_model import DAY_ENTRY_CAPABILITY, day_entry_descriptor
+    from ..rules.source_references import SourceReferenceSpec
+    from .static_runtime_nodes import runtime_handler_node
+
+    match = re.fullmatch(r"If it['’]s neither day nor night, it becomes day as (?P<source>.+?) enters\.",
+                         material_line, re.IGNORECASE)
+    if match is None or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    return runtime_handler_node(
+        node_id=node_id, line=line, span=span,
+        compiled=("intrinsic-entry-initial-day-v1", day_entry_descriptor(), DAY_ENTRY_CAPABILITY),
+        kind="replacement_effect", event="zone.change", active_zone="all",
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason="Initial day requires the original intrinsic entry replacement.",
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+
+
+def day_night_counter_binding(text, *, card_name):
+    from ..day_night_model import (
+        DAY_TOGGLE_COUNTER_CAPABILITY, DAY_TOGGLE_COUNTER_VARIANT, DAY_TOGGLE_EVENT, day_night_toggle_condition,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+    from .fixed_public_event_trigger_bindings import _spec
+
+    match = re.fullmatch(r"Whenever day becomes night or night becomes day, "
+                         r"(?P<body>put a \+1/\+1 counter on (?P<source>.+?)\.)", text, re.IGNORECASE)
+    if match is None or not card_name or not SourceReferenceSpec(card_name).matches(match["source"]):
+        return None
+    return _spec(
+        DAY_TOGGLE_EVENT, DAY_TOGGLE_COUNTER_VARIANT, match["body"],
+        "day-night-toggle-counter-v1", "trigger-event-normalized-public-action",
+        condition=day_night_toggle_condition(), capabilities=(DAY_TOGGLE_COUNTER_CAPABILITY,),
+    )

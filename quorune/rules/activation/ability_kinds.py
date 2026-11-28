@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """Validated ability identity for subtype-specific activation cost scopes."""
 
+from ..attachment_actions import EQUIP_SEMANTIC_KEY, PLANESWALKER_EQUIP_SEMANTIC_KEY
+
 
 def _catalogued_equip_matches(host, source, ability):
     """An opaque granted program key retains its independently typed keyword."""
@@ -38,14 +40,29 @@ def activation_matches_cost_scope(host,source,ability,scope):
     from dataclasses import replace
     if scope=='all':return True
     if scope=='nonmana':return not ability.mana_ability
-    if scope=='equip':return ability.builtin_semantic_key=='builtin:equip' or _catalogued_equip_matches(host,source,ability)
+    if scope == 'equip':
+        from .equip_permissions import ZeroEquipPrice
+
+        if isinstance(ability, ZeroEquipPrice):
+            ability = ability.printed_equip
+        return (ability.builtin_semantic_key in {EQUIP_SEMANTIC_KEY, PLANESWALKER_EQUIP_SEMANTIC_KEY}
+                or _catalogued_equip_matches(host, source, ability))
     if scope=='boast':
         from ...boast import validate_boast_ability
         validate_boast_ability(ability)
         return ability.boast
-    if scope!='cycling':raise ValueError('Unsupported activation cost ability selector')
-    program=host.semantics.get(host._semantic_key_for_ability(source,ability))
-    if program is None or not host.semantic_program_is_current_trusted(program):return False
+    if scope not in {'cycling', 'ninjutsu'}:
+        raise ValueError('Unsupported activation cost ability selector')
+    program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    if program is None or not host.semantic_program_is_current_trusted(program):
+        return False
+    if scope == 'ninjutsu':
+        from ...semantic_runtime.combat_entry_activations import is_fixed_ninjutsu_activation
+
+        return is_fixed_ninjutsu_activation(program, ability)
+
     from ...semantic_runtime.cycling_abilities import cycling_specs_from_descriptors
-    return any(replace(spec.to_activated_ability(),builtin_semantic_key=program.key)==ability
-        for spec in cycling_specs_from_descriptors(program.handlers))
+
+    specs = cycling_specs_from_descriptors(program.handlers)
+    return any(replace(spec.to_activated_ability(), builtin_semantic_key=program.key) == ability
+        for spec in specs)

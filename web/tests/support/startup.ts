@@ -1,6 +1,23 @@
 import { expect, test, type Page } from "@playwright/test";
+import type { StartingPlayer } from "../../src/api";
+import { viewRevision } from "./progress";
 
-export async function startRoomGame(page: Page): Promise<void> {
+export async function openGameMenu(page: Page): Promise<void> {
+  const menu = page.locator("details.game-menu");
+  if (await menu.getAttribute("open") === null) await page.getByTestId("open-game-menu").click();
+}
+
+export async function completeCastGesture(page: Page, gesture: () => Promise<void>): Promise<void> {
+  const revision = await viewRevision(page);
+  const dialog = page.getByTestId("choice-dialog");
+  await gesture();
+  await expect.poll(async () => await dialog.isVisible() || await viewRevision(page) > revision).toBe(true);
+  if (await dialog.isVisible()) await dialog.getByTestId("submit-choice").click();
+  await expect.poll(() => viewRevision(page)).toBeGreaterThan(revision);
+}
+
+export async function startRoomGame(page: Page, firstPlayer: StartingPlayer = "A"): Promise<void> {
+  await page.getByRole("combobox", { name: "Starting player" }).selectOption(firstPlayer);
   const receipt = page.waitForResponse(
     (response) => response.request().method() === "POST"
       && /^\/api\/v1\/rooms\/[^/]+\/start$/.test(new URL(response.url()).pathname),

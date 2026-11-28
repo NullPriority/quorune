@@ -251,10 +251,13 @@ class MassDestructionCompilerTests(unittest.TestCase):
     def test_unsupported_mass_destruction_variants_remain_residuals(self):
         self.assertIsNotNone(mass_destruction_effect_template('Destroy all nonwhite creatures.'))
         self.assertEqual('exact',self.compile('Destroy all nonwhite creatures.').status)
+        subtype = mass_destruction_effect_template("Destroy all non-Human creatures.")
+        self.assertEqual(("human",), subtype.spec.query.excluded_subtypes)
+        self.assertEqual("exact", self.compile("Destroy all non-Human creatures.").status)
         unsupported = (
             "Destroy each artifact with mana value less than or equal to the number of rust counters on it.",
             "Destroy all nonwhite creatures that attacked this turn.",
-            "Destroy all non-Human creatures.",
+            "Destroy all non-Human creatures with stun counters on them.",
             "Destroy all creatures that attacked this turn.",
             "Destroy all creatures with counters on them.",
             "Destroy all creatures. Draw a card for each tapped creature destroyed this way.",

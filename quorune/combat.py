@@ -10,6 +10,15 @@ TRAMPLE = "trample"
 LIFELINK = "lifelink"
 
 
+def current_attacker_blocker_count(state, attacker_object_id: str) -> int:
+    blockers = state.combat.blockers.get(attacker_object_id, ())
+    return sum(
+        1 for object_id in dict.fromkeys(blockers)
+        if (card := state.cards.get(object_id)) is not None
+        and card.zone == "battlefield" and not card.phased_out and card.blocking is not None
+    )
+
+
 def current_block_counterpart_ids(
     blockers: Mapping[str, Iterable[str]], source_object_id: str, *,
     live_attackers: Collection[str] | None,

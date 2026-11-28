@@ -2,7 +2,8 @@
 from ..discard_result_model import (
     DAMAGE_RECIPIENT_REFERENCE, DISCARD_RESULT_CAPABILITY, DISCARD_RESULT_EVENT_PLAYER_REFERENCES,
     DISCARD_RESULT_MECHANIC, DISCARD_RESULT_OPERATION, EVENT_PLAYER_DISCARD_RESULT_CAPABILITY,
-    EVENT_PLAYER_DISCARD_RESULT_VERSION, SELECTED_LAND_DISCARD_RESULT_VERSION, SELECTED_LAND_DISCARD_FIELD, validate_discard_draw,
+    EVENT_PLAYER_DISCARD_RESULT_VERSION, SELECTED_LAND_DISCARD_RESULT_VERSION, SELECTED_LAND_DISCARD_FIELD,
+    ORDERED_OPPONENTS_DISCARD_CAPABILITY, is_ordered_opponents_discard, validate_discard_draw,
 )
 from ..event_player_modifier_model import DEFENDING_PLAYER_REFERENCE
 from .effect_shape_walkers import nested_effects
@@ -26,6 +27,8 @@ def discard_result_node_capabilities(*, effects, target_schema, mechanic_ids, **
     except (ValueError, TypeError):return ()
     effect = effects[0]
     if effect['actor'] != '$controller':return ()
+    if is_ordered_opponents_discard(effect):
+        return (DISCARD_RESULT_CAPABILITY, ORDERED_OPPONENTS_DISCARD_CAPABILITY, GRAVEYARD_ARRIVAL_ORDER_CAPABILITY)
     if effect['schema_version'] == SELECTED_LAND_DISCARD_RESULT_VERSION:
         if SELECTED_LAND_DISCARD_FIELD in effect:
             return ()
@@ -55,6 +58,14 @@ def event_player_discard_result_runtime_dependencies(program):
     if equipped := equipped_damage_discard_untap_runtime_dependencies(program):
         return equipped
     nodes = tuple(nested_effects((program.effects, getattr(program, 'handlers', ()))))
+    if any(is_ordered_opponents_discard(effect) for effect in nodes):
+        required = discard_result_node_capabilities(effects=program.effects, target_schema=program.target_schema,
+                                                    mechanic_ids=program.coverage)
+        if (ORDERED_OPPONENTS_DISCARD_CAPABILITY not in required
+                or (program.event, program.active_zone) != ("activate", "battlefield")
+                or program.event_condition is not None or program.cost_schema is None):
+            raise ValueError("Ordered opponents discard requires the complete battlefield activation")
+        return required
     if any(effect.get('op') == DISCARD_RESULT_OPERATION
            and effect.get('schema_version') == SELECTED_LAND_DISCARD_RESULT_VERSION for effect in nodes):
         required = discard_result_node_capabilities(effects=program.effects,

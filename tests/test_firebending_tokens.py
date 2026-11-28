@@ -1,10 +1,13 @@
 """Created tokens own separate Firebending triggers and combat-retained mana."""
 
 from pathlib import Path
+import json
+import os
 import tempfile
 import unittest
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.rules.capabilities import load_default_capability_registry
@@ -107,3 +110,146 @@ class FirebendingTokenRuntimeTests(unittest.TestCase):
             and current.state.pending_decision is not None and current.state.pending_decision.kind == "priority")
         self.assertEqual(0, session.state.players["A"].mana_pool["R"])
         self.private_replay(session, private)
+
+
+class FirebendingSourceAndExileTriggerTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        FirebendingTokenRuntimeTests.setUpClass.__func__(cls)
+        cls.deck = DeckDefinition("Fire Lord Zuko witness", [
+            DeckEntry("Fire Lord Zuko", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Fire Lord Zuko"])
+
+    def save_replay(self, game, name):
+        from hashlib import file_digest
+        from quorune.record import authoritative_state_hash, replay_record
+
+        parent = os.environ.get("QUORUNE_ZUKO_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        destination = Path(parent) / name
+        game.save(destination)
+        result = replay_record(destination, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, result["final_state_hash"])
+        with (destination / "manifest.json").open("rb") as handle:
+            manifest_hash = file_digest(handle, "sha256").hexdigest()
+        destination.with_suffix(".receipt.json").write_text(
+            json.dumps({"manifest_sha256": manifest_hash, "final_state_sha256": state_hash,
+                        "commands": len(game.commands)}, indent=2) + "\n", encoding="utf-8")
+
+    def test_firebending_x_uses_live_or_last_known_power_and_expires_after_combat(self):
+        for leaves in (False, True):
+            with self.subTest(leaves=leaves):
+                game = self.session(702189400 + int(leaves))
+                source = self.add(game.engine, "Fire Lord Zuko", ref="firebending-original")
+                boost = self.add(game.engine, "Brute Force", zone="hand")
+                self.add(game.engine, "Mountain")
+                if leaves:
+                    response = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                    self.add(game.engine, "Island", seat="B")
+                    self.assert_closed(game, response)
+                for card in (source, boost):
+                    self.assert_closed(game, card)
+                self.prepare(game)
+                self.checkpoint(game)
+                self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+                result = game.act("pilot:A", {"action_id": "attack", "attackers": {source.ref: "B"}})
+                self.assertTrue(result.ok, result.summary)
+                trigger, = game.state.stack
+                self.assertEqual(("triggered_ability", "creature.attacks"), (trigger.kind, trigger.context["event"]))
+                self.assertFalse(game.state.players["A"].mana_pool.get("R", 0))
+                self.cast_for(game, "A", boost, [source.ref])
+                self.resolve_top(game)
+                self.assertEqual(5, game.engine._numeric_stat(source.object_id, "power"))
+                if leaves:
+                    self.cast_for(game, "B", response, [source.ref])
+                    self.resolve_top(game)
+                    self.assertEqual("hand", game.state.cards[source.object_id].zone)
+                label = "lki" if leaves else "live"
+                self.save_replay(game, f"zuko-{label}-pending-game-record")
+                self.resolve_top(game)
+                self.assertEqual(5, game.state.players["A"].mana_pool["R"])
+                self.until(game, lambda current: current.state.step == "end_combat")
+                self.assertEqual(5, game.state.players["A"].mana_pool["R"])
+                self.until(game, lambda current: current.state.phase == "postcombat_main")
+                self.assertEqual(0, game.state.players["A"].mana_pool.get("R", 0))
+                self.save_replay(game, f"zuko-{label}-ended-combat-game-record")
+
+    def test_zuko_command_cast_and_separate_exile_cast_and_entry_receipts(self):
+        from quorune.oracle_ir import register_generated_programs
+
+        game = self.session(608214001)
+        source, = (game.state.cards[oid] for oid in game.state.players["A"].zones["command"])
+        self.assertTrue(source.is_commander)
+        register_generated_programs(self.db, game.engine.semantics, (self.db.lookup(source.printed_name),),
+            trust_level="provisional", capability_registry=self.registry, capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        impulse = self.add(game.engine, "Reckless Impulse", zone="hand")
+        blink = self.add(game.engine, "Flicker of Fate", zone="hand")
+        creature = self.add(game.engine, "Isamaru, Hound of Konda", zone="library", ref="zuko-exile-creature")
+        self.add(game.engine, "Mountain", zone="library", ref="zuko-exile-land")
+        for card in (source, impulse, blink, creature):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 5, "R": 3, "W": 5, "B": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[source.object_id].zone)
+        self.assertEqual(0, self.trigger_count(game, source))
+        self.cast_for(game, "A", impulse)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[creature.object_id].zone)
+        self.cast_for(game, "A", game.state.cards[creature.object_id])
+        trigger = game.state.stack[-1]
+        self.assertEqual((source.object_id, "spell.cast", "exile"),
+                         (trigger.source_object_id, trigger.context["event"], trigger.context["from"]))
+        self.save_replay(game, "zuko-exile-cast-pending-game-record")
+        self.resolve_top(game)
+        self.assertEqual(1, game.state.cards[source.object_id].counters["+1/+1"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[creature.object_id].zone)
+        self.assertFalse(game.state.cards[creature.object_id].counters)
+        self.cast_for(game, "A", blink, [game.state.cards[creature.object_id].ref])
+        self.resolve_top(game)
+        trigger = game.state.stack[-1]
+        self.assertEqual((source.object_id, "permanent.enter", "exile"),
+                         (trigger.source_object_id, trigger.context["event"], trigger.context["from"]))
+        self.save_replay(game, "zuko-exile-arrival-pending-game-record")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, game.state.cards[source.object_id].counters["+1/+1"])
+        self.assertEqual(1, game.state.cards[creature.object_id].counters["+1/+1"])
+        self.save_replay(game, "zuko-exile-receipts-resolved-game-record")
+
+    def test_zuko_full_binding_rejects_withdrawn_ability_authorities(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.exile_origin_creature_counters import CAPABILITY as EXILE_CAPABILITY
+        from quorune.rules.source_power_firebending import CAPABILITY as FIRE_CAPABILITY
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Fire Lord Zuko", fuzzy=False)
+        profile = "commander_review"
+        bound, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        programs = {row.event: row for row in semantics.programs_for_oracle(card.oracle_id)}
+        self.assertEqual({"creature.attacks", "spell.cast"}, set(programs))
+        for event, cap in (("creature.attacks", FIRE_CAPABILITY), ("spell.cast", EXILE_CAPABILITY)):
+            program = programs[event]
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            mutant = replace(program, capability_dependencies=deps,
+                             capability_closure=self.registry.closure(deps, profile=profile).to_dict())
+            result = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile=profile)
+            self.assertFalse(result["strict"])
+            self.assertIn("capability:undeclared_runtime_dependency:" + cap, result["blockers"])
+        for oracle in (card.oracle_text.replace("Zuko's power", "Zuko's toughness"),
+                       card.oracle_text.replace("enters from exile", "enters from anywhere"),
+                       card.oracle_text.replace("each creature you control", "each target creature you control")):
+            result = compile_oracle_card(
+                replace(card, oracle_text=oracle), capability_registry=self.registry, capability_profile=profile,
+            )
+            self.assertNotEqual("exact", result.status)

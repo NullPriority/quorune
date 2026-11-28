@@ -274,7 +274,7 @@ class EventCardReturnActionTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / 'event-return.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/fixed-resolution-payment-cards.json', ROOT / 'tests/fixtures/typed-grant-carrier-cards.json', ROOT / 'tests/fixtures/event-card-return.json', ROOT / 'tests/fixtures/scryfall-exact-lists.json'], path)
+        build_fixture_database([ROOT / 'tests/fixtures/fixed-resolution-payment-cards.json', ROOT / 'tests/fixtures/typed-grant-carrier-cards.json', ROOT / 'tests/fixtures/event-card-return.json', ROOT / 'tests/fixtures/scryfall-exact-lists.json', ROOT / 'tests/fixtures/damage-linked-graveyard-outcome-cards.json'], path)
         cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Event return deck', [DeckEntry('Generic Payment Commander', 1, 'commander'), DeckEntry('Generic Payment Plains', 30)], ['Generic Payment Commander'])
 
@@ -282,8 +282,10 @@ class EventCardReturnActionTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close(); cls.temporary.cleanup()
 
-    def session(self, seed):
-        session = CommanderSession.create(self.db, {seat: deepcopy(self.deck) for seat in 'ABCD'}, first_player='A', seed=seed, config=GameConfig(seed=seed, auto_pass_empty_priority=False))
+    def session(self, seed, *, seats='ABCD'):
+        config = GameConfig(seed=seed, auto_pass_empty_priority=False)
+        session = CommanderSession.create(self.db, {seat: deepcopy(self.deck) for seat in seats},
+                                          first_player='A', seed=seed, config=config)
         keep_all(session); engine = session.engine
         engine.permissions.invalidate_current(); engine.state.pending_decision = None
         engine.state.priority_player = None; engine.state.priority_passes = []
@@ -292,9 +294,9 @@ class EventCardReturnActionTests(unittest.TestCase):
         register_generated_programs(self.db, engine.semantics, records, trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
 
-    def add(self, engine, name, *, ref, zone='battlefield', owner='A', controller=None):
+    def add(self, engine, name, *, ref, zone='battlefield', owner='A', controller=None, is_token=False):
         record = self.db.lookup(name); controller = controller or owner
-        card = CardInstance(object_id='event-return:' + ref, ref=ref, oracle_id=record.oracle_id, printed_name=record.name, owner=owner, controller=controller, zone=zone, zone_timestamp=engine._next_zone_timestamp(), known_to=[owner] if zone in {'hand', 'library'} else list(engine.seats), revealed_to=[] if zone in {'hand', 'library'} else list(engine.seats))
+        card = CardInstance(object_id='event-return:' + ref, ref=ref, oracle_id=record.oracle_id, printed_name=record.name, owner=owner, controller=controller, zone=zone, is_token=is_token, zone_timestamp=engine._next_zone_timestamp(), known_to=[owner] if zone in {'hand', 'library'} else list(engine.seats), revealed_to=[] if zone in {'hand', 'library'} else list(engine.seats))
         engine.state.cards[card.object_id] = card; engine.state.players[controller if zone == 'battlefield' else owner].zones[zone].append(card.object_id)
         return card
 
@@ -325,6 +327,62 @@ class EventCardReturnActionTests(unittest.TestCase):
             result = replay_record(path, self.db, verify=True)
         self.assertTrue(result['ok'], {key: value for key, value in result.items() if key != 'events'})
         self.assertEqual(expected, result['final_state_hash'])
+
+    def test_cauldron_controlled_death_moves_the_original_to_its_owner_bottom_and_replays(self):
+        session = self.session(4000711)
+        engine = session.engine
+        cauldron = self.add(engine, 'The Cauldron of Eternity', ref='CAULDRON')
+        record = self.db.by_oracle_id(cauldron.oracle_id)
+        register_generated_programs(
+            self.db, engine.semantics, (record,), trust_level='trusted',
+            capability_registry=self.registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        stolen = self.add(engine, 'Atog', ref='STOLEN', owner='B', controller='A')
+        opponent_controlled = self.add(engine, 'Atog', ref='OPPONENT-CONTROLLED', owner='A', controller='B')
+        copy_token = self.add(engine, 'Atog', ref='COPY-TOKEN', is_token=True)
+        murder = self.add(engine, 'Murder', ref='MURDER', zone='hand')
+        first_reap = self.add(engine, "Altar's Reap", ref='FIRST-REAP', zone='hand')
+        second_reap = self.add(engine, "Altar's Reap", ref='SECOND-REAP', zone='hand')
+        owner_library = list(session.state.players['B'].zones['library'])
+
+        action = self.ready(session, murder, {'B': 4, 'C': 3})
+        self.checkpoint(session)
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': [opponent_controlled.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        self.assertEqual('graveyard', opponent_controlled.zone)
+        self.assertIn(opponent_controlled.object_id, session.state.players['A'].zones['graveyard'])
+
+        for spell, sacrificed in ((first_reap, stolen), (second_reap, copy_token)):
+            while session.pending_principals()[0] != 'pilot:A':
+                passed = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+                self.assertTrue(passed.ok, passed.summary)
+            offered = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+            action = next(row for row in offered if row['id'] == 'cast:' + spell.ref)
+            result = session.act('pilot:A', {
+                'action_id': action['id'], 'pay': 'auto', 'sacrifice_cards': [sacrificed.ref],
+            })
+            self.assertTrue(result.ok, result.summary)
+            trigger, = (item for item in session.state.stack if item.source_object_id == cauldron.object_id)
+            self.assertEqual('A', trigger.controller)
+            self.assertEqual('A', trigger.context['previous_controller'])
+            self.assertEqual(sacrificed.owner, trigger.context['owner'])
+            self.assertEqual(sacrificed.ref, trigger.context['card'])
+            if sacrificed is stolen:
+                self.assertEqual(sacrificed.zone_change_counter, trigger.context['card_zone_change_counter'])
+                self.assertEqual('graveyard', sacrificed.zone)
+            else:
+                self.assertNotIn(copy_token.object_id, session.state.players['A'].zones['graveyard'])
+            self.resolve(session)
+
+        self.assertEqual('library', stolen.zone)
+        self.assertEqual([stolen.object_id, *owner_library], session.state.players['B'].zones['library'])
+        self.assertEqual('graveyard', opponent_controlled.zone)
+        self.assertNotIn(copy_token.object_id, session.state.players['A'].zones['library'])
+        self.assertNotEqual('battlefield', getattr(engine.state.cards.get(copy_token.object_id), 'zone', None))
+        self.replay(session)
 
     def test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays(self):
         session = self.session(4000710)
@@ -523,6 +581,162 @@ class EventCardReturnActionTests(unittest.TestCase):
         with mock.patch.object(owner, 'event_card_return_intent', omit):
             with self.assertRaises(AssertionError):
                 self.test_stale_graveyard_incarnation_is_not_returned_by_old_trigger()
+
+    def _nim_return_fixture(self, seed, *, seats='ABCD'):
+        session = self.session(seed, seats=seats)
+        engine = session.engine
+        records = tuple(self.db.lookup(name) for name in ('Nim Deathmantle', 'Cremate'))
+        register_generated_programs(
+            self.db, engine.semantics, records, trust_level='trusted',
+            capability_registry=self.registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        equipment = self.add(engine, 'Nim Deathmantle', ref='DEATHMANTLE')
+        creature = self.add(engine, 'Atog', ref='ORIGINAL', owner='A', controller='B')
+        return session, equipment, creature
+
+    def _cast_in_fresh_priority(self, session, seat, spell, target):
+        principal = 'pilot:' + seat
+        while session.pending_principals()[0] != principal:
+            passed = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(passed.ok, passed.summary)
+        actions = session.packet(principal, full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row['id'] == 'cast:' + spell.ref)
+        result = session.act(principal, {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+
+    def _pass_until_card_zone(self, session, card, zone):
+        for _ in range(16):
+            if card.zone == zone:
+                return
+            result = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.fail('The card did not reach its expected zone')
+
+    def _accept_nim_payment(self, session):
+        self.resolve(session)
+        self.assertEqual('semantic.choice', session.state.pending_decision.kind)
+        self.assertEqual(['pilot:A'], list(session.pending_principals()))
+        player = session.state.players['A']
+        before = sum(player.mana_pool.values())
+        accepted = session.act('pilot:A', {'action_id': 'choose', 'pay': True})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(before - 4, sum(player.mana_pool.values()))
+
+    def test_nim_paid_return_requires_attachment_authority_and_exact_compiler_result(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        record = self.db.lookup("Nim Deathmantle")
+        profiles = ("traditional", "commander_duel", "commander_review")
+        for profile in profiles:
+            self.assertEqual("exact", compile_oracle_card(
+                record, capability_registry=self.registry, capability_profile=profile,
+            ).status)
+        with mock.patch("quorune.compiler.event_card_return_templates._paid_death_equipment_return", return_value=None):
+            for profile in profiles:
+                missing_result = compile_oracle_card(
+                    record, capability_registry=self.registry, capability_profile=profile,
+                )
+                self.assertNotEqual("exact", missing_result.status)
+
+        path = ROOT / "quorune/rules/capability-registry.json"
+        raw = json.loads(path.read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+        for capability in ("zone.return.fixed_paid_death_equipment", "attachment.action.fixed_source"):
+            with self.subTest(capability=capability):
+                changed = deepcopy(raw)
+                row = next(item for item in changed["capabilities"] if item["id"] == capability)
+                row.update(status="blocked", blockers=["Independently withdrawn Equipment return authority"])
+                registry = CapabilityRegistry(changed)
+                index = build_index(registry_value=changed, declaration_source=declarations,
+                                    discovered_test_ids=discovered)
+                registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+                for profile in profiles:
+                    declined = compile_oracle_card(record, capability_registry=registry, capability_profile=profile)
+                    self.assertNotEqual("exact", declined.status)
+
+    def test_nim_death_payment_observes_ownership_and_attaches_to_the_returned_card(self):
+        from quorune.card_programs.adapters import compile_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+
+        record = self.db.lookup("Nim Deathmantle")
+        plans = {}
+        for profile in ('traditional', 'commander_duel', 'commander_review'):
+            program = compile_card_program(
+                self.db, record, capability_registry=self.registry,
+                capability_profile=profile, trust_level="trusted",
+            )
+            binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+            self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+            trigger, = (ability for ability in program.abilities if ability.event == "creature.dies")
+            plans[profile] = (trigger.event_condition, trigger.effects, trigger.capability_dependencies)
+        self.assertEqual(plans["commander_review"], plans["traditional"])
+        self.assertEqual(plans["commander_review"], plans["commander_duel"])
+        for seats in ('AB', 'ABCD'):
+            with self.subTest(seats=seats):
+                self._assert_nim_ownership_return(seats)
+
+    def _assert_nim_ownership_return(self, seats):
+        session, equipment, creature = self._nim_return_fixture(4000712, seats=seats)
+        engine = session.engine
+        borrowed = self.add(engine, 'Atog', ref='BORROWED', owner='B', controller='A')
+        token = self.add(engine, 'Atog', ref='TOKEN')
+        token.is_token, token.object_kind = True, 'token'
+        removals = [self.add(engine, 'Murder', ref=f'MURDER-{index}', zone='hand') for index in range(3)]
+        self.ready(session, removals[0], {'B': 6, 'C': 7})
+        self.checkpoint(session)
+
+        for spell, target in zip(removals[:2], (borrowed, token), strict=True):
+            self._cast_in_fresh_priority(session, 'A', spell, target)
+            self.resolve(session)
+            self.assertFalse(session.state.stack)
+            self.assertEqual('priority', session.state.pending_decision.kind)
+        self.assertIn(borrowed.object_id, session.state.players['B'].zones['graveyard'])
+
+        self._cast_in_fresh_priority(session, 'A', removals[2], creature)
+        self._pass_until_card_zone(session, creature, 'graveyard')
+        trigger, = (item for item in session.state.stack if item.source_object_id == equipment.object_id)
+        self.assertEqual('A', trigger.controller)
+        self.assertEqual('B', trigger.context['previous_controller'])
+        self.assertEqual('A', trigger.context['owner'])
+        self.assertEqual(creature.zone_change_counter, trigger.context['death_equipment_arrivals'][0]['zone_change_counter'])
+        self._accept_nim_payment(session)
+
+        self.assertEqual(('battlefield', 'A'), (creature.zone, creature.controller))
+        self.assertEqual(creature.object_id, equipment.attached_to)
+        self.assertIn(equipment.object_id, creature.attachments)
+        data = engine._effective_card_data(creature)
+        self.assertIn('Zombie', data['type_line'])
+        self.assertEqual(3, engine._numeric_stat(creature.object_id, 'power'))
+        self.replay(session)
+
+    def test_nim_can_pay_after_equipment_departure_or_the_original_arrival_becomes_stale(self):
+        for index, (name, response_target, zone) in enumerate((
+            ('Naturalize', 'equipment', 'graveyard'), ('Cremate', 'creature', 'exile'),
+        )):
+            with self.subTest(response=name):
+                session, equipment, creature = self._nim_return_fixture(4000713 + index)
+                engine = session.engine
+                murder = self.add(engine, 'Murder', ref='MURDER', zone='hand')
+                response = self.add(engine, name, ref='RESPONSE', zone='hand', owner='B')
+                engine.state.players['B'].mana_pool.update({'B': 1, 'G': 1, 'C': 1})
+                self.ready(session, murder, {'B': 2, 'C': 5})
+                self.checkpoint(session)
+                self._cast_in_fresh_priority(session, 'A', murder, creature)
+                self._pass_until_card_zone(session, creature, 'graveyard')
+                target = equipment if response_target == 'equipment' else creature
+                self._cast_in_fresh_priority(session, 'B', response, target)
+                self._pass_until_card_zone(session, target, zone)
+                self._accept_nim_payment(session)
+                self.assertEqual('battlefield' if name == 'Naturalize' else 'exile', creature.zone)
+                self.assertIsNone(equipment.attached_to)
+                self.replay(session)
 
     def test_commander_command_choice_removes_card_before_old_return_trigger(self):
         session = self.session(4000704); engine = session.engine

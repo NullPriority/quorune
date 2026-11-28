@@ -27,6 +27,8 @@ NINJUTSU_ABILITY_HANDLER_ID = "ability.activated.ninjutsu.v1"
 NINJUTSU_EFFECT_HANDLER_ID = "generic.ninjutsu-entry.v1"
 NINJUTSU_EFFECT_OPERATION = "ninjutsu_entry"
 NINJUTSU_MECHANICS = frozenset({"ninjutsu", "commander ninjutsu"})
+NINJUTSU_ACTIVATED_EVENT = "ability.ninjutsu.activated"
+NINJUTSU_ACTIVATED_CAPABILITY = "trigger.event.normalized_ninjutsu_activation"
 ENCORE_ABILITY_HANDLER_ID = "ability.activated.encore.v1"
 ENCORE_EFFECT_HANDLER_ID = "generic.encore-tokens.v1"
 ENCORE_EFFECT_OPERATION = "encore_tokens"
@@ -59,6 +61,29 @@ _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 
 class CombatEntryActivationError(ValueError):
     """A fixed combat-entry activation or intent is malformed."""
+
+
+def ninjutsu_activation_controller_condition() -> dict[str, str]:
+    return {"field": "player", "op": "eq", "value": "$source.controller"}
+
+
+def ninjutsu_activation_trigger_dependencies(program, subscriptions):
+    nested = subscriptions is not None and subscriptions.subscription_for(NINJUTSU_ACTIVATED_EVENT) is not None
+    if (program.event != NINJUTSU_ACTIVATED_EVENT and not nested
+            and NINJUTSU_ACTIVATED_CAPABILITY not in program.capability_dependencies):
+        return ()
+    if (program.event != NINJUTSU_ACTIVATED_EVENT or program.active_zone != "battlefield"
+            or program.event_condition != ninjutsu_activation_controller_condition()):
+        raise CombatEntryActivationError("A ninjutsu activation observer requires its exact controller condition")
+    from .rules.library_selection_capability_shapes import (
+        PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION, private_one_hand_ordered_bottom_shape,
+    )
+
+    if (program.target_schema is not None or len(program.effects) != 1
+            or program.effects[0].get("schema_version") != PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION
+            or not private_one_hand_ordered_bottom_shape(program.effects[0])):
+        raise CombatEntryActivationError("A ninjutsu activation observer requires the private hand and bottom choice")
+    return (NINJUTSU_ACTIVATED_CAPABILITY,)
 
 
 @dataclass(frozen=True, slots=True)
@@ -411,6 +436,19 @@ def resolve_ninjutsu_entry(
         or host.state.combat is None
     ):
         return None
+    from .rules.attacking_entry_copy import current_entry_copy_subscriber
+
+    if getattr(host.state, "attacking_entry_publication_version", None) == 1 and current_entry_copy_subscriber(host):
+        from .rules.attacking_card_entry import AttackingEntryRecipient
+        from .zone_transitions import ZoneTransitionOwner
+
+        target = intent.attack_target
+        arrival = AttackingEntryRecipient(target["target"], target.get("logical_object_id"))
+        ZoneTransitionOwner(host).move_cards_simultaneously(((source.object_id, "battlefield"),),
+            reason="Ninjutsu resolved", log=True, tapped=True,
+            destination_controllers={source.object_id: intent.actor}, putting_players={source.object_id: intent.actor},
+            replacement_selections=intent.replacement_selections, attacking_entries={source.object_id: arrival})
+        return source.ref if source.zone == "battlefield" and source.controller == intent.actor else None
     host.move_card(
         source.object_id,
         "battlefield",
@@ -620,17 +658,88 @@ def encore_attack_requirement(card: Any) -> str | None:
     return str(raw["opponent"])
 
 
-def begin_ninjutsu_reveal(
-    host: Any, source: Any, item: Any
-) -> None:
+def _matching_ninjutsu_reveals(
+    host: Any, object_id: str | None, logical_object_id: str | None
+):
+    for pending in host.state.stack:
+        raw = pending.context.get(NINJUTSU_REVEAL_CONTEXT)
+        if (
+            isinstance(raw, Mapping)
+            and raw.get("source_object_id") == object_id
+            and raw.get("source_logical_object_id") == logical_object_id
+            and isinstance(raw.get("previous_revealed_to"), list)
+        ):
+            yield pending, raw
+
+
+def _ninjutsu_reveal_activation_ref(item: Any, reveal: Mapping[str, Any]) -> str:
+    return reveal.get(
+        "activation_stack_ref", item.context.get("copied_from_stack", item.ref)
+    )
+
+
+def _is_granted_ninjutsu_reveal(host: Any, item: Any) -> bool:
+    from .card_programs.admission import program_has_complete_card_program_admission
+
+    program = host.semantics.get(item.semantic_key)
+    if (
+        program is None
+        or program.event != "activate"
+        or program.active_zone != "hand"
+        or program.provenance.get("granted_only") is not True
+        or not program_has_complete_card_program_admission(program)
+        or not host.semantic_program_is_current_trusted(program)
+    ):
+        return False
+    from .semantic_runtime.combat_entry_activations import (
+        fixed_ninjutsu_specs_from_descriptors,
+    )
+
+    specs = fixed_ninjutsu_specs_from_descriptors(program.handlers)
+    return len(specs) == 1 and not specs[0].commander
+
+
+def begin_ninjutsu_reveal(host: Any, source: Any, item: Any) -> None:
     if FIXED_COMBAT_RETURN_CONTEXT not in item.context:
         return
-    item.context[NINJUTSU_REVEAL_CONTEXT] = {
+    announced_incarnation = item.context.get("source_logical_object_id")
+    siblings = tuple(_matching_ninjutsu_reveals(
+        host, item.source_object_id, announced_incarnation
+    ))
+    # A paid granted activation introduces scoped disclosure. Intrinsic-only
+    # records retain the original representation and replay behavior.
+    scoped = any("activation_stack_ref" in raw for _, raw in siblings) or (
+        _is_granted_ninjutsu_reveal(host, item)
+    )
+    if scoped and (
+        source.zone != "hand"
+        or source.object_id != item.source_object_id
+        or source.logical_object_id != announced_incarnation
+    ):
+        return
+    reveal = {
         "source_object_id": source.object_id,
         "source_logical_object_id": source.logical_object_id,
         "previous_revealed_to": list(source.revealed_to),
     }
+    item.context[NINJUTSU_REVEAL_CONTEXT] = reveal
     source.revealed_to = list(host.seats)
+    if not scoped:
+        return
+    earliest = next(
+        (
+            raw for pending, raw in siblings
+            if _ninjutsu_reveal_activation_ref(pending, raw) == pending.ref
+        ),
+        reveal,
+    )
+    prior = earliest["previous_revealed_to"]
+    for pending, raw in (*siblings, (item, reveal)):
+        pending.context[NINJUTSU_REVEAL_CONTEXT] = {
+            **raw,
+            "activation_stack_ref": _ninjutsu_reveal_activation_ref(pending, raw),
+            "previous_revealed_to": list(prior),
+        }
 
 
 def cleanup_ninjutsu_reveal(host: Any, item: Any) -> None:
@@ -639,12 +748,23 @@ def cleanup_ninjutsu_reveal(host: Any, item: Any) -> None:
         return
     source = host.state.cards.get(str(raw.get("source_object_id") or ""))
     if (
-        source is not None
-        and source.logical_object_id == raw.get("source_logical_object_id")
-        and source.zone in {"hand", "command"}
-        and isinstance(raw.get("previous_revealed_to"), list)
+        source is None
+        or source.logical_object_id != raw.get("source_logical_object_id")
+        or source.zone not in {"hand", "command"}
+        or not isinstance(raw.get("previous_revealed_to"), list)
     ):
-        source.revealed_to = list(raw["previous_revealed_to"])
+        return
+    if "activation_stack_ref" in raw:
+        # The end-turn owner visits each item before clearing the whole stack.
+        item.context.pop(NINJUTSU_REVEAL_CONTEXT)
+        if raw["activation_stack_ref"] != item.ref or any(
+            other.get("activation_stack_ref") == pending.ref
+            for pending, other in _matching_ninjutsu_reveals(
+                host, source.object_id, source.logical_object_id
+            )
+        ):
+            return
+    source.revealed_to = list(raw["previous_revealed_to"])
 
 
 __all__ = [

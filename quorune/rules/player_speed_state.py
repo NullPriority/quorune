@@ -3,20 +3,31 @@ from __future__ import annotations
 """Canonical player speed mutation and inherent once-per-turn trigger owner."""
 
 from ..ability_fragments import StaticComponentSpec
+from ..characteristic_read_frames import characteristic_read_method
 from ..model import StackItem
 from ..trigger_processing import enqueue_trigger_batch
 from .player_speed_model import player_speed,SpeedIncrease,SPEED_KEY,SPEED_TRIGGER_TURN_KEY,START_ENGINES_HANDLER
 
 
+@characteristic_read_method
 def controlled_start_engines_players(host):
-    players=set()
-    if not callable(getattr(host,'_semantic_event_sources',None)):return ()
+    if not callable(getattr(host, "_semantic_event_sources", None)):
+        return ()
+    start_programs = {
+        program.key: program
+        for program in host.semantics.programs()
+        if any(handler.get("handler_id") == START_ENGINES_HANDLER for handler in program.handlers)
+    }
+    if not start_programs:
+        return ()
+    players = set()
     for card in host._semantic_event_sources(zones={'battlefield'}):
         if card.controller not in host.active_seats or card.phased_out:continue
         for fragment in host._effective_ability_fragments(card):
             if not isinstance(fragment,StaticComponentSpec):continue
-            program=host.semantics.get(fragment.semantic_key)
-            if program is not None and host.semantic_program_is_current_trusted(program) and any(d.get('handler_id')==START_ENGINES_HANDLER for d in program.handlers):players.add(card.controller)
+            program = start_programs.get(fragment.semantic_key)
+            if program is not None and host.semantic_program_is_current_trusted(program):
+                players.add(card.controller)
     return tuple(p for p in host.apnap_order() if p in players)
 
 

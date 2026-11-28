@@ -2,15 +2,43 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..cast_lifecycles import (
+    GRANTED_ESCAPE_CAPABILITY, GRANTED_ESCAPE_EXILE_COUNT, GRANTED_ESCAPE_HANDLER_ID,
+    GRANTED_ESCAPE_LIFECYCLE_VERSION, FixedCastLifecycleKind, FixedCastLifecycleSpec, granted_escape_descriptor,
+)
 from ..rules.turn_cast_grant_model import (
     COMMAND_GRAVEYARD_CAST_CAPABILITY, COMMAND_GRAVEYARD_CAST_HANDLER,
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
     TURN_CAST_EXILE_CAPABILITY, TURN_CAST_EXILE_HANDLER, TURN_CAST_TAPPED_CAPABILITY, TURN_CAST_TAPPED_HANDLER,
     TURN_CAST_MILL_CAPABILITY, TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_CAPABILITY, TURN_CAST_LIBRARY_SHARED_HANDLER,
     TURN_CAST_NONBATTLEFIELD_CAPABILITY,TURN_CAST_NONBATTLEFIELD_HANDLER,
+    TURN_CAST_PERMANENT_TYPE_CAPABILITY, TURN_CAST_PERMANENT_TYPE_HANDLER,
 )
 from .component_registry import exact_fields
 from .context import SemanticNodeError
+
+
+@dataclass(frozen=True, slots=True)
+class GrantedEscapeHandler:
+    handler_id: str = GRANTED_ESCAPE_HANDLER_ID
+    schema_version: int = 1
+    family: str = GRANTED_ESCAPE_CAPABILITY
+    event: str = TURN_CAST_GRANT_EVENT
+    rule_references: tuple[str, ...] = ("118.9", "601.2b", "601.2f", "601.2h", "702.138a")
+    capability_dependencies: tuple[str, ...] = (GRANTED_ESCAPE_CAPABILITY,)
+
+    def validate(self, descriptor):
+        expected = granted_escape_descriptor()
+        exact_fields(descriptor, set(expected), field="Source-granted Escape")
+        if (descriptor != expected or type(descriptor["schema_version"]) is not int
+                or descriptor["requires_complete_card_program"] is not True
+                or type(descriptor["exile_other_cards"]) is not int):
+            raise SemanticNodeError("Source-granted Escape requires its exact printed-price declaration")
+        return FixedCastLifecycleSpec(None, None, None, FixedCastLifecycleKind.ESCAPE, None, None,
+            exile_count=GRANTED_ESCAPE_EXILE_COUNT, schema_version=GRANTED_ESCAPE_LIFECYCLE_VERSION)
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,6 +89,9 @@ def turn_cast_rider_handlers():
 
 def qualified_turn_grant_handlers():
     return (
+        TurnCastGrantHandler(handler_id=TURN_CAST_PERMANENT_TYPE_HANDLER, family=TURN_CAST_PERMANENT_TYPE_CAPABILITY,
+            rule_references=("113.6", "205.2a", "305.1", "305.2", "400.7", "601.2"),
+            capability_dependencies=(TURN_CAST_GRANT_CAPABILITY, TURN_CAST_PERMANENT_TYPE_CAPABILITY)),
         TurnCastGrantHandler(handler_id=TURN_CAST_NONBATTLEFIELD_HANDLER,family=TURN_CAST_NONBATTLEFIELD_CAPABILITY,
             rule_references=('113.6','400.7','601.2'),
             capability_dependencies=(TURN_CAST_GRANT_CAPABILITY,TURN_CAST_NONBATTLEFIELD_CAPABILITY)),

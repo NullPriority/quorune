@@ -3,6 +3,7 @@ from __future__ import annotations
 """Capability closure for fixed life and ordered controller effects."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from ..event_counter_reference import EVENT_ENTRY_OBJECT
 
 from .node_capability_shapes import (
     fixed_counter_placement_node_capabilities,
@@ -74,6 +75,51 @@ def player_history_life_loss_runtime_dependencies(program):
     return owned
 
 
+def temporary_life_total_and_permanent_protection_effects():
+    from ..life_gain_permission import temporary_controller_life_total_prohibition_effect
+    from ..object_predicate import ObjectQuerySpec
+
+    return (
+        temporary_controller_life_total_prohibition_effect(),
+        {"op": "modify_all_matching_permanents_until_end_of_turn",
+         "predicate": ObjectQuerySpec(zones=("battlefield",), controller="$controller").to_dict(),
+         "power": 0, "toughness": 0, "keywords": ["Hexproof", "Indestructible"]},
+    )
+
+
+def _temporary_life_total_protection_capabilities(effects, target_schema, mechanics):
+    from ..life_gain_permission import TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    from ..replacement.immutable import thaw_value
+    from .fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+
+    if (
+        target_schema is not None or len(effects) != 2
+        or not {"cr-119-life", "cr-611-continuous-effects", "hexproof", "indestructible"} <= set(mechanics)
+        or tuple(thaw_value(effects)) != temporary_life_total_and_permanent_protection_effects()
+    ):
+        return ()
+    if type(effects[1].get("power")) is not int or type(effects[1].get("toughness")) is not int:
+        return ()
+    required = fixed_resolution_characteristic_set_node_capabilities(
+        effects=(thaw_value(effects[1]),), target_schema=None, mechanic_ids=mechanics,
+    )
+    if not required:
+        return ()
+    return tuple(sorted({
+        TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY, "life.change.effect", *required,
+        *(capability for keyword in effects[1]["keywords"]
+          for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+    }))
+
+
+def _uses_temporary_controller_life_total(effect, marker):
+    definition = effect.get(marker)
+    return isinstance(definition, Mapping) and (
+        definition.get("affected_player_relation") == "controller" or definition.get("schema_version") == 2
+    )
+
+
 def temporary_life_gain_runtime_dependencies(program):
     from ..life_gain_permission import (
         LIFE_GAIN_PROHIBITION_CAPABILITY, TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD,
@@ -84,6 +130,13 @@ def temporary_life_gain_runtime_dependencies(program):
     effects = (*program.effects, *getattr(program, "handlers", ()))
     if not any(TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in effect for effect in nested_effects(effects)):
         return ()
+    if any(_uses_temporary_controller_life_total(effect, TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD)
+           for effect in nested_effects(effects)):
+        required = _temporary_life_total_protection_capabilities(program.effects, program.target_schema, program.coverage)
+        if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+                or program.event_condition is not None or program.handlers):
+            raise ValueError("Temporary life-total and characteristic protection requires the exact untargeted spell")
+        return required
     if len(program.effects) == 3 and TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in program.effects[0]:
         from .damage_capability_shapes import turn_damage_prevention_runtime_dependencies
 
@@ -123,7 +176,11 @@ def fixed_life_node_capabilities(
         )
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
-    if "cr-119-life" not in mechanics or len(effects) != 1:
+    if "cr-119-life" not in mechanics:
+        return ()
+    if len(effects) == 2:
+        return _temporary_life_total_protection_capabilities(effects, target_schema, mechanics)
+    if len(effects) != 1:
         return ()
     effect = effects[0]
     operation = effect.get("op")
@@ -339,6 +396,13 @@ def fixed_counter_controller_effect_sequence_node_capabilities(
         normalized_counter = {**counter_effect, "card": "$source"}
     elif counter_effect.get("card") == "$target.0":
         normalized_counter = counter_effect
+    elif counter_effect.get("card") == EVENT_ENTRY_OBJECT:
+        draw = effects[1]
+        if (target_schema is not None or effects[0] is not counter_effect
+                or counter_effect.get("counter") != "+1/+1" or counter_effect.get("amount") != 1
+                or draw.get("op") != "draw" or draw.get("count") != 1):
+            return ()
+        normalized_counter = counter_effect
     else:
         return ()
     counter_dependencies = fixed_counter_placement_node_capabilities(
@@ -381,6 +445,43 @@ def fixed_counter_controller_effect_sequence_node_capabilities(
             }
         )
     )
+
+
+def is_controlled_nontoken_creature_entry(event, active_zone, condition):
+    from ..replacement.immutable import FrozenMap
+    from .entrant_name_absence import NONTOKEN_CONTROLLED_CREATURE_ENTRY
+
+    return (
+        (event, active_zone) == ("creature.enter", "battlefield")
+        and isinstance(condition, Mapping)
+        and FrozenMap(condition) == NONTOKEN_CONTROLLED_CREATURE_ENTRY
+        and condition["all"][1]["value"] is False
+    )
+
+
+def entry_counter_draw_runtime_dependencies(program):
+    """Validate that the ordered result is bound to its printed entry domain."""
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    effects = program.effects
+    coverage = set(program.coverage)
+    if not (
+        {_FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC, "fixed-entry-event-object-counter"} <= coverage
+        or len(effects) == 2 and effects[1].get("op") == "draw"
+        and effects[0].get("op") == "place_counters" and effects[0].get("card") == EVENT_ENTRY_OBJECT
+    ):
+        return ()
+    required = fixed_counter_controller_effect_sequence_node_capabilities(
+        effects=effects, target_schema=program.target_schema, mechanic_ids=coverage,
+    )
+    if not (
+        required and effects[0].get("card") == EVENT_ENTRY_OBJECT
+        and CURRENT_ABILITY_FRAGMENT_COVERAGE in coverage
+        and is_controlled_nontoken_creature_entry(program.event, program.active_zone, program.event_condition)
+        and program.cost_schema is None and not program.handlers
+    ):
+        raise ValueError("An entry counter and draw require the original controlled nontoken creature occurrence")
+    return (*required, "counter.producer.fixed_event_trigger", "trigger.event.normalized_zone_change", "trigger.placement.apnap")
 
 
 __all__ = [

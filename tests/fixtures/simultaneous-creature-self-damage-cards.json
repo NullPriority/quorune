@@ -50,6 +50,53 @@
       "type_line": "Creature — Kithkin Wizard"
     },
     {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Chandra's Ignition",
+      "oracle_id": "f61680da-606e-4d16-b0a0-361aa5210901",
+      "oracle_text": "Target creature you control deals damage equal to its power to each other creature and each opponent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
       "cmc": 4.0,
       "color_identity": [
         "R",
@@ -144,6 +191,55 @@
       "released_at": "2026-04-24",
       "toughness": null,
       "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "d0dd425b-fdba-41b4-b9e6-f5161610bd7e",
+      "name": "Ezuri's Predation",
+      "mana_cost": "{5}{G}{G}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "For each creature your opponents control, create a 4/4 green Phyrexian Beast creature token. Each of those tokens fights a different one of those creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "cmc": 8.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Fight"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -165,6 +261,48 @@
       "oracle_id": "70bb275b-3458-4690-a50f-b231fbf0bccb",
       "published_at": "2017-11-17",
       "source": "wotc"
+    },
+    {
+      "comment": "If the creature becomes an illegal target by the time Chandra's Ignition tries to resolve (perhaps because another player controls it or it's left the battlefield), Chandra's Ignition won't resolve and none of its effects will happen. No damage will be dealt.",
+      "oracle_id": "f61680da-606e-4d16-b0a0-361aa5210901",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature is the source of the damage, not Chandra's Ignition. For example, Chandra's Ignition can have a white creature deal damage to a creature with protection from red.",
+      "oracle_id": "f61680da-606e-4d16-b0a0-361aa5210901",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the power of the target creature as Chandra's Ignition resolves to determine how much damage it deals to each other creature and each opponent.",
+      "oracle_id": "f61680da-606e-4d16-b0a0-361aa5210901",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "d0dd425b-fdba-41b4-b9e6-f5161610bd7e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "You choose which Beast is fighting which creature an opponent controls."
+    },
+    {
+      "oracle_id": "d0dd425b-fdba-41b4-b9e6-f5161610bd7e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If Ezuri's Predation creates more than one token for any given creature (due to an effect such as the one Doubling Season creates), the extra tokens won't fight any creature."
+    },
+    {
+      "oracle_id": "d0dd425b-fdba-41b4-b9e6-f5161610bd7e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Players can't cast spells or activate any abilities in between the Beasts entering the battlefield and fighting the other creatures. If the Beasts entering the battlefield cause any abilities to trigger, those abilities will be put onto the stack after Ezuri's Predation is finished resolving."
+    },
+    {
+      "oracle_id": "d0dd425b-fdba-41b4-b9e6-f5161610bd7e",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Each of the \"fights\" happens at the same time."
     }
   ],
   "schema_version": 1,

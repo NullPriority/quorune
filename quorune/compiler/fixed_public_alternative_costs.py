@@ -15,6 +15,9 @@ from ..additional_cost_vocabulary import (
 from ..object_predicate import ObjectQuerySpec
 from ..public_alternative_costs import (
     ANNOUNCED_X_PITCH_PRICE_VERSION,
+    LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION,
+    life_and_blue_hand_exile_payments,
+    BATTLEFIELD_CREATURE_PRICE_VERSION,
     FIXED_PUBLIC_ALTERNATIVE_COST_MECHANIC,
     OPPONENT_HISTORY_COSTS,
     CREATURE_DAMAGE_PRICE_VERSION,
@@ -31,8 +34,9 @@ from ..rules.casting_additional_cost_groups import (
     FixedLifePaymentAdditionalCost,
 )
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+from ..rules.island_pair_discard_cost import ISLAND_PAIR_DISCARD_FIELD, ISLAND_PAIR_PRICE_TEXT, island_pair_discard_cost
 from ..util import mana_cost_to_vector
-from .fixed_numbers import fixed_number
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 _MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -64,6 +68,10 @@ _HAND_MOVE = re.compile(
     r"(?P<verb>discard|exile) (?P<count>a|an|one|two|three|four|five|[1-9][0-9]*) "
     r"(?P<quality>white|blue|black|red|green|Forest|Island|Mountain|Plains|Swamp) "
     r"cards?(?P<from_hand> from your hand)?",
+    re.IGNORECASE,
+)
+_LIFE_AND_BLUE_HAND_EXILE = re.compile(
+    r"You may pay 1 life and exile a blue card from your hand rather than pay this spell['’]s mana cost\.?",
     re.IGNORECASE,
 )
 _ANNOUNCED_X_PITCH = re.compile(
@@ -267,6 +275,8 @@ def _payment(
             ),
         )
         return parsed[0], parsed[1], (FrozenMap(cost.to_descriptor()),)
+    if normalized.casefold() == ISLAND_PAIR_PRICE_TEXT:
+        return None, _zero_mana(), (FrozenMap(island_pair_discard_cost().to_descriptor()),)
     if match := _HAND_MOVE.fullmatch(normalized):
         count = _count(match.group("count"))
         verb = match.group("verb").casefold()
@@ -388,6 +398,33 @@ def _creature_damage_price(material_line, oracle_line, line_index):
     )
 
 
+_BATTLEFIELD_CREATURE_PRICE = re.compile(
+    rf"You may pay (?P<mana>{_ORDINARY_COST}) rather than pay this spell['’]s mana cost "
+    rf"if there are (?P<count>thirteen|{FIXED_COUNT_PATTERN}) or more creatures on the battlefield\.",
+    re.IGNORECASE,
+)
+
+
+def _battlefield_creature_price(material_line, oracle_line, line_index):
+    match = _BATTLEFIELD_CREATURE_PRICE.fullmatch(material_line.strip())
+    if match is None:
+        return None
+    minimum = _count(match["count"])
+    payment = _mana(match["mana"])
+    if minimum is None or payment is None:
+        return None
+    cost_text, mana = payment
+    return FixedPublicAlternativeCostSpec(
+        ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+        kind=FixedPublicAlternativeCostKind.PLAIN,
+        condition=FixedPublicAlternativeCondition(
+            FixedPublicAlternativeConditionKind.MINIMUM_BATTLEFIELD_CREATURES,
+            schema_version=BATTLEFIELD_CREATURE_PRICE_VERSION, minimum_creature_count=minimum,
+        ),
+        cost_text=cost_text, mana_requirements=mana,
+    )
+
+
 def compile_fixed_public_alternative_cost(
     *,
     material_line: str,
@@ -396,6 +433,16 @@ def compile_fixed_public_alternative_cost(
 ) -> FixedPublicAlternativeCostSpec | None:
     """Parse one closed fixed alternative-cost declaration."""
     from .conditional_free_casts import conditional_zero_mana_condition
+
+    if _LIFE_AND_BLUE_HAND_EXILE.fullmatch(material_line.strip()):
+        return FixedPublicAlternativeCostSpec(
+            ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+            kind=FixedPublicAlternativeCostKind.PLAIN,
+            condition=FixedPublicAlternativeCondition(FixedPublicAlternativeConditionKind.ALWAYS),
+            cost_text=None, mana_requirements=_zero_mana(),
+            additional_costs=life_and_blue_hand_exile_payments(),
+            schema_version=LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION,
+        )
     if match := _ANNOUNCED_X_PITCH.fullmatch(material_line.strip()):
         cost = FixedZoneChangeAdditionalCost(
             operation=EXILE_ONE_FROM_HAND_COST, count=1, choice_field="exile_cards",
@@ -415,6 +462,9 @@ def compile_fixed_public_alternative_cost(
     attacking_price = _live_attacking_price(material_line, oracle_line, line_index)
     if attacking_price is not None:
         return attacking_price
+    battlefield_price = _battlefield_creature_price(material_line, oracle_line, line_index)
+    if battlefield_price is not None:
+        return battlefield_price
     damage_price = _creature_damage_price(material_line, oracle_line, line_index)
     if damage_price is not None:
         return damage_price
@@ -444,6 +494,9 @@ def compile_fixed_public_alternative_cost(
             return None
         cost_text, mana, additional = parsed
         condition = _condition(kind, plain)
+        if (any(cost.get(ISLAND_PAIR_DISCARD_FIELD) is True for cost in additional)
+                and condition.kind is not FixedPublicAlternativeConditionKind.ALWAYS):
+            return None
     return FixedPublicAlternativeCostSpec(
         ability_id=f"ab{line_index + 1}",
         line_index=line_index,

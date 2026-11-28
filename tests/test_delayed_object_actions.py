@@ -141,3 +141,62 @@ class DelayedObjectOwnerTests(unittest.TestCase):
         with patch(__name__+'.apply_delayed_object_action',side_effect=omit):
             result=unittest.TestResult();DelayedObjectOwnerTests('test_delayed_action_keeps_identity_source_controller_and_waits_for_the_right_step').run(result)
         self.assertFalse(result.errors,result.errors);self.assertTrue(result.failures)
+
+class TargetDeathReturnCompilerTests(unittest.TestCase):
+    def test_target_death_return_requires_exact_target_and_result_descriptors(self):
+        from quorune.delayed_object_model import (
+            TARGET_DEATH_RETURN_CAPABILITY,
+            TARGET_DEATH_RETURN_MECHANICS,
+            target_death_return_effect,
+            target_death_return_node_capabilities,
+            target_death_return_target_schema,
+        )
+
+        target = target_death_return_target_schema()
+        effect = target_death_return_effect()
+        def requirements(effect, target):
+            return target_death_return_node_capabilities(
+                effects=(effect,), target_schema=target, mechanic_ids=TARGET_DEATH_RETURN_MECHANICS,
+            )
+
+        self.assertIn(TARGET_DEATH_RETURN_CAPABILITY, requirements(effect, target))
+        relaxed = dict(target)
+        relaxed.pop("state_predicate")
+        self.assertFalse(requirements(effect, relaxed))
+        for forged_effect in (
+            {**effect, "object": "$source.zone_object"},
+            {**effect, "timing": "next_end_step"},
+            {**effect, "action": "reanimate"},
+        ):
+            with self.subTest(effect=forged_effect):
+                self.assertFalse(requirements(forged_effect, target))
+
+    def test_target_death_return_withdrawal_keeps_support_available(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_granted_skulk import record
+
+        support = "When this enchantment enters, support 2."
+        linked = ("{1}: Choose target creature with a counter on it. When that creature "
+                  "dies this turn, return that card to its owner's hand.")
+        together = record(support + "\n" + linked, "Enchantment")
+        admitted = compile_oracle_card(together, capability_registry=load_default_capability_registry())
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        delayed = next(row for row in raw["capabilities"] if row["id"] == "trigger.delayed.fixed_object_action")
+        delayed.update(status="blocked", blockers=["delayed object authority withdrawn"])
+        registry = CapabilityRegistry(raw)
+        evidence = build_index(
+            registry_value=raw,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()),
+        )
+        registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+        partial = compile_oracle_card(together, capability_registry=registry)
+        self.assertNotEqual("exact", partial.status)
+        independent = compile_oracle_card(record(support, "Enchantment"), capability_registry=registry)
+        self.assertEqual("exact", independent.status, independent.material_residuals)

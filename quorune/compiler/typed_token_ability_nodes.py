@@ -27,12 +27,23 @@ EffectTemplate = Callable[..., tuple[Any, ...]]
 GrantEffectTemplates = Callable[..., tuple[Any, Any]]
 
 _QUOTED = re.compile(r'"(?P<ability>[^"]+)"')
+_COPY_DEATH_DRAW_GRANT = re.compile(
+    r"(?P<creation>[^:\n]+:\s*Create a token that's a copy of another target creature you control\.) "
+    r'It gains haste and "(?P<ability>When this token dies, draw a card\.)" '
+    r'(?P<cleanup>Sacrifice it at the beginning of the next end step\. Activate only as a sorcery\.)',
+    re.IGNORECASE,
+)
 _POSTPOSED = re.compile(
     r'\.\s+(?:It|They)\s+(?:has|have)\s+"[^"]+"\.?',
     re.IGNORECASE,
 )
 _AND_QUOTED = re.compile(r',?\s+and\s+"[^"]+"', re.IGNORECASE)
 _WITH_QUOTED = re.compile(r'\s+with\s+"[^"]+"', re.IGNORECASE)
+_NESTED_TOKEN_DEATH = re.compile(
+    r"(?P<body>When this token dies, create [^'.]+ tokens? with [^'.]+)"
+    r" and '(?P<activation>\{[WUBRGC]\}: [^']+)'",
+    re.IGNORECASE,
+)
 _ABILITY_WORD = re.compile(r"^[A-Za-z][A-Za-z ']+\s+[—-]\s+(?P<body>.+)$")
 _PERMANENT_CARD_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
@@ -126,13 +137,25 @@ def _with_token_fragments(
     *,
     fragments: Sequence[Mapping[str, Any]],
     query_defined_stats: bool = False,
+    post_entry_copy_grant: bool = False,
 ) -> tuple[Any, int]:
     if isinstance(value, Mapping):
         result = {str(key): copy.deepcopy(child) for key, child in value.items()}
         if result.get("op") == "create_token":
             if "copy_spec" in result:
                 recipe = result["copy_spec"]
-                recipe["exception"]["add_ability_fragments"] = [copy.deepcopy(dict(fragment)) for fragment in fragments]
+                if post_entry_copy_grant:
+                    from ..token_copy_recipes import POST_ENTRY_COPY_GRANT_VERSION, TokenCopyRecipeSpec
+
+                    grant, = canonical_ability_fragments(fragments)
+                    result["copy_spec"] = replace(
+                        TokenCopyRecipeSpec.from_dict(recipe), schema_version=POST_ENTRY_COPY_GRANT_VERSION,
+                        post_entry_grant=grant,
+                    ).to_dict()
+                else:
+                    recipe["exception"]["add_ability_fragments"] = [
+                        copy.deepcopy(dict(fragment)) for fragment in fragments
+                    ]
                 return result, 1
             characteristics = dict(result.get("characteristics") or {})
             if query_defined_stats:
@@ -147,6 +170,7 @@ def _with_token_fragments(
         for key, child in tuple(result.items()):
             result[key], count = _with_token_fragments(
                 child, fragments=fragments, query_defined_stats=query_defined_stats,
+                post_entry_copy_grant=post_entry_copy_grant,
             )
             changed += count
         return result, changed
@@ -156,6 +180,7 @@ def _with_token_fragments(
         for child in value:
             updated, count = _with_token_fragments(
                 child, fragments=fragments, query_defined_stats=query_defined_stats,
+                post_entry_copy_grant=post_entry_copy_grant,
             )
             result.append(updated)
             changed += count
@@ -229,8 +254,9 @@ def _outer_nodes(
     trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    saga_chapter_body: bool = False,
 ) -> tuple[OracleNode, ...] | None:
-    if set(printed_card_types).intersection(_SPELL_CARD_TYPES):
+    if saga_chapter_body or set(printed_card_types).intersection(_SPELL_CARD_TYPES):
         node = _spell_outer_node(
             node_id=node_id,
             line=line,
@@ -412,6 +438,7 @@ def _token_fragments_and_children(
     capability_profile: str,
     copy_recipe: bool = False,
     literal_source_name: str | None = None,
+    post_entry_copy_grant: bool = False,
 ) -> tuple[list[Mapping[str, Any]], list[OracleNode], list[str]] | None:
     from .attached_granted_ability_nodes import attached_granted_ability_plan
     from .granted_static_costs import bind_granted_plan_dependencies
@@ -427,9 +454,10 @@ def _token_fragments_and_children(
     direct_mechanics: list[str] = []
     for slot, quoted in enumerate(quoted_abilities, 1):
         child_id = f"{node_id}:token-ability:{slot}"
+        nested = _NESTED_TOKEN_DEATH.fullmatch(quoted.strip()) if not copy_recipe else None
         child_inputs = dict(
             node_id=child_id,
-            quoted=quoted,
+            quoted=nested["body"] + "." if nested is not None else quoted,
             token_type_line=token_type_line,
             token_keywords=token_keywords,
             span=span,
@@ -442,6 +470,10 @@ def _token_fragments_and_children(
             copy_recipe=copy_recipe,
         )
         token_source_name = "Created Token"
+        if post_entry_copy_grant:
+            # "Dies" checks any battlefield-to-graveyard occurrence, including
+            # when the target was a creature only through a noncopiable effect.
+            child_inputs["quoted"] = "When Created Token is put into a graveyard from the battlefield, draw a card."
         compiled = _inner_node(**child_inputs)
         # Keep already represented child programs stable before trying the
         # token definition's printed name through the same source-reference owner.
@@ -452,6 +484,17 @@ def _token_fragments_and_children(
         if compiled is None:
             return None
         inner, compiled_text = compiled
+        descendants: list[OracleNode] = []
+        if nested is not None:
+            nested_program = _decorate_nested_token_death(
+                inner, activation=nested["activation"], oracle_id=oracle_id, face_id=face_id,
+                span=span, compile_inner=compile_inner, trigger_node=trigger_node,
+                grant_effect_templates=grant_effect_templates, trusted_mechanics=trusted_mechanics,
+                capability_registry=capability_registry, capability_profile=capability_profile,
+            )
+            if nested_program is None:
+                return None
+            inner, descendants = nested_program
         if inner.kind == "static_ability":
             static_fragments = fragments_from_descriptors(inner.handlers)
             if not static_fragments:
@@ -491,6 +534,7 @@ def _token_fragments_and_children(
                 residual_ids=(),
             )
         )
+        children.extend(descendants)
     return fragments, children, direct_mechanics
 
 
@@ -502,6 +546,7 @@ def _decorate_outer_nodes(
     capability_registry: CapabilityRegistry,
     capability_profile: str,
     query_defined_stats: bool = False,
+    post_entry_copy_grant: bool = False,
 ) -> tuple[OracleNode, ...] | None:
     # These intrinsic restrictions already have a closed fixed-definition
     # representation. Keep its legacy capability shape when adding no child
@@ -525,9 +570,13 @@ def _decorate_outer_nodes(
     result: list[OracleNode] = []
     changed = 0
     for outer in outer_nodes:
-        effects, count = _with_token_fragments(
-            outer.effects, fragments=fragments, query_defined_stats=query_defined_stats,
-        )
+        try:
+            effects, count = _with_token_fragments(
+                outer.effects, fragments=fragments, query_defined_stats=query_defined_stats,
+                post_entry_copy_grant=post_entry_copy_grant,
+            )
+        except ValueError:
+            return None
         changed += count
         if not count:
             result.append(outer)
@@ -562,6 +611,47 @@ def _decorate_outer_nodes(
     return tuple(result) if changed == 1 else None
 
 
+def _decorate_nested_token_death(
+    node: OracleNode,
+    *,
+    activation: str,
+    oracle_id: str,
+    face_id: str,
+    span: SourceSpan,
+    compile_inner: CompileInner,
+    trigger_node: TriggerNode,
+    grant_effect_templates: GrantEffectTemplates,
+    trusted_mechanics: frozenset[str],
+    capability_registry: CapabilityRegistry,
+    capability_profile: str,
+) -> tuple[OracleNode, list[OracleNode]] | None:
+    """Bind the second token's activation to its own exact creation result."""
+    if node.event != "creature.dies.self" or node.target_schema is not None or len(node.effects) != 1:
+        return None
+    effect, = node.effects
+    characteristics = effect.get("characteristics")
+    if effect.get("op") != "create_token" or "copy_spec" in effect or not isinstance(characteristics, Mapping):
+        return None
+    compiled = _token_fragments_and_children(
+        quoted_abilities=(activation,), characteristics=characteristics,
+        oracle_id=oracle_id, face_id=face_id, node_id=node.node_id, span=span,
+        compile_inner=compile_inner, trigger_node=trigger_node,
+        grant_effect_templates=grant_effect_templates, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        literal_source_name=effect.get("name"),
+    )
+    if compiled is None:
+        return None
+    fragments, descendants, mechanics = compiled
+    if len(descendants) != 1 or descendants[0].kind != "granted_activated_ability":
+        return None
+    decorated = _decorate_outer_nodes(
+        outer_nodes=(node,), fragments=fragments, direct_mechanics=mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    return (decorated[0], descendants) if decorated is not None else None
+
+
 def typed_token_ability_nodes(
     *,
     record: Any,
@@ -581,12 +671,26 @@ def typed_token_ability_nodes(
     compile_inner: CompileInner,
     trigger_node: TriggerNode,
     grant_effect_templates: GrantEffectTemplates,
+    compile_spell_shell: Callable[[str], tuple[OracleNode, ...] | None] | None = None,
+    saga_chapter_body: bool = False,
 ) -> tuple[OracleNode, ...] | None:
     """Compile one closed token shell plus independently exact abilities."""
 
+    from .linked_death_token_copy import linked_death_token_copy_nodes
+
+    linked_death = linked_death_token_copy_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+        source_name=source_name, registry=capability_registry, profile=capability_profile,
+    )
+    if linked_death is not None:
+        return linked_death
     from .named_equipment_token_templates import named_equipment_ability_shell, equipment_token_children
     equipment_shell = named_equipment_ability_shell(material_line)
-    parsed = equipment_shell[:2] if equipment_shell is not None else _token_ability_shell(material_line)
+    post_entry = _COPY_DEATH_DRAW_GRANT.fullmatch(material_line)
+    if post_entry is not None:
+        parsed = (post_entry["creation"] + " It gains haste. " + post_entry["cleanup"], (post_entry["ability"],))
+    else:
+        parsed = equipment_shell[:2] if equipment_shell is not None else _token_ability_shell(material_line)
     if parsed is None or capability_registry is None:
         return None
     shell, quoted_abilities = parsed
@@ -604,7 +708,7 @@ def typed_token_ability_nodes(
     # Reuse the fixed creature parser for color, subtype and keyword spelling.
     # The temporary pair is replaced only after both intrinsic stats are proven.
     shell, missing_stats = _CREATURE_TOKEN_WITHOUT_STATS.subn(r"\g<1>0/0 ", shell, count=1)
-    outer_nodes = _outer_nodes(
+    outer_nodes = compile_spell_shell(shell) if compile_spell_shell is not None else _outer_nodes(
         node_id=node_id,
         line=line,
         shell=shell,
@@ -620,6 +724,7 @@ def typed_token_ability_nodes(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        saga_chapter_body=saga_chapter_body,
     )
     if outer_nodes is None:
         return None
@@ -635,8 +740,8 @@ def typed_token_ability_nodes(
         # Only abilities inside the copy exception become copiable. Separate
         # ability grants need their own duration-aware result owner.
         copy_exception = material_line.split(", except ", 1)
-        if len(copy_exception) != 2 or any(match.start() < material_line.index(", except ")
-            for match in _QUOTED.finditer(material_line)) or re.search(r"\. (?:It|They|That token|Those tokens) (?:has|have|gains?) ", copy_exception[1], re.I):
+        if post_entry is None and (len(copy_exception) != 2 or any(match.start() < material_line.index(", except ")
+            for match in _QUOTED.finditer(material_line)) or re.search(r"\. (?:It|They|That token|Those tokens) (?:has|have|gains?) ", copy_exception[1], re.I)):
             return None
         # Token child compilation assumes a creature. Keep wider copy domains
         # residual rather than assigning that type to an arbitrary permanent.
@@ -666,6 +771,7 @@ def typed_token_ability_nodes(
         capability_profile=capability_profile,
         copy_recipe="copy_spec" in created[0],
         literal_source_name=created[0].get("name"),
+        post_entry_copy_grant=post_entry is not None,
     )
     if compiled is None:
         return None
@@ -688,6 +794,7 @@ def typed_token_ability_nodes(
         direct_mechanics=direct_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        post_entry_copy_grant=post_entry is not None,
     )
     return (*decorated, *children) if decorated is not None else None
 

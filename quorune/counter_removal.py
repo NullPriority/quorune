@@ -490,6 +490,13 @@ def _commit_removal_counter_plan(
         raise CounterRemovalError(str(exc)) from exc
     events = capture_counter_removal_events(host, transitions)
     dispatch_counter_removal_events(host, events)
+    if any(value.counter_name == "time" and value.before > 0 and value.after == 0 for value in transitions):
+        from .suspend import suspend_last_counter_trigger_items
+        from .trigger_processing import enqueue_trigger_batch
+
+        triggers = suspend_last_counter_trigger_items(host, transitions, cast_suspended_only=True)
+        if triggers:
+            enqueue_trigger_batch(host, triggers)
     return transitions
 
 
@@ -519,7 +526,10 @@ def commit_all_permanent_counter_removals(
         raise CounterRemovalError("The captured entry counter inventory changed before commit")
     if not removals:
         return ()
-    transitions = commit_counter_removals(host, plan_counter_removals(host, removals))
+    return _all_counter_removal_results(commit_counter_removals(host, plan_counter_removals(host, removals)))
+
+
+def _all_counter_removal_results(transitions):
     by_permanent: dict[str, list[tuple[str, int]]] = {}
     for transition in transitions:
         if transition.applied_delta:
@@ -532,32 +542,86 @@ def commit_all_permanent_counter_removals(
 
 def commit_entry_counter_transfer(host, prepared_entries):
     from .errors import GameRuleError
-    from .replacement.counted_entry_counters import ENTRY_COUNTER_TRANSFER_RESULT, TransferEntryCounters
+    from .replacement.counted_entry_counters import (
+        ENTRY_COUNTER_TRANSFER_RESULT, ChosenTransferEntryCounters, entry_counter_transfer_receipt,
+    )
 
     selected = [(plan, plan.event.payload[ENTRY_COUNTER_TRANSFER_RESULT]) for plan in prepared_entries
                 if ENTRY_COUNTER_TRANSFER_RESULT in plan.event.payload]
     if not selected:
         return
-    if len(selected) != 1:
-        raise GameRuleError("A simultaneous entry can consume its shared counter inventory only once")
-    plan, data = selected[0]
     try:
-        operation = TransferEntryCounters.from_dict(data)
-        applied = [effect for effect in plan.effects if effect.effect_id in plan.event.applied_effects
-                   and effect.operations == (operation,)]
-        if (len(applied) != 1 or plan.event.affected_object is None
-                or plan.event.affected_object.object_id != plan.object_id
-                or operation.source_ref != plan.event.payload.get("object_ref")
-                or operation.placing_player != plan.destination_controller):
-            raise CounterRemovalError("Entry counter transfer lost its original replacement authority")
-        results = commit_all_permanent_counter_removals(host, captured=operation.removals)
+        receipts = tuple((plan, entry_counter_transfer_receipt(data)) for plan, data in selected)
+        chosen = any(isinstance(receipt, ChosenTransferEntryCounters) for _, receipt in receipts)
+        if not chosen and len(receipts) != 1:
+            raise CounterRemovalError("A simultaneous entry can consume its shared counter inventory only once")
+        for plan, receipt in receipts:
+            _validate_entry_counter_transfer_authority(plan, receipt, chosen=chosen)
+        if chosen:
+            results, sources = _commit_chosen_counter_transfers(host, tuple(receipt for _, receipt in receipts))
+        else:
+            _, operation = receipts[0]
+            results = commit_all_permanent_counter_removals(host, captured=operation.removals)
+            sources = {result.object_id: operation for result in results}
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     for result in results:
+        operation = sources[result.object_id]
         host._record_all_removed_counters(
             result, host.state.cards[result.object_id],
             actor=operation.placing_player, source_ref=operation.source_ref,
         )
+
+
+def _validate_entry_counter_transfer_authority(plan, receipt, *, chosen):
+    from .replacement.counted_entry_counters import ChosenTransferEntryCounters
+
+    matching = []
+    for effect in plan.effects:
+        if effect.effect_id not in plan.event.applied_effects or len(effect.operations) != 1:
+            continue
+        original = effect.operations[0]
+        if not chosen:
+            if original == receipt:
+                matching.append(effect)
+            continue
+        if (type(original) is type(receipt) and original.source_ref == receipt.source_ref
+                and original.placing_player == receipt.placing_player and set(receipt.removals) <= set(original.removals)
+                and (not isinstance(receipt, ChosenTransferEntryCounters)
+                     or set(receipt.candidates) <= set(original.candidates))):
+            matching.append(effect)
+    if (len(matching) != 1 or plan.event.affected_object is None
+            or plan.event.affected_object.object_id != plan.object_id
+            or receipt.source_ref != plan.event.payload.get("object_ref")
+            or receipt.placing_player != plan.destination_controller):
+        raise CounterRemovalError("Entry counter transfer lost its original replacement authority")
+
+
+def _commit_chosen_counter_transfers(host, receipts):
+    from .replacement.counted_entry_counters import ChosenTransferEntryCounters
+
+    sources = {}
+    removals = []
+    selected_objects = set()
+    for receipt in receipts:
+        objects = {row.object_id for row in receipt.removals}
+        if objects.intersection(sources):
+            raise CounterRemovalError("One permanent's counters cannot be removed twice in a batch")
+        sources.update({object_id: receipt for object_id in objects})
+        removals.extend(receipt.removals)
+        if isinstance(receipt, ChosenTransferEntryCounters):
+            selected_objects.update(object_id for _, object_id in receipt.candidates)
+    include_all = any(not isinstance(receipt, ChosenTransferEntryCounters) for receipt in receipts)
+    captured = tuple(sorted(removals, key=lambda row: row.key))
+    current = tuple(sorted(
+        (row for row in snapshot_all_permanent_counter_removals(host)
+         if include_all or row.object_id in selected_objects),
+        key=lambda row: row.key,
+    ))
+    if current != captured:
+        raise CounterRemovalError("The selected entry counter inventory changed before commit")
+    results = _all_counter_removal_results(commit_counter_removals(host, plan_counter_removals(host, captured)))
+    return results, sources
 
 
 def validate_counter_removal_plan(

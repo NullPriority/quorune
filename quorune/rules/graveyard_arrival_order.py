@@ -4,10 +4,9 @@ from collections.abc import Mapping, Sequence
 
 from ..continuous_effect_model import ContinuousObjectIdentity
 from ..errors import GameRuleError
-from ..graveyard_arrival_order_model import GraveyardArrivalGroup, GraveyardArrivalOrders
-
-
-GRAVEYARD_ARRIVAL_ORDER_CAPABILITY = "zone.graveyard.ordered_simultaneous_arrival"
+from ..graveyard_arrival_order_model import (
+    GRAVEYARD_ARRIVAL_ORDER_CAPABILITY, GraveyardArrivalGroup, GraveyardArrivalOrders,
+)
 
 
 def graveyard_arrival_groups(prepared, cards: Mapping, apnap_order: Sequence[str]):

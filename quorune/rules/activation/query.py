@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from ..activation_counter_cost import SourceCounterRemovalCost
-
+from dataclasses import replace
 from hashlib import sha256
 from typing import Any, Protocol
 
+from ..activation_counter_cost import SourceCounterRemovalCost
 from ...abilities import ActivatedAbility, CostChoice
 from ...activation_condition_model import (
     PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, public_activation_program_timing,
@@ -18,7 +18,11 @@ from ...card_overrides.game_record_v3 import (
 )
 from ...fixed_mana_abilities import FixedManaMode
 from ...card_programs.admission import program_has_complete_card_program_admission
-from ...granted_activation_model import GRANTED_UNEARTH_VERSION
+from ...continuous_effect_model import Layer
+from ...granted_activation_model import (
+    GRANTED_NINJUTSU_VERSION, GRANTED_UNEARTH_VERSION, GRANTOR_REDIRECTION_CAPABILITY, GRANTOR_REDIRECTION_VERSION,
+)
+from ...intrinsic_land_abilities import intrinsic_land_mana_abilities
 from ...util import normalize_mana_bundle
 
 
@@ -34,7 +38,15 @@ def activated_abilities(
 ) -> tuple[ActivatedAbility, ...]:
     """Return compiler-pinned, intrinsic, and typed granted abilities."""
 
+    from .battlefield_grants import battlefield_creature_activated_abilities
+
     data = host._effective_card_data(card)
+    base = current_activation_catalog(host, card, data, allow_historical=True)
+    return (*base, *battlefield_creature_activated_abilities(host, card, data))
+
+
+def current_activation_catalog(host, card, data, *, allow_historical=False):
+    """Read the local ability catalog without recursing through battlefield donor effects."""
     raw_abilities = data.get("activated_abilities", ())
     if not isinstance(raw_abilities, (list, tuple)):
         raise ValueError("activated_abilities must be an array")
@@ -46,6 +58,7 @@ def activated_abilities(
     ]
     if (
         not abilities
+        and allow_historical
         and bool(
             getattr(
                 getattr(host, "semantics", None),
@@ -66,8 +79,55 @@ def activated_abilities(
             if (ability.target_schema or {}).get("predicate") != LINKED_EXILE_COPY_TARGET_PREDICATE
         ]
     abilities.sort(key=lambda ability: ability.line_index)
-    abilities.extend(_typed_granted_abilities(host, data))
+    from ..linked_exile_activations import linked_exile_activated_abilities
+
+    fragments = canonical_ability_fragments(data.get("ability_fragments", ()))
+    abilities.extend(_typed_granted_abilities(host, fragments))
+    abilities.extend(linked_exile_activated_abilities(host, card, fragments))
     return tuple(abilities)
+
+
+def bind_creature_donor_activations(
+    host, donor, *, binding_identity: str, ability_prefix: str, first_line_index: int,
+) -> tuple[ActivatedAbility, ...]:
+    """Rebind represented donor abilities without recursively asking for activation offers."""
+    values = host._effective_card_data(donor, maximum_layer=Layer.ABILITY)
+    types, subtypes, _supertypes = host._type_parts(str(values.get('type_line') or ''))
+    if 'creature' not in types:
+        return ()
+
+    activations = (ActivatedAbility.from_dict(raw) for raw in values.get('activated_abilities', ()))
+    return bind_donor_activation_catalog(
+        donor, represented_donor_activation_catalog(host, donor, activations, types=types, subtypes=subtypes),
+        binding_identity=binding_identity, ability_prefix=ability_prefix, first_line_index=first_line_index,
+    )
+
+
+def represented_donor_activation_catalog(host, donor, abilities, *, types, subtypes):
+    """Keep only current battlefield costs and independently executable donor programs."""
+    intrinsic = intrinsic_land_mana_abilities(types, subtypes)
+    for ability in abilities:
+        if not ability.compiled_cost or 'battlefield' not in ability.zones:
+            continue
+        key = host._semantic_key_for_ability(donor, ability)
+        program = host.semantics.get(key)
+        if program is None:
+            if not any(item.ability_id == ability.ability_id and item.fixed_mana_outputs == ability.fixed_mana_outputs
+                       for item in intrinsic):
+                continue
+        elif program.event != 'activate' or not host.semantic_program_is_current_trusted(program):
+            continue
+        yield ability, key
+
+
+def bind_donor_activation_catalog(donor, catalog, *, binding_identity, ability_prefix, first_line_index):
+    result = []
+    for ability, key in catalog:
+        identity = f'{binding_identity}:{donor.logical_object_id}:{ability.ability_id}'
+        occurrence = sha256(identity.encode('utf-8')).hexdigest()[:24]
+        result.append(replace(ability, ability_id=f'{ability_prefix}:{occurrence}:{ability.ability_id}',
+                              line_index=first_line_index + len(result), builtin_semantic_key=key))
+    return tuple(result)
 
 
 def activation_actor_allowed(host, seat: str, source: Any, ability: ActivatedAbility) -> bool:
@@ -78,6 +138,11 @@ def activation_actor_allowed(host, seat: str, source: Any, ability: ActivatedAbi
         return source.owner == seat
     if source.phased_out:
         return False
+    if ability.activation_grantor is not None:
+        program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+        return (seat == ability.activation_grantor and program is not None
+                and GRANTOR_REDIRECTION_CAPABILITY in program.capability_dependencies
+                and host.semantic_program_is_current_trusted(program))
     if source.controller == seat:
         return True
     if ability.mana_ability:
@@ -106,7 +171,7 @@ def activation_offer_candidates(host, seat: str):
                 if activation_actor_allowed(host, seat, source, ability):
                     yield source, ability
 
-    if not any(PUBLIC_ACTIVATION_CAPABILITY in program.capability_dependencies
+    if not any({PUBLIC_ACTIVATION_CAPABILITY, GRANTOR_REDIRECTION_CAPABILITY}.intersection(program.capability_dependencies)
                for program in host.semantics.programs_for_event("activate")):
         return
     for controller in host.active_seats:
@@ -147,15 +212,25 @@ def _is_current_granted_unearth_program(host, spec) -> bool:
 
 
 def _typed_granted_abilities(
-    host: ActivatedAbilityQueryHost, data: dict[str, Any],
+    host: ActivatedAbilityQueryHost, fragments,
 ) -> tuple[ActivatedAbility, ...]:
-    specs = granted_activated_specs(
-        canonical_ability_fragments(data.get("ability_fragments", ()))
-    )
+    specs = granted_activated_specs(fragments)
     counts: dict[str, int] = {}
     result: list[ActivatedAbility] = []
     for index, spec in enumerate(specs):
+        if spec.schema_version == GRANTED_NINJUTSU_VERSION:
+            from ...semantic_runtime.hand_ninjutsu_grants import granted_ninjutsu_activation
+
+            activation = granted_ninjutsu_activation(host, spec)
+            if activation is not None:
+                result.append(activation)
+            continue
         ability_id = spec.ability_id
+        if spec.schema_version == GRANTOR_REDIRECTION_VERSION:
+            if spec.activation_grantor is None or spec.activation_grantor.startswith("$"):
+                continue
+            suffix = sha256(spec.activation_grantor.encode("utf-8")).hexdigest()[:20]
+            ability_id = f"{ability_id}#grantor-{suffix}"
         if spec.schema_version == GRANTED_UNEARTH_VERSION:
             if spec.grant_incarnation is None or not _is_current_granted_unearth_program(host, spec):
                 continue
@@ -201,6 +276,7 @@ def _typed_granted_abilities(
                     for output in spec.fixed_mana_outputs
                 ),
                 builtin_semantic_key=spec.semantic_key,
+                activation_grantor=spec.activation_grantor,
                 mana_spend_restriction=spec.mana_spend_restriction,
                 granting_attachment_payment=payment,
                 announced_x_symbols=spec.announced_x_symbols,
@@ -211,4 +287,4 @@ def _typed_granted_abilities(
     return tuple(result)
 
 
-__all__ = ["ActivatedAbilityQueryHost", "activated_abilities"]
+__all__ = ["ActivatedAbilityQueryHost", "activated_abilities", "bind_creature_donor_activations"]

@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Scryfall Oracle and rulings for instruction-wide counter replacement ordering.",
+  "cards": [
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "name": "Pir, Imaginative Rascal",
+      "mana_cost": "{2}{G}",
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "Partner with Toothy, Imaginary Friend (When this creature enters, target player may put Toothy into their hand from their library, then shuffle.)\nIf one or more counters would be put on a permanent your team controls, that many plus one of each of those kinds of counters are put on that permanent instead.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Partner with",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "name": "Toothy, Imaginary Friend",
+      "mana_cost": "{3}{U}",
+      "type_line": "Legendary Creature — Illusion",
+      "oracle_text": "Partner with Pir, Imaginative Rascal (When this creature enters, target player may put Pir into their hand from their library, then shuffle.)\nWhenever you draw a card, put a +1/+1 counter on Toothy.\nWhen Toothy leaves the battlefield, draw a card for each +1/+1 counter on it.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Partner with",
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+      "name": "Grumgully, the Generous",
+      "mana_cost": "{1}{R}{G}",
+      "type_line": "Legendary Creature — Goblin Shaman",
+      "oracle_text": "Each other non-Human creature you control enters with an additional +1/+1 counter on it.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "name": "Village Rites",
+      "mana_cost": "{B}",
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability (featured in the Magic: The Gathering—Commander™ (2016 Edition) set) or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander. For more information on the Commander variant, please visit Wizards.com/Commander."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If an effect includes multiple instructions to put one or more counters on a permanent, such as Lifecrafter's Gift does, Pir's effect applies to each of those instructions."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If a permanent your team controls would enter the battlefield with one or more counters of any kind on it, it enters with that many plus one instead."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Khorvath and Sylvia are your commanders, your deck may contain cards with red and/or white in their color identity, but not blue, black, or green."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player who might have that card in their library."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Pir's effect can't apply to itself as it's entering the battlefield or to any other permanent entering the battlefield at the same time as it."
+    },
+    {
+      "oracle_id": "7683c2b2-a06f-4691-9cc5-1968dc032885",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle their library.\""
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If a spell or ability causes you to put cards in your hand without specifically using the word \"draw,\" Toothy's middle ability won't trigger."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from one of them, not from both of them combined. Command Beacon's effect puts one into your hand from the command zone, not both."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The triggered ability of the \"partner with\" keyword still triggers in a Commander game. If your other commander has somehow ended up in your library, you can find it. You can also target another player who might have that card in their library."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If you draw multiple cards, Toothy's middle ability triggers that many times. If your team also controls Pir, each of those resolving triggered abilities puts two +1/+1 counters on Toothy."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Khorvath and Sylvia are your commanders, your deck may contain cards with red and/or white in their color identity, but not blue, black, or green."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The second ability represented by the \"partner with [name]\" keyword modifies the rules for deck construction in the Commander variant and has no function outside of that variant. If a legendary creature card with \"partner with [name]\" is designated as your commander, the named legendary creature card can also be designated as your commander. For more information on the Commander variant, please visit Wizards.com/Commander."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "\"Partner with [name]\" represents two abilities. The first is a triggered ability: \"When this permanent enters the battlefield, target player may search their library for a card named [name], reveal it, put it into their hand, then shuffle their library.\""
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Note that the target player searches their library (which may be affected by effects such as that of Stranglehold) and that the card they find is revealed, even though these words aren't included in the ability's reminder text."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If enough -1/-1 counters are put on Toothy at the same time to make its toughness 0 or less, the number of +1/+1 counters on it before it got any -1/-1 counters will be used to determine how many cards you draw. For example, if there are two +1/+1 counters on Toothy and it gets three -1/-1 counters, you'll draw two cards."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability (featured in the Magic: The Gathering—Commander™ (2016 Edition) set) or corresponding \"partner with\" abilities as the game begins. A creature with a \"partner with\" ability can't partner with any creature other than its designated partner. Losing a partner ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "41d6cce0-b852-4d0e-aee2-081df13dd9b8",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If a non-Human creature enters the battlefield as a copy of a Human creature, it won't get a +1/+1 counter. Similarly, if a Human enters as a non-Human creature, it will get a +1/+1 counter."
+    },
+    {
+      "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "A non-Human creature you control that would enter the battlefield with no +1/+1 counters on it enters with one +1/+1 counter on it."
+    },
+    {
+      "oracle_id": "fa4afcf7-9cf7-4f67-95b9-1f7fe66bf332",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Any other non-Human creatures that enter the battlefield at the same time as Grumgully won't get a +1/+1 counter."
+    },
+    {
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures."
+    }
+  ]
+}

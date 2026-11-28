@@ -12,6 +12,7 @@ from ..library_order_model import (
     TOP_ORDER_MECHANIC,
     SHUFFLE_MECHANIC,
     fixed_shuffle_effect,
+    paid_private_top_cycle_effect,
 )
 from ..rules.graveyard_card_targets import PublicGraveyardCardTargetKind, PublicGraveyardCardTargetSpec
 from ..target_cardinality import AnnouncedTargetCardinality
@@ -57,7 +58,17 @@ def _graveyard_library_order_template(text: str):
     )
 
 
+_PAID_TOP_CYCLE_TEXT = (
+    "Look at the top five cards of your library. As many times as you choose, you may pay 1 life, "
+    "put those cards on the bottom of your library in any order, then look at the top five cards of your library. "
+    "Then shuffle and put the last cards you looked at this way on top in any order."
+)
+
+
 def fixed_top_order_template(text: str):
+    if " ".join(text.split()).casefold() == _PAID_TOP_CYCLE_TEXT.casefold():
+        return ("fixed-life-paid-private-top-cycle-v1", (paid_private_top_cycle_effect(),), None,
+                (TOP_ORDER_MECHANIC, SHUFFLE_MECHANIC))
     from .target_library_shuffle import fixed_target_library_shuffle_template
     targeted=fixed_target_library_shuffle_template(text)
     if targeted is not None:return targeted

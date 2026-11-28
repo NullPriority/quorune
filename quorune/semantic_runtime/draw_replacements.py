@@ -23,8 +23,11 @@ from ..drawing.step_exemption import (
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .draw_step_discard import DrawStepExemptDiscardHandler
+from .draw_exile_play import HANDLER_ID as DRAW_EXILE_PLAY_HANDLER_ID, DrawExilePlayReplacementHandler
+from .draw_empty_library_win import HANDLER_ID as EMPTY_LIBRARY_WIN_HANDLER_ID, EmptyLibraryWinDrawReplacementHandler
 from .draw_step_redirect import DrawStepExemptRedirectHandler
 from .temporary_draw_redirect import collect_temporary_draw_redirects
+from ..drawing.scheduled_draw_results import collect_scheduled_draw_replacements
 
 
 DREDGE_HANDLER_ID = "replacement.draw.dredge.v1"
@@ -32,6 +35,8 @@ DRAW_INSTRUCTION_MULTIPLIER_HANDLER_ID = (
     "replacement.draw.instruction.multiply.v1"
 )
 DRAW_RESULT_MULTIPLIER_HANDLER_ID = "replacement.draw.result.multiply.v1"
+EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID = "replacement.draw.result.multiply.empty_hand.v1"
+EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY = "zone.draw.replacement.controller_empty_hand"
 _DREDGE_LABEL = "Dredge "
 _DRAW_STEP_EXEMPT_HANDLERS = {
     DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
@@ -186,7 +191,10 @@ class DrawResultMultiplierHandler:
             raise SemanticNodeError(
                 "Runtime handler ID does not match the draw replacement registry"
             )
-        if descriptor["schema_version"] != self.schema_version:
+        if descriptor["schema_version"] != self.schema_version or (
+            self.handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID
+            and type(descriptor["schema_version"]) is not int
+        ):
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -488,6 +496,61 @@ class DredgeReplacementHandler:
         return (self.replacement_effect(descriptor, context),)
 
 
+LIBRARY_CHOICE_DRAW_HANDLER_ID = "replacement.draw.controller_library_choice.v1"
+LIBRARY_CHOICE_DRAW_CAPABILITY = "zone.draw.replacement.controller_library_choice"
+
+
+def library_choice_draw_descriptor():
+    return {
+        "handler_id": LIBRARY_CHOICE_DRAW_HANDLER_ID,
+        "schema_version": 1,
+        "event": "draw",
+        "condition": {"affected_player_relation": "source_controller"},
+        "modification": {"operation": "replace_draw_with_library_choice"},
+        "requires_complete_card_program": True,
+    }
+
+
+@dataclass(frozen=True, slots=True)
+class LibraryChoiceDrawReplacementHandler:
+    handler_id: str = LIBRARY_CHOICE_DRAW_HANDLER_ID
+    schema_version: int = 1
+    family: str = LIBRARY_CHOICE_DRAW_CAPABILITY
+    event: str = "draw"
+    rule_references: tuple[str, ...] = ("121.6a", "121.7", "401.4", "614.5", "616.1", "701.20a")
+    capability_dependencies: tuple[str, ...] = (
+        LIBRARY_CHOICE_DRAW_CAPABILITY,
+        "zone.draw.result_generated_ordering",
+        "library.select.reveal_until_controller",
+        "zone.change.destination_replacement",
+    )
+
+    def validate(self, descriptor):
+        if (descriptor != library_choice_draw_descriptor() or type(descriptor["schema_version"]) is not int
+                or descriptor["requires_complete_card_program"] is not True):
+            raise SemanticNodeError("The library-choice replacement requires its complete controller draw grammar")
+
+    def replacement_effect(self, descriptor, context):
+        from ..replacement.operations import ReplaceDrawWithLibraryChoice
+
+        self.validate(descriptor)
+        source = f"{context.source_object_id}@{context.source_zone_change_counter}"
+        component = context.component_id or "printed"
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{source}:{component}",
+            source_id=source,
+            event_kind="draw",
+            replacement_class=ReplacementClass.OTHER,
+            conditions={"is_draw": {"eq": True}, "affected_player": {"eq": context.source_controller}},
+            operations=(ReplaceDrawWithLibraryChoice(),),
+            label=f"{context.source_ref}: choose land or nonland instead of drawing",
+            optional=True,
+        )
+
+    def lower(self, descriptor, context):
+        return (self.replacement_effect(descriptor, context),)
+
+
 class DrawReplacementRegistry(
     RuntimeComponentRegistry[
         DrawReplacementSourceContext,
@@ -516,8 +579,15 @@ def default_draw_replacement_registry() -> DrawReplacementRegistry:
             DredgeReplacementHandler(),
             DrawInstructionMultiplierHandler(),
             DrawResultMultiplierHandler(),
+            DrawExilePlayReplacementHandler(),
+            EmptyLibraryWinDrawReplacementHandler(),
+            DrawResultMultiplierHandler(
+                handler_id=EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
+                capability_dependencies=(EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY,),
+            ),
             DrawStepExemptRedirectHandler(),
             DrawStepExemptDiscardHandler(),
+            LibraryChoiceDrawReplacementHandler(),
             DrawResultMultiplierHandler(
                 handler_id=DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
                 capability_dependencies=(DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY, "zone.draw.result_generated_ordering"),
@@ -545,6 +615,7 @@ def collect_draw_replacement_effects(
     registry = default_draw_replacement_registry()
     graveyard = host.state.players[player].zones["graveyard"]
     effects = collect_temporary_draw_redirects(host, player, active_seats)
+    effects.extend(collect_scheduled_draw_replacements(host.state, player))
     for object_id in graveyard:
         source = host.state.cards[object_id]
         if source.owner != player or source.zone != "graveyard":
@@ -599,9 +670,19 @@ def collect_draw_replacement_effects(
                     and (source.controller != player) != applies_to_opponent
                 ):
                     continue
-                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS:
-                    if is_first_draw_in_own_draw_step(host.state, player):
+                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS and is_first_draw_in_own_draw_step(host.state, player):
+                    continue
+                if handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID and host.state.players[player].zones["hand"]:
+                    continue
+                if handler_id in {LIBRARY_CHOICE_DRAW_HANDLER_ID, EMPTY_LIBRARY_WIN_HANDLER_ID}:
+                    from ..card_programs.admission import program_has_complete_card_program_admission
+
+                    if not program_has_complete_card_program_admission(program):
                         continue
+                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS or handler_id in {
+                    EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID, DRAW_EXILE_PLAY_HANDLER_ID,
+                    LIBRARY_CHOICE_DRAW_HANDLER_ID, EMPTY_LIBRARY_WIN_HANDLER_ID,
+                }:
                     if component_map is None:
                         component_map = host._effective_static_component_key_map()
                     if program.key not in component_map.get(source.object_id, ()):

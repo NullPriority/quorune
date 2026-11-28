@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .characteristic_read_frames import characteristic_read_method
+from .characteristic_read_frames import characteristic_read_frame, characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
@@ -13,7 +13,10 @@ import random
 import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Iterable, Iterator, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Mapping, Sequence
+
+if TYPE_CHECKING:
+    from .cost_payments import ManaCostPayment
 
 from .abilities import (
     ActivatedAbility,
@@ -41,6 +44,7 @@ from .card_programs.validation import (
     program_source_is_current,
 )
 from .rules.activation_costs import activation_choice_candidates
+from .rules.spell_self_exile import conditional_terminal_spell_destination
 from .characteristic_evaluation import (
     type_parts,
 )
@@ -85,7 +89,6 @@ from .crew import (
     pay_crew_cost,
 )
 from .combat_constraints import (
-    selected_options,
     DeclarationConstraintError,
     DeclarationProblem,
     DeclarationRequirement,
@@ -97,9 +100,7 @@ from .commander_zones import (
     CommanderZoneError,
     pending_commander_zone_state_choices,
 )
-from .declaration_costs import (
-    DeclarationCost,
-)
+from .declaration_costs import DeclarationCost, lock_declaration_payment
 from .declaration_condition_runtime import fixed_declaration_condition_verdict
 from .declaration_requirement_runtime import (
     typed_attacker_requirements,
@@ -129,7 +130,6 @@ from .damage import (
 from .damage_results import (
     consume_deathtouch_damage_checks,
 )
-from .day_night import synchronize_day_night
 from .drawing import (
     begin_draw_batch,
     begin_draw_sequence,
@@ -176,7 +176,8 @@ from .selection.storm import SPELL_COPY_TRIGGER_KEYS, StormTargetChoiceOwnerMixi
 from .selection.exile_cast import OneShotExileCastChoiceOwnerMixin
 from .selection.public_choice import PublicChoiceOwnerMixin
 from . import turn_counter_coordination
-from .impulse_access import temporary_play_permission_is_current
+from .impulse_access import temporary_play_permission_for_view
+from .opponent_library_exile import current_opponent_library_exile_play_permission, opponent_library_exile_spend_context
 from . import untap_step_coordination
 from . import haste
 from .combat_evasion_engine_adapter import engine_combat_evasion_verdict
@@ -218,7 +219,8 @@ from .stack_counter import (
     stack_item_can_be_countered,
 )
 from .stack_resolution import (
-    arbiter_resolution_program_key, bind_ability_resolution_ordinals, complete_stack_resolution,
+    arbiter_resolution_effects,
+    arbiter_resolution_program_key, complete_stack_resolution, prepare_resolving_stack_effects,
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
@@ -238,6 +240,7 @@ from .model import (
     YieldPolicy,
 )
 from .turn_history import (
+    record_committed_land_play,
     opponent_was_dealt_damage_this_turn, reset_turn_history,
     record_creature_attack_history,
 )
@@ -279,7 +282,13 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
-from .rules.protected_attack_payments import protected_attack_payment_costs, source_controls_planeswalker
+from .rules.protected_attack_payments import (
+    declaration_mana_cost,
+    protected_attack_payment_costs,
+    source_controls_planeswalker,
+    offered_attack_declaration_costs,
+    pay_attack_declaration_costs,
+)
 from .cast_event_type_model import physical_card_event_context
 from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
@@ -358,10 +367,11 @@ from .semantic_runtime.values import resolve_semantic_value
 from .state_based_actions import (
     ObjectSnapshot,
     PermanentSnapshot,
-    evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    WorldTimestampChanges,
     commit_game_draw,
+    commit_game_win,
     synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
@@ -472,8 +482,8 @@ class CommanderEngine(
         if ("continuous.control.fixed_resolution" in program.capability_dependencies
                 and self.state.control_history_version != control_history.CONTROL_HISTORY_VERSION):
             return False
-        if ("history.spell_resolution.names" in program.capability_dependencies
-                and self.state.spell_resolution_name_ledger is None):
+        from .spell_resolution_name_codec import has_required_spell_name_history
+        if not has_required_spell_name_history(self.state, program.capability_dependencies):
             return False
         current_programs = self.semantics.programs_for_oracle(
             program.oracle_id or ""
@@ -559,6 +569,15 @@ class CommanderEngine(
             },
             importance=3,
         )
+        from .rules.name_stickers import access
+        from .rules.name_sticker_sheets import NAME_STICKER_SHEETS
+
+        for seat in state.turn_order:
+            sheets = access(state.players[seat])
+            if sheets is not None:
+                names = {key: [NAME_STICKER_SHEETS[sheet][0] for sheet in sheets[key]]
+                         for key in ("registered", "chosen")}
+                engine._log(seat, "sticker.sheets", f"{seat} revealed their sticker sheets.", names, importance=2)
         for seat in state.turn_order:
             engine.draw(
                 seat,
@@ -796,6 +815,9 @@ class CommanderEngine(
                 [value for value in (previous, seat) if value is not None]
             ),
         )
+        from .rules.monarch_transition import dispatch_committed_monarch_transition
+
+        dispatch_committed_monarch_transition(self, seat, previous)
         return seat
 
     def _monarch_trigger(
@@ -976,12 +998,13 @@ class CommanderEngine(
         zones: Iterable[str] | None = None,
         controlled_only: bool = False,
         owned_only: bool = False,
+        indexed_refs: Mapping[str, list[CardInstance]] | None = None,
     ) -> CardInstance:
         from .selection.target_query import resolve_object
 
         return resolve_object(
             self, seat, value, zones=zones,
-            controlled_only=controlled_only, owned_only=owned_only,
+            controlled_only=controlled_only, owned_only=owned_only, indexed_refs=indexed_refs,
         )
 
     def _next_active_after(self, seat: str) -> str:
@@ -1218,6 +1241,8 @@ class CommanderEngine(
         history_pre_recorded: bool = False,
         discard_effect_origin: DiscardEffectOrigin | None = None,
         putting_player: str | None = None,
+        discard_batch_member: bool = False,
+        origin_copy_snapshot: Mapping[str, Any] | None = None,
     ) -> None:
         """Game Record v3 compatibility facade for normalized zone events."""
 
@@ -1236,6 +1261,7 @@ class CommanderEngine(
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
                     putting_player=putting_player,
+                    copy_snapshot=origin_copy_snapshot,
                 ),
                 destination=destination,
                 reason=reason,
@@ -1243,6 +1269,7 @@ class CommanderEngine(
                 trigger_batch=trigger_batch,
                 history_pre_recorded=history_pre_recorded,
                 discard_effect_origin=discard_effect_origin,
+                discard_batch_member=discard_batch_member,
             )
         )
         origin_types, _, _ = self._type_parts(
@@ -1331,10 +1358,12 @@ class CommanderEngine(
             putting_players=putting_players,
         )
 
-    def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:
-        """Compatibility facade for canonical library membership mutation."""
+    def shuffle_library(
+        self, seat: str, *, reason: str = "shuffle", actor: str | None = None, shuffling_player: str | None = None,
+    ) -> None:
+        """Delegate library movement and keep the acting seat separate from log attribution."""
 
-        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason, actor=actor)
+        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason, actor=actor, shuffling_player=shuffling_player)
 
     def draw(
         self,
@@ -1613,28 +1642,47 @@ class CommanderEngine(
             self._perform_mulligan_redraws(list(mulliganers))
             return
 
+        from .rules.mulligan_redraw import MULLIGAN_REDRAW_ACTION, MULLIGAN_REDRAW_OFFER, hand_redraw_offer
+
         seat = actor_list[index]
+        actions = ["keep", "mulligan"]
+        continuation = {
+            "round": round_no,
+            "actors": actor_list,
+            "index": index,
+            "mulliganers": list(mulliganers),
+        }
+        if (offer := hand_redraw_offer(self, seat)) is not None:
+            actions.append(MULLIGAN_REDRAW_ACTION)
+            continuation[MULLIGAN_REDRAW_OFFER] = offer
         self.permissions.issue(
             kind="mulligan.declare",
             role="pilot",
             actors=[seat],
-            allowed_actions=["keep", "mulligan"],
+            allowed_actions=actions,
             payload_by_actor={seat: self._mulligan_hand_payload(seat)},
             simultaneous=False,
-            continuation={
-                "round": round_no,
-                "actors": actor_list,
-                "index": index,
-                "mulliganers": list(mulliganers),
-            },
+            continuation=continuation,
         )
 
     def _complete_mulligan_declaration(self, decision: Any) -> None:
+        from .rules.mulligan_redraw import MULLIGAN_REDRAW_ACTION, MULLIGAN_REDRAW_OFFER, commit_hand_redraw
+
         seat = decision.actors[0]
         response = decision.responses[seat]
         action = response["action"]
         player = self.state.players[seat]
         mulliganers = list(decision.continuation.get("mulliganers") or [])
+
+        if action == MULLIGAN_REDRAW_ACTION:
+            commit_hand_redraw(self, seat, decision.continuation.get(MULLIGAN_REDRAW_OFFER))
+            self._issue_mulligan_declaration(
+                actors=decision.continuation["actors"],
+                index=decision.continuation["index"],
+                mulliganers=mulliganers,
+                round_no=decision.continuation["round"],
+            )
+            return
 
         if action == "keep":
             player.kept_hand = True
@@ -1826,9 +1874,15 @@ class CommanderEngine(
             )
 
     def _clear_mana(self, *, reason: str) -> None:
+        from .rules.step_mana_retention import current_mana_retention
+
+        retention = current_mana_retention(self)
         for seat, player in self.state.players.items():
             clear_mana_undo_stack(player.stats)
-            lost = clear_step_mana(player, phase=self.state.phase, step=self.state.step)
+            lost = clear_step_mana(
+                player, phase=self.state.phase, step=self.state.step,
+                preserve_colors=retention.get(seat, ()), turn_sequence=self.state.turn_sequence,
+            )
             if lost:
                 self._log(seat, "mana.empty", f"{seat}'s mana pool emptied.", {"lost": lost, "reason": reason}, importance=0, changed_players=[seat])
 
@@ -1917,6 +1971,11 @@ class CommanderEngine(
                 "step": step,
                 "player": active,
             }
+            queue = self.state.main_phase_extra_combats
+            if step == "beginning_combat" and queue is not None and queue.combat_grant is not None:
+                from .extra_combat_model import MAIN_PHASE_COMBAT_GRANT_FIELD
+
+                context[MAIN_PHASE_COMBAT_GRANT_FIELD] = queue.combat_grant
             waiting_triggers = collect_trigger_items(
                 self,
                 "step.begin",
@@ -2356,7 +2415,7 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
         preserve_source_id: str | None = None,
-    ) -> tuple[dict[str, int], list[dict[str, Any]]]:
+    ) -> ManaCostPayment:
         from .cost_payments import pay_for_cost
 
         return pay_for_cost(self, seat, requirements, response, exclude_sources=exclude_sources,
@@ -2387,16 +2446,19 @@ class CommanderEngine(
         seat: str,
         card: CardInstance,
     ) -> Mapping[str, Any] | None:
-        permission = card.annotations.get("temporary_play_permission")
-        if not isinstance(permission, Mapping):
-            return None
-        if not temporary_play_permission_is_current(
-            self.state,
-            seat,
-            card,
-            permission,
-        ):
-            return None
+        permission = temporary_play_permission_for_view(self, seat, card)
+        opponent_library_permission = current_opponent_library_exile_play_permission(self.state, seat, card)
+        if opponent_library_permission is None:
+            from .rules.private_opponent_top_exile import controller_private_top_exile_play_permission
+
+            opponent_library_permission = controller_private_top_exile_play_permission(self, seat, card)
+        if permission is None:
+            return opponent_library_permission
+        if opponent_library_permission is not None:
+            return {
+                **permission, "allow_land": bool(permission.get("allow_land", True) or opponent_library_permission["allow_land"]),
+                "allow_spell": True, "without_mana_cost": bool(permission.get("without_mana_cost") and permission.get("allow_spell", True)),
+            }
         return permission
 
     def _compiled_land_play_permission(
@@ -2520,6 +2582,7 @@ class CommanderEngine(
         life_paid = life_before - player.life
         consume_land_play_permission(self, seat, selected_permission, played_card=card,
                                      type_line=land_play_face_type_line(record, face))
+        record_committed_land_play(self, seat, card.logical_object_id)
         self._log(
             seat,
             "land.play",
@@ -2540,7 +2603,7 @@ class CommanderEngine(
             "player": seat,
             "from": origin,
             **physical_card_event_context(self.state, card),
-        })
+        }, played_land_reference=card.ref)
         if resolving is not None:
             return
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
@@ -2602,6 +2665,7 @@ class CommanderEngine(
         ignore_priority: bool = False,
         ignore_timing: bool = False,
         during_resolution: bool = False,
+        authorized_hand_incarnation: str | None = None,
     ) -> None:
         request = CastProposalRequest.from_submission(
             seat,
@@ -2613,6 +2677,7 @@ class CommanderEngine(
             ignore_priority=ignore_priority,
             ignore_timing=ignore_timing,
             during_resolution=during_resolution,
+            authorized_hand_incarnation=authorized_hand_incarnation,
         )
         try:
             proposal = build_cast_proposal(self, request)
@@ -3158,6 +3223,7 @@ class CommanderEngine(
                 or ""
             )
         )
+        spend_context = opponent_library_exile_spend_context(self.state, seat, card, spend_context)
         maximum = -1
         for value in range(limit + 1):
             options, _ = self._compiled_printed_cost_options(
@@ -3255,6 +3321,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ] | None = None,
         trigger_batch: list[StackItem] | None = None,
+        target_announcement_subtypes: tuple[str, ...] | None = None,
     ) -> list[str]:
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self,reason='before semantic trigger discovery')
@@ -3266,6 +3333,7 @@ class CommanderEngine(
             source_zones=source_zones,
             source_characteristics=source_characteristics,
             trigger_batch=trigger_batch,
+            target_announcement_subtypes=target_announcement_subtypes,
         )
         from .state_trigger_model import STATE_TRIGGER_EVENT
         if event != STATE_TRIGGER_EVENT:
@@ -3806,7 +3874,7 @@ class CommanderEngine(
             )
             self._grant_priority(self.state.active_player)
             return
-        effects = [dict(effect) for effect in response.get("effects") or []]
+        effects = arbiter_resolution_effects(response.get("effects"))
         destination = response.get("destination", item.default_destination)
         note = str(response.get("note") or "")
         key = arbiter_resolution_program_key(self, item, action=action, requested_key=response.get("semantic_key"))
@@ -3845,7 +3913,7 @@ class CommanderEngine(
         control_effects.begin_control_duration_resolution(self, item)
         self._continue_resolution(
             stack_ref=item.ref,
-            effects=bind_ability_resolution_ordinals(self, item, effects),
+            effects=prepare_resolving_stack_effects(self, item, effects),
             destination=destination,
             note=note,
             instruction_pointer=0,
@@ -3909,7 +3977,7 @@ class CommanderEngine(
         item.context["currently_resolving"] = True
         index = 0
         while index < len(effects):
-            effect = prepare_stack_resolution_effect(self, item, effects[index])
+            effect = prepare_stack_resolution_effect(self, item, effects[index], instruction_pointer=instruction_pointer + index)
             if effect is None:
                 index += 1
                 continue
@@ -3999,6 +4067,7 @@ class CommanderEngine(
         # stack object. Intrinsic as-enters counters are self-replacements in
         # this same immutable event tree, so a counter-replacement ordering
         # choice can suspend without replaying prior instructions.
+        destination = conditional_terminal_spell_destination(self, item, destination)
         entry_preparation = prepare_resolving_entry_replacement(
             self,
             item=item,
@@ -4010,17 +4079,15 @@ class CommanderEngine(
         )
         if entry_preparation.suspended:
             return
-        entry_destination = entry_preparation.destination
-        prepared_entry = entry_preparation.replacement
-
         complete_stack_resolution(
             self,
             item=item,
-            destination=entry_destination,
-            prepared_replacement=prepared_entry,
+            destination=entry_preparation.destination,
+            prepared_replacement=entry_preparation.replacement,
         )
         self._log(item.controller, "stack.resolve", f"Resolved {item.ref} {item.label}.", {"stack": item.ref, "effects": effects, "destination": destination, "note": note}, importance=2, changed_players=[item.controller])
         if self._stabilize():
+            self.turn_priority.defer_post_resolution()
             return
         self._grant_priority(self.state.active_player)
 
@@ -4075,9 +4142,12 @@ class CommanderEngine(
             return f"{card.ref} is not a creature"
         if "battle" in card_types:
             return f"{card.ref} cannot attack because it is a Battle"
+        from .rules.chosen_attack_turn import chosen_attack_turn_prohibits
+        if chosen_attack_turn_prohibits(self.state, card, active):
+            return f"{card.ref} was not chosen to attack this turn"
         if card.tapped:
             return f"{card.ref} is tapped"
-        if haste.summoning_sickness_prohibits_attack(self, card):
+        if haste.summoning_sickness_prohibits_declaration(self, card):
             return f"{card.ref} is summoning sick"
         if defender.defender_prohibits_attack(data, host=self, card=card):
             return f"{card.ref} has defender and cannot attack"
@@ -4215,6 +4285,7 @@ class CommanderEngine(
         mana: tuple[tuple[str, int], ...],
         source: CardInstance,
         label: str,
+        phyrexian_life: int | None = None,
     ) -> DeclarationCost:
         return DeclarationCost(
             cost_id=cost_id,
@@ -4224,6 +4295,7 @@ class CommanderEngine(
             mana=mana,
             source=source.ref,
             label=label,
+            phyrexian_life=phyrexian_life,
         )
 
     def _declaration_costs(
@@ -4315,7 +4387,8 @@ class CommanderEngine(
                     and not source.attacking
                 ):
                     continue
-                for variable, option in selections:
+                mana, printed_cost = declaration_mana_cost(self, source, template)
+                for variable, option in selections if mana else ():
                     costs.append(
                         self._declaration_cost(
                             cost_id=(
@@ -4325,11 +4398,12 @@ class CommanderEngine(
                             variable=variable,
                             option=option,
                             payer=payer,
-                            mana=template.mana,
+                            mana=mana,
                             source=source,
+                            phyrexian_life=template.phyrexian_life,
                             label=(
                                 f"{self.display_name(source.object_id)} "
-                                f"requires {template.printed_cost} for "
+                                f"requires {printed_cost} for "
                                 f"{variable} to {kind}."
                             ),
                         )
@@ -4437,7 +4511,7 @@ class CommanderEngine(
                     break
             if enchanted != predicate.enchanted:
                 return False
-        if not predicate.matches_counter_state(card.counters):
+        if not predicate.matches_public_state(card.counters, mana_value=data.get("mana_value")):
             return False
         for comparison_rule in (
             *((predicate.stat,) if predicate.stat is not None else ()),
@@ -4971,22 +5045,8 @@ class CommanderEngine(
         *,
         payer: str,
     ) -> tuple[dict[str, int], tuple[DeclarationCost, ...]]:
-        requirements = {
-            key: 0
-            for key in ("GENERIC", "W", "U", "B", "R", "G", "C")
-        }
-        selected: list[DeclarationCost] = []
-        for cost in costs:
-            if cost.option not in selected_options(declaration.get(cost.variable)):
-                continue
-            if cost.payer != payer:
-                raise GameRuleError(
-                    "A declaration cost named a different payer"
-                )
-            selected.append(cost)
-            for key, amount in cost.mana_requirements().items():
-                requirements[key] += amount
-        return requirements, tuple(selected)
+        requirements, selected, _, _ = lock_declaration_payment(costs, declaration, payer=payer)
+        return requirements, selected
 
     def _attack_declaration_components(
         self,
@@ -4996,25 +5056,18 @@ class CommanderEngine(
         tuple[DeclarationCost, ...],
         tuple[tuple[CardInstance, str, str], ...],
     ]:
+        from .rules.next_turn_attack_restrictions import attack_declaration_targets
+        from .rules.counter_bound_attack import counter_bound_attack_options
+
         planeswalkers = self._attackable_planeswalkers(active)
-        battles = self._attackable_battles(active)
-        planeswalker_ids = {walker["id"] for walker in planeswalkers}
-        defenders = [
-            *[seat for seat in self.active_seats if seat != active],
-            *[walker["id"] for walker in planeswalkers],
-            *[
-                battle["id"]
-                for battle in battles
-                if battle["id"] not in planeswalker_ids
-            ],
-        ]
+        defenders = attack_declaration_targets(self, active, planeswalkers, self._attackable_battles(active))
         domains: dict[str, tuple[str, ...]] = {}
         requirements: list[DeclarationRequirement] = []
         for object_id in self.state.players[active].zones["battlefield"]:
             card = self.state.cards[object_id]
             if self._attack_declaration_error(card, active) is not None:
                 continue
-            domains[card.ref] = tuple(defenders)
+            domains[card.ref] = counter_bound_attack_options(self.state, card, defenders, planeswalkers)
             requirements.extend(
                 typed_attacker_requirements(
                     self,
@@ -5107,6 +5160,7 @@ class CommanderEngine(
             self,
             blockers_by_ref,
             error_type=GameRuleError,
+            domains=domains,
         )
 
         restrictions: list[DeclarationRestriction] = []
@@ -5187,20 +5241,23 @@ class CommanderEngine(
         if active not in self.active_seats:
             self._advance_step()
             return
-        candidate_by_ref: dict[str, dict[str, Any]] = {}
-        for oid in self.state.players[active].zones["battlefield"]:
-            card = self.state.cards[oid]
-            data = self._effective_card_data(card)
-            if self._attack_declaration_error(card, active) is None:
-                candidate_by_ref[card.ref] = {
-                    "id": card.ref,
-                    "name": self.display_name(oid),
-                    "sick": haste.is_summoning_sick(self, card),
-                    "haste": haste.has_effective_haste(self, card),
-                }
-        problem, costs, unresolved = self._attack_declaration_components(
-            active
-        )
+        with characteristic_read_frame(self):
+            problem, costs, unresolved = self._attack_declaration_components(active)
+            candidates = []
+            if not unresolved and problem.domains:
+                cards = {card.ref: card for card in (
+                    self.state.cards[oid] for oid in self.state.players[active].zones["battlefield"]
+                )}
+                candidates = [
+                    {
+                        "id": ref,
+                        "name": self.display_name(card.object_id),
+                        "sick": haste.is_summoning_sick(self, card),
+                        "haste": haste.has_effective_haste(self, card),
+                    }
+                    for ref in problem.domains
+                    if (card := cards.get(ref)) is not None
+                ]
         if unresolved:
             source, line, category = unresolved[0]
             self._pause_for_unsupported_semantic(
@@ -5208,11 +5265,6 @@ class CommanderEngine(
                 source=source,
             )
             return
-        candidates = [
-            candidate_by_ref[ref]
-            for ref in problem.domains
-            if ref in candidate_by_ref
-        ]
         if not candidates:
             self.state.combat.attackers_declared = True
             self.state.combat.defending_players = [
@@ -5224,9 +5276,10 @@ class CommanderEngine(
             return
         planeswalker_defenders = self._attackable_planeswalkers(active)
         battle_defenders = self._attackable_battles(active)
-        permanent_defender_ids = {
-            walker["id"] for walker in planeswalker_defenders
-        }
+        from .rules.next_turn_attack_restrictions import attack_declaration_targets
+
+        defenders = attack_declaration_targets(self, active, planeswalker_defenders, battle_defenders)
+        defender_refs = set(defenders)
         from .rules.banding import banding_offer
         attack_banding = banding_offer(self, candidates)
         self.permissions.issue(
@@ -5240,28 +5293,11 @@ class CommanderEngine(
                     **({'banding': attack_banding} if attack_banding else {}),
                     **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
                     **({'exert':rows} if (rows:=exert_offer_rows(self,active,candidates)) else {}),
-                    "defenders": [
-                        *[
-                            seat
-                            for seat in self.active_seats
-                            if seat != active
-                        ],
-                        *[
-                            walker["id"]
-                            for walker in planeswalker_defenders
-                        ],
-                        *[
-                            battle["id"]
-                            for battle in battle_defenders
-                            if battle["id"] not in permanent_defender_ids
-                        ],
-                    ],
-                    "planeswalker_defenders": planeswalker_defenders,
-                    "battle_defenders": battle_defenders,
+                    "defenders": defenders,
+                    "planeswalker_defenders": [row for row in planeswalker_defenders if row["id"] in defender_refs],
+                    "battle_defenders": [row for row in battle_defenders if row["id"] in defender_refs],
                     "declaration_constraints": problem.projection(),
-                    "declaration_costs": [
-                        cost.to_dict() for cost in costs
-                    ],
+                    "declaration_costs": offered_attack_declaration_costs(self, active, costs),
                     "payment": {
                         "default": "auto",
                         "manual_fields": ["mana", "payment"],
@@ -5475,12 +5511,20 @@ class CommanderEngine(
         chosen: list[tuple[CardInstance, dict[str, str]]] = []
         canonical: dict[str, str] = {}
         used: set[str] = set()
+        from .selection.target_query import card_ref_index
+
+        indexed_refs = card_ref_index(self.state.cards.values()) if len(declarations) > 1 else None
+        defender_details: dict[str, dict[str, str] | None] = {}
         for value, defender in dict(declarations).items():
-            card = self._resolve_object(active, str(value), zones={"battlefield"}, controlled_only=True)
+            card = self._resolve_object(
+                active, str(value), zones={"battlefield"}, controlled_only=True, indexed_refs=indexed_refs,
+            )
             if card.object_id in used:
                 raise GameRuleError("A creature cannot be declared twice")
             defender = str(defender)
-            target_details = self._attack_target_details(active, defender)
+            if defender not in defender_details:
+                defender_details[defender] = self._attack_target_details(active, defender)
+            target_details = defender_details[defender]
             if target_details is None:
                 raise GameRuleError(f"Invalid attack defender {defender}")
             defender = target_details["target"]
@@ -5490,7 +5534,7 @@ class CommanderEngine(
             )
             if declaration_error is not None:
                 raise GameRuleError(declaration_error)
-            chosen.append((card, target_details))
+            chosen.append((card, dict(target_details)))
             canonical[card.ref] = defender
             used.add(card.object_id)
 
@@ -5511,20 +5555,9 @@ class CommanderEngine(
         tap_declared_attackers(self, (card for card, _details in chosen))
         commit_enlist_costs(self,enlist_plans)
         commit_exert_costs(self,exert_plans,trigger_batch=attack_triggers)
-        requirements, selected_costs = self._selected_declaration_mana(
-            locked_costs,
-            canonical,
-            payer=active,
+        payment_details = pay_attack_declaration_costs(
+            self, payer=active, costs=locked_costs, declaration=canonical, response=response,
         )
-        spent = normalize_mana_bundle(None)
-        activations: list[dict[str, Any]] = []
-        if sum(requirements.values()):
-            spent, activations = self._pay_for_cost(
-                active,
-                requirements,
-                response,
-                spend_context="combat_declaration",
-            )
         committed = attack_transitions.commit_engine_attack_declaration(
             self, controller=active, chosen=chosen, bands=bands
         )
@@ -5552,23 +5585,7 @@ class CommanderEngine(
                     self.state.cards[oid].ref: defender
                     for oid, defender in self.state.combat.attackers.items()
                 },
-                "costs": [cost.cost_id for cost in selected_costs],
-                "requirements": {
-                    key: value
-                    for key, value in requirements.items()
-                    if value
-                },
-                "payment": {
-                    key: value for key, value in spent.items() if value
-                },
-                "mana_sources": [
-                    {
-                        "source": activation.get("source_ref")
-                        or activation.get("source"),
-                        "bundle": activation.get("bundle"),
-                    }
-                    for activation in activations
-                ],
+                **payment_details,
             },
             importance=2,
             changed_objects=list(used),
@@ -5728,12 +5745,13 @@ class CommanderEngine(
         spent = normalize_mana_bundle(None)
         activations: list[dict[str, Any]] = []
         if sum(requirements.values()):
-            spent, activations = self._pay_for_cost(
+            mana_payment = self._pay_for_cost(
                 defender,
                 requirements,
                 response,
                 spend_context="combat_declaration",
             )
+            spent, activations = mana_payment.spent, mana_payment.activations
         committed = block_triggers.commit_engine_block_declaration(
             self,
             controller=defender,
@@ -6147,6 +6165,10 @@ class CommanderEngine(
         )
         if self._semantic_pause_annotation() is not None:
             return True
+        from .rules.combat_prevention_tokens import begin_combat_prevention_aftermath
+
+        if begin_combat_prevention_aftermath(self, result):
+            return True
         return self._stabilize()
 
     # Cleanup, state-based actions, and player elimination
@@ -6239,13 +6261,13 @@ class CommanderEngine(
         ):
             return False
 
-        if protection_verdict_for_ref(
-            self,
-            self._effective_card_data(target),
-            attachment.ref,
-        ) is not ProtectionVerdict.ALLOWED:
-            return False
-        return True
+        from .attachments import current_protection_attachment
+
+        retention = (current_protection_attachment(self.state.cards, attachment, target)
+                     if "equipment" in subtypes else None)
+        return protection_verdict_for_ref(
+            self, self._effective_card_data(target), attachment.ref, retaining_attachment=retention,
+        ) is ProtectionVerdict.ALLOWED
 
     def _has_world_supertype(self, card: CardInstance) -> bool:
         _, _, supertypes = self._type_parts(
@@ -6279,29 +6301,18 @@ class CommanderEngine(
             return True
         return False
 
-    def _synchronize_world_supertype_timestamps(self) -> None:
-        """Observe simultaneous gains/losses of the World supertype."""
+    def _synchronize_world_supertype_timestamps(
+        self, changes: WorldTimestampChanges,
+    ) -> None:
+        """Commit simultaneous gains and losses of the World supertype."""
 
-        from .rules.city_blessing import synchronize_citys_blessing
-        synchronize_citys_blessing(self,reason='before state-based actions')
-        synchronize_day_night(
-            self, reason="continuous day/night synchronization"
-        )
-
-        newly_world: list[CardInstance] = []
-        for card in self.state.cards.values():
-            if card.zone != "battlefield":
-                if card.world_supertype_timestamp is not None:
-                    card.world_supertype_timestamp = None
-                continue
-            if self._has_world_supertype(card):
-                if card.world_supertype_timestamp is None:
-                    newly_world.append(card)
-            else:
-                card.world_supertype_timestamp = None
-        if newly_world:
+        for object_id in changes.clears:
+            card = self.state.cards[object_id]
+            card.world_supertype_timestamp = None
+        if changes.gains:
             timestamp = self._next_zone_timestamp()
-            for card in newly_world:
+            for object_id in changes.gains:
+                card = self.state.cards[object_id]
                 card.world_supertype_timestamp = timestamp
 
     def _permanent_sba_snapshots(self) -> list[PermanentSnapshot]:
@@ -6345,11 +6356,13 @@ class CommanderEngine(
         """Apply or request the represented CR 704.5x-y protector repair."""
 
         attacked_targets = set(self.state.combat.attackers.values())
-        for seat in self.active_seats:
-            for object_id in list(
-                self.state.players[seat].zones["battlefield"]
-            ):
-                battle = self.state.cards[object_id]
+        battlefield = (
+            self.state.cards[object_id]
+            for seat in self.active_seats
+            for object_id in self.state.players[seat].zones["battlefield"]
+        )
+        with characteristic_read_frame(self):
+            for battle in battlefield:
                 if battle.zone != "battlefield" or battle.phased_out:
                     continue
                 card_types, subtypes, _ = self._effective_type_parts(battle)
@@ -6357,24 +6370,7 @@ class CommanderEngine(
                     continue
                 if not subtypes:
                     if battle.battle_protector != battle.controller:
-                        battle.battle_protector = battle.controller
-                        self._log(
-                            battle.controller,
-                            "state.battle_protector",
-                            (
-                                f"{battle.controller} became protector "
-                                f"of {battle.ref}."
-                            ),
-                            {
-                                "battle": battle.ref,
-                                "protector": battle.controller,
-                                "reason": "Battle has no Battle type",
-                            },
-                            importance=2,
-                            changed_objects=[battle.object_id],
-                            changed_players=[battle.controller],
-                        )
-                        return "changed"
+                        break
                     continue
                 if "siege" not in subtypes:
                     raise GameRuleError(
@@ -6395,39 +6391,42 @@ class CommanderEngine(
                     # Battle. CR 704.5y has no such exception when a Siege's
                     # controller is also its protector.
                     continue
-                candidates = [
-                    opponent
-                    for opponent in self.active_seats
-                    if opponent != battle.controller
-                ]
-                if not candidates:
-                    self._move_cards_simultaneously(
-                        [(battle.object_id, "graveyard")],
-                        reason="no legal Battle protector",
-                        log=False,
-                    )
-                    self._log(
-                        battle.controller,
-                        "state.battle_protector",
-                        (
-                            f"{battle.ref} had no legal protector and "
-                            "went to its owner's graveyard."
-                        ),
-                        {
-                            "battle": battle.ref,
-                            "protector": None,
-                            "reason": "no_legal_protector",
-                        },
-                        importance=2,
-                        changed_objects=[battle.object_id],
-                    )
-                    return "changed"
-                self._begin_battle_protector_repair_choice(
-                    battle,
-                    candidates,
-                )
-                return "waiting"
-        return None
+                break
+            else:
+                return None
+
+        if not subtypes:
+            battle.battle_protector = battle.controller
+            self._log(
+                battle.controller,
+                "state.battle_protector",
+                f"{battle.controller} became protector of {battle.ref}.",
+                {
+                    "battle": battle.ref,
+                    "protector": battle.controller,
+                    "reason": "Battle has no Battle type",
+                },
+                importance=2,
+                changed_objects=[battle.object_id],
+                changed_players=[battle.controller],
+            )
+            return "changed"
+        candidates = [opponent for opponent in self.active_seats if opponent != battle.controller]
+        if not candidates:
+            self._move_cards_simultaneously(
+                [(battle.object_id, "graveyard")], reason="no legal Battle protector", log=False,
+            )
+            self._log(
+                battle.controller,
+                "state.battle_protector",
+                f"{battle.ref} had no legal protector and went to its owner's graveyard.",
+                {"battle": battle.ref, "protector": None, "reason": "no_legal_protector"},
+                importance=2,
+                changed_objects=[battle.object_id],
+            )
+            return "changed"
+        self._begin_battle_protector_repair_choice(battle, candidates)
+        return "waiting"
 
     def _stabilize(self) -> bool:
         """Perform state-based actions until stable.
@@ -6458,13 +6457,11 @@ class CommanderEngine(
                 )
                 return True
 
-            if synchronize_state_based_observers(self):return True
-            sba_batch = evaluate_state_based_actions(
-                permanents=self._permanent_sba_snapshots(),
-                objects=self._object_sba_snapshots(),
-            )
+            inputs = synchronize_state_based_observers(self)
+            if inputs is None:
+                return True
             from .state_based_replacement_coordination import prepare_state_based_execution_or_choice
-            execution = prepare_state_based_execution_or_choice(self, sba_batch)
+            sba_batch, execution = prepare_state_based_execution_or_choice(self, inputs)
             if execution is None:
                 return True
             sba_batch = execution.resolved_batch or sba_batch
@@ -6796,11 +6793,7 @@ class CommanderEngine(
             if seat in remaining
         ]
         if len(remaining) == 1:
-            self.state.game_over = True
-            self.state.winner = remaining[0]
-            self.state.priority_player = None
-            self.permissions.invalidate_current()
-            self._log(remaining[0], "game.win", f"{remaining[0]} won the game.", importance=3, changed_players=remaining)
+            commit_game_win(self, remaining[0])
         elif not remaining:
             commit_game_draw(self, reason="All remaining players lost simultaneously.")
         elif self.state.priority_player in unique:

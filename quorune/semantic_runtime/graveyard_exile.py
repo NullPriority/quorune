@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Qualified destination redirection through the canonical replacement boundary."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from ..graveyard_exile_model import (
     GraveyardExileSpec,GRAVEYARD_EXILE_HANDLER,GRAVEYARD_EXILE_DEPENDENCIES,
 )
@@ -48,3 +48,35 @@ class GraveyardExileReplacementHandler:
                 'owner':context.object_owner})
         if not condition_matches(effect.conditions,event):return ()
         return (ZoneDestinationIntent(self.handler_id,context.source_ref,'exile',()),)
+
+
+from ..rules.zone_replacement_token_trigger import (
+    DEPENDENCIES as TOKEN_TRIGGER_DEPENDENCIES, HANDLER as TOKEN_TRIGGER_HANDLER,
+    PAYLOAD_FIELD, ReplacementTokenSource, parse_descriptor,
+)
+from ..replacement.operations import SetField
+
+
+@dataclass(frozen=True, slots=True)
+class GraveyardExileTokenTriggerHandler(GraveyardExileReplacementHandler):
+    handler_id: str = TOKEN_TRIGGER_HANDLER
+    capability_dependencies: tuple[str, ...] = TOKEN_TRIGGER_DEPENDENCIES
+    rule_references: tuple[str, ...] = ("603.3", "603.12", "614.4", "614.5", "614.6", "616.1", "700.4")
+
+    def validate(self, descriptor):
+        try:
+            return parse_descriptor(descriptor)[0]
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def source_replacement_effect(self, descriptor, *, source_ref, source_controller, component_id, source_context=None):
+        if (not isinstance(source_context, ReplacementTokenSource)
+                or (source_context.ref, source_context.controller) != (source_ref, source_controller)):
+            raise SemanticNodeError("A replacement token trigger needs its original source snapshot")
+        base = GraveyardExileReplacementHandler.source_replacement_effect(
+            self, descriptor, source_ref=source_ref, source_controller=source_controller, component_id=component_id,
+        )
+        _, program = parse_descriptor(descriptor)
+        return replace(base, operations=(*base.operations,
+            SetField(PAYLOAD_FIELD, {"source": source_context.to_dict(), "program": program.to_dict()}),
+        ))

@@ -261,9 +261,19 @@ class CombatUntapPreventionTests(InheritedNativeFixture, unittest.TestCase):
         game = self.session(50761415)
         ith = self.add(game.engine, "Ith, High Arcanist", zone="hand")
         self.assert_closed(game, ith)
+        player = game.state.players["A"]
+        for object_id in list(player.zones["hand"]):
+            if object_id != ith.object_id:
+                game.engine.move_card(object_id, "library", log=False)
+        for object_id in list(player.zones["command"]):
+            game.engine.move_card(object_id, "battlefield", controller="A", log=False)
+        game.state.config.auto_pass_empty_priority = True
         self.prepare(game, mana={"W": 1, "U": 1})
+        self.assertEqual(["pilot:A"], game.pending_principals())
         self.checkpoint(game)
-        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        legal = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]
+        self.assertFalse(any(legal[key] for key in ("cast", "lands", "abilities")))
+        actions = legal["actions"]
         offer, = [row for row in actions if row["id"].startswith("suspend:" + ith.ref + ":")]
         paid = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
         self.assertTrue(paid.ok, paid.summary)

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 """Parse fixed temporary results with a complete creature-subtype set."""
 
+from ..activation_x import exact_mana_only_x_activation_cost
 from ..rules.creature_subtype_set_results import (
     CREATURE_SUBTYPE_SET_RESULT_MECHANIC, CreatureSubtypeSetResult,
+    PAID_CONTROLLER_SUBTYPE_SET_TEMPLATE, paid_controller_subtype_set_effect,
 )
 from . import regex_working_set as re
 
@@ -43,3 +45,19 @@ def creature_subtype_set_template(text):
         "temporary-creature-subtype-set-result-v1", (result.to_instruction(),), result.to_target_schema(),
         (CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"),
     )
+
+
+
+def paid_controller_subtype_set_template(ability, text):
+    from .activated_costs import activated_ability_cost
+
+    if (" ".join(text.casefold().split()) !=
+            "until end of turn, creatures you control have base power and toughness x/x and gain all creature types."):
+        return None
+    if (ability.zones != ("battlefield",) or ability.mana_ability or ability.sorcery_speed
+            or ability.activation_conditions or ability.target_schema is not None
+            or ability.generic_reduction_per_legendary_creature or ability.library_search_types
+            or not exact_mana_only_x_activation_cost(activated_ability_cost(ability))):
+        return None
+    return (PAID_CONTROLLER_SUBTYPE_SET_TEMPLATE, (paid_controller_subtype_set_effect(),), None,
+            (CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects"))

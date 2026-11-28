@@ -59,6 +59,30 @@ class OpponentUpkeepCastWindow:
 
 
 @dataclass(frozen=True, slots=True)
+class ControllerCombatCastWindow:
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CastTimingPermissionError("Own-combat casting requires the exact version-one window")
+
+    def to_dict(self):
+        return {"kind":"controller_combat_window", "schema_version":self.schema_version}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"kind","schema_version"}
+                or value["kind"] != "controller_combat_window"):
+            raise CastTimingPermissionError("Own-combat cast window fields are closed")
+        return cls(value["schema_version"])
+
+    def permits(self, state, actor: str) -> bool:
+        player = state.players.get(actor)
+        return (state.phase == "combat" and state.active_player == actor
+                and player is not None and player.in_game)
+
+
+@dataclass(frozen=True, slots=True)
 class ManaSurchargeFlashSpec:
     """One fixed additional generic price for this face's timing permission."""
 

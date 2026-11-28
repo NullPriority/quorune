@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Slip Out the Back",
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put a +1/+1 counter on target creature. It phases out. (Treat it and anything attached to it as though they don't exist until its controller's next turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "An attacking or blocking creature that phases out is removed from combat."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Any continuous effects with a “for as long as” duration, such as that of Extraction Specialist, ignore phased-out objects. If ignoring those objects causes the effect's conditions to no longer be met, the duration will expire."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "As a creature is phased out, Auras and Equipment attached to it also phase out at the same time. Those Auras and Equipment will phase in at the same time that creature does, and they'll phase in still attached to that creature."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Choices made for permanents as they entered the battlefield are remembered when they phase in."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Permanents phase back in during their controller's untap step, immediately before that player untaps their permanents. Creatures that phase in this way are able to attack and pay a cost of {T} during that turn. If a permanent had counters on it when it phased out, it will have those counters when it phases back in."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Phased-out permanents are treated as though they don't exist. They can't be the target of spells or abilities, their static abilities have no effect on the game, their triggered abilities can't trigger, they can't attack or block, and so on."
+    },
+    {
+      "oracle_id": "82506e51-3fe1-446f-83c9-69e67583cefc",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Phasing out doesn't cause any “leaves the battlefield” abilities to trigger. Similarly, phasing in won't cause any “enters the battlefield” abilities to trigger."
+    }
+  ]
+}

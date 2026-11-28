@@ -55,7 +55,9 @@ def paid_variant_program(host, normal, spec, kind):
     return paid
 
 
-def all_fixed_variant_cost_options(host,seat,card,program,**options):
+def all_fixed_variant_cost_options(host, seat, card, program, *, exile_permission=None, **options):
+    if exile_permission is not None and exile_permission.get("allows_other_spell_costs") is False:
+        options["force_without_mana_cost"] = True
     result=[]
     for kind in SpellTextVariantKind:
         values=fixed_variant_cost_options(host,seat,card,program,kind=kind,**options)

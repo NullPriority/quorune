@@ -1,7 +1,7 @@
 ---
 title: "Counter placement and removal transactions"
 status: "current"
-authoritative_source: "quorune/counter_placement.py, quorune/counter_placement_events.py, quorune/counter_removal.py, quorune/counter_names.py, quorune/counter_state.py, quorune/counter_maximums.py, quorune/counter_placement_sets.py, quorune/counter_placement_targets.py, quorune/damage_results.py, quorune/player_result_events.py, quorune/token_creation.py, quorune/keyword_counters.py, quorune/leveler_bands.py, quorune/attachment_references.py, quorune/entry_counter_model.py, quorune/entry_counters.py, quorune/fixed_keyword_entry_counters.py, quorune/saga_progression.py, quorune/turn_counter_coordination.py, quorune/death_return.py, quorune/unleash.py, quorune/mentor.py, quorune/attack_counter_triggers.py, quorune/renown.py, quorune/modular.py, quorune/amass.py, quorune/zone_object_subtype_grants.py, quorune/relative_power_target.py, quorune/target_predicates.py, quorune/permanent_designations.py, quorune/zone_object_state.py, quorune/compiler/amass_templates.py, quorune/compiler/counter_maximum_templates.py, quorune/compiler/counter_removal_templates.py, quorune/compiler/fixed_counter_trigger_nodes.py, quorune/compiler/fixed_keyword_entry_nodes.py, quorune/compiler/fixed_self_entry_counter_templates.py, quorune/compiler/fixed_target_effect_sequences.py, quorune/compiler/fixed_source_effect_sequences.py, quorune/compiler/self_counter_keyword_actions.py, quorune/rules/optional_counter_capability_shapes.py, semantic_runtime/ability_fragments.py, semantic_runtime/counter_replacements.py, semantic_runtime/counter_removal_handlers.py, semantic_runtime/token_replacements.py, semantic_runtime/zone_replacements.py, semantic_runtime/self_entry_counters.py, semantic_runtime/entry_choices.py, semantic_runtime/block_restrictions.py, semantic_choices/amass.py, semantic_choices/death_return.py, semantic_choices/modular.py, semantic_choices/optional_counter_placement.py, ADR 0011, ADR 0034, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0048, and ADR 0054"
+authoritative_source: "quorune/counter_placement.py, quorune/counter_placement_events.py, quorune/counter_removal.py, quorune/counter_names.py, quorune/counter_state.py, quorune/rules/counter_movement.py, quorune/semantic_choices/source_counter_distribution.py, quorune/counter_maximums.py, quorune/counter_placement_sets.py, quorune/counter_placement_targets.py, quorune/damage_results.py, quorune/player_result_events.py, quorune/token_creation.py, quorune/keyword_counters.py, quorune/leveler_bands.py, quorune/attachment_references.py, quorune/entry_counter_model.py, quorune/entry_counters.py, quorune/fixed_keyword_entry_counters.py, quorune/saga_progression.py, quorune/turn_counter_coordination.py, quorune/death_return.py, quorune/unleash.py, quorune/mentor.py, quorune/attack_counter_triggers.py, quorune/renown.py, quorune/modular.py, quorune/amass.py, quorune/zone_object_subtype_grants.py, quorune/relative_power_target.py, quorune/target_predicates.py, quorune/permanent_designations.py, quorune/zone_object_state.py, quorune/compiler/amass_templates.py, quorune/compiler/counter_maximum_templates.py, quorune/compiler/counter_removal_templates.py, quorune/compiler/fixed_counter_trigger_nodes.py, quorune/compiler/fixed_keyword_entry_nodes.py, quorune/compiler/fixed_self_entry_counter_templates.py, quorune/compiler/fixed_target_effect_sequences.py, quorune/compiler/fixed_source_effect_sequences.py, quorune/compiler/self_counter_keyword_actions.py, quorune/rules/optional_counter_capability_shapes.py, semantic_runtime/ability_fragments.py, semantic_runtime/counter_replacements.py, semantic_runtime/counter_removal_handlers.py, semantic_runtime/token_replacements.py, semantic_runtime/zone_replacements.py, semantic_runtime/self_entry_counters.py, semantic_runtime/entry_choices.py, semantic_runtime/block_restrictions.py, semantic_choices/amass.py, semantic_choices/death_return.py, semantic_choices/modular.py, semantic_choices/optional_counter_placement.py, ADR 0011, ADR 0034, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0048, and ADR 0054"
 verified: "2026-10-16"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -24,6 +24,15 @@ from the declared event.
 Grouped subscriptions for a named kind can read the final amount for their
 qualifying recipient through the committed-event scalar owner. Admission
 associates that quantity with the named grouped placement event.
+An optional controller-upkeep movement reads the original source's current
++1/+1 counters at resolution. The controller can allocate any number of them
+among other battlefield creatures through one public nontarget choice. The
+movement owner pins the donor and recipients to their battlefield incarnations.
+It prepares every placement replacement before jointly committing the donor's
+removals and the successful recipient placements. A fully prevented share stays
+on the donor. A quantity replacement changes the placement amount while the
+donor gives up the original share.
+
 An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.
@@ -35,6 +44,13 @@ logical incarnation as the recipient. Snapshots with an attached rule use
 schema version two. Other rule sets use the version-one encoding. The sealed
 recipient also feeds damage-result counter permissions before quantity
 replacement discovery. Damage and lifelink retain their ordinary facts.
+
+Public battlefield sets can require a creature to have zero counters or zero
+counters of one named kind. The typed predicate reads current counter state
+when the effect applies. A creature with only a charge counter survives the
+counterless destruction set and remains eligible for a hand-return set that
+excludes creatures with a +1/+1 counter. Both forms use existing batch
+owners and preserve normal zone ownership and replacements.
 
 Numeric power/toughness counters apply each signed dimension independently
 under CR 122.1a and layer 7c. The canonical numeric characteristic query
@@ -53,6 +69,26 @@ Replacement suspension seals the concrete requested amount and recipient
 incarnation; resumption neither repeats the prefix nor recounts changed zones.
 Source-counter last-known quantities, distributed results and independently
 unsupported costs or linked riders remain outside this query family.
+
+A public entry choice can collect counters from a selected subset of current
+permanents. The entry transaction reserves each selected pool once and places
+twice the committed total as +1/+1 counters through the usual entry
+replacement owner. A targeted death trigger can place every kind from the
+departure snapshot on its announced recipient. On resolution the trigger
+also shuffles the recorded owner's library and moves the source card if its
+captured graveyard incarnation is still there.
+
+A beginning-of-combat placement for another controlled creature reads the
+original source's effective power at resolution. If the source left the
+battlefield, the placement uses its last known power. The trigger selects
+and revalidates the target through ordinary targeting, then sends its positive
+quantity to the counter transaction.
+
+Controlled-creature counter Monstrosity binds the resolving ability
+controller's current battlefield counter total once. A positive quantity
+uses ordinary placement and the current source gains the monstrous
+designation even if the quantity is zero. An existing designation prevents
+a second placement through the same Monstrosity action.
 
 Source-self entry counters accept complete closed public value definitions,
 including graveyard mana-value totals and explicit hand or library cardinalities.
@@ -78,14 +114,36 @@ sealed occurrences in the canonical damage result and add them to its completed
 trigger batch. Trigger discovery, current source presence, APNAP ordering,
 targets, optional choices and replay retain their existing owners. The
 dispatcher uses that same printed-and-granted event-program lookup to skip
-per-counter iteration when there is no subscriber.
+per-counter iteration when there is no subscriber. Subscriber discovery and
+affected-set selection each use one characteristic read frame. Each frame
+ends before the corresponding trigger dispatch or placement commit.
 
 Ordinary canonical lore placements publish each crossed Saga chapter once,
 after all placements in the instruction commit. Counter movements use that
 same placement boundary. Chapter and ordinary counter occurrences enter one
-pending trigger batch before the final-chapter state-based action runs. Saga
+pending trigger batch before the final-chapter state-based action runs. The
+untargeted flying-counter batch snapshots current creatures controlled by its
+resolving controller and excludes those that already have flying, including
+flying granted by another effect or an existing counter. Saga
 entry and intrinsic turn progression retain their separately owned chapter
 batches, so these paths do not dispatch a chapter twice.
+
+A chapter that distributes three +1/+1 counters requires one to three distinct
+creatures controlled by the trigger controller. The controller divides the
+counters as the ability goes on the stack. The public stack projects the
+original slot shares. Resolution discards shares for targets that became illegal
+and uses a single replacement-aware counter transaction for the surviving slots.
+
+A fixed creature-token instruction followed by a vigilance counter uses two
+ordered results. The token creation completes before the resolving controller
+chooses one current creature they control, so the new token can receive the
+counter. The public object choice pins the selected incarnation and sends
+placement through the canonical counter transaction.
+
+A sorcery-speed Saga return activation binds its paid X to the target's exact
+mana value. The returned object receives its finality counter in the canonical
+entry proposal. A successful entry grants haste to the new incarnation until
+end of turn through the existing continuous-effect owner.
 
 The compiler admits source-self and closed public permanent predicates, with
 separate placing-player and recipient-controller relations. Threshold, first-
@@ -99,6 +157,14 @@ decline and delegates acceptance to the same replacement-aware transaction.
 A replaced discard destination retains its typed discard cause. Compound and
 linked follow-up bodies, unsupported targets, and independent sibling abilities
 remain outside this optional-result contract.
+
+A complete current-turn journal can report that the placing player put a
+positive number of counters on a battlefield creature. The authoritative
+commit records the placing player and the recipient's type and incarnation
+at the placement. It includes entry counters and supported damage results.
+An end-step condition can use that history independently of the recipient's
+current zone, controller, or remaining counters. Historical journals retain
+their original placement modes.
 
 `counter_placement.py` also owns represented
 effect-generated, cost-generated, and typed rule-result counters placed on
@@ -283,6 +349,12 @@ destination handler and nested counter operation. Different owners, origins,
 object kinds, optional wording, counter-free moves, and alternate destinations
 remain residual rather than being inferred at runtime.
 
+A beginning-of-combat trigger can place counters on each creature its
+controller controls using the original source's power. Resolution calculates
+the amount once from current power or the source's last battlefield
+information. The affected set and its replacements use that same amount,
+including when the source receives counters itself. Zero places no counters.
+
 ## Player-selected creature recipients
 
 A source-entry ability can target one opponent and give that player the
@@ -291,6 +363,21 @@ target is announced with the trigger. The creature selection occurs during
 resolution and uses the ordinary counter placement owner. The continuation
 retains the selected creature's original incarnation. If no legal recipient
 can take the counter, resolution finishes without issuing an object choice.
+
+A sorcery-speed tap activation can announce two distinct permanent targets.
+The activating player controls the donor and chooses one movable counter
+kind on resolution. The retained choice pins both original incarnations
+and the kind through replacement ordering. Movement removes one counter and
+places that kind through the ordinary placement owner. If either target is
+illegal or the placement is impossible, movement changes neither object.
+
+An original public permanent or player target can receive another counter
+of one existing kind. The ability controller chooses the kind at resolution.
+The choice retains the target identity and the offered kinds. Ordinary
+placement applies prohibitions and replacements to the selected kind. A
+counter-placement trigger observes only the committed result. Multiple
+counters of one kind placed on the same permanent in one instruction
+produce one occurrence for a grouped subscription.
 
 ## Ownership and dependencies
 
@@ -397,6 +484,12 @@ without replaying it; the continuation carries only the remaining printed
 instructions. This family adds no counter write path and excludes optional,
 modal, conditional, variable, linked, repeated, movement, and affected-set
 variants.
+
+A controlled nontoken creature entry can also place one mandatory +1/+1
+counter on the recorded entrant and then draw one card for the trigger
+controller. The counter instruction uses the entrant's recorded incarnation.
+If the entrant leaves before resolution, the draw still resolves and a later
+incarnation cannot receive the original counter.
 
 ## Current producer inventory
 
@@ -549,8 +642,8 @@ effect-qualified quantity replacements therefore apply before the permanent
 enters. Ordinary Sagas dispatch every crossed trusted chapter, while CR
 702.155a permits a Read Ahead entry-turn chapter only when the final lore count
 exactly equals that chapter number. At the active player's precombat main boundary,
-`saga_progression.py` snapshots every controlled Saga with trusted typed
-chapter declarations and prepares one simultaneous `counter.place` batch with
+`saga_progression.py` snapshots the current chapter abilities of each controlled
+Saga and prepares one simultaneous `counter.place` batch with
 `effect_generated=false`. Unqualified replacements that apply when that
 player would put counters participate in the ordinary affected-controller
 ordering, while effect-qualified text such as Doubling Season remains
@@ -562,9 +655,26 @@ other beginning-of-phase triggers. The separate `state_based.saga_final_chapter`
 capability snapshots the exact Saga incarnation, waits while one of its typed
 chapter abilities is pending, and then routes the ordinary final-chapter
 sacrifice through the simultaneous state-based zone-change transaction.
-Untrusted chapter programs, arbitrary lore-counter movement, and copied,
-gained, removed, or layer-modified Read Ahead or chapter abilities remain
-fail-closed.
+Prospective entry checks applicable continuous effects before adding intrinsic
+lore counters. A Saga that loses its abilities through those effects enters
+without intrinsic lore. When no current chapter abilities remain, it gains no
+lore from the turn action and skips the final-chapter sacrifice check. Existing
+lore counters stay on the permanent. The Game Record pins the applicable Saga
+behavior for replay. Untrusted chapter programs, arbitrary lore-counter
+movement and other unrepresented chapter grants remain fail-closed. A controlled Saga
+can receive Read Ahead from a current battlefield static component. The prospective
+layer-six view determines whether that choice applies, then the same replacement
+owner used by printed Read Ahead handles the choice. Later lore placements during
+the entry turn check the Saga's current Read Ahead ability.
+
+The stack resolution owner observes successful final chapter completions
+after the chapter leaves the stack and before state-based actions. The
+occurrence matches the Saga's current battlefield incarnation, highest
+chapter, and controller. An observer that enters during the chapter can
+see its completion. Earlier chapters, countered abilities, and departed
+incarnations do not emit this event. The shared public counter aggregate
+also supports counting only lore counters among current controlled Sagas
+for static characteristics.
 
 Effect-generated entry counters use the same nested replacement tree through
 an immutable `EffectEntryCounter`. The instruction pins the physical card's
@@ -714,6 +824,16 @@ legal, and pending choices retain the original identities across save/load.
 Variable and unsupported keyword values, unrepresented sibling abilities,
 Oracle-equivalent prose, and unrepresented counter prohibitions remain residual.
 
+A departure counter copy reads each kind and quantity from the controlled creature's
+battlefield snapshot. It places that batch on the original observing permanent
+through ordinary replacements.
+
+The optional beginning-of-combat transfer requires counters on the original
+source at the beginning and at resolution. Its creature target is chosen when
+the trigger is placed. It prepares all current counter kinds in one batch. A
+kind whose placement fails stays on the source, and successful kinds remove
+their original quantities.
+
 Fixed ordinary-mana Impending binds the selected alternate price to the
 resolving spell and copies of that spell. The paid entrant uses the existing
 entry-counter transaction to place its printed number of time counters.
@@ -783,6 +903,17 @@ public object count evaluated through the cycle-safe layer-5 quantity boundary.
 The resolving-entry coordinator freezes the resulting nonnegative amount by
 component identity before replacement ordering; a private replacement choice,
 save/load, or exact replay cannot recompute it. Zero creates no counter child.
+A closed self-entry amount can read the greatest power, total toughness,
++1/+1 counter total, or separate red and green creature counts of its
+represented current public groups. Battlefield inputs use effective
+characteristics and exclude phased-out objects and simultaneous arrivals.
+The graveyard maximum also reads the destination controller’s creature cards
+already in that public zone. The chosen amount is carried through the same
+entry replacement transaction and remains fixed after entry.
+A maximum-mana-value entry amount reads every current face-up card in exile.
+It includes the entering card if it is still face up in exile and evaluates
+to zero when no card supplies a value.
+
 Fixed “escapes with” counters use this same amount owner. The typed predicate
 requires an actual spell cast from the graveyard with the Escape alternative
 cost; graveyard origin alone does not qualify. The amount is placed through
@@ -802,7 +933,7 @@ battlefield identity described by CR 400.7a. Applicability outside this typed
 prospective query remains unsupported instead of authorizing entry with an
 assumed printed component or silently omitting its counters.
 Choice or multikind counters, repeated kicker, unavailable history such as
-permanent departures or life gain, dynamic characteristics beyond layer 5,
+permanent departures or life gain, cycle-prone prospective characteristic queries,
 and counters placed on other entering permanents remain material residuals.
 
 Ordinary printed Sunburst now has a dedicated cast-payment entry owner. Cast
@@ -940,6 +1071,13 @@ then resolves as one +1/+1 counter on each surviving creature target through
 the existing APNAP-canonical, quantity-replacement-aware transaction; it adds
 no runtime Oracle parser, Support-specific mutation, or card identity branch.
 
+A permanent with one printed X in its mana cost can use Support X in
+its own entry trigger. The trigger seals the resolving spell’s announced
+X and uses the same placement owner. Noncast entries and later returns use zero. The sealed count bounds
+the distinct other creature targets offered and accepted when the trigger
+is put on the stack. Placement uses the same simultaneous transaction for
+the targets that remain legal at resolution.
+
 The fixed positive Amass subtype N family composes three existing owners rather
 than introducing an Army-specific state write. If the resolving controller has
 no Army, one typed token-creation intent first traverses represented additional-
@@ -988,11 +1126,17 @@ pins physical and logical permanent identity plus every positive counter kind;
 one additional counter of each kind then enters one simultaneous
 replacement-aware batch. The transaction permits an empty selection and
 rejects a changed subject or counter-kind snapshot before any counter changes.
-Two-Headed Giant shared poison totals, repeated or variable Proliferate,
-Proliferate replacement effects, and broader granted/copy propagation remain
-explicitly unsupported.
+A complete activated result or a single source entry-or-attack trigger with
+`Proliferate twice.` composes two ordinary instructions in printed order. The
+trigger has separate source-bound subscriptions for entry and attack
+declaration. Each instruction opens its own selection from the current counters and
+finishes any counter replacement choices before the next instruction. The
+same resolution continues without priority or state-based actions between
+the two instructions. Variable repetition, Proliferate replacement effects,
+Two-Headed Giant shared poison totals, and broader granted/copy propagation
+remain outside this scope.
 
-New Proliferate instructions carry a choice-order version. The native offer
+A versioned counter-quantity provider can bind one order across the positive\nkinds of a single placement on one permanent. The affected controller chooses\nfrom the applicable replacements. Each selection applies to all eligible kinds,\nand a kind-specific replacement changes only its own kinds. Prospective entry\nuses its containing entry event to scope the same choice. Other permanents retain\ntheir independent APNAP choices. Existing records keep their saved event ordering.\nIn the supported singleton-team profiles, the printed team relation selects\npermanents controlled by the current ability source controller.\n\nNew Proliferate instructions carry a choice-order version. The native offer
 lists eligible permanents by reference, followed by eligible players in seat
 order. Game Record v3 can also resume the sealed choice order from an
 unversioned instruction.
@@ -1016,6 +1160,13 @@ replacement-aware `PlaceCountersIntent` transaction as every other fixed
 counter effect. Noncombat damage, permanent recipients, fully prevented
 damage, optional placement, other counter kinds or counts, and broader damage
 wording remain residual.
+
+The optional damage-recipient counter family reads each committed positive
+damage occurrence to the observing permanent's controller, regardless of
+who controlled the damage dealer. The compiler recognizes the creature
+self-reference with +1/+1 counters and the artifact self-reference with charge
+counters. The trigger's controller may place the committed amount on the
+original battlefield incarnation through the existing optional placement choice.
 
 One printed fixed positive ordinary-mana or fixed positive life
 cumulative-upkeep instance uses a two-stage semantic continuation. The first
@@ -1059,8 +1210,9 @@ The following producers and wordings remain deliberately outside this slice:
   counter removed from the current battlefield source;
 - cumulative-upkeep forms outside the fixed positive ordinary-mana and fixed
   positive life families;
-- Support X or zero and conditional, optional, repeated, copied, granted,
-  modal, or compound Support instructions, plus variable, distributed, dynamic,
+- Explicit Support zero, Support X outside source-self entry triggers,
+  and conditional, optional, repeated, copied, granted, modal, or compound
+  Support instructions, plus variable, distributed, dynamic,
   subtype-qualified, combat-qualified, modal, conditional, compound, and
   multiple-counter target-set clauses, plus fixed player-counter variants
   outside the closed relations;
@@ -1157,9 +1309,21 @@ validates the full counter map, snapshots and revalidates the selected kind,
 and commits only that kind. No matching counters is a no-op. The original
 all-kinds descriptor omits the selector and retains its interpretation.
 
+A controller life-gain trigger can place the actual committed gain as named
+counters on its original source. The follow-up reads that incarnation's
+live count after placement and replacements. Meeting its threshold removes
+all counters of the specified kind and attempts an ordinary untap. Other
+counter kinds remain, and stun can replace the untap independently.
+
 Evolve checks the entrant's live power and toughness while the original
 incarnation remains on the battlefield. The zone transition owner seals its
 public characteristics immediately before departure and attaches them to the
 original pending or stacked trigger. A returned object has a new incarnation.
 Game Records written before the Evolve entrant observation version replay with
 their original condition behavior.
+
+An attacking source can offer a private optional discard before awarding
+experience. The later instruction reads distinct players in the committed
+current-turn discard journal and includes an accepted discard. The activated
+source modifier reads the ability controller's current experience at resolution
+and grants Menace even when that count is zero.

@@ -661,7 +661,9 @@ def targeted_graveyard_cast_schema(owner_relation):
     ).to_target_schema()
 
 
-def targeted_graveyard_cast_instruction_schema(owner_relation):
+def targeted_graveyard_cast_instruction_schema(owner_relation, *, first_paid=False):
+    if first_paid:
+        return OwnGraveyardCardTargetSpec(GraveyardCardTargetKind.NONLAND_PERMANENT_CARD).to_target_schema()
     from ..relative_power_target import MANA_VALUE_LE_POWER
 
     schema = targeted_graveyard_cast_schema(owner_relation)
@@ -672,17 +674,39 @@ def targeted_graveyard_cast_instruction_schema(owner_relation):
 
 def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
     from ..replacement.immutable import FrozenMap, thaw_value
-    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC, validate_graveyard_cast_effect
+    from ..targeted_graveyard_cast_model import (
+        FIRST_PAID_GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_CAPABILITY, GRAVEYARD_CAST_MECHANIC,
+        first_paid_graveyard_cast, is_bounded_graveyard_cast,
+        surveil_graveyard_cast_effects, validate_graveyard_cast_effect,
+    )
 
-    if len(effects) != 1 or not isinstance(target_schema, Mapping) or GRAVEYARD_CAST_MECHANIC not in mechanic_ids:
+    if GRAVEYARD_CAST_MECHANIC not in mechanic_ids:
+        return ()
+    if effects and is_bounded_graveyard_cast(effects[-1]):
+        try:
+            validate_graveyard_cast_effect(effects[-1])
+            if (target_schema is None and "surveil" in mechanic_ids and type(effects[0].get("count")) is int
+                    and thaw_value(FrozenMap({"effects": effects}))["effects"] == list(surveil_graveyard_cast_effects())):
+                return (GRAVEYARD_CAST_CAPABILITY, "library.surveil.fixed_controller")
+        except (TypeError, ValueError):
+            pass
+        return ()
+    if len(effects) != 1 or not isinstance(target_schema, Mapping):
         return ()
     try:
         effect = effects[0]
         validate_graveyard_cast_effect(effect)
-        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_instruction_schema(effect["owner_relation"]):
+        paid = first_paid_graveyard_cast(effect)
+        if thaw_value(FrozenMap(target_schema)) != targeted_graveyard_cast_instruction_schema(effect["owner_relation"], first_paid=paid):
             return ()
     except (ValueError, TypeError):
         return ()
+    if paid:
+        from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+        from ..temporary_cast_rule_model import CAPABILITY as TURN_CAST_PROHIBITION_CAPABILITY
+
+        return (GRAVEYARD_CAST_CAPABILITY, FIRST_PAID_GRAVEYARD_CAST_CAPABILITY, PUBLIC_HISTORY_QUERY_CAPABILITY,
+                TURN_CAST_PROHIBITION_CAPABILITY, "target.revalidate_resolution")
     from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY
     return (
         GRAVEYARD_CAST_CAPABILITY, "target.revalidate_resolution",
@@ -691,30 +715,60 @@ def targeted_graveyard_cast_node_capabilities(*, effects, target_schema, mechani
 
 
 def targeted_graveyard_cast_runtime_dependencies(program):
-    from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC, GRAVEYARD_CAST_OPERATION
+    from ..targeted_graveyard_cast_model import (
+        FIRST_PAID_GRAVEYARD_CAST_CAPABILITY, FIRST_PAID_GRAVEYARD_CAST_FIELD,
+        GRAVEYARD_CAST_MECHANIC, GRAVEYARD_CAST_OPERATION, first_paid_graveyard_cast,
+        is_bounded_graveyard_cast,
+    )
+    from .effect_shape_walkers import contains_nested_key
 
     effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_CAST_OPERATION)
+    marked_paid = (FIRST_PAID_GRAVEYARD_CAST_CAPABILITY in getattr(program, "capability_dependencies", ())
+                   or contains_nested_key((program.effects, getattr(program, "handlers", ())), FIRST_PAID_GRAVEYARD_CAST_FIELD))
+    if marked_paid and (len(effects) != 1 or not first_paid_graveyard_cast(effects[0])):
+        raise GraveyardCardTargetError("First paid graveyard casting requires its complete resolving instruction")
     if not effects:
         return ()
+    if any(is_bounded_graveyard_cast(effect) for effect in effects):
+        return _bounded_graveyard_cast_dependencies(program)
     required = targeted_graveyard_cast_node_capabilities(
         effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_CAST_MECHANIC,),
     )
     if not required:
         raise GraveyardCardTargetError("A graveyard cast requires its closed target and resolving permission")
-    if effects[0]["owner_relation"] == "you":
+    if first_paid_graveyard_cast(effects[0]):
+        from .artifact_graveyard_cast_activation import require_first_paid_graveyard_activation
+
+        require_first_paid_graveyard_activation(program)
+    elif effects[0]["owner_relation"] == "you":
         _require_relative_graveyard_attack(program)
+    return required
+
+
+def _bounded_graveyard_cast_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+    from ..targeted_graveyard_cast_model import EQUIPPED_PLAYER_COMBAT_DAMAGE
+
+    required = targeted_graveyard_cast_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if (not required or (program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or program.cost_schema is not None or program.handlers
+            or FrozenMap(program.event_condition or {}) != EQUIPPED_PLAYER_COMBAT_DAMAGE):
+        raise GraveyardCardTargetError("Surveil and the bounded cast require the original equipped combat-damage trigger")
     return required
 
 
 def graveyard_copy_scope_schema(scope):
     from ..relative_power_target import MANA_VALUE_LE_POWER, MANA_VALUE_LT_POWER
+    from .graveyard_copy_cast_model import UNTARGETED_COPY_SCOPES
 
     if scope == "own_source_power":
         return {**targeted_graveyard_cast_schema("you"), "predicate": MANA_VALUE_LE_POWER}
     if scope == "public_source_power":
         return {"zones": ["graveyard"], "categories": ["card"], "owner_relation": "any",
                 "types_none": ["creature", "land"], "count": 1, "predicate": MANA_VALUE_LT_POWER}
-    if scope == "own_all":
+    if scope in UNTARGETED_COPY_SCOPES:
         return None
     if scope == "paired":
         return {"groups": [{"id": "clause_0", **targeted_graveyard_cast_schema("you")},
@@ -724,9 +778,23 @@ def graveyard_copy_scope_schema(scope):
 
 def graveyard_copy_cast_node_capabilities(*, effects, target_schema, mechanic_ids):
     from ..replacement.immutable import freeze_value, thaw_value
-    from .graveyard_copy_cast_model import GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_MECHANIC, validate_graveyard_copy_effect
+    from .graveyard_copy_cast_model import (
+        GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_MECHANIC, RANDOM_NONLAND_SCOPE,
+        mill_random_graveyard_copy_effects, validate_graveyard_copy_effect,
+    )
 
-    if len(effects) != 1 or GRAVEYARD_COPY_MECHANIC not in mechanic_ids:
+    if GRAVEYARD_COPY_MECHANIC not in mechanic_ids:
+        return ()
+    if effects and effects[-1].get("scope") == RANDOM_NONLAND_SCOPE:
+        try:
+            validate_graveyard_copy_effect(effects[-1])
+            if (target_schema is None and "mill" in mechanic_ids and type(effects[0].get("count")) is int
+                    and thaw_value(freeze_value(effects)) == list(mill_random_graveyard_copy_effects())):
+                return (GRAVEYARD_COPY_CAPABILITY, "zone.mill.fixed")
+        except (ValueError, TypeError):
+            pass
+        return ()
+    if len(effects) != 1:
         return ()
     try:
         validate_graveyard_copy_effect(effects[0])
@@ -748,13 +816,15 @@ def graveyard_copy_cast_node_capabilities(*, effects, target_schema, mechanic_id
 
 
 def graveyard_copy_cast_runtime_dependencies(program):
-    from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION
+    from .graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION, RANDOM_NONLAND_SCOPE
 
     effects = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_COPY_OPERATION)
     if not effects:
         return ()
+    random_scope = any(effect.get("scope") == RANDOM_NONLAND_SCOPE for effect in effects)
     required = graveyard_copy_cast_node_capabilities(
-        effects=effects, target_schema=program.target_schema, mechanic_ids=(GRAVEYARD_COPY_MECHANIC,),
+        effects=program.effects if random_scope else effects, target_schema=program.target_schema,
+        mechanic_ids=program.coverage if random_scope else (GRAVEYARD_COPY_MECHANIC,),
     )
     if not required:
         raise GraveyardCardTargetError("Graveyard copy casting requires its exact exile and target scope")
@@ -763,6 +833,13 @@ def graveyard_copy_cast_runtime_dependencies(program):
 
 
 def _validate_relative_graveyard_copy_event(program, scope):
+    from .graveyard_copy_cast_model import RANDOM_NONLAND_SCOPE
+
+    if scope == RANDOM_NONLAND_SCOPE:
+        from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+        if ((program.event, program.active_zone) != ("step.begin", "battlefield")
+                or not is_controller_end_step_schedule(program.event_condition)):
+            raise GraveyardCardTargetError("Mill and random graveyard copy require the controller's end step")
     if scope == "own_source_power":
         from ..source_entry_cast_information import validate_source_entry_cast_condition
         if program.active_zone != "battlefield" or program.event != "permanent.enter.self":
@@ -817,6 +894,9 @@ def targeted_graveyard_return_node_capabilities(*, effects, target_schema, mecha
 
 
 def public_graveyard_return_runtime_dependencies(program):
+    grouped = per_color_graveyard_return_runtime_dependencies(program)
+    if grouped:
+        return grouped
     from ..replacement.immutable import thaw_value
 
     from .source_excluding_graveyard_returns import (
@@ -891,3 +971,57 @@ __all__ = [
     "PublicGraveyardCardTargetSpec",
     "targeted_own_graveyard_return_node_capabilities",
 ]
+
+
+
+PER_COLOR_GRAVEYARD_RETURN_CAPABILITY = "card.return.own_graveyard_per_color"
+_PER_COLOR_GRAVEYARD_TARGETS = (
+    ("white", "W"), ("blue", "U"), ("black", "B"), ("red", "R"), ("green", "G"),
+)
+
+
+def per_color_graveyard_return_target_schema():
+    single = OwnGraveyardCardTargetSpec(GraveyardCardTargetKind.CARD).to_target_schema()
+    single.pop("count")
+    return {"globally_distinct": True, "groups": [
+        {**single, "id": name, "colors_any": [color], "up_to": 1}
+        for name, color in _PER_COLOR_GRAVEYARD_TARGETS
+    ]}
+
+
+def per_color_graveyard_return_effect():
+    return {"op": "return_graveyard_targets_to_owner_hand", "cards": "$targets",
+            "maximum_targets": len(_PER_COLOR_GRAVEYARD_TARGETS)}
+
+
+def per_color_graveyard_return_node_capabilities(effects, target_schema):
+    from ..replacement.immutable import thaw_value
+
+    if (not isinstance(target_schema, Mapping) or target_schema.get("globally_distinct") is not True
+            or thaw_value(target_schema) != per_color_graveyard_return_target_schema()
+            or any(type(group["up_to"]) is not int for group in target_schema["groups"])
+            or len(effects) != 1 or thaw_value(effects[0]) != per_color_graveyard_return_effect()
+            or type(effects[0]["maximum_targets"]) is not int):
+        return ()
+    return (
+        PER_COLOR_GRAVEYARD_RETURN_CAPABILITY, "card.return.own_graveyard_to_owner_hand",
+        "resolution.effect.fixed_homogeneous_target_set", "target.revalidate_resolution",
+    )
+
+
+def per_color_graveyard_return_runtime_dependencies(program):
+    marked = PER_COLOR_GRAVEYARD_RETURN_CAPABILITY in program.capability_dependencies
+    groups = program.target_schema.get("groups") if isinstance(program.target_schema, Mapping) else None
+    grouped_return = (
+        isinstance(groups, (list, tuple)) and len(groups) == len(_PER_COLOR_GRAVEYARD_TARGETS)
+        and all(isinstance(group, Mapping) and group.get("id") == name
+                for group, (name, _color) in zip(groups, _PER_COLOR_GRAVEYARD_TARGETS, strict=True))
+        and any(effect.get("op") == "return_graveyard_targets_to_owner_hand" for effect in program.effects)
+    )
+    if not (marked or grouped_return):
+        return ()
+    required = per_color_graveyard_return_node_capabilities(program.effects, program.target_schema)
+    if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.cost_schema is not None or program.handlers or program.event_condition is not None):
+        raise ValueError("A per-color graveyard return requires its original spell and five color groups")
+    return required

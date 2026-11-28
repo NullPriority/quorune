@@ -9,12 +9,15 @@ from .applicability import canonical_effects, replacement_choice
 from .model import ReplaceableEvent, ReplacementClass, ReplacementEffect
 from .entry_counter_types import ENTRY_TIME_COUNTER_TYPES_FIELD, entry_time_counter_child
 from .operations import AddAffectedObjectCounter, AmplifyEntryOperation, ApplyEntryCounterReplacement
+from .counter_instruction_grouping import entry_counter_instruction_indices
 
 
 def entry_counter_order_effects(
     event: ReplaceableEvent, effects: Iterable[ReplacementEffect]
 ) -> tuple[ReplacementEffect, ...]:
-    values=tuple(effects)
+    from .riot_permissions import granted_riot_permission_effects
+
+    values=granted_riot_permission_effects(event, tuple(effects))
     if event.kind != 'zone.change' or not event.children or event.payload.get('destination') != 'battlefield':
         return values
     values=canonical_effects(values)
@@ -44,16 +47,28 @@ def entry_counter_order_effects(
         and child.payload.get("follows_zone_destination") is True
         and child.payload.get("counter_name") == "+1/+1"
     )
-    if len(candidates)!=1:return values
-    for child in candidates:
+    if len(candidates) != 1:
+        return values
+    anchor, = candidates
+    indices = entry_counter_instruction_indices(event, anchor, values)
+    if indices and root_choice is None:
+        # With no root competitor, the ordinary child chooser owns the group.
+        return values
+    leaves = tuple(event.children[index] for index in indices) if indices else (anchor,)
+    event_ids_by_effect = {}
+    for child in leaves:
         choice = replacement_choice(child, values)
-        if choice is None:
+        if choice is not None:
+            for identity in choice.options:
+                event_ids_by_effect.setdefault(identity, []).append(child.event_id)
+    for identity, event_ids in event_ids_by_effect.items():
+        effect = adapted[identity]
+        if effect.event_kind != "counter.place":
             continue
-        for identity in choice.options:
-            effect = adapted[identity]
-            if effect.event_kind!='counter.place':
-                # Separate counter kinds keep their ordinary child boundaries.
-                continue
-            adapted[identity] = replace(effect, event_kind='zone.change', conditions={},
-                operations=(ApplyEntryCounterReplacement(child.event_id, effect),), decline_operations=())
+        first, *members = event_ids
+        adapted[identity] = replace(
+            effect, event_kind="zone.change", conditions={},
+            operations=(ApplyEntryCounterReplacement(first, effect, tuple(members)),),
+            decline_operations=(), counter_instruction_order_version=None,
+        )
     return canonical_effects(adapted.values())

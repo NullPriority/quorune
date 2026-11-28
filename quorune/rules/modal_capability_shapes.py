@@ -9,7 +9,12 @@ from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
     FIXED_NONREPEATING_MODAL_MECHANIC,
 )
+from ..pawprint_modes import PAWPRINT_MECHANIC, REPEATABLE_MODE_MECHANIC
 from ..targets import target_plan
+from .modal_selection import (
+    COMMANDER_CAST_MODE_LIMIT_FIELD, conditional_cast_mode_capability, wizard_cast_mode_limit_matches,
+    DISTINCT_TURN_TRIGGER_MODES_FIELD, has_distinct_turn_trigger_modes, valid_distinct_turn_trigger_modes,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,7 +27,10 @@ class FixedModalBranch:
 FIXED_MODAL_WRAPPER_MECHANICS = frozenset(
     {
         'fixed-spree-mode-costs',
+        'fixed-tiered-mode-costs',
         'fixed-entwine-mode-costs',
+        PAWPRINT_MECHANIC,
+        REPEATABLE_MODE_MECHANIC,
         "cr-603-handling-triggered-abilities",
         "exhaust",
         "fixed-typed-event-effect-trigger",
@@ -94,6 +102,13 @@ def fixed_choose_one_modal_branches(
     if tuple(definitions) != expected_ids:
         return None
 
+    from .announced_x_modal import uses_announced_x_modal, validate_announced_x_modal_schema
+    announced_x = uses_announced_x_modal(target_schema)
+    if announced_x:
+        try:
+            validate_announced_x_modal_schema(target_schema)
+        except (TypeError, ValueError, KeyError):
+            return None
     branches: list[FixedModalBranch] = []
     represented = {FIXED_CHOOSE_ONE_MODAL_MECHANIC}
     for definition in definitions.values():
@@ -122,7 +137,7 @@ def fixed_choose_one_modal_branches(
             for key, value in definition.items()
             if key not in {"effects", "mechanics"}
         }
-        valid, target = _choose_one_target_schema(child_schema)
+        valid, target = (True, child_schema) if announced_x else _choose_one_target_schema(child_schema)
         if not valid:
             return None
         branch_mechanics = tuple(raw_mechanics)
@@ -154,9 +169,14 @@ def fixed_nonrepeating_modal_branches(
         or FIXED_NONREPEATING_MODAL_MECHANIC not in mechanics
         or FIXED_CHOOSE_ONE_MODAL_MECHANIC in mechanics
         or not isinstance(target_schema, Mapping)
-        or set(target_schema)
-        != {"mode_count", "min_modes", "max_modes", "modes"}
     ):
+        return None
+    fields = {"mode_count", "min_modes", "max_modes", "modes"}
+    if conditional_cast_mode_capability(target_schema):
+        fields.add(COMMANDER_CAST_MODE_LIMIT_FIELD)
+    if valid_distinct_turn_trigger_modes(target_schema):
+        fields.add(DISTINCT_TURN_TRIGGER_MODES_FIELD)
+    if set(target_schema) != fields:
         return None
     mode_count = target_schema.get("mode_count")
     minimum_modes = target_schema.get("min_modes")
@@ -169,9 +189,10 @@ def fixed_nonrepeating_modal_branches(
         or mode_count != minimum_modes
         or not isinstance(definitions, Mapping)
         or len(definitions) not in {2, 3, 4, 5}
-        or not 1 <= minimum_modes <= maximum_modes <= len(definitions)
-        or (minimum_modes, maximum_modes)
-        not in {(1, 1), (1, len(definitions)), (2, 2)}
+        or not 0 <= minimum_modes <= maximum_modes <= len(definitions)
+        or ((minimum_modes, maximum_modes)
+            not in {(0, 1), (0, len(definitions)), (1, 1), (1, len(definitions)), (2, 2)}
+            and not wizard_cast_mode_limit_matches(target_schema))
     ):
         return None
     expected_ids = tuple(
@@ -198,6 +219,7 @@ def fixed_nonrepeating_modal_branches(
             or not raw_effects
             or any(not isinstance(effect, Mapping) for effect in raw_effects)
             or not isinstance(raw_groups, (list, tuple))
+            or (minimum_modes == 0 and maximum_modes > 1 and raw_groups)
             or not scoped and len(raw_groups) > 1
             or any(not isinstance(group, Mapping) for group in raw_groups)
             or not isinstance(raw_mechanics, (list, tuple))
@@ -250,8 +272,13 @@ def fixed_nonrepeating_modal_branches(
             )
         )
     outer = set(mechanics) - represented
+    wrappers = FIXED_MODAL_WRAPPER_MECHANICS
+    from .combat_damage_library_access import uses_combat_damage_recipient_modes
+
+    if minimum_modes == 0 or uses_combat_damage_recipient_modes(target_schema):
+        wrappers = wrappers | {"trigger-event-normalized-damage"}
     if (
-        not outer.issubset(FIXED_MODAL_WRAPPER_MECHANICS)
+        not outer.issubset(wrappers)
         or set(mechanics) != represented | outer
     ):
         return None

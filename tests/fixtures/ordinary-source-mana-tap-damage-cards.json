@@ -1,0 +1,274 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{G}",
+      "name": "Zhur-Taa Druid",
+      "oracle_id": "5979310e-38c8-489f-ab9e-2723af98a3a5",
+      "oracle_text": "{T}: Add {G}.\nWhenever you tap this creature for mana, it deals 1 damage to each opponent.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2016-11-11",
+      "toughness": "1",
+      "type_line": "Creature — Human Druid"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Cryptolith Rite",
+      "oracle_id": "043f869d-b11c-4c0d-9591-2bf0df7bde55",
+      "oracle_text": "Creatures you control have \"{T}: Add one mana of any color.\"",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Treasure Nabber",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "oracle_text": "Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "2",
+      "type_line": "Creature — Goblin Rogue"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forbidden Orchard",
+      "oracle_id": "cfd60d1f-9832-4408-b84e-0fd3018b015b",
+      "oracle_text": "{T}: Add one mana of any color.\nWhenever you tap this land for mana, target opponent creates a 1/1 colorless Spirit creature token.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Land",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2022-07-08"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Zhur-Taa Druid’s last ability isn’t a mana ability. It uses the stack and can be responded to.",
+      "oracle_id": "5979310e-38c8-489f-ab9e-2723af98a3a5",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Zhur-Taa Druid’s last ability doesn’t trigger if it becomes tapped for any other reason. However, if Zhur-Taa Druid gains another mana ability that requires you tap it, its ability will trigger.",
+      "oracle_id": "5979310e-38c8-489f-ab9e-2723af98a3a5",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you tap Zhur-Taa Druid for mana during the process of casting a spell or activating an ability, its triggered ability will resolve before that spell or ability.",
+      "oracle_id": "5979310e-38c8-489f-ab9e-2723af98a3a5",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature has multiple mana abilities with a cost of {T}, such as if you control two Cryptolith Rites, you can only activate one of them at a time. Tapping the creature doesn’t produce multiple mana.",
+      "oracle_id": "043f869d-b11c-4c0d-9591-2bf0df7bde55",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple players each control Treasure Nabbers, an artifact tapped for mana will make quite a journey. For example, if player A taps an artifact for mana during their turn, and players B and C are the next players in turn order who control Treasure Nabbers, C's ability resolves before B and C gains control of the artifact. Then B gains control of the artifact. B keeps it during their turn, and then C regains control of the artifact once B's effect expires, then A will have it back after C's expires. However, if B or C taps the artifact for mana, one of them will take it from the other. You may need to pay very careful attention to which effects are still in effect, which have expired, and who owns what.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control multiple Treasure Nabbers, their effects all expire at the same time. You won't keep an artifact for any longer.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If that player controls any nabbed treasures, the effect giving that player control of those artifacts ends.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "An artifact is \"tapped for mana\" when a player activates a mana ability of an artifact that includes {T} (the tap symbol). Notably, tapping an artifact to pay for a spell with the improvise keyword is not tapping that artifact for mana.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the artifact leaves the battlefield, Treasure Nabber doesn't nab it from the zone it moved to.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The artifact remains tapped when you gain control of it.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent taps an artifact for mana during your turn, you'll gain control of it and keep control of it until the end of your next turn.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for original source tap-for-mana witnesses"
+}

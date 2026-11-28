@@ -3,6 +3,7 @@ import type { ChoiceForm, JsonValue } from "./generated/protocol";
 export type ChoiceValues = Record<string, JsonValue>;
 export type ChoiceField = Record<string, JsonValue>;
 export const DAMAGE_ALLOCATION_FIELD = "damage_allocation";
+const COUNTER_ALLOCATION_FIELD = "target_counter_allocation";
 export const MANA_POOL_PAYMENT_FIELD = "mana_pool_payment";
 
 export function record(value: JsonValue | undefined): Record<string, JsonValue> {
@@ -82,7 +83,7 @@ function initialField(field: ChoiceField): JsonValue | undefined {
       return target !== undefined && power > 0 ? [{ source, target, amount: power }] : [];
     });
   }
-  if (["object_map", "assignment_map", "targets"].includes(control)) return {};
+  if (["object_map", "quantity_map", "assignment_map", "targets"].includes(control)) return {};
   if (control === "select" && field.required) {
     return record(list(field.options)[0]).value;
   }
@@ -221,6 +222,7 @@ export function choicesWithDefaults(
 ): ChoiceValues {
   const values: ChoiceValues = structuredClone(current);
   delete values[DAMAGE_ALLOCATION_FIELD];
+  delete values[COUNTER_ALLOCATION_FIELD];
   const variants = record(form.variants);
   if (list(variants.options).length && values[stringValue(variants.field || "cost_option")] === undefined) {
     const selector = stringValue(variants.field || "cost_option");
@@ -237,6 +239,37 @@ export function choicesWithDefaults(
 
 export function initialChoices(form: ChoiceForm): ChoiceValues {
   return choicesWithDefaults(form, {});
+}
+
+export function restoreCastChoices(form: ChoiceForm, previous: ChoiceValues): ChoiceValues {
+  const values = { ...previous };
+  // Mana activation can change which mana in the pool is available to spend.
+  delete values[MANA_POOL_PAYMENT_FIELD];
+  const variants = activeVariants(form, values);
+  const options = list(variants.options).map(record);
+  const selector = stringValue(variants.field || "cost_option");
+  if (options.length && !options.some((option) => option.value === values[selector])) {
+    values[selector] = variants.default ?? options[0].value;
+  }
+  for (const field of activeFields(form, values)) {
+    const name = stringValue(field.name);
+    if (field.control === "refs" && Array.isArray(values[name])) {
+      const permitted = field.legal_refs === undefined
+        ? list(field.options).map((option) => record(option).value)
+        : list(field.legal_refs);
+      values[name] = list(values[name]).filter((candidate) => permitted.includes(candidate));
+    }
+    if (field.control !== "targets") continue;
+    const schema = record(field.schema);
+    if (Array.isArray(schema.legal_modes)) {
+      values.modes = list(values.modes).filter((mode) => list(schema.legal_modes).includes(mode));
+    }
+    const existing = record(values[name]);
+    values[name] = retainTargetGroups(selectedTargetGroups(field, values), existing);
+    if (JSON.stringify(existing) !== JSON.stringify(values[name])) delete values[DAMAGE_ALLOCATION_FIELD];
+  }
+  const retained = executableChoices(form, values);
+  return { ...choicesWithDefaults(form, retained), ...retained };
 }
 
 function selectedTargetGroups(field: ChoiceField, values: ChoiceValues): ChoiceField[] {
@@ -266,17 +299,20 @@ function damageAllocationTotal(spec: ChoiceField, values: ChoiceValues): number 
   return Number.isSafeInteger(computed) ? computed : undefined;
 }
 
-export function selectedDamageAllocation(field: ChoiceField, values: ChoiceValues) {
-  const total = damageAllocationTotal(record(record(field.schema)[DAMAGE_ALLOCATION_FIELD]), values);
+export function selectedTargetAllocation(field: ChoiceField, values: ChoiceValues) {
+  const schema = record(field.schema);
+  const counters = schema[COUNTER_ALLOCATION_FIELD] !== undefined;
+  const name = counters ? COUNTER_ALLOCATION_FIELD : DAMAGE_ALLOCATION_FIELD;
+  const total = damageAllocationTotal(record(schema[name]), values);
   if (total === undefined) return null;
   const targets = record(values[stringValue(field.name || "targets")]);
   const refs = selectedTargetGroups(field, values).flatMap((group) =>
     list(targets[stringValue(group.id || "target")]).map(String),
   );
-  const shares = values[DAMAGE_ALLOCATION_FIELD] === undefined
+  const shares = values[name] === undefined
     ? Object.fromEntries(refs.map((ref, index) => [ref, index === 0 ? total - refs.length + 1 : 1]))
-    : record(values[DAMAGE_ALLOCATION_FIELD]);
-  return { total, refs, shares };
+    : record(values[name]);
+  return { name, counters, total, refs, shares };
 }
 
 export function updateModalTargetSelection(
@@ -302,6 +338,10 @@ export function updateModalTargetSelection(
   const modeSchemas = record(schema.mode_schemas);
   const groups = next.flatMap((selectedMode) =>
     list(record(modeSchemas[selectedMode]).groups).map((group) => record(group)));
+  return { modes: next, targets: retainTargetGroups(groups, targets) };
+}
+
+function retainTargetGroups(groups: ChoiceField[], targets: ChoiceField): ChoiceField {
   const retained: ChoiceField = {};
   for (const group of groups) {
     const groupId = stringValue(group.id || "target");
@@ -314,7 +354,7 @@ export function updateModalTargetSelection(
       .slice(0, Number(group.max ?? 1));
     if (selected.length) retained[groupId] = selected;
   }
-  return { modes: next, targets: retained };
+  return retained;
 }
 
 export function copyTargetGroups(copy: ChoiceField): ChoiceField[] {
@@ -392,7 +432,7 @@ function refsForCopyGroup(
   return list(record(rawTargets)[stringValue(group.id || "target")]).map(String);
 }
 
-function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
+function fieldErrors(field: ChoiceField, values: ChoiceValues, compatibility: string[]): string[] {
   const name = stringValue(field.name);
   const label = stringValue(field.label || name);
   const control = stringValue(field.control);
@@ -523,6 +563,20 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
         errors.push(`${String(rule.label ?? group)} allows at most ${rule.maximum} card(s).`);
       }
     }
+  } else if (control === "quantity_map") {
+    const amounts = Object.entries(record(value));
+    const refs = new Set(list(field.options).map((option) => stringValue(record(option).value)));
+    const exact = field.exact_total;
+    const budget = Number(exact ?? field.maximum_total);
+    const total = amounts.reduce((sum, [, amount]) => sum + Number(amount), 0);
+    const eachMaximum = Number(field.maximum_each ?? budget);
+    const valid = value !== null && typeof value === "object" && !Array.isArray(value)
+      && amounts.every(([ref, amount]) => refs.has(ref) && typeof amount === "number"
+        && Number.isInteger(amount) && amount >= Number(field.minimum_each ?? 0) && amount <= eachMaximum)
+      && (exact === undefined ? total <= budget : total === budget);
+    if (!valid) errors.push(exact === undefined
+      ? `${label} allows up to ${budget} in total.`
+      : `${label} requires a total of ${budget}.`);
   } else if (control === "object_map") {
     const count = Object.keys(record(value)).length;
     if (field.minimum !== undefined && count < Number(field.minimum)) {
@@ -579,16 +633,19 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       const groupId = stringValue(group.id || "target");
       const selected = list(targets[groupId]);
       const count = selected.length;
-      if (count < Number(group.min ?? 1) || count > Number(group.max ?? 1)) {
-        errors.push(
-          `${stringValue(group.label || groupId)} requires between ${group.min ?? 1} and ${group.max ?? 1} target(s).`,
-        );
+      const label = stringValue(group.label || "Targets");
+      const minimum = Number(group.min ?? 1);
+      const maximum = Number(group.max ?? 1);
+      if (count < minimum || count > maximum) {
+        errors.push(minimum === maximum
+          ? `${label} requires exactly ${minimum} ${minimum === 1 ? "target" : "targets"}.`
+          : `${label} requires between ${minimum} and ${maximum} targets.`);
       }
-      if (schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === groupId) {
-        const legal = new Set(list(group.legal_refs));
-        if (selected.some((ref) => !legal.has(ref))) {
-          errors.push("Choose an X within the offered range for each target.");
-        }
+      if (Array.isArray(group.legal_refs) && selected.some((ref) => !list(group.legal_refs).includes(ref))) {
+        const boundsApply = schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === groupId;
+        errors.push(boundsApply
+          ? "Choose an X within the offered range for each target."
+          : `${label} changed. Choose from the current targets.`);
       }
     }
     const selectedRefs = targetGroups.flatMap((group) => list(targets[stringValue(group.id || "target")]));
@@ -615,14 +672,15 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       );
     });
     if (missingFlagbearer) errors.push("Choose at least one Flagbearer as a target.");
-    const allocation = selectedDamageAllocation(field, values);
+    const allocation = selectedTargetAllocation(field, values);
     if (allocation) {
-      const { refs, shares, total } = allocation;
+      const { counters, refs, shares, total } = allocation;
       const amounts = refs.map((ref) => shares[ref]);
       if (Object.keys(shares).length !== refs.length
           || amounts.some((amount) => typeof amount !== "number" || !Number.isSafeInteger(amount) || amount < 1)
           || amounts.reduce<number>((sum, amount) => sum + Number(amount), 0) !== (refs.length ? total : 0)) {
-        errors.push(`Assign at least 1 damage to each chosen target and use exactly ${total} damage.`);
+        errors.push(counters ? "Assign at least one counter to each chosen target and use all three counters."
+          : `Assign at least 1 damage to each chosen target and use exactly ${total} damage.`);
       }
     }
   } else if (control === "copy_targets") {
@@ -661,12 +719,30 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
         errors.push(`${source} must assign exactly ${required} damage.`);
       }
     }
+  } else if (required) {
+    const message = `Update Quorune to complete ${stringValue(field.label || "this choice")}. A required control uses a newer format.`;
+    errors.push(message);
+    compatibility.push(message);
   }
   return errors;
 }
 
+function inspectChoices(form: ChoiceForm, values: ChoiceValues): { errors: string[]; compatibility: string[] } {
+  if (form.v !== 1) {
+    const compatibility = ["Update Quorune to use this version of the action form."];
+    return { errors: compatibility, compatibility };
+  }
+  const compatibility: string[] = [];
+  const errors = activeFields(form, values).flatMap((field) => fieldErrors(field, values, compatibility));
+  return { errors, compatibility };
+}
+
 export function validateChoices(form: ChoiceForm, values: ChoiceValues): string[] {
-  return activeFields(form, values).flatMap((field) => fieldErrors(field, values));
+  return inspectChoices(form, values).errors;
+}
+
+export function choiceCompatibilityErrors(form: ChoiceForm | undefined, values: ChoiceValues): string[] {
+  return form ? inspectChoices(form, values).compatibility : [];
 }
 
 export function executableChoices(form: ChoiceForm, values: ChoiceValues): ChoiceValues {
@@ -677,8 +753,8 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
     if (name) permitted.add(name);
     if (field.control === "targets") {
       permitted.add("modes");
-      const allocation = selectedDamageAllocation(field, values);
-      if (allocation) result[DAMAGE_ALLOCATION_FIELD] = structuredClone(allocation.shares);
+      const allocation = selectedTargetAllocation(field, values);
+      if (allocation) result[allocation.name] = structuredClone(allocation.shares);
     }
   }
   const variants = activeVariants(form, values);
@@ -694,4 +770,24 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
 
 export function targetGroups(field: ChoiceField, values: ChoiceValues): ChoiceField[] {
   return selectedTargetGroups(field, values);
+}
+
+export function castsWithNoXTargets(form: ChoiceForm, values: ChoiceValues): boolean {
+  const groups = activeFields(form, values).filter((field) => field.control === "targets").flatMap((field) => {
+    const selected = record(values[stringValue(field.name)]);
+    return targetGroups(field, values).map((group) => ({
+      optional: group.min === 0,
+      usesX: group.maximum_from === "x",
+      count: list(selected[stringValue(group.id ?? "target")]).length,
+    }));
+  });
+  return groups.some((group) => group.usesX) && groups.every((group) => group.optional && group.count === 0);
+}
+
+export function targetGroupModes(field: ChoiceField): Map<string, string> {
+  const schema = record(field.schema);
+  const modeSchemas = record(schema.mode_schemas);
+  return new Map(list(schema.legal_modes).map(String).flatMap((mode) =>
+    list(record(modeSchemas[mode]).groups).map((group) => [String(record(group).id ?? "target"), mode] as const),
+  ));
 }

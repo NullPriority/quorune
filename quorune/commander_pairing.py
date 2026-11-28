@@ -280,6 +280,8 @@ def validate_commander_pair(
     card_db: "CardDatabase",
     registry: PairingProgramRegistry | None,
     commanders: tuple["CardRecord", "CardRecord"],
+    *,
+    capability_profile: str = "commander_review",
 ) -> tuple[CommanderPairingDeclaration | None, ...]:
     """Validate CR 702.124h/i/j/k/m through one shared typed setup owner."""
 
@@ -306,7 +308,10 @@ def validate_commander_pair(
     if kinds == (
         CommanderPairingKind.PARTNER,
         CommanderPairingKind.PARTNER,
-    ) and all(_is_legendary_creature(card) for card in commanders):
+    ) and all(
+        _is_legendary_creature(card) or _has_printed_commander_permission(card_db, registry, card, capability_profile)
+        for card in commanders
+    ):
         return declarations
     if kinds == (
         CommanderPairingKind.PARTNER_WITH,
@@ -520,7 +525,9 @@ def validated_commander_counts(
                 "Commander-board entries must match the designated commander list"
             )
     if len(commander_records) == 2:
-        validate_commander_pair(card_db, registry, commander_records)
+        validate_commander_pair(
+            card_db, registry, commander_records, capability_profile=strict_profile or "commander_review",
+        )
     if len(commander_records) == 1 and strict_profile is not None:
         _validate_single_commander(card_db, registry, commander_records[0], strict_profile)
     return dict(commander_counts)

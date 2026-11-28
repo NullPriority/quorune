@@ -11,7 +11,9 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
     CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,
-    CREATURE_SELF_DAMAGE_SET_DEPENDENCIES,
+    CREATURE_SELF_DAMAGE_SET_DEPENDENCIES, CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES,
+    CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY, is_creature_controller_damage_set,
+    validate_creature_controller_damage_set,
     is_creature_self_damage_set,
     validate_creature_self_damage_set,
     OCCURRENCE_POWER_DAMAGE_LKI,
@@ -19,6 +21,8 @@ from ..creature_power_damage_model import (
     OCCURRENCE_POWER_DAMAGE_VERSION,
     creature_power_damage_multiplier,
     occurrence_power_damage_in,
+    TARGET_POWER_DAMAGE_COHORT_DEPENDENCIES,
+    target_power_damage_cohort_schema, uses_target_power_damage_cohort, validate_target_power_damage_cohort,
 )
 from ..replacement.immutable import thaw_value
 from ..creature_subtypes import canonical_creature_subtype
@@ -233,11 +237,85 @@ def _creature_self_damage_set_capabilities(effects, target_schema, mechanics):
     if (len(effects) != 1 or target_schema is not None or "cr-115-targets" in mechanics
             or not {CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage"} <= mechanics):
         return ()
+    if is_creature_controller_damage_set(effects[0]):
+        try:
+            validate_creature_controller_damage_set(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES
     try:
         validate_creature_self_damage_set(effects[0])
     except (TypeError, ValueError):
         return ()
     return CREATURE_SELF_DAMAGE_SET_DEPENDENCIES
+
+
+def target_power_damage_cohort_node_capabilities(effects, target_schema):
+    schema = thaw_value(target_schema)
+    if len(effects) != 1 or schema != target_power_damage_cohort_schema():
+        return ()
+    if type(schema["groups"][0]["count"]) is not int:
+        return ()
+    try:
+        validate_target_power_damage_cohort(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return TARGET_POWER_DAMAGE_COHORT_DEPENDENCIES
+
+
+def target_power_damage_cohort_program_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    leaves = tuple(effect for effect in nested_effects((program.effects, program.handlers))
+                   if uses_target_power_damage_cohort(effect))
+    if not leaves:
+        return ()
+    required = target_power_damage_cohort_node_capabilities(program.effects, program.target_schema)
+    if (not required or leaves != tuple(program.effects) or program.handlers or program.cost_schema is not None
+            or (program.event, program.active_zone) != ("resolve", "stack") or program.event_condition is not None):
+        raise ValueError("Target-power damage requires its complete resolving spell and sole controlled target")
+    return required
+
+
+def trample_bite_target_schema():
+    group = {"zones": ["battlefield"], "categories": ["permanent"],
+             "types_any": ["creature"], "count": 1}
+    return {"groups": [
+        {"id": "fighter", "controller_relation": "you", **group},
+        {"id": "recipient", "controller_relation": "opponent", **group},
+    ]}
+
+
+def _trample_bite_node_capabilities(effects, target_schema, mechanics):
+    from ..creature_power_damage_model import TRAMPLE_BITE_DEPENDENCIES, validate_trample_bite
+
+    schema = thaw_value(target_schema)
+    if (len(effects) != 1 or schema != trample_bite_target_schema()
+            or any(type(group["count"]) is not int for group in schema["groups"])
+            or not {CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"} <= mechanics):
+        return ()
+    try:
+        validate_trample_bite(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return TRAMPLE_BITE_DEPENDENCIES
+
+
+def trample_bite_program_dependencies(program):
+    from ..creature_power_damage_model import TRAMPLE_BITE_CAPABILITY, uses_trample_bite
+    from .effect_shape_walkers import nested_effects
+
+    marked = tuple(effect for effect in nested_effects((*program.effects, *program.handlers))
+                   if uses_trample_bite(effect))
+    if not marked and TRAMPLE_BITE_CAPABILITY not in program.capability_dependencies:
+        return ()
+    required = _trample_bite_node_capabilities(program.effects, program.target_schema, set(program.coverage))
+    if (len(marked) != 1 or not required
+            or (program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:") or program.cost_schema is not None
+            or program.handlers or program.event_condition is not None or program.trigger_limit is not None):
+        raise ValueError("Creature-power excess damage requires the two original mandatory spell targets")
+    return required
 
 
 def fixed_creature_power_damage_node_capabilities(
@@ -249,7 +327,24 @@ def fixed_creature_power_damage_node_capabilities(
     """Recognize the compiler-owned Fight, bite, and self-damage set shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
-    if any(is_creature_self_damage_set(effect) for effect in effects):
+    from ..creature_power_damage_model import uses_trample_bite
+
+    if any(uses_trample_bite(effect) for effect in effects):
+        return _trample_bite_node_capabilities(effects, target_schema, mechanics)
+    from .turn_retained_resolution_mana import fight_excess_red_node_dependencies, uses_fight_excess_red
+    if uses_fight_excess_red(effects):
+        try:
+            return fight_excess_red_node_dependencies(effects, target_schema, mechanics)
+        except (TypeError, ValueError, KeyError):
+            return ()
+    from .source_power_opponent_damage import (
+        uses_source_power_opponent_damage, source_power_opponent_damage_node_capabilities,
+    )
+    if any(uses_target_power_damage_cohort(effect) for effect in effects):
+        return target_power_damage_cohort_node_capabilities(effects, target_schema)
+    if any(uses_source_power_opponent_damage(effect) for effect in effects):
+        return source_power_opponent_damage_node_capabilities(effects, target_schema, mechanics)
+    if any(is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect) for effect in effects):
         return _creature_self_damage_set_capabilities(effects, target_schema, mechanics)
     from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities
     if RECIPROCAL_POWER_MECHANIC in mechanics:
@@ -377,9 +472,12 @@ def fixed_creature_power_damage_node_capabilities(
 def fixed_creature_power_damage_covered_mechanics(
     capability_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    if CREATURE_POWER_DAMAGE_CAPABILITY not in set(capability_ids):
-        return ()
-    return (CREATURE_POWER_DAMAGE_MECHANIC, "fight")
+    capabilities = set(capability_ids)
+    if CREATURE_POWER_DAMAGE_CAPABILITY in capabilities:
+        return (CREATURE_POWER_DAMAGE_MECHANIC, "fight")
+    if CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY in capabilities:
+        return (CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage")
+    return ()
 
 
 __all__ = [

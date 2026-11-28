@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .zone_move_intent import ExilePublicGraveyardCardIntent
-from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec
+from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec, graveyard_card_counter_recipe
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,7 +34,8 @@ def validate_graveyard_card_counter_life_identity(value):
     expected = {'actor', 'card_ref', 'reason', 'source_object_id', 'source_logical_object_id', 'result'}
     if not isinstance(value, Mapping) or set(value) != expected:
         raise ValueError('Targeted graveyard card result identity fields are closed')
-    result = GraveyardCardCounterLifeSpec.from_dict(value['result'])
+    payload = value['result']
+    result = graveyard_card_counter_recipe(payload).from_dict(payload)
     intent = GraveyardCardCounterLifeIntent(actor=value['actor'], object_ref=value['card_ref'],
         reason=value['reason'], source_object_id=value['source_object_id'],
         source_logical_object_id=value['source_logical_object_id'], result=result)

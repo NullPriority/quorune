@@ -38,6 +38,41 @@ the same principal-scoped full and delta packets plus safe lifecycle metadata.
 The in-process and network paths share protocol and validation code; neither is
 a second rules interface.
 
+Matches that require a different saved rules build return HTTP `409` with
+`game_rules_build_required`. The stream sends the same code in a terminal
+message, and the browser offers a return to the lobby.
+
+The progress endpoint reports queue and persistence status without submitting
+a game command. A pilot can read the interaction ID and monotonic durations
+for their own latest command. Browser timing records the matching receipt,
+projection, and paint using the browser’s clock. Phase samples can include
+several players’ actions, so they are reported separately.
+
+The guest library exposes the authenticated guest's saved decks and games
+they can access. A saved deck is resolved and validated again when submitted
+to a table. The host of a completed match can prepare a fresh room for the
+previously seated players. The original room membership continues to govern
+access to that match and its projections.
+
+If the card programs disagree with one another or with the active card data,
+deck submission saves an editable draft. The owner's preflight includes every
+mismatch with the card identity, the program sources, and the source excerpts
+when available. Other seats see that a deck needs review.
+
+A duel requires two seated players. A four-seat room requires at least three.
+Every occupied seat must be ready for a standard start. The server checks that
+the roster and deck choices still match before committing the game.
+The start request accepts `first_player` as an occupied seat ID or `random`.
+The default selects a seat from the room seed. An optional positive integer
+`starting_life` applies to every seat. Leaving it unset uses the format
+default. The initial Game Record state stores the resolved order and life
+total.
+
+The room owner may set `use_reviewed_card_data` to `true` on the start request.
+The server verifies one retained snapshot against the current submitted decks
+and uses it for the whole match. The Game Record pins its fingerprint. The
+default start path uses the active card data.
+
 The intrinsic Miracle reveal decision exposes the prospective card and fixed
 cost only to its drawer. Acceptance publishes that card and queues its linked
 trigger. The later cast-or-decline decision belongs to the resolving trigger's
@@ -73,6 +108,25 @@ attempt rolls back and does not consume the decision capability. Reusing a
 client command ID with a byte-equivalent request returns the durable receipt;
 reusing it for different content is a conflict.
 
+An issued priority pass can carry a current turn sequence and the IDs of
+optional, non-mana activations the pilot explicitly ignored for that pass. The
+server validates the turn and the offered IDs before recording the command.
+Each subsequent pass requires its own current capability. The existing yield
+policy uses its own declared choice field.
+
+An authenticated pilot may update their own priority holds with
+`PUT /api/v1/games/{game_id}/priority-holds`. The body has `steps` for selected
+hold points and `preserve_empty` for full control or activity holds. The
+server preserves those priority decisions during fast advancement. The request
+itself leaves the game revision unchanged. Each accepted game command records
+the active hold settings as private replay input. An explicit pass still uses
+the current issuer's capability and yields only that seat's priority.
+`before_my_turn` holds the end step before that pilot's currently scheduled
+turn. The projected turn can include `next_player` during an end step.
+The browser can request the union of its general and seat-specific step
+holds and apply the active-seat filter locally. The request shape stores
+step names per acting principal and has no active-seat condition.
+
 ## Projected packets
 
 [`schemas/decision-packet.schema.json`](../../schemas/decision-packet.schema.json)
@@ -80,6 +134,10 @@ defines the client packet. A full packet establishes a principal-specific view,
 its canonical hash, current revision, visible definitions/events, and current
 decision. A delta names the exact base hash, resulting view hash, patch, event
 tail, and current decision.
+
+A WebSocket projection and its game lifecycle summary describe the same
+authoritative revision. A move committed after that observation produces a
+separate update.
 
 A resolving cast choice over several exiled cards includes a public `card`
 reference in each `cast_options` entry. The submitted `cost_option` selects the
@@ -102,7 +160,8 @@ A client must:
 Target-dependent casting offers may include `target_costs` on a cost option and
 its target form field. Public clauses identify the current source components
 and matching target references. Each payable price row gives the selected mode
-set, applicable component set, exact mana requirements and display label.
+set, applicable component set, exact mana requirements and a display label.
+A life-priced component and payable row include its current `life` amount.
 Multiple matching targets charge one component once. The browser selects a
 display row as targets change and flags an absent payable combination. This
 metadata grants no command fields; clients submit the ordinary cost option,
@@ -208,6 +267,13 @@ including any snow requirement. The server checks each class's spending
 restriction and debits the actual selected units. Omit the choice to use the
 ordinary payment path.
 
+An Equip activation with an optional first-activation price projects an
+`equip_payment` form variant. Choose `printed` for its ordinary Equip cost or
+`zero` for the alternate base cost. Each variant carries its own payment
+controls. Ordinary modifiers and target and timing checks apply to both. The
+server checks a successfully committed activation even when its cost was paid
+ordinarily, including before the alternative became available.
+
 For a source-counter quantity with a counter-removal price, the advertised
 total uses a read-only preview of the canonical exact payment plan. It commits
 no counters or events; resolution still samples the amount after actual payment.
@@ -244,8 +310,10 @@ Administrative resume can clear only its own stop reason; it cannot override a
 rules, fidelity, corruption, or terminal boundary.
 
 The WebSocket event tail is bounded delivery context. The paginated public log
-returns a fixed spectator-filtered event shape and never exposes raw details,
-checkpoints, private events, capabilities, record paths, or analyst artifacts.
+returns spectator-filtered event descriptions and, when available, compact
+card references for their publicly visible subjects. Card references use the
+same spectator visibility check as the summary. The log excludes raw details,
+checkpoints, private events, capabilities, record paths, and analyst artifacts.
 
 ## Versioned schema ownership
 

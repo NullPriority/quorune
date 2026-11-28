@@ -32,6 +32,10 @@ def source_counter_reflexive_child(value):
     from .source_optional_unblockable import source_optional_unblockable_target_schema
 
     child = ReflexiveTriggerProgram.from_dict(value)
+    from .reflexive_defender_exile import child_capabilities
+
+    if owned := child_capabilities(child):
+        return child, owned
     schema = thaw_value(child.target_schema)
     owned = source_optional_unblockable_node_capabilities(
         effects=child.effects, target_schema=schema, mechanic_ids=child.mechanic_ids,
@@ -67,10 +71,16 @@ def source_counter_reflexive_runtime_dependencies(program):
     required = source_counter_reflexive_node_capabilities(
         effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
     )
-    if (not required or program.event != "step.begin" or program.active_zone != "battlefield"
-            or thaw_value(program.event_condition) != source_counter_reflexive_condition()
+    from .reflexive_defender_exile import CAPABILITY, attack_condition
+
+    if CAPABILITY in required:
+        event, condition = "creature.attacks", attack_condition()
+    else:
+        event, condition = "step.begin", source_counter_reflexive_condition()
+    if (not required or program.event != event or program.active_zone != "battlefield"
+            or thaw_value(program.event_condition) != condition
             or program.cost_schema is not None or getattr(program, "handlers", ())):
-        raise ValueError("A committed source counter needs its complete beginning-combat trigger")
+        raise ValueError("A committed source counter needs its exact attack or beginning-combat trigger")
     return required
 
 

@@ -49,12 +49,17 @@ def commit_single_devour_entry(owner,plan,*,reason,log,aura_target_ref,semantic_
 
 def prepare_token_devour_sacrifices(host,entries,*,reason):
     """Prepare the zone-owned half before the token owner allocates anything."""
-    linked=tuple(p for entry in entries.values() for p in (*entry.devour_sacrifices,*entry.graveyard_copy_exiles))
+    linked = tuple(p for entry in entries.values()
+                   for p in (*entry.devour_sacrifices, *entry.graveyard_copy_exiles, entry.entry_land_discard)
+                   if p is not None)
     if not linked:return None
     roots=tuple((oid,entry.requested_destination) for oid,entry in entries.items())
     from .rules.graveyard_entry_copy import expand_graveyard_copy_zone_plans
     changes,prepared,kinds=expand_devour_zone_plans(host,roots,dict(entries),{})
     changes,prepared,kinds=expand_graveyard_copy_zone_plans(host,changes,prepared,kinds)
+    from .semantic_runtime.entry_cost_preparation import expand_entry_land_discards
+
+    changes,prepared,kinds=expand_entry_land_discards(host,changes,prepared,kinds,error_type=GameRuleError)
     changes=tuple((oid,destination) for oid,destination in changes if oid not in entries)
     prepared={oid:prepared[oid] for oid,_ in changes}
     from .zone_transitions import ZoneTransitionOwner

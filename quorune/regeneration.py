@@ -5,10 +5,79 @@ from __future__ import annotations
 from typing import Any, Mapping, Protocol, Sequence
 
 from . import damage_results, tap_state
+from .continuous_effect_model import ContinuousObjectIdentity
+
+
+CONTROLLED_CREATURE_REGENERATION_CAPABILITY = "permanent.regeneration.controlled_creature_set"
+CONTROLLED_CREATURE_REGENERATION_VERSION = 2
 
 
 class RegenerationError(ValueError):
     """A regeneration-shield request is malformed or unsupported."""
+
+
+def is_controlled_creature_regeneration(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == "regenerate"
+            and (effect.get("schema_version") == CONTROLLED_CREATURE_REGENERATION_VERSION
+                 or effect.get("scope") == "controller_creatures"))
+
+
+def controlled_creature_regeneration_effect():
+    return {
+        "op": "regenerate", "schema_version": CONTROLLED_CREATURE_REGENERATION_VERSION,
+        "player": "$controller", "scope": "controller_creatures",
+    }
+
+
+def controlled_creature_regeneration_dependencies(effect):
+    if (not is_controlled_creature_regeneration(effect)
+            or dict(effect) != controlled_creature_regeneration_effect()
+            or type(effect["schema_version"]) is not int):
+        raise RegenerationError("Controlled creature regeneration requires its exact current-controller scope")
+    return "permanent.regeneration.self_activation", CONTROLLED_CREATURE_REGENERATION_CAPABILITY
+
+
+def bind_controlled_creature_regeneration(host, item, effect):
+    from .continuous_effect_state import matching_battlefield_objects
+    from .object_predicate import ObjectQuerySpec
+
+    controlled_creature_regeneration_dependencies(effect)
+    if item.controller not in host.active_seats:
+        raise RegenerationError("Regeneration requires the active resolving controller")
+    cards = matching_battlefield_objects(host, ObjectQuerySpec(
+        zones=("battlefield",), controller=item.controller, types_all=("creature",),
+    ))
+    if not cards:
+        return None
+    return {
+        "op": "regenerate", "schema_version": CONTROLLED_CREATURE_REGENERATION_VERSION, "player": item.controller,
+        "members": tuple(
+            {"ref": card.ref, "identity": ContinuousObjectIdentity(card.object_id, card.logical_object_id).to_dict()}
+            for card in cards
+        ),
+    }
+
+
+def controlled_regeneration_members(effect, actor):
+    if (not is_controlled_creature_regeneration(effect)
+            or set(effect) != {"op", "schema_version", "player", "members"}
+            or type(effect["schema_version"]) is not int or effect["player"] != actor
+            or not isinstance(effect["members"], (list, tuple)) or not effect["members"]):
+        raise RegenerationError("Controlled creature regeneration requires its bound members and controller")
+    members = []
+    identities = set()
+    refs = set()
+    for member in effect["members"]:
+        if (not isinstance(member, Mapping) or set(member) != {"ref", "identity"}
+                or type(member["ref"]) is not str or not member["ref"]):
+            raise RegenerationError("A regeneration set member requires its public reference and incarnation")
+        identity = ContinuousObjectIdentity.from_dict(member["identity"])
+        if identity.object_id in identities or member["ref"] in refs:
+            raise RegenerationError("A regeneration set cannot repeat an object")
+        identities.add(identity.object_id)
+        refs.add(member["ref"])
+        members.append((member["ref"], identity.logical_object_id))
+    return tuple(members)
 
 
 class RegenerationHost(Protocol):

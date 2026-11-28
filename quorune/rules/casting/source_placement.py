@@ -5,7 +5,7 @@ from types import MappingProxyType
 from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
 from ...characteristic_read_frames import CharacteristicReadHost as _ProspectiveCharacteristicReadHost
-from ...characteristic_read_frames import CharacteristicStateView
+from ...characteristic_read_frames import CharacteristicStateView, memoized_characteristic_read
 from ..cast_cascade_grants import (
     CastCascadeScope, announced_cascade_context, commit_cast_cascade_grants, reserve_cast_cascade_grants,
 )
@@ -48,9 +48,22 @@ class _CastAffordabilityHost:
 
     def __getattr__(self,name):return getattr(self.original,name)
 
-    def _cost_is_affordable(self,seat,requirements,**kwargs):
-        from ...cost_payments import cost_is_affordable
-        return cost_is_affordable(prospective_characteristic_read_host(self.original,seat,self.source),seat,requirements,**kwargs)
+    def _mana_quote(self, seat, spend_context):
+        from ...cost_payments import cost_affordability_quote
+
+        def prepare():
+            read_host = prospective_characteristic_read_host(self.original, seat, self.source)
+            return cost_affordability_quote(read_host, seat, spend_context=spend_context)
+
+        # The quote retains a single exact prospective source and seat. A
+        # different read frame prepares fresh inputs even for the same source.
+        return memoized_characteristic_read(
+            self.original, ("cast-mana-quote", id(self.source), seat, spend_context),
+            prepare, identity=self.source,
+        )
+
+    def _cost_is_affordable(self, seat, requirements, *, spend_context=None, **kwargs):
+        return self._mana_quote(seat, spend_context)(requirements, **kwargs)
 
 
 def prospective_characteristic_read_host(host,seat,source):
@@ -71,6 +84,25 @@ def cast_payment_read_host(host, caster):
     if isinstance(host, _CastAffordabilityHost):
         return prospective_characteristic_read_host(host.original, caster, host.source)
     return host
+
+
+def quote_cast_affordability(host, caster, spend_context):
+    """Reuse discovery only for this quote's exact prospective casting view."""
+
+    quote = None
+
+    def can_pay(requirements, *, exclude_sources=None, snow_required=0):
+        nonlocal quote
+        if not isinstance(host, _CastAffordabilityHost):
+            return host._cost_is_affordable(
+                caster, requirements, spend_context=spend_context,
+                exclude_sources=exclude_sources, snow_required=snow_required,
+            )
+        if quote is None:
+            quote = host._mana_quote(caster, spend_context)
+        return quote(requirements, exclude_sources=exclude_sources, snow_required=snow_required)
+
+    return can_pay
 
 
 def prospective_sacrifice_read_host(host, actor, source_object_id):

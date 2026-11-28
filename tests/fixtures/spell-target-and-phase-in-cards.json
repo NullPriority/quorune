@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "King of the Oathbreakers",
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "mana_cost": "{2}{W}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Spirit Noble",
+      "oracle_text": "Flying\nWhenever King of the Oathbreakers or another Spirit you control becomes the target of a spell, it phases out. (Treat it and anything attached to it as though they don't exist until your next turn.)\nWhenever King of the Oathbreakers or another Spirit you control phases in, create a tapped 1/1 white Spirit creature token with flying.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Undo",
+      "oracle_id": "b446c3bd-3c7d-4d59-ba59-3dd80818465e",
+      "mana_cost": "{1}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return two target creatures to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1999-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "A phased-out token will phase in at the beginning of its controller's untap step just like a nontoken permanent would."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "An attacking or blocking creature that phases out is removed from combat."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Any continuous effects with a \"for as long as\" duration, such as that of Rangers of Ithilien, ignore phased-out objects. If ignoring those objects causes the effect's conditions to no longer be met, the duration will expire."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "As a creature is phased out, Auras and Equipment attached to it also phase out at the same time. Those Auras and Equipment will phase in at the same time that creature does, and they'll phase in still attached to that creature."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Choices made for permanents as they entered the battlefield are remembered even after they phase in."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If King of the Oathbreakers phases in at the same time as one or more other Spirits you control, King of the Oathbreakers's last ability will trigger for each of them."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If a spell an opponent controls targets multiple Spirits you control, King of the Oathbreakers's triggered ability will trigger once for each of those Spirits."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Permanents phase back in during their controller's untap step, immediately before that player untaps their permanents. Creatures that phase in this way are able to attack and pay a cost of {T} during that turn. If a permanent had counters on it when it phased out, it will have those counters when it phases back in."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Phased-out permanents are treated as though they don't exist. They can't be the target of spells or abilities, their static abilities have no effect on the game, their triggered abilities can't trigger, they can't attack or block, and so on."
+    },
+    {
+      "oracle_id": "3ee451e7-2b2f-4ce7-af96-540bba555c60",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Phasing out doesn't cause any \"leaves the battlefield\" abilities to trigger. Similarly, phasing in won't cause any \"enters the battlefield\" abilities to trigger."
+    },
+    {
+      "oracle_id": "b446c3bd-3c7d-4d59-ba59-3dd80818465e",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The two creatures may have different owners and return to their respective owner’s hands."
+    }
+  ]
+}

@@ -25,6 +25,14 @@ def turn_damage_prevention_template(text, *, card_name, source_is_permanent):
     if source_is_permanent is not False:
         return None
     normalized = " ".join(text.split())
+    if re.fullmatch(
+        r"You can['’]t lose the game this turn and your opponents can['’]t win the game this turn\. "
+        r"Until end of turn, damage that would reduce your life total to less than 1 reduces it to 1 instead\.?",
+        normalized, re.I,
+    ):
+        from ..rules.turn_match_outcome_protection import TURN_OUTCOME_TEMPLATE, turn_match_outcome_protection
+
+        return TURN_OUTCOME_TEMPLATE, (turn_match_outcome_protection(),), None, ()
     if re.fullmatch(r"Damage can't be prevented this turn\.?", normalized, re.I):
         return (
             "damage-turn-prevention-prohibition-v1",
@@ -51,4 +59,20 @@ def turn_damage_prevention_template(text, *, card_name, source_is_permanent):
         "damage-turn-life-and-prevention-prohibition-v1",
         (temporary_life_gain_effect("any"), temporary_damage_prevention_prohibition(), *result.effects),
         result.target_schema, (*result.mechanics, "cr-119-life"),
+    )
+
+
+def turn_received_damage_watch_template(text, *, source_is_permanent):
+    if source_is_permanent is not False:
+        return None
+    if not re.fullmatch(
+        r"Choose target creature[.] Whenever that creature is dealt damage this turn, "
+        r"it deals that much damage to each other creature and each player[.]",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        return None
+    from ..rules.received_damage_watch import WATCHED_DAMAGE_TEMPLATE, watched_damage_schedule, watched_damage_target_schema
+
+    return WATCHED_DAMAGE_TEMPLATE, (watched_damage_schedule(),), watched_damage_target_schema(), (
+        "cr-115-targets", "cr-120-damage", "cr-603-handling-triggered-abilities",
     )

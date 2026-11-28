@@ -270,4 +270,190 @@ class ResolvedAttackRequirementModelTests(unittest.TestCase):
             with self.assertRaises(ValueError): type(spec).from_dict(changed)
 
 
+class ChosenAttackTurnTests(InheritedNativeFixture, unittest.TestCase):
+    source_name = "Chosen Attack Test Advisor"
+
+    @classmethod
+    def source_fixture(cls):
+        return {"cards": [{
+            "name": cls.source_name, "oracle_id": "c30099a9-8efa-4dbf-aee7-f4e18ba01edf",
+            "type_line": "Creature — Advisor", "mana_cost": "{1}{W}", "cmc": 2,
+            "color_identity": ["W"], "power": "1", "toughness": "1",
+            "oracle_text": "{T}: Target opponent chooses any number of creatures they control. During that player's "
+                           "next turn, the chosen creatures attack if able, and other creatures can't attack. "
+                           "At the beginning of that turn's end step, destroy each of the chosen creatures "
+                           "that didn't attack this turn. Activate only during your turn.",
+        }]}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "chosen-attack-turn.sqlite3"
+        fixture = path.with_suffix(".json")
+        payload = {**cls.source_fixture(), "schema_version": 1}
+        payload["cards"].append({
+            "name": "Chosen Attack Test Defender", "oracle_id": "66321018-5ef9-4961-a785-0d1255da3379",
+            "type_line": "Creature — Wall", "power": "0", "toughness": "6",
+            "oracle_text": "Defender", "keywords": ["Defender"],
+        })
+        fixture.write_text(json.dumps(payload), encoding="utf-8")
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "resolved-attack-requirement-cards.json",
+            fixtures / "own-combat-entwine-cards.json",
+            fixture,
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Chosen attack turn", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def assert_rejected(self, game, actor, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_chosen_attack_turn_whole_activation_is_closed_and_guarded(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.chosen_attack_turn_model import CHOOSE, COMMIT, DESTROY
+        from quorune.errors import GameRuleError
+        from quorune.stack_resolution import arbiter_resolution_effects
+
+        game = self.session(603710)
+        source = self.add(game.engine, self.source_name)
+        self.assert_closed(game, source)
+        record = self.db.lookup(self.source_name)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        effect, = program.effects
+        for invalid in (
+            replace(program, target_schema={**program.target_schema, "player_relation": "any"}),
+            replace(program, effects=({**effect, "player": "$controller"},)),
+            replace(program, cost_schema={**program.cost_schema, "tap_source": False}),
+        ):
+            result = bind_semantic_program_runtime(invalid, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(result["strict"], result)
+        for op in (CHOOSE, COMMIT, DESTROY):
+            with self.assertRaises(GameRuleError):
+                arbiter_resolution_effects([{"op": op}])
+
+    def test_chosen_attack_turn_replays_choice_and_exact_delayed_destruction(self):
+        from quorune.chosen_attack_turn_model import DELAYED_FIELD, ResolvedChosenAttackTurn
+
+        game = self.session(603711)
+        for seat in "ABCD":
+            for object_id in game.state.players[seat].zones["hand"][:3]:
+                game.engine.move_card(object_id, "library", log=False, reason="Initial hand fixture")
+        source = self.add(game.engine, self.source_name, ref="attack-selection-source")
+        spare = self.add(game.engine, self.source_name, ref="attack-selection-spare")
+        ready = self.add(game.engine, "Generic Bound Body", seat="C", ref="chosen-ready")
+        wall = self.add(game.engine, "Chosen Attack Test Defender", seat="C", ref="chosen-defender")
+        blinking = self.add(game.engine, "Grizzly Bears", seat="C", ref="chosen-to-blink")
+        omitted = self.add(game.engine, "Grizzly Bears", seat="C", ref="unchosen")
+        blink = self.add(game.engine, "Cloudshift", seat="C", zone="hand")
+        beating = self.add(game.engine, "Savage Beating", seat="C", zone="hand")
+        secret = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="selection-private-card")
+        for index, name in enumerate(("Plains", "Mountain", "Mountain", "Mountain", "Mountain")):
+            self.add(game.engine, name, seat="C", ref=f"choice-mana-{index}")
+        for card in (source, spare, ready, wall, blinking, omitted):
+            card.acquired_control_turn_count = -1
+        self.prepare(game)
+        self.checkpoint(game)
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        command = {"action_id": action["id"], "targets": ["C"], "pay": "auto"}
+        self.assert_rejected(game, "B", command)
+        self.assert_rejected(game, "A", {**command, "targets": ["A"]})
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        choice = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["C"]), (choice.kind, choice.actors))
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertIsNone(game.packet("pilot:A", full=True)["decision"])
+        self.assertNotIn(secret.ref, json.dumps(game.packet("pilot:C", full=True)))
+        self.assertIn(secret.ref, json.dumps(game.packet("pilot:D", full=True)))
+        self.assert_rejected(game, "A", {"action_id": "choose", "cards": [ready.ref]})
+        self.assert_rejected(game, "C", {"action_id": "choose", "cards": [ready.ref, ready.ref]})
+        self.assert_rejected(game, "C", {"action_id": "choose", "cards": [source.ref]})
+        game = self.replay(game, load=True)
+        result = game.act("pilot:C", {"action_id": "choose", "cards": [ready.ref, wall.ref, blinking.ref]})
+        self.assertTrue(result.ok, result.summary)
+        restriction, = [effect for effect in game.state.continuous_effects if isinstance(effect, ResolvedChosenAttackTurn)]
+        self.assertEqual(("C", 3), (restriction.turn.player, len(restriction.turn.selected)))
+        before_blink = game.state.cards[blinking.object_id].logical_object_id
+        self.cast_for(game, "C", blink, [blinking.ref])
+        self.resolve_top(game)
+        self.assertNotEqual(before_blink, game.state.cards[blinking.object_id].logical_object_id)
+
+        self.until(game, lambda current: current.state.active_player == "B" and current.state.step == "upkeep")
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"].startswith(f"activate:{spare.ref}:") for row in actions))
+        self.until(game, lambda current: current.state.active_player == "B" and current.state.step == "end_step")
+        self.assertEqual("battlefield", game.state.cards[wall.object_id].zone)
+        self.assertFalse(any(DELAYED_FIELD in item.context for item in game.state.stack))
+
+        for combat in range(2):
+            self.until(game, lambda current: current.state.active_player == "C"
+                       and current.state.pending_decision.kind == "combat.attackers")
+            packet = game.packet("pilot:C", full=True)["decision"]
+            domains = packet["ctx"]["declaration_constraints"]["domains"]
+            self.assertEqual({ready.ref}, set(domains))
+            self.assert_rejected(game, "C", {"action_id": "attack", "attackers": {}})
+            self.assert_rejected(game, "C", {"action_id": "attack", "attackers": {omitted.ref: "B"}})
+            attack = game.act("pilot:C", {"action_id": "attack", "attackers": {ready.ref: "B"}})
+            self.assertTrue(attack.ok, attack.summary)
+            if combat == 0:
+                self.priority(game, "C")
+                result = game.act("pilot:C", {"action_id": "cast:" + beating.ref,
+                                            "modes": ["mode_2"], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.resolve_top(game)
+        self.until(game, lambda current: any(DELAYED_FIELD in item.context for item in current.state.stack))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[wall.object_id].zone)
+        self.assertEqual(["battlefield"] * 3,
+                         [game.state.cards[card.object_id].zone for card in (ready, blinking, omitted)])
+        self.replay(game)
+
+    def test_chosen_attack_turn_destruction_mutation_is_killed(self):
+        with patch("quorune.rules.chosen_attack_turn.resolve_chosen_nonattackers", return_value=None):
+            with self.assertRaisesRegex(AssertionError, "graveyard.*battlefield"):
+                self.test_chosen_attack_turn_replays_choice_and_exact_delayed_destruction()
+
+    def test_chosen_attack_turn_zero_choices_forbid_all_without_destruction(self):
+        from quorune.chosen_attack_turn_model import DELAYED_FIELD, ResolvedChosenAttackTurn
+
+        game = self.session(603712)
+        for seat in "ABCD":
+            for object_id in game.state.players[seat].zones["hand"][:3]:
+                game.engine.move_card(object_id, "library", log=False, reason="Initial hand fixture")
+        source = self.add(game.engine, self.source_name)
+        creature = self.add(game.engine, "Generic Bound Body", seat="B", ref="empty-selection-creature")
+        source.acquired_control_turn_count = creature.acquired_control_turn_count = -1
+        self.prepare(game)
+        self.checkpoint(game)
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        result = game.act("pilot:A", {"action_id": action["id"], "targets": ["B"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        result = game.act("pilot:B", {"action_id": "choose", "cards": []})
+        self.assertTrue(result.ok, result.summary)
+        restriction, = [effect for effect in game.state.continuous_effects if isinstance(effect, ResolvedChosenAttackTurn)]
+        self.assertEqual((), restriction.turn.selected)
+        self.until(game, lambda current: current.state.active_player == "B" and
+                   current.state.step == "declare_attackers" and current.state.combat.attackers_declared)
+        self.assertEqual({}, game.state.combat.attackers)
+        self.until(game, lambda current: any(DELAYED_FIELD in item.context for item in current.state.stack))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[creature.object_id].zone)
+        self.replay(game)
+
+
 if __name__ == '__main__': unittest.main()

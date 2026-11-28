@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "opening_hand_battlefield_candidates",
-  "source": "Pinned opening-hand battlefield originals and rulings; generic shared controls use the canonical compact fixture.",
+  "source": "Pinned hand-action originals and rulings; generic shared controls use the canonical compact fixture.",
   "cards": [
     {
       "oracle_id": "492e0e6c-8c27-4376-938b-f8a8b6205810",
@@ -1183,6 +1183,199 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "c0adbddc-b070-4c5f-afe0-0474c72a9251",
+      "name": "Gemstone Caverns",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Legendary Land",
+      "oracle_text": "If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.\n{T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "713332c1-5bd8-400f-bfff-c1ca0697a043",
+      "name": "Opt",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "name": "Vampire Hexmage",
+      "mana_cost": "{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Vampire Shaman",
+      "oracle_text": "First strike\nSacrifice this creature: Remove all counters from target permanent.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "name": "Serum Powder",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\nAny time you could mulligan and this card is in your hand, you may exile all the cards from your hand, then draw that many cards. (You can do this in addition to taking mulligans.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -1353,6 +1546,42 @@
       "published_at": "2021-03-19",
       "source": "wotc",
       "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "c0adbddc-b070-4c5f-afe0-0474c72a9251",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "c0adbddc-b070-4c5f-afe0-0474c72a9251",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If multiple Gemstone Caverns are put onto the battlefield under a single player's control before the game begins, the \"legend rule\" won't put the extras into that player's graveyard until just before the starting player gets priority during the game's first upkeep step. There's no opportunity to tap the extras for mana."
+    },
+    {
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Any permanent can be targeted by the second ability, not just one with counters on it."
+    },
+    {
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Vampire Hexmage's ability can't target a permanent card in a zone other than the battlefield, such as a suspended card."
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "The cards in your hand are exiled for the rest of the game; they aren't shuffled back into your library if you take another mulligan. Cards exiled are always face up unless the effect that exiled them says they aren't. Be sure to return those cards to your deck for your next game."
+    },
+    {
+      "oracle_id": "4e734493-9cb8-4409-8a30-cc15d519a27e",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "You can use Serum Powder's second ability only while it's in your hand. If this card is in your hand, you can choose either to mulligan or to use Serum Powder's ability. Using the ability doesn't prevent you from taking further mulligans, and taking a mulligan doesn't prevent you from using a Serum Powder's ability if you happen to draw one in your new hand."
     }
   ]
 }

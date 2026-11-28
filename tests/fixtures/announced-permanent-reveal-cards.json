@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Genesis Wave",
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "mana_cost": "{X}{G}{G}{G}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Reveal the top X cards of your library. You may put any number of permanent cards with mana value X or less from among them onto the battlefield. Then put all cards revealed this way that weren't put onto the battlefield into your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A permanent card is an artifact, battle, creature, enchantment, land, or planeswalker card."
+    },
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "All of the permanents put onto the battlefield this way enter at the same time. If any have triggered abilities that trigger on something else entering, they'll see each other."
+    },
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card in a player's library has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a permanent card in your library has no mana symbols in its upper right corner (because it's a land card, for example), its mana value is 0. Such cards can always be put onto the battlefield with Genesis Wave."
+    },
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you have fewer than X cards in your library, you reveal all of them."
+    },
+    {
+      "oracle_id": "e2487868-f386-438e-a73f-b494f6d35fac",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You don't have to put permanent cards revealed this way onto the battlefield if you choose not to, regardless of their mana values."
+    }
+  ]
+}

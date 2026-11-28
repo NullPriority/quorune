@@ -31,6 +31,18 @@ observation.
 Authentication fixes the principal before projection. Request content cannot
 promote a spectator, select another seat, or request an analyst view.
 
+During a delegated priority decision, the controlling principal receives the
+controlled player's ordinary priority actions. The controlled player's own
+principal receives a capability for their own concession in that window. The
+concession-only capability exposes the confirmation form. The offer catalog
+and command authorization enforce the same scope, including after restore.
+
+A live turn controller can see the controlled player's available information
+throughout the active control window, including during other players' priority.
+When the controller leaves the game, the controlled pilot regains their own
+decisions and the former controller loses both delegated actions and private
+visibility. Reissued capabilities use the same live controller check.
+
 ## Projection invariants
 
 Action explanations obey the same hidden-library boundary as card views. A top
@@ -67,9 +79,11 @@ another reveal or erase remembered knowledge.
   seats, while a look at a hand marks those identities known only to the
   resolving controller. The resulting selection form remains controller-only
   in both cases.
-- A face-down public-zone object's controller can see its identity. Ownership
-  alone grants no visibility; other seats need explicit known or revealed
-  state.
+- A face-down card in exile is visible to seats with an explicit look or
+  reveal grant. For face-down objects in other public zones, the controller
+  and any explicitly authorized seats can see the identity.
+  Without a look or reveal grant, the exiled identity and its movement history
+  remain redacted in player and spectator views.
 - Public exile is projected as a stable unordered set for live principals.
   Its presentation order is independent of the order cards left a hidden
   library; graveyard order remains authoritative because rules can use it.

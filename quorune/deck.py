@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator
 
 from .carddb import CardDatabase, CardRecord
+from .card_printing import CardPrinting
 from .util import normalize_card_name, stable_json, unique_preserving_order
 from .version import __version__
 
@@ -30,6 +31,7 @@ class DeckEntry:
     quantity: int = 1
     board: str = "mainboard"
     tags: list[str] = field(default_factory=list)
+    printing: CardPrinting | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -37,7 +39,12 @@ class DeckEntry:
             "quantity": self.quantity,
             "board": self.board,
             "tags": list(self.tags),
+            **({"printing": self.printing.to_dict()} if self.printing else {}),
         }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "DeckEntry":
+        return cls(**{**data, "printing": CardPrinting.from_dict(data.get("printing"))})
 
 
 @dataclass(slots=True)
@@ -75,7 +82,7 @@ class DeckDefinition:
     def from_dict(cls, data: dict[str, Any]) -> "DeckDefinition":
         return cls(
             name=str(data.get("name") or "Unnamed Deck"),
-            entries=[DeckEntry(**entry) for entry in data.get("entries", [])],
+            entries=[DeckEntry.from_dict(entry) for entry in data.get("entries", [])],
             commanders=list(data.get("commanders") or []),
             source=data.get("source"),
             metadata=dict(data.get("metadata") or {}),
@@ -90,18 +97,19 @@ class MoxfieldFetchError(RuntimeError):
     pass
 
 
-def _strip_line_annotations(value: str) -> tuple[str, list[str]]:
+def _strip_line_annotations(value: str) -> tuple[str, list[str], CardPrinting | None]:
     tags = [match.group(0).strip() for match in TAG_RE.finditer(value)]
     value = TAG_RE.sub("", value).strip()
     value = re.sub(r"\s+\*CMDR\*\s*$", "", value, flags=re.IGNORECASE)
-    value = re.sub(r"\s+\*F\*\s*$", "", value, flags=re.IGNORECASE)
-    # Moxfield plain-text exports can append set and collector information.
-    # Prefer the bracketed card name before removing a suffix only when it is
-    # unambiguous; Scryfall resolution later catches mistakes.
-    match = re.match(r"^(.*?)(?:\s+\([A-Za-z0-9_]+\)\s+\S+)?$", value)
-    if match:
-        value = match.group(1).strip()
-    return value, tags
+    value, foil = re.subn(r"\s+\*F\*\s*$", "", value, flags=re.IGNORECASE)
+    match = re.fullmatch(r"(.*?)\s+\(([A-Za-z0-9_]+)\)\s+(\S+)", value)
+    if not match:
+        return value.strip(), tags, CardPrinting(finish="foil") if foil else None
+    name, set_code, collector = match.groups()
+    return name.strip(), tags, CardPrinting.from_dict({
+        "set_code": set_code.casefold(), "collector_number": collector,
+        "finish": "foil" if foil else None,
+    })
 
 
 def parse_deck_text(
@@ -143,11 +151,11 @@ def parse_deck_text(
             quantity = 1
             rest = line
         is_commander_marker = bool(re.search(r"\*CMDR\*", rest, re.IGNORECASE))
-        card_name, tags = _strip_line_annotations(rest)
+        card_name, tags, printing = _strip_line_annotations(rest)
         if not card_name:
             continue
         entry_board = "commander" if is_commander_marker else board
-        entry = DeckEntry(name=card_name, quantity=quantity, board=entry_board, tags=tags)
+        entry = DeckEntry(name=card_name, quantity=quantity, board=entry_board, tags=tags, printing=printing)
         entries.append(entry)
         if entry_board == "commander":
             commanders.extend([card_name] * quantity)
@@ -162,7 +170,7 @@ def parse_deck_text(
                 entry.board = "commander"
                 if entry.quantity > 1:
                     entry.quantity -= 1
-                    entries.append(DeckEntry(commander, 1, "commander", entry.tags.copy()))
+                    entries.append(DeckEntry(commander, 1, "commander", entry.tags.copy(), entry.printing))
                 break
         if not found:
             entries.append(DeckEntry(commander, 1, "commander"))
@@ -170,6 +178,19 @@ def parse_deck_text(
     if not entries:
         raise DeckParseError("No card lines were found")
     return DeckDefinition(name=name, entries=entries, commanders=commanders, source=source)
+
+
+def _moxfield_card_printing(card: dict[str, Any], entry: dict[str, Any]) -> CardPrinting | None:
+    faces = card.get("card_faces")
+    return CardPrinting.from_dict({
+        "scryfall_id": card.get("scryfall_id") or card.get("scryfallId"),
+        "set_code": card.get("set"),
+        "collector_number": card.get("cn") or card.get("collector_number"),
+        "language": card.get("lang"),
+        "finish": entry.get("finish") or ("foil" if entry.get("isFoil") is True else card.get("defaultFinish")),
+        "provider_id": card.get("id"),
+        "faces": [row.get("name") for row in faces if isinstance(row, dict)] if isinstance(faces, list) else (),
+    })
 
 
 def _extract_moxfield_board(
@@ -210,6 +231,7 @@ def _extract_moxfield_board(
                     quantity=quantity_int,
                     board=board_name,
                     tags=tags,
+                    printing=_moxfield_card_printing(card_obj or value, value),
                 )
             )
             return
@@ -233,9 +255,9 @@ def _extract_moxfield_board(
 
     visit(board_value)
     # Deduplicate objects reached through wrapper keys.
-    merged: dict[tuple[str, str], DeckEntry] = {}
+    merged: dict[tuple[str, str, CardPrinting | None], DeckEntry] = {}
     for entry in entries:
-        key = (normalize_card_name(entry.name), entry.board)
+        key = (normalize_card_name(entry.name), entry.board, entry.printing)
         existing = merged.get(key)
         if existing is None:
             merged[key] = entry
@@ -263,6 +285,7 @@ def parse_moxfield_json(data: dict[str, Any], *, source: str | None = None) -> D
         "companions",
         "companion",
         "maybeboard",
+        "stickers",
     ):
         if key in data:
             board_candidates.append((key, data[key]))
@@ -457,6 +480,8 @@ class DeckLoader:
         deck_name: str | None = None,
         force_refresh: bool = False,
     ) -> DeckDefinition:
+        from .deck_imports import fetch_public_deck, public_deck_source
+
         source_str = str(source)
         if is_moxfield_source(source_str):
             deck = fetch_moxfield_deck(
@@ -464,6 +489,8 @@ class DeckLoader:
                 cache_dir=self.cache_dir,
                 force_refresh=force_refresh,
             )
+        elif public_deck_source(source_str):
+            deck = fetch_public_deck(source_str, cache_dir=self.cache_dir, force_refresh=force_refresh)
         else:
             path = Path(source)
             if not path.exists():
@@ -596,8 +623,16 @@ class DeckLoader:
             in {"mainboard", "commander", "companion", "sideboard"}
         }
         issues: list[dict[str, Any]] = []
+        from .rules.commander_companion_roles import commander_companion_is_banned
+
         for name, board in sorted(legality_entries):
             card = self.card_db.lookup(name)
+            if board == "companion" and commander_companion_is_banned(card.oracle_id):
+                issues.append({
+                    "code": "commander_companion_banned", "message": f"Commander legality: {name} is banned as a companion",
+                    "card": name, "board": board, "legality": "banned", "released_at": card.released_at or None,
+                })
+                continue
             legality = str(
                 card.legalities.get("commander") or "unknown"
             ).casefold()

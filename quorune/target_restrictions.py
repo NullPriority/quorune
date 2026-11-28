@@ -8,6 +8,8 @@ from .target_source import (
     TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, TargetingSource, current_turn_spell_source_protection_colors,
     spell_source_is_prohibited_by_color,
 )
+from .turn_creature_target_prohibition_model import current_turn_creature_target_prohibition
+
 
 TARGET_RESTRICTION_CAPABILITY='target.prohibition.fixed_source_quality'
 TARGET_RESTRICTION_HANDLER='ability.static.target-prohibition.v1'
@@ -97,8 +99,15 @@ def current_target_prohibition(host,*,row,acting_controller,acting_source,prohib
     from .model import CardInstance
     target=row.get('card')
     if not isinstance(target,CardInstance):return False
+    from .rules.targeted_turn_target_prohibition import current_targeted_turn_prohibition
+
+    if row.get("zone") == "battlefield" and current_targeted_turn_prohibition(host, target, acting_controller, acting_source):
+        return True
     if row.get("zone") == "battlefield" and "creature" in row.get("types", ()):
         player = host.state.players.get(target.controller)
+        if (player is not None and acting_controller != target.controller
+                and current_turn_creature_target_prohibition(player.stats, host.state.turn_sequence)):
+            return True
         if player is not None and TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW in player.stats:
             colors = current_turn_spell_source_protection_colors(player.stats, host.state.turn_sequence)
             if spell_source_is_prohibited_by_color(acting_source, colors):

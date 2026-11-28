@@ -14,12 +14,17 @@ from ..rules.hand_inspection import (
     HandInspectionAction,
     HandInspectionMode,
     defending_hand_observation_effect,
+    selected_hand_reveal_discard_effect,
 )
 from ..object_predicate import ObjectQuerySpec
 from .life_templates import fixed_life_effect_template
 from .scry_templates import fixed_scry_effect_template
 
 
+_SELECTED_REVEAL_DISCARD_TEXT = (
+    "target player reveals three cards from their hand and you choose one of them. "
+    "that player discards that card."
+)
 FIXED_HAND_INSPECTION_MECHANIC = "fixed-target-hand-inspection"
 FIXED_HAND_INSPECTION_CAPABILITY = "choice.target_hand.fixed_inspection_move"
 _CARD_TYPES = frozenset(
@@ -180,6 +185,12 @@ class FixedHandInspectionTemplate:
             raise ValueError(
                 "Hand inspection predicate does not match its action"
             )
+        if self.mode is HandInspectionMode.REVEAL_SELECTED_THREE and (
+            self.relation != "any" or self.action is not HandInspectionAction.DISCARD
+            or self.predicate != HandCardPredicateSpec(ObjectQuerySpec(zones=("hand",)))
+            or self.trailing_effect is not None or self.trailing_mechanics
+        ):
+            raise ValueError("Selected reveal requires the exact target hand and one ordinary discard")
         if self.trailing_effect is not None and self.action not in {
             HandInspectionAction.DISCARD,
             HandInspectionAction.EXILE,
@@ -193,6 +204,8 @@ class FixedHandInspectionTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.mode is HandInspectionMode.REVEAL_SELECTED_THREE:
+            return "fixed-target-hand-selected-reveal-discard-v1"
         return "fixed-target-hand-inspection-program-v1"
 
     def compiled(
@@ -213,6 +226,8 @@ class FixedHandInspectionTemplate:
                 self.predicate.to_dict() if self.predicate is not None else None
             ),
         }
+        if self.mode is HandInspectionMode.REVEAL_SELECTED_THREE:
+            effect = selected_hand_reveal_discard_effect()
         effects = (effect,) + (
             (deepcopy(self.trailing_effect),)
             if self.trailing_effect is not None
@@ -327,6 +342,11 @@ def fixed_hand_inspection_effect_template(
     normalized = " ".join(text.strip().replace("’", "'").split())
     if normalized and not normalized.endswith("."):
         normalized += "."
+    if normalized.casefold() == _SELECTED_REVEAL_DISCARD_TEXT:
+        return FixedHandInspectionTemplate(
+            "any", HandInspectionMode.REVEAL_SELECTED_THREE, HandInspectionAction.DISCARD,
+            HandCardPredicateSpec(ObjectQuerySpec(zones=("hand",))),
+        )
     look = re.fullmatch(
         r"Look at target (?P<subject>opponent|player)'s hand\.",
         normalized,

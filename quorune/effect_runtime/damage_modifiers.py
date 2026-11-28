@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from ..damage_modifier_state import CreateTokensPreventionAftermath
 from ..damage import DamageError, recipient_snapshot
 from ..damage_modifier_state import (
     DamageModifierDuration,
@@ -217,7 +218,8 @@ def _prevention_aftermath_requests(
 ) -> tuple[
     GainLifeAftermathRequest
     | PlaceCountersAftermathRequest
-    | DealDamageAftermathRequest,
+    | DealDamageAftermathRequest
+    | CreateTokensPreventionAftermath,
     ...,
 ]:
     raw = effect.get("aftermath")
@@ -228,12 +230,18 @@ def _prevention_aftermath_requests(
         GainLifeAftermathRequest
         | PlaceCountersAftermathRequest
         | DealDamageAftermathRequest
+        | CreateTokensPreventionAftermath
     ] = []
     for value in values:
         if not isinstance(value, Mapping):
             raise GameRuleError("Prevention aftermath entries must be objects")
         kind = value.get("kind")
         common = {"kind", "per_prevented", "fixed_amount"}
+        if kind == "create_tokens":
+            from ..rules.prevention_component_shapes import decode_combat_token_aftermath
+
+            result.append(decode_combat_token_aftermath(value))
+            continue
         if kind == "gain_life":
             if set(value) != common | {"player"}:
                 raise GameRuleError("Prevention life aftermath is malformed")
@@ -251,6 +259,9 @@ def _prevention_aftermath_requests(
                 "placing_player",
                 "subject",
             }
+            version = value.get("schema_version", 1)
+            if type(version) is int and version == 2:
+                expected |= {"schema_version"}
             if set(value) != expected:
                 raise GameRuleError("Prevention counter aftermath is malformed")
             result.append(
@@ -264,6 +275,7 @@ def _prevention_aftermath_requests(
                     placing_player=str(value.get("placing_player") or actor),
                     per_prevented=value["per_prevented"],
                     fixed_amount=value["fixed_amount"],
+                    schema_version=version,
                 )
             )
             continue
@@ -419,6 +431,12 @@ def _apply_create_damage_prevention_shield(
         from ..designation_prevention import unavailable_designation
         if unavailable_designation(effect.get('scope')):return []
         if _bound_prevention_subject_is_unavailable(host,effect,actor=actor):return []
+        from ..damage_modifier_state import SOURCE_NEXT_INSTANCE_BATCH_FIELD, validate_source_next_instance_batch_version
+
+        batch_version = (
+            validate_source_next_instance_batch_version(effect[SOURCE_NEXT_INSTANCE_BATCH_FIELD])
+            if SOURCE_NEXT_INSTANCE_BATCH_FIELD in effect else None
+        )
         mode = PreventionMode(str(effect.get("mode") or "amount"))
         duration = DamageModifierDuration(
             str(effect.get("duration") or "until_end_of_turn")
@@ -453,6 +471,7 @@ def _apply_create_damage_prevention_shield(
                 else None
             ),
             aftermath=_prevention_aftermath_requests(effect, actor=actor),
+            source_next_instance_batch_version=batch_version,
             triggered_ability=_prevention_trigger_request(
                 effect, actor=actor
             ),
@@ -493,26 +512,45 @@ def _apply_create_damage_redirection(
     actor: str,
     operation: str,
     reason: str,
-) -> str:
+) -> str | None:
+    from ..rules.controller_damage_redirection import REDIRECTION_FIELD, TARGETED
+    from ..rules.chosen_damage_redirection import VERSION_FIELD, chosen_damage_redirection_subjects
+
     del operation
+    scope = effect.get(REDIRECTION_FIELD)
     consume = effect.get("consume_on_application", True)
     if type(consume) is not bool:
         raise GameRuleError("Damage redirection consumption must be boolean")
     try:
-        subject = _damage_subject(
-            recipient_snapshot(
-                host,
-                str(effect.get("subject") or actor),
-                actor=actor,
-            )
-        )
-        destination = _damage_subject(
-            recipient_snapshot(
-                host,
-                str(effect.get("destination") or ""),
-                actor=actor,
-            )
-        )
+        if REDIRECTION_FIELD in effect:
+            from .controller_damage_redirection import controller_damage_redirection_subjects
+
+            subjects = controller_damage_redirection_subjects(host, effect, actor=actor)
+            if subjects is None:
+                return None
+            subject, destination, source = subjects
+        elif "grantor_owned_redirect" in effect:
+            from .grantor_damage_redirection import grantor_damage_redirection_subjects
+
+            subjects = grantor_damage_redirection_subjects(host, effect, actor=actor)
+            if subjects is None:
+                return None
+            subject, destination = subjects
+        elif VERSION_FIELD in effect:
+            subjects = chosen_damage_redirection_subjects(host, effect, actor=actor)
+            if subjects is None:
+                return None
+            subject, destination = subjects
+        elif "maximum_damage" in effect:
+            from .finite_damage_redirection import finite_damage_redirection_subjects
+
+            subjects = finite_damage_redirection_subjects(host, effect, actor=actor)
+            if subjects is None:
+                return None
+            subject, destination = subjects
+        else:
+            subject = _damage_subject(recipient_snapshot(host, str(effect.get("subject") or actor), actor=actor))
+            destination = _damage_subject(recipient_snapshot(host, str(effect.get("destination") or ""), actor=actor))
         redirection = DamageRedirectionEffect(
             redirection_id=host._next_ref("DR"),
             source_id=str(effect.get("source") or reason),
@@ -534,8 +572,17 @@ def _apply_create_damage_redirection(
                 predicate=_source_predicate(effect),
             ),
             consume_on_application=consume,
-            label=str(effect.get("label") or reason),
+            label=(f"{reason}: redirect damage to {destination.ref}" if scope is not None
+                   else str(effect.get("label") or reason)),
+            maximum_damage=effect.get("maximum_damage"),
+            controller_scope=scope,
+            creature_destination_only="grantor_owned_redirect" in effect,
+            chosen_source_scope_version=effect.get(VERSION_FIELD),
         )
+        if scope == TARGETED:
+            from ..rules.watched_death_counter_draw import schedule_watched_death
+
+            schedule_watched_death(host, source, destination, actor=actor)
     except (DamageError, DamagePreventionCreationError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
     host.state.damage_redirections.append(redirection)

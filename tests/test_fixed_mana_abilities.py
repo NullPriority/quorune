@@ -8,6 +8,7 @@ import unittest
 from unittest import mock
 
 from common import keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.abilities import parse_activated_abilities
 from quorune.activation_usage import ActivationLimit
 from quorune.carddb import CardRecord
@@ -67,6 +68,65 @@ def record(oracle_text: str, *, name: str = "Typed Mana Relic") -> CardRecord:
 
 
 class FixedManaModelTests(unittest.TestCase):
+    def test_paid_next_cast_library_mana_requires_exact_price_result_and_capability(self):
+        from common import ROOT
+        from quorune.discover_model import ExileCastProgress, validate_qualified_scan_effect
+        from quorune.fixed_mana_results import FixedManaResultSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.next_cast_library_access import NEXT_CAST_LIBRARY_MANA_CAPABILITY
+
+        text = (
+            "{4}, {T}: Add {W}{U}{B}{R}{G}. When you next cast a spell this turn, exile cards "
+            "from the top of your library until you exile an instant or sorcery card with lesser mana value. "
+            "Until end of turn, you may cast that card without paying its mana cost. "
+            "Put each other card exiled this way on the bottom of your library in a random order."
+        )
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record(text), capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual("mana_ability", node.kind)
+        self.assertIn(NEXT_CAST_LIBRARY_MANA_CAPABILITY, node.capability_dependencies)
+        result = node.handlers[0]["ability"]["result"]
+        self.assertEqual(8, result["schema_version"])
+        self.assertEqual(result, FixedManaResultSpec.from_dict(dict(result)).to_dict())
+
+        with mock.patch("quorune.fixed_mana_abilities.printed_next_cast_library_mana", return_value=False):
+            broken = compile_oracle_card(record(text), capability_registry=registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", broken.status)
+        registry_data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        blocked = next(row for row in registry_data["capabilities"] if row["id"] == NEXT_CAST_LIBRARY_MANA_CAPABILITY)
+        blocked.update(status="blocked", blockers=["Unavailable in this witness"])
+        restricted_registry = CapabilityRegistry(registry_data)
+        restricted_registry.mark_evidence_verified("0" * 64)
+        changed = compile_oracle_card(
+            record(text), capability_registry=restricted_registry, capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", changed.status)
+
+        for malformed in (
+            {**result, "amount": True},
+            {**result, "schema_version": 8.0},
+            {**result, "schema_version": 7},
+            {**result, "controller": "A"},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                FixedManaResultSpec.from_dict(malformed)
+        progress = ExileCastProgress(None, (), None, "A", exclusive_mana_value=3.0)
+        self.assertEqual(progress, ExileCastProgress.from_dict(progress.to_dict()))
+        with self.assertRaises(ValueError):
+            ExileCastProgress.from_dict({**progress.to_dict(), "exclusive_mana_value": None})
+        effect = {
+            "op": "exile_until_instant_or_sorcery", "schema_version": 2, "player": "A",
+            "supplier": "A", "exclusive_mana_value": 3.0,
+        }
+        validate_qualified_scan_effect(effect, resolved=True)
+        for change in ({"supplier": "B"}, {"exclusive_mana_value": True}, {"schema_version": 2.0}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_qualified_scan_effect({**effect, **change}, resolved=True)
+        with self.assertRaises(ValueError):
+            validate_qualified_scan_effect(effect)
+
     def test_fixed_mana_result_codecs_reject_unknown_kinds_and_preserve_v1_bytes(self):
         from quorune.fixed_mana_results import FixedManaResultSpec
         from quorune.semantic_runtime.mana_abilities import FixedActivatedManaAbilityHandler,FixedManaResultAbilityHandler
@@ -483,7 +543,18 @@ class FixedManaCompilerTests(unittest.TestCase):
         self.assertEqual(1, specs[1].mana_cost["GENERIC"])
 
     def test_constrained_mana_compiles_spend_limit_and_land_conditions(self):
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_CAPABILITY, EXILE_CAST_MANA_RESTRICTION
+
+        exile_capabilities = {"mana.activated.restricted_fixed_output", EXILE_CAST_MANA_CAPABILITY}
         cases = (
+            (
+                "{T}: Add one mana of any color. Spend this mana only to cast spells from exile.",
+                exile_capabilities,
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast spells from exile.",
+                exile_capabilities,
+            ),
             (
                 "{T}: Add {U}. Spend this mana only to cast an instant or sorcery spell.",
                 {"mana.activated.restricted_fixed_output"},
@@ -525,11 +596,32 @@ class FixedManaCompilerTests(unittest.TestCase):
                 node = ir.faces[0].nodes[0]
                 self.assertLessEqual(expected, set(node.capability_dependencies))
                 self.assertTrue(node.handlers)
+                if EXILE_CAST_MANA_CAPABILITY in expected:
+                    self.assertEqual(EXILE_CAST_MANA_RESTRICTION, node.handlers[0]["ability"]["spend_restriction"])
+
+        land_ability = "{T}: Add one mana of any color. Activate only if this land entered this turn"
+        land = replace(record(land_ability + " or if you control a basic land."), type_line="Land", mana_cost="")
+        ir = compile_oracle_card(land, capability_registry=capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn("activation.condition.fixed_public_state", node.capability_dependencies)
+        condition, = node.handlers[0]["ability"]["activation_conditions"]
+        self.assertEqual("any", condition["condition"]["kind"])
+        entry, basic_land = condition["condition"]["terms"]
+        self.assertEqual("source_entered_this_turn", entry["kind"])
+        self.assertEqual("query_count_at_least", basic_land["kind"])
+        self.assertEqual(1, basic_land["amount"])
+        self.assertEqual("controller_zone", basic_land["quantity"]["scope"])
+        self.assertEqual(["land"], basic_land["quantity"]["query"]["types_all"])
+        self.assertEqual(["basic"], basic_land["quantity"]["query"]["supertypes_all"])
+        hidden_land = replace(land, oracle_text=land_ability + " or if the top card of your library is a basic land.")
+        hidden = compile_oracle_card(hidden_land, capability_registry=capabilities, capability_profile="commander_review")
+        self.assertNotEqual("exact", hidden.status)
+        self.assertTrue(hidden.material_residuals)
 
         for unsupported in (
-            "{T}: Add one mana of any color. Spend this mana only to cast spells from exile.",
+            "{T}: Add one mana of any color. Spend this mana only to cast your second spell from exile each turn.",
             "{T}: Add {C}{C}. Spend this mana only to cast spells with mana value 5 or greater.",
-            "{T}: Add one mana of any color. Activate only if this land entered this turn or if you control a basic land.",
             "{T}: Add {G}. If this mana is spent on a creature spell, it gains haste.",
         ):
             with self.subTest(unsupported=unsupported):
@@ -559,8 +651,8 @@ class FixedManaCompilerTests(unittest.TestCase):
     def test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual(self):
         for text in (
             "{T}: Add {G} for each creature you control if you attacked this turn.",
-            "{T}: Add {G}. Spend this mana only to cast spells from exile.",
-            "+1: Add one mana of any color.",
+            "{T}: Add {G}. Spend this mana only to cast spells you don't own from exile.",
+            "+1: Add one mana of any color among permanents you control.",
             "{T}: Target player adds {G}.",
             "Discard a card: Add {G}.",
             "Exile a card from your graveyard: Add {B}.",
@@ -578,18 +670,31 @@ class FixedManaCompilerTests(unittest.TestCase):
                 self.assertFalse(any(node.handlers for node in ir.faces[0].nodes))
 
     def test_fixed_loyalty_mana_uses_resolution_producer_without_promoting_mana_leaf(self):
-        text = "+1: Add {G}."
-        ability = parse_activated_abilities(card_name="Typed Mana Relic", oracle_text=text)[0]
-        self.assertIsNone(compile_fixed_activated_mana_ability(ability))
-        ir = compile_oracle_card(replace(record(text), type_line="Legendary Planeswalker — Generic", loyalty="3"),
-            capability_registry=load_default_capability_registry(), capability_profile="commander_review")
-        self.assertEqual("exact", ir.status)
-        node = next(node for face in ir.faces for node in face.nodes if node.kind == "activated_ability")
-        self.assertEqual(1, node.cost["loyalty_delta"])
-        self.assertEqual("fixed-resolution-mana-bundle-v1", node.template_id)
-        self.assertEqual(({"op": "mana", "player": "$controller", "color": "G", "amount": 1,
-            "source": "$source"},), node.effects)
-        self.assertIn("mana.production.fixed_resolution", node.capability_dependencies)
+        from quorune.resolution_mana_model import RESOLUTION_MANA_CHOICE_CAPABILITY
+
+        cases = (
+            ("+1: Add {G}.", "fixed-resolution-mana-bundle-v1",
+             {"op": "mana", "player": "$controller", "source": "$source", "color": "G", "amount": 1}),
+            ("+1: Add one mana of any color.", "fixed-resolution-mana-choice-v2",
+             {"op": "choose_mana", "schema_version": 2, "player": "$controller", "source": "$source",
+              "selection": "one_color", "amount": 1}),
+        )
+        registry = load_default_capability_registry()
+        for text, template, effect in cases:
+            with self.subTest(text=text):
+                card = replace(record(text), type_line="Legendary Planeswalker — Generic", loyalty="3")
+                ability, = parse_activated_abilities(card_name=card.name, oracle_text=text)
+                self.assertIsNone(compile_fixed_activated_mana_ability(ability))
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual("activated_ability", node.kind)
+                self.assertEqual(1, node.cost["loyalty_delta"])
+                self.assertEqual(template, node.template_id)
+                self.assertEqual((effect,), node.effects)
+                self.assertFalse(node.handlers)
+                self.assertIn("mana.production.fixed_resolution", node.capability_dependencies)
+                self.assertEqual(effect["op"] == "choose_mana", RESOLUTION_MANA_CHOICE_CAPABILITY in node.capability_dependencies)
 
     def test_parenthesized_basic_land_reminder_is_not_an_executable_program(self):
         card = replace(
@@ -638,6 +743,102 @@ class FixedManaCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact_modes()
+
+
+class PoolDoublingManaTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "pool-doubling.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "fixed-mana-result-cards.json", "activation-public-state-cards.json",
+        )], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Unspent mana rules", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def prepare_pool(self, *, seed):
+        game = self.session(seed)
+        cube = self.add(game.engine, "Doubling Cube")
+        watch = self.add(game.engine, "Interdimensional Web Watch")
+        blade = self.add(game.engine, "Doom Blade", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        self.assert_closed(game, cube)
+        self.assert_closed(game, watch)
+        self.prepare(game, mana={"C": 3, "G": 1})
+        self.checkpoint(game)
+        mana = game.act("pilot:A", {"action_id": f"activate:{watch.ref}:ab2", "mana_output": {"B": 1, "R": 1}})
+        self.assertTrue(mana.ok, mana.summary)
+        return game, cube, blade, target
+
+    def test_actual_cube_copies_postpayment_amount_without_copying_original_restrictions(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        game, cube, _, _ = self.prepare_pool(seed=60503070)
+        command = {"action_id": f"activate:{cube.ref}:ab1", "pay": "manual", "payment": {"C": 3}}
+        before = authoritative_state_hash(game.state)
+        forged = game.act("pilot:A", {**command, "mana_output": {"U": 4}})
+        self.assertFalse(forged.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        actual = game.state.players["A"]
+        self.assertEqual({"B": 2, "C": 0, "G": 2, "R": 2, "U": 0, "W": 0}, actual.mana_pool)
+        self.assertEqual([(("B", 1), ("R", 1))], [lot.bundle for lot in mana_provenance_lots(actual)
+                         if lot.restriction == EXILE_CAST_MANA_RESTRICTION])
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_automatic_spell_funding_uses_only_the_new_unrestricted_copies(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        game, cube, blade, target = self.prepare_pool(seed=60503071)
+        paid = game.act("pilot:A", {"action_id": f"cast:{blade.ref}", "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertEqual([(("B", 1), ("R", 1))], [lot.bundle for lot in mana_provenance_lots(game.state.players["A"])
+                         if lot.restriction == EXILE_CAST_MANA_RESTRICTION])
+        self.settle(game)
+        self.assertEqual("graveyard", game.state.cards[target.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_cube_can_pay_to_double_an_empty_pool_and_replays(self):
+        game = self.session(60503072)
+        cube = self.add(game.engine, "Doubling Cube")
+        self.assert_closed(game, cube)
+        self.prepare(game, mana={"C": 3})
+        self.checkpoint(game)
+        result = game.act("pilot:A", {"action_id": f"activate:{cube.ref}:ab1", "pay": "manual", "payment": {"C": 3}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_doubling_marker_rejects_a_synthetic_fixed_output(self):
+        from quorune.fixed_mana_results import DOUBLE_UNSPENT_MANA_CAPABILITY
+
+        card = self.db.lookup("Doubling Cube", fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(DOUBLE_UNSPENT_MANA_CAPABILITY, node.capability_dependencies)
+        ability, = parse_activated_abilities(card_name=card.name, oracle_text=card.oracle_text, keywords=card.keywords)
+        spec = compile_fixed_activated_mana_ability(ability)
+        self.assertIsNotNone(spec)
+        self.assertFalse(spec.modes)
+        with self.assertRaisesRegex(FixedManaAbilityError, "no fixed output"):
+            replace(spec, modes=(FixedManaMode(colorless=1),))
 
 
 class FixedManaResultRuntimeTests(unittest.TestCase):
@@ -1183,6 +1384,7 @@ class FixedTriggeredManaRuntimeTests(unittest.TestCase):
 
     def test_chosen_triggered_mana_descriptor_and_assist_step_are_closed(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.errors import GameRuleError
         from quorune.rules.casting.assist_frame import AssistManaStep
         from quorune.rules.casting.assist_payment import _available_steps
         from quorune.triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
@@ -1191,10 +1393,16 @@ class FixedTriggeredManaRuntimeTests(unittest.TestCase):
         land = self.add(session.engine, 'Boros Garrison')
         flare = self.add(session.engine, 'Mana Flare', seat='B')
         self.ready(session, land)
-        steps = [step for step, _ in _available_steps(session.engine, 'A', None, set()) if step.source == land.ref]
+        quotes = [(step, schema) for step, _label, schema in _available_steps(session.engine, 'A', None, set())
+                  if step.source == land.ref]
+        self.assertEqual(2, len(quotes))
         self.assertEqual({self.bonus_option({'R': 1, 'W': 1}, {color: 1}) for color in 'RW'},
-                         {step.triggered_mana_option for step in steps})
-        self.assertTrue(all(AssistManaStep.from_dict(step.to_dict()) == step for step in steps))
+                         {step.triggered_mana_option for step, _schema in quotes})
+        for step, schema in quotes:
+            self.assertIsNone(schema)
+            self.assertEqual(step, AssistManaStep.from_dict(step.to_dict()))
+            with self.assertRaisesRegex(GameRuleError, "same base tap output"):
+                AssistManaStep.from_dict({**step.to_dict(), "bundle": {"G": 1}})
         program, = (program for program in session.engine.semantics.programs_for_oracle(flare.oracle_id)
                     if program.event == FIXED_TRIGGERED_MANA_EVENT)
         omitted = replace(program, capability_dependencies=(), capability_closure=None)
@@ -1923,6 +2131,199 @@ class FixedManaRuntimeTests(unittest.TestCase):
             ("payable", None),
             engine._ability_availability("B", ring, conditional_ability),
         )
+
+
+
+
+class FixedManaLifeResultTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "mana-life-result.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "pristine-talisman-cards.json",
+            fixtures / "life-gain-prohibition-cards.json",
+            fixtures / "activation-view-equivalence-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Fixed mana life result", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def source_action(self, game, source, **selection):
+        actor = game.state.priority_player
+        action_id = f"activate:{source.ref}:ab1"
+        actions = game.packet("pilot:" + actor, full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertEqual(1, sum(row["id"] == action_id for row in actions))
+        return game.act("pilot:" + actor, {"action_id": action_id, **selection})
+
+    def reject(self, game, actor, command):
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:" + actor, command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_pristine_manual_mana_and_life_use_current_controller_and_replay(self):
+        game = self.session(605_321_001)
+        source = self.add(game.engine, "Pristine Talisman", seat="B")
+        self.assert_closed(game, source)
+        game.engine.change_control(source.object_id, "A", reason="fixture control")
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game)
+        self.checkpoint(game)
+        action = {"action_id": f"activate:{source.ref}:ab1"}
+        self.reject(game, "B", action)
+        self.reject(game, "A", {**action, "mana_output": {"U": 1}})
+        self.reject(game, "A", {**action, "mana_output": {"C": 2}})
+        accepted = self.source_action(game, source)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, game.state.players["A"].mana_pool["C"])
+        self.assertEqual([41, 40, 40, 40], [game.state.players[seat].life for seat in "ABCD"])
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.reject(game, "A", action)
+        self.replay(game, load=True)
+
+    def test_pristine_native_life_replacement_orders_suspend_and_commit_once(self):
+        cases = (
+            ("add to life gained", 44, True),
+            ("multiply life gained", 43, False),
+        )
+        for index, (label, life, automatic) in enumerate(cases):
+            with self.subTest(first=label, automatic=automatic):
+                game = self.session(605_321_010 + index)
+                engine = game.engine
+                source = self.add(engine, "Pristine Talisman")
+                spell = self.add(engine, "Sol Ring", zone="hand")
+                boon = self.add(engine, "Boon Reflection")
+                heron = self.add(engine, "Heron of Hope")
+                for card in (source, spell, boon, heron):
+                    self.assert_closed(game, card)
+                game.state.config.semantic_policy = "trusted_only"
+                self.prepare(game)
+                self.checkpoint(game)
+                if automatic:
+                    self.cast(game, "A", spell)
+                else:
+                    result = self.source_action(game, source)
+                    self.assertTrue(result.ok, result.summary)
+                self.assertEqual("replacement.order", game.state.pending_decision.kind)
+                self.assertEqual(["pilot:A"], list(game.pending_principals()))
+                self.assertFalse(game.state.cards[source.object_id].tapped)
+                self.assertEqual("hand", game.state.cards[spell.object_id].zone)
+                self.assertEqual(40, game.state.players["A"].life)
+                self.assertEqual(0, game.state.players["A"].mana_pool["C"])
+                self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+                game = self.replay(game, load=True)
+                options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+                self.assertEqual(2, len(options))
+                command = {"action_id": "choose",
+                           "replacement": next(row["id"] for row in options if label in row["label"])}
+                self.reject(game, "B", command)
+                self.reject(game, "A", {**command, "replacement": "unoffered-order"})
+                result = game.act("pilot:A", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual([life, 40, 40, 40], [game.state.players[seat].life for seat in "ABCD"])
+                self.assertTrue(game.state.cards[source.object_id].tapped)
+                self.assertEqual(int(not automatic), game.state.players["A"].mana_pool["C"])
+                self.assertEqual(int(automatic), sum(item.card_object_id == spell.object_id
+                                                     for item in game.state.stack))
+                self.replay(game, load=True)
+
+    def test_pristine_prohibited_life_preserves_native_automatic_payment_and_replay(self):
+        game = self.session(605_321_012)
+        engine = game.engine
+        source = self.add(engine, "Pristine Talisman")
+        spell = self.add(engine, "Sol Ring", zone="hand")
+        blocker = self.add(engine, "Giant Cindermaw", seat="B")
+        boon = self.add(engine, "Boon Reflection")
+        for card in (source, spell, blocker, boon):
+            self.assert_closed(game, card)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast(game, "A", spell)
+        self.assertEqual("priority", game.state.pending_decision.kind)
+        self.assertEqual([40, 40, 40, 40], [game.state.players[seat].life for seat in "ABCD"])
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual(0, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(1, sum(item.card_object_id == spell.object_id for item in game.state.stack))
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_printed_fixed_mana_life_closure_rejects_open_grammar_and_missing_owner(self):
+        from common import ROOT
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.fixed_mana_abilities import FIXED_MANA_RESULT_HANDLER_ID
+        from quorune.fixed_mana_results import FIXED_MANA_LIFE_GAIN_CAPABILITY, GAIN_CONTROLLER_LIFE
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        card = self.db.lookup("Pristine Talisman", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(FIXED_MANA_LIFE_GAIN_CAPABILITY, node.capability_dependencies)
+        spec, = fixed_mana_specs_from_descriptors(node.handlers)
+        self.assertEqual((GAIN_CONTROLLER_LIFE, 1, 3),
+                         (spec.result.kind, spec.result.amount, spec.result.schema_version))
+        for changed in (
+            "You gain 0 life.", "You gain X life.", "You gain 21 life.",
+            "Each player gains 1 life.", "You may gain 1 life.",
+            "You gain 1 life. Draw a card.", "You gain 1 life. Activate only once each turn.",
+        ):
+            with self.subTest(changed=changed):
+                altered = replace(card, oracle_text="{T}: Add {C}. " + changed)
+                result = compile_oracle_card(altered, **options)
+                # Some complete effect variants are valid ordinary stack
+                # abilities, and must not lower through this stackless rider.
+                self.assertFalse(any(FIXED_MANA_LIFE_GAIN_CAPABILITY in node.capability_dependencies
+                                     for face in result.faces for node in face.nodes))
+        for changed in ("{1}, {T}: Add {C}. You gain 1 life.",
+                        "{T}: Add {C} or {G}. You gain 1 life."):
+            with self.subTest(changed=changed):
+                result = compile_oracle_card(replace(card, oracle_text=changed), **options)
+                self.assertFalse(any(FIXED_MANA_LIFE_GAIN_CAPABILITY in node.capability_dependencies
+                                     for face in result.faces for node in face.nodes))
+        data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        row = next(row for row in data["capabilities"] if row["id"] == FIXED_MANA_LIFE_GAIN_CAPABILITY)
+        row.update(status="blocked", blockers=["fixed mana life owner withdrawn"])
+        withdrawn = CapabilityRegistry(data)
+        withdrawn.mark_evidence_verified("0" * 64)
+        ir = compile_oracle_card(card, capability_registry=withdrawn, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(any(FIXED_MANA_LIFE_GAIN_CAPABILITY in blocker
+                            for residual in ir.material_residuals for blocker in residual.blockers))
+        program, = generated_programs(self.db, card, trust_level="trusted", **options)
+        self.assertTrue(bind_semantic_program_runtime(program, capability_registry=self.registry,
+                                                      profile="commander_review")["strict"])
+        other_capabilities = tuple(cap for cap in program.capability_dependencies
+                                   if cap != FIXED_MANA_LIFE_GAIN_CAPABILITY)
+        other_closure = self.registry.closure(other_capabilities, profile="commander_review").to_dict()
+        for missing, altered in (
+            ("handler", replace(program, handlers=tuple(row for row in program.handlers
+                                                       if row["handler_id"] != FIXED_MANA_RESULT_HANDLER_ID))),
+            ("capability", replace(program, capability_dependencies=other_capabilities,
+                                   capability_closure=other_closure)),
+        ):
+            with self.subTest(missing=missing):
+                result = bind_semantic_program_runtime(altered, capability_registry=self.registry,
+                                                       profile="commander_review")
+                self.assertFalse(result["strict"], result)
+
+    def test_pristine_native_life_result_mutation_is_detected(self):
+        with mock.patch("quorune.rules.mana_life_result.apply_mana_life_gain", return_value=None) as skipped:
+            with self.assertRaises(AssertionError):
+                self.test_pristine_manual_mana_and_life_use_current_controller_and_replay()
+        skipped.assert_called_once()
 
 
 if __name__ == "__main__":

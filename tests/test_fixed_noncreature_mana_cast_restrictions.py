@@ -1,6 +1,7 @@
 from copy import deepcopy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -251,3 +252,139 @@ class FixedNoncreatureManaCastRestrictionTests(InheritedNativeFixture, unittest.
         other, _ = register_card(self.db, registry, "Boomerang")
         self.assertFalse(bound["strict_capability_ready"], bound)
         self.assertTrue(other["strict_capability_ready"], other["blockers"])
+
+
+class OpponentEvenManaValueRestrictionTests(InheritedNativeFixture, unittest.TestCase):
+    _actions = FixedNoncreatureManaCastRestrictionTests._actions
+    _accept = FixedNoncreatureManaCastRestrictionTests._accept
+    _reject_unchanged = FixedNoncreatureManaCastRestrictionTests._reject_unchanged
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "even-mana-value-restrictions.sqlite3"
+        build_fixture_database([FIXTURES / "bound-effect-program-cards.json",
+                                FIXTURES / "fixed-noncreature-mana-cast-restriction-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Even mana value", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def save_replay(self, game, name):
+        from hashlib import file_digest
+        from quorune.record import replay_record
+
+        parent = os.environ.get("QUORUNE_EVEN_MANA_VALUE_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        destination = Path(parent) / name
+        game.save(destination)
+        result = replay_record(destination, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, result["final_state_hash"])
+        with (destination / "manifest.json").open("rb") as handle:
+            manifest_hash = file_digest(handle, "sha256").hexdigest()
+        destination.with_suffix(".receipt.json").write_text(
+            json.dumps({"manifest_sha256": manifest_hash, "final_state_sha256": state_hash,
+                        "commands": len(game.commands)}, indent=2) + "\n", encoding="utf-8")
+
+    def test_winnower_cast_offers_share_announced_x_parity_with_submission(self):
+        from quorune.choice_forms import _field
+
+        game = self.session(202316561)
+        source = self.add(game.engine, "Void Winnower", seat="B")
+        even = self.add(game.engine, "Grizzly Bears", zone="hand")
+        zero = self.add(game.engine, "Ornithopter", zone="hand")
+        endless = self.add(game.engine, "Endless One", zone="hand")
+        hydra = self.add(game.engine, "Mistcutter Hydra", zone="hand")
+        for card in (source, even, zero, endless, hydra):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 5, "G": 1})
+        self.checkpoint(game)
+        offers = self._actions(game, "A")
+        for card in (even, zero):
+            action_id = "cast:" + card.ref
+            self.assertNotIn(action_id, offers)
+            self._reject_unchanged(game, "A", {"action_id": action_id, "pay": "auto"})
+        for card, lower, upper in ((endless, 1, 5), (hydra, 0, 4)):
+            offer = offers["cast:" + card.ref]
+            option = next(item for item in offer["cost_options"] if item["id"] == "normal")
+            self.assertEqual({"type": "integer", "minimum": lower, "maximum": upper,
+                              "default": lower, "step": 2}, option["choice_schema"]["x"])
+            field = _field("x", option["choice_schema"]["x"], {})
+            self.assertEqual(list(range(lower, upper + 1, 2)), [row["value"] for row in field["options"]])
+            self._reject_unchanged(game, "A", {"action_id": offer["id"], "cost_option": "normal",
+                                               "x": 2 if card is endless else 1, "pay": "auto"})
+        self._reject_unchanged(game, "A", {"action_id": "cast:" + endless.ref, "x": 0, "pay": "auto"})
+        self.save_replay(game, "void-winnower-x-offers-game-record")
+        self._accept(game, "A", {"action_id": "cast:" + endless.ref, "x": 3, "pay": "auto"})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(3, game.state.cards[endless.object_id].counters.get("+1/+1"))
+        self._accept(game, "A", {"action_id": "cast:" + hydra.ref, "x": 2, "pay": "auto"})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, game.state.cards[hydra.object_id].counters.get("+1/+1"))
+        self.save_replay(game, "void-winnower-x-resolved-game-record")
+
+    def test_winnower_blocks_even_and_zero_current_creatures_only_for_opponents(self):
+        game = self.session(202316562)
+        engine = game.engine
+        source = self.add(engine, "Void Winnower")
+        attacker = self.add(engine, "Grizzly Bears", ref="parity-attacker")
+        even = self.add(engine, "Grizzly Bears", seat="B", ref="parity-even-blocker")
+        odd = self.add(engine, "Llanowar Elves", seat="B")
+        own_spell = self.add(engine, "Grizzly Bears", zone="hand", ref="parity-controller-spell")
+        token_ref, = engine.create_token("B", name="Soldier Token", characteristics={
+            "type_line": "Token Creature — Soldier", "colors": ["W"], "power": "1", "toughness": "1",
+        })
+        zero = next(card for card in game.state.cards.values() if card.ref == token_ref)
+        self.assertEqual(0, engine._effective_card_data(zero)["mana_value"])
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 1, "G": 1})
+        self.checkpoint(game)
+        self.assertIn("cast:" + own_spell.ref, self._actions(game, "A"))
+        self.cast_for(game, "A", own_spell)
+        self.assertIsNone(self.resolve(game))
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self._accept(game, "A", {"action_id": "attack", "attackers": {attacker.ref: "B"}})
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.blockers")
+        self.assertIsNone(game.packet("pilot:C", full=True)["decision"])
+        legal = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal_blocks"]
+        self.assertIn(attacker.ref, legal.get(odd.ref, ()))
+        for card in (even, zero):
+            self.assertNotIn(attacker.ref, legal.get(card.ref, ()))
+            self._reject_unchanged(game, "B", {"action_id": "block", "blocks": {card.ref: attacker.ref}})
+        self.save_replay(game, "void-winnower-block-offers-game-record")
+        self._accept(game, "B", {"action_id": "block", "blocks": {odd.ref: attacker.ref}})
+        self.assertIn(odd.object_id, game.state.combat.blockers[attacker.object_id])
+        self.save_replay(game, "void-winnower-block-declared-game-record")
+
+    def test_winnower_exact_admission_seals_independent_cast_and_block_authority(self):
+        from quorune.battlefield_mana_value_query import EVEN_MANA_VALUE_BLOCKER_CAPABILITY
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.semantic_runtime.static_cast_rules import OPPONENT_EVEN_MANA_VALUE_CAPABILITY
+
+        card = self.db.lookup("Void Winnower", fuzzy=False)
+        bound, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        programs = {program.event: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        capabilities = {"cast.static.rule": OPPONENT_EVEN_MANA_VALUE_CAPABILITY,
+                        "combat.declaration": EVEN_MANA_VALUE_BLOCKER_CAPABILITY}
+        self.assertEqual(set(capabilities), set(programs))
+        for event, cap in capabilities.items():
+            program = programs[event]
+            remaining = tuple(value for value in program.capability_dependencies if value != cap)
+            mutant = replace(program, capability_dependencies=remaining,
+                             capability_closure=self.registry.closure(remaining, profile=PROFILE).to_dict())
+            result = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(result["strict"])
+            self.assertIn("capability:undeclared_runtime_dependency:" + cap, result["blockers"])
+        for changed in (card.oracle_text.replace("spells with even", "spells with odd"),
+                        card.oracle_text.replace("creatures with even", "creatures with odd"),
+                        card.oracle_text.replace("Your opponents can't block", "You can't block")):
+            result = compile_oracle_card(
+                replace(card, oracle_text=changed), capability_registry=self.registry, capability_profile=PROFILE,
+            )
+            self.assertNotEqual("exact", result.status)

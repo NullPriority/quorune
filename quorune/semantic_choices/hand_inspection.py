@@ -13,8 +13,9 @@ from ..rules.hand_inspection import (
     HandInspectionError,
     HandInspectionMode,
     is_defending_hand_observation,
+    selected_hand_reveal_discard_effect,
 )
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.intents import (
     InspectHandIntent,
     MoveObjectsSimultaneouslyIntent,
@@ -24,6 +25,7 @@ from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
     ObjectChoice,
+    ReferenceSetChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
     SemanticChoiceError,
@@ -66,6 +68,144 @@ def _predicate(effect: Mapping[str, Any]) -> HandCardPredicateSpec | None:
         raise SemanticChoiceError(str(exc)) from exc
 
 
+_SELECTED_REVEAL_FIELDS = frozenset({"_reveal_candidates", "_selected_subset", "_stack_label"})
+
+
+def _hand_rows(query, target):
+    return tuple(sorted(query.objects(zones=("hand",), owner=target), key=lambda row: row.ref))
+
+
+def _hand_identities(rows):
+    return tuple((row.ref, row.object_id, row.logical_object_id) for row in rows)
+
+
+def _retained_identities(value):
+    if not isinstance(value, (list, tuple)):
+        return ()
+    return tuple(tuple(row) if isinstance(row, (list, tuple)) else () for row in value)
+
+
+def _selected_reveal_base(effect):
+    actor, target = effect.get("player"), effect.get("target")
+    if (
+        type(actor) is not str or not actor or type(target) is not str or not target
+        or set(effect) - (_BASE_FIELDS | _SELECTED_REVEAL_FIELDS)
+        or thaw_value(FrozenMap({key: effect[key] for key in _BASE_FIELDS if key in effect}))
+           != selected_hand_reveal_discard_effect(player=actor, target=target)
+        or ("_reveal_candidates" in effect and "_selected_subset" in effect)
+    ):
+        raise SemanticChoiceError("Selected hand reveal has an unsupported phase")
+    return actor, target
+
+
+def _selected_subset_rows(effect, rows):
+    selected = effect.get("_selected_subset")
+    if not isinstance(selected, (list, tuple)):
+        raise SemanticChoiceError("Selected reveal requires its retained original hand subset")
+    identities = _retained_identities(selected)
+    chosen = tuple(row for row in rows if (row.ref, row.object_id, row.logical_object_id) in identities)
+    if (not chosen or len(chosen) != min(3, len(rows)) or _hand_identities(chosen) != identities):
+        raise SemanticChoiceError("Selected reveal does not match the original hand subset")
+    return chosen
+
+
+def _subset_discard_stage(target, controller, rows):
+    return FrozenMap({
+        **selected_hand_reveal_discard_effect(player=controller, target=target),
+        "_selected_subset": _hand_identities(rows),
+    })
+
+
+def _prepare_selected_reveal(effect, context):
+    actor, target = _selected_reveal_base(effect)
+    if actor != context.actor or target not in context.query.active_seats:
+        raise SemanticChoiceError("Selected hand reveal actor or target is unavailable")
+    rows = _hand_rows(context.query, target)
+    if "_selected_subset" in effect:
+        if actor != context.stack_controller:
+            raise SemanticChoiceError("Only the resolving controller chooses a revealed card")
+        chosen = _selected_subset_rows(effect, rows)
+        refs = tuple(row.ref for row in chosen)
+        return SemanticChoicePreparation(
+            request=SemanticChoiceRequest(
+                prompt="Choose one of the revealed cards to discard.",
+                choice=ObjectChoice(field_name="card", legal_refs=refs, zones=("hand",), visibility="actor_private"),
+                public_context=FrozenMap({"stack": context.stack_ref, "target": target, "objects": _private_cards(chosen)}),
+            ),
+            continuation_effect=FrozenMap({**dict(effect), "_stack_label": context.stack_label}),
+            preparation_intents=(InspectHandIntent(
+                actor=actor, player=target, refs=refs, reason=context.stack_label,
+                public=True, scoped_stack_ref=context.stack_ref,
+            ),),
+        )
+    if actor != target:
+        raise SemanticChoiceError("Only the hand's player chooses cards to reveal")
+    identities = _hand_identities(rows)
+    if "_reveal_candidates" in effect and _retained_identities(effect["_reveal_candidates"]) != identities:
+        raise SemanticChoiceError("The original reveal candidates changed")
+    if len(rows) <= 3:
+        return SemanticChoicePreparation(
+            request=None,
+            continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue(
+                reason="The target has at most three cards in hand.",
+                prepend_effects=(_subset_discard_stage(target, context.stack_controller, rows),) if rows else (),
+            ),
+        )
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Choose exactly three cards from your hand to reveal.",
+            choice=ReferenceSetChoice(field_name="cards", legal_refs=tuple(row.ref for row in rows), minimum=3, maximum=3),
+            public_context=FrozenMap({"stack": context.stack_ref, "target": target, "objects": _private_cards(rows)}),
+        ),
+        continuation_effect=FrozenMap({**dict(effect), "_reveal_candidates": identities}),
+    )
+
+
+def _complete_hand_inspection_move(*, actor, selected, action, reason, query):
+    return SemanticChoiceCompletion(
+        intents=(MoveObjectsSimultaneouslyIntent(
+            actor=actor, object_refs=(selected,), expected_zones=("hand",),
+            destination="graveyard" if action is HandInspectionAction.DISCARD else "exile",
+            reason=reason,
+            transition_kind=ZoneTransitionKind.DISCARD if action is HandInspectionAction.DISCARD else ZoneTransitionKind.ORDINARY,
+            discard_effect_origin=(getattr(query, "discard_effect_origin", None)
+                                   if action is HandInspectionAction.DISCARD else None),
+        ),),
+    )
+
+
+def _complete_selected_reveal(continuation, response, query):
+    effect = continuation.effect
+    actor, target = _selected_reveal_base(effect)
+    rows = _hand_rows(query, target)
+    controller = continuation.semantic_frame.controller
+    if "_selected_subset" in effect:
+        if actor != controller or type(effect.get("_stack_label")) is not str:
+            raise SemanticChoiceError("The revealed-card choice belongs to the resolving controller")
+        chosen = _selected_subset_rows(effect, rows)
+        selected = response.get("card")
+        if type(selected) is not str or not any(row.ref == selected for row in chosen):
+            raise SemanticChoiceError("Only a retained revealed card can be discarded")
+        return _complete_hand_inspection_move(
+            actor=actor, selected=selected, action=HandInspectionAction.DISCARD,
+            reason=effect["_stack_label"], query=query,
+        )
+
+    if actor != target or _retained_identities(effect.get("_reveal_candidates")) != _hand_identities(rows) or len(rows) <= 3:
+        raise SemanticChoiceError("The private reveal choice lost its original candidates")
+    submitted = response.get("cards")
+    if (
+        not isinstance(submitted, (list, tuple)) or len(submitted) != 3
+        or any(type(ref) is not str for ref in submitted) or len(set(submitted)) != 3
+    ):
+        raise SemanticChoiceError("The hand's player must reveal exactly three original cards")
+    chosen = tuple(row for row in rows if row.ref in submitted)
+    if len(chosen) != 3:
+        raise SemanticChoiceError("The reveal includes a card outside the original hand")
+    return SemanticChoiceCompletion(prepend_effects=(_subset_discard_stage(target, controller, chosen),))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedHandInspectionHandler:
     operation: str = FIXED_HAND_INSPECTION_OPERATION
@@ -86,7 +226,7 @@ class FixedHandInspectionHandler:
         "zone.change.destination_replacement",
     )
     continuation_fields: tuple[str, ...] = tuple(
-        sorted(_BASE_FIELDS | _CONTINUATION_FIELDS | {DEFENDING_HAND_OBSERVATION_VERSION_FIELD})
+        sorted(_BASE_FIELDS | _CONTINUATION_FIELDS | _SELECTED_REVEAL_FIELDS | {DEFENDING_HAND_OBSERVATION_VERSION_FIELD})
     )
     private_data: tuple[str, ...] = ("target hand", "eligible card identities")
     projected_fields: tuple[str, ...] = (
@@ -155,6 +295,8 @@ class FixedHandInspectionHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if effect.get("inspection") == HandInspectionMode.REVEAL_SELECTED_THREE.value:
+            return _prepare_selected_reveal(effect, context)
         mode, action, predicate = self._shape(effect)
         target = str(effect.get("_target_player") or effect["target"])
         if effect.get("player") not in {"$controller", context.actor}:
@@ -291,6 +433,8 @@ class FixedHandInspectionHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if continuation.effect.get("inspection") == HandInspectionMode.REVEAL_SELECTED_THREE.value:
+            return _complete_selected_reveal(continuation, response, query)
         _mode, action, predicate = self._shape(continuation.effect)
         if action not in {
             HandInspectionAction.DISCARD,
@@ -314,27 +458,9 @@ class FixedHandInspectionHandler:
             raise SemanticChoiceError(
                 "Selected target-hand card is no longer legal"
             )
-        return SemanticChoiceCompletion(
-            intents=(
-                MoveObjectsSimultaneouslyIntent(
-                    actor=str(continuation.effect["_choice_actor"]),
-                    object_refs=(selected,),
-                    expected_zones=("hand",),
-                    destination=(
-                        "graveyard"
-                        if action == HandInspectionAction.DISCARD
-                        else "exile"
-                    ),
-                    reason=str(continuation.effect["_stack_label"]),
-                    transition_kind=(
-                        ZoneTransitionKind.DISCARD
-                        if action == HandInspectionAction.DISCARD
-                        else ZoneTransitionKind.ORDINARY
-                    ),
-                    discard_effect_origin=(getattr(query, "discard_effect_origin", None)
-                                           if action == HandInspectionAction.DISCARD else None),
-                ),
-            )
+        return _complete_hand_inspection_move(
+            actor=str(continuation.effect["_choice_actor"]), selected=selected, action=action,
+            reason=str(continuation.effect["_stack_label"]), query=query,
         )
 
 

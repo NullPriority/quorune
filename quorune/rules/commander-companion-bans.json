@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "format": "commander",
+  "banned_role": "companion",
+  "effective": "2026-02-09",
+  "authority": "https://magic.wizards.com/en/news/announcements/commander-banned-and-restricted-february-9-2026",
+  "oracle_ids": ["158a6225-a246-4fd6-aa57-0df8067b4383"]
+}

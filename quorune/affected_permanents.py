@@ -26,6 +26,11 @@ class PermanentControllerRelation(str, Enum):
 
 DEFENDING_PLAYER_UNTAP_SET_FIELD = "defending_player_untap_set_version"
 TARGET_UNSPENT_MANA_FIELD = "target_unspent_mana_version"
+TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD = "target_player_creature_untap_snapshot_version"
+TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD = "target_opponent_nonland_untap_snapshot_version"
+TARGET_OPPONENT_NONLAND_UNTAP_CAPABILITY = "permanent.tap_state.opponent_nonland_untap_snapshot"
+COMBAT_PLAYER_LAND_TAP_FIELD = "combat_player_land_tap_version"
+COMBAT_DAMAGE_PLAYER_REFERENCE = "$context.target"
 
 
 _SET_FIELDS = frozenset(
@@ -86,6 +91,10 @@ class AffectedPermanentSetSpec:
             raise AffectedPermanentSetError(
                 "Affected permanent source exclusion must be boolean"
             )
+        if (self.mana_value_filter is not None and self.mana_value_filter.uses_cast_spell_mana_value
+                and (self.query != ObjectQuerySpec(zones=("battlefield",))
+                     or self.controller_relation is not PermanentControllerRelation.ANY or self.exclude_source)):
+            raise AffectedPermanentSetError("A committed spell value selects all matching battlefield permanents")
         if self.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
             _nonempty(
                 self.target_controller,
@@ -229,8 +238,122 @@ def decode_defending_player_creature_untap(effect: Mapping[str, Any], *, resolve
     return AffectedPermanentSetSpec.from_dict(subject)
 
 
+def combat_player_land_tap_effect(
+    player: str = COMBAT_DAMAGE_PLAYER_REFERENCE, source: str | None = "$source",
+) -> dict[str, Any]:
+    group = AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+        controller_relation=PermanentControllerRelation.TARGET_PLAYER,
+        target_controller=player,
+    )
+    return {
+        "op": "set_public_tap_state", "source": source, "set": group.to_dict(),
+        "tapped": True, COMBAT_PLAYER_LAND_TAP_FIELD: 1,
+    }
+
+
+def fixed_controller_land_untap_effect() -> dict[str, Any]:
+    group = AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+        controller_relation=PermanentControllerRelation.ACTOR,
+    )
+    return {"op": "set_public_tap_state", "source": "$source", "set": group.to_dict(), "tapped": False}
+
+
+def decode_combat_player_land_tap(effect: Mapping[str, Any], *, resolved: bool = False) -> AffectedPermanentSetSpec:
+    raw_set = effect.get("set")
+    player = raw_set.get("target_controller") if isinstance(raw_set, Mapping) else None
+    source = effect.get("source")
+    if resolved:
+        if (type(player) is not str or not player or player.startswith("$")
+                or source is not None and (type(source) is not str or not source or source.startswith("$"))):
+            raise AffectedPermanentSetError("Land tap requires its bound combat damage recipient")
+    elif player != COMBAT_DAMAGE_PLAYER_REFERENCE or source != "$source":
+        raise AffectedPermanentSetError("Land tap requires the original combat damage recipient")
+    if (type(effect.get(COMBAT_PLAYER_LAND_TAP_FIELD)) is not int
+            or effect.get("tapped") is not True
+            or FrozenMap(effect) != FrozenMap(combat_player_land_tap_effect(player, source))):
+        raise AffectedPermanentSetError("Combat damage land tap requires its complete current land set")
+    return AffectedPermanentSetSpec.from_dict(raw_set)
+
+
+def target_player_creature_snapshot_target_schema() -> dict[str, Any]:
+    return {"zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any"}
+
+
+def target_player_creature_snapshot_spec(player: str) -> AffectedPermanentSetSpec:
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+        controller_relation=PermanentControllerRelation.TARGET_PLAYER,
+        target_controller=player,
+    )
+
+
+def decode_target_player_creature_untap_snapshot(
+    effect: Mapping[str, Any], *, resolved: bool = False,
+) -> AffectedPermanentSetSpec:
+    raw_set = effect.get("set")
+    player = raw_set.get("target_controller") if isinstance(raw_set, Mapping) else None
+    source = effect.get("source")
+    if resolved:
+        if (
+            type(player) is not str or not player or player.startswith("$")
+            or source is not None and (type(source) is not str or not source or source.startswith("$"))
+        ):
+            raise AffectedPermanentSetError("Creature-set restraint requires its resolved player target")
+    elif player != "$target.0" or source != "$source":
+        raise AffectedPermanentSetError("Creature-set restraint requires the originally targeted player")
+    spec = target_player_creature_snapshot_spec(player)
+    expected = {
+        "op": "set_public_tap_state", "source": source, "set": spec.to_dict(),
+        "tapped": True, TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD: 1,
+    }
+    if (
+        FrozenMap(effect) != FrozenMap(expected)
+        or type(effect[TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD]) is not int
+        or effect["tapped"] is not True
+    ):
+        raise AffectedPermanentSetError("Creature-set restraint follows the complete original tapped set")
+    return spec
+
+
 def target_unspent_mana_target_schema() -> dict[str, Any]:
     return {"zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any"}
+
+
+def target_opponent_nonland_snapshot_target_schema() -> dict[str, Any]:
+    return {**target_player_creature_snapshot_target_schema(), "player_relation": "opponent"}
+
+
+def target_opponent_nonland_snapshot_spec(player: str) -> AffectedPermanentSetSpec:
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), excluded_types=("land",)),
+        controller_relation=PermanentControllerRelation.TARGET_PLAYER,
+        target_controller=player,
+    )
+
+
+def decode_target_opponent_nonland_untap_snapshot(
+    effect: Mapping[str, Any], *, resolved: bool = False,
+) -> AffectedPermanentSetSpec:
+    raw_set = effect.get("set")
+    player = raw_set.get("target_controller") if isinstance(raw_set, Mapping) else None
+    source = effect.get("source")
+    if resolved:
+        if (type(player) is not str or not player or player.startswith("$")
+                or source is not None and (type(source) is not str or not source or source.startswith("$"))):
+            raise AffectedPermanentSetError("Nonland restraint requires its resolved opponent target")
+    elif (player, source) != ("$target.0", "$source"):
+        raise AffectedPermanentSetError("Nonland restraint requires its original announced opponent")
+    spec = target_opponent_nonland_snapshot_spec(player)
+    expected = {
+        "op":"set_public_tap_state", "source":source, "set":spec.to_dict(),
+        "tapped":True, TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD:1,
+    }
+    if (FrozenMap(effect) != FrozenMap(expected)
+            or type(effect.get(TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD)) is not int):
+        raise AffectedPermanentSetError("Nonland restraint follows only the original tapped permanent set")
+    return spec
 
 
 def target_unspent_mana_tap_spec(player: str) -> AffectedPermanentSetSpec:

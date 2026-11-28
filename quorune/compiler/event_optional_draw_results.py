@@ -7,13 +7,73 @@ EVENT_OPTIONAL_DRAW_MECHANIC = 'fixed-event-player-optional-draw'
 EVENT_OPTIONAL_DRAW_TEMPLATE = 'fixed-defending-player-optional-draw-v1'
 
 
+def tempting_draw_token_template(text):
+    match = re.fullmatch(
+        r"(?:Tempting Offer [—-] )?Draw a card and create (?P<token>[^.]+)\. "
+        r"Then each opponent may draw a card and create (?P=token)\. "
+        r"For each opponent who does, you draw a card and you create (?P=token)\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    from .token_templates import fixed_token_creation_effect_template
+    from ..rules.event_optional_draw_shapes import (
+        TEMPTING_DRAW_TOKEN_VERSION, tempting_draw_token_effects, validate_event_optional_draw_payload,
+    )
+
+    definition = fixed_token_creation_effect_template(f"Create {match['token']}.")
+    if definition is None or definition.target_schema is not None:
+        return None
+    effects = tempting_draw_token_effects(definition.effect)
+    try:
+        validate_event_optional_draw_payload(effects[2])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return (
+        f"tempting-draw-token-v{TEMPTING_DRAW_TOKEN_VERSION}", effects, None,
+        (EVENT_OPTIONAL_DRAW_MECHANIC, "cr-121-drawing-a-card", *definition.mechanics),
+    )
+
+
 def fixed_event_optional_draw_result(binding, body, *, effect_template, card_name):
+    from .source_counter_mill_templates import source_counter_mill_template
+
+    if compiled := source_counter_mill_template(binding, body, card_name=card_name):
+        return compiled, False
     from .event_creature_controller_results import dead_creature_controller_optional_draw_result
     if death := dead_creature_controller_optional_draw_result(binding, body):return death
+    from ..permanent_event_state_model import any_counter_combat_damage_condition
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            == ("damage.dealt", "battlefield", "one_or_more_controlled_creatures_combat_damage_player")
+            and binding.event_condition == any_counter_combat_damage_condition()
+            and re.fullmatch(r"you may draw a card and proliferate\.?", " ".join(body.split()), re.I)):
+        from .proliferate_templates import ProliferateEffectTemplate
+        from .draw_templates import fixed_draw_effect_template
+        from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+        _, draw, _, draw_mechanics = fixed_draw_effect_template("Draw a card.")
+        proliferate = ProliferateEffectTemplate()
+        optional = FixedOptionalEffectTemplate(
+            component_template_id="optional-draw-and-proliferate-v1",
+            _component_effects=(*draw, *proliferate.effects), _target_schema=None,
+            mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, *draw_mechanics, *proliferate.mechanics),
+        )
+        return optional.compiled(), False
     from ..rules.event_optional_draw_shapes import (
-        DAMAGE_DEALER_DRAW_VARIANT, DAMAGE_DEALER_DRAW_VERSION, damage_dealer_draw_condition,
-        cast_opponent_optional_draw_effect,
+        DAMAGE_DEALER_DRAW_VARIANT, DAMAGE_DEALER_DRAW_VERSION, DAMAGE_DEALER_LIFE_DRAW_VERSION,
+        damage_dealer_draw_condition,
+        cast_opponent_optional_draw_effect, controller_end_step_condition, table_draw_attack_restriction_effect,
     )
+
+    if ((binding.event.value, binding.active_zone, binding.variant) == ("step.begin", "battlefield", "your end step")
+            and binding.event_condition == controller_end_step_condition()
+            and re.fullmatch(
+                r"each player may draw a card\. Each opponent who does can['’]t attack you "
+                r"or permanents you control during their next turn\.?", " ".join(body.split()), re.I,
+            )):
+        return (("table-optional-draw-attack-restriction-v1", (table_draw_attack_restriction_effect(),),
+                 None, (EVENT_OPTIONAL_DRAW_MECHANIC,)), True)
 
     if binding.event.value == "spell.cast" and binding.active_zone == "battlefield":
         from ..rules.event_outcome_shapes import noncreature_cast_condition
@@ -25,8 +85,16 @@ def fixed_event_optional_draw_result(binding, body, *, effect_template, card_nam
 
     if binding.variant == DAMAGE_DEALER_DRAW_VARIANT:
         if (binding.event.value != "damage.dealt" or binding.active_zone != "battlefield"
-                or binding.event_condition != damage_dealer_draw_condition()
-                or re.fullmatch(r"its controller may draw a card\.?", body.strip(), re.I) is None):
+                or binding.event_condition != damage_dealer_draw_condition()):
+            return None
+        normalized = " ".join(body.split()).casefold().removesuffix(".")
+        version, template = {
+            "its controller may draw a card": (DAMAGE_DEALER_DRAW_VERSION, "damage-dealer-controller-optional-draw-v3"),
+            "its controller may pay 1 life. if they do, they draw a card": (
+                DAMAGE_DEALER_LIFE_DRAW_VERSION, "damage-dealer-controller-life-paid-draw-v1",
+            ),
+        }.get(normalized, (None, None))
+        if version is None:
             return None
         from ..target_controller_information import damage_dealer_controller_reference
         from .event_player_results import EVENT_PLAYER_RESULT_MECHANIC
@@ -34,8 +102,8 @@ def fixed_event_optional_draw_result(binding, body, *, effect_template, card_nam
 
         _, (effect,), _, mechanics = fixed_draw_effect_template("You may draw a card.")
         controller = damage_dealer_controller_reference()
-        effect = {**effect, "player": controller, "drawer": controller, EVENT_OPTIONAL_DRAW_FIELD: DAMAGE_DEALER_DRAW_VERSION}
-        return (("damage-dealer-controller-optional-draw-v3", (effect,), None,
+        effect = {**effect, "player": controller, "drawer": controller, EVENT_OPTIONAL_DRAW_FIELD: version}
+        return ((template, (effect,), None,
                  (*mechanics, EVENT_PLAYER_RESULT_MECHANIC, EVENT_OPTIONAL_DRAW_MECHANIC)), False)
     if binding.event.value != 'creature.attacks' or binding.variant != 'source_attacks':return None
     if re.fullmatch(

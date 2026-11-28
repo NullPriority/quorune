@@ -20,9 +20,72 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.record import authoritative_state_hash
 from scripts.build_test_database import build_fixture_database
+from quorune.public_history_query_model import NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY, current_nontoken_creature_entry_query
+from quorune.turn_history import reset_turn_history
+from test_controller_creature_keyword_absence import register_card
+
+
+ENTRY_HISTORY_FOOD = "Gyome, Master Chef"
+OPPONENT_THRESHOLD_ORACLE = (
+    "At the beginning of each end step, draw a card for each opponent who drew two or more cards "
+    "this turn, then create a Treasure token for each opponent who had two or more lands "
+    "enter the battlefield under their control this turn."
+)
 
 
 class PublicHistoryQueryCompilerTests(unittest.TestCase):
+    def test_share_thresholds_require_two_ordered_closed_results(self):
+        from quorune.public_history_query_model import (
+            OPPONENT_EVENT_THRESHOLD_CAPABILITY, opponent_event_threshold_query,
+        )
+
+        registry = load_default_capability_registry()
+        oracle = OPPONENT_THRESHOLD_ORACLE
+        ir = compile_oracle_card(query_record(oracle), capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = ir.faces[0].nodes
+        self.assertIn(OPPONENT_EVENT_THRESHOLD_CAPABILITY, trigger.capability_dependencies)
+        self.assertEqual(("draw", "create_token"), tuple(effect["op"] for effect in trigger.effects))
+        draw, create = trigger.effects
+        for result, field, lands in ((draw, "count", False), (create, "quantity", True)):
+            expected = opponent_event_threshold_query(land_entries=lands)
+            self.assertEqual(expected, PublicHistoryQuerySpec.from_dict(result[field]["history_count"]))
+            for change in ({"relation": "any_player"}, {"reduction": "count"}, {"schema_version": 1}):
+                with self.assertRaises(ValueError):
+                    PublicHistoryQuerySpec.from_dict({**expected.to_dict(), **change})
+        for mutation in (
+            oracle.replace("two or more cards", "three or more cards"),
+            oracle.replace("each end step", "your end step"),
+            oracle.replace("then create", "or create"),
+        ):
+            with self.subTest(mutation=mutation):
+                mutated = compile_oracle_card(query_record(mutation), capability_registry=registry)
+                self.assertNotEqual("exact", mutated.status)
+
+    def test_share_reduction_counts_players_and_excludes_departed_seats(self):
+        import quorune.public_history_query_model as owner
+
+        query = owner.opponent_event_threshold_query(land_entries=True)
+        events = [TurnHistoryEvent("permanent_entered", actor=seat, types=("land",),
+                                   object_incarnation=f"{seat}{i}@1")
+                  for seat, count in (("A", 2), ("B", 3), ("C", 1), ("D", 2))
+                  for i in range(count)]
+        state = SimpleNamespace(
+            turn_sequence=4, turn_history=TurnHistory(turn_sequence=4, events=events),
+            players={seat: SimpleNamespace(in_game=seat != "D") for seat in "ABCD"},
+        )
+
+        def witness():
+            self.assertEqual(1, owner.public_history_query_value(state, "A", query))
+
+        witness()
+        with patch.object(owner, "_OPPONENT_THRESHOLD_REDUCTION", "count"), self.assertRaises(AssertionError):
+            witness()
+        state.players["D"].in_game = True
+        self.assertEqual(2, owner.public_history_query_value(state, "A", query))
+        state.players["B"].in_game = state.players["D"].in_game = False
+        self.assertEqual(0, owner.public_history_query_value(state, "A", query))
+
     def test_new_history_schema_round_trips_without_changing_legacy_payloads(self):
         spec=PublicHistoryQuerySpec('creature_died','controller')
         condition=FixedPublicStateConditionSpec(FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,amount=1,schema_version=8,history_query=spec)
@@ -212,3 +275,213 @@ class PublicHistoryQueryNativeTests(unittest.TestCase):
         self.assert_closed(session,source);self.prepare(session,mana={'C':2,'B':1});self.checkpoint(session)
         self.cast(session,'A',source);self.assertIsNone(self.resolve(session));self.end_step(session)
         self.assertFalse(any(i.source_object_id==source.object_id for i in session.state.stack));self.replay(session,load=True)
+
+
+    def cast_with_mana(self, game, actor, card, targets=(), payment=None):
+        self.priority(game, actor)
+        command = {"action_id": "cast:" + card.ref, "targets": list(targets), "pay": "auto"}
+        if payment is not None:
+            command.update(pay="manual", payment=payment)
+        result = game.act("pilot:" + actor, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def food_tokens(self, game):
+        return tuple(card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"
+                     and card.controller == "A" and "food" in game.engine._type_parts(
+                         str(game.engine._effective_card_data(card)["type_line"]))[1])
+
+    def test_share_counts_committed_draws_and_land_entries_on_third_party_turn(self):
+        from quorune.public_history_query_model import opponent_event_threshold_query
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(1647001)
+        engine = game.engine
+        source = self.add(engine, "Smuggler's Share")
+        self.add(engine, "Narset, Parter of Veils", seat="B")
+        main_draw = self.add(engine, "Quick Study", seat="C", zone="hand")
+        late_draw = self.add(engine, "Reach Through Mists", seat="B", zone="hand")
+        borrowed = self.add(engine, "Azorius Guildgate", seat="D", zone="hand")
+        current = self.add(engine, "Generic Bound Plains", seat="C", zone="hand", ref="share-c-land")
+        for seat in "AB":
+            self.add(engine, "Island", seat=seat, ref="share-untapped-" + seat)
+        self.add(engine, "Island", seat="C", ref="share-untapped-C")
+        self.add(engine, "Generic Bound Plains", seat="C", ref="share-untapped-1")
+        self.add(engine, "Generic Bound Plains", seat="C", ref="share-untapped-2")
+        self.assert_closed(game, source)
+        self.prepare(game, actor="C", active="C", mana={"C": 2, "U": 1})
+        engine.draw("B", reason="Prepared earlier opponent draw")
+        ZoneTransitionOwner(engine).move_cards_simultaneously(
+            [(borrowed.object_id, "battlefield"), (current.object_id, "battlefield")],
+            reason="Prepared simultaneous land entries", destination_controllers={borrowed.object_id: "C"},
+        )
+        self.assertTrue(game.state.cards[borrowed.object_id].tapped)
+        self.assertEqual("C", game.state.cards[borrowed.object_id].controller)
+        self.checkpoint(game)
+
+        self.cast_with_mana(game, "C", main_draw, payment={"C": 2, "U": 1})
+        self.assertIsNone(self.resolve(game))
+        draw_query = opponent_event_threshold_query(land_entries=False)
+        land_query = opponent_event_threshold_query(land_entries=True)
+        self.assertEqual(0, public_history_query_value(game.state, "A", draw_query))
+        self.assertEqual(1, public_history_query_value(game.state, "A", land_query))
+
+        self.end_step(game)
+        self.assertEqual("C", game.state.active_player)
+        trigger, = game.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.cast_for(game, "B", late_draw)
+        game = self.replay(game, load=True)
+        hand = len(game.state.players["A"].zones["hand"])
+        start = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, public_history_query_value(game.state, "A", draw_query))
+        self.assertEqual(hand + 1, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual(
+            ["card.draw", "token.create"],
+            [e.code for e in game.state.events[start:] if e.actor == "A" and e.code in {"card.draw", "token.create"}],
+        )
+        treasures = [c for c in game.state.cards.values()
+                     if c.is_token and c.zone == "battlefield" and c.controller == "A"
+                     and "treasure" in game.engine._type_parts(game.engine._effective_card_data(c)["type_line"])[1]]
+        self.assertEqual(1, len(treasures))
+        self.replay(game)
+
+    def test_share_with_no_qualifying_current_opponents_has_no_results(self):
+        from quorune.public_history_query_model import opponent_event_threshold_query
+
+        game = self.session(1647002)
+        source = self.add(game.engine, "Smuggler's Share")
+        self.prepare(game)
+        game.engine.draw("A", 2, reason="Prepared controller-only draws")
+        self.checkpoint(game)
+        self.end_step(game)
+        self.assertEqual(source.object_id, game.state.stack[-1].source_object_id)
+        hand = len(game.state.players["A"].zones["hand"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(hand, len(game.state.players["A"].zones["hand"]))
+        self.assertFalse(any(c.is_token for c in game.state.cards.values()))
+        query = opponent_event_threshold_query(land_entries=False)
+        self.assertEqual(0, public_history_query_value(game.state, "A", query))
+        self.replay(game)
+
+    def test_food_counts_earlier_and_resolving_creature_entries_and_retains_paid_protection(self):
+        game = self.session(60820091)
+        source = self.add(game.engine, ENTRY_HISTORY_FOOD, zone="hand")
+        bear = self.add(game.engine, "Grizzly Bears", zone="hand", ref="entry-repeat-bear")
+        tapped = self.add(game.engine, "Grizzly Bears", seat="C", ref="entry-already-tapped-bear")
+        tapped.tapped = True
+        bounce = self.add(game.engine, "Unsummon", zone="hand")
+        token_spell = self.add(game.engine, "Raise the Alarm", zone="hand")
+        late = self.add(game.engine, "Cloudshift", zone="hand")
+        foreign = self.add(game.engine, "Ashcoat Bear", seat="B", zone="hand")
+        for index in range(2):
+            self.add(game.engine, "Plains", ref=f"entry-end-step-plains-{index}")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 5, "G": 3, "B": 1, "U": 1, "W": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        game.state.players["B"].mana_pool.update(C=1, G=1)
+        self.checkpoint(game)
+
+        for actor, card, targets, payment in (
+            ("A", bear, [], {"C": 1, "G": 1}),
+            ("A", bounce, [bear.ref], {"U": 1}),
+            ("A", source, [], {"C": 2, "B": 1, "G": 1}),
+            ("A", bear, [], {"C": 1, "G": 1}),
+            ("A", token_spell, [], {"C": 1, "W": 1}),
+            ("B", foreign, [], {"C": 1, "G": 1}),
+        ):
+            self.cast_with_mana(game, actor, card, targets, payment)
+            self.assertIsNone(self.resolve(game))
+        query = current_nontoken_creature_entry_query()
+        self.assertEqual(3, public_history_query_value(game.state, "A", query))
+        self.assertEqual(1, public_history_query_value(game.state, "B", query))
+        self.assertEqual(2, sum(event.kind == "permanent_entered" and event.token is True
+                                for event in game.state.turn_history.events))
+        self.end_step(game)
+        trigger, = game.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.cast_with_mana(game, "A", late, [bear.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(4, public_history_query_value(game.state, "A", query))
+        self.assertEqual(4, len(self.food_tokens(game)))
+
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = (row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+        food = self.food_tokens(game)[0]
+        result = game.act("pilot:A", {"action_id": offer["id"], "targets": [tapped.ref],
+                                     "cost_cards": [food.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        protected = game.state.cards[tapped.object_id]
+        self.assertTrue(protected.tapped)
+        self.assertIn("indestructible", game.engine._combat_keywords(protected))
+        self.assertEqual(3, len(self.food_tokens(game)))
+        self.replay(game, load=True)
+
+    def test_food_count_with_no_current_creature_entries_is_zero(self):
+        game = self.session(60820092)
+        source = self.add(game.engine, ENTRY_HISTORY_FOOD)
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.end_step(game)
+        self.assertTrue(any(item.source_object_id == source.object_id for item in game.state.stack))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((), self.food_tokens(game))
+        self.replay(game, load=True)
+
+    def test_old_entry_journal_payload_replays_and_unavailable_token_facts_fail_closed(self):
+        game = self.session(60820093)
+        bear = self.add(game.engine, "Grizzly Bears", zone="hand")
+        tokens = self.add(game.engine, "Raise the Alarm", zone="hand")
+        game.state.turn_history.permanent_entry_token_history_version = None
+        self.prepare(game, mana={"C": 2, "G": 1, "W": 1})
+        self.checkpoint(game)
+        for card in (bear, tokens):
+            self.cast_with_mana(game, "A", card)
+            self.assertIsNone(self.resolve(game))
+        history = game.state.turn_history
+        entries = [event for event in history.events if event.kind == "permanent_entered"]
+        self.assertEqual(3, len(entries))
+        self.assertTrue(all("token" not in entry.to_dict() for entry in entries))
+        self.assertNotIn("permanent_entry_token_history_version", history.to_dict())
+        self.assertIsNone(reset_turn_history(history, history.turn_sequence + 1).permanent_entry_token_history_version)
+        query = current_nontoken_creature_entry_query()
+        self.assertIsNone(public_history_query_value(game.state, "A", query))
+        game = self.replay(game, load=True)
+        self.assertEqual(history.to_dict(), game.state.turn_history.to_dict())
+
+        incomplete = replace(history, permanent_entry_token_history_version=1)
+        snapshot = SimpleNamespace(turn_history=incomplete, turn_sequence=history.turn_sequence,
+                                   players=game.state.players)
+        self.assertIsNone(public_history_query_value(snapshot, "A", query))
+        with self.assertRaises(ValueError):
+            TurnHistoryEvent.from_dict({**entries[0].to_dict(), "token": 1})
+
+    def test_food_amount_requires_its_exact_history_capability_and_result(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.scalar_effect_amount_model import ScalarEffectAmountSpec
+
+        report, semantics = register_card(self.db, self.registry, ENTRY_HISTORY_FOOD)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        cap = NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY
+        programs = semantics.programs_for_oracle(report["oracle_id"])
+        trigger, = (program for program in programs if cap in program.capability_dependencies)
+        effect, = trigger.effects
+        amount = ScalarEffectAmountSpec.from_dict(effect["quantity"])
+        self.assertEqual(current_nontoken_creature_entry_query(), amount.history_count)
+        dependencies = tuple(value for value in trigger.capability_dependencies if value != cap)
+        altered = replace(trigger, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(bound["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + cap, bound["blockers"])
+        source = self.db.lookup(ENTRY_HISTORY_FOOD, fuzzy=False)
+        for old, new in (("nontoken creatures", "noncreature permanents"),
+                         ("this turn", "last turn"), ("a number of Food tokens", "a number of Treasure tokens"),
+                         ("your end step", "an opponent's end step")):
+            changed = replace(source, oracle_text=source.oracle_text.replace(old, new))
+            ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)

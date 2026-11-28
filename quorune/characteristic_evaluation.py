@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import re
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from .continuous_effects import (
     CharacteristicState,
@@ -22,6 +22,7 @@ from .keyword_counters import keyword_counter_abilities
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .util import unique_preserving_order
 from .ability_fragments import (
+    ability_fragment_from_dict,
     ability_fragment_to_dict,
     canonical_ability_fragments,
 )
@@ -40,6 +41,7 @@ from .characteristic_fragments import (
 from .creature_subtypes import CREATURE_SUBTYPES
 from .type_subtype_vocabulary import CARD_SUPERTYPES
 from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
+from .basic_land_types import AllNonbasicLandTypesDefinitionSpec, NONBASIC_LAND_SUBTYPES
 from .off_battlefield_creatures import OffBattlefieldSelfCreatureSpec
 
 
@@ -293,10 +295,17 @@ def _has_all_creature_types_characteristic_definition(
     )
 
 
-def _all_creature_types_effect(
+def _has_all_nonbasic_land_types_definition(base, overrides):
+    return any(isinstance(fragment, AllNonbasicLandTypesDefinitionSpec) for fragment in
+               canonical_ability_fragments(overrides.get("ability_fragments", base.get("ability_fragments", ()))))
+
+
+def _subtype_definition_effect(
     card: CardInstance,
     *,
     enabled: bool,
+    name: str,
+    subtypes: Iterable[str],
     face_down_values: Any,
     ignore_face_down: bool,
 ) -> ContinuousEffect | None:
@@ -307,7 +316,7 @@ def _all_creature_types_effect(
     ):
         return None
     return ContinuousEffect(
-        effect_id=f"{card.object_id}:all-creature-types-definition",
+        effect_id=f"{card.object_id}:{name}",
         source_id=card.object_id,
         layer=Layer.TYPE,
         sublayer="4",
@@ -315,7 +324,7 @@ def _all_creature_types_effect(
         operations=(
             ContinuousOperation(
                 "add_types",
-                sorted(CREATURE_SUBTYPES),
+                sorted(subtypes),
                 field="subtypes",
             ),
         ),
@@ -359,6 +368,7 @@ def _object_continuous_effects(
     added_subtypes: Sequence[str],
     *,
     has_all_creature_types_definition: bool,
+    has_all_nonbasic_land_types_definition: bool,
     has_colorless_definition: bool,
     has_all_colors_definition: bool,
     ignore_face_down: bool = False,
@@ -393,14 +403,15 @@ def _object_continuous_effects(
                 duration=ContinuousEffectDuration.ZONE_OBJECT,
             )
         )
-    all_creature_types = _all_creature_types_effect(
-        card,
-        enabled=has_all_creature_types_definition,
-        face_down_values=face_down_values,
-        ignore_face_down=ignore_face_down,
-    )
-    if all_creature_types is not None:
-        effects.append(all_creature_types)
+    for enabled, name, subtypes in (
+        (has_all_creature_types_definition, "all-creature-types-definition", CREATURE_SUBTYPES),
+        (has_all_nonbasic_land_types_definition, "all-nonbasic-land-types-definition", NONBASIC_LAND_SUBTYPES),
+    ):
+        if effect := _subtype_definition_effect(
+            card, enabled=enabled, name=name, subtypes=subtypes,
+            face_down_values=face_down_values, ignore_face_down=ignore_face_down,
+        ):
+            effects.append(effect)
     type_operations: list[ContinuousOperation] = []
     if card.annotations.get("bestowed") and card.attached_to:
         type_operations.extend(
@@ -500,6 +511,28 @@ def _object_continuous_effects(
     return effects
 
 
+def _has_query_characteristic_input(
+    state: CharacteristicState, effects: Sequence[ContinuousEffect],
+) -> bool:
+    """Check whether the ability-layer pass could discover a quantity fragment."""
+    quantity_fragments = (QueryCharacteristicModifierSpec, QueryPowerToughnessDefinitionSpec)
+    if any(isinstance(fragment, quantity_fragments) for fragment in state.ability_fragments):
+        return True
+    for effect in effects:
+        for operation in effect.operations:
+            # Copying, turning face down and granting a fragment are the
+            # layer operations that can introduce new typed ability fragments.
+            if operation.op == "add_ability_fragment":
+                inputs = (operation.value,)
+            elif operation.op in {"copy_values", "face_down"}:
+                inputs = operation.value.get("ability_fragments", ())
+            else:
+                continue
+            if any(isinstance(ability_fragment_from_dict(value), quantity_fragments) for value in inputs):
+                return True
+    return False
+
+
 def _intrinsic_quantity_fragments_after_abilities(state,effects,*,context):
     """Separate source ability applicability from the quantity's layer-5 reads."""
     through_abilities=evaluate_continuous_effects(copy.deepcopy(state),
@@ -527,10 +560,15 @@ def _query_characteristic_effects(
 
     if card.zone == "battlefield" and card.phased_out:
         return []
+    if not _has_query_characteristic_input(state, effects):
+        return []
     fragments = _intrinsic_quantity_fragments_after_abilities(state,effects,context=context)
     materialized: list[ContinuousEffect] = []
     for index, fragment in enumerate(fragments):
         if isinstance(fragment, QueryPowerToughnessDefinitionSpec):
+            if (fragment.quantity.scope is CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS
+                    and maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS):
+                continue
             count = count_resolver(fragment.quantity)
             if type(count) is not int or (count < 0 and fragment.quantity.scope not in DEFINING_LIFE_SCOPES):
                 raise ContinuousEffectError(
@@ -666,14 +704,8 @@ def _render_characteristics(
                     values["ability_fragments"]
                 )
             ],
-            "activated_abilities": [
-                (
-                    ability.to_dict()
-                    if isinstance(ability, ActivatedAbility)
-                    else ActivatedAbility.from_dict(ability).to_dict()
-                )
-                for ability in values["activated_abilities"]
-            ],
+            # The layer evaluator supplies a fresh, already validated snapshot.
+            "activated_abilities": values["activated_abilities"],
         }
     )
     for field in ("power", "toughness", "loyalty", "defense"):
@@ -705,7 +737,7 @@ def _normalized_unlayered_characteristics(result):
     return result
 
 
-def _card_characteristic_query_context(card, *, enchanted=False, equipped=False, modified=False):
+def _card_characteristic_query_context(card, *, enchanted=False, equipped=False, modified=False, ignore_face_down=False):
     return {
         "object_id": card.object_id,
         "logical_object_id": card.logical_object_id,
@@ -716,6 +748,7 @@ def _card_characteristic_query_context(card, *, enchanted=False, equipped=False,
         "token": card.is_token,
         "commander": card.is_commander,
         "tapped": card.tapped,
+        "face_down": card.face_down and not ignore_face_down,
         "phased_out": card.phased_out,
         "known_to_actor": True,
         "counters": card.counters,
@@ -729,7 +762,7 @@ def _card_characteristic_query_context(card, *, enchanted=False, equipped=False,
 
 
 def battlefield_type_dependency_view(
-    card, base, *, runtime_effects=(), ignore_face_down=False,
+    card, base, *, runtime_effects=(), ignore_face_down=False, linked_exile_resolver=None,
     dependency_order_version=CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ):
     """Prepare the real pre-type state and per-object operations without mutating the game."""
@@ -738,11 +771,14 @@ def battlefield_type_dependency_view(
     object_effects = _object_continuous_effects(
         card, overrides, added_types, added_subtypes,
         has_all_creature_types_definition=_has_all_creature_types_characteristic_definition(base, overrides),
+        has_all_nonbasic_land_types_definition=_has_all_nonbasic_land_types_definition(base, overrides),
         has_colorless_definition=False, has_all_colors_definition=False, ignore_face_down=ignore_face_down,
     )
     effects = (*object_effects, *runtime_effects)
-    context = _card_characteristic_query_context(card)
+    context = _card_characteristic_query_context(card, ignore_face_down=ignore_face_down)
     context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    if linked_exile_resolver is not None:
+        context["linked_exile_characteristics"] = linked_exile_resolver
     evaluate_continuous_effects(state, (effect for effect in effects if effect.layer < Layer.TYPE),
                                 context=context)
     return state, context, tuple(effect for effect in effects if effect.layer is Layer.TYPE)
@@ -763,6 +799,47 @@ def off_battlefield_self_creature_effects(
                  for effect in spec.layer_effects(source, timestamp=card.zone_timestamp, occurrence=index))
 
 
+def _render_layered_evaluation(card, result, evaluated, effects, *, include_base_power):
+    values = evaluated.characteristics
+    applied = set(evaluated.applied_effects)
+    render_type_line = any(
+        effect.effect_id in applied
+        and (
+            effect.layer is Layer.TYPE
+            or any(
+                operation.op == "face_down"
+                or (
+                    operation.op == "copy_values"
+                    and bool(
+                        {"supertypes", "card_types", "subtypes"}.intersection(
+                            operation.value
+                        )
+                    )
+                )
+                for operation in effect.operations
+            )
+        )
+        for effect in effects
+    )
+    characteristics = _render_characteristics(
+        card,
+        result,
+        values,
+        render_type_line=render_type_line,
+    )
+    if "saga" in values["subtypes"] and any(
+        effect.effect_id in applied
+        and any(operation.op in {"set_basic_land_types", "remove_all_abilities"} for operation in effect.operations)
+        for effect in effects
+    ):
+        from .ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+
+        characteristics[INTRINSIC_ABILITIES_REMOVED] = True
+    if include_base_power:
+        characteristics["base_power"] = evaluated.base_power
+    return characteristics
+
+
 def evaluate_card_characteristics(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -774,11 +851,13 @@ def evaluate_card_characteristics(
     ]
     | None = None,
     maximum_layer: Layer | None = None,
+    include_base_power: bool = False,
     enchanted: bool = False,
     equipped: bool = False,
     modified: bool = False,
     active_player: str | None = None,
     type_order=None,
+    linked_exile_resolver=None,
     dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ) -> dict[str, Any]:
     """Evaluate one object's declarative CR 613 characteristic state.
@@ -796,6 +875,7 @@ def evaluate_card_characteristics(
         overrides,
     )
     has_all_colors_definition = _has_all_colors_definition(result,overrides)
+    has_all_land_types = _has_all_nonbasic_land_types_definition(result, overrides)
     has_all_creature_types_definition = (
         _has_all_creature_types_characteristic_definition(
             result,
@@ -808,8 +888,11 @@ def evaluate_card_characteristics(
             ignore_face_down=ignore_face_down,
         )
     )
+    from .rules.name_stickers import PLACEMENTS, characteristic_effects
+
     layered = bool(
         overrides
+        or card.annotations.get(PLACEMENTS)
         or card.permanent_composition is not None
         or added_types
         or added_subtypes
@@ -820,6 +903,7 @@ def evaluate_card_characteristics(
         or has_colorless_definition
         or has_all_colors_definition
         or has_all_creature_types_definition
+        or has_all_land_types
         or (
             card.face_down
             and not ignore_face_down
@@ -830,6 +914,8 @@ def evaluate_card_characteristics(
         or query_count_resolver is not None
     )
     if not layered:
+        if include_base_power:
+            result["base_power"] = _numeric(result.get("power"))
         return _normalized_unlayered_characteristics(result)
 
     state = _base_characteristic_state(card,result,resolve_undefined_stats=(
@@ -844,11 +930,18 @@ def evaluate_card_characteristics(
         ),
         has_colorless_definition=has_colorless_definition,
         has_all_colors_definition=has_all_colors_definition,
+        has_all_nonbasic_land_types_definition=has_all_land_types,
         ignore_face_down=ignore_face_down,
     )
+    if card.annotations.get(PLACEMENTS) and (maximum_layer is None or maximum_layer >= Layer.TEXT):
+        effects.extend(characteristic_effects(card))
     effects.extend((*source_zone_effects, *runtime_effects))
-    context = _card_characteristic_query_context(card, enchanted=enchanted, equipped=equipped, modified=modified)
+    context = _card_characteristic_query_context(
+        card, enchanted=enchanted, equipped=equipped, modified=modified, ignore_face_down=ignore_face_down,
+    )
     context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    if linked_exile_resolver is not None:
+        context["linked_exile_characteristics"] = linked_exile_resolver
     if type_order is not None:
         context["type_order"] = type_order
     if query_count_resolver is not None and (
@@ -874,30 +967,4 @@ def evaluate_card_characteristics(
         effects,
         context=context,
     )
-    values = evaluated.characteristics
-    applied = set(evaluated.applied_effects)
-    render_type_line = any(
-        effect.effect_id in applied
-        and (
-            effect.layer is Layer.TYPE
-            or any(
-                operation.op == "face_down"
-                or (
-                    operation.op == "copy_values"
-                    and bool(
-                        {"supertypes", "card_types", "subtypes"}.intersection(
-                            operation.value
-                        )
-                    )
-                )
-                for operation in effect.operations
-            )
-        )
-        for effect in effects
-    )
-    return _render_characteristics(
-        card,
-        result,
-        values,
-        render_type_line=render_type_line,
-    )
+    return _render_layered_evaluation(card, result, evaluated, effects, include_base_power=include_base_power)

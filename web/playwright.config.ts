@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 import path from "node:path";
 
 const serverData = path.resolve(
-  process.env.MTG_E2E_RUNTIME_DIR ??
+  process.env.MTG_E2E_RUNTIME_DIR ?? process.env.MTG_E2E_RUNTIME_RESOLVED ??
     path.join("..", "local", `playwright-${process.pid}`),
 );
 // Do not borrow the documented manual-development ports. Browser cookies are
@@ -52,6 +52,11 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    ...(process.env.QUORUNE_PLAYTEST_FIREFOX === "1" ? [{
+      name: "firefox",
+      grep: /@playtest-activation|two distinct blockers/,
+      use: { ...devices["Desktop Firefox"] },
+    }] : []),
   ],
   webServer: [
     {
@@ -67,6 +72,7 @@ export default defineConfig({
         ...process.env,
         MTG_CARD_DB: process.env.MTG_CARD_DB ?? "data/test-ci.sqlite3",
         MTG_SERVER_DATA: serverData,
+        MTG_AUTO_PASS_EMPTY_PRIORITY: process.env.MTG_AUTO_PASS_EMPTY_PRIORITY ?? "0",
         MTG_E2E_SERVER_PORT: String(serverPort),
         MTG_E2E_WEB_PORT: String(webPort),
       },

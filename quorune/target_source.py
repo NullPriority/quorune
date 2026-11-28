@@ -76,9 +76,17 @@ class TargetingSource:
     logical_object_id: str | None = None
     chosen_creature_type: str | None = None
     chosen_color: str | None = None
+    supertypes: frozenset[str] | None = None
+    is_commander: bool | None = None
+    reserved_graveyard_source_id: str | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
+        if self.reserved_graveyard_source_id is not None and (
+            self.kind != "spell" or type(self.reserved_graveyard_source_id) is not str
+            or not self.reserved_graveyard_source_id
+        ):
+            raise ValueError("Only a casting proposal may reserve a graveyard source departure")
         if self.logical_object_id is not None and (
             type(self.logical_object_id) is not str or not self.logical_object_id
         ):
@@ -96,12 +104,14 @@ class TargetingSource:
         if self.spell_owner is not None and (self.kind!='spell' or type(self.spell_owner) is not str
                 or not self.spell_owner or self.spell_owner.strip()!=self.spell_owner):
             raise ValueError('Spell ownership requires an explicit canonical spell owner')
-        for name in ('colors','card_types','subtypes'):
+        if self.is_commander is not None and (self.kind != "ability" or type(self.is_commander) is not bool):
+            raise ValueError("Commander status requires an explicit boolean ability source fact")
+        for name in ('colors','card_types','subtypes','supertypes'):
             value=getattr(self,name)
             if value is not None and (type(value) is not frozenset or any(type(v) is not str or not v for v in value)):
                 raise ValueError('Targeting source characteristics must be immutable canonical terms')
         if self.colors is not None and not self.colors.issubset(set('WUBRG')):raise ValueError('Targeting colors must be canonical')
-        if any(v!=v.casefold() for values in (self.card_types,self.subtypes) if values is not None for v in values):
+        if any(v!=v.casefold() for values in (self.card_types,self.subtypes,self.supertypes) if values is not None for v in values):
             raise ValueError('Targeting types must be canonical')
         if self.protection_source is not None and (
             not isinstance(self.protection_source, ProtectionSource)
@@ -110,10 +120,14 @@ class TargetingSource:
             raise ValueError("Targeting protection requires the acting source's typed characteristics")
 
     @classmethod
-    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None,protection_source=None,logical_object_id=None):
-        types,subtypes,_=type_parts(str(value.get('type_line') or ''))
+    def from_characteristics(
+        cls, kind, value, *, controller=None, spell_owner=None, protection_source=None,
+        logical_object_id=None, is_commander=None,
+    ):
+        types, subtypes, supertypes = type_parts(str(value.get('type_line') or ''))
         return cls(kind, frozenset(str(v).upper() for v in value.get('colors',())), frozenset(types),
-                   frozenset(subtypes), controller, spell_owner, protection_source, logical_object_id)
+                   frozenset(subtypes), controller, spell_owner, protection_source, logical_object_id,
+                   supertypes=frozenset(supertypes), is_commander=is_commander)
 
 
 @dataclass(frozen=True,slots=True)
@@ -127,6 +141,7 @@ class TargetingSourceBinding:
     colors: tuple[str,...]
     mana_value: float | None = None
     schema_version: int = 1
+    is_commander: bool | None = None
 
     def __post_init__(self):
         if any(type(v) is not str or not v for v in (self.object_id,self.object_ref,self.logical_object_id,self.zone,self.controller)) or type(self.type_line) is not str:
@@ -138,12 +153,16 @@ class TargetingSourceBinding:
                 or self.mana_value is not None and (self.schema_version != BOUND_TARGETING_SOURCE_VERSION
                     or type(self.mana_value) not in {int, float} or self.mana_value < 0 or not isfinite(self.mana_value))):
             raise ValueError('Targeting source binding has malformed protection facts')
+        if self.is_commander is not None and type(self.is_commander) is not bool:
+            raise ValueError("Targeting source binding has malformed commander status")
 
     def to_dict(self):
         data = {'schema_version':self.schema_version,'object_id':self.object_id,'object_ref':self.object_ref,'logical_object_id':self.logical_object_id,
                 'zone':self.zone,'controller':self.controller,'type_line':self.type_line,'colors':list(self.colors)}
         if self.schema_version == BOUND_TARGETING_SOURCE_VERSION:
             data['mana_value'] = self.mana_value
+        if self.is_commander is not None:
+            data["is_commander"] = self.is_commander
         return data
 
     @classmethod
@@ -151,41 +170,53 @@ class TargetingSourceBinding:
         fields = {'schema_version','object_id','object_ref','logical_object_id','zone','controller','type_line','colors'}
         if isinstance(value, Mapping) and value.get('schema_version') == BOUND_TARGETING_SOURCE_VERSION:
             fields.add('mana_value')
+        if isinstance(value, Mapping) and "is_commander" in value:
+            if type(value["is_commander"]) is not bool:
+                raise ValueError("Targeting source binding has malformed commander status")
+            fields.add("is_commander")
         if not isinstance(value,Mapping) or set(value)!=fields or type(value['colors']) not in (list,tuple):
             raise ValueError('Targeting source binding fields are closed')
         return cls(value['object_id'],value['object_ref'],value['logical_object_id'],value['zone'],
                    value['controller'],value['type_line'],tuple(value['colors']),
-                   mana_value=value.get('mana_value'), schema_version=value['schema_version'])
+                   mana_value=value.get('mana_value'), schema_version=value['schema_version'], is_commander=value.get("is_commander"))
 
     def facts(self):
         characteristics = {'type_line': self.type_line, 'colors': self.colors, 'mana_value': self.mana_value}
         protection = ProtectionSource.from_characteristics(characteristics) if self.schema_version == BOUND_TARGETING_SOURCE_VERSION else None
         return TargetingSource.from_characteristics('ability', characteristics, controller=self.controller,
-                                                    protection_source=protection,logical_object_id=self.logical_object_id)
+                                                    protection_source=protection,logical_object_id=self.logical_object_id,
+                                                    is_commander=self.is_commander)
 
 
 def capture_targeting_source(host,source,*,characteristics=None,zone=None,schema_version=1):
+    from .ability_source_information import retains_ability_source_commander_status
+
     data=host._effective_card_data(source) if characteristics is None else characteristics
+    commander = getattr(source, "is_commander", None) if retains_ability_source_commander_status(host.state) else None
     if not isinstance(data,Mapping) or type(data.get('type_line')) is not str:
         raise ValueError('Targeting source characteristics require an explicit type line')
     return TargetingSourceBinding(source.object_id,source.ref,source.logical_object_id,zone or source.zone,source.controller if (zone or source.zone) in {'battlefield','stack'} else source.owner,
         data['type_line'],tuple(sorted(set(data.get('colors',())))),
         mana_value=ProtectionSource.from_characteristics(data).mana_value if schema_version == BOUND_TARGETING_SOURCE_VERSION else None,
-        schema_version=schema_version)
+        schema_version=schema_version, is_commander=commander)
 
 
-def spell_targeting_source(host,card):
-    return TargetingSource.from_characteristics('spell',host._effective_card_data(card),
-        controller=card.controller,spell_owner=card.owner)
+def spell_targeting_source(host, card, *, reserve_graveyard_departure=False):
+    source = TargetingSource.from_characteristics(
+        'spell', host._effective_card_data(card), controller=card.controller, spell_owner=card.owner,
+    )
+    if reserve_graveyard_departure and card.zone == "graveyard":
+        return replace(source, reserved_graveyard_source_id=card.object_id)
+    return source
 
 
 def ability_targeting_source(host,card):
     facts = capture_targeting_source(host, card).facts()
-    from .rules.chosen_color_target_shapes import current_linked_target_color
+    from .rules.chosen_color_target_shapes import current_linked_entry_color
 
     annotations = getattr(card, "annotations", {})
     subtype = annotations.get("chosen_creature_type")
-    color = current_linked_target_color(card)
+    color = current_linked_entry_color(card)
     choices = {}
     if subtype is not None and canonical_creature_subtype(subtype) == subtype:
         choices["chosen_creature_type"] = subtype
@@ -219,7 +250,7 @@ def _requires_shared_draw_source(program):
     return program is not None and any(is_source_shared_type_draw_discard(effect) for effect in program.effects)
 
 
-def stack_targeting_source(host,item):
+def stack_targeting_source(host,item, *, phased_out_lki=False):
     if item.kind in {'spell','spell_copy'}:
         card=host.state.cards.get(item.card_object_id or item.source_object_id)
         if card is not None and card.zone=='stack':return spell_targeting_source(host,card)
@@ -238,7 +269,7 @@ def stack_targeting_source(host,item):
         if (source is not None and source.ref==binding.object_ref and source.logical_object_id==binding.logical_object_id
                 and source.zone==binding.zone
                 and not (getattr(source, "phased_out", False)
-                         and _requires_shared_draw_source(host.semantics.get(item.semantic_key)))):
+                         and (phased_out_lki or _requires_shared_draw_source(host.semantics.get(item.semantic_key))))):
             facts = capture_targeting_source(host, source, schema_version=binding.schema_version).facts()
         else:
             facts = binding.facts()
@@ -257,6 +288,8 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError,phase_
     from .trigger_processing import replace_pending_trigger_batch
     try:
         departures={(c.object_id,c.logical_object_id):c for c in cards}
+        from .trigger_processing import pin_same_turn_cast_keyword_source_departures
+        pin_same_turn_cast_keyword_source_departures(host, departures)
         updates={};pending=[]
         frames=[item.to_dict() for item in host.state.stack]
         for batch in host.state.pending_trigger_batches:
@@ -271,7 +304,7 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError,phase_
                 continue
             if phase_out or getattr(source, "phased_out", False):
                 shared_draw = _requires_shared_draw_source(host.semantics.get(item.get("semantic_key")))
-                if phase_out != shared_draw:
+                if phase_out != shared_draw and not (phase_out and binding.is_commander is not None):
                     continue
             updates[item['ref']]=capture_targeting_source(host,source,schema_version=binding.schema_version).to_dict()
         for index,batch in enumerate(host.state.pending_trigger_batches):

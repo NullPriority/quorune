@@ -1,0 +1,435 @@
+{
+  "cards": [
+    {
+      "cmc": 3,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": "8",
+      "mana_cost": "{2}{G}",
+      "name": "Trial Wilds Guide",
+      "oracle_id": "31c22893-6e86-5726-822e-f17290cb8dfb",
+      "oracle_text": "\u22127: Search your library for any number of Elf creature cards, put them onto the battlefield, then shuffle.",
+      "released_at": "2026-01-01",
+      "type_line": "Legendary Planeswalker"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Elf Kindred Spell",
+      "oracle_id": "26c2ab81-86f9-53a8-9ee6-c5f760a1b01e",
+      "oracle_text": "You gain 1 life.",
+      "released_at": "2026-01-01",
+      "type_line": "Kindred Sorcery \u2014 Elf"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf A",
+      "oracle_id": "15f9bb64-359b-5079-a3b0-dc3e593b31d2",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf B",
+      "oracle_id": "5e523691-bd8a-5eb8-bf65-993ab370cf09",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf C",
+      "oracle_id": "8eebdb6d-1ebd-5b48-be35-483717c3dd28",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf D",
+      "oracle_id": "08510a45-658f-54e3-85fe-28619c806fa3",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf E",
+      "oracle_id": "a6b002f0-169a-59d0-9651-ea3ba8287a24",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf F",
+      "oracle_id": "b6caba5a-e57d-5a5b-92b6-77fe33924d2c",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf G",
+      "oracle_id": "11c870c9-c341-53f7-98c9-5fde119bfbfc",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf H",
+      "oracle_id": "03095449-d455-5402-b6d0-f16bbab62cd3",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf I",
+      "oracle_id": "50e3a2a7-89c4-55dc-8149-726822f8ca31",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf J",
+      "oracle_id": "43d9e68b-0621-5077-980d-829629bb8810",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf K",
+      "oracle_id": "3f9a883f-8b0c-546c-9731-ad729f4587a0",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{G}",
+      "name": "Trial Library Elf L",
+      "oracle_id": "02cfd51e-a9af-5a6c-8aab-db880672aa46",
+      "oracle_text": "",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Scout"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "The World Tree",
+      "oracle_id": "3437d504-bf62-4c27-b15f-f6330182ff7e",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\nAs long as you control six or more lands, lands you control have \"{T}: Add one mana of any color.\"\n{W}{W}{U}{U}{B}{B}{R}{R}{G}{G}, {T}, Sacrifice this land: Search your library for any number of God cards, put them onto the battlefield, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "name": "Trial Library God",
+      "oracle_id": "c8f52600-194f-4f37-a75c-000000000001",
+      "type_line": "Creature \u2014 God",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "power": "2",
+      "toughness": "2",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Trial Library God Two",
+      "oracle_id": "c8f52600-194f-4f37-a75c-000000000002",
+      "type_line": "Creature \u2014 God",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "power": "2",
+      "toughness": "2",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Trial God Relic",
+      "oracle_id": "c8f52600-194f-4f37-a75c-000000000003",
+      "type_line": "Kindred Artifact \u2014 God",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "power": null,
+      "toughness": null,
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Trial God Kindred Instant",
+      "oracle_id": "c8f52600-194f-4f37-a75c-000000000004",
+      "type_line": "Kindred Instant \u2014 God",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "layout": "normal",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "power": null,
+      "toughness": null,
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "3437d504-bf62-4c27-b15f-f6330182ff7e",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "The World Tree\u2019s third ability doesn\u2019t cause lands you control to lose any of their abilities. It also doesn\u2019t cause lands you control to gain or lose any land types."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Synthetic typed creature search native fixture"
+}

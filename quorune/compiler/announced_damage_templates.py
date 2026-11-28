@@ -5,6 +5,7 @@ from . import regex_working_set as re
 from ..announced_damage import (
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
     DAMAGE_ALLOCATION_FIELD,
+    TURN_DAMAGE_MAXIMUM,
     DamageAllocationSpec,
     VariableDamageAllocationSpec,
 )
@@ -23,7 +24,8 @@ _DIVIDED_DAMAGE = re.compile(
 _VARIABLE_DIVIDED_DAMAGE = re.compile(
     r"(?P<source>.+?) deals (?P<amount>X(?: plus 1)?) damage divided as you choose among "
     r"(?P<count>any number of|up to two) (?P<domain>[^.]+?)"
-    r"(?:, where X is (?P<quantity>[^.]+?) as you cast this spell)?\."
+    r"(?:, where X is (?:(?P<quantity>[^.]+?) as you cast this spell|"
+    r"(?P<turn_damage>the greatest amount of damage dealt by a source to a permanent or player this turn)))?\."
     r"(?: If X is (?P<double_from>6) or more, (?P=source) deals twice X damage divided as you choose among them instead\.)?",
     re.IGNORECASE,
 )
@@ -42,6 +44,21 @@ _VARIABLE_RECIPIENTS = {
     "target attacking or blocking creatures without flying": "target attacking or blocking creature without flying",
 }
 VARIABLE_DAMAGE_TEMPLATE_ID = "damage-announced-allocation-v2"
+
+
+def scaled_announced_target_damage_template(text: str, *, source_name: str):
+    match = re.fullmatch(r"(?P<source>.+?) deals five times X damage to each of up to X targets\.?",
+                         " ".join(text.split()), re.IGNORECASE)
+    if match is None:
+        return None
+    direct = fixed_damage_effect_template(f"{match['source']} deals 5 damage to any target.", card_name=source_name)
+    if not isinstance(direct, FixedDamageEffectTemplate) or direct.target_schema is None:
+        return None
+    from ..rules.announced_x_damage_sets import scaled_announced_target_damage_effect, scaled_announced_target_damage_schema
+    from .announced_target_sets import ANNOUNCED_TARGET_SET_MECHANIC
+
+    return ("damage-fivefold-x-each-of-up-to-x-targets-v1", (scaled_announced_target_damage_effect(),),
+            scaled_announced_target_damage_schema(), (*direct.mechanics, ANNOUNCED_TARGET_SET_MECHANIC))
 
 
 def fixed_announced_damage_template(text: str, *, card_name: str, allow_source_pronoun: bool = False):
@@ -91,7 +108,11 @@ def variable_announced_damage_template(text: str, *, card_name: str, has_cast_x:
     if not isinstance(direct, FixedDamageEffectTemplate) or direct.target_schema is None:
         return None
     quantity = None
-    if match["quantity"] is not None:
+    if match["turn_damage"] is not None:
+        if has_cast_x or match["count"].casefold() != "any number of" or recipient != "target creature":
+            return None
+        quantity = TURN_DAMAGE_MAXIMUM
+    elif match["quantity"] is not None:
         if has_cast_x:
             return None
         from .live_battlefield_quantities import resolution_quantity

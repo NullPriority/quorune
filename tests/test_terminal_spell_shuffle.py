@@ -156,6 +156,62 @@ class TerminalSpellShuffleRuntimeTests(actions.InheritedNativeFixture, unittest.
         self.assertEqual("library", session.state.cards[zenith.object_id].zone)
         self.replay(session, load=True)
 
+    def test_announced_counters_cover_all_creatures_before_zenith_shuffles(self):
+        for amount in (0, 2):
+            with self.subTest(amount=amount):
+                session = self.session(7012410 + amount)
+                zenith = self.add(session.engine, "Black Sun's Zenith", zone="hand")
+                bear = self.add(session.engine, "Grizzly Bears")
+                survivor = self.add(session.engine, "Fogwalker", seat="B")
+                indestructible = self.add(session.engine, "Darksteel Myr", seat="C")
+                land = self.add(session.engine, "Generic Bound Plains", seat="D")
+                self.assert_current_shuffle_program(session, zenith)
+                self.prepare(session, mana={"C": amount, "B": 2})
+                self.checkpoint(session)
+                counts = self.counts(session)
+                start = len(session.state.events)
+                action = self.action(session, "A", zenith)
+                result = session.act("pilot:A", {"action_id": action["id"], "x": amount, "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(amount, session.state.stack[-1].x_value)
+                self.settle(session)
+
+                expected = {(card.ref, amount) for card in (bear, survivor, indestructible)} if amount else set()
+                additions = [event for event in session.state.events[start:] if event.code == "counter.add"]
+                self.assertEqual(len(expected), len(additions))
+                self.assertEqual(expected, {(event.details["object"], event.details["placed"]) for event in additions})
+                self.assertEqual({**counts, "A": counts["A"] + 1}, self.counts(session))
+                self.assertEqual("library", session.state.cards[zenith.object_id].zone)
+                self.assertEqual(amount, session.state.cards[survivor.object_id].counters.get("-1/-1", 0))
+                self.assertEqual({}, session.state.cards[land.object_id].counters)
+                for lethal in (bear, indestructible):
+                    self.assertEqual("graveyard" if amount else "battlefield", session.state.cards[lethal.object_id].zone)
+                if amount:
+                    codes = [event.code for event in session.state.events[start:]]
+                    last_placement = len(codes) - 1 - codes[::-1].index("counter.add")
+                    self.assertLess(last_placement, codes.index("state.creatures_died"))
+                self.replay(session, load=True)
+
+    def test_countered_announced_counter_spell_preserves_battlefield_and_library(self):
+        session = self.session(7012413)
+        zenith = self.add(session.engine, "Black Sun's Zenith", zone="hand")
+        counter = self.add(session.engine, "Counterspell", seat="B", zone="hand")
+        creature = self.add(session.engine, "Grizzly Bears", seat="C")
+        self.prepare(session, mana={"C": 2, "B": 2})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        counts = self.counts(session)
+        action = self.action(session, "A", zenith)
+        result = session.act("pilot:A", {"action_id": action["id"], "x": 2, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.cast(session, "B", counter, [session.state.stack[-1].ref])
+        self.settle(session)
+        self.assertEqual("graveyard", session.state.cards[zenith.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[creature.object_id].zone)
+        self.assertEqual({}, session.state.cards[creature.object_id].counters)
+        self.assertEqual(counts, self.counts(session))
+        self.replay(session, load=True)
+
     def test_countered_and_all_illegal_beacons_skip_the_shuffle(self):
         session = self.session(7012403)
         first = self.add(session.engine, "Beacon of Destruction", zone="hand", ref="countered-beacon")

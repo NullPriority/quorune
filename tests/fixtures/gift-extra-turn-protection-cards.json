@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Perch Protection",
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "mana_cost": "{4}{W}{W}",
+      "cmc": 6.0,
+      "type_line": "Instant",
+      "oracle_text": "Gift an extra turn (You may promise an opponent a gift as you cast this spell. If you do, they take an extra turn after this one.)\nCreate four 2/2 blue Bird creature tokens with flying. If the gift was promised, all permanents you control phase out, and until your next turn, your life total can't change and you gain protection from everything.\nExile Perch Protection.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Gift"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "A permanent phasing out causes a spell or ability on the stack to have an illegal target if it targets that permanent. As a spell or ability tries to resolve, if all its targets are illegal, that spell or ability doesn't resolve and none of its effects happen, including effects unrelated to the target. If at least one target is still legal, the spell or ability does as much as it can to the remaining legal targets, and its other effects still happen."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Any continuous effects with a \"for as long as\" duration such as that of Mathas, Fiend Seeker ignore phased-out objects. Any such effects will expire if their conditions are no longer met after ignoring the phased-out objects."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Any creatures that phase in under your control as your next untap step begins will be able to attack and pay a cost of {T} during that turn."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Any one-shot effects that are waiting \"until [this] leaves the battlefield,\" such as that of Banishing Light, won't happen when a permanent phases out."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "As an additional cost to cast a spell with gift, you can promise the listed gift to an opponent. That opponent is chosen as part of that additional cost. The gift isn't given at this time; rather, it's given at a later time based on whether or not the spell is a permanent spell."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Choices made for permanents as they entered are remembered when they phase in."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Each Aura and Equipment that phases out attached to a permanent that's phasing out phases in with that permanent and still attached to it."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Each Aura and Equipment you control attached to a permanent that isn't phasing out phases in attached to that permanent if it can still be attached to that permanent. If not, it phases in unattached. An Aura that phases in unattached will be put into its owner's graveyard as a state-based action. The same is true with Auras attached to players."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "For instants and sorceries with gift, the gift is given to the appropriate opponent as part of the resolution of the spell. This happens before any of the spell's other effects would take place."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "For permanent spells with gift, an ability triggers when that permanent enters if the gift was promised. When that ability resolves, the gift is given to the appropriate opponent."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Gaining protection from everything causes a spell or ability on the stack to have an illegal target if it targets you. As a spell or ability tries to resolve, if all its targets are illegal, that spell or ability doesn't resolve and none of its effects happen, including effects unrelated to the target. If at least one target is still legal, the spell or ability does as much as it can to the remaining legal targets, and its other effects still happen."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If a player has protection from everything, it means three things: 1) All damage that would be dealt to that player is prevented. 2) Auras can't be attached to that player. 3) That player can't be the target of spells or abilities."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If a spell for which the gift was promised is countered, doesn't resolve (perhaps because all of its targets are illegal), or is otherwise removed from the stack, the gift won't be given. None of its other effects will happen either."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If a token is phased out, it will phase in as your next untap step begins."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If you copy a spell for which the gift was promised, the gift was also promised to the same opponent for the copy. If a card or token enters as a copy of a permanent that's already on the battlefield, the gift isn't promised for that new permanent, even if it was promised for the original."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If you gain control of another player's permanent and it phases out, if the duration of the control-change effect expires before it phases in, that permanent phases in under that other player's control as your next untap step begins. If you leave the game before your next untap step, it phases in as the next untap step begins after your turn would have begun."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your life total can't change and an effect would set your life total to a specific number that's different from your current life total, that part of the effect won't do anything. Similarly, if an effect would cause you to exchange life totals with another player, the exchange won't happen, and neither player's life total will change."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your life total can't change, effects that replace an event with having you gain life (like Words of Worship's effect does) or having you lose life will apply and end up replacing the event with nothing."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your life total can't change, effects that would replace having you gain life with some other event won't be able to be applied because it's impossible for you to gain life. The same is true for effects that would replace having you lose life with some other event."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your life total can't change, spells and abilities that would normally cause you to gain or lose life still resolve while your life total can't change, but the life-gain or life-loss part simply has no effect."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your life total can't change, you can't pay a cost that includes the payment of any amount of life other than 0 life. Similarly, if a cost includes causing you to gain life (like the alternative cost of an opponent's Invigorate does), that cost can't be paid."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If your untap step is somehow skipped as your next turn begins, your phased-out permanents won't phase in until the next untap step you actually have, but you'll no longer have protection from everything and your life total can change again."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "In the main set, there are four different kinds of gifts. \"Gift a Food\" causes the chosen opponent to create a Food token, while \"Gift a Treasure\" causes the chosen opponent to create a Treasure token. \"Gift a card\" causes them to draw a card, and \"Gift a tapped Fish\" causes them to create a tapped 1/1 blue Fish creature token. The Commander decks contain two more kinds of gifts: \"Gift an Octopus,\" which causes the chosen opponent to create an 8/8 blue Octopus creature token, and \"Gift an extra turn,\" which causes them to take an extra turn after the current turn ends."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Nothing other than the specified events are prevented or illegal. An effect that doesn't target you could still cause you to discard cards, for example. Creatures can still attack you while you have protection from everything, although combat damage that they would deal to you will be prevented."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Permanents that phase out with counters phase in with those counters."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Phasing out doesn't cause any \"leaves the battlefield\" abilities to trigger. Similarly, phasing in won't cause any \"enters\" abilities to trigger."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Protection from everything will usually prevent damage if it would be dealt to you, but some damage can't be prevented. In this case, because your life total also can't change, that damage has any other effects that it may have aside from causing you to lose that much life (such as effects from lifelink or infect) and triggers and effects can see that damage was dealt even though your life total didn't change."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Some instant or sorcery spells require alternative or additional targets if the gift was promised. You ignore these targeting requirements if the gifts aren't promised for those spells. On the other hand, you can promise a gift for a permanent spell even if you won't be able to choose targets for an enters ability of that permanent once the spell resolves."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "While a permanent is phased out, it's treated as though it doesn't exist. It can't be the target of spells or abilities, its static abilities have no effect on the game, its triggered abilities can't trigger, it can't attack or block, and so on."
+    },
+    {
+      "oracle_id": "295fe873-ecb5-4d5e-a73c-3af6c478afc5",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "You can't pay a gift cost more than once."
+    }
+  ]
+}

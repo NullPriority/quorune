@@ -1,9 +1,18 @@
 from __future__ import annotations
 
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
+from quorune.engine import TURN_STEPS
+from quorune.record import authoritative_state_hash
 from quorune.rules.activation import activation_condition_status
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 class ExactLandFamilyTests(unittest.TestCase):
@@ -304,7 +313,7 @@ class ExactLandFamilyTests(unittest.TestCase):
             "pilot:B",
             {
                 "action_id": "choose",
-                "objects": [target.ref],
+                "card": target.ref,
                 "plan": "RECUR_VALUE",
                 "reason": "Return the creature milled by Takenuma.",
             },
@@ -395,6 +404,122 @@ class ExactLandFamilyTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("hand", target.zone)
         self.assertEqual("graveyard", fair.zone)
+
+
+class GhostTownNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "ghost-town.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/scryfall-exact-lists.json",
+            ROOT / "tests/fixtures/actual-card-play-and-fixed-cleanup-limit-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Land return", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+            DeckEntry("Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def set_priority_window(self, game, active, first):
+        engine = game.engine
+        engine.permissions.invalidate_current()
+        game.state.pending_decision = None
+        game.state.active_player = active
+        game.state.last_normal_turn_player = active
+        game.state.started = True
+        game.state.phase, game.state.step = "precombat_main", "main"
+        game.state.phase_index = TURN_STEPS.index((game.state.phase, game.state.step))
+        game.state.priority_passes = []
+        engine._grant_priority(first)
+        engine.pump()
+
+    def action_ids(self, game, seat):
+        packet = game.packet(f"pilot:{seat}", full=True)
+        return {row["id"] for row in packet["decision"]["ctx"]["legal"]["actions"]}
+
+    def act(self, game, seat, action, **payload):
+        result = game.act(f"pilot:{seat}", {"action_id": action, **payload})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_ghost_town_native_mana_and_controller_turn_preserve_owner_return(self):
+        game = self.session(86401)
+        source = self.add(game.engine, "Ghost Town")
+        game.engine.change_control(source.object_id, "B", reason="Foreign ownership fixture")
+        self.assert_closed(game, source)
+        mana_key = f"activate:{source.ref}:ab1"
+        return_key = f"activate:{source.ref}:ab2"
+        self.set_priority_window(game, "B", "B")
+        self.assertNotIn(return_key, self.action_ids(game, "B"))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": return_key}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertIn(mana_key, self.action_ids(game, "B"))
+        self.checkpoint(game)
+        mana_before = game.state.players["B"].mana_pool["C"]
+        self.act(game, "B", mana_key)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual(mana_before + 1, game.state.players["B"].mana_pool["C"])
+        self.assertFalse(game.state.stack)
+        self.replay(game)
+
+        # B controls the land on its owner A's turn. A and B are different roles.
+        self.set_priority_window(game, "A", "A")
+        self.assertNotIn(return_key, self.action_ids(game, "A"))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": return_key}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.checkpoint(game)
+        self.act(game, "A", "pass")
+        self.assertIn(return_key, self.action_ids(game, "B"))
+        self.assertNotIn(mana_key, self.action_ids(game, "B"))
+        mana_before = dict(game.state.players["B"].mana_pool)
+        self.act(game, "B", return_key)
+        item, = game.state.stack
+        self.assertEqual("B", item.controller)
+        self.assertFalse(item.targets)
+        self.assertEqual("battlefield", game.state.cards[source.object_id].zone)
+        self.assertEqual(mana_before, game.state.players["B"].mana_pool)
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertIn(source.object_id, game.state.players["A"].zones["hand"])
+        self.assertNotIn(source.object_id, game.state.players["B"].zones["hand"])
+        self.replay(game)
+
+    def test_ghost_town_native_pending_return_ignores_reentered_incarnation(self):
+        game = self.session(86402)
+        source = self.add(game.engine, "Ghost Town")
+        spiral = self.add(game.engine, "Growth Spiral", zone="hand")
+        self.assert_closed(game, source)
+        self.assert_closed(game, spiral)
+        self.set_priority_window(game, "C", "C")
+        game.state.players["A"].mana_pool.update({"G": 1, "U": 1})
+        self.checkpoint(game)
+        self.priority(game, "A")
+        original = game.state.cards[source.object_id].logical_object_id
+        return_key = f"activate:{source.ref}:ab2"
+        self.act(game, "A", return_key)
+        self.priority(game, "A")
+        self.act(game, "A", return_key)
+        self.assertEqual(2, len(game.state.stack))
+        self.resolve_top(game)
+        self.assertIn(source.object_id, game.state.players["A"].zones["hand"])
+        self.assertEqual(1, len(game.state.stack))
+        self.cast_for(game, "A", spiral)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.act(game, "A", "choose", card=source.ref)
+        reentered = game.state.cards[source.object_id]
+        self.assertEqual("battlefield", reentered.zone)
+        self.assertNotEqual(original, reentered.logical_object_id)
+        replacement_id = reentered.logical_object_id
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertFalse(game.state.stack)
+        current = game.state.cards[source.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual(replacement_id, current.logical_object_id)
+        self.replay(game)
 
 
 if __name__ == "__main__":

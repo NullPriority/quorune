@@ -66,6 +66,35 @@ def targeted_destruction_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    from .nonbasic_land_source_untap import nonbasic_land_source_untap_dependencies, uses_nonbasic_land_source_untap
+    from .artifact_destruction_treasure import artifact_destruction_treasure_dependencies, uses_artifact_destruction_treasure
+    from .destroyed_creature_copy import destroyed_creature_copy_dependencies, uses_destroyed_creature_copy
+
+    if uses_destroyed_creature_copy(effect):
+        try:
+            return destroyed_creature_copy_dependencies(effect, target_schema)
+        except (TypeError, ValueError):
+            return ()
+
+    if uses_nonbasic_land_source_untap(effect):
+        try:
+            return nonbasic_land_source_untap_dependencies(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+
+    from .target_controller_library_reveal import target_controller_library_dependencies, uses_target_controller_library_reveal
+
+    if uses_target_controller_library_reveal(effect):
+        try:
+            return target_controller_library_dependencies(effect, target_schema)
+        except (TypeError, ValueError):
+            return ()
+
+    if uses_artifact_destruction_treasure(effect):
+        try:
+            return artifact_destruction_treasure_dependencies(effect, target_schema)
+        except (TypeError, ValueError):
+            return ()
     regeneration_prohibited = effect.get("regeneration_prohibited")
     expected_fields = {"op", "card"} | (
         {"regeneration_prohibited"}
@@ -112,6 +141,15 @@ def self_regeneration_node_capabilities(
     if len(effects) != 1:
         return ()
     effect = effects[0]
+    from ..regeneration import controlled_creature_regeneration_dependencies, is_controlled_creature_regeneration
+
+    if is_controlled_creature_regeneration(effect):
+        if target_schema is not None or effect_mechanics != {"regenerate"}:
+            return ()
+        try:
+            return controlled_creature_regeneration_dependencies(effect)
+        except (TypeError, ValueError):
+            return ()
     if set(effect) != {"op", "card"} or effect.get("op") != "regenerate":
         return ()
     reference = effect.get("card")

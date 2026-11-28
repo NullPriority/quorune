@@ -239,5 +239,13 @@ def paid_graveyard_runtime_dependencies(program):
         elif isinstance(value, (list, tuple)):
             for child in value:
                 visit(child)
-    visit((program.effects, program.handlers, program.cost_schema))
+    from ..public_alternative_costs import life_and_blue_hand_exile_price_payload_dependencies
+
+    visit((program.effects, program.cost_schema))
+    for handler in program.handlers:
+        if isinstance(handler, Mapping) and life_and_blue_hand_exile_price_payload_dependencies(handler):
+            # The exact alternative-price owner has already decoded this subtree.
+            visit({key: child for key, child in handler.items() if key != "alternative_cost"})
+        else:
+            visit(handler)
     return tuple(sorted(required))

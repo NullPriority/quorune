@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
+from functools import partial
 from typing import Any, Protocol
 
+from ..characteristic_read_frames import characteristic_read_frame
+from ..continuous_effect_model import Layer
 from ..additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_BATTLEFIELD_COST,
@@ -18,11 +21,17 @@ from ..additional_cost_vocabulary import (
     SACRIFICE_ONE_COST,
     ZONE_CHANGE_COST_KIND,
 )
+from .named_sacrifice_cost_model import (
+    NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD, validate_named_sacrifice_cost,
+)
 from ..object_predicate import ObjectQuerySpec
 from ..qualified_return_cost_model import QUALIFIED_RETURN_COST_VERSION, validate_qualified_return_cost
 from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION, validate_keyword_sacrifice_cost
 from ..sacrifice_union_model import SacrificePredicateUnion, validate_sacrifice_union_variant
 from ..object_query import object_query_result, query_objects
+from .island_pair_discard_cost import (
+    ISLAND_PAIR_DISCARD_FIELD, ISLAND_PAIR_DISCARD_VERSION, validate_island_pair_discard_cost,
+)
 
 
 class AdditionalCostError(ValueError):
@@ -32,7 +41,9 @@ class AdditionalCostError(ValueError):
 class AdditionalCostQueryHost(Protocol):
     state: Any
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(
+        self, card: Any, *, maximum_layer: Layer | None = None,
+    ) -> Mapping[str, Any]: ...
 
     def _type_parts(
         self, type_line: str
@@ -73,6 +84,8 @@ _FIXED_COMBAT_RETURN_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {
 }
 _ANNOUNCED_ZONE_CHANGE_FIELDS = (_FIXED_ZONE_CHANGE_FIELDS - {'count'}) | {'count_parameter'}
 _FIXED_UNION_ZONE_CHANGE_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {'predicate_union'}
+_FIXED_ISLAND_PAIR_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {ISLAND_PAIR_DISCARD_FIELD}
+_FIXED_NAMED_ZONE_CHANGE_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {NAMED_SACRIFICE_NAME_FIELD}
 ANNOUNCED_X_EXILE_CAPABILITY = 'casting.additional_cost.announced_x_graveyard_exile'
 ANNOUNCED_X_DISCARD_CAPABILITY = 'casting.additional_cost.announced_x_hand_discard'
 ANNOUNCED_X_LIFE_CAPABILITY = 'casting.additional_cost.announced_x_life'
@@ -328,11 +341,26 @@ def _validate_color_return_cost(cost) -> None:
 
 DAMAGE_QUALIFIED_SACRIFICE_VERSION = 9
 DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY = "casting.additional_cost.zone_change.damage_dealt_sacrifice"
+CAST_COPY_SACRIFICE_PRICE_VERSION = 10
 
 
 def damage_qualified_sacrifice_predicate() -> ObjectQuerySpec:
     return ObjectQuerySpec(zones=("battlefield",), controller="$actor", known_to_actor=True,
                            types_all=("creature",))
+
+
+def _validate_zone_change_cardinality(cost) -> None:
+    if cost.schema_version == 3:
+        _validate_announced_zone_cost(cost)
+        return
+    if cost.schema_version == CAST_COPY_SACRIFICE_PRICE_VERSION:
+        if (cost.operation != SACRIFICE_ONE_COST or cost.count_parameter is not None
+                or type(cost.count) is not int or cost.count < 1 or cost.unblocked_attacker is not False
+                or cost.predicate != damage_qualified_sacrifice_predicate()):
+            raise AdditionalCostError("Cast-linked copy prices need a positive number of controlled creatures")
+        return
+    if cost.count_parameter is not None or type(cost.count) is not int or not 1 <= cost.count <= 99:
+        raise AdditionalCostError("Fixed zone-change additional costs require 1-99 objects")
 
 
 def _validate_damage_qualified_sacrifice(cost) -> None:
@@ -351,6 +379,31 @@ def _damage_qualified_sacrifice_candidates(host, actor, rows):
     ))
 
 
+def _validate_optional_zone_change_variants(cost) -> None:
+    from ..power_sacrifice_model import validate_power_sacrifice_variant
+
+    common = (cost.schema_version, cost.operation, cost.count, cost.predicate,
+              cost.unblocked_attacker, cost.count_parameter)
+    try:
+        validate_power_sacrifice_variant(*common)
+        validate_sacrifice_union_variant(*common, cost.predicate_union)
+        validate_island_pair_discard_cost(cost)
+    except ValueError as exc:
+        raise AdditionalCostError(str(exc)) from exc
+
+
+def _validate_name_or_damage_cost(cost) -> None:
+    if cost.schema_version == NAMED_SACRIFICE_COST_VERSION:
+        try:
+            validate_named_sacrifice_cost(cost)
+        except ValueError as exc:
+            raise AdditionalCostError(str(exc)) from exc
+    elif cost.sacrifice_name is not None:
+        raise AdditionalCostError("A sacrifice name requires the explicit named cost version")
+    if cost.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
+        _validate_damage_qualified_sacrifice(cost)
+
+
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCost:
     """Move one fixed-size selected set between operation-owned zones."""
@@ -364,12 +417,15 @@ class FixedZoneChangeAdditionalCost:
     count_parameter: str | None = None
     unblocked_attacker: bool = False
     predicate_union: SacrificePredicateUnion | None = None
+    island_pair: bool = False
+    sacrifice_name: str | None = None
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
             or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION,
-                QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
+                QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                CAST_COPY_SACRIFICE_PRICE_VERSION, ISLAND_PAIR_DISCARD_VERSION, NAMED_SACRIFICE_COST_VERSION}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -382,10 +438,7 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional-cost operation is unsupported"
             )
-        if self.schema_version == 3:
-            _validate_announced_zone_cost(self)
-        elif self.count_parameter is not None or type(self.count) is not int or not 1 <= self.count <= 99:
-            raise AdditionalCostError('Fixed zone-change additional costs require 1-99 objects')
+        _validate_zone_change_cardinality(self)
         origin, _, expected_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[
             self.operation
         ]
@@ -397,8 +450,7 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional costs require a typed object predicate"
             )
-        if self.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
-            _validate_damage_qualified_sacrifice(self)
+        _validate_name_or_damage_cost(self)
         if self.schema_version == COLOR_RETURN_SCHEMA_VERSION:
             _validate_color_return_cost(self)
         if self.schema_version == QUALIFIED_RETURN_COST_VERSION:
@@ -406,11 +458,7 @@ class FixedZoneChangeAdditionalCost:
         if self.schema_version == KEYWORD_SACRIFICE_COST_VERSION:
             try:validate_keyword_sacrifice_cost(self)
             except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
-        from ..power_sacrifice_model import validate_power_sacrifice_variant
-        try:validate_power_sacrifice_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter)
-        except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
-        try:validate_sacrifice_union_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter,self.predicate_union)
-        except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
+        _validate_optional_zone_change_variants(self)
         expected_owner = "$actor" if origin != "battlefield" else None
         expected_controller = "$actor" if origin == "battlefield" else None
         state_predicate = self.predicate.state_predicate
@@ -527,6 +575,8 @@ class FixedZoneChangeAdditionalCost:
                 _FIXED_COMBAT_RETURN_FIELDS,
                 _ANNOUNCED_ZONE_CHANGE_FIELDS,
                 _FIXED_UNION_ZONE_CHANGE_FIELDS,
+                _FIXED_ISLAND_PAIR_FIELDS,
+                _FIXED_NAMED_ZONE_CHANGE_FIELDS,
             }
         ):
             raise AdditionalCostError(
@@ -534,10 +584,15 @@ class FixedZoneChangeAdditionalCost:
             )
         try:
             if (value["schema_version"] in {COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION,
-                    KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
+                    KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                    CAST_COPY_SACRIFICE_PRICE_VERSION}
                     and set(value) != _FIXED_ZONE_CHANGE_FIELDS):
                 raise ValueError("Versioned fixed zone-change cost fields are closed")
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
+            if (ISLAND_PAIR_DISCARD_FIELD in value) != (value["schema_version"] == ISLAND_PAIR_DISCARD_VERSION):
+                raise ValueError("Island pair fields require exactly the paired discard version")
+            if (NAMED_SACRIFICE_NAME_FIELD in value) != (value["schema_version"] == NAMED_SACRIFICE_COST_VERSION):
+                raise ValueError("A sacrifice name requires exactly the named cost version")
             if ('predicate_union' in value) != (value['schema_version'] == 5):
                 raise ValueError('Sacrifice union fields require exactly schema five')
             predicate_union = SacrificePredicateUnion.from_dict(value['predicate_union']) if 'predicate_union' in value else None
@@ -552,6 +607,8 @@ class FixedZoneChangeAdditionalCost:
             count=value.get("count"),
             count_parameter=value.get("count_parameter"),
             predicate_union=predicate_union,
+            island_pair=value.get(ISLAND_PAIR_DISCARD_FIELD, False),
+            sacrifice_name=value.get(NAMED_SACRIFICE_NAME_FIELD),
             choice_field=value["choice_field"],
             predicate=predicate,
             unblocked_attacker=value.get("unblocked_attacker", False),
@@ -602,6 +659,10 @@ class FixedZoneChangeAdditionalCost:
             value['count_parameter'] = self.count_parameter
         if self.schema_version == 5:
             value['predicate_union'] = self.predicate_union.to_dict()
+        if self.island_pair:
+            value[ISLAND_PAIR_DISCARD_FIELD] = self.island_pair
+        if self.schema_version == NAMED_SACRIFICE_COST_VERSION:
+            value[NAMED_SACRIFICE_NAME_FIELD] = self.sacrifice_name
         return value
 
     def required_count(self, declared_x: Any = None) -> int:
@@ -741,30 +802,47 @@ def fixed_zone_change_cost_candidates(
     actor: str,
     cost: FixedZoneChangeAdditionalCost,
     exclude_object_id: str | None = None,
+    maximum_layer: Layer | None = None,
 ) -> tuple[str, ...]:
-    """Return operation-owned candidates through one immutable query path."""
+    """Read operation-owned candidates through the layer required by the price."""
 
-    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}:
+    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                               CAST_COPY_SACRIFICE_PRICE_VERSION}:
         from .casting.source_placement import prospective_sacrifice_read_host
         host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 
+    from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+    read_characteristics = host._effective_card_data
+    if maximum_layer is not None:
+        read_characteristics = partial(read_characteristics, maximum_layer=maximum_layer)
+    from ..carddb_characteristics import public_object_rules_names
+
+    required_name = cost.sacrifice_name.casefold() if cost.sacrifice_name is not None else None
     rows = []
-    for object_id in host.state.players[actor].zones[cost.origin_zone]:
-        if object_id == exclude_object_id:
-            continue
-        card = host.state.cards[object_id]
-        effective = host._effective_card_data(card)
-        rows.append(
-            object_query_result(
-                card,
-                effective,
-                type_parts=host._type_parts(
-                    str(effective.get("type_line") or "")
-                ),
-                known_to_actor=True,
-                attached_to_ref=None,
+    with characteristic_read_frame(host):
+        for object_id in host.state.players[actor].zones[cost.origin_zone]:
+            if object_id == exclude_object_id:
+                continue
+            card = host.state.cards[object_id]
+            if cost.operation == SACRIFICE_ONE_COST and sacrifice_is_prohibited(host.state, card):
+                continue
+            effective = read_characteristics(card)
+            if required_name is not None and required_name not in {
+                name.casefold() for name in public_object_rules_names(card, effective)
+            }:
+                continue
+            rows.append(
+                object_query_result(
+                    card,
+                    effective,
+                    type_parts=host._type_parts(
+                        str(effective.get("type_line") or "")
+                    ),
+                    known_to_actor=True,
+                    attached_to_ref=None,
+                )
             )
-        )
     matched = tuple(query_objects(rows, cost.bound_predicate(actor)))
     if cost.predicate_union is not None:
         admitted = {row.ref for query in cost.predicate_union.bound_predicates(actor) for row in query_objects(rows, query)}
@@ -783,6 +861,8 @@ def fixed_zone_change_cost_candidates(
                 combat, host.state.cards.get(row.object_id)))
         else:
             matched = tuple(row for row in matched if not combat.blockers.get(row.object_id))
+    if cost.island_pair and not any("island" in row.subtypes for row in matched):
+        return ()
     return tuple(row.ref for row in matched)
 
 
@@ -811,9 +891,13 @@ def legacy_additional_cost_candidates(
             )
         )
     }
+    from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
     candidates: list[str] = []
     for object_id in host.state.players[actor].zones.get(zone, []):
         card = host.state.cards[object_id]
+        if kind == "sacrifice" and sacrifice_is_prohibited(host.state, card):
+            continue
         if zone == "battlefield":
             if card.controller != actor or card.phased_out:
                 continue

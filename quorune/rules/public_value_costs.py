@@ -10,6 +10,11 @@ PUBLIC_SOURCE_POWER_COST_CAPABILITY = 'cost.modification.public_source_power'
 def public_value_cost_dependencies(value):
     if isinstance(value, Mapping):
         own = set()
+        if "spell_qualification" in value:
+            from ..cast_cost_modifiers import ADVENTURE_PERMANENT_COST_CAPABILITY, PublicCastCostModifierV2Spec
+
+            PublicCastCostModifierV2Spec.from_dict(value)
+            own.add(ADVENTURE_PERMANENT_COST_CAPABILITY)
         if value.get('handler_id') == 'modification.activation-cost.public-quantity.v3':
             from ..semantic_runtime.activation_costs import PublicQuantityActivationCostModifierHandler
             spec = PublicQuantityActivationCostModifierHandler().validate(value)

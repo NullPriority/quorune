@@ -1,6 +1,58 @@
 {
   "cards": [
     {
+      "cmc": 7.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Proliferate"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{G}",
+      "name": "Agent Frank Horrigan",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "oracle_text": "Trample\nAgent Frank Horrigan has indestructible as long as it attacked this turn.\nWhenever Agent Frank Horrigan enters or attacks, proliferate twice. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "6",
+      "type_line": "Legendary Creature — Mutant Warrior"
+    },
+    {
       "cmc": 1.0,
       "color_identity": [
         "W"
@@ -190,6 +242,102 @@
       "released_at": "2025-08-01",
       "toughness": "1",
       "type_line": "Creature — Phyrexian Bird Horror"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Proliferate"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Ripples of Potential",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "oracle_text": "Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there. Treat phased-out permanents and anything attached to them as though they don't exist until their controller's next turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -228,6 +376,198 @@
       "comment": "You don't have to choose every permanent or player that has a counter, only the ones you want to add another counter to. Since \"any number\" includes zero, you don't have to choose any permanents at all, and you don't have to choose any players at all.",
       "oracle_id": "eac94269-4baa-4b8e-a0fd-d6b227d1cde3",
       "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A phased-out token will phase in at the beginning of its controller's untap step just like a nontoken permanent would.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers \"Whenever you proliferate\" triggers even if you chose no permanents or players while doing so.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An attacking or blocking creature that phases out is removed from combat.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any continuous effects with a \"for as long as\" duration ignore phased-out objects. If ignoring those objects causes the effect's conditions to no longer be met, the duration will expire.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "As a creature is phased out, Auras and Equipment attached to it also phase out at the same time. Those Auras and Equipment will phase in at the same time that creature does, and they'll phase in still attached to that creature.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choices made for permanents as they entered the battlefield are remembered even after they phase in.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can't have it get just one kind of counter it already has and not the others.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Permanents phase back in during their controller's untap step, immediately before that player untaps their permanents. Creatures that phase in this way are able to attack and pay a cost of {T} during that turn. If a permanent had counters on it when it phased out, it will have those counters when it phases back in.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phased-out permanents are treated as though they don't exist. They can't be the target of spells or abilities, their static abilities have no effect on the game, their triggered abilities can't trigger, they can't attack or block, and so on.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phasing out doesn't cause any \"leaves the battlefield\" abilities to trigger. Similarly, phasing in won't cause any \"enters the battlefield\" abilities to trigger.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it's too late for anyone to respond.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To proliferate, you can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can't choose cards in any zone other than the battlefield, even if they have counters on them.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't have to choose every permanent or player that has a counter, only the ones you want to add another counter to. Since \"any number\" includes zero, you don't have to choose any permanents at all, and you don't have to choose any players at all.",
+      "oracle_id": "45bcebd0-5e93-4433-b92f-b4c161d04bd6",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don’t get poison counters and they don’t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can’t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won’t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage’s replacement effect), the original event won’t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn’t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can’t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can’t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn’t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Agent Frank Horrigan enters the battlefield attacking, it doesn’t have indestructible since it was never declared as an attacker.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it’s too late for anyone to respond.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can’t have it get just one kind of counter it already has and not the others.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that causes Agent Frank Horrigan to have indestructible starts to apply as soon as it’s declared as an attacker. It applies for the remainder of the turn. It doesn’t matter what happens to the player or permanent it attacked after that point.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "While proliferating twice, players can’t respond between proliferating the first time and proliferating the second time.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can’t choose cards in any zone other than the battlefield, even if they have counters on them.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don’t have to choose every permanent or player that has a counter—only the ones you want to add counters to. Since “any number” includes zero, you don’t have to choose any permanents at all, and you don’t have to choose any players at all.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that cause you to proliferate may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won’t resolve. You won’t proliferate.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you proliferate twice, you don’t have to choose the same set of players and/or permanents to get additional counters each time.",
+      "oracle_id": "aedcde3b-3ed5-443c-a81c-03d785153e55",
+      "published_at": "2024-03-08",
       "source": "wotc"
     }
   ],

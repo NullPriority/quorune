@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and ruling subset",
+  "cards": [
+    {
+      "name": "Run Away Together",
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose two target creatures controlled by different players. Return those creatures to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If both creatures are controlled by the same player as Run Away Together tries to resolve, both targets are illegal. The spell doesn't resolve."
+    },
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If one of the two target creatures becomes an illegal target, Run Away Together can still determine its controller only to check whether the other creature is a legal target. If the illegal target has left the battlefield, use its last known information. If the other creature is still a legal target, it's returned to its owner's hand."
+    },
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If both creatures are controlled by the same player as Run Away Together tries to resolve, both targets are illegal. The spell doesn't resolve."
+    },
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If one of the two target creatures becomes an illegal target, Run Away Together can still determine its controller only to check whether the other creature is a legal target. If the illegal target has left the battlefield, use its last known information. If the other creature is still a legal target, it's returned to its owner's hand."
+    },
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If both creatures are controlled by the same player as Run Away Together tries to resolve, both targets are illegal. The spell doesn't resolve."
+    },
+    {
+      "oracle_id": "290faa28-450e-4797-9a8f-642d8af3f82a",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If one of the two target creatures becomes an illegal target, Run Away Together can still determine its controller only to check whether the other creature is a legal target. If the illegal target has left the battlefield, use its last known information. If the other creature is still a legal target, it's returned to its owner's hand."
+    }
+  ]
+}

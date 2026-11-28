@@ -2,19 +2,30 @@ from __future__ import annotations
 
 """A departed public card identified by its sealed zone-change occurrence."""
 
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 
-from .semantic_runtime.intents import ZoneMoveIntent
+if TYPE_CHECKING:
+    from .semantic_runtime.intents import ZoneMoveIntent
 
 
 EVENT_CARD_RETURN_CAPABILITY = 'zone.return.fixed_event_card'
 EVENT_CARD_RETURN_MECHANIC = 'fixed-event-card-return'
+EVENT_HAND_RETURN_CAPABILITY = "zone.return.fixed_event_departure_owner_hand"
+EVENT_HAND_RETURN_VERSION = "event_hand_return_version"
+EVENT_HAND_RETURN_MECHANIC = "fixed-event-departure-owner-hand"
+OTHER_LEGENDARY_HAND_RETURN_VARIANT = "other_legendary_permanent_graveyard_return"
+OTHER_LEGENDARY_HAND_RETURN_CAPABILITY = "trigger.event.other_legendary_graveyard_departure"
 EVENT_BATTLEFIELD_RETURN_CAPABILITY = 'zone.return.fixed_event_battlefield'
+EVENT_TRANSFORMED_RETURN_CAPABILITY = 'zone.return.fixed_event_tapped_transformed'
 EVENT_BATTLEFIELD_RETURN_MECHANIC = 'fixed-event-battlefield-return'
+EVENT_ENCHANTMENT_RETURN_VERSION = 24
+EVENT_ENCHANTMENT_RETURN_CAPABILITY = "zone.return.fixed_event_enchantment"
 EVENT_LIBRARY_MOVE_CAPABILITY = "zone.return.fixed_event_library"
 EVENT_LIBRARY_COMPOSITION_CAPABILITY = "zone.return.fixed_event_library_components"
 EVENT_LIBRARY_MOVE_VERSION = "event_library_move_version"
 EVENT_LIBRARY_COMPONENTS = "event_library_components"
+CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT = "controlled_creature_death_library_bottom"
+CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE = "fixed-counter-controlled-creature-death-library-bottom-v1"
 GRAVEYARD_SOURCE_ARRIVAL_EVENT = "object.enter_graveyard"
 GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY = "trigger.event.normalized_anywhere_graveyard"
 GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE = "fixed-counter-source-graveyard-arrival-shuffle-v1"
@@ -60,6 +71,10 @@ def event_library_departure_condition(scope: str) -> dict[str, Any]:
     else:
         raise ValueError("Event library moves require a closed departure scope")
     return {"all": conditions}
+
+
+def controlled_creature_death_library_condition() -> dict[str, Any]:
+    return {"field": "previous_controller", "op": "eq", "value": "$source.controller"}
 
 
 def event_library_move_effect(*, position: str | int, shuffle: bool, version: int = 2) -> dict[str, Any]:
@@ -131,11 +146,14 @@ def _validate_library_components(composition, components, owner) -> None:
         raise ValueError("Event library movement contains a duplicate physical departure")
 
 
-def event_library_departure_context(host, context, occurrence, parts):
+def event_library_departure_context(host, context, occurrence, parts, *, event="permanent.leave"):
     """Seal complete post-move identities before the originating trigger is put on the stack."""
     from .rules.event_subscriptions import event_has_capability_subscriber
 
-    if not event_has_capability_subscriber(host, "permanent.leave", EVENT_LIBRARY_COMPOSITION_CAPABILITY):
+    capabilities = (EVENT_LIBRARY_COMPOSITION_CAPABILITY,)
+    if event == "permanent.leave":
+        capabilities += (EVENT_HAND_RETURN_CAPABILITY,)
+    if not any(event_has_capability_subscriber(host, event, capability) for capability in capabilities):
         return context
     group = occurrence.composition
     if group is None or not group.permanent_departure or len(parts) != group.member_count or any(
@@ -240,6 +258,23 @@ def _graveyard_source_shuffle_dependencies(program):
     return (*event_library_move_capabilities(expected), GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY)
 
 
+def _controlled_creature_death_library_dependencies(program) -> tuple[str, ...]:
+    from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
+
+    instruction = event_library_move_effect(position="bottom", shuffle=False)
+    if (
+        (program.event, program.active_zone) != ("creature.dies", "battlefield")
+        or program.event_condition != controlled_creature_death_library_condition()
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, FIXED_OWNER_ZONE_MOVE_MECHANIC} <= set(program.coverage)
+        or "one_or_more_event_batch" in program.coverage
+        or len(program.effects) != 1 or dict(program.effects[0]) != instruction
+    ):
+        raise ValueError("A controlled creature death requires its original owner-library bottom move")
+    return event_library_move_capabilities(instruction)
+
+
 def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
     arrival_template = GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
     if (program.event == GRAVEYARD_SOURCE_ARRIVAL_EVENT
@@ -251,6 +286,10 @@ def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
             return is_event_library_move(value) or any(uses_move(child) for child in value.values())
         return isinstance(value, (list, tuple)) and any(uses_move(child) for child in value)
 
+    death_template = CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    death_marked = death_template in str(program.provenance.get("template_id") or "").split("+")
+    if death_marked or program.event == "creature.dies" and uses_move(program.effects):
+        return _controlled_creature_death_library_dependencies(program)
     if not uses_move(program.effects):
         return ()
     from .public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
@@ -284,38 +323,158 @@ def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
             *(("effect.choice.optional_fixed",) if optional else ()))
 
 
+def other_legendary_graveyard_departure_condition() -> dict[str, Any]:
+    return {"all": [
+        {"field": "card", "op": "ne", "value": "$source.ref"},
+        {"field": "supertypes", "op": "contains_any", "value": ["legendary"]},
+        {"field": "to", "op": "eq", "value": "graveyard"},
+    ]}
+
+
+def event_hand_return_effect() -> dict[str, Any]:
+    return {
+        "op": "move_if_in_zone", EVENT_HAND_RETURN_VERSION: 1,
+        "card": "$context.card", "from": "$context.to", "owner": "$context.owner",
+        "expected_zone_change_counter": "$context.card_zone_change_counter",
+        "destination": "hand", "composition": "$context.composition",
+        "components": "$context." + EVENT_LIBRARY_COMPONENTS,
+    }
+
+
+def is_event_hand_return(effect: Mapping[str, Any]) -> bool:
+    return EVENT_HAND_RETURN_VERSION in effect or (
+        effect.get("op") == "move_if_in_zone" and effect.get("destination") == "hand"
+        and ("components" in effect or "composition" in effect)
+    )
+
+
+def event_hand_return_capabilities() -> tuple[str, ...]:
+    return (EVENT_HAND_RETURN_CAPABILITY, "trigger.event.normalized_zone_change",
+            "trigger.effect.fixed_event", "trigger.placement.apnap",
+            "zone.change.destination_replacement", "zone.composition.destination_result")
+
+
+def validate_event_hand_return(effect: Mapping[str, Any], *, resolved: bool = False) -> None:
+    expected = event_hand_return_effect()
+    if not resolved:
+        if dict(effect) != expected or type(effect[EVENT_HAND_RETURN_VERSION]) is not int:
+            raise ValueError("Departure hand returns require the original occurrence roles")
+        return
+    bindings = {"card", "from", "owner", "expected_zone_change_counter", "composition", "components"}
+    extras = {"_replacement_selections", "_runtime_source"}
+    if (
+        set(effect) - extras != set(expected) or type(effect[EVENT_HAND_RETURN_VERSION]) is not int
+        or {key: value for key, value in effect.items() if key not in bindings | extras}
+           != {key: value for key, value in expected.items() if key not in bindings}
+        or effect["from"] not in {"graveyard", "exile"}
+        or type(effect["expected_zone_change_counter"]) is not int or effect["expected_zone_change_counter"] < 1
+        or any(type(effect[key]) is not str or not effect[key] or effect[key].startswith("$") for key in ("card", "owner"))
+        or not isinstance(effect.get("_replacement_selections", ()), (tuple, list))
+    ):
+        raise ValueError("Departure hand returns require a sealed public arrival and owner")
+    _validate_library_components(effect["composition"], effect["components"], effect["owner"])
+
+
+def event_hand_return_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
+    if (
+        target_schema is None and EVENT_HAND_RETURN_MECHANIC in mechanic_ids and len(effects) == 1
+        and dict(effects[0]) == event_hand_return_effect() and type(effects[0][EVENT_HAND_RETURN_VERSION]) is int
+    ):
+        return event_hand_return_capabilities()
+    return ()
+
+
+def event_hand_return_runtime_dependencies(program) -> tuple[str, ...]:
+    def uses_return(value):
+        if isinstance(value, Mapping):
+            return is_event_hand_return(value) or any(uses_return(child) for child in value.values())
+        return isinstance(value, (list, tuple)) and any(uses_return(child) for child in value)
+
+    if not uses_return(program.effects):
+        return ()
+    from .replacement.immutable import FrozenMap
+
+    other_legendary = OTHER_LEGENDARY_HAND_RETURN_CAPABILITY in program.capability_dependencies
+    condition = (other_legendary_graveyard_departure_condition() if other_legendary
+                 else event_library_departure_condition("graveyard_or_exile"))
+    if (
+        (program.event, program.active_zone) != ("permanent.leave", "battlefield")
+        or program.cost_schema is not None or program.handlers
+        or FrozenMap(program.event_condition or {}) != FrozenMap(condition)
+        or not event_hand_return_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+    ):
+        raise ValueError("Departure hand returns require an exact source or other legendary graveyard occurrence")
+    return (*event_hand_return_capabilities(), OTHER_LEGENDARY_HAND_RETURN_CAPABILITY) if other_legendary else event_hand_return_capabilities()
+
+
 def event_battlefield_return_effect(
     *, tapped: bool, entry_counter: str | None = None, controller: str = '$context.owner',
+    transformed_entry: bool = False,
 ) -> dict[str, Any]:
-    if (type(tapped) is not bool or entry_counter not in (None, '+1/+1')
+    if (type(transformed_entry) is not bool or transformed_entry and (
+            tapped is not True or entry_counter is not None or controller != '$context.owner')
+            or type(tapped) is not bool or entry_counter not in (None, '+1/+1')
             or type(controller) is not str or controller not in ('$context.owner', '$controller')):
         raise ValueError('Event battlefield return has unsupported entry instructions')
     return {'op': 'reanimate', 'schema_version': 2, 'card': '$context.card',
         'expected_zone_change_counter': '$context.card_zone_change_counter',
         'controller': controller, 'tapped': tapped, 'entry_counter': entry_counter,
-        'source': '$stack'}
+        'source': '$stack', **({'transformed_entry': True} if transformed_entry else {})}
+
+
+def event_enchantment_return_effect() -> dict[str, Any]:
+    effect = event_battlefield_return_effect(tapped=False)
+    del effect["entry_counter"]
+    return {**effect, "schema_version": EVENT_ENCHANTMENT_RETURN_VERSION, "entry_form": "enchantment"}
 
 
 def event_battlefield_return_intent(effect: Mapping[str, Any], *, actor: str, reason: str) -> ZoneMoveIntent:
-    fields = {'op', 'schema_version', 'card', 'expected_zone_change_counter', 'controller',
-        'tapped', 'entry_counter', 'source'}
+    fields = {'op', 'schema_version', 'card', 'expected_zone_change_counter', 'controller', 'tapped', 'source'}
+    version = effect.get("schema_version")
+    fields.add("entry_form" if version == EVENT_ENCHANTMENT_RETURN_VERSION else "entry_counter")
+    from .rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD
+
+    enchantment = DEATH_ENCHANTMENT_RETURN_FIELD in effect
+    transformed = 'transformed_entry' in effect
+    if transformed:
+        fields.add('transformed_entry')
+        if (effect['transformed_entry'] is not True or enchantment
+                or effect.get('tapped') is not True or effect.get('entry_counter') is not None):
+            raise ValueError("Transformed return requires its fixed tapped battlefield entry")
+    if enchantment:
+        fields.add(DEATH_ENCHANTMENT_RETURN_FIELD)
+        if (type(effect[DEATH_ENCHANTMENT_RETURN_FIELD]) is not int
+                or effect[DEATH_ENCHANTMENT_RETURN_FIELD] != 1
+                or effect.get("tapped") is not False or effect.get("entry_counter") is not None):
+            raise ValueError("Enchantment return has a fixed noncountered and untapped entry description")
     if (set(effect) not in (fields, fields | {'_replacement_selections'})
-            or effect.get('op') != 'reanimate' or type(effect.get('schema_version')) is not int
-            or effect['schema_version'] != 2):
-        raise ValueError('Event battlefield return requires a closed version-two instruction')
+            or effect.get('op') != 'reanimate' or type(version) is not int
+            or version not in (2, EVENT_ENCHANTMENT_RETURN_VERSION)):
+        raise ValueError('Event battlefield return requires a closed versioned instruction')
     incarnation = effect['expected_zone_change_counter']
     if (type(incarnation) is not int or incarnation < 1
             or any(type(effect[k]) is not str or not effect[k] for k in ('card', 'controller', 'source'))
-            or type(effect['tapped']) is not bool or effect['entry_counter'] not in {None, '+1/+1'}):
+            or type(effect['tapped']) is not bool or effect.get('entry_counter') not in {None, '+1/+1'}):
         raise ValueError('Event battlefield return identity and entry facts are malformed')
     selections = effect.get('_replacement_selections', ())
     if not isinstance(selections, (list, tuple)):
         raise ValueError('Event battlefield return replacements require a sequence')
     from .entry_counter_model import EffectEntryCounter
-    counters = (() if effect['entry_counter'] is None else
+    counters = (() if effect.get('entry_counter') is None else
         (EffectEntryCounter(effect['entry_counter'], 1, effect['controller'], effect['source'], '122.6a'),))
-    return ZoneMoveIntent(actor=actor, object_ref=effect['card'], expected_zones=('graveyard',),
-        destination='battlefield', reason=reason, new_controller=effect['controller'],
+    if version == EVENT_ENCHANTMENT_RETURN_VERSION:
+        if enchantment or effect["entry_form"] != "enchantment" or effect["tapped"] or counters:
+            raise ValueError("The original enchantment return adds no counters or tap instruction")
+        enchantment = True
+    from .semantic_runtime.entry_enchantment_return_intent import EntryEnchantmentReturnIntent
+    from .semantic_runtime.intents import ZoneMoveIntent
+
+    intent = EntryEnchantmentReturnIntent if enchantment else ZoneMoveIntent
+    return intent(actor=actor, object_ref=effect['card'], expected_zones=('graveyard',),
+        **({"entry_source_ref": effect["source"]} if enchantment else {}),
+        transformed_entry=transformed, destination='battlefield', reason=reason, new_controller=effect['controller'],
         tapped_policy='tapped' if effect['tapped'] else 'untapped', optional_if_missing=True,
         expected_zone_change_counter=incarnation, effect_entry_counters=counters,
         replacement_selections=tuple(selections))
@@ -338,6 +497,8 @@ def event_card_return_intent(effect: Mapping[str, Any], *, actor: str, reason: s
     selections = effect.get('_replacement_selections', ())
     if not isinstance(selections, (list, tuple)):
         raise ValueError('Event-card return replacements require a bounded sequence')
+    from .semantic_runtime.intents import ZoneMoveIntent
+
     return ZoneMoveIntent(
         actor=actor, object_ref=effect['card'], expected_zones=('graveyard',),
         destination='hand', new_controller=None, reason=reason,
@@ -350,7 +511,11 @@ def event_card_return_intent(effect: Mapping[str, Any], *, actor: str, reason: s
 DEATH_LAND_EXILE_CAPABILITY = "zone.move.fixed_death_source_exile_after_land_type"
 DEATH_LAND_EXILE_MECHANIC = "fixed-death-land-type-and-exile"
 DEATH_EXILE_THEN_RETURN_CAPABILITY = "zone.move.fixed_death_source_exile_before_graveyard_return"
-DEATH_EXILE_ARRIVAL_CAPABILITIES = frozenset({DEATH_LAND_EXILE_CAPABILITY, DEATH_EXILE_THEN_RETURN_CAPABILITY})
+DEATH_EXILE_THEN_REANIMATE_CAPABILITY = "zone.reanimate.after_source_death_exile"
+DEATH_SOURCE_RETURN_TARGET_FIELD = "death_source_return_target_version"
+DEATH_EXILE_ARRIVAL_CAPABILITIES = frozenset({
+    DEATH_LAND_EXILE_CAPABILITY, DEATH_EXILE_THEN_RETURN_CAPABILITY, DEATH_EXILE_THEN_REANIMATE_CAPABILITY,
+})
 DEATH_EXILE_ARRIVALS = "death_exile_arrivals"
 DEATH_EXILE_VERSION = "death_exile_version"
 _DEATH_EXILE_PUBLIC_ZONES = ("graveyard", "exile", "command")
@@ -429,6 +594,18 @@ def death_exile_then_return_node_capabilities(effects, target_schema):
             or effects[0] != death_source_exile_effect()
             or not isinstance(schema, Mapping) or schema.get("types_any") != ["creature"]):
         return ()
+    from .rules.graveyard_card_targets import GraveyardCardTargetKind, OwnGraveyardCardTargetSpec
+    from .rules.reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
+
+    if schema == OwnGraveyardCardTargetSpec(GraveyardCardTargetKind.CREATURE_CARD).to_target_schema():
+        result = dict(effects[1])
+        version = result.pop(DEATH_SOURCE_RETURN_TARGET_FIELD, None)
+        if type(version) is not int or version != 1:
+            return ()
+        required = fixed_target_reanimation_node_capabilities(effects=(result,), target_schema=schema,
+            mechanic_ids=("fixed-target-reanimation", "cr-115-targets"))
+        if required and effects[1].get("controller") == "$controller" and effects[1].get("tapped") is False:
+            return (*required, "card.exile.public_graveyard", DEATH_EXILE_THEN_REANIMATE_CAPABILITY)
     base = source_excluding_graveyard_return_node_capabilities(
         effects=effects[1:], target_schema=schema, mechanic_ids=("return-to-owner-hand", "cr-115-targets"),
     )
@@ -449,6 +626,24 @@ def death_land_exile_runtime_dependencies(program):
     if not required:
         raise ValueError("Death-source exile requires its exact ordered target land setting or owned return")
     return required
+
+
+def current_death_source_return_effect(host, effect):
+    """Restrict the ordered second step to the selected graveyard incarnation."""
+    if DEATH_SOURCE_RETURN_TARGET_FIELD not in effect:
+        return effect
+    from .errors import GameRuleError
+    from .rules.reanimation_followup import current_linked_subject
+
+    version = effect[DEATH_SOURCE_RETURN_TARGET_FIELD]
+    target = effect.get("target_snapshot")
+    if (type(version) is not int or version != 1 or not isinstance(target, Mapping)
+            or set(target) != {"object_id", "ref", "zone_change_counter"}
+            or target["ref"] != effect.get("card") or type(target["zone_change_counter"]) is not int):
+        raise GameRuleError("Death-source reanimation requires its bound original graveyard target")
+    if current_linked_subject(host, target, zone="graveyard") is None:
+        return None
+    return {key: value for key, value in effect.items() if key not in {DEATH_SOURCE_RETURN_TARGET_FIELD, "target_snapshot"}}
 
 
 def apply_death_source_exile(host, effect, *, actor, reason):

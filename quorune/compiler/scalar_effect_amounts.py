@@ -16,7 +16,7 @@ from ..rules.source_references import SourceReferenceSpec
 from ..counter_names import normalized_counter_name
 from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT, counter_placement_condition_names_kind
 from ..creature_subtypes import canonical_creature_subtype_surface
-from ..public_history_query_model import PublicHistoryQuerySpec
+from ..public_history_query_model import PublicHistoryQuerySpec, current_own_graveyard_creature_death_query
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .declared_effect_amounts import declared_effect_amount_template, _result_slot
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
@@ -41,6 +41,20 @@ _HISTORY = {
     "the number of creatures that died this turn": "creatures_died",
     "the number of creatures that entered under your control this turn": "creatures_entered",
 }
+_DRAW_COUNTED_TRAMPLE = re.compile(
+    r"Until end of turn, target creature gains trample and gets \+1/\+0 "
+    r"for each card you['’]ve drawn this turn\.",
+    re.IGNORECASE,
+)
+
+
+def _normalize_draw_counted_trample(text: str) -> str:
+    if _DRAW_COUNTED_TRAMPLE.fullmatch(text):
+        return (
+            "Target creature gets +X/+0 and gains trample until end of turn, "
+            "where X is the number of cards you've drawn this turn."
+        )
+    return text
 
 
 def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
@@ -107,6 +121,9 @@ def _counted_history_result(text: str) -> tuple[str, ScalarEffectAmountSpec] | N
 
 
 def _death_history_count(subject: str) -> ScalarEffectAmountSpec | None:
+    if subject.casefold() == "nontoken creature put into your graveyard from the battlefield this turn":
+        return ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY_COUNT, schema_version=10,
+                                      history_count=current_own_graveyard_creature_death_query())
     match = re.fullmatch(r"(?P<quality>.+?) that died(?P<controlled> under your control)? this turn", subject, re.I)
     if match is None:
         return None
@@ -170,11 +187,42 @@ def _target_creature_power_template(text):
     )
 
 
+def _turn_damage_recovery_template(text: str, source_name: str):
+    match = re.fullmatch(
+        r"You gain life equal to the damage dealt to you this turn[.] "
+        r"(?P<source>[^.]+?) deals damage to target creature you control "
+        r"equal to the damage dealt to you this turn[.]",
+        " ".join(text.split()),
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    source = match["source"]
+    if source.casefold() != "this spell" and not SourceReferenceSpec(source_name).matches(source):
+        return None
+    from ..rules.damage_capability_shapes import turn_damage_recovery_shape
+    from .fixed_effect_clause_sequences import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+
+    effects, target = turn_damage_recovery_shape()
+    return "turn-damage-recovery-v1", effects, target, (
+        SCALAR_AMOUNT_MECHANIC, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
+        "cr-119-life", "cr-120-damage", "cr-115-targets",
+    )
+
+
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    if event is None and (recovery := _turn_damage_recovery_template(text, source_name)) is not None:
+        return recovery
     if target_power := _target_creature_power_template(text.strip()):
         return target_power
+    if re.fullmatch(r"(?:Mega Flare — )?This creature deals damage equal to the total mana value of "
+                    r"other permanents you control to each opponent\.", " ".join(text.split()), re.I):
+        from ..rules.fixed_dual_damage import other_permanent_mana_value_damage_effect
+
+        return ("other-controlled-permanent-mana-value-damage-v1", (other_permanent_mana_value_damage_effect(),),
+                None, ("cr-120-damage", SCALAR_AMOUNT_MECHANIC))
     from .commander_cast_quantity_templates import commander_cast_scalar_template
     commander_result = commander_cast_scalar_template(text, source_name=source_name, compile_fixed=compile_fixed)
     if commander_result is not None:
@@ -188,7 +236,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         source_name=source_name, compile_fixed=compile_fixed, event=event, source_event=source_event)
     if cleanup is not None:return cleanup
     from .target_hand_amount_templates import normalized_target_hand_damage
-    normalized = normalized_target_hand_damage(text.strip(),source_name)
+    normalized = normalized_target_hand_damage(_normalize_draw_counted_trample(text.strip()), source_name)
     if event == "spell.cast" and (counter_amount := re.fullmatch(
         r"Put a number of (?P<counter>[A-Za-z0-9+/-]+) counters equal to "
         r"(?P<value>that spell['’]s mana value) on (?P<receiver>[^.]+?)\.?",
@@ -301,13 +349,104 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
+def _nontoken_creature_entry_food_template(text, binding, compile_fixed):
+    from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+    from ..public_history_query_model import current_nontoken_creature_entry_query
+
+    if (binding.event.value != "step.begin" or binding.active_zone != "battlefield"
+            or not is_controller_end_step_schedule(binding.event_condition)
+            or re.fullmatch(
+                r"Create a number of Food tokens equal to the number of nontoken creatures "
+                r"you had enter the battlefield under your control this turn\.",
+                " ".join(text.split()), re.I) is None):
+        return None
+    base, effects, targets, mechanics = compile_fixed("Create a Food token.")
+    if base is None or targets is not None or len(effects) != 1 or effects[0].get("op") != "create_token":
+        return None
+    amount = ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY_COUNT, schema_version=10,
+                                    history_count=current_nontoken_creature_entry_query())
+    return ("fixed-food-from-nontoken-creature-entry-history-v1", ({**effects[0], "quantity": amount.to_dict()},),
+            None, (*mechanics, SCALAR_AMOUNT_MECHANIC))
+
+
+def _opponent_turn_threshold_end_step(text, binding, compile_fixed):
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            != ("step.begin", "each end step", "battlefield")
+            or not re.fullmatch(
+                r"Draw a card for each opponent who drew two or more cards this turn, then "
+                r"create a Treasure token for each opponent who had two or more lands enter "
+                r"the battlefield under their control this turn[.]",
+                " ".join(text.split()), re.I,
+            )):
+        return None
+
+    from ..public_history_query_model import opponent_event_threshold_query
+    from ..rules.fixed_effect_clause_shapes import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+
+    effects = []
+    mechanics = [SCALAR_AMOUNT_MECHANIC, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC]
+    for clause, operation, field, land_entries in (
+        ("Draw a card.", "draw", "count", False),
+        ("Create a Treasure token.", "create_token", "quantity", True),
+    ):
+        base, result, targets, leaves = compile_fixed(clause)
+        if base is None or targets is not None or len(result) != 1 or result[0].get("op") != operation:
+            return None
+        amount = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.HISTORY_COUNT, schema_version=10,
+            history_count=opponent_event_threshold_query(land_entries=land_entries),
+        )
+        effects.append({**result[0], field: amount.to_dict()})
+        mechanics.extend(leaves)
+    return "end-step-opponent-draw-and-land-thresholds-v1", tuple(effects), None, tuple(mechanics)
+
+
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
+    if thresholds := _opponent_turn_threshold_end_step(text, binding, compile_fixed):
+        return thresholds
+    from .mana_value_destruction import cast_mana_value_destruction_template
+
+    if destruction := cast_mana_value_destruction_template(binding, text):
+        return destruction
+    if food := _nontoken_creature_entry_food_template(text, binding, compile_fixed):
+        return food
+    from ..counter_placement_sets import (
+        SOURCE_POWER_COMBAT_COUNTER_CONDITION, SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC,
+        source_power_combat_counter_effect, source_power_combat_counter_target_schema,
+        source_power_combat_target_counter_effect,
+    )
+
+    if ((binding.event.value, binding.variant) == ("step.begin", "combat on your turn")
+            and getattr(binding, "active_zone", None) == "battlefield"
+            and binding.event_condition == SOURCE_POWER_COMBAT_COUNTER_CONDITION):
+        mechanics = ("cr-122-counters", "declared-effect-amount", SCALAR_AMOUNT_MECHANIC)
+        if re.fullmatch(r"Put X \+1/\+1 counters on each creature you control, "
+                        r"where X is this creature['’]s power\.?", text.strip(), re.I):
+            return ("source-power-combat-creature-counter-set-v1", (source_power_combat_counter_effect(),),
+                    None, mechanics)
+        if re.fullmatch(
+            rf"Put a number of \+1/\+1 counters equal to "
+            rf"(?:this creature|{SourceReferenceSpec(source_name).regex_pattern})['’]s power "
+            rf"on another target creature you control\.?", text.strip(), re.I,
+        ):
+            return ("source-power-combat-creature-target-counters-v1",
+                    (source_power_combat_target_counter_effect(),), source_power_combat_counter_target_schema(),
+                    (*mechanics, "cr-115-targets", SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC))
     from .life_gain_counted_results import life_gain_counted_counter_result, life_gain_counted_self_growth_result
     counted = life_gain_counted_counter_result(text, binding=binding) or life_gain_counted_self_growth_result(text, binding=binding)
     if counted is not None:
         text = counted
     event = binding.event.value
+    if (event == "damage.dealt.self" and binding.variant == "source_combat_damage_player"
+            and binding.active_zone == "battlefield" and text == binding.body
+            and re.fullmatch(r"Draw a card for each kind of counter on it\.?", text.strip(), re.I)):
+        from ..rules.source_counter_kind_draw import (
+            source_combat_damage_to_player_condition_is_exact, source_counter_kind_draw_effect,
+        )
+        if source_combat_damage_to_player_condition_is_exact(binding.event_condition):
+            return ("source-combat-counter-kind-draw-v1", (source_counter_kind_draw_effect(),), None,
+                    (SCALAR_AMOUNT_MECHANIC, "cr-121-drawing-a-card"))
     if (event == "damage.dealt.self" and binding.variant == "source_combat_damage_player"
             and text == binding.body and re.fullmatch(r"You get that many \{E\}\s*\.?", text.strip(), re.I)):
         from ..rules.event_player_result_shapes import combat_damage_energy_effect
@@ -348,10 +487,44 @@ def _graveyard_target_life_slot(operation, path, effects):
     )
 
 
+def _shared_counter_token_projection(effect, effects):
+    from ..fixed_token_production import distributed_source_counter_token_amount
+    from ..fixed_damage_set_model import PlayerDamageGroup, PlayerDamageRelation
+
+    try:
+        amount = distributed_source_counter_token_amount(effect)
+    except (TypeError, ValueError) as exc:
+        raise PublicQueryAmountError(str(exc)) from exc
+    if amount is None:
+        return None
+    if len(effects) != 3 or effect is not effects[1]:
+        raise PublicQueryAmountError("Shared counter results require their ordered placement and damage")
+    placement, _, damage = effects
+    groups = damage.get("groups")
+    if (placement.get("op") != "place_counters" or placement.get("card") != "$source.zone_object"
+            or placement.get("counter") != amount.counter_name
+            or damage.get("op") != "damage_fixed_set" or damage.get("source") != "$source"
+            or not isinstance(groups, (list, tuple))
+            or tuple(groups) != (PlayerDamageGroup(PlayerDamageRelation.ALL).to_dict(),)
+            or damage.get("amount") != effect["token"]["quantity"]):
+        raise PublicQueryAmountError("Token creation and damage must share their original source counter count")
+    return {**effect, "token": {**effect["token"], "quantity": 2}}
+
+
 def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
     from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
 
+    from ..counter_placement_sets import source_power_combat_counter_projection, uses_source_power_combat_counter_set
+
+    if any(uses_source_power_combat_counter_set(effect) for effect in effects):
+        if len(effects) != 1:
+            return None
+        try:
+            fixed = source_power_combat_counter_projection(effects[0])
+        except (TypeError, ValueError):
+            return None
+        return (fixed,), set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount"}
     if len(effects) == 1 and effects[0].get("op") == "place_player_counters":
         from ..rules.event_player_result_shapes import combat_damage_energy_fixed_projection
 
@@ -365,6 +538,11 @@ def scalar_amount_shape_context(effects, mechanics):
     count = 0
     def project(value, operation, path):
         nonlocal count
+        if not path and operation == "create_distributed_tokens":
+            projected = _shared_counter_token_projection(value, effects)
+            if projected is not None:
+                count += 1
+                return projected
         if isinstance(value, Mapping) and value.get('op') == 'mana' and isinstance(value.get('amount'), Mapping):
             if set(value) != {'op', 'player', 'color', 'amount', 'source'}:
                 raise PublicQueryAmountError('A scalar mana result requires an unrestricted single color')
@@ -377,8 +555,9 @@ def scalar_amount_shape_context(effects, mechanics):
             spec = ScalarEffectAmountSpec.from_dict(value)
             if spec.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE:
                 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_MECHANIC
-                if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation,path)!=("damage",("amount",)):
-                    raise PublicQueryAmountError("Upkeep hand difference requires its scheduled player damage slot")
+                amount_slots = {("damage", ("amount",)), ("life", ("delta",))}
+                if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation, path) not in amount_slots:
+                    raise PublicQueryAmountError("Upkeep hand difference requires its scheduled damage or life slot")
             elif spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE:
                 if not _graveyard_target_life_slot(operation, path, effects):
                     raise PublicQueryAmountError("Graveyard-target mana value requires its exact life-result slot")
@@ -386,8 +565,13 @@ def scalar_amount_shape_context(effects, mechanics):
                 if PAID_SACRIFICE_MANA_VALUE_MECHANIC not in mechanics or (operation, path) not in {
                     ('draw', ('count',)), ('life', ('delta',)),
                     ('place_counters', ('amount',)), ('mana', ('amount',)),
+                    ('apply_source_characteristics_until_end_of_turn', ('power',)),
                 }:
                     raise PublicQueryAmountError('Paid sacrifice mana value is outside its closed result slots')
+            elif spec.aggregate is not None and spec.aggregate.schema_version == 3:
+                if ((operation, path) != ("damage_each_opponent", ("amount",))
+                        or "cr-120-damage" not in mechanics):
+                    raise PublicQueryAmountError("Other permanent mana value requires the complete opponent damage slot")
             elif not _result_slot(operation, path,
                                   cast_event_counter_targets=spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE):
                 raise PublicQueryAmountError("Scalar amount is outside a result slot")

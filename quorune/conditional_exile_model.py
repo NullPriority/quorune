@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from .continuous_effect_model import ContinuousObjectIdentity
-from .linked_exile_return_model import ExiledObjectIdentity
+from .linked_exile_return_model import ExiledObjectIdentity, SelectedConditionalExileScope
 
 CONDITIONAL_EXILE_BINDINGS = 'conditional_exile_bindings'
 
@@ -21,12 +21,18 @@ class ConditionalExileBinding:
     source: ContinuousObjectIdentity
     objects: tuple[ExiledObjectIdentity, ...]
     schema_version: int = 1
+    linked_scope: SelectedConditionalExileScope | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
             raise ValueError('Unsupported conditional exile binding schema')
+        expected_scope = SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES if self.schema_version == 2 else None
+        if self.linked_scope is not expected_scope:
+            raise ValueError('Conditional exile linked scope does not match its version')
         if type(self.binding_id) is not str or not self.binding_id:
             raise ValueError('Conditional exile binding requires an instruction identity')
+        if expected_scope is not None and not self.binding_id.endswith(':' + expected_scope.binding_id):
+            raise ValueError('Conditional exile linkage requires its exact selected instruction identity')
         if not isinstance(self.source, ContinuousObjectIdentity):
             raise ValueError('Conditional exile requires the original source incarnation')
         if not isinstance(self.objects, tuple) or not self.objects or any(
@@ -37,18 +43,23 @@ class ConditionalExileBinding:
 
     def to_dict(self) -> dict[str, Any]:
         return {'schema_version': self.schema_version, 'binding_id': self.binding_id,
-            'source': self.source.to_dict(), 'objects': [value.to_dict() for value in self.objects]}
+            'source': self.source.to_dict(), 'objects': [value.to_dict() for value in self.objects],
+            **({'linked_scope': self.linked_scope.value} if self.linked_scope is not None else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> 'ConditionalExileBinding':
-        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'binding_id', 'source', 'objects'}:
+        fields = {'schema_version', 'binding_id', 'source', 'objects'}
+        if isinstance(value, Mapping) and value.get('schema_version') == 2:
+            fields.add('linked_scope')
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Conditional exile binding has a closed schema')
         objects = value['objects']
         if not isinstance(objects, (list, tuple)):
             raise ValueError('Conditional exile objects must be an array')
         return cls(schema_version=value['schema_version'], binding_id=value['binding_id'],
             source=ContinuousObjectIdentity.from_dict(value['source']),
-            objects=tuple(ExiledObjectIdentity.from_dict(item) for item in objects))
+            objects=tuple(ExiledObjectIdentity.from_dict(item) for item in objects),
+            linked_scope=SelectedConditionalExileScope(value['linked_scope']) if 'linked_scope' in value else None)
 
 
 def conditional_source_remains(source: ContinuousObjectIdentity, cards: Mapping[str, Any]) -> bool:
@@ -75,6 +86,18 @@ def source_conditional_bindings(card: Any) -> tuple[ConditionalExileBinding, ...
 def conditional_return_objects(binding: ConditionalExileBinding, cards: Mapping[str, Any]) -> tuple[Any, ...]:
     return tuple(card for identity in binding.objects for card in (cards.get(identity.object_id),)
         if identity.matches_exiled_card(card))
+
+
+def current_source_linked_exile_count(source, cards) -> int:
+    if source.zone != 'battlefield':
+        return 0
+    scope = SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES
+    return len({
+        card.logical_object_id
+        for binding in source_conditional_bindings(source)
+        if binding.linked_scope is scope
+        for card in conditional_return_objects(binding, cards)
+    })
 
 
 def conditional_departure_return_objects(

@@ -4,11 +4,27 @@ from collections.abc import Mapping
 from .object_predicate import ObjectQuerySpec
 
 SACRIFICE_UNION_CAPABILITY = 'casting.additional_cost.permanent_union'
+COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION = 2
 _TYPES = {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'}
 
 
 def controlled_permanent_predicate(**fields):
     return ObjectQuerySpec(zones=('battlefield',), controller='$actor', known_to_actor=True, **fields)
+
+
+def _colored_or_artifact_creature_predicates(color: str) -> tuple[ObjectQuerySpec, ...]:
+    if type(color) is not str or color not in {"W", "U", "B", "R", "G"}:
+        raise ValueError("A creature sacrifice union requires one canonical ordinary color")
+    return (
+        controlled_permanent_predicate(types_all=("creature",), colors_all=(color,)),
+        controlled_permanent_predicate(types_all=("artifact", "creature")),
+    )
+
+
+def colored_or_artifact_creature_sacrifice(color: str) -> "SacrificePredicateUnion":
+    return SacrificePredicateUnion(
+        _colored_or_artifact_creature_predicates(color), COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -17,11 +33,19 @@ class SacrificePredicateUnion:
     schema_version: int = 1
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1 or not isinstance(self.predicates, (tuple, list)):
+        if (type(self.schema_version) is not int
+                or self.schema_version not in {1, COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION}
+                or not isinstance(self.predicates, (tuple, list))):
             raise ValueError('Sacrifice predicate union requires its versioned collection')
         predicates = tuple(self.predicates)
         if not 2 <= len(predicates) <= 4 or any(not isinstance(p, ObjectQuerySpec) for p in predicates) or len(set(predicates)) != len(predicates):
             raise ValueError('Sacrifice union requires two through four distinct clauses')
+        if self.schema_version == COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION:
+            colors = predicates[0].colors_all
+            if len(colors) != 1 or predicates != _colored_or_artifact_creature_predicates(colors[0]):
+                raise ValueError("A creature sacrifice union requires the same creature type in both branches")
+            object.__setattr__(self, "predicates", predicates)
+            return
         for query in predicates:
             if not isinstance(query, ObjectQuerySpec) or query.token not in (None, True):
                 raise ValueError('Sacrifice union clause is unrepresented')

@@ -34,8 +34,10 @@ def select_fixed_nonmoving_cost(host,seat,source,option,mandatory,response,*,hin
             amount = declared_life.amount_for(response.get('x'))
         except AdditionalCostError:
             return False, None
-        maximum = min(host.state.players[seat].life,
-            int(choice_schema.get('x', {}).get('maximum', host.state.players[seat].life)))
+        from ...life_state import available_life_for_payment
+
+        available = available_life_for_payment(host, seat)
+        maximum = min(available, int(choice_schema.get('x', {}).get('maximum', available)))
         if option.get('x_value_policy') == 'zero':
             maximum = 0
         if amount > maximum:

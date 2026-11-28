@@ -89,6 +89,84 @@ class WholeHandDiscardRuntimeTests(unittest.TestCase):
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
 
+    def test_myojin_hand_cast_spends_divinity_and_opponents_order_one_simultaneous_discard(self):
+        session = self.session(70190401)
+        engine = session.engine
+        source = self.add(engine, "Myojin of Night's Reach", zone="hand")
+        keep = self.add(engine, "Generic Bound Growth", zone="hand", ref="myojin-own-keep")
+        hands = {}
+        incumbents = {}
+        for seat, count in (("B", 2), ("C", 2), ("D", 1)):
+            for oid in tuple(session.state.players[seat].zones["hand"])[count:]:
+                engine.move_card(oid, "library", log=False, reason="Prepare a small private hand")
+            hands[seat] = tuple(session.state.players[seat].zones["hand"])
+            incumbents[seat] = self.add(engine, "Generic Bound Plains", seat=seat, zone="graveyard", ref="before-" + seat)
+        action = self.ready(session, source, {"C": 5, "B": 3})
+        self.checkpoint(session)
+        done = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(done.ok, done.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(1, current.counters.get("divinity"))
+        self.assertIn("indestructible", session.engine._combat_keywords(current))
+        activate, = (row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"].startswith(f"activate:{current.ref}:"))
+        done = session.act("pilot:A", {"action_id": activate["id"], "pay": "auto"})
+        self.assertTrue(done.ok, done.summary)
+        self.assertNotIn("divinity", session.state.cards[source.object_id].counters)
+        self.assertNotIn("indestructible", session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+
+        for seat in "BC":
+            self.assertEqual(["pilot:" + seat], session.pending_principals())
+            for opponent in "BCD":
+                self.assertEqual(hands[opponent], tuple(session.state.players[opponent].zones["hand"]))
+            current_order = [session.state.cards[oid].ref for oid in reversed(hands[seat])]
+            other = "C" if seat == "B" else "B"
+            hidden = session.state.cards[hands[other][0]].ref
+            packet = session.packet("pilot:" + seat, full=True)["decision"]
+            self.assertNotIn(hidden, json.dumps(packet))
+            rejected = session.act("pilot:" + other, {"action_id": "choose", "cards": current_order})
+            self.assertFalse(rejected.ok)
+            session = self.replay(session, load=True)
+            done = session.act("pilot:" + seat, {"action_id": "choose", "cards": current_order})
+            self.assertTrue(done.ok, done.summary)
+
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[keep.object_id].zone)
+        for seat in "BCD":
+            self.assertEqual([], session.state.players[seat].zones["hand"])
+            self.assertEqual([incumbents[seat].object_id, *reversed(hands[seat])],
+                             session.state.players[seat].zones["graveyard"])
+        self.assertEqual(1, len({session.state.cards[oid].zone_timestamp for hand in hands.values() for oid in hand}))
+        self.assertFalse(any(row["id"].startswith(f"activate:{source.ref}:")
+                            for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]))
+        self.replay(session, load=True)
+
+    def test_myojin_ordered_activation_schema_and_capability_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.discard_result_model import ORDERED_OPPONENTS_DISCARD_CAPABILITY, validate_discard_draw
+
+        record = self.db.lookup("Myojin of Night's Reach", fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for node in ir.faces[0].nodes if node.event == "activate")
+        effect, = node.effects
+        for mutation in ({"players": "all"}, {"offset": 1}, {"reduction": "own"}, {"schema_version": 2}):
+            with self.assertRaises(ValueError):
+                validate_discard_draw({**effect, **mutation})
+        session = self.session(70190402)
+        source = self.add(session.engine, record.name, zone="hand")
+        session.engine.move_card(source.object_id, "battlefield", reason="Direct entry outside casting", log=False)
+        self.assertNotIn("divinity", session.state.cards[source.object_id].counters)
+        program, = (p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.event == "activate")
+        deps = tuple(cap for cap in program.capability_dependencies if cap != ORDERED_OPPONENTS_DISCARD_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        self.assertFalse(bind_semantic_program_runtime(
+            changed, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+
     def test_original_batch_carriers_with_residual_siblings_reject_runtime_admission(self):
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime

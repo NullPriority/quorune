@@ -1,6 +1,7 @@
 """Exercise a mandatory counter transfer before the original entry."""
 
 from dataclasses import replace
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -179,4 +180,178 @@ class EntryLivePermanentCounterTransferTests(InheritedNativeFixture, unittest.Te
         self.assertEqual(4, token.counters["+1/+1"])
         self.assertEqual({}, game.state.cards[original.object_id].counters)
         self.assertIn("flying", game.engine._combat_keywords(token))
+        self.replay(game, load=True)
+
+
+class ChosenEntryCounterTransferTests(InheritedNativeFixture, unittest.TestCase):
+    entrant_name = "Siltstone Chronicler"
+    destroy_name = "Break the Mast"
+    exile_name = "Scatter the Record"
+    mixed_name = "Brasshold Scout"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        home = Path(cls.temporary.name)
+        fixture = home / "authored-permanent-choices.json"
+
+        def record(number, name, type_line, text="", colors=(), *, creature=False):
+            value = {
+                "name": name, "oracle_id": f"adefed92-321d-4fcc-865e-{number:012d}",
+                "layout": "normal", "type_line": type_line,
+                "oracle_text": text, "colors": list(colors), "color_identity": list(colors),
+                "mana_cost": "{G}" if colors == ("G",) else "{B}" if colors == ("B",) else "{1}",
+                "cmc": 1, "legalities": {"commander": "legal"},
+                "keywords": ["Flying"] if name == cls.entrant_name else [],
+            }
+            if creature:
+                value.update(power="2", toughness="2")
+            return value
+
+        source_text = (
+            "Flying\nAs this creature enters, remove all counters from any number of creatures, enchantments, and artifacts. "
+            "This creature enters with X +1/+1 counters on it, where X equals twice the number of counters removed this way.\n"
+            "When this creature dies, put the counters it had on target creature you control. "
+            "Then shuffle this card into its owner's library."
+        )
+        fixture.write_text(json.dumps({"schema_version": 1, "source": "authored entry and departure tests", "rulings": [],
+            "cards": [
+                record(1, cls.entrant_name, "Creature — Salamander", source_text, ("G",), creature=True),
+                record(2, cls.destroy_name, "Instant", "Destroy target creature.", ("B",)),
+                record(3, cls.exile_name, "Instant", "Exile target card from a graveyard.", ("B",)),
+                record(4, cls.mixed_name, "Artifact Creature — Golem", creature=True),
+            ]}), encoding="utf-8")
+        path = home / "chosen-entry-counter-transfer.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/entry-live-permanent-counter-transfer-cards.json", fixture], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Chosen entry counter transfer", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def test_chosen_public_transfer_counts_each_selected_permanent_once_and_replays(self):
+        game = self.session(61343321)
+        entrant = self.add(game.engine, self.entrant_name, zone="hand")
+        mixed = self.add(game.engine, self.mixed_name, seat="B", ref="mixed-public-counter-pool")
+        enchantment = self.add(game.engine, "Hardened Scales")
+        unchosen = self.add(game.engine, "Sol Ring", seat="C")
+        land = self.add(game.engine, "Plains", seat="D")
+        hidden = self.add(game.engine, self.mixed_name, seat="D", zone="hand", ref="hidden-counter-pool-decoy")
+        mixed.counters.update({"charge": 3, "stun": 2})
+        enchantment.counters["charge"] = 1
+        unchosen.counters["charge"] = 4
+        land.counters["charge"] = 7
+        self.assert_closed(game, entrant)
+        self.prepare(game, mana={"G": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", entrant)
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        game = self.replay(game, load=True)
+        choice = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        effect, = choice["object_choices"]
+        options = choice["object_choices"][effect]
+        self.assertEqual(0, options["minimum"])
+        self.assertEqual({mixed.ref, enchantment.ref, unchosen.ref}, set(options["legal_refs"]))
+        self.assertNotIn(hidden.ref, json.dumps(choice))
+
+        def command(refs):
+            return {"action_id": "choose", "replacement": effect, "replacement_objects": refs}
+
+        before = authoritative_state_hash(game.state)
+        for actor, refs in (("B", [mixed.ref]), ("A", [land.ref]), ("A", [mixed.ref, mixed.ref])):
+            result = game.act(f"pilot:{actor}", command(refs))
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", command([mixed.ref, enchantment.ref]))
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual({"+1/+1": 13}, game.state.cards[entrant.object_id].counters)
+        self.assertEqual({}, game.state.cards[mixed.object_id].counters)
+        self.assertEqual({}, game.state.cards[enchantment.object_id].counters)
+        self.assertEqual(4, game.state.cards[unchosen.object_id].counters["charge"])
+        self.assertEqual(7, game.state.cards[land.object_id].counters["charge"])
+        self.replay(game, load=True)
+
+    def test_simultaneous_chosen_transfers_allow_zero_and_reserve_each_counter_pool(self):
+        game = self.session(61343322)
+        entrants = [
+            self.add(game.engine, self.entrant_name, seat=seat, zone="graveyard", ref=f"counter-entrant-{seat}")
+            for seat in "BCD"
+        ]
+        spell = self.add(game.engine, "Rise of the Dark Realms", zone="hand")
+        first = self.add(game.engine, "Sol Ring", seat="B", ref="simultaneous-first-pool")
+        second = self.add(game.engine, "Sol Ring", seat="C", ref="simultaneous-second-pool")
+        first.counters["charge"] = 3
+        second.counters["stun"] = 2
+        self.prepare(game, mana={"C": 7, "B": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        for entrant, refs in zip(entrants, ([], [first.ref], [first.ref, second.ref]), strict=True):
+            ctx = game.packet("pilot:A", full=True)["decision"]["ctx"]
+            command = {"action_id": "choose", "replacement_objects": refs}
+            if ctx.get("event_order_options"):
+                event, = [event for event in ctx["event_order_options"] if event.endswith(":" + entrant.ref)]
+                effect, = [effect for effect in ctx["event_effect_options"][event] if effect in ctx["object_choices"]]
+                command["replacement_event"] = event
+            else:
+                effect, = ctx["object_choices"]
+            command["replacement"] = effect
+            result = game.act("pilot:A", command)
+            self.assertTrue(result.ok, result.summary)
+        for entrant, amount in zip(entrants, (0, 6, 4), strict=True):
+            current = game.state.cards[entrant.object_id]
+            self.assertEqual(("battlefield", "A", amount),
+                             (current.zone, current.controller, current.counters.get("+1/+1", 0)))
+        self.assertEqual({}, game.state.cards[first.object_id].counters)
+        self.assertEqual({}, game.state.cards[second.object_id].counters)
+        self.replay(game, load=True)
+
+    def _death_stack(self, seed, counters, *, exile_source=False, destroy_target=False):
+        game = self.session(seed)
+        source = self.add(game.engine, self.entrant_name)
+        target = self.add(game.engine, self.mixed_name, seat="B")
+        spell = self.add(game.engine, self.destroy_name, zone="hand", ref="departure-destroy-spell")
+        followup = self.add(game.engine, self.exile_name if exile_source else self.destroy_name,
+                            zone="hand", ref="departure-followup-spell")
+        source.counters.update(counters)
+        game.engine.change_control(source.object_id, "B", reason="Set owner and controller independently")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"B": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell, [source.ref])
+        self.assertEqual("semantic.target", self.resolve(game).kind)
+        self.target(game, "B", [target.ref])
+        if exile_source or destroy_target:
+            self.cast_for(game, "A", followup, [source.ref if exile_source else target.ref])
+            self.resolve_top(game)
+        return game, source, target
+
+    def test_death_copies_lki_kinds_then_shuffles_the_distinct_owner_even_if_source_left(self):
+        counters = {"+1/+1": 2, "charge": 3, "stun": 1, "flying": 1}
+        for exile_source in (False, True):
+            with self.subTest(exile_source=exile_source):
+                game, source, target = self._death_stack(61343330 + exile_source, counters, exile_source=exile_source)
+                game = self.replay(game, load=True)
+                shuffled = []
+                original = type(game.engine).shuffle_library
+
+                def observe_shuffle(host, player, **kwargs):
+                    shuffled.append(player)
+                    return original(host, player, **kwargs)
+
+                with patch.object(type(game.engine), "shuffle_library", observe_shuffle):
+                    self.assertIsNone(self.resolve(game))
+                self.assertEqual(["A"], shuffled)
+                self.assertEqual(counters, game.state.cards[target.object_id].counters)
+                self.assertEqual("exile" if exile_source else "library", game.state.cards[source.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_death_with_illegal_target_keeps_source_and_skips_shuffle(self):
+        game, source, target = self._death_stack(61343333, {"charge": 2}, destroy_target=True)
+        owner_library = tuple(game.state.players["A"].zones["library"])
+        with patch.object(type(game.engine), "shuffle_library", side_effect=AssertionError("Illegal target shuffled")):
+            self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual({}, game.state.cards[target.object_id].counters)
+        self.assertEqual(owner_library, tuple(game.state.players["A"].zones["library"]))
         self.replay(game, load=True)

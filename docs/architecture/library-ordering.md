@@ -22,6 +22,66 @@ ordering choice uses the original owner's completed instruction and the
 current composition. The owner chooses the order privately before any
 part moves.
 
+## Revealed Plains placement
+
+After selecting and revealing a Plains, the bounded conditional search
+compares the searching player's land count with each opponent. If an
+opponent controls more, the searching player may choose tapped battlefield
+entry or hand. Otherwise the revealed card goes to hand directly. The
+destination choice retains the revealed card's original library incarnation
+and shuffles only after the selected movement. Failing to find still
+shuffles once.
+
+## Saved artifact search choices
+
+The reviewed artifact search with a resolution payment orders private candidate
+references deterministically. Its saved semantic program identifies the ordering
+contract. Historical programs retain their original candidate ordering and
+resolution behavior.
+
+The current saved program applies the canonical library search restrictions
+after a successful sacrifice. A search limited to the top of the library
+offers and accepts candidates only within that scope. The resolving player
+may fail to find and still shuffles. Search prohibition skips the private
+choice and preserves the required shuffle.
+
+The source-spanned artifact exchange retains the paid permanent's battlefield
+mana value and the selected library incarnation across the resolution payment.
+The result stays private until the existing zone movement makes it public.
+The exact grammar's separate final shuffle is applied when the initial
+sacrifice is impossible, based on CR 608.2c and 609.3. This reading does not
+change the stored programs' zero-shuffle behavior.
+
+## Targeted top-half exile
+
+A self-cast trigger targets one opponent through normal trigger placement.
+On resolution the top-exile owner computes half of that opponent's current
+library size, rounded up, and moves that many current top cards face up in one
+zone transaction. It grants no play permission. The library size determines
+the quantity inside the authoritative transaction, with no player search or
+advance reveal.
+
+## Searching after a creature sacrifice
+
+An any-number creature sacrifice may precede a search whose mana-value
+ceiling is the number actually sacrificed. The searching player chooses the
+library, graveyard, or both after the sacrifice completes. A searched public
+graveyard with a legal match requires a selection. A searched library is
+private and shuffles after its result, even when the chosen card was in the
+graveyard. A graveyard-only search leaves the library untouched.
+
+## Public pair with marked exile
+
+The controller reveals the top two available cards and elects an opponent
+when there is a genuine choice. The elected opponent chooses the card that
+goes to its owner's hand, and the same library transaction exiles the other.
+The silver counter is bound to the exile destination before publication and
+is omitted if a replacement moves that card somewhere else. A lone revealed
+card goes to hand, and an empty library requires no choice.
+
+The separate untargeted return checks current exile ownership and silver
+counters. It can choose a card marked by a different source.
+
 ## Fixed targeted inspection
 
 `library.inspect.fixed_target_player` represents the resolving controller
@@ -48,13 +108,69 @@ existing codecs and replay meaning. Multiple-card ordering or destination
 partitions, conditional payments, optional initial inspection and face-down
 play permissions remain outside this grammar.
 
+## Private top-four exile and casting
+
+The resolving controller privately inspects up to four cards from the
+targeted opponent's library and chooses one. The canonical move attempts
+face-down exile, then the unselected cards go to the bottom in deterministic
+random order. The continuation retains the original top order and
+incarnations through replacement choices and replay.
+
+A successful exile grants the resolving controller private viewing and
+spell casting for that exile incarnation. Normal timing and costs still
+apply. The cast binds the validated any-type mana permission before the
+card is announced, and the payment owner keeps actual mana provenance for
+restrictions and snow costs.
+
+## Face-down library entry
+
+The Cloak instruction uses the existing face-down entry and turn-up owners. A
+cloaked permanent enters as a face-down 2/2 creature with Ward {2}. Its marker
+preserves the method through save and replay. A legal printed-cost turn-up
+uses the physical card's front characteristics and the ordinary mana and life
+payment authorities. A separate printed turn-up method can still be offered.
+
+The fixed top-five instruction lets its controller look at the available top
+cards and choose exactly two when available. A lone card is the only choice.
+The response
+specifies the order of the selected entries. The continuation pins all looked
+incarnations and delegates the entries to the zone owner one at a time. The
+remaining cards go to the bottom in deterministic random order. The choice,
+incarnations, and bottom ordering stay private.
+
+## Public exile from several libraries
+
+The controller-upkeep instruction moves one current top from each unfinished
+library in each round. It tracks committed face-up exile identities and stops
+each library after its first nonland result or exhaustion. The resolving
+controller elects an active opponent, who excludes a nonland from the actual
+exile results.
+
+The fixed exile cast owner offers up to two distinct cards from the remaining
+results during the same resolution. Each cast uses its offered face, targets
+and additional costs. The cast owner rebuilds the next offer from the current
+stack after the first spell is cast. An unused result remains in exile.
+
 ## Search queries and player roles
+
+A paid-artifact search captures the selected permanent's effective mana value
+and logical incarnation at the sacrifice cost. It supports the ordinary
+sorcery-speed tap activation with either two generic mana and another artifact,
+or one white mana and a controlled artifact. The white price can select the
+source when its current characteristics qualify. The resulting private search
+uses precisely that captured value plus one and delegates battlefield entry and
+the shuffle to the existing library and zone owners.
 
 The canonical library-search query accepts a library owner and a separate
 searching player. Restrictions and bounded top windows belong to the searching
 player; the returned card identities belong to the instructed library. Existing
 self-search callers keep their original default. The query is read-only and
 does not itself issue a choice, grant visibility, move a card or shuffle.
+
+An any-number creature search offers eligible library cards privately, then
+puts the chosen cards onto the battlefield together under their searcher.
+Destination replacements complete before the shuffle. The unrestricted
+and subtype-restricted searches have distinct validated descriptors.
 
 A version-nine target-library exile search keeps both roles explicit through
 choice, validation and movement. Its mandatory unqualified count requires the
@@ -64,6 +180,30 @@ destination replacements. Search prohibition still preserves the printed shuffle
 Saved identities reject changed incarnations, and older search versions cannot
 carry this foreign-library authority. Contextual event-player clauses, qualified
 and optional counts, and unrepresented destinations remain separate boundaries.
+
+A printed pair can link an optional private artifact search to a later
+optional death return. Declining the search leaves the library order in
+place. A search can find zero cards and still shuffle. The search exposes
+only the actual face-up move and binds its exile incarnation to the original
+source. The death trigger can return all still-current linked cards to
+their owners' hands, including cards from multiple entry triggers. An
+entry that resolves after an earlier death keeps its original link.
+
+## Subtype-only simultaneous search
+
+A private any-number subtype search checks effective library characteristics
+without a creature-type filter. A selected instant or sorcery stays in the
+library. The remaining selected permanents enter in one transaction, and the
+library shuffles once after the result. The public result reports only cards
+whose final zones make them public.
+
+A self-entry trigger can search the resolving controller's library, graveyard,
+or both for one non-Human creature within the entry's sealed X. Ordinary uncast
+entries use zero. The shared search owner offers only eligible cards and checks
+the current search restriction and original amount before movement. A
+qualifying card in the searched graveyard requires one find across the chosen
+zones. A library-only search can finish without a find. The owner shuffles
+only when the searched zones include the library.
 
 ## Single land entry during search
 
@@ -77,6 +217,34 @@ the entry choice suspends the search. The continuation rechecks the selected
 library object's incarnation before placement. Invalid responses preserve the
 pending choice and its transaction state.
 
+A mandatory basic-land search can explicitly put its single result onto the
+battlefield tapped, then shuffle, then conditionally untap that result. The
+last instruction reads the resolving player's current controlled land count,
+including the new permanent if it qualifies. The search continuation applies
+the ordinary untap owner only to the actual battlefield incarnation; an
+unsuccessful search or redirected entry leaves no permanent to untap.
+
+A fixed basic-land search can give the announced target player the private
+choice in their own library. A selected basic land enters tapped under that
+player’s control. The target may finish the search without finding a card.
+The target shuffles their library in either case, after the entry and any
+replacement choices finish. A saved continuation keeps the original payer
+and the searching player bound to their roles.
+
+## Opponent top exile and public land entry
+
+A self-cast trigger that exiles four cards from one targeted opponent's library
+uses the fixed library-top batch owner. Only the available cards move, and
+the instruction finishes its destination replacements before the next choice.
+
+The resolving controller can then choose any number of face-up land cards owned
+by that opponent from the public exile zone. The choice includes lands exiled by
+earlier instructions and pins the offered incarnations through save and replay.
+The selected lands enter together under the resolving controller through the
+ordinary battlefield-entry replacements. Optional entry life payments belong to
+that controller, are chosen before the batch moves, and share the controller's
+available life. This instruction does not spend a land play.
+
 ## Playing a revealed matching card
 
 After a matching card is publicly revealed during Kinship, the resolving
@@ -86,6 +254,51 @@ play uses the current turn and land quota, including ordinary entry
 replacement choices. The offer, selected card, and originating trigger
 remain bound through save and replay.
 
+## Revealed top-card placement
+
+A mandatory reveal can place the resolving controller's exact top card on the
+battlefield when it is a land. The ordinary entry and replacement owners
+handle its arrival independently of the controller's land plays. The other
+result moves the revealed card directly to hand and keeps its identity public.
+An empty library ends the instruction immediately. Save and replay preserve
+the original reveal and the exact card through any pending entry replacement.
+
+## Hideaway and linked play
+
+Fixed library selection version 29 seals the resolving controller's private
+top-four window. The controller chooses one card if the window is nonempty.
+The zone owner moves that card face down into exile and randomly places the
+remaining cards on the library bottom. The actual exile incarnation keeps the
+printed ability pair and the exiling permanent's original incarnation.
+
+The player who performed the private selection keeps look access. A later
+controller gains look access through the canonical control transition of that
+same permanent. A phased-out source grants fresh access after it phases in
+and control has settled. The linked play uses the resolving controller's signed
+creature power total and offers the current linked cards privately. A
+committed spell uses the ordinary resolving free-cast and additional-cost
+owners. A committed land uses the current player's ordinary turn and land
+quota. The selected card becomes public as it is played, and an original
+exile link can supply multiple cards when the entry trigger was copied.
+
+## Public top-card statistics after Scry
+
+An optional top-card reveal can compare the revealed card's library mana
+value with an opponent's committed spell. The unaccepted decision carries
+only the reveal choice. Acceptance reveals the then-current top, using
+zero for an X on that library card. The effect compares it with the
+original spell's committed mana value, including announced X and its cast
+face, then uses the ordinary counter owner for a live match. A departed
+original spell still leaves the reveal decision available.
+
+A fixed Scry can continue by publicly revealing the resulting current top card.
+One rules query reads that physical card's effective library type, power and
+toughness. For a creature card the resolution passes power to the ordinary
+draw owner, then toughness to the life-change owner. The revealed card stays
+on top until a draw or its replacement changes the library. A pending draw
+replacement retains the bound life result without repeating the reveal. Only
+the Scry controller sees the other inspected cards.
+
 ## Targeted owner placement
 
 The original target is revalidated before its owner chooses a library
@@ -94,6 +307,21 @@ incarnation along with the separate resolving controller. A successful
 response uses the ordinary zone-transition owner to put that object on top
 or on the bottom of its owner's library. Later instructions continue for the
 original controller.
+
+## Linked public exile and spell names
+
+Two separately ordered controller color-cast triggers can share one linked
+exile set with a static cast prohibition. Each trigger targets one player at
+stack placement and reads that player's current library top on resolution.
+Canonical zone movement records the resulting exile incarnation against the
+original source and linked ability identity.
+
+The current battlefield source reads its face-up linked exiles and applies the
+name restriction to its controller's opponents through the ordinary cast-offer
+and cast-validation owner. A split card in exile supplies both names. The
+prospective spell supplies the chosen face's name, both names when fused, or no
+name when cast face down. The restriction ends for a linked card when it leaves
+exile, and a source that leaves and returns uses its new incarnation.
 
 ## Shared ordered partition
 
@@ -133,6 +361,11 @@ operation rather than a second Scry implementation.
 
 ## Fixed top ordering and shuffle
 
+A represented tap activation can draw one private card and then move its
+original source to the top of its owner's library. The ordinary draw completes
+before the move. The move uses the source's battlefield incarnation from the
+activation. If that incarnation has left, the draw still resolves.
+
 `library.order.fixed_controller` owns a fixed private look followed by a complete
 ordering of those cards on top. `FixedTopLibraryOrderSpec` has a closed controller
 and positive-count schema. The new `order_library_top` choice pins both physical
@@ -165,6 +398,19 @@ controller-only payload and existing handler identity retain their replay
 meaning. The executable marker independently requires the target capability
 and exact single-player schema even after coverage metadata is removed.
 See [ADR 0131](../adr/0131-typed-private-library-ordering.md).
+
+## A private library look with repeated life payment
+
+The controller privately looks at the current top five cards, or the
+available cards in a shorter library. An affordable repeat pays one life
+before ordering that exact group on the bottom. The spell immediately
+looks again. A repeat can pay life when the library is empty.
+
+Stopping shuffles the rest once. The controller places the last looked
+group on top in the chosen order. The existing shuffle owner excludes
+those exact cards, and the top order remains private to the controller.
+The pending decisions retain the same resolving stack object and inspected
+incarnations through save and replay.
 
 ## Fixed hand to library top
 
@@ -213,6 +459,57 @@ the arrivals when several cards reach the library. Replacement continuations
 bind the private order and the announced batch so replay can resume without
 changing the placement or revealing the permutation.
 
+## Linked creature death
+
+A mandatory creature-death trigger uses the battlefield controller recorded
+at the death occurrence. The trigger uses the dying object's owner for the
+library destination and retains the original public arrival. An object that
+changes zones again is unavailable to the trigger. If the creature was merged,
+the owner's private ordering applies to the original components still
+available for the bottom move.
+
+## Exiling the controller's library top
+
+One ordinary targetless activation pays a source tap and one life before it
+can resolve. Resolution uses the ability controller's current library top
+and moves that card face up through the existing top-exile and zone owners.
+An empty library produces no movement. The activation grants no permission
+to play the exiled card. Static top look and cast permissions keep their own
+visibility and casting rules. The qualified artifact-or-colorless spell
+permission checks a proposed face-down spell before offering it, when
+accepting the cast and when validating its ordinary payment. Legacy typed
+permissions keep their recorded front-view behavior.
+
+## Random graveyard bottom
+
+An optional player-targeted instruction takes the chosen player's complete
+current graveyard. The simultaneous zone owner processes destination
+replacements before placing actual library arrivals as a randomly ordered
+bottom group. Existing library cards keep their relative order. The seed,
+affected seat and resolving stack reference fix the permutation across a
+pending replacement and exact replay. The random order is internal to the
+zone transaction and never grants positional knowledge of a multi-card
+group. The archived, unversioned graveyard-bottom operation remains available
+to stored programs for historical replay.
+
+## Shuffle and play the exiled top card
+
+An untargeted five-mana activation shuffles its controller's library and then
+exiles the current top card face up. Only the card that actually reaches exile
+gets the current-turn permission. A land uses ordinary land timing and the
+player's land allotment. A spell uses the free mana cost as its one alternative
+cost and still pays applicable additional costs. Printed X is zero. The
+permission expires this turn and the unused card stays in exile.
+
+## Opposing land entry and top exile
+
+The committed land-entry controller supplies up to two cards from the
+current top of their library for face-up exile through the simultaneous zone
+transition owner. The untargeted ability keeps the original entry controller
+and original ability controller through priority and replay. The following
+draw uses the ordinary per-card draw transaction privately for the ability
+controller. A short or empty supplying library changes only the exile count.
+
 ## Mill result counts
 
 The existing Mill preparation owner consumes a nonnegative resolved integer.
@@ -221,6 +518,25 @@ it does not interpret Python's empty slice as the entire library. Positive
 counts retain the ordinary current-top identity validation and simultaneous,
 replacement-aware zone transaction. Declared spell-cost or public-definition
 amounts require their separate numeric capability, not runtime Oracle parsing.
+
+After a single or joint Mill commits, the public nonland event reports the
+number of its exact, identifiable nonland cards in public destinations.
+One group of simultaneous mills produces one occurrence. The trigger
+placement owner sets the maximum number of distinct creature targets from
+that result and retains ordinary target revalidation during resolution.
+
+A fixed Mill can require its resolving controller to choose one creature,
+enchantment, or land from that instruction's committed public cards. The
+choice preserves their top-first order and exact post-move incarnations. It
+does not reveal hidden replacement destinations or admit preexisting cards
+from the same zone. With no eligible card, resolution continues immediately.
+The selected card uses the ordinary battlefield entry and Aura attachment
+owners, including replacement choices and save/load.
+
+An optional committed-Mill hand selection chooses up to two creature or land
+cards from the actual public result. The choice and the simultaneous hand
+move keep the original controller and each post-move incarnation. A later
+selected mode reads the result of that move during the same resolution.
 
 ## Fixed Surveil
 
@@ -249,6 +565,17 @@ put into a graveyard “this way” remains outside this fixed-body grammar.
 
 ## Fixed library selection
 
+A public legendary selection reveals the current prefix and offers only its
+eligible legendary cards for the optional hand move. The owner’s ordering
+choice contains the actual graveyard arrivals after replacements. Once that
+partition commits, the ordinary token owner creates one Treasure for each
+card that entered the controller’s graveyard in the batch.
+
+The normalized ninjutsu activation observer uses effect version 16 for a
+private fixed-one hand selection and chosen bottom order. The private choice
+advertises one required hand card and the bottom order. The command submits
+both groups. Replay decodes the stored effect version.
+
 `mana_value_limit.py` provides a closed immutable limit over an already evaluated
 mana value. It does not derive that value from costs paid, power or card names.
 The battlefield-selection shape uses that limit separately from the public
@@ -265,6 +592,17 @@ existing partition and destination owners retain privacy, physical/logical
 identity validation, replacement continuation and replay authority. Unowned
 amounts, another player's library, linked followups and unrepresented selected
 destinations remain residual.
+
+A source-entry instruction can measure its resolving controller's current blue
+devotion once, then look privately at that many available top cards. The
+controller may keep one on top. The existing library selection owner puts the
+rest on the bottom in random order. After placement, the instruction compares
+the same measured devotion with the current library size and delegates a
+qualifying win to the game-outcome owner. A zero count skips both the look and
+the placement. The comparison still runs, including when the library is empty.
+Win prohibitions apply at the outcome boundary, after the private ordering.
+The resolved-count selection uses descriptor version 26. The private one-card
+hand and ordered-bottom partition retains version 16.
 
 `library.select.fixed_controller` owns one complete fixed positive inspection
 or reveal of the resolving controller's library top. The compiler supplies a
@@ -329,11 +667,65 @@ next turn boundary. The canonical whole-library shuffle follows, including
 when the revealed prefix contains no creature. Pending entry choices retain
 the exact revealed identities, counter instruction, and pending shuffle.
 
+A version-28 fixed selection publicly reveals the available cards within a
+fixed top prefix and samples one eligible creature card when present. The
+resolving controller and stack reference key the sample, so replay and a
+pending entry replacement retain the same physical card. The controller
+makes no selection or ordering choice. The usual entry owner applies
+replacement effects before the remaining revealed cards move to the bottom in
+random order. The public reveal records the identities without exposing the
+resulting bottom order or cards beyond the sampled prefix.
+
 Aura-capable or ambiguous selectors, attacking entry, other linked post-entry
 grants and graveyard remainders remain compiler residuals. Another player's
 library, conditional or payment instructions, unowned numeric, chosen and name
 predicates, other exile, cast or play destinations, and unowned preceding or
 trailing effects also remain material compiler residuals.
+
+The immutable library selection intent and its commit bridge own the sealed
+arrangement, battlefield attachment, and resulting library knowledge. The
+runtime host delegates the selection to that bridge.
+
+A public single-card placement commits the reveal of the controller's current
+top card before selecting its printed result. The immutable continuation uses
+the revealed card's physical and logical identity for entry, a graveyard move,
+or an optional bottom placement. A card kept on top retains the information
+already revealed, and other library cards stay private. An empty library
+finishes the effect without issuing a choice.
+
+Optional permanent entry uses the canonical non-targeting Aura attachment
+rules. With no legal attachment, the controller can use the printed fallback.
+When an attachment or replacement choice pauses entry, replay resumes the
+sealed movement through the normal zone owner without repeating the reveal.
+
+## Opposing-library top exile and play
+
+A controller end-step ability can exile each active opponent’s current top card
+in one simultaneous move, skipping empty libraries. Only the face-up objects
+that actually reach exile receive a grant. Each grant follows its original
+exile incarnation and its original trigger controller, even after the source
+leaves. A card that leaves exile loses this grant when it changes incarnation.
+
+Ordinary land-play and spell-casting query the same grant during advertisement
+and validation. Timing, land limits, and other costs remain in force. A spell
+cast by this grant can use existing mana as though it were any color. True
+colorless requirements and restrictions on spending each mana unit still apply.
+An independently active permission to spend mana as any type maintains its own
+scope and duration.
+
+## Private controller-library top exile
+
+An untargeted resolving spell can let its controller look at the current top
+two cards of their library and exile them face down together. The batch grants
+look access only to that controller and only to the objects that actually
+reach exile. That access stays in place for the original exile incarnation.
+
+The ordinary land-play and spell-cast permission uses current battlefield
+characteristics to check whether the original controller controls a permanent
+of the required subtype. Losing the last such permanent suspends the play
+permission and regaining one restores it. Land limits, timing, and spell
+costs still apply. A spell already cast continues to resolve if the
+controller later loses that permission.
 
 ## Discover
 
@@ -351,6 +743,11 @@ departure quantities use last-known battlefield information. The resolved amount
 remains fixed throughout the scan and its choices. Zero still performs Discover's
 scan; declining an optional Discover performs none.
 
+A final Saga chapter can pass its public source identity and mana value to a
+triggered life change. The scalar owner reads the same battlefield
+incarnation while available and uses the last known value after departure,
+including sacrifice before trigger placement.
+
 Mandatory cost replacements suspend the whole attempted cast before payment
 commits. The immutable cast intent retains the resolving permission, candidate,
 face, cost and targets. Resume replays ordered choices through the canonical
@@ -367,6 +764,16 @@ owner moves the other exiled cards to the bottom in random order, then the
 procedure emits `player.discovered`. Applicable destination replacements suspend
 cleanup before the whole bottom batch moves; the saved continuation retains its
 public exile progress. Empty libraries still complete the action.
+
+## Library exile after the next cast
+
+A delayed cast trigger retains its original caster and the mana value of the
+actual triggering spell, including its announced X. Its controller exiles
+cards face up from their library through the first instant or sorcery below
+that value. The selected exile incarnation receives a free spell-cast
+permission at normal timing for the rest of that turn. The other exiled cards
+go to the library bottom in random order. An exhausted library leaves no
+permission and returns every exiled card from the scan.
 Casting and cleanup preserve the enclosing instruction continuation; the cast
 spell resolves after that enclosing spell or ability finishes. Cascade retains
 its separate strict-less comparison and cleanup contract.
@@ -384,6 +791,37 @@ rest of the selector against the existing counted search shape. Resolution
 seals the limit before it offers private choices, and resumption validates the
 selection against the same limit. A stated quality still permits the player to
 search and find nothing.
+
+A counted creature search can bind its limit to the last battlefield mana value
+of the creature sacrificed to cast the spell, plus two. Its private offer and
+resumed validation use the same bound when a replacement redirects the paid
+creature. The search shuffles once whether a card is found, then the terminal
+instruction exiles the resolving physical spell. Copies retain the paid value
+and resolve the search for their controller.
+
+An announced-X creature search across a caster's library and graveyard asks
+which zones to search before opening the library. When the chosen zones
+include an eligible graveyard card, the caster must find one card across the
+chosen zones. A qualifying library search may fail to find, and only a searched
+library is shuffled. The same stack X bounds the search and determines the
+following conditional team bonus. It affects the creatures the caster controls
+after the search, including any creature that entered in the search, until end
+of turn. The bonus is independent of whether a card was found. This current
+search transport preserves the existing named and historical search codecs.
+
+An unqualified self-entry library search for a face-down play result uses the
+ordinary mandatory search and shuffle. The movement owner grants the resolving
+controller access to the committed exile incarnation. Ordinary land and spell
+timing and costs apply. Control of the source can change separately from the
+private access to the exiled card.
+
+An opponent's own library search can be delegated to a different authenticated
+principal for the duration of the search. The original searcher retains their
+zones, restrictions, and shuffle. A controlled find may replace the original
+destination with public exile. When effects compete, the authorized chooser
+elects the applicable exile effect for each found object. The winner receives
+ordinary play access until that exile incarnation changes. Historical private
+events remain with their original viewers.
 
 ## Searches with a public query maximum
 
@@ -403,6 +841,28 @@ prohibitions, chooser privacy, entry replacements and rollback remain canonical.
 Historical search versions retain their codecs and meanings. See
 [ADR 0171](../adr/0171-query-bounded-library-search.md).
 
+## Basic-land search followed by an untap
+
+The closed basic-land search puts one selected card onto the battlefield tapped
+through the ordinary entry owner, then shuffles. After the shuffle, it counts
+the resolving controller's current effective lands. With four or more, it
+attempts to untap only the battlefield incarnation created by the search. A
+destination replacement that prevents battlefield entry leaves no object to
+untap. Search results redirected to a hidden zone keep their identities private.
+Failure to find still shuffles.
+
+## Creature searches with a power or toughness limit
+
+The qualified search can find one creature card with current library power or
+toughness of two or less. The query uses the card's library face and evaluates
+characteristic-defining abilities that apply there. The controller may find
+zero cards. A found card is revealed before it moves to hand, and the
+controller shuffles once when the search completes.
+
+When the trigger offers an optional search, the search and shuffle happen
+only if the controller accepts. An accepted search that finds zero cards
+still shuffles.
+
 ## Counted searches with alternative qualities
 
 Different qualifications can share one counted search. Each alternative
@@ -414,6 +874,12 @@ search shuffles once.
 
 The version-three selector carries the separate branches. The original
 version-two form retains its single predicate.
+
+An up-to-N search can put unqualified creature cards into the searching
+player's graveyard. The private response lists the topmost result first.
+Replacement effects use the same simultaneous batch, and the chosen relative
+order applies to the cards that actually reach the graveyard. A completed
+search shuffles once even when the player selects no cards.
 
 ## Searches with conditional placement
 
@@ -431,6 +897,32 @@ rollback and replay retain their existing owners. Declining an optional
 search does not shuffle; searching for a stated quality and finding nothing
 does. Other placement branches and unsupported condition bindings remain
 explicit compiler boundaries.
+
+## Public choices after a private search
+
+The resolving controller privately finds three unqualified cards or all
+available cards when the permitted search window contains fewer. The spell
+announces one opponent as its target. Resolution checks that target before
+the search. A change of control before resolution changes whose library
+is searched and preserves the announced opponent if the target is legal.
+
+The search reveals only the found cards. The targeted opponent chooses one
+of those revealed cards, which enters the searcher's hand. The remainder
+enters the searcher's graveyard in their chosen order. Ordinary destination
+replacements apply before ordering the actual arrivals. The final shuffle
+applies after this placement or when no cards were found. A prohibited
+search still executes the independent shuffle instruction.
+
+The searched-result choice binds the same card incarnations and resolving
+stack object across all decisions. If the opponent leaves during their
+choice, the resolving player chooses another opponent to continue.
+
+The distinct-name variant privately finds up to four cards and compares
+their rules names while they are in the library. Its targeted opponent
+chooses two of the revealed cards for the searcher's graveyard. With only
+one or two revealed cards, all of them go to the graveyard without an
+opponent decision. The other revealed cards go into the searcher's hand
+before the final shuffle.
 
 ## Ordered search allocations
 
@@ -469,6 +961,25 @@ in top-to-bottom order. The owner reveals the selected set in an independent
 public order, shuffles the remainder once, and places the same card objects
 on top without a zone change. Only the controller learns the permutation.
 Earlier single-result library placement retains its existing code and format.
+
+The hidden search owner validates each versioned search descriptor through
+the same checker before advertising or restoring the search. The checker
+decodes search roles, selectors and saved input identities. The search
+owner retains authorization, projection and movement.
+
+## Creature searches with a total mana value limit
+
+A fixed total mana value limit applies to the complete subset of creature cards
+found in the controller's library. The private choice offers each individually
+eligible card once and the search owner validates the selected subset against
+the same bound before movement. Mana value is read in the library, where X in
+a mana cost is zero. The controller may find zero cards and still shuffles.
+
+The zone owner processes the selected cards as one simultaneous battlefield
+entry batch and handles any entry replacements before commitment. The search
+shuffles once after the batch. The choice and the remaining library order stay
+private through replacement pauses, saves and replay.
+[Protean Hulk rulings](https://magic.wizards.com/en/news/feature/ravnica-remastered-release-notes)
 
 ## Library search restrictions
 
@@ -519,10 +1030,26 @@ correction while historical absence retains earlier bookkeeping. See
 [ADR 0156](../adr/0156-versioned-library-order-knowledge.md) and
 [ADR 0157](../adr/0157-controller-reveal-until-partitions.md).
 
-Other players' libraries, variable or chosen stopping conditions, linked
-revealed-count/mana-value consumers, casting results, shuffle-the-rest forms
-and unrepresented destinations remain outside this scan family. Existing
-fixed-count selection and Discover retain their separate contracts.
+A spell that stops at the first creature can use that public reveal to
+trigger a separate counter placement. The trigger retains the creature's
+revealed mana value. An X symbol in the creature's cost contributes zero
+while the card is in the library. The controller chooses one creature they
+control after the spell finishes, through ordinary target selection and
+resolution. A scan without a matching creature creates no trigger.
+
+The named reveal variant accepts a single exact Oracle card or face name
+from the resolving controller before changing any zone. A fixed face-up top
+exile commits first. Only the remaining library is scanned for the name.
+The public prefix stops at the first match, using the card's names as it
+exists in the library. The matched card enters hand with public identity,
+then the other revealed cards move to exile together. No match exiles the
+entire remaining library without attempting a draw.
+
+Other players' libraries, other variable or chosen stopping conditions, other
+linked revealed-count or mana-value results, casting results,
+shuffle-the-rest forms and unrepresented destinations remain outside
+this scan family. Fixed-count selection and Discover retain their
+separate contracts.
 
 ## Deliberate boundary
 
@@ -567,3 +1094,134 @@ Printed activation prices remain paid when a player target becomes illegal;
 revalidation also prevents any following draw from resolving alone. The
 shuffle owner clears order knowledge and preserves seeded replay. Selective
 card sets, hidden-zone wheels and unrepresented siblings remain unsupported.
+
+## Private Bargain search
+
+The search owner shuffles after the hidden library move and before offering
+the resolving cast. A pending destination replacement retains the search
+choice and its actor until resumption. If the selected card stays hidden,
+the replacement journal is visible to the searching player and the analyst.
+A replacement that moves the card to a public zone uses the public journal.
+
+## Target permanent shuffle and top-card reveal
+
+A legal target permanent moves through the canonical zone-transition owner. Its owner is captured before movement and shuffles their current library after the move, including when a replacement redirects it. Required component ordering stays private to that owner and resumes before shuffling. Only the resulting top object is revealed. A physical permanent card can enter under the library owner’s control through the normal entry and attachment owners. Other objects remain on top until the ordinary rules move them. An illegal sole target suppresses the entire result.
+
+## Matching card types after targeted destruction
+
+Targeted destruction can direct the affected permanent's controller to
+reveal cards from their library. A legal target that survives supplies
+its current controller and card types. A target that leaves supplies its
+last known ones. The library owner publicly reveals the prefix through
+the first matching permanent card, puts it onto the battlefield, and
+randomly bottoms the nonmatching cards in the inspected prefix. The
+ordinary library entry owner handles replacements and Aura attachments.
+The public event retains the revealed identities without publishing the
+resulting bottom order.
+
+## Draw for each opponent who drew
+
+An untargeted spell can draw once for each distinct opponent who actually
+drew from the preceding opponent draw instruction. The canonical draw owner
+records a seat only after a draw commits. Replacement-generated draws use
+the same receipt, so multiple cards from one opponent count once.
+Prohibited draws, empty-library attempts and non-draw replacements contribute
+zero. The receipt is bound to its resolving spell and contains seat IDs
+only. The controller's follow-up is a normal private draw instruction.
+
+## Land search after a committed sacrifice
+
+The controller chooses any number of controlled lands during spell
+resolution. The ordinary sacrifice transaction completes before the
+search. Its receipt counts only selected incarnations that generated an
+actual sacrifice, including cards redirected to exile. If multiple cards
+will arrive in the same graveyard, that graveyard's owner chooses their
+order before the sacrifice transaction commits. The private search
+accepts up to that many land cards. It places the chosen lands onto the
+battlefield tapped together, then shuffles. A zero count still opens the
+search and shuffles.
+
+## Draw before opposing top exile
+
+A closed battlefield activation can draw for the resolving controller and
+then exile each current opponent's top card in the ordinary movement batch.
+The draw remains private. Empty opposing libraries contribute no object,
+and the resulting face-up exiles grant no play permission. The separate
+Ingest trigger still takes only the damaged player's current top card.
+
+
+An exact artifact search can use the effective battlefield mana value from
+a committed activation sacrifice. The receipt identifies the original
+sacrificed incarnation and is available after the source or payment leaves.
+The resolving player may fail to find a matching artifact. They still
+shuffle after a prohibited search or an unsuccessful battlefield entry.
+The result uses the ordinary entry replacement owner. Search publication
+uses the actual destinations of the selected cards.
+
+## Reveal until the announced number of lands
+
+The cast offer limits X to the players in the game. Once announced, X stays
+with the resolving spell or copy. The existing public prefix scan collects
+that many lands or reaches the end of the library. It puts the matched lands
+onto the battlefield tapped and randomizes the other revealed cards on the
+bottom. Choosing zero leaves the library untouched.
+
+## Basic land pair with a shared subtype
+
+This counted library search permits zero, one, or two basic land cards.
+Two choices must share a land subtype. A subtype-free basic land can be
+chosen alone. The actor's private search choice describes the pair constraint,
+and the canonical result owner checks it again on the current cards.
+The two entries share one tapped movement event, followed by the printed
+shuffle. The same forced shuffle runs when the search is prohibited or finds
+no cards.
+
+## Opponent shuffle and private top partition
+
+The canonical shuffle owner emits a single normalized public occurrence per
+completed owner shuffle when an admitted ability subscribes to it. Terminal
+spells and Omens distinguish their controller from the library owner. The
+occurrence contains the owner seat and its shuffle count. It carries no
+card identities, and two shuffles in one resolution remain separate.
+
+The bounded opponent-shuffle trigger uses that exact seat and occurrence.
+Its controller may decline before inspecting cards. If they accept, the owner
+reads up to two cards from that library's current top and makes both destination
+groups part of one private decision. The controller may exile at most one
+card face up and must order the remaining cards on top. Both continuation and
+commit require the same admitted, still-resolving trigger. Mismatched source,
+view, or current object identities fail closed.
+
+## Private hand, bottom, and exile access
+
+The controller privately sorts up to three current top identities into one
+hand card and an ordered remainder. The sealed choice commits hand, bottom,
+and exile in the printed order, stopping after the last available card.
+Each zone departure uses the ordinary replacement owner. The bottom card
+retains private knowledge, while a face-up exile arrival can receive ordinary
+play access for its exact incarnation through the current turn.
+
+
+## Ordered opponent search offers
+
+A fixed land-search offer completes the controller's first result before
+collecting public participation decisions. Accepted opponents then make private
+land choices in turn order. The canonical zone owner commits the found
+lands as one batch and applies ordinary found-card and entry replacements.
+Accepting a search and finding no land still counts toward the controller's
+bonus opportunities. The controller's bounded library view retains its original
+identities across those opportunities. Only players who searched shuffle, once
+each after the last result.
+
+
+## Linked library search across Saga chapters
+
+A Saga chapter can search its controller's library, exile the selected card
+face down for that viewer, and shuffle. The link records the actual exile
+incarnation and the original Saga incarnation. Copies of the chapter can add
+further cards to the same link. The reveal chapter turns each current linked
+card face up. If any is a creature card, the original resolving controller
+loses life equal to their combined mana value. The final instruction offers
+one choice to put all current eligible permanent cards onto the battlefield
+when a creature qualifies and sends the remaining cards to their owners'
+hands. Each step uses the existing search, visibility, life and zone owners.

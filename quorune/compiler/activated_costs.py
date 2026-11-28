@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
+from ..activated_ability_descriptor import (
+    SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD,
+    SOURCE_LIBRARY_BOTTOM_CAPABILITY, SOURCE_LIBRARY_BOTTOM_FIELD, SOURCE_LIBRARY_BOTTOM_TEXT,
+    normalize_source_library_bottom_cost, source_library_bottom_mana_price,
+)
 from . import regex_working_set as re
 from typing import Any, Sequence
 
@@ -71,7 +78,45 @@ def _parse_compiled_activation_material(material, *, card_name, keywords):
 
     from .announced_reinforce_nodes import parse_reinforce_activation_material
     abilities = parse_reinforce_activation_material(material, card_name=card_name, keywords=keywords)
-    return tuple(compile_ability_local_mana_reduction(ability, source_name=card_name) for ability in abilities)
+    return tuple(
+        fixed_source_library_bottom_cost(_compile_source_equipment_unattach_cost(
+            compile_ability_local_mana_reduction(_compile_commander_identity_life_cost(ability), source_name=card_name)
+        ))
+        for ability in abilities
+    )
+
+
+def _compile_source_equipment_unattach_cost(ability):
+    from ..granted_activation_model import GrantingAttachmentPayment, GrantingAttachmentPaymentKind
+    from ..util import ORDINARY_FIXED_MANA_PATTERN
+
+    if not re.fullmatch(rf"{ORDINARY_FIXED_MANA_PATTERN},\s*Unattach this Equipment", ability.cost_text, re.I):
+        return ability
+    try:
+        return replace(ability, uncompiled_costs=(),
+                       granting_attachment_payment=GrantingAttachmentPayment(GrantingAttachmentPaymentKind.UNATTACH_SOURCE))
+    except ValueError:
+        return ability
+
+
+def _compile_commander_identity_life_cost(ability: ActivatedAbility) -> ActivatedAbility:
+    from ..rules.activation.commander_identity_life import PRICE_CLAUSE, uses_commander_identity_life
+
+    if not uses_commander_identity_life(ability):
+        return ability
+    remaining = tuple(" ".join(clause.casefold().replace("’", "'").split())
+                      for clause in ability.uncompiled_costs)
+    return replace(ability, uncompiled_costs=()) if remaining == (PRICE_CLAUSE,) else ability
+
+
+def fixed_source_library_bottom_cost(ability: ActivatedAbility) -> ActivatedAbility:
+    missing = tuple(map(normalize_source_library_bottom_cost, ability.uncompiled_costs))
+    if missing != (SOURCE_LIBRARY_BOTTOM_TEXT,) or source_library_bottom_mana_price(ability.cost_text) != dict(ability.mana):
+        return ability
+    try:
+        return replace(ability, source_library_bottom=True, uncompiled_costs=())
+    except ValueError:
+        return ability
 
 
 def activated_ability_cost_capabilities(
@@ -80,6 +125,26 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    from ..granted_activation_model import GrantingAttachmentPaymentKind, SOURCE_EQUIPMENT_UNATTACH_CAPABILITY
+    if (ability.granting_attachment_payment is not None
+            and ability.granting_attachment_payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE):
+        additional.append(SOURCE_EQUIPMENT_UNATTACH_CAPABILITY)
+    from ..rules.forage import FORAGE_ACTIVATION_CAPABILITY, has_forage_cost
+
+    if has_forage_cost(ability):
+        additional.append(FORAGE_ACTIVATION_CAPABILITY)
+    from ..rules.chosen_color_draw_price import CAPABILITY as CHOSEN_COLOR_DRAW_CAPABILITY, chosen_color_draw_text
+
+    if chosen_color_draw_text(ability.cost_text, ability.effect_text):
+        additional.append(CHOSEN_COLOR_DRAW_CAPABILITY)
+    from ..rules.activation.commander_identity_life import ACTIVATION_COMMANDER_LIFE_CAPABILITY, uses_commander_identity_life
+
+    if uses_commander_identity_life(ability) and ability.compiled_cost:
+        additional.append(ACTIVATION_COMMANDER_LIFE_CAPABILITY)
+    if ability.loyalty_x:
+        from ..rules.linked_loyalty_exile_model import LOYALTY_X_CAPABILITY
+
+        additional.append(LOYALTY_X_CAPABILITY)
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_CAPABILITY
 
@@ -104,16 +169,30 @@ def activated_ability_cost_capabilities(
         for choice in ability.choices
         if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES
     )
+    from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY, announced_subtype_sacrifice_choice
+    if announced_subtype_sacrifice_choice(ability) is not None:
+        additional.append(ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY)
+    from ..rules.announced_artifact_sacrifice_return import ARTIFACT_SACRIFICE_X_CAPABILITY, has_announced_artifact_sacrifice
+
+    if has_announced_artifact_sacrifice(ability):
+        additional.extend((ARTIFACT_SACRIFICE_X_CAPABILITY, "target.revalidate_resolution"))
+    from ..rules.announced_hand_discard import ANNOUNCED_HAND_DISCARD_CAPABILITY, announced_hand_discard_choice
+    if announced_hand_discard_choice(ability) is not None:
+        additional.append(ANNOUNCED_HAND_DISCARD_CAPABILITY)
     if ability.announced_x_symbols is not None:
-        from ..activation_x import activation_x_capabilities
+        from ..activation_x import activation_x_capabilities, has_controlled_land_return_x_price
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,
-            sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
+            sacrifice_source=ability.sacrifice_source,
+            discard_cards=bool(ability.choices) and not has_controlled_land_return_x_price(ability),
             discard_source=ability.discard_source))
     if ability.waterbend is not None:
         from ..waterbend import WATERBEND_CAPABILITY
         additional.append(WATERBEND_CAPABILITY)
     if ability.energy_payment:
         additional.append('activation.energy.fixed_payment')
+    if ability.announced_energy_reanimation:
+        from ..rules.announced_energy_reanimation import CAPABILITY as ENERGY_REANIMATION_CAPABILITY
+        additional.append(ENERGY_REANIMATION_CAPABILITY)
     if ability.random_discard_payment:
         additional.append('activation.random_discard.fixed')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
@@ -170,9 +249,19 @@ def activated_ability_cost_capabilities(
     if any(choice.tap_schema_version == 3 for choice in ability.choices):
         from ..rules.activation_costs import LEGENDARY_TAP_ACTIVATION_CAPABILITY
         additional.append(LEGENDARY_TAP_ACTIVATION_CAPABILITY)
-    if any(choice.sacrifice_schema_version is not None for choice in ability.choices):
-        from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
+    from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY, KEYWORD_SACRIFICE_COST_VERSION
+    from ..rules.named_sacrifice_cost_model import NAMED_SACRIFICE_CAPABILITY, NAMED_SACRIFICE_COST_VERSION
+    if any(choice.sacrifice_schema_version == KEYWORD_SACRIFICE_COST_VERSION for choice in ability.choices):
         additional.append(KEYWORD_SACRIFICE_CAPABILITY)
+    if any(choice.sacrifice_schema_version == NAMED_SACRIFICE_COST_VERSION for choice in ability.choices):
+        additional.append(NAMED_SACRIFICE_CAPABILITY)
+    if ability.source_counter_placement_cost is not None:
+        additional.append(SOURCE_COUNTER_PLACEMENT_CAPABILITY)
+    if ability.source_library_bottom:
+        additional.append(SOURCE_LIBRARY_BOTTOM_CAPABILITY)
+    if ability.mill_library_cost:
+        from ..rules.activation.mill_library_cost import MILL_LIBRARY_ACTIVATION_COST_CAPABILITY
+        additional.append(MILL_LIBRARY_ACTIVATION_COST_CAPABILITY)
     return tuple(dict.fromkeys(additional))
 
 
@@ -201,7 +290,20 @@ def activated_ability_cost(
         "choices": [choice.compact() for choice in ability.choices],
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
+    if ability.granting_attachment_payment is not None:
+        from ..granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
+        result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = ability.granting_attachment_payment.to_dict()
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.announced_x_minimum:result['announced_x_minimum']=ability.announced_x_minimum
+    if ability.loyalty_x:
+        result["loyalty_x"] = True
+    from ..rules.activation.commander_identity_life import ACTIVATION_COMMANDER_LIFE_FIELD, uses_commander_identity_life
+
+    if uses_commander_identity_life(ability) and ability.compiled_cost:
+        result[ACTIVATION_COMMANDER_LIFE_FIELD] = 1
+
+    if ability.announced_energy_reanimation:
+        result["announced_energy_reanimation"] = True
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
 
@@ -218,10 +320,20 @@ def activated_ability_cost(
         result["activation_limit"] = ability.activation_limit.value
     if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
     if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
+    if ability.source_library_bottom:
+        result[SOURCE_LIBRARY_BOTTOM_FIELD] = True
+    if ability.mill_library_cost:
+        result['mill_library_cost'] = ability.mill_library_cost
+    if ability.source_counter_placement_cost is not None:
+        result[SOURCE_COUNTER_PLACEMENT_FIELD] = ability.source_counter_placement_cost.to_dict()
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
     if ability.saddle_threshold is not None:
         result["saddle"] = ability.saddle_threshold
+    from ..rules.chosen_color_draw_price import FIELD as CHOSEN_COLOR_DRAW_PAYMENT, chosen_color_draw_text
+
+    if chosen_color_draw_text(ability.cost_text, ability.effect_text):
+        result[CHOSEN_COLOR_DRAW_PAYMENT] = 1
     if public_timing is not None:
         result[PUBLIC_ACTIVATION_FIELD] = public_activation_descriptor(public_timing)
     return result

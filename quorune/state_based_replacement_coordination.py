@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Authenticated suspension of state-based destruction and zone choices."""
 
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping, Sequence, TYPE_CHECKING
 from contextvars import ContextVar
 from contextlib import contextmanager
 
@@ -10,6 +10,11 @@ from .replacement.immutable import thaw_value
 from .replacement.model import ReplacementEffectError
 from .replacement.ordering import replacement_choice_payload
 from .replacement.ordering import ReplacementChoiceRequired
+from .state_based_actions import StateBasedActionBatch
+
+if TYPE_CHECKING:
+    from .state_based_execution import StateBasedActionRead, StateBasedExecutionPlan
+
 _CURRENT_SELECTIONS: ContextVar[tuple[Any, ...]] = ContextVar("state_based_replacement_selections", default=())
 _CURRENT_ZONE_SELECTIONS: ContextVar[tuple[Any, ...]] = ContextVar("state_based_zone_replacement_selections", default=())
 
@@ -22,12 +27,18 @@ def log_state_based_counter_annihilation(host: Any, batch: Any, changes: Sequenc
                                if host.state.cards[object_id].zone == "battlefield"])
 
 
-def prepare_state_based_execution_or_choice(host: Any, batch: Any):
+def prepare_state_based_execution_or_choice(
+    host: Any, inputs: StateBasedActionRead,
+) -> tuple[StateBasedActionBatch, StateBasedExecutionPlan | None]:
     from .state_based_execution import prepare_state_based_execution
     from .state_based_legend_choices import coordinate_state_based_legend_choices
-    batch = coordinate_state_based_legend_choices(host, batch)
+
+    detected = inputs.batch
+    batch = coordinate_state_based_legend_choices(
+        host, detected, pending=inputs.pending_legend, groups=inputs.legend_groups,
+    )
     if batch is None:
-        return None
+        return detected, None
     selected = _CURRENT_SELECTIONS.get()
     zone_selected = _CURRENT_ZONE_SELECTIONS.get()
     _CURRENT_SELECTIONS.set(())
@@ -36,10 +47,10 @@ def prepare_state_based_execution_or_choice(host: Any, batch: Any):
         execution=prepare_state_based_execution(host, batch, replacement_selections=selected,
                                              zone_replacement_selections=zone_selected)
         from .composition_state_based_order import prepare_state_based_compositions
-        return prepare_state_based_compositions(host,execution,selected,zone_selected)
+        return detected, prepare_state_based_compositions(host, execution, selected, zone_selected)
     except ReplacementChoiceRequired as required:
         issue_state_based_replacement_choice(host, required, selected, zone_selected)
-        return None
+        return detected, None
 
 
 @contextmanager

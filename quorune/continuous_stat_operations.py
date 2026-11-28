@@ -32,6 +32,16 @@ def apply_stat_operation(state,operation,context):
     if op=='set_power':state.power=int(value);return True
     if op=='set_toughness':state.toughness=int(value);return True
     if op=='set_power_toughness':state.power=int(value[0]);state.toughness=int(value[1]);return True
+    if op == "set_power_toughness_to_mana_value":
+        state.power = state.toughness = int(state.mana_value)
+        return True
+    if op == "default_creature_stats":
+        if any(kind.casefold() == "creature" for kind in state.card_types):
+            if state.power is None:
+                state.power = 0
+            if state.toughness is None:
+                state.toughness = 0
+        return True
     if op=='switch_power_toughness':state.power,state.toughness=state.toughness,state.power;return True
     if op==RECIPIENT_MODIFIER_OPERATION:
         spec=validate_recipient_modifier(value)
@@ -41,6 +51,14 @@ def apply_stat_operation(state,operation,context):
             identity=ContinuousObjectIdentity(context.get('object_id'),context.get('logical_object_id'))
             amount=shared_creature_type_count(value['objects'],recipient=identity,creature_types=state.subtypes)
             if spec.maximum is not None:amount=min(amount,spec.maximum)
+        elif spec.kind is RecipientQuantityKind.OTHER_SAME_NAME_CREATURES:
+            from .continuous_effect_model import ContinuousObjectIdentity
+            from .recipient_modifier_model import same_name_objects
+
+            recipient = ContinuousObjectIdentity(context.get('object_id'), context.get('logical_object_id'))
+            members = same_name_objects(value['objects'])
+            names = members.get(recipient, frozenset())
+            amount = sum(identity != recipient and bool(names & other) for identity, other in members.items())
         else:amount=recipient_quantity_amount(spec,state,context)
         power,toughness=value['power']*amount,value['toughness']*amount
     elif op=='modify_power_toughness':power,toughness=int(value[0]),int(value[1])

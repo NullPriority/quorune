@@ -196,8 +196,15 @@ class ExactArtifactEngineTests(unittest.TestCase):
             },
         )
         self.assertTrue(result.ok, result.summary)
+        self.assertEqual("permanent.composition_order", engine.state.pending_decision.kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(("battlefield", "battlefield"), (victim_one.zone, victim_two.zone))
+        order = [victim_two.ref, victim_one.ref]
+        result = session.act("pilot:B", {"action_id": "order", "cards": order})
+        self.assertTrue(result.ok, result.summary)
         self.assertEqual("graveyard", victim_one.zone)
         self.assertEqual("graveyard", victim_two.zone)
+        self.assertEqual(order, [engine.state.cards[oid].ref for oid in engine.state.players["B"].zones["graveyard"][-2:]])
         self.assertEqual(
             "state.commander_zone", engine.state.pending_decision.kind
         )
@@ -457,7 +464,7 @@ class ExactArtifactEngineTests(unittest.TestCase):
             "A", treasure_ref, zones={"battlefield"}
         )
         copied = engine._effective_card_data(treasure)
-        self.assertEqual("Phyrexian Myr", copied["name"])
+        self.assertEqual("Phyrexian Myr Token", copied["name"])
         self.assertIn("Artifact Creature", copied["type_line"])
         self.assertEqual("2", copied["power"])
         self.assertIn("Haste", copied["keywords"])

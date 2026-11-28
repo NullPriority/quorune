@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from ..rules.global_alternative_cost_model import (
     GLOBAL_ALTERNATIVE_CAPABILITY,GLOBAL_ALTERNATIVE_HANDLER,GLOBAL_ALTERNATIVE_EVENT,GlobalAlternativeCostSpec,
+    TURN_LIMITED_ALTERNATIVE_CAPABILITY,
 )
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -15,7 +16,12 @@ class GlobalAlternativeCostHandler:
     family:str='casting.alternative-cost.fixed-battlefield-grant'
     event:str=GLOBAL_ALTERNATIVE_EVENT
     rule_references:tuple[str,...]=('118.9','118.9a','118.9b','118.9c','118.9d','107.3b','601.2f','601.2h','400.7')
-    capability_dependencies:tuple[str,...]=(GLOBAL_ALTERNATIVE_CAPABILITY,)
+    capability_dependencies:tuple[str,...]=(GLOBAL_ALTERNATIVE_CAPABILITY, TURN_LIMITED_ALTERNATIVE_CAPABILITY)
+
+    def required_capabilities(self, descriptor):
+        spec = self.validate(descriptor)
+        return (TURN_LIMITED_ALTERNATIVE_CAPABILITY if spec.turn_limited_scope is not None
+                else GLOBAL_ALTERNATIVE_CAPABILITY,)
 
     def validate(self,descriptor):
         exact_fields(descriptor,{'handler_id','schema_version','event','requires_complete_card_program','grant'},field='global alternative cost')

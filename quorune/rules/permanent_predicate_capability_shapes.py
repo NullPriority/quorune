@@ -79,6 +79,19 @@ def controller_island_target_runtime_dependencies(program) -> tuple[str, ...]:
     return ("target.revalidate_resolution",)
 
 
+def activated_tap_cost_target_runtime_dependencies(program) -> tuple[str, ...]:
+    template = getattr(program, "provenance", {}).get("template_id")
+    if type(template) is not str or "-with-activated-tap-cost-" not in template:
+        return ()
+    try:
+        spec = DirectPermanentTargetSpec.from_target_schema(program.target_schema)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Tap-symbol targeting requires its exact public creature role") from exc
+    if not spec.has_activated_tap_cost:
+        raise ValueError("Tap-symbol targeting must retain its current ability predicate")
+    return ("target.permanent.characteristic_predicate", "target.revalidate_resolution")
+
+
 def direct_target_predicate_capabilities(
     target_schema: Mapping[str, Any],
     *, allow_commander: bool = False,
@@ -156,3 +169,16 @@ __all__ = [
     "fixed_counter_target_set_state_capabilities",
     "public_state_query_capabilities",
 ]
+
+
+def collect_fixed_permanent_target_runtime_requirements(program, required, blockers):
+    """Validate the fixed creature qualification and target predicate owners."""
+    for resolver, label in (
+        (controller_island_target_runtime_dependencies, "controller_island_target"),
+        (activated_tap_cost_target_runtime_dependencies, "activated_tap_cost_target"),
+        (nonartifact_nonblack_target_runtime_dependencies, "qualified_creature_target"),
+    ):
+        try:
+            required.update(resolver(program))
+        except (TypeError, ValueError) as exc:
+            blockers.add(f"runtime_{label}:invalid:{exc}")

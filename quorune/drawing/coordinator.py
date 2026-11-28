@@ -5,6 +5,9 @@ from typing import Any, Mapping, Protocol
 
 from ..model import GameState
 from ..replacement import FrozenMap
+from ..rules.faction_trigger_model import CountFactionDraw
+from ..rules.opponent_draw_result import ObserveOpponentDraw
+from ..rules.opponent_draw_followup import CountDistinctOpponentDraw
 from ..replacement.immutable import thaw_value
 from ..semantic_runtime.context import SemanticNodeError
 from ..semantic_runtime.draw_reveals import (
@@ -330,6 +333,15 @@ def _prepare_runtime_draw_event(
         selections.append(options[0])
 
 
+def _retain_committed_draw_observers(draw, original):
+    observers = tuple(
+        action for action in original.post_draw_actions
+        if isinstance(action, (CountFactionDraw, ObserveOpponentDraw, CountDistinctOpponentDraw))
+        and action not in draw.post_draw_actions
+    )
+    return replace(draw, post_draw_actions=(*draw.post_draw_actions, *observers)) if observers else draw
+
+
 def _arrange_draw_result(
     host: DrawCoordinatorHost,
     result: DrawCommitResult,
@@ -337,18 +349,31 @@ def _arrange_draw_result(
     resume: DrawResume,
 ) -> tuple[int, DrawResume] | None:
     """Place replacement actions ahead of the rest of the current draw."""
-    if result.discard_followup is not None:
-        from .discard_coordination import begin_discard_replacement
-
+    if result.discard_followup is not None or result.scheduled_result is not None or result.library_choice is not None:
         after = (
             DrawResume(kind="draw_remainder", draws=(unconsumed,), after=resume)
             if unconsumed.count else resume
         )
-        if begin_discard_replacement(host, result.discard_followup, after):
+        if result.library_choice is not None:
+            from .library_choice_coordination import begin_library_choice_draw
+
+            begin_library_choice_draw(host, result.library_choice, after)
             return None
+        if result.discard_followup is not None:
+            from .discard_coordination import begin_discard_replacement
+
+            followup = _retain_committed_draw_observers(result.discard_followup, unconsumed)
+            if begin_discard_replacement(host, followup, after):
+                return None
+        else:
+            from .scheduled_draw_coordination import begin_scheduled_draw_result
+
+            if begin_scheduled_draw_result(host, result.scheduled_result, after):
+                return None
     if result.result_draws:
         tail = _draw_batch_resume((unconsumed,) if unconsumed.count else (), after=resume)
-        return 0, _draw_batch_resume(result.result_draws, after=tail)
+        observed = tuple(_retain_committed_draw_observers(draw, unconsumed) for draw in result.result_draws)
+        return 0, _draw_batch_resume(observed, after=tail)
     return unconsumed.count, resume
 
 
@@ -424,8 +449,10 @@ def _continue_draw_sequence(
             if prepared is None:
                 return
             result = commit_prepared_draw_result(host, prepared)
+            if host.state.game_over:
+                return
             remaining -= 1
-            if result.discard_followup is not None or result.result_draws:
+            if result.has_followup:
                 arranged = _arrange_draw_result(
                     host, result,
                     QueuedDraw(seat, remaining, reason, private, excluded_effect_ids, post_draw_actions),
@@ -602,9 +629,11 @@ def complete_draw_replacement(
     if prepared is None:
         return
     result = commit_prepared_draw_result(host, prepared)
+    if host.state.game_over:
+        return
     remaining = continuation.remaining_draws - 1
     resume = continuation.after
-    if result.discard_followup is not None or result.result_draws:
+    if result.has_followup:
         arranged = _arrange_draw_result(
             host, result,
             QueuedDraw(
@@ -648,6 +677,11 @@ def complete_draw_decision(
     if decision.kind == "draw.miracle_reveal":
         from .miracle_coordination import complete_miracle_reveal
         complete_miracle_reveal(host, decision)
+        return
+    if decision.kind in {"draw.library_kind", "draw.library_bottom"}:
+        from .library_choice_coordination import complete_library_choice_draw
+
+        complete_library_choice_draw(host, decision)
         return
     raise DrawError(f"Unsupported draw decision {decision.kind!r}")
 
@@ -781,6 +815,11 @@ def resume_after_draw(
         return
     if resume.kind == "turn_draw":
         host._complete_draw_step_entry(resume.seat)
+        return
+    if resume.kind == "combat_damage":
+        from ..rules.combat_prevention_draw import complete_combat_damage_draws
+
+        complete_combat_damage_draws(host)
         return
     if resume.kind == "semantic_resolution":
         host._continue_resolution(

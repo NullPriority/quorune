@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
+from ..announced_x_modal import DESTROY_MODE, bind_announced_x_modal_targets, uses_announced_x_modal
 from ...target_cardinality import (
     AnnouncedTargetCardinality, bind_announced_target_schema, link_announced_public_bounds,
 )
@@ -17,6 +18,14 @@ def bind_target_count_option(program: Any, option: Mapping[str, Any], response: 
     from .kicked_targets import bind_kicked_targets
     try:option=bind_kicked_targets(program,option)
     except (TypeError,ValueError):return None
+    if uses_announced_x_modal(schema):
+        if not has_mana_x or option.get("target_schema") is not None:
+            return None
+        try:
+            bound = bind_announced_x_modal_targets(schema, response.get("x"))
+        except (TypeError, ValueError, KeyError):
+            return None
+        return {**deepcopy(dict(option)), "target_schema": bound, "announced_x_modal_mode": DESTROY_MODE}
     if not isinstance(schema, Mapping) or "count_parameter" not in schema:
         return deepcopy(dict(option))
     try:
@@ -39,6 +48,14 @@ def bind_target_count_option(program: Any, option: Mapping[str, Any], response: 
 
 def public_target_count_schema(schema: Mapping[str, Any], option: Mapping[str, Any]) -> dict[str, Any]:
     result = deepcopy(dict(schema))
+    mode = option.get("announced_x_modal_mode")
+    if mode == DESTROY_MODE:
+        incoming = result.get("mode_schemas", {}).get(mode)
+        if incoming is not None:
+            result["mode_schemas"][mode] = link_announced_public_bounds(
+                incoming, AnnouncedTargetCardinality().to_dict(),
+            )
+        return result
     raw = option.get("target_count_parameter")
     if raw is None:
         return result

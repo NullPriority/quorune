@@ -266,5 +266,105 @@ class ChosenCreatureTypeDestructionTests(InheritedNativeFixture, unittest.TestCa
         self.assertTrue(ordinary["strict_capability_ready"], ordinary["blockers"])
 
 
+class APNAPCreatureTypeReturnTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "apnap-type-return.sqlite3"
+        build_fixture_database([FIXTURES / name for name in (
+            "chosen-creature-type-destruction-cards.json", "attached-destruction-set-cards.json",
+            "characteristic-query-union-cards.json", "bound-effect-program-cards.json",
+            "announced-destruction-controller-tokens-cards.json", "entry-copy-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Public type return", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def _scene(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Patriarch's Bidding", zone="hand")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _answer(self, game, seat, kind, expected=()):
+        self.assertEqual(["pilot:" + seat], game.pending_principals())
+        packet = game.packet("pilot:" + seat, full=True)["decision"]
+        self.assertEqual(list(expected), packet["ctx"]["previous_choices"])
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:" + seat, {"action_id":"choose","creature_type":"Artifact"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:" + seat, {"action_id":"choose","creature_type":kind})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_bidding_public_apnap_duplicates_union_and_changeling(self):
+        game, source = self._scene(77155121)
+        bear = self.add(game.engine, "Grizzly Bears", seat="A", zone="graveyard")
+        elf = self.add(game.engine, "Gladecover Scout", seat="B", zone="graveyard")
+        changeling = self.add(game.engine, "Universal Automaton", seat="C", zone="graveyard")
+        outside = self.add(game.engine, "Darksteel Myr", seat="D", zone="graveyard")
+        self.add(game.engine, "Vedalken Orrery")
+        self.prepare(game, actor="A", active="B", mana={"C":3,"B":2})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        previous = []
+        for seat, kind in (("B","Elf"),("C","Bear"),("D","Elf"),("A","Vampire")):
+            self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard"
+                                for card in (bear, elf, changeling, outside)))
+            self._answer(game, seat, kind, previous)
+            previous.append({"player":seat, "creature_type":kind.casefold()})
+            if seat == "C":
+                game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        returned = [game.state.cards[card.object_id] for card in (bear, elf, changeling)]
+        self.assertEqual([("battlefield",seat) for seat in "ABC"], [(row.zone,row.controller) for row in returned])
+        self.assertEqual(1, len({row.zone_timestamp for row in returned}))
+        self.assertEqual("graveyard", game.state.cards[outside.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_bidding_replays_multiowner_entry_replacement_before_any_return(self):
+        game, source = self._scene(77155123)
+        existing = self.add(game.engine, "Generic Bound Body", seat="C", ref="bidding-existing")
+        image = self.add(game.engine, "Mirror Image", seat="C", zone="graveyard")
+        bear = self.add(game.engine, "Grizzly Bears", seat="B", zone="graveyard")
+        self.prepare(game, mana={"C":3, "B":2})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        previous = []
+        for seat, kind in (("A","Bear"),("B","Shapeshifter"),("C","Elf"),("D","Bear")):
+            self._answer(game, seat, kind, previous)
+            previous.append({"player":seat,"creature_type":kind.casefold()})
+        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+        self.assertEqual("graveyard", game.state.cards[bear.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[image.object_id].zone)
+        game = self.replay(game, load=True)
+        options = game.packet("pilot:C",full=True)["decision"]["ctx"]["options"]
+        choice = next(row["id"] for row in options if existing.ref in row["id"] and not row["id"].startswith("decline:"))
+        result = game.act("pilot:C", {"action_id":"choose", "replacement":choice})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        moved = [game.state.cards[card.object_id] for card in (bear,image)]
+        self.assertEqual([("battlefield","B"),("battlefield","C")], [(row.zone,row.controller) for row in moved])
+        self.assertEqual(moved[0].zone_timestamp,moved[1].zone_timestamp)
+        self.assertEqual("Generic Bound Body",game.engine.display_name(moved[1].object_id))
+        self.replay(game, load=True)
+
+    def test_bidding_lowering_requires_the_complete_union_and_return(self):
+        from dataclasses import replace
+        from quorune.rules.apnap_type_return import TYPE_RETURN_CAPABILITY
+
+        game, source = self._scene(77155122)
+        card = self.db.lookup(source.printed_name, fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertIn(TYPE_RETURN_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+        altered = replace(card, oracle_text=card.oracle_text.replace("a type chosen this way","the type they chose"))
+        self.assertNotEqual("exact", compile_oracle_card(altered, capability_registry=self.registry).status)
+
+
+
 if __name__ == "__main__":
     unittest.main()

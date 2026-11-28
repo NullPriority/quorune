@@ -143,7 +143,40 @@ def _spell_cast_count_life_result(binding, body):
     return None
 
 
+def _death_controller_opponents_result(binding, body):
+    from ..rules.death_controller_opponents import death_opponent_effects, death_opponents_condition_is_closed
+    from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            != ("creature.dies", "qualified_public_zone_query", "battlefield")
+            or not death_opponents_condition_is_closed(binding.event_condition)):
+        return None
+    match = re.fullmatch(
+        rf"each of its controller['’]s opponents draws (?P<draw>{FIXED_COUNT_PATTERN}) "
+        r"(?P<cards>cards?) and gains (?P<life>[1-9][0-9]*) life\.",
+        body, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    draw = fixed_number(match["draw"])
+    if draw < 1 or (match["cards"].casefold() == "card") != (draw == 1):
+        return None
+    return (
+        "fixed-death-controller-opponents-draw-life-v1",
+        death_opponent_effects(draw, int(match["life"])), None,
+        (EVENT_PLAYER_RESULT_MECHANIC,),
+    ), False
+
+
 def fixed_event_player_result(binding,body,*,effect_template,card_name):
+    from .artifact_mana_tap_control import artifact_mana_tap_control_result
+
+    if control := artifact_mana_tap_control_result(binding, body):
+        return control
+    from .unblocked_attacker_bindings import unblocked_source_control_result
+
+    if unblocked_control := unblocked_source_control_result(binding, body, card_name=card_name):
+        return unblocked_control
     from ..rules.recipient_control_shapes import DAMAGE_DEALER_CONTROL_VARIANT, damage_dealer_control_condition
 
     if binding.variant == DAMAGE_DEALER_CONTROL_VARIANT:
@@ -157,6 +190,9 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
         control = recipient_control_effect(card="$source.zone_object", controller=damage_dealer_controller_reference())
         return ("damage-dealer-controls-source-land-v1", (control,), None,
                 (RECIPIENT_CONTROL_MECHANIC, "cr-611-continuous-effects")), False
+    death_opponents = _death_controller_opponents_result(binding, body)
+    if death_opponents is not None:
+        return death_opponents
     spell_count = _spell_cast_count_life_result(binding, body)
     if spell_count is not None:
         return spell_count
@@ -169,6 +205,14 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
             and _event_player(binding, "defending player") == "$context.defending_player"):
         return ("fixed-unblocked-defender-poison-v1", (unblocked_defender_poison_effect(),), None,
                 (UNBLOCKED_DEFENDER_POISON_MECHANIC, "cr-122-counters")), False
+    from .controlled_subtype_damage_batch import controlled_subtype_damage_result
+    from .subtype_damage_controller import subtype_damage_result
+
+    if grouped := controlled_subtype_damage_result(binding, body):
+        return grouped
+
+    if subtype := subtype_damage_result(binding, body):
+        return subtype
     from .event_optional_draw_results import fixed_event_optional_draw_result
     optional = fixed_event_optional_draw_result(binding, body, effect_template=effect_template, card_name=card_name)
     if optional is not None:return optional
@@ -232,7 +276,53 @@ def defending_creature_damage_result(binding, body):
     return (template, effects, None, mechanics), False
 
 
+def _equipped_combat_hand_count_results(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt", "equipped_creature_combat_damage_a_player", "battlefield")
+        or body != binding.body
+        or body.casefold() != (
+            "this equipment deals damage to that player equal to the number of cards in their hand "
+            "and you gain 1 life for each card in your hand."
+        )
+    ):
+        return None
+
+    from ..event_player_result_values import EquippedCombatHandCountSpec
+
+    return (
+        "equipped-combat-live-hand-counts-v1",
+        (EquippedCombatHandCountSpec("damaged_player").effect(),
+         EquippedCombatHandCountSpec("trigger_controller").effect()),
+        None, (EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC),
+    ), False
+
+
 def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
+    from ..land_entry_condition_model import (
+        OTHER_LAND_ARRIVAL_EVENT, OTHER_LAND_ARRIVAL_VARIANT, other_land_arrival_damage_effect,
+    )
+    if (binding.event.value == OTHER_LAND_ARRIVAL_EVENT and binding.variant == OTHER_LAND_ARRIVAL_VARIANT
+            and body == binding.body and body.casefold() == "this creature deals 3 damage to that player."):
+        return ("fixed-opponent-land-entry-history-damage-v1", (other_land_arrival_damage_effect(),), None,
+                (EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC)), True
+
+    from ..triggered_mana_model import (
+        LAND_MANA_TAP_EVENT, LAND_MANA_TAP_VARIANT, land_mana_tap_damage_effect,
+        SOURCE_MANA_TAP_DAMAGE_MECHANIC, SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT,
+        source_mana_tap_damage_effect,
+    )
+
+    if (binding.event.value == SOURCE_MANA_TAP_EVENT and binding.variant == SOURCE_MANA_TAP_VARIANT
+            and body == binding.body and body.casefold() == "it deals 1 damage to each opponent."):
+        return ("fixed-source-mana-tap-damage-v1", (source_mana_tap_damage_effect(),), None,
+                (SOURCE_MANA_TAP_DAMAGE_MECHANIC, "cr-120-damage")), False
+    if (binding.event.value == LAND_MANA_TAP_EVENT and binding.variant == LAND_MANA_TAP_VARIANT
+            and body == binding.body and body.casefold() == "this enchantment deals 1 damage to that player."):
+        return ("fixed-land-mana-tap-damage-v1", (land_mana_tap_damage_effect(),), None,
+                (EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC)), True
+    if hand_count := _equipped_combat_hand_count_results(binding, body):
+        return hand_count
     if creatures := defending_creature_damage_result(binding, body):
         return creatures
     match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|them|defending player|that "

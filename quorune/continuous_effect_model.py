@@ -65,7 +65,9 @@ class ContinuousEffectDuration(str, Enum):
 
     WHILE_SOURCE_PRESENT = "while_source_present"
     UNTIL_END_OF_TURN = "until_end_of_turn"
+    UNTIL_END_OF_GAME = "until_end_of_game"
     UNTIL_NEXT_TURN = "until_next_turn"
+    UNTIL_END_OF_NEXT_TURN = "until_end_of_next_turn"
     UNTIL_RECIPIENT_CONTROLLER_UNTAP = "until_recipient_controller_untap"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
@@ -113,6 +115,7 @@ class ContinuousEffectRelation(str, Enum):
     SOURCE_CONTROLLED_AURA_RECIPIENT = "source_controlled_aura_recipient"
     SOURCE_BLOCK_COUNTERPART_OBJECT = "source_block_counterpart_object"
     SOURCE_COUNTER_PLACEMENT_RECIPIENT = "source_counter_placement_recipient"
+    SOURCE_ATTACK_HISTORY_RECIPIENT = "source_attack_history_recipient"
 
 
 _OPERATION_LAYERS = {
@@ -120,14 +123,17 @@ _OPERATION_LAYERS = {
     "face_down": Layer.COPY,
     "set_controller": Layer.CONTROL,
     "replace_text": Layer.TEXT,
+    "insert_name_sticker": Layer.TEXT,
     "set_types": Layer.TYPE,
     "set_basic_land_types": Layer.TYPE,
     "set_creature_subtype": Layer.TYPE,
     "set_creature_subtypes": Layer.TYPE,
+    "set_linked_exile_creature_subtypes": Layer.TYPE,
     "set_creature_subtype_set": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
     "remove_creature_card_type": Layer.TYPE,
+    "remove_planeswalker_card_type": Layer.TYPE,
     "set_colors": Layer.COLOR,
     "add_colors": Layer.COLOR,
     "remove_colors": Layer.COLOR,
@@ -143,7 +149,11 @@ _OPERATION_LAYERS = {
     "remove_ability_fragment": Layer.ABILITY,
     "set_power": Layer.POWER_TOUGHNESS,
     "set_toughness": Layer.POWER_TOUGHNESS,
+    "add_creature_for_enchantment_threshold": Layer.TYPE,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
+    "set_power_toughness_to_mana_value": Layer.POWER_TOUGHNESS,
+    "set_linked_exile_creature_stats": Layer.POWER_TOUGHNESS,
+    "default_creature_stats": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
     "modify_power_toughness_by_recipient_quantity": Layer.POWER_TOUGHNESS,
     "switch_power_toughness": Layer.POWER_TOUGHNESS,
@@ -269,6 +279,19 @@ def _validate_copy_values(value: Any) -> None:
             )
 
 
+def _validate_text_operation(op, value, field):
+    if op == "insert_name_sticker":
+        if (field is not None or not isinstance(value, Mapping) or set(value) != {"text", "position"}
+                or type(value["text"]) is not str or not value["text"].strip()
+                or type(value["position"]) is not int or value["position"] < 0):
+            raise ContinuousEffectError("Name sticker requires a nonempty text and a nonnegative word position")
+        return
+    if not isinstance(value, Mapping) or set(value) != {"from", "to"}:
+        raise ContinuousEffectError("replace_text requires exact from/to fields")
+    if type(value["from"]) is not str or not value["from"] or type(value["to"]) is not str:
+        raise ContinuousEffectError("replace_text values must be strings and from must be nonempty")
+
+
 def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     if op not in {"set_types", "add_types", "remove_types"} and field is not None:
         raise ContinuousEffectError(f"{op} does not accept a field")
@@ -332,16 +355,22 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op == "set_controller":
         if type(value) is not str or not value:
             raise ContinuousEffectError("set_controller requires a nonempty string")
-    elif op == "replace_text":
-        if not isinstance(value, Mapping) or set(value) != {"from", "to"}:
-            raise ContinuousEffectError("replace_text requires exact from/to fields")
-        if type(value["from"]) is not str or not value["from"] or type(value["to"]) is not str:
-            raise ContinuousEffectError("replace_text values must be strings and from must be nonempty")
+    elif op in {"insert_name_sticker", "replace_text"}:
+        _validate_text_operation(op, value, field)
     elif op == 'set_basic_land_types':
         from .basic_land_types import BASIC_LAND_MANA
         words=_nonempty_words(value,field_name=op)
         if field is not None or any(word not in BASIC_LAND_MANA for word in words):
             raise ContinuousEffectError('Basic land type setting requires canonical basic subtypes and no field')
+    elif op in {"set_linked_exile_creature_subtypes", "set_linked_exile_creature_stats"}:
+        from .linked_exile_characteristic_model import linked_exile_characteristic_candidates
+
+        if field is not None:
+            raise ContinuousEffectError("A linked exile setting does not accept a field")
+        try:
+            linked_exile_characteristic_candidates(value)
+        except (TypeError, ValueError) as exc:
+            raise ContinuousEffectError(str(exc)) from exc
     elif op == "set_creature_subtype_set":
         if field is not None or type(value) is not str or value not in {"all", "none"}:
             raise ContinuousEffectError("Creature subtype sets require all or none without a field")
@@ -393,6 +422,9 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         "remove_landwalk_abilities",
         "remove_all_colors",
         "remove_creature_card_type",
+        "remove_planeswalker_card_type",
+        "default_creature_stats",
+        "set_power_toughness_to_mana_value",
         "switch_power_toughness",
     }:
         if field is not None or value is not None:
@@ -419,6 +451,9 @@ class ContinuousOperation:
     field: str | None = None
 
     def __post_init__(self) -> None:
+        if (self.op == "add_creature_for_enchantment_threshold"
+                and (self.field is not None or type(self.value) is not int or self.value != 5)):
+            raise ContinuousEffectError("Enchantment animation requires its exact five-permanent threshold")
         if type(self.op) is not str or not self.op:
             raise ContinuousEffectError(
                 "Continuous operation names must be nonempty strings"
@@ -518,7 +553,7 @@ class ContinuousObjectIdentity:
         )
 
 
-def _validate_continuous_effect_identity_scope(
+def _validate_continuous_effect_duration(
     effect: "ContinuousEffect",
     locked: tuple[ContinuousObjectIdentity, ...],
 ) -> None:
@@ -527,7 +562,18 @@ def _validate_continuous_effect_identity_scope(
         validate_attachment_duration(effect, locked)
     except ValueError as exc:
         raise ContinuousEffectError(str(exc)) from exc
+    if effect.duration is ContinuousEffectDuration.UNTIL_END_OF_GAME:
+        raise ContinuousEffectError("Game duration requires a typed player-rule effect")
     validate_turn_expiry(effect.duration, effect.expires_on_next_turn_of)
+    if effect.duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN:
+        if (effect.origin is not ContinuousEffectOrigin.RESOLUTION or effect.layer is not Layer.CONTROL
+                or len(effect.operations) != 1 or effect.operations[0].op != "set_controller"
+                or type(effect.operations[0].value) is not str or not effect.operations[0].value
+                or effect.applies != ObjectQuerySpec(zones=("battlefield",))
+                or type(effect.controller_cleanup_turn) is not int or effect.controller_cleanup_turn < 1):
+            raise ContinuousEffectError("Next-turn cleanup control requires its exact locked layer-two result and turn ordinal")
+    elif effect.controller_cleanup_turn is not None:
+        raise ContinuousEffectError("Only next-turn cleanup control can record a controller turn ordinal")
     if (effect.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN
             and effect.origin is not ContinuousEffectOrigin.RESOLUTION):
         raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
@@ -560,6 +606,10 @@ def _validate_continuous_effect_identity_scope(
                     or effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES
                     and effect.layer is Layer.TYPE and len(locked) == len(effect.operations) == 1
                     and effect.operations[0].op == "set_basic_land_types"
+                    or effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES
+                    and effect.layer is Layer.ABILITY and effect.sublayer == "6"
+                    and len(locked) == len(effect.operations) == 1
+                    and effect.operations[0].op == "remove_all_abilities"
                 ))
                 or not isinstance(effect.duration_source, ContinuousObjectIdentity)
                 or not isinstance(effect.duration_history, SourceContinuitySnapshot)
@@ -572,6 +622,13 @@ def _validate_continuous_effect_identity_scope(
             raise ContinuousEffectError("Source-presence duration cannot add a controller condition")
     elif any(value is not None for value in (effect.duration_source, effect.duration_controller, effect.duration_history)):
         raise ContinuousEffectError("Only source-bound effects may carry duration source facts")
+
+
+def _validate_continuous_effect_identity_scope(
+    effect: "ContinuousEffect",
+    locked: tuple[ContinuousObjectIdentity, ...],
+) -> None:
+    _validate_continuous_effect_duration(effect, locked)
     locked_origins = {
         ContinuousEffectOrigin.REPLACEMENT,
         ContinuousEffectOrigin.RESOLUTION,
@@ -645,11 +702,25 @@ def _validate_continuous_effect_identity_scope(
                     controller=predicate.controller, exclude_ref=predicate.exclude_ref,
                 )):
             raise ContinuousEffectError("Counter placement recipients require a current controlled creature and fixed keywords")
+    elif effect.relation is ContinuousEffectRelation.SOURCE_ATTACK_HISTORY_RECIPIENT:
+        predicate = effect.applies
+        operations = effect.operations
+        if ((effect.layer, effect.sublayer) != (Layer.POWER_TOUGHNESS, "7c")
+                or len(operations) != 1 or operations[0].op != "modify_power_toughness"
+                or operations[0].value[0] <= 0 or operations[0].value[1] != 0
+                or not predicate.controller or predicate != ObjectQuerySpec(
+                    zones=("battlefield",), types_all=("creature",), controller=predicate.controller,
+                )):
+            raise ContinuousEffectError("Attack-history recipients require a controlled creature and positive power modifier")
 
 
 def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
     anchor = effect.recipient_scope_anchor
+    animation_ops = {"add_creature_for_enchantment_threshold", "set_power_toughness_to_mana_value"}
+    operations = tuple(operation.op for operation in effect.operations)
     if anchor is None:
+        if animation_ops.intersection(operations):
+            raise ContinuousEffectError("Enchantment animation requires its earlier-layer recipient scope")
         return
     if type(anchor) is not str or not anchor:
         raise ContinuousEffectError("A retained recipient scope requires an effect identity")
@@ -657,11 +728,21 @@ def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
             or effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT
             or effect.relation is not ContinuousEffectRelation.NONE
             or effect.locked_objects or effect.characteristic_defining
-            or not effect.applies.controlled_by_nonowner or not effect.applies.controller
-            or effect.applies.types_all != ("creature",)):
-        raise ContinuousEffectError("Retained recipients require a live nonowner creature query")
-    if (anchor == effect.effect_id) != (effect.layer is Layer.TYPE) or effect.sublayer not in {"4","6","7c"}:
-        raise ContinuousEffectError("Retained recipients start in layer four and continue in six or seven c")
+            or not effect.applies.controller):
+        raise ContinuousEffectError("Retained recipients require a live controlled permanent query")
+    if (anchor == effect.effect_id) != (effect.layer is Layer.TYPE):
+        raise ContinuousEffectError("Retained recipients start in layer four")
+    if (effect.applies.controlled_by_nonowner and effect.applies.types_all == ("creature",)
+            and effect.sublayer in {"4", "6", "7c"} and not animation_ops.intersection(operations)):
+        return
+    predicate = ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), excluded_subtypes=("aura",),
+                                controller=effect.applies.controller, exclude_ref=effect.applies.exclude_ref)
+    expected_operation = {(Layer.TYPE, "4"):"add_creature_for_enchantment_threshold",
+                          (Layer.POWER_TOUGHNESS, "7b"):"set_power_toughness_to_mana_value"}.get(
+                              (effect.layer, effect.sublayer))
+    if (effect.applies != predicate or not effect.applies.exclude_ref or expected_operation is None
+            or operations != (expected_operation,)):
+        raise ContinuousEffectError("Retained recipients require the exact original enchantment animation")
 
 
 @dataclass(frozen=True, slots=True)
@@ -690,6 +771,7 @@ class ContinuousEffect:
     attachment_duration: AttachmentDuration | None = None
     expires_on_next_turn_of: str | None = None
     recipient_scope_anchor: str | None = None
+    controller_cleanup_turn: int | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -810,6 +892,13 @@ class ContinuousEffect:
             raise ContinuousEffectError('Denied keyword grants must name a locked resolution target and added keyword')
         object.__setattr__(self, 'denied_keyword_grants', denied)
 
+    def expires_at_cleanup(self, state: Any) -> bool:
+        if self.duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN:
+            controller = self.operations[0].value
+            return (state.active_player == controller
+                    and state.players[controller].turns_begun >= self.controller_cleanup_turn)
+        return self.duration is ContinuousEffectDuration.UNTIL_END_OF_TURN
+
     def to_dict(self) -> dict[str, Any]:
         payload = {
             "effect_id": self.effect_id,
@@ -849,6 +938,8 @@ class ContinuousEffect:
             payload["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         if self.recipient_scope_anchor is not None:
             payload["recipient_scope_anchor"] = self.recipient_scope_anchor
+        if self.controller_cleanup_turn is not None:
+            payload["controller_cleanup_turn"] = self.controller_cleanup_turn
         return payload
 
     @classmethod
@@ -877,7 +968,10 @@ class ContinuousEffect:
         turn_expiry = decode_turn_expiry(value)
         if "recipient_scope_anchor" in value and value["recipient_scope_anchor"] is None:
             raise ContinuousEffectError("An explicit recipient scope anchor cannot be null")
-        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of', 'recipient_scope_anchor'})
+        if "controller_cleanup_turn" in value and value["controller_cleanup_turn"] is None:
+            raise ContinuousEffectError("An explicit controller cleanup turn cannot be null")
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of',
+                                                 'recipient_scope_anchor', 'controller_cleanup_turn'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -963,6 +1057,7 @@ class ContinuousEffect:
                     if 'attachment_duration' in value else None),
                 expires_on_next_turn_of=turn_expiry,
                 recipient_scope_anchor=value.get("recipient_scope_anchor"),
+                controller_cleanup_turn=value.get("controller_cleanup_turn"),
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

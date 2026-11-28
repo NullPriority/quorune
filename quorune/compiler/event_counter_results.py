@@ -6,6 +6,7 @@ from . import regex_working_set as re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
 from ..face_up_effect_model import TURN_FACE_UP_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT
+from .fixed_counter_controller_effect_sequences import FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 EVENT_COUNTER_CAPABILITY='counter.producer.fixed_event_object'
@@ -15,7 +16,48 @@ PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
 
 
+def counter_placement_blocking_result(binding, body):
+    from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT
+    from ..replacement.immutable import FrozenMap
+    from ..rules.counter_placement_blocking import (
+        COUNTER_PLACEMENT_BLOCKING_MECHANICS, COUNTER_PLACEMENT_BLOCKING_TEMPLATE,
+        counter_placement_blocking_condition, counter_placement_blocking_effect,
+    )
+
+    if ((binding.event.value, binding.active_zone) != (COUNTER_PLACEMENT_EVENT, "battlefield")
+            or binding.variant != "counter_placement_one_or_more"
+            or " ".join(body.split()).casefold()
+            != "until end of turn, that creature can't be blocked by creatures your opponents control."
+            or FrozenMap(binding.event_condition or {}) != FrozenMap(counter_placement_blocking_condition())):
+        return None
+    return (COUNTER_PLACEMENT_BLOCKING_TEMPLATE, (counter_placement_blocking_effect(),), None,
+            COUNTER_PLACEMENT_BLOCKING_MECHANICS), True
+
+
+def counter_recipient_control_result(binding, body):
+    from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT
+    from ..replacement.immutable import FrozenMap
+    from ..rules.counter_recipient_control import (
+        COUNTER_RECIPIENT_CONTROL_MECHANICS, COUNTER_RECIPIENT_CONTROL_TEMPLATE, counter_recipient_control_condition,
+        counter_recipient_control_instructions,
+    )
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            != (COUNTER_PLACEMENT_EVENT, "battlefield", "counter_placement_one_or_more")
+            or FrozenMap(binding.event_condition or {}) != FrozenMap(counter_recipient_control_condition())
+            or " ".join(body.split()).casefold() != (
+                "draw a card if you control that creature. if you don't control it, its controller loses 1 life."
+            )):
+        return None
+    return (COUNTER_RECIPIENT_CONTROL_TEMPLATE, counter_recipient_control_instructions(),
+            None, COUNTER_RECIPIENT_CONTROL_MECHANICS), True
+
+
 def event_counter_threshold_result(binding, body, *, effect_template, card_name):
+    from .life_gain_counted_results import life_gain_counter_reset_result
+
+    if reset := life_gain_counter_reset_result(body, binding=binding):
+        return reset
     if binding.variant != "enchanted_creature_attacks" or binding.event_condition != {
         "field": "source_attachment_target_ref", "op": "eq", "value": "$context.card",
     }:
@@ -39,7 +81,56 @@ def event_counter_threshold_result(binding, body, *, effect_template, card_name)
             (*compiled[3], EVENT_COUNTER_THRESHOLD_MECHANIC)), current
 
 
+def recipient_counter_damage_result(binding, body, *, card_name):
+    from ..recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
+    from ..rules.recipient_counter_damage import (
+        RECIPIENT_COUNTER_DAMAGE_MECHANIC, RECIPIENT_COUNTER_VARIANT,
+        recipient_counter_damage_condition, recipient_counter_damage_effect, recipient_counter_damage_target_schema,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            != (RECIPIENT_COUNTER_EVENT, "battlefield", RECIPIENT_COUNTER_VARIANT)
+            or binding.event_condition != recipient_counter_damage_condition()):
+        return None
+    match = re.fullmatch(
+        r"(?P<source>.+?) deals that much damage to target opponent, creature an opponent controls, "
+        r"or planeswalker an opponent controls\.", " ".join(body.split()), re.I,
+    )
+    if match is None or (match["source"].casefold() != "this enchantment"
+            and not (card_name and SourceReferenceSpec(card_name).matches(match["source"]))):
+        return None
+    return (("fixed-recipient-counter-damage-v1", (recipient_counter_damage_effect(),),
+             recipient_counter_damage_target_schema(), (RECIPIENT_COUNTER_DAMAGE_MECHANIC, "cr-115-targets")), True)
+
+
 def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
+    if damage := recipient_counter_damage_result(binding, body, card_name=card_name):
+        return damage
+    if controller_result := counter_recipient_control_result(binding, body):
+        return controller_result
+    if blocking := counter_placement_blocking_result(binding, body):
+        return blocking
+    if binding.variant == "one_or_more_qualified_attack" and re.fullmatch(
+        r"Put a \+1/\+1 counter on each of them\.", body.strip(), re.I,
+    ) is not None:
+        from ..rules.attack_batches import declared_attack_counter_condition, declared_attack_counter_effect
+
+        try:
+            declared_attack_counter_condition(binding.event_condition)
+        except ValueError:
+            return None
+        from ..rules.public_event_counter_set_shapes import PUBLIC_SET_EVENT_MECHANIC
+
+        return ("fixed-declared-attack-group-counters-v1", (declared_attack_counter_effect(),),
+                None, ("cr-122-counters", PUBLIC_SET_EVENT_MECHANIC)), True
+    if (binding.variant == "artifact_any_graveyard" and binding.event.value == "artifact.graveyard"
+            and binding.active_zone == "battlefield" and binding.event_condition is None):
+        from .counter_resolution_effect_templates import source_and_controlled_subtype_counter_template
+
+        source_subtype = source_and_controlled_subtype_counter_template(body, card_name)
+        if source_subtype is not None:
+            return source_subtype, True
     if binding.variant not in accepted_variants or re.search(r'\bcounters?\b',body,re.I) is None:return None
     compiled=effect_template(body,card_name=card_name)
     if compiled[0] is None:return None
@@ -69,6 +160,16 @@ def public_event_target_counter_result(binding, body, *, effect_template, card_n
 
 def public_event_source_counter_result(binding, body, *, effect_template, card_name, accepted_variants=(), allow_source_pronoun=False):
     """Bind one printed fixed source result independently from the event object."""
+    if binding.variant == "one_or_more_controlled_tokens_enter" and re.fullmatch(
+        r"Put that many \+1/\+1 counters on this creature\.", body.strip(), re.I,
+    ) is not None:
+        from ..rules.aggregated_arrival_counters import (
+            MATCHED_ARRIVAL_MECHANIC, matching_arrival_counter_effect, matching_token_arrival_condition,
+        )
+
+        if binding.event.value == "permanent.enter" and matching_token_arrival_condition(binding.event_condition):
+            return ("matching-token-arrival-source-counter-v1", (matching_arrival_counter_effect(),),
+                    None, ("cr-122-counters", MATCHED_ARRIVAL_MECHANIC)), True
     if binding.variant not in accepted_variants or re.search(r'\bcounters?\b', body, re.I) is None:
         return None
     if allow_source_pronoun:
@@ -116,8 +217,21 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     operation = r'Put .+? counters? on'
     if binding.variant in ATTACHED_CREATURE_ATTACK_VARIANTS:
         operation += r'|Double the number of .+? counters on'
-    match = re.fullmatch(rf'(?P<head>{operation}) (?:it|that creature|that artifact|that permanent)\.', body, re.I)
+    match = re.fullmatch(
+        rf'(?P<head>{operation}) (?P<recipient>it|that creature|that artifact|that permanent)'
+        r'(?P<draw> and draw a card)?\.', body, re.I,
+    )
     if match is None:return None
+    if match["draw"]:
+        from ..rules.fixed_controller_effect_shapes import is_controlled_nontoken_creature_entry
+
+        if (
+            body != binding.body
+            or match["head"].casefold() != "put a +1/+1 counter on"
+            or match["recipient"].casefold() not in {"it", "that creature"}
+            or not is_controlled_nontoken_creature_entry(binding.event.value, binding.active_zone, binding.event_condition)
+        ):
+            return None
     normalized=match['head']+' this creature.'
     from .scalar_effect_amounts import scalar_effect_amount_template
     scalar=scalar_effect_amount_template(normalized,source_name=card_name,event=binding.event.value,
@@ -126,5 +240,12 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if effect.get('op')!='place_counters' or effect.get('card') not in ('$source','$source.zone_object'):return None
-    return ('fixed-entry-event-object-counter-v1',({**effect,'card':EVENT_ENTRY_OBJECT if entry else '$event.counter_object'},),None,
-        (*compiled[3],EVENT_COUNTER_MECHANIC)),True
+    counter = {**effect, 'card': EVENT_ENTRY_OBJECT if entry else '$event.counter_object'}
+    counter_mechanics = (*compiled[3], EVENT_COUNTER_MECHANIC)
+    if match["draw"]:
+        from .draw_templates import fixed_draw_effect_template
+
+        _, draws, _, draw_mechanics = fixed_draw_effect_template("Draw a card.")
+        return ("fixed-entry-event-object-counter-draw-v1", (counter, *draws), None,
+                (FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC, *counter_mechanics, *draw_mechanics)), True
+    return ("fixed-entry-event-object-counter-v1", (counter,), None, counter_mechanics), True

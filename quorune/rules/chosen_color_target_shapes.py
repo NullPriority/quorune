@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-"""One attached source designation governing a public destruction target."""
+"""Bind a current entry color to the same-face programs that can consume it."""
 
 from collections.abc import Mapping
 
 from ..entry_designations import (
     CHOSEN_COLOR_TARGET_PREDICATE, ENTRY_DESIGNATION_CAPABILITY, EntryDesignationKind, validate_designation,
+    LINKED_COLOR_PROTECTION_CAPABILITIES, LINKED_COLOR_PROTECTION_HANDLER_ID, LINKED_COLOR_PROTECTION_TEMPLATE,
 )
 from .linked_entry_opponent import entry_opponent_copy_form as linked_entry_copy_form
 from ..replacement.immutable import thaw_value
 
 
 CHOSEN_COLOR_TARGET_CAPABILITY = "target.public.source_chosen_color"
-LINKED_ENTRY_COLOR_TARGET_FIELD = "linked_entry_color_target"
+LINKED_ENTRY_COLOR_FIELD = "linked_entry_color_target"
 _REQUIRED = (
     CHOSEN_COLOR_TARGET_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
     "permanent.destroy.effect", "target.revalidate_resolution",
@@ -65,14 +66,63 @@ def is_closed_chosen_color_target_program(program):
     return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
-def linked_color_target_entry_programs(host, card):
+def linked_color_protection_runtime_dependencies(program):
+    marked = program.provenance.get("template_id") == LINKED_COLOR_PROTECTION_TEMPLATE
+    if not marked and not any(extra.get("handler_id") == LINKED_COLOR_PROTECTION_HANDLER_ID
+                              for extra in program.handlers):
+        return ()
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..semantic_runtime.chosen_characteristics import linked_color_protection_descriptor
+
+    if (
+        not marked or (program.event, program.active_zone) != ("characteristics.evaluate", "battlefield")
+        or len(program.handlers) != 1 or dict(program.handlers[0]) != linked_color_protection_descriptor()
+        or program.effects or program.target_schema is not None or program.cost_schema is not None
+        or program.event_condition is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+    ):
+        raise ValueError("Linked color protection requires its current self-protection component")
+    return LINKED_COLOR_PROTECTION_CAPABILITIES
+
+
+def _uses_linked_entry_color(program):
+    from ..characteristic_fragments import CHOSEN_COLOR_DEFINITION_CAPABILITY, CHOSEN_COLOR_DEFINITION_TEMPLATE
+    from ..triggered_mana_model import (
+        SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY, SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE,
+        fixed_triggered_mana_runtime_dependencies,
+    )
+
+    if program.provenance.get("template_id") == SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE:
+        try:
+            required = fixed_triggered_mana_runtime_dependencies(program)
+        except (ValueError, TypeError, KeyError):
+            return False
+        return (required == (SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY,)
+                and SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY in program.capability_dependencies)
+    if program.provenance.get("template_id") == CHOSEN_COLOR_DEFINITION_TEMPLATE:
+        from .live_modifier_quantities import validate_chosen_color_definition_program
+
+        try:
+            validate_chosen_color_definition_program(program, set(program.capability_dependencies))
+        except (ValueError, TypeError):
+            return False
+        return CHOSEN_COLOR_DEFINITION_CAPABILITY in program.capability_dependencies
+    if is_closed_chosen_color_target_program(program):
+        return True
+    try:
+        required = linked_color_protection_runtime_dependencies(program)
+    except (ValueError, TypeError):
+        return False
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def linked_color_entry_programs(host, card):
     from ..card_program_faces import normalized_program_face_id, selected_face_id
     from ..entry_copy import copiable_oracle_id
 
     oracle_id = copiable_oracle_id(card)
     programs = tuple(
-        program for program in host.semantics.programs_for_oracle(oracle_id, active_zone="battlefield")
-        if is_closed_chosen_color_target_program(program)
+        program for program in host.semantics.programs_for_oracle(oracle_id)
+        if _uses_linked_entry_color(program)
     )
     if not programs:
         return ()
@@ -84,7 +134,7 @@ def linked_color_target_entry_programs(host, card):
     ))
 
 
-def color_target_entry_binding(card, color, program_keys):
+def linked_color_entry_binding(card, color, program_keys):
     return {
         "schema_version": 1, "source_logical_object_id": card.logical_object_id,
         "face": card.active_face, "copy_form": linked_entry_copy_form(card),
@@ -92,8 +142,8 @@ def color_target_entry_binding(card, color, program_keys):
     }
 
 
-def current_linked_target_color(card, *, program_key=None):
-    raw = card.annotations.get(LINKED_ENTRY_COLOR_TARGET_FIELD)
+def current_linked_entry_color(card, *, program_key=None):
+    raw = card.annotations.get(LINKED_ENTRY_COLOR_FIELD)
     fields = {"schema_version", "source_logical_object_id", "face", "copy_form", "program_keys", "color"}
     if (
         not isinstance(raw, Mapping) or set(raw) != fields

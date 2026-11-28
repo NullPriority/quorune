@@ -3,6 +3,7 @@ from __future__ import annotations
 """Reuse the closed public query grammar only at an applied instruction."""
 
 from . import regex_working_set as re
+from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
@@ -14,6 +15,10 @@ _CREATURE_NUMERIC = re.compile(
 )
 _OPPOSING_CREATURE_COLOR = re.compile(
     r'(?P<color>white|blue|black|red|green) creatures? your opponents control', re.I,
+)
+_TAPPED_OPPONENT_LANDS = ObjectQuerySpec(zones=("battlefield",), types_all=("land",), tapped=True)
+_TAPPED_OPPONENT_LAND_COUNT = CharacteristicQuantitySpec(
+    CharacteristicQuantityScope.OPPONENT_ZONES, query=_TAPPED_OPPONENT_LANDS,
 )
 
 
@@ -34,6 +39,8 @@ def resolution_quantity(value: str, *, source_name: str, complete_value: bool = 
     from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
     quantity = (query_characteristic_value(value, source_name=source_name) if complete_value
         else query_characteristic_quantity(value, source_name=source_name, definition_extensions=True))
+    if quantity == _TAPPED_OPPONENT_LAND_COUNT:
+        return LiveBattlefieldQuantitySpec("source_opponents", _TAPPED_OPPONENT_LANDS)
     if quantity is not None:
         from ..query_effect_amount_model import PublicQueryAmountSpec
         try:
@@ -47,6 +54,10 @@ def resolution_quantity(value: str, *, source_name: str, complete_value: bool = 
         if match is None:
             return None
         text = match['objects']
+    if text.casefold() == 'unlocked doors among rooms you control':
+        from ..shared_type_doors import RoomDoorQuantity
+
+        return RoomDoorQuantity()
     if re.fullmatch(r'creatures? attacking you',text,re.I):
         return LiveBattlefieldQuantitySpec('any',ObjectQuerySpec(zones=('battlefield',),
             types_all=('creature',),state_predicate=PermanentStatePredicateSpec(attacking=True)),

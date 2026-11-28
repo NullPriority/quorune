@@ -159,12 +159,106 @@ def _untap_and_combat_prevention_dependencies(effects, schema, mechanics):
     return (*untap, *prevention) if untap and prevention else ()
 
 
+def _source_target_counter_batch_node_capabilities(effects, target_schema, mechanics):
+    from ..counter_placement_sets import (
+        SOURCE_TARGET_COUNTER_BATCH_CAPABILITY, source_target_counter_batch_projection,
+    )
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    from ..replacement.immutable import FrozenMap
+    from .node_capability_shapes import fixed_counter_placement_batch_node_capabilities
+
+    recipient = {"zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"]}
+    if (BOUND_EFFECT_PROGRAM_MECHANIC not in mechanics or len(effects) != 2
+            or not isinstance(target_schema, Mapping)
+            or FrozenMap(target_schema) != FrozenMap({**recipient, "source_exclusion": True})
+            or dict(effects[0]) != {"op": "grant_keyword_until_end_of_turn", "card": "$target.0",
+                                    "keyword": "Indestructible"}):
+        return ()
+    try:
+        batch = source_target_counter_batch_projection(effects[1])
+    except (TypeError, KeyError, ValueError):
+        return ()
+    grant = closed_effect_component_capabilities(effects[:1], target_schema=target_schema, mechanics=mechanics)
+    counters = fixed_counter_placement_batch_node_capabilities(
+        effects=(batch,), target_schema=recipient, mechanic_ids=mechanics,
+    )
+    if not grant or not counters:
+        return ()
+    return tuple(sorted({BOUND_EFFECT_PROGRAM_CAPABILITY, "resolution.effect_program.closed_components",
+                         SOURCE_TARGET_COUNTER_BATCH_CAPABILITY, *grant, *counters,
+                         *FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES["Indestructible"],
+                         *FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES["Lifelink"]}))
+
+
+def _source_target_counter_batch_cost_capabilities(program):
+    from ..compiler.activated_costs import activated_ability_cost, activated_ability_cost_capabilities
+    from ..replacement.immutable import FrozenMap
+    from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+    from .activation_counter_cost import SourceCounterRemovalCost
+
+    ability, = activated_abilities_from_descriptors(program.handlers)
+    expected_price = FrozenMap({
+        "text": ability.cost_text,
+        "mana": {key: int(key == "GENERIC") for key in ("B", "C", "G", "GENERIC", "R", "U", "W")},
+        "complex_symbols": [],
+        "tap_source": False,
+        "untap_source": False,
+        "discard_source": False,
+        "sacrifice_source": False,
+        "exile_source": False,
+        "life_payment": 0,
+        "energy_payment": 0,
+        "loyalty_delta": None,
+        "source_counter_removal_cost": SourceCounterRemovalCost("indestructible", 1).to_dict(),
+        "choices": [],
+        "uncompiled_costs": [],
+    })
+    if (ability.zones != ("battlefield",) or ability.mana_ability or ability.sorcery_speed
+            or ability.activation_conditions or ability.generic_reduction_per_legendary_creature
+            or program.ability_id != f"ability:{ability.ability_id}" or ability.builtin_semantic_key != program.key
+            or ability.target_schema != FrozenMap(program.target_schema)
+            or FrozenMap(activated_ability_cost(ability)) != expected_price
+            or FrozenMap(program.cost_schema or {}) != expected_price):
+        raise ValueError("The paired placements require one generic mana and one source indestructible counter")
+    return activated_ability_cost_capabilities(ability)
+
+
+def source_target_counter_batch_program_dependencies(program):
+    from ..counter_placement_sets import SOURCE_TARGET_COUNTER_BATCH_CAPABILITY, uses_source_target_counter_batch
+    from ..semantic_runtime.activated_abilities import ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+    from .effect_shape_walkers import nested_effects
+
+    marked = tuple(effect for effect in nested_effects((program.effects, program.handlers))
+                   if uses_source_target_counter_batch(effect))
+    if not marked and SOURCE_TARGET_COUNTER_BATCH_CAPABILITY not in program.capability_dependencies:
+        return ()
+    if (marked != tuple(program.effects[1:]) or (program.event, program.active_zone) != ("activate", "battlefield")
+            or len(program.handlers) != 1 or program.event_condition is not None
+            or program.handlers[0].get("handler_id") != ACTIVATED_ABILITY_CATALOG_HANDLER_ID):
+        raise ValueError("The paired placements require their original paid battlefield ability")
+    dependencies = _source_target_counter_batch_node_capabilities(program.effects, program.target_schema, set(program.coverage))
+    if not dependencies:
+        raise ValueError("The two-subject batch requires its complete original target grant and counters")
+    return (*dependencies, *_source_target_counter_batch_cost_capabilities(program))
+
+
 def bound_effect_program_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanics = set(mechanic_ids)
+    from ..counter_placement_sets import uses_source_target_counter_batch
     from .target_recipient_results import target_recipient_result_node_capabilities
+    from .qualified_token_creators import uses_qualified_token_creators, qualified_token_creator_node_capabilities
+    from .third_player_rounds import is_third_player_round_choice, third_player_rounds_node_capabilities
+
+    if any(uses_source_target_counter_batch(effect) for effect in effects):
+        return _source_target_counter_batch_node_capabilities(effects, target_schema, mechanics)
+    if any(uses_qualified_token_creators(effect) for effect in effects):
+        return qualified_token_creator_node_capabilities(effects, target_schema, mechanics)
+
+    if any(is_third_player_round_choice(effect) for effect in effects):
+        return third_player_rounds_node_capabilities(effects, target_schema, mechanics)
     from ..compiler.target_recipient_results import TARGET_RECIPIENT_RESULT_MECHANIC
     if TARGET_RECIPIENT_RESULT_MECHANIC in mechanics:
         return target_recipient_result_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)

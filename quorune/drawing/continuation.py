@@ -57,12 +57,13 @@ class DrawResume:
         if self.kind not in {
             "none",
             "turn_draw",
+            "combat_damage",
             "semantic_resolution",
             "draw_batch",
             "draw_remainder",
         }:
             raise DrawError(f"Unsupported post-draw continuation {self.kind!r}")
-        if self.kind == "none":
+        if self.kind in {"none", "combat_damage"}:
             if (
                 self.seat
                 or self.stack_ref
@@ -133,9 +134,9 @@ class DrawResume:
         if not isinstance(value, Mapping):
             raise DrawError("Post-draw continuation must be an object")
         kind = value.get("kind")
-        if kind == "none":
+        if kind in {"none", "combat_damage"}:
             _exact(value, {"kind"}, name="Empty draw continuation")
-            return cls.none()
+            return cls(kind=kind)
         if kind == "turn_draw":
             _exact(value, {"kind", "seat"}, name="Turn-draw continuation")
             return cls(kind="turn_draw", seat=_string(value["seat"], name="Turn-draw continuation seat"))
@@ -190,8 +191,8 @@ class DrawResume:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        if self.kind == "none":
-            return {"kind": "none"}
+        if self.kind in {"none", "combat_damage"}:
+            return {"kind": self.kind}
         if self.kind == "turn_draw":
             return {"kind": "turn_draw", "seat": self.seat}
         if self.kind in {"draw_batch", "draw_remainder"}:

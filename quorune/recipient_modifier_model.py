@@ -10,6 +10,7 @@ from .counter_names import normalized_counter_name
 RECIPIENT_MODIFIER_CAPABILITY='continuous.power_toughness.recipient_quantity'
 RECIPIENT_MODIFIER_OPERATION='modify_power_toughness_by_recipient_quantity'
 RECIPIENT_SHARED_TYPE_CAPABILITY='continuous.power_toughness.recipient_shared_type'
+RECIPIENT_SHARED_NAME_CAPABILITY='continuous.power_toughness.recipient_shared_name'
 
 
 class RecipientQuantityKind(str,Enum):
@@ -18,6 +19,7 @@ class RecipientQuantityKind(str,Enum):
     MANA_SYMBOLS='mana_symbols'
     CREATURE_TYPES='creature_types'
     SHARED_CREATURE_TYPES='shared_creature_types'
+    OTHER_SAME_NAME_CREATURES='other_same_name_creatures'
 
 
 @dataclass(frozen=True,slots=True)
@@ -30,13 +32,16 @@ class RecipientQuantitySpec:
     controller_relation: str|None=None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2} or not isinstance(self.kind,RecipientQuantityKind):
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3} or not isinstance(self.kind,RecipientQuantityKind):
             raise ValueError('Recipient quantity identity is malformed')
         if self.kind is RecipientQuantityKind.SHARED_CREATURE_TYPES:
             if self.schema_version!=2 or self.controller_relation not in {'any','source_controller'}:
                 raise ValueError('Shared creature-type quantities require an explicit count controller')
+        elif self.kind is RecipientQuantityKind.OTHER_SAME_NAME_CREATURES:
+            if self.schema_version != 3 or self.controller_relation != 'source_controller' or self.maximum is not None:
+                raise ValueError('Same-name creatures require the source controller and an uncapped versioned count')
         elif self.schema_version!=1 or self.controller_relation is not None:
-            raise ValueError('Only shared creature-type quantities carry a controller relation')
+            raise ValueError('Only shared quantities carry a controller relation')
         if self.kind is RecipientQuantityKind.COUNTERS:
             if type(self.counter) is not str or normalized_counter_name(self.counter)!=self.counter:
                 raise ValueError('Recipient counter must be a canonical fixed counter name')
@@ -51,13 +56,13 @@ class RecipientQuantitySpec:
     def to_dict(self):
         value={'schema_version':self.schema_version,'kind':self.kind.value,'counter':self.counter,
             'mana_color':self.mana_color,'maximum':self.maximum}
-        if self.schema_version==2:value['controller_relation']=self.controller_relation
+        if self.schema_version in {2,3}:value['controller_relation']=self.controller_relation
         return value
 
     @classmethod
     def from_dict(cls,value):
         fields={'schema_version','kind','counter','mana_color','maximum'}
-        if isinstance(value,Mapping) and value.get('schema_version')==2:fields.add('controller_relation')
+        if isinstance(value,Mapping) and value.get('schema_version') in {2,3}:fields.add('controller_relation')
         if not isinstance(value,Mapping) or set(value)!=fields:
             raise ValueError('Recipient quantity fields are malformed')
         return cls(kind=RecipientQuantityKind(value['kind']),counter=value['counter'],
@@ -67,10 +72,10 @@ class RecipientQuantitySpec:
 
 def validate_recipient_modifier(value):
     fields={'schema_version','quantity','power','toughness'}
-    if isinstance(value,Mapping) and value.get('schema_version')==2:fields.add('objects')
+    if isinstance(value,Mapping) and value.get('schema_version') in {2,3}:fields.add('objects')
     if not isinstance(value,Mapping) or set(value)!=fields:
         raise ValueError('Recipient modifier fields are malformed')
-    if type(value['schema_version']) is not int or value['schema_version'] not in {1,2}:
+    if type(value['schema_version']) is not int or value['schema_version'] not in {1,2,3}:
         raise ValueError('Recipient modifier version is malformed')
     if any(type(value[key]) is not int for key in ('power','toughness')) or not(value['power'] or value['toughness']):
         raise ValueError('Recipient modifier requires nonzero integer coefficients')
@@ -80,4 +85,30 @@ def validate_recipient_modifier(value):
     if value['schema_version']==2:
         from .shared_creature_type_model import shared_type_objects
         shared_type_objects(value['objects'])
+    elif value['schema_version'] == 3:
+        same_name_objects(value['objects'])
     return spec
+
+
+
+def same_name_objects(values):
+    """Read current incarnations and the public rules names of controlled creatures."""
+    from .continuous_effect_model import ContinuousObjectIdentity
+
+    if not isinstance(values, (list, tuple)):
+        raise ValueError("Same-name quantity requires a sealed object array")
+    members = {}
+    physical_ids = set()
+    for row in values:
+        if not isinstance(row, Mapping) or set(row) != {"identity", "names"}:
+            raise ValueError("Same-name object fields are malformed")
+        identity = ContinuousObjectIdentity.from_dict(row["identity"])
+        names = row["names"]
+        if (not isinstance(names, (list, tuple)) or any(type(name) is not str or not name.strip() for name in names)
+                or tuple(names) != tuple(sorted(set(names)))):
+            raise ValueError("Same-name object rules names must be distinct and canonical")
+        if identity.object_id in physical_ids:
+            raise ValueError("Same-name quantity cannot repeat an original physical object")
+        physical_ids.add(identity.object_id)
+        members[identity] = frozenset(names)
+    return members

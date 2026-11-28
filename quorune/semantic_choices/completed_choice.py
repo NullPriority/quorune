@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..rules.opponent_blight import OpponentBlightBatchIntent
 
 """Replay-pinned remaining intents after an already committed choice intent."""
 
@@ -19,21 +20,26 @@ from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, Semanti
 
 def _intent_types():
     from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
+    from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
     from ..targeted_graveyard_cast_model import GraveyardCastIntent
+    from ..rules.discarded_card_cast import DiscardedCardCastIntent
     from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
     from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
     return {cls.__name__:cls for cls in (
-        GraveyardCastIntent, GraveyardLibraryCostBatchIntent, GraveyardExileLifeResultIntent,
+        GraveyardCastIntent, DiscardedCardCastIntent, GraveyardLibraryCostBatchIntent, GraveyardExileLifeResultIntent,
+        MultiownerFrontFaceGraveyardReturnIntent,
         ExileGraveyardCopiesIntent,
         ResolveRippleCastIntent,RippleBottomIntent,typed.ResolvingSharedTypeLibraryPlayIntent,
+        typed.ResolveQualifiedLibraryCastIntent,
         LifeGainCostBatchIntent, typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
         typed.RecordChoiceIntent, typed.ExploreCompletedIntent, typed.ConniveCompletedIntent,
         typed.SetPermanentTappedIntent, typed.SetPermanentsTappedIntent, typed.ProhibitNextUntapIntent, DomainEffectIntent, ExploitSacrificeIntent,
         typed.PlaceCountersIntent,typed.PlacePlayerCountersIntent,typed.PlaceCounterBatchIntent,typed.RemoveCountersIntent,
+        OpponentBlightBatchIntent,
         typed.QueueReflexiveTriggerIntent,
-        typed.AscendIntent,
+        typed.AscendIntent, typed.CopyStackItemIntent,
     )}
 
 
@@ -46,12 +52,13 @@ def _value_types():
     from ..rules.library_selection import LibrarySelectionObjectIdentity
     from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
     from ..semantic_runtime.intents import CounterPlacementAmount
+    from ..stack_spell_copy_model import PermanentSpellCopySpec
     from ..entry_counter_model import EffectEntryCounter
     from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
     from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
     return {cls.__name__:cls for cls in (RippleSpec,RippleCastSnapshot,RippleResolutionState,FixedHandPutbackOrder, ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
                                          DepartedLibraryArrivalOrder, LibrarySelectionObjectIdentity,
-                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot, GraveyardExileLifeResultSpec)}
+                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot, GraveyardExileLifeResultSpec, PermanentSpellCopySpec)}
 
 
 def _data(value):
@@ -82,10 +89,15 @@ def _intent_data(intent):
     values = {field.name: getattr(intent, field.name) for field in fields(intent)}
     if isinstance(intent, typed.PlaceCountersIntent) and intent.effect_generated:
         values.pop("effect_generated")
-    if isinstance(intent, typed.QueueReflexiveTriggerIntent) and intent.paid_creature is None:
-        values.pop("paid_creature")
-    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent) and intent.library_order is None:
-        values.pop("library_order")
+    if isinstance(intent, typed.QueueReflexiveTriggerIntent):
+        for name in ("paid_creature", "paid_mana"):
+            if values[name] is None:
+                values.pop(name)
+    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent):
+        if intent.library_order is None:
+            values.pop("library_order")
+        if not intent.entry_life_payment_refs:
+            values.pop("entry_life_payment_refs")
     if isinstance(intent, typed.ReturnGraveyardCardToOwnerHandIntent) and intent.scope is GraveyardReturnScope.OWN:
         values.pop("scope")
     return _data(values)
@@ -150,10 +162,21 @@ def decode_remaining_completion(value):
         expected_fields = {field.name for field in fields(cls)}
         if cls is typed.PlaceCountersIntent and "effect_generated" not in values:
             expected_fields.remove("effect_generated")
-        if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
-            expected_fields.remove("paid_creature")
-        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent) and "library_order" not in values:
-            expected_fields.remove("library_order")
+        if cls is typed.QueueReflexiveTriggerIntent:
+            expected_fields -= {"paid_creature", "paid_mana"} - values.keys()
+        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent):
+            from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
+            from ..public_zone_moves import PublicBattlefieldController
+
+            expected_fields -= {"library_order", "entry_life_payment_refs"} - values.keys()
+            if cls is MultiownerFrontFaceGraveyardReturnIntent:
+                if values.get("battlefield_controller") != PublicBattlefieldController.OWNER.value:
+                    raise SemanticChoiceError("Saved multiowner return requires the physical owner")
+                values = {**values, "battlefield_controller": PublicBattlefieldController.OWNER}
+            if "entry_life_payment_refs" in values:
+                if values.get("battlefield_controller") != PublicBattlefieldController.ACTOR.value:
+                    raise SemanticChoiceError("Saved entry payment must be for entries under the actor")
+                values = {**values, "battlefield_controller": PublicBattlefieldController.ACTOR}
         if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" not in values:
             expected_fields.remove("scope")
         if set(values) != expected_fields:
@@ -167,7 +190,7 @@ def decode_remaining_completion(value):
         if cls is typed.ResolveRippleCastIntent:
             if not isinstance(values['response'],Mapping):raise SemanticChoiceError('Ripple cast response is malformed')
             values['response']=FrozenMap(values['response'])
-        if cls is typed.ResolvingSharedTypeLibraryPlayIntent:
+        if cls in (typed.ResolvingSharedTypeLibraryPlayIntent, typed.ResolveQualifiedLibraryCastIntent):
             if not isinstance(values["effect"], Mapping) or not isinstance(values["response"], Mapping):
                 raise SemanticChoiceError("Revealed library play proof is malformed")
             values["effect"] = FrozenMap(values["effect"])

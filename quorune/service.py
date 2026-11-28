@@ -12,6 +12,7 @@ from .choice_forms import delegated_choice_fields
 from .protocol import PROTOCOL_VERSION
 from .rules.mana_pool_payment import mana_pool_choice_context
 from .session import CommanderSession
+from .turn_priority_model import PriorityWindowHolds
 
 
 COMMAND_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
@@ -49,7 +50,10 @@ class CommandEnvelope:
             "expected_view_revision",
             "choices",
         }
-        unknown = sorted(str(key) for key in set(value) - allowed)
+        unknown = sorted(
+            str(key).encode("utf-8", "backslashreplace").decode("utf-8")
+            for key in set(value) - allowed
+        )
         if unknown:
             raise ValueError(
                 "Command envelope contains unknown field(s): "
@@ -80,6 +84,10 @@ class CommandEnvelope:
             raw = value.get(name)
             if not isinstance(raw, str) or not raw:
                 raise ValueError(f"{name} must be a nonempty string")
+            try:
+                raw.encode("utf-8")
+            except UnicodeError as exc:
+                raise ValueError(f"{name} must contain valid Unicode") from exc
         return cls(
             protocol_version=str(value["protocol_version"]),
             game_id=str(value["game_id"]),
@@ -106,6 +114,7 @@ class CommandEnvelope:
         encoded = json.dumps(
             payload,
             ensure_ascii=False,
+            allow_nan=False,
             sort_keys=True,
             separators=(",", ":"),
         ).encode("utf-8")
@@ -253,9 +262,10 @@ class GameService:
         *,
         full: bool = False,
         cursor_key: str | None = None,
+        observation_epoch: object | None = None,
     ) -> dict[str, Any]:
         return self.session.packet(
-            principal, full=full, cursor_key=cursor_key
+            principal, full=full, cursor_key=cursor_key, observation_epoch=observation_epoch,
         )
 
     def drop_projection_cursor(self, cursor_key: str) -> None:
@@ -298,24 +308,33 @@ class GameService:
         )
 
     @staticmethod
-    def _choice_fields(
+    def _choice_error(
         action: Mapping[str, Any],
+        choices: Mapping[str, Any],
         *,
         decision_kind: str,
         context: Mapping[str, Any],
-    ) -> set[str]:
-        """Return the fields the current server-issued action delegates.
+    ) -> str | None:
+        """Validate submitted fields against the current action.
 
         This is intentionally conservative.  Server-derived action metadata
         such as a card ref, source, cost, zone, or semantic key never becomes
         writable merely because it is present in the catalog entry.
         """
 
-        return delegated_choice_fields(
+        allowed = delegated_choice_fields(
             action,
             decision_kind=decision_kind,
             context=context,
         )
+        unknown = sorted(str(key) for key in set(choices) - allowed)
+        if unknown:
+            return "Choices contain field(s) not delegated by this action: " + ", ".join(unknown)
+        if action.get("action") == "activate" and "cost_cards" in choices:
+            refs = choices["cost_cards"]
+            if not isinstance(refs, list) or any(type(ref) is not str or not ref for ref in refs):
+                return "Activation cost cards must be an array of card references"
+        return None
 
     def _selected_action(
         self, principal: str, action_id: str
@@ -362,13 +381,7 @@ class GameService:
         )
         return receipt
 
-    def command(
-        self,
-        envelope: CommandEnvelope,
-        *,
-        principal: str,
-        commit_idempotency: bool = True,
-    ) -> CommandReceipt:
+    def _envelope_error(self, envelope: CommandEnvelope) -> CommandReceipt | None:
         if envelope.protocol_version != PROTOCOL_VERSION:
             return self._receipt(
                 envelope,
@@ -383,8 +396,60 @@ class GameService:
                 code="wrong_game",
                 summary="Command belongs to a different game",
             )
+        return None
 
-        request_fingerprint = envelope.request_fingerprint()
+    def _command_availability_error(
+        self, envelope: CommandEnvelope, principal: str,
+    ) -> CommandReceipt | None:
+        status = self.session.record_status
+        if status not in {"created", "in_progress"}:
+            administrative_stop = (
+                status == "paused"
+                and (self.session.pause_reason or {}).get("kind") == "administrative_stop"
+            )
+            return self._receipt(
+                envelope,
+                ok=False,
+                code="game_paused" if status == "paused" else "game_not_active",
+                summary=(
+                    "Game is administratively stopped; resume it before "
+                    "submitting a new command"
+                    if administrative_stop
+                    else "Game is paused at a rules or fidelity boundary and "
+                    "cannot accept new commands"
+                    if status == "paused"
+                    else f"Game is {status} and cannot accept new commands"
+                ),
+            )
+        if principal.startswith("pilot:"):
+            player = self.session.state.players.get(principal.removeprefix("pilot:"))
+            if player is not None and not player.in_game:
+                return self._receipt(
+                    envelope,
+                    ok=False,
+                    code="player_not_active",
+                    summary="You are observing this game after leaving it",
+                )
+        return None
+
+    def command(
+        self,
+        envelope: CommandEnvelope,
+        *,
+        principal: str,
+        commit_idempotency: bool = True,
+        priority_window_holds: Mapping[str, PriorityWindowHolds] | None = None,
+    ) -> CommandReceipt:
+        if error := self._envelope_error(envelope):
+            return error
+
+        try:
+            request_fingerprint = envelope.request_fingerprint()
+        except (TypeError, ValueError, RecursionError):
+            return self._receipt(
+                envelope, ok=False, code="invalid_envelope",
+                summary="Command data must be valid UTF-8 JSON with finite numbers",
+            )
         prior = self.idempotency.get(
             envelope.game_id, principal, envelope.command_id
         )
@@ -398,36 +463,8 @@ class GameService:
                 )
             return replace(prior.receipt, replayed=True)
 
-        if self.session.record_status not in {"created", "in_progress"}:
-            status = self.session.record_status
-            administrative_stop = (
-                status == "paused"
-                and (self.session.pause_reason or {}).get("kind")
-                == "administrative_stop"
-            )
-            receipt = self._receipt(
-                envelope,
-                ok=False,
-                code=(
-                    "game_paused"
-                    if status == "paused"
-                    else "game_not_active"
-                ),
-                summary=(
-                    "Game is administratively stopped; resume it before "
-                    "submitting a new command"
-                    if administrative_stop
-                    else "Game is paused at a rules or fidelity boundary and "
-                    "cannot accept new commands"
-                    if status == "paused"
-                    else f"Game is {status} and cannot accept new commands"
-                ),
-            )
-            return (
-                self.remember(envelope, principal, receipt)
-                if commit_idempotency
-                else receipt
-            )
+        if error := self._command_availability_error(envelope, principal):
+            return self.remember(envelope, principal, error) if commit_idempotency else error
 
         decision = self.session.state.pending_decision
         if decision is None or decision.decision_id != envelope.decision_id:
@@ -482,26 +519,20 @@ class GameService:
                 principal,
                 receipt,
             ) if commit_idempotency else receipt
-        allowed_choices = self._choice_fields(
-            selected,
+        choice_error = self._choice_error(
+            selected, envelope.choices,
             decision_kind=decision_kind,
             context=mana_pool_choice_context(
                 self.session.state, capability.actor, decision_kind,
                 decision.payload_by_actor.get(capability.actor or principal, {}),
             ),
         )
-        unknown_choices = sorted(
-            str(key) for key in set(envelope.choices) - allowed_choices
-        )
-        if unknown_choices:
+        if choice_error is not None:
             receipt = self._receipt(
                 envelope,
                 ok=False,
                 code="invalid_choices",
-                summary=(
-                    "Choices contain field(s) not delegated by this action: "
-                    + ", ".join(unknown_choices)
-                ),
+                summary=choice_error,
             )
             return self.remember(
                 envelope,
@@ -516,6 +547,7 @@ class GameService:
                 "choices": copy.deepcopy(dict(envelope.choices)),
             },
             client_command_id=envelope.command_id,
+            priority_window_holds=priority_window_holds,
         )
         receipt = self._receipt(
             envelope,

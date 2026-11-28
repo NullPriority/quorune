@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Target legality and protection
 
+A source Equipment entry trigger can require a legendary creature controlled
+by the trigger's controller. Placement requires one legal target and skips
+the trigger when none exists. The shared target query checks the creature type,
+Legendary supertype, controller, and original battlefield incarnation again
+on resolution. The ordinary attachment owner then moves the source Equipment
+without an equip activation or payment.
+
 Version-four typed Enchant represents a modified creature, a nonbasic land,
 or a creature with another Aura attached. The modified predicate uses the
 canonical attachment-state query, including the permanent controller's Auras,
@@ -25,6 +32,27 @@ this Aura into its owner's graveyard.
 The capability is inferred from the exact typed fragment. Earlier Enchant
 encodings use their original payloads for replay.
 
+A linked graveyard Aura changes its legal attachment domain when its
+trigger returns the enchanted card. The return uses the original ability
+controller and the committed battlefield incarnation. The ordinary Aura
+owner checks the untargeted attachment and protection. Its delayed
+sacrifice follows that incarnation, even if protection prevents attachment,
+and triggers when the original Aura departs. Earlier reviewed Game Record
+v3 effects retain their stored physical-object encoding.
+
+An announced X can bound each distinct mana value in a group of creature cards
+from the caster's graveyard. The group permits a zero-target declaration.
+The maximum is X plus one before the offer narrows it to the number of
+represented values. Selection uses the effective public graveyard front face,
+and resolution compares each surviving target with its original incarnation
+and value. The concrete group is retained with the stack item's existing
+target schema. The exact distinct-value return pairs it with one simultaneous
+battlefield entry for the legal survivors. The result receives the count of
+originally selected targets and uses the existing movement and replacement
+owners. The return seals the printed creature front of a modal double-faced
+card before the entry owner measures replacement effects. The fixed-count
+reanimation instruction retains its established encoding and behavior.
+
 The target-language owner relation `spell_owner` reads the acting spell's explicit
 owner, independently of the spell controller and target controller. Live spell
 copies use their existing noncard object ownership; unavailable ownership rejects
@@ -34,6 +62,46 @@ inference requires `target.object.same_spell_owner` for this relation even when
 annotations omit it. Human and Changeling targets remain excluded from Mutate.
 Changing a spell's controller preserves its owner. A copy receives its own owner
 from the player under whose control it is created.
+
+The targeted return of an opposing spell or nonland permanent uses one
+target slot. The same opponent relation applies on the stack and on the
+battlefield. A stack target resolves to its current spell card and leaves
+by the ordinary owner-hand zone transition, including when the spell is
+uncounterable. A moved spell copy ceases to exist through state-based
+actions. Invalid or departed targets follow ordinary target revalidation.
+
+A counter that protects its controller or their creature can choose a spell
+or ability with at least one matching current target. The stack target reader
+follows the announced battlefield incarnation and the player's current game
+membership. A creature that stays under the controller's control and gains
+hexproof still qualifies. A departed incarnation leaves the target set used
+by the counter predicate, and a returned card receives a fresh identity.
+
+A qualified copy can target an instant spell, sorcery spell, activated ability,
+or triggered ability under any controller. One shared public predicate
+distinguishes spell types from ability kinds both when offering and revalidating
+the target. The copied stack item retains its existing source and paid choices.
+For fixed Spree, this mode can accompany a distinct single-target change mode.
+Each announced target is revalidated separately, and the copy instruction runs
+before that change in printed order.
+
+A spell that copies and returns one targeted instant or sorcery uses the
+same revalidated stack object for both instructions. The existing copy
+choice may retain the original targets or announce legal replacements.
+After placing the copy on the stack, the resolution moves the original
+spell to its owner's hand through ordinary zone movement. The move uses
+the original spell's owner when someone else controls it, and applies to
+uncounterable spells. The resolving player controls the copy. Cast history
+records actual casts only.
+
+A spell that copies and returns one targeted instant or sorcery uses the
+same revalidated stack object for both instructions. The existing copy
+choice may retain the original targets or announce legal replacements.
+After placing the copy on the stack, the resolution moves the original
+spell to its owner's hand through ordinary zone movement. The move uses
+the original spell's owner when someone else controls it, and applies to
+uncounterable spells. The resolving player controls the copy. Cast history
+records actual casts only.
 
 Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
 the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
@@ -76,6 +144,12 @@ when it announces targets and when a copy selects a replacement target.
 Resolution runs the ordinary reanimation instruction after revalidating the
 target. An announced X of zero remains a legal ceiling.
 
+A sorcery-speed activation can bind the same upper bound to one artifact or
+enchantment card in its controller's graveyard. The activation pays its
+fixed colored mana and announced X and returns one controlled land to its
+owner's hand. Payable offers show the target's minimum X and the largest
+payable X. The announced X and target incarnation are retained for resolution.
+
 An X-cost permanent's self-entry trigger can limit one owned artifact or
 creature card to its sealed entry X. Trigger creation binds the ceiling
 before target selection. Entry without a resolving spell supplies zero.
@@ -88,6 +162,18 @@ from the fixed query's mana-value field, so the resolved X can exceed the
 literal query grammar's range. The set resolves through the ordinary
 simultaneous battlefield entry owner. Copies use their own controller's
 graveyard and the copied X.
+
+A tap activation that grants a cast for a targeted artifact checks the
+ability controller's own graveyard and retains the selected incarnation
+through ordinary revalidation. An artifact land is a legal target. The
+resolved grant authorizes only casting the selected card this turn with
+ordinary timing and payment. Leaving and returning to the graveyard
+creates a new object outside that permission.
+
+An own-graveyard historic target can be an artifact, a legendary card, or a
+Saga. The mixed-characteristic target owner applies that disjunction to its
+one physical card, including a legendary land or a Saga land. Action offers
+and resolution both verify the same ownership and current incarnation.
 
 The spell that phases out up to X target creatures uses the ordinary
 announced cardinality. The caster can choose fewer than X targets. If Splice
@@ -156,6 +242,14 @@ the current attachment of the original Aura incarnation, or its last-known
 attachment after departure. It retains the referenced permanent through type
 changes and rejects a returned recipient's new incarnation. No target schema
 or resolution-time creature target predicate is synthesized for this form.
+
+A mandatory change to a single-target spell can carry a separate life-loss
+instruction for the resolving controller. The change uses the original
+spell's target authority. The life loss reads the original spell's current
+stack mana value, including announced X, after the target change or after
+the game finds no legal alternative. The pending choice keeps the following
+instruction in the existing resolution continuation. An illegal original
+spell target prevents both instructions from resolving.
 
 Closed stack-counter predicates keep disjunction branches independent. A
 triggered ability or colorless spell does not include an activated ability
@@ -228,6 +322,11 @@ selector owns zero and counts above six; legacy fixed descriptors retain their
 existing bounds. Dependent public forms follow exact or up-to selection, while
 the server revalidates the count and targets. Text-defined counts, unowned
 carrier contexts, target roles and linked consequences remain residual.
+A targeted life charge is fixed with the other casting prices after target
+announcement. Repeated instances of the same targeted permanent charge its
+source once. Distinct sources combine with the other life costs and use the
+ordinary nonreplaceable payment before the spell finishes casting.
+
 Target-dependent casting taxes retain their existing source-combination owner;
 preview witnesses include the X price needed to select those targets. Exact
 selection bounds also follow eligible target count, while up-to selection
@@ -363,6 +462,14 @@ choices then use the same structural validator in
 `selection/target_validation.py`, and genuinely changed targets still use the
 ordinary current target predicate and copied spell or ability controller.
 
+A supported power-adjusted die table targets a stack object with at least one
+announced target. Resolution uses the signed maximum current power of creatures
+controlled by the resolving player. The table offers ordinary reselection for
+the original under its current controller. A high result creates a separate
+copy choice after reselection, using the changed targets as defaults and the
+new copy controller for legality. The saved choice retains that continuation
+across reload without another roll.
+
 A retained-index selection keeps the original target incarnation even when it
 is no longer legal or has left its expected zone. An explicit current-reference
 selection chooses the currently represented object and must be legal. The
@@ -373,6 +480,15 @@ remain readable as original-target retention; grouped current-reference
 selections distinguish new targets. Ordinary casting and unrelated retargeting
 receive no copy retention exemption.
 
+A targeted graveyard return can offer to copy its resolving source after the
+original return when the physical spell was cast from a graveyard. Losing the
+sole original target stops that resolution before either instruction. The
+copy uses the standard target choice, including retention of the original
+incarnation after it leaves the graveyard. Return triggers wait until the
+copy's target choice is finished, then resolve before the copy. Only the
+original recorded graveyard cast carries authority for the optional copy.
+[Commander 2019 release notes](https://magic.wizards.com/en/news/feature/commander-2019-edition-release-notes-2019-08-09)
+
 Event-bound spell copies feed the same validator from current or departure-
 pinned spell information. Their prospective targeting source uses the copied
 characteristics and the copy controller. The original spell is a distinct
@@ -380,11 +496,24 @@ object and may be a legal new target of its copy. Without an explicit new-target
 permission, the copy retains every original target choice and incarnation.
 
 Normalized becomes-target occurrences use those committed snapshots as well.
+
+A fixed tap activation with one random target samples the current legal target
+group during announcement. Its ordinary cost owner then prices the selected
+target. A failed payment rolls back the action, and repeating the same proposal
+uses the same draw. The offer exposes the activation without a target picker.
 A retained departed incarnation creates no occurrence on a returned permanent
 with the same public reference. Choosing that returned incarnation explicitly
 does create an occurrence; retargeting compares incarnations before suppressing
 an unchanged-target announcement. Copies retain their own stack occurrence and
 do not publish a cast event.
+
+The fixed two-mana counter trigger can observe an opponent targeting a Sliver
+creature controlled by the source's controller. Trigger discovery reads the
+recipient's effective creature type and Sliver subtype at the announcement,
+including Changeling. Each newly targeted creature has its own occurrence.
+The subtype is available to discovery only, so the version-one event envelope
+keeps its original fields. The trigger refers to the announcing stack object,
+and its current controller receives the payment choice at resolution.
 
 The current representation fails closed before copy commitment if one
 assignment would require different incarnations sharing the same public
@@ -394,6 +523,13 @@ composition limits, not successful approximations. Current-version replay,
 descriptor readability and historical execution remain separate claims; old
 records require matching execution provenance and are rejected when that
 provenance is incompatible.
+
+A source-controlled blocking prohibition is a declaration rule locked to
+the target and the current source incarnation. It uses the original
+controller's control and phasing history. A committed loss of continuity
+ends the prohibition, even if the original controller regains the same
+permanent. A separate clause can still resolve when the prohibition never
+starts.
 
 ## Fixed source-specific prohibitions
 
@@ -462,8 +598,7 @@ existing attached handler binds that marker to the current Aura incarnation.
 Current attachment retention may ignore that one instance for that Aura.
 Another protection instance still applies, and targeting, damage and blocking
 receive ordinary protection. The exception does not permit a new attachment
-or ignore the Aura's Enchant restriction. All-Aura and already-attached
-exceptions remain outside this production.
+or ignore the Aura's Enchant restriction.
 
 Schema v4 represents protection from a publicly chosen player. The linked entry
 component binds the choice to the current source incarnation and copy form. A
@@ -472,6 +607,23 @@ the controller of the spell or ability. Damage, blocking and attachment use
 the controller of the relevant object, or its owner when it has no controller.
 These checks share the typed protection verdict and attachment legality is
 rechecked after control changes.
+
+A same-face entry choice can link one card type to a static grant of Protection
+for the source's current controller and creatures that player controls. The
+entering controller chooses a card type before entry. The retained choice
+follows the current source incarnation and copy form. The ordinary layer-6
+query applies to the current creature set, and player targeting, attachment,
+and damage consume the same typed Protection quality.
+
+Schema v5 represents one chosen-color Aura grant that retains the current
+Aura controller's eligible attachments. A retained Aura or Equipment must
+still have a reciprocal attachment to the same creature incarnation. The
+relation must have begun before or simultaneously with the granting Aura's
+attachment. A simultaneous entry transaction preserves that common boundary
+even when layer timestamps differ. Reattachment starts a new relation.
+Control changes recheck the live controllers. The exception belongs to that
+one protection instance when checking attachment retention. New attachments,
+targeting, blocking and damage use ordinary protection.
 
 The fixed-card-type compiler production admits protection from enchantments,
 optionally alongside a signed power/toughness modifier. Its separate capability
@@ -538,6 +690,10 @@ mechanic reusable pieces plus `capability.target.revalidate_resolution` and
 
 The compiler recognizes ordinary permanent Hexproof and Shroud
 case-insensitively and composes them with sibling keyword nodes. Qualified
+A color-changing instruction for a target artifact creature uses the
+conjunctive artifact and creature predicate in both offers and resolution.
+The color layer preserves the object's types.
+
 Hexproof retains separate closed keyword values for fixed colors, each color,
 monocolored or multicolored sources and single represented card types. The
 printed-face bridge preserves those values instead of a collapsed bare
@@ -594,3 +750,81 @@ Primary evidence is in `test_qualified_hexproof.py`, `test_hexproof_targeting.py
 effects that ignore either ability, hidden-zone targets, and unsupported
 ability-changing, copying, face-down, or merged-object
 keyword producers remain outside these trusted slices.
+
+A represented cast-entry trigger can grant its resolving controller protection from everything until the beginning of their next turn. The original cast receipt binds the trigger to that entry incarnation. The typed player protection applies to targeting and preventable damage for that duration. This descriptor leaves life total changes and permanent phasing to their own rules. Historical protection journals retain their recorded descriptor semantics.
+
+An untargeted battlefield activation can grant the same player protection. The
+versioned instruction binds the resolving activation and its controller even
+after a paid source move. The shared rules owners prevent targeting, Aura
+attachment and preventable damage until that player's next turn. Untargeted
+life loss and damage that cannot be prevented remain applicable.
+
+
+A grouped entry trigger can announce one optional creature per active player.
+The triggered object seals the roster. Each target stays in its original role
+through copies, retargeting and resolution. The destruction owner commits the
+still-legal targets in one batch. A qualifying destruction of a creature
+controlled by the resolving player requests two counters on the original live
+source. Destination replacement and prevention keep their separate outcomes.
+The reward uses the ordinary counter placement owner after destruction.
+
+A complete linked graveyard Aura face binds its cast and entry carriers to one
+linked Enchant descriptor. The original static Enchant and attached modifier
+retain their own source spans. Current registration checks both lifecycle
+carriers before superseding the historical reviewed pair.
+
+## Turn-long caster-relative restrictions
+
+A resolving spell can protect one targeted creature from the spell controller’s
+opponents until cleanup. The restriction uses that resolving controller and
+the target's current incarnation. The ordinary target owner applies it when
+offering new targets and revalidating pending instructions. A kicked copy
+retains the paid cast fact and applies both instructions to its own target.
+
+## Another legendary noncommander ability source
+
+A controlled stack ability qualifies for this copy target only when the
+source's effective supertype is legendary, its commander status is known to
+be false, and its original incarnation differs from the copy activation's
+source. The target check applies during announcement and revalidation. It
+uses current facts while the source exists in its original zone and last
+known facts after the source departs or phases out.
+
+Ability-source information version three records the commander fact with the
+existing source binding. Earlier records retain the prior shapes and their
+existing ability-source predicates. The new predicate requires complete
+commander and source identity facts.
+
+The paid battlefield commander return targets a permanent designated as a
+commander and checks its actual owner against the activating seat. It uses the
+regular priority and current-turn condition, including a nonempty stack. The
+target stays eligible under another player's control, and a legendary
+lookalike without commander designation stays ineligible. Ordinary target
+incarnation revalidation and the existing owner-hand destination replacement
+choice govern resolution.
+
+The ordinary Saga's per-player exile chapters offer one optional permanent
+for each player, including the source controller. Land and Saga permanents
+are excluded. Resolution revalidates the announced controller and target
+incarnation before the canonical source-departure exile and return.
+
+## Returning a graveyard card of each color
+
+A per-color graveyard return offers a separate optional group for each of
+the five colors. The same physical card cannot fill two groups, while two
+multicolored cards can fill different groups. Resolution rechecks each
+announced card against the color group originally selected and moves only
+the legally retained targets. A terminal self-exile applies when the spell
+resolves, including a cast with zero targets.
+
+A homogeneous optional set of controlled permanent targets can receive a fixed
+keyword through cleanup. Each distinct announced permanent revalidates before
+the grant. Its resolving incarnation retains the granted ability through later
+controller changes.
+
+A non-Aura enchantment can use the same linked graveyard lifecycle through its
+self-entry ability. The spell has no target. The entry trigger checks the
+original battlefield incarnation and the selected graveyard creature before
+creating the source-bound Aura type and Enchant restriction. The shared return
+owner attaches only to the actual arrival and schedules the same departure
+sacrifice. Independent timing permissions remain with the casting owner.

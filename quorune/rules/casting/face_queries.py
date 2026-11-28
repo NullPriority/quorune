@@ -59,6 +59,31 @@ def current_printed_cast_mana_cost(host,card,record):
     return str(face.get('mana_cost') or '') if face is not None else record.mana_cost
 
 
+def graveyard_printed_cast_price(host, seat, card):
+    physical = host.state.cards.get(card.object_id)
+    if (physical is None or physical.zone != "graveyard" or card.zone != "graveyard"
+            or physical.owner != seat or physical.object_kind != "card"
+            or physical.logical_object_id != card.logical_object_id):
+        return None
+    if card.face_down or card.annotations.get("prospective_cast_prototype") or card.annotations.get("prospective_cast_fuse"):
+        return None
+    record = host.card_record(physical)
+    if record is None:
+        return None
+    face = card.active_face
+    if record.faces:
+        front = str(record.faces[0]["name"])
+        face = face or front
+        if face != front and record.layout not in {"split", "adventure", "modal_dfc"}:
+            return None
+    for view in (physical, card):
+        types, _, _ = host._type_parts(str(host._effective_card_data(view).get("type_line") or ""))
+        if "land" in types:
+            return None
+    mana_cost = current_printed_cast_mana_cost(host, card, record).strip()
+    return (face, mana_cost) if mana_cost else None
+
+
 def printed_phyrexian_cast_options(mana_cost: str, *, x_value: int, commander_tax: int) -> list[dict[str, Any]]:
     """Price printed symbols while retaining the chosen mana and life components."""
     from ...activation_mana_cost import fixed_complex_activation_mana_options
@@ -110,9 +135,12 @@ def offered_cast_methods(host,card):
     from ...cast_face_offers import complete_cast_face_offers
     face_layouts={'split','modal_dfc'}|({'adventure'} if complete_cast_face_offers(host.state) else set())
     faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in face_layouts else (None,)
-    from .disturb_costs import compiled_disturb_spec
-    disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None
-    if disturb is not None:faces=(*faces,disturb.back_face)
+    from .disturb_costs import compiled_disturb_spec, compiled_more_than_meets_the_eye_spec
+    back_face_cast = compiled_more_than_meets_the_eye_spec(host, card)
+    if back_face_cast is None and card.zone == 'graveyard':
+        back_face_cast = compiled_disturb_spec(host, card)
+    if back_face_cast is not None:
+        faces = (*faces, back_face_cast.back_face)
     from ..prototype import compiled_prototype_spec
     prototype=(('prototype',None),) if compiled_prototype_spec(host,card) is not None else ()
     from ..fuse import compiled_fuse_spec
@@ -120,10 +148,29 @@ def offered_cast_methods(host,card):
     return tuple((None,name) for name in faces)+prototype+fuse+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
 
 
-def candidate_zone_cast_permission(host,seat,card):
+def face_down_library_top_cast_permission(host, seat, card, method):
+    from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
+    from ...morph import FACE_DOWN_CAST_METHODS
+    from ...semantic_runtime.action_permissions import controller_has_face_down_library_top_spell_permission
+
+    return (
+        card.zone == 'library' and method in FACE_DOWN_CAST_METHODS
+        and compiled_fixed_mana_face_down_method_spec(host, card, method=method) is not None
+        and controller_has_face_down_library_top_spell_permission(host, seat, card)
+    )
+
+
+def candidate_zone_cast_permission(host, seat, card):
     from .disturb_costs import cast_view_zone_permission
-    if cast_view_zone_permission(host,seat,card):return True
-    return any(cast_view_zone_permission(host,seat,selected_cast_card_view(host,card,name,method)) for method,name in offered_cast_methods(host,card) if method=='prototype' or method is None and name is not None)
+
+    if cast_view_zone_permission(host, seat, card):
+        return True
+    return any(
+        cast_view_zone_permission(host, seat, selected_cast_card_view(host, card, name, method))
+        if method == 'prototype' or method is None and name is not None
+        else face_down_library_top_cast_permission(host, seat, card, method)
+        for method, name in offered_cast_methods(host, card)
+    )
 
 
 def selected_cast_card_view(host,card,face_name=None,cast_method=None):
@@ -158,6 +205,29 @@ def _limit_cast_cost_option_x(options, maximum):
     return tuple(remaining)
 
 
+def _restrict_cast_cost_option_x_parity(options, permissions):
+    if permissions is None or all(permissions):
+        return options
+    if not any(permissions):
+        return ()
+    parity = 0 if permissions[0] else 1
+    result = []
+    for option in options:
+        value = option.to_dict()
+        bounds = value.get("choice_schema", {}).get("x")
+        if bounds is None:
+            if permissions[0]:
+                result.append(option)
+            continue
+        minimum = bounds["minimum"] + (parity - bounds["minimum"]) % 2
+        maximum = bounds["maximum"] - (bounds["maximum"] - parity) % 2
+        if minimum > maximum:
+            continue
+        bounds.update(minimum=minimum, maximum=maximum, default=minimum, step=2)
+        result.append(CastCostOption.from_dict(value))
+    return tuple(result)
+
+
 def build_cast_cost_options(
     host: CastCostHost,
     seat: str,
@@ -170,44 +240,80 @@ def build_cast_cost_options(
     alternative_base: Mapping[str, Any] | None = None,
     cast_type_line: str | None = None,
     suppress_source_costs: bool = False,
-    resolving_exile_authority: bool = False,
+    resolving_paid_zone: str | None = None,
     resolving_library_authority: bool = False,
     ignore_timing: bool = False,
 ) -> tuple[CastCostOption, ...]:
     """Offer the selected face's payable choices under its current zone permission."""
     from .costs import _cast_cost_options_for_submission
     from .source_placement import casting_affordability_host
-    from ...semantic_runtime.static_cast_rules import static_cast_maximum_x
+    from ...semantic_runtime.static_cast_rules import opponent_cast_x_permissions, static_cast_maximum_x
+    from ..player_capped_land_reveal import source_limited_cast_x
 
     submission = dict(response or {})
     face = {"type_line": cast_type_line} if cast_type_line is not None else None
-    maximum = static_cast_maximum_x(host, seat, card, face=face)
+    maximum = source_limited_cast_x(host, program, static_cast_maximum_x(host, seat, card, face=face))
     if maximum is not None and int(submission.get("x") or 0) > maximum:
+        return ()
+    permissions = opponent_cast_x_permissions(
+        host, seat, card, face=face, face_down=cast_type_line is not None and suppress_source_costs,
+    )
+    if permissions is not None and (not any(permissions) or
+            submission.get("x") is not None and not permissions[int(submission["x"]) % 2]):
         return ()
     host = casting_affordability_host(host, card)
     price = partial(_cast_cost_options_for_submission, host, seat, card, program,
         hint=hint, force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
         cast_type_line=cast_type_line, suppress_source_costs=suppress_source_costs,
-        resolving_exile_authority=resolving_exile_authority,ignore_timing=ignore_timing)
+        resolving_paid_zone=resolving_paid_zone,ignore_timing=ignore_timing)
 
     def build(announcement, **options):
         announced_x = announcement.get("x")
         if maximum is not None and announced_x is not None and int(announced_x) > maximum:
             return ()
-        return _limit_cast_cost_option_x(price(announcement, **options), maximum)
+        return _restrict_cast_cost_option_x_parity(
+            _limit_cast_cost_option_x(price(announcement, **options), maximum), permissions,
+        )
 
     if resolving_library_authority and (card.zone!='library' or not force_without_mana_cost or not ignore_timing):
         raise ValueError('Resolving library authority requires its explicit free resolution cast')
+    life_price_options = ()
+    if card.zone == "library" and alternative_base is None and not force_without_mana_cost:
+        life_price_options = _library_top_life_variants(
+            host, seat, card, submission, build, face_down=suppress_source_costs,
+        )
+    if card.zone == "exile" and alternative_base is None and not force_without_mana_cost and not ignore_timing:
+        from ...semantic_runtime.linked_graveyard_exile_play import controller_linked_graveyard_exile_permissions
+        from .linked_exile_life import has_separate_exile_cast_authority, linked_exile_life_variants
+
+        if controller_linked_graveyard_exile_permissions(host, seat, card):
+            linked = linked_exile_life_variants(host, seat, card, submission, build, face_down=suppress_source_costs)
+            ordinary = build(submission, minimum_library_x=0) if has_separate_exile_cast_authority(host, seat, card) else ()
+            return (*ordinary, *linked)
     minimum = 0 if resolving_library_authority else _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
     if not (hint and minimum and submission.get('x') is None):
-        return build(submission, minimum_library_x=minimum)
-    static = build({**submission, 'x': minimum}, minimum_library_x=minimum, source_grant_only=False)
+        return (*build(submission, minimum_library_x=minimum), *life_price_options)
+    preview_x = minimum + int(permissions is not None and not permissions[minimum % 2])
+    static = build({**submission, 'x': preview_x}, minimum_library_x=minimum, source_grant_only=False)
     from .turn_cast_grants import current_turn_cast_grants
 
     if not current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line):
-        return static
+        return (*static, *life_price_options)
     grants = build(submission, minimum_library_x=minimum, source_grant_only=True)
-    return (*static, *grants)
+    return (*static, *grants, *life_price_options)
+
+
+def _library_top_life_variants(host, seat, card, submission, build, *, face_down):
+    from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+    from .library_top_life import library_top_life_cost_options
+
+    bases = library_top_life_cost_options(host, seat, card, submission, face_down=face_down)
+    return tuple(
+        option
+        for base in bases
+        for option in build(submission, minimum_library_x=0, alternative_base=base)
+        if TURN_CAST_GRANT_FIELD not in option.to_dict()
+    )
 
 
 def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_grant_only):
@@ -237,7 +343,19 @@ def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_g
 
 def validate_library_top_cast_commit(host, seat, card, option, response, *, face_down=False):
     from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD, validate_library_top_life_price
 
+    if LIBRARY_TOP_LIFE_PRICE_FIELD in option:
+        if TURN_CAST_GRANT_FIELD in option:
+            raise ValueError("A library-top life price may only use its own source")
+        validate_library_top_life_price(host, seat, card, option, response, face_down=face_down)
+        return
+    from .linked_exile_life import LINKED_EXILE_LIFE_PRICE_FIELD, validate_linked_exile_life_price
+    if LINKED_EXILE_LIFE_PRICE_FIELD in option:
+        if TURN_CAST_GRANT_FIELD in option:
+            raise ValueError("A linked-exile life price may only use its own source")
+        validate_linked_exile_life_price(host, seat, card, option, response, face_down=face_down)
+        return
     if card.zone != 'library' or TURN_CAST_GRANT_FIELD in option:
         return
     minimum = _static_library_top_minimum_x(host, seat, card, face_down=face_down)

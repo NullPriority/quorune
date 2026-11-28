@@ -74,6 +74,11 @@ def prepare_composition_merge(host,*,target:ContinuousObjectIdentity,source:Cont
     root=host.state.cards.get(target.object_id)
     if root is None or root.zone!='battlefield' or root.logical_object_id!=target.logical_object_id:
         raise ValueError('A physical merge requires its current battlefield target')
+    from .name_stickers import placements
+
+    spell = host.state.cards.get(source.object_id)
+    if placements(root) or (spell is not None and placements(spell)):
+        raise ValueError("Merging a stickered object requires its physical marker allocation rules")
     members=tuple(seat for seat,player in host.state.players.items()
         for object_id in player.zones.get('battlefield',()) if object_id==root.object_id)
     if members!=(root.controller,):raise ValueError('Physical merge target membership is ambiguous')

@@ -9,7 +9,8 @@ from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..fixed_effect_payment import (
-    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_DISCARD_PAYMENT_VERSION,
+    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION, MANDATORY_DISCARD_PAYMENT_VERSION,
+    mandatory_artifact_sacrifice_predicate, mandatory_artifact_sacrifice_result_parts,
     RETURN_PAYMENT_KIND, RETURN_PAYMENT_VERSION, FixedEffectPaymentSpec, creature_or_vehicle_sacrifice_predicate,
 )
 from ..object_predicate import ObjectQuerySpec
@@ -27,6 +28,9 @@ from .spell_additional_cost_templates import (
 _PAYMENT = re.compile(r"You may (?P<cost>.+?)\. If you do, (?P<body>.+)", re.I)
 _DECLINED_PAYMENT = re.compile(r"You may (?P<cost>.+?)\. If you don['’]t, (?P<body>.+)", re.I)
 _MANDATORY_DISCARD = re.compile(r"Discard (?:a|one) card\. If you do, (?P<body>[^.\n]+\.?)", re.I)
+_MANDATORY_ARTIFACT = re.compile(
+    r"Sacrifice an artifact\. If you do, (?P<body>put two \+1/\+1 counters on this creature\.)", re.I,
+)
 _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that much|equal to|for each)\b", re.I)
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 
@@ -154,9 +158,24 @@ def _owned_graveyard_exile_payment(value):
 def fixed_effect_payment_template(
     text: str, *, compile_effect: Callable[[str], Compiled], source_is_permanent: bool | None = None,
 ) -> Compiled | None:
-    match = _MANDATORY_DISCARD.fullmatch(text.strip())
+    from ..rules.mandatory_sacrifice_reanimation import mandatory_sacrifice_reanimation_template
+    from ..rules.artifact_search_exchange import artifact_search_exchange_template
+
+    if source_is_permanent is not True and (exchange := artifact_search_exchange_template(text)):
+        return exchange
+    if reanimation := mandatory_sacrifice_reanimation_template(text, source_is_permanent=source_is_permanent):
+        return reanimation
+    artifact = _MANDATORY_ARTIFACT.fullmatch(text.strip())
+    match = artifact or _MANDATORY_DISCARD.fullmatch(text.strip())
     declined = False
-    if match is not None:
+    if artifact is not None:
+        if source_is_permanent is not True:
+            return None
+        cost = FixedEffectPaymentSpec(
+            "sacrifice", schema_version=MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION,
+            predicate=mandatory_artifact_sacrifice_predicate("$controller"),
+        )
+    elif match is not None:
         cost = FixedEffectPaymentSpec(
             "discard", schema_version=MANDATORY_DISCARD_PAYMENT_VERSION,
             predicate=ObjectQuerySpec(zones=("hand",), owner="$controller", known_to_actor=True),
@@ -175,9 +194,17 @@ def fixed_effect_payment_template(
                 cost = FixedEffectPaymentSpec(
                     RETURN_PAYMENT_KIND, predicate=returned.predicate, schema_version=RETURN_PAYMENT_VERSION,
                 )
-    body=match['body'].strip()
-    if cost is None or _OPEN.search(body) or '"' in body:return None
-    template,effects,schema,mechanics=compile_effect(body)
+    body = match["body"].strip()
+    if cost is None or '"' in body:
+        return None
+    chosen_impulse = None
+    if not declined and cost.kind == "discard" and cost.amount == 1:
+        from .discover_templates import _chosen_impulse_template
+
+        chosen_impulse = _chosen_impulse_template(body)
+    if chosen_impulse is None and _OPEN.search(body):
+        return None
+    template, effects, schema, mechanics = chosen_impulse or compile_effect(body)
     if len(effects)==1 and effects[0].get('op')=='modify_stats_until_end_of_turn' and effects[0].get('card')=='$source':
         from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
         source_result=FixedSourceCharacteristicsTemplate(source_kind='permanent',power=effects[0]['power'],toughness=effects[0]['toughness'])
@@ -199,6 +226,11 @@ def fixed_effect_payment_template(
     if declined:
         value["declined_effects"] = deepcopy(list(effects))
     if cost.kind=='mana':value['cost']=dict(cost.requirements)
+    if artifact is not None:
+        try:
+            mandatory_artifact_sacrifice_result_parts(value)
+        except (TypeError, ValueError):
+            return None
     identity=hashlib.sha256(stable_json(value).encode('utf-8')).hexdigest()[:16]
     return ('fixed-resolution-payment-'+identity+'-v2',(value,),schema,
             tuple(dict.fromkeys((FIXED_EFFECT_PAYMENT_MECHANIC,*mechanics))))

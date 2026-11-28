@@ -65,6 +65,107 @@ class TargetedSpellCostRuntimeTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
 
+    def test_terror_of_the_peaks_closes_the_exact_fixed_life_cost_source(self):
+        from unittest.mock import patch
+        from test_controller_creature_keyword_absence import register_card
+        from quorune.targeted_spell_costs import TARGETED_SPELL_LIFE_COST_CAPABILITY, validate_targeted_spell_cost_fact
+
+        card = self.db.lookup("Terror of the Peaks", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for node in ir.faces[0].nodes if node.event == "cast.cost.modify")
+        self.assertEqual({"schema_version": 6, "subject": "source", "life": 3},
+                         node.handlers[0]["modifier"])
+        self.assertIn(TARGETED_SPELL_LIFE_COST_CAPABILITY, node.capability_dependencies)
+        binding, _ = register_card(self.db, self.registry, card.name)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        with patch("quorune.compiler.targeted_spell_costs._targeted_spell_life_cost_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+        for change in ({"life": True}, {"life": 2}, {"generic": 3}, {"subject": "spell_target"}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                TargetedSpellCostSpec.from_dict({**node.handlers[0]["modifier"], **change})
+        row = {"component_id": "source", "source_ref": "A01", "source_identity": "A01@1",
+               "controller": "A", "generic": 0, "life": 3}
+        fact = {"schema_version": 4, "generic": 0, "generic_reduction": 0, "life": 3, "sources": [row]}
+        self.assertEqual(0, validate_targeted_spell_cost_fact(fact))
+        for change in ({"life": True}, {"life": 6}, {"sources": [row, row]}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                validate_targeted_spell_cost_fact({**fact, **change})
+
+    def test_terror_of_the_peaks_charges_distinct_permanents_once_during_cast_and_replays(self):
+        for distinct in (False, True):
+            with self.subTest(distinct=distinct):
+                game = self.session(45613201 + distinct)
+                first = self.add(game.engine, "Terror of the Peaks", ref="terror-cast-first")
+                second = self.add(game.engine, "Terror of the Peaks", seat="C", ref="terror-cast-second")
+                bond = self.add(game.engine, "Common Bond", seat="B", zone="hand")
+                self.fund(game, {"C": 1, "G": 1, "W": 1}, actor="B")
+                before = game.state.players["B"].life
+                targets = [first.ref, second.ref if distinct else first.ref]
+                action = next(choice for choice in game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                              if choice.get("card") == bond.ref)
+                self.assertTrue(any(price.get("life") == 6 and "6 life" in price["label"]
+                    for option in action["cost_options"] for price in option.get("target_costs", {}).get("prices", ())))
+                result = game.act("pilot:B", {"action_id": action["id"], "targets": targets, "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(before - (6 if distinct else 3), game.state.players["B"].life)
+                self.assertEqual(["spell"], [item.kind for item in game.state.stack])
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.replay(game, load=True)
+
+    def test_terror_of_the_peaks_keeps_an_untaxed_target_and_does_not_tax_an_ability(self):
+        game = self.session(45613203)
+        source = self.add(game.engine, "Terror of the Peaks")
+        other = self.add(game.engine, "Generic Bound Body", ref="terror-untaxed")
+        sorcerer = self.add(game.engine, "Prodigal Sorcerer", seat="B")
+        sorcerer.acquired_control_turn_count = -1
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        game.state.players["B"].life = 2
+        self.fund(game, {"U": 1}, actor="B")
+        actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        cast = next(action for action in actions if action.get("card") == bounce.ref)
+        self.assertNotIn(source.ref, cast["target_schema"]["legal_refs"])
+        self.assertIn(other.ref, cast["target_schema"]["legal_refs"])
+        self.reject(game, "B", action_id=cast["id"], targets=[source.ref], pay="auto")
+        activation, = (action for action in actions if action["id"].startswith(f"activate:{sorcerer.ref}:"))
+        result = game.act("pilot:B", {"action_id": activation["id"], "targets": [source.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, game.state.players["B"].life)
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+    def test_terror_of_the_peaks_locks_combined_life_affordability_and_pays_before_sba(self):
+        for life in (6, 7):
+            with self.subTest(life=life):
+                game = self.session(45613207 + life)
+                source = self.add(game.engine, "Terror of the Peaks")
+                untaxed = self.add(game.engine, "Generic Bound Body", ref="terror-phyrexian-untaxed")
+                spell = self.add(game.engine, "Dismember", seat="B", zone="hand")
+                game.state.players["B"].life = life
+                self.fund(game, {"C": 1}, actor="B")
+                actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                cast = next(action for action in actions if action.get("card") == spell.ref)
+                self.assertIn(untaxed.ref, cast["target_schema"]["legal_refs"])
+                if life < 7:
+                    self.assertNotIn(source.ref, cast["target_schema"]["legal_refs"])
+                    self.reject(game, "B", action_id=cast["id"], targets=[source.ref], pay="auto")
+                    self.assertEqual(6, game.state.players["B"].life)
+                else:
+                    start = len(game.state.events)
+                    result = game.act("pilot:B", {"action_id": cast["id"], "targets": [source.ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual(0, game.state.players["B"].life)
+                    delta = list(game.state.events)[start:]
+                    payments = [event.details["amount"] for event in delta if event.code == "cost.life"]
+                    self.assertEqual([4, 3], payments)
+                    codes = [event.code for event in delta]
+                    self.assertLess(codes.index("cost.life"), codes.index("stack.cast"))
+                    self.assertLess(codes.index("stack.cast"), codes.index("player.eliminated"))
+                    self.assertNotIn("B", game.engine.active_seats)
+                self.replay(game, load=True)
+
     def test_actual_boreal_tax_rejects_unpaid_target_and_preserves_an_untaxed_legal_offer(self):
         session=self.session(6012);target=self.add(session.engine,'Boreal Elemental',ref='actual-boreal')
         other=self.add(session.engine,'Generic Bound Body',ref='untaxed-target')

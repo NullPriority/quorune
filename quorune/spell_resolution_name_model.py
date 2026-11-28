@@ -3,9 +3,10 @@ from __future__ import annotations
 """Immutable per-controller facts about names of successfully resolved spells."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from .replacement.immutable import FrozenMap, thaw_value
+from .spell_cast_name_model import SpellCastNameHistory
 
 
 def _names(value):
@@ -105,11 +106,16 @@ class SpellResolutionNameLedger:
     history: SpellResolutionNameHistory = field(default_factory=SpellResolutionNameHistory)
     pending: FrozenMap = field(default_factory=FrozenMap)
     schema_version: int = 1
+    cast_history: SpellCastNameHistory | None = None
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version != 1
+        if (type(self.schema_version) is not int or self.schema_version not in {1, 2}
                 or not isinstance(self.history, SpellResolutionNameHistory) or not isinstance(self.pending, Mapping)):
             raise ValueError('A resolution ledger requires explicit known history and a closed version')
+        if self.schema_version == 1 and self.cast_history is not None:
+            raise ValueError('The original resolution ledger has no cast history')
+        if self.schema_version == 2 and not isinstance(self.cast_history, SpellCastNameHistory):
+            raise ValueError('The combined name ledger requires its separate cast history')
         frozen = FrozenMap(self.pending)
         for ref, value in frozen.items():
             fact = SpellResolutionNameFact.from_dict(value)
@@ -120,14 +126,21 @@ class SpellResolutionNameLedger:
 
     def to_dict(self):
         return {'schema_version': self.schema_version, 'history': self.history.to_dict(),
-                'pending': thaw_value(self.pending)}
+                'pending': thaw_value(self.pending),
+                **({'cast_history': self.cast_history.to_dict()} if self.cast_history is not None else {})}
 
     @classmethod
     def from_dict(cls, value):
-        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'history', 'pending'}:
-            raise ValueError('Resolution-name ledger fields are closed')
+        if not isinstance(value, Mapping):
+            raise ValueError('Spell-name ledger requires its versioned object')
+        expected = {'schema_version', 'history', 'pending'}
+        if value.get('schema_version') == 2:
+            expected.add('cast_history')
+        if set(value) != expected:
+            raise ValueError('Spell-name ledger fields are closed')
         return cls(SpellResolutionNameHistory.from_dict(value['history']),
-                   FrozenMap(value['pending']), value['schema_version'])
+                   FrozenMap(value['pending']), value['schema_version'],
+                   SpellCastNameHistory.from_dict(value['cast_history']) if 'cast_history' in value else None)
 
     def begin(self, *, stack_ref, controller, names):
         _names(names)
@@ -138,11 +151,11 @@ class SpellResolutionNameLedger:
                 raise ValueError('A paused resolution changed its spell name or controller')
             return self, fact
         history, fact = self.history.note_resolution(stack_ref=stack_ref, controller=controller, names=names)
-        return SpellResolutionNameLedger(history, FrozenMap({**dict(self.pending), stack_ref: fact.to_dict()})), fact
+        pending = FrozenMap({**dict(self.pending), stack_ref: fact.to_dict()})
+        return replace(self, history=history, pending=pending), fact
 
     def finish(self, stack_ref):
         if type(stack_ref) is not str or not stack_ref:
             raise ValueError('Completing resolution requires its original stack reference')
         if stack_ref not in self.pending:return self
-        return SpellResolutionNameLedger(self.history,
-            FrozenMap({ref: fact for ref, fact in self.pending.items() if ref != stack_ref}))
+        return replace(self, pending=FrozenMap({ref: fact for ref, fact in self.pending.items() if ref != stack_ref}))

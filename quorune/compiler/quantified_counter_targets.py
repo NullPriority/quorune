@@ -15,7 +15,28 @@ _CHOOSE = re.compile(rf'Choose (?P<count>{_COUNT}) target (?P<subject>[^.]+)\. (
 _INLINE = re.compile(rf'(?P<result>(?:Put|Double) .+?) on (?:each of )?(?P<count>{_COUNT}) target (?P<subject>[^.]+)\.',re.I)
 
 
+def _split_two_counter_template(text):
+    match = re.fullmatch(
+        r"Distribute two (?P<counter>[+]1/[+]1|-1/-1) counters among one or two target creatures"
+        r"(?P<controlled> you control)?[.]", text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    from ..split_two_counter_target_amount import SplitTwoCounterTargetAmount
+
+    ordinary = quantified_counter_target_template(
+        f"Put a {match['counter']} counter on each of one or two target creatures{match['controlled'] or ''}."
+    )
+    if ordinary is None:
+        return None
+    _, (effect,), schema, mechanics = ordinary
+    return ("split-two-counter-targets-v1", ({**effect, "amount": SplitTwoCounterTargetAmount().to_dict()},),
+            schema, mechanics)
+
+
 def quantified_counter_target_template(text):
+    if split := _split_two_counter_template(text):
+        return split
     match=_CHOOSE.fullmatch(text.strip()) or _INLINE.fullmatch(text.strip())
     if match is None:return None
     result=match['result'];doubling=result.casefold().startswith('double the number of ')

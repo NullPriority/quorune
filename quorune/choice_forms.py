@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 from typing import Any, Mapping, Sequence
 
+from .rules.mana_contribution_draw import MANA_CONTRIBUTION_DRAW_OPERATION
+
 
 FORM_VERSION = 1
 
@@ -15,6 +17,50 @@ def _rows(value: Any) -> list[Mapping[str, Any]]:
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
         return []
     return [item for item in value if isinstance(item, Mapping)]
+
+
+def present_creature_type_entry_options(context, continuation, *, state, card_db, actor):
+    """Label the legal choices and recommend creature types from the pilot's own cards."""
+    from .characteristic_evaluation import type_parts
+    from .creature_subtypes import canonical_creature_subtype
+    from .entry_designations import EntryDesignationKind
+
+    offered = {row.get("id"): row for row in _rows(context.get("options"))}
+    choices = {}
+    for effect in _rows(continuation.get("replacement_effects")):
+        option_id = effect.get("effect_id")
+        if option_id not in offered or effect.get("event_kind") != "zone.change":
+            continue
+        for operation in _rows(effect.get("operations")):
+            if operation.get("op") != "set" or operation.get("field") != EntryDesignationKind.CREATURE_TYPE.event_field:
+                continue
+            subtype = canonical_creature_subtype(operation.get("value"))
+            if subtype is not None:
+                choices[option_id] = subtype
+
+    if not choices:
+        return
+    deck_types = set()
+    for oracle_id in {
+        card.oracle_id for card in state.cards.values()
+        if card.owner == actor and card.is_card_object
+    }:
+        try:
+            record = card_db.by_oracle_id(oracle_id)
+        except KeyError:
+            continue
+        type_lines = [str(face.get("type_line", "")) for face in record.faces] or [record.type_line]
+        for type_line in type_lines:
+            card_types, subtypes, _ = type_parts(type_line)
+            if card_types.intersection({"creature", "kindred", "tribal"}):
+                deck_types.update(subtypes)
+
+    if len(choices) == len(offered) and not context.get("event_order_options"):
+        context["prompt"] = "Choose a creature type."
+    context["entry_creature_types"] = {
+        option_id: {"label": subtype.title(), "preferred": subtype in deck_types}
+        for option_id, subtype in choices.items()
+    }
 
 
 def _labels(context: Mapping[str, Any]) -> dict[str, str]:
@@ -124,6 +170,17 @@ def _select_value_field(field, value, legal_values, context):
     return field
 
 
+def _integer_field(field, value, context):
+    if value.get("step") == 2:
+        legal = range(value["minimum"], value["maximum"] + 1, 2)
+        return _select_value_field(field, value, legal, context)
+    field["control"] = "integer"
+    for key in ("minimum", "maximum", "default"):
+        if value.get(key) is not None:
+            field[key] = int(value[key])
+    return field
+
+
 def _field(
     name: str,
     descriptor: Any,
@@ -162,6 +219,16 @@ def _field(
     legal_refs = value.get("legal_refs")
     if shape == "object_map":
         return _object_map_field(name, value, context)
+    if shape == "quantity_map":
+        field.update({
+            "control": "quantity_map",
+            "options": _options(list(value.get("legal_refs") or []), context),
+            "minimum_each": value.get("minimum_each", 0),
+            "maximum_each": value.get("maximum_each"),
+        })
+        bound = "exact_total" if "exact_total" in value else "maximum_total"
+        field[bound] = value[bound]
+        return field
     if shape == "ordered_partition":
         return _ordered_partition_field(name, value, context)
     if name == "copy_targets" and value.get("copy_count") is not None:
@@ -204,14 +271,7 @@ def _field(
             )
         return field
     if value_type == "integer":
-        field["control"] = "integer"
-        if value.get("minimum") is not None:
-            field["minimum"] = int(value["minimum"])
-        if value.get("maximum") is not None:
-            field["maximum"] = int(value["maximum"])
-        if value.get("default") is not None:
-            field["default"] = int(value["default"])
-        return field
+        return _integer_field(field, value, context)
     if value_type in {"card_name", "creature_type", "string"}:
         field["control"] = "text"
         if value.get("max_length") is not None:
@@ -396,6 +456,20 @@ def _variant_form(
     }
 
 
+def _phyrexian_declaration_payment_field(context):
+    rows = []
+    for cost in _rows(context.get('declaration_costs')):
+        if cost.get('kind') != 'phyrexian':
+            continue
+        color, = cost['mana']
+        labels = {'mana': f'Pay {{{color}}}', 'life': f"Pay {cost['life']} life"}
+        rows.append({'value': cost['id'], 'label': f"{cost['label']} Defender: {cost['option']}.",
+                     'options': [{'value': key, 'label': labels[key]} for key in cost['methods']]})
+    return ({'name': 'phyrexian_payments', 'control': 'assignment_map', 'required': False,
+             'allow_none': True, 'label': 'Payment for selected Phyrexian attack costs', 'rows': rows}
+            if rows else None)
+
+
 def _ref_field(
     name: str,
     values: Sequence[Any],
@@ -421,6 +495,39 @@ def _ref_field(
     if ordered:
         result["ordered"] = True
     return result
+
+
+def _priority_pass_fields(context: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "name": "yield",
+            "label": "Pass duration",
+            "control": "select",
+            "required": False,
+            "options": _options(
+                [
+                    "none",
+                    "until_public_change",
+                    "until_my_turn",
+                    "auto_if_no_response",
+                ],
+                context,
+            ),
+            "default": "none",
+        },
+        {
+            "name": "pass_turn_sequence",
+            "label": "Current turn",
+            "control": "turn_pass_scope",
+            "required": False,
+        },
+        {
+            "name": "ignored_activation_ids",
+            "label": "Ignored activation stops",
+            "control": "turn_pass_ignored_activations",
+            "required": False,
+        },
+    ]
 
 
 def _special_fields(
@@ -460,17 +567,28 @@ def _special_fields(
         minimum = 0 if can_decline else count
         from .library_order_model import HAND_TOP_FIRST
 
-        return [_ref_field("cards", refs, context, minimum=minimum, maximum=count,
-                           ordered=context.get("order") == HAND_TOP_FIRST)]
+        field = _ref_field("cards", refs, context, minimum=minimum, maximum=count,
+                           ordered=context.get("order") == HAND_TOP_FIRST)
+        if context.get("declined_life_loss") is not None and count > 1:
+            from .apnap_object_payment import object_payment_cardinalities
+
+            field["allowed_cardinalities"] = list(object_payment_cardinalities(count))
+            field["distinct"] = True
+        return [field]
     if decision_kind == "state.legend" and action_name == "choose":
         refs = list(context.get("keep_one") or [])
         return [_ref_field("card", refs, context, minimum=1, maximum=1)]
     if decision_kind == "combat.attackers" and action_name == "attack":
+        defenders = context.get("defenders") or []
+        domains = (context.get("declaration_constraints") or {}).get("domains") or {}
         rows = [
             {
                 "value": str(row["id"]),
                 "label": str(row.get("name") or row["id"]),
-                "options": _options(list(context.get("defenders") or []), context),
+                "options": _options(
+                    [ref for ref in defenders if ref in domains.get(str(row["id"]), defenders)],
+                    context,
+                ),
             }
             for row in _rows(context.get("candidates"))
             if row.get("id")
@@ -485,6 +603,8 @@ def _special_fields(
                 "rows": rows,
             }
         ]
+        if phyrexian := _phyrexian_declaration_payment_field(context):
+            fields.append(phyrexian)
         if context.get('enlist'):
             fields.append({'name':'enlist','label':'Enlist creatures','control':'assignment_map','required':False,'allow_none':True,'rows':copy.deepcopy(context['enlist']),'source_assignment':'attackers','exclude_assigned':True,'distinct_options':True})
         if context.get('exert'):
@@ -535,24 +655,7 @@ def _special_fields(
             }
         ]
     if action_name == "pass":
-        return [
-            {
-                "name": "yield",
-                "label": "Pass duration",
-                "control": "select",
-                "required": False,
-                "options": _options(
-                    [
-                        "none",
-                        "until_public_change",
-                        "until_my_turn",
-                        "auto_if_no_response",
-                    ],
-                    context,
-                ),
-                "default": "none",
-            }
-        ]
+        return _priority_pass_fields(context)
     if action_name == "mulligan":
         return [
             {
@@ -564,6 +667,94 @@ def _special_fields(
             }
         ]
     return []
+
+
+def _activation_cost_field(
+    action: Mapping[str, Any], context: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Adapt the activation owner's compact price without changing its offer."""
+    summary = action.get("cost_summary")
+    if action.get("action") != "activate" or not isinstance(summary, Mapping):
+        return None
+    rows = _rows(summary.get("choose_cost"))
+    if len(rows) != 1:
+        return None
+    cost = rows[0]
+    kind = cost.get("k")
+    refs = cost.get("legal_refs")
+    if not isinstance(refs, (list, tuple)) or any(type(ref) is not str for ref in refs):
+        return None
+
+    from .additional_cost_vocabulary import (
+        DISCARD_ONE_COST,
+        EXILE_ONE_FROM_BATTLEFIELD_COST,
+        EXILE_ONE_FROM_GRAVEYARD_COST,
+        EXILE_ONE_FROM_HAND_COST,
+        RETURN_ONE_TO_OWNER_HAND_COST,
+        SACRIFICE_ONE_COST,
+    )
+    from .combat_entry_activations import FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+    from .rules.activation_costs import FIXED_TAP_ACTIVATION_COST_KIND
+    from .station import STATION_COST_KIND
+
+    labels = {
+        SACRIFICE_ONE_COST: "Sacrifice",
+        DISCARD_ONE_COST: "Discard",
+        EXILE_ONE_FROM_GRAVEYARD_COST: "Exile from your graveyard",
+        EXILE_ONE_FROM_BATTLEFIELD_COST: "Exile from the battlefield",
+        EXILE_ONE_FROM_HAND_COST: "Exile from your hand",
+        RETURN_ONE_TO_OWNER_HAND_COST: "Return to owner's hand",
+        FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND: "Return unblocked attacker to owner's hand",
+        FIXED_TAP_ACTIVATION_COST_KIND: "Tap",
+        STATION_COST_KIND: "Tap a creature to station",
+    }
+    if kind in ("crew", "saddle"):
+        label = f"Tap creatures to {kind} ({cost['minimum_total_power']} total power)"
+    elif isinstance(kind, str) and kind in labels:
+        label = labels[kind]
+    else:
+        return None
+    minimum = cost.get("n", cost.get("minimum"))
+    maximum = cost.get("n", cost.get("maximum", len(refs)))
+    if type(minimum) is not int or type(maximum) is not int or not 0 <= minimum <= maximum:
+        return None
+    return {
+        **_ref_field("cost_cards", refs, context, minimum=minimum, maximum=maximum),
+        "label": label,
+        "distinct": True,
+    }
+
+
+def _mana_pool_field(rows):
+    from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
+
+    return {"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",
+            "control": "mana_pool_payment", "required": False, "rows": copy.deepcopy(rows)}
+
+
+def _equip_payment_variants(action, context):
+    from .rules.activation.equip_permissions import EQUIP_PAYMENT_FIELD, EQUIP_PAYMENT_OPTIONS
+
+    rows = _rows(action.get(EQUIP_PAYMENT_OPTIONS))
+    variants = _variant_form(rows, context)
+    if variants is None:
+        return None
+    variants.update(field=EQUIP_PAYMENT_FIELD, label="Equip price")
+    pool_rows = context.get("mana_pool_rows")
+    for row, option in zip(rows, variants["options"], strict=True):
+        cost = _activation_cost_field({**row, "action": "activate"}, context)
+        if cost is not None and not any(field["name"] == "cost_cards" for field in option["fields"]):
+            option["fields"].append(cost)
+        branches = _rows(row.get("cost_options"))
+        if branches:
+            option["fields"].append({
+                "name": "cost_option", "label": "Mana payment", "control": "select",
+                "required": True, "default": branches[0]["id"],
+                "options": [{"value": branch["id"], "label": branch["label"]} for branch in branches],
+            })
+        if pool_rows and (branches or row.get("cost_summary", {}).get("m")):
+            option["fields"].append(_mana_pool_field(pool_rows))
+    return variants
 
 
 def build_action_form(
@@ -581,7 +772,12 @@ def build_action_form(
     """
 
     fields = _schema_fields(action.get("choice_schema"), context)
-    variants = _variant_form(action.get("cost_options"), context)
+    equip_variants = _equip_payment_variants(action, context) if action.get("action") == "activate" else None
+    if equip_variants is None and not any(field["name"] == "cost_cards" for field in fields):
+        cost_field = _activation_cost_field(action, context)
+        if cost_field is not None:
+            fields.append(cost_field)
+    variants = equip_variants or _variant_form(action.get("cost_options"), context)
     if decision_kind=='choice.apnap' and 'discard_options' in context:
         variants=_variant_form(context['discard_options'],context)
         if variants is not None:variants.update(field='discard_mode',label='Discard option')
@@ -602,7 +798,7 @@ def build_action_form(
         fields = _special_fields(action, decision_kind, context)
     pool_rows = context.get("mana_pool_rows")
     activation_price = action.get("cost_summary")
-    if decision_kind == "priority" and pool_rows and (
+    priority_payment = decision_kind == "priority" and (
         action.get("action") == "cast"
         or action.get("action") == "activate" and (
             action.get("cost_options")
@@ -610,11 +806,14 @@ def build_action_form(
                 activation_price.get("m") or activation_price.get("announced_x_symbols")
             )
         )
-    ):
-        from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
-
-        fields.append({"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",
-            "control": "mana_pool_payment", "required": False, "rows": copy.deepcopy(pool_rows)})
+    )
+    contribution_payment = (
+        decision_kind == "semantic.choice"
+        and context.get("operation") == MANA_CONTRIBUTION_DRAW_OPERATION
+        and action.get("id") == "choose"
+    )
+    if pool_rows and (priority_payment and equip_variants is None or contribution_payment):
+        fields.append(_mana_pool_field(pool_rows))
     if not fields and variants is None:
         return None
     result: dict[str, Any] = {
@@ -642,6 +841,7 @@ def delegated_choice_fields(
     decision_kind: str,
     context: Mapping[str, Any],
 ) -> set[str]:
+    from .announced_counter_allocation import COUNTER_ALLOCATION_FIELD
     from .announced_damage import DAMAGE_ALLOCATION_FIELD
 
     form = build_action_form(
@@ -660,8 +860,7 @@ def delegated_choice_fields(
                 result.add(name)
             if field.get("control") == "targets":
                 result.add("modes")
-                if DAMAGE_ALLOCATION_FIELD in (field.get("schema") or {}):
-                    result.add(DAMAGE_ALLOCATION_FIELD)
+                result.update({DAMAGE_ALLOCATION_FIELD, COUNTER_ALLOCATION_FIELD}.intersection(field.get("schema") or {}))
 
     add_fields(list(form.get("fields") or []))
     variants = form.get("variants")

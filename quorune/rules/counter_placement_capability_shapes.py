@@ -3,7 +3,9 @@ from __future__ import annotations
 """Closed ordinary and named-relative counter placement capability shapes."""
 
 from typing import Any, Iterable, Mapping, Sequence
-from ..attachment_references import AttachmentReferenceError, AttachmentReferenceSpec
+from ..attachment_references import (
+    ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceError, AttachmentReferenceSpec,
+)
 from ..affected_permanents import AffectedPermanentSetError, AffectedPermanentSetSpec, PermanentControllerRelation as AffectedControllerRelation
 from ..compiler.counter_placement_templates import fixed_counter_set_spec_is_closed
 from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
@@ -26,6 +28,9 @@ def counter_placement_covered_mechanics(supplied):
     if 'counter.producer.fixed_event_object' in supplied:covered.add('fixed-entry-event-object-counter')
     if 'counter.producer.fixed_public_source_event' in supplied:covered.add('fixed-public-event-source-counter')
     if 'counter.producer.fixed_public_target_event' in supplied:covered.add('fixed-public-event-target-counter')
+    from .aggregated_arrival_counters import MATCHED_ARRIVAL_CAPABILITY, MATCHED_ARRIVAL_MECHANIC
+    if MATCHED_ARRIVAL_CAPABILITY in supplied:
+        covered.add(MATCHED_ARRIVAL_MECHANIC)
     return covered
 
 
@@ -47,6 +52,10 @@ def fixed_counter_placement_node_capabilities(*, effects, target_schema, mechani
         is_opponent_counter_choice, target_opponent_counter_choice_node_capabilities,
     )
 
+    if len(effects) == 1 and effects[0].get("amount") == "$event.matched_arrival_count":
+        from .aggregated_arrival_counters import matching_arrival_counter_capabilities
+
+        return matching_arrival_counter_capabilities(effects, target_schema, mechanic_ids)
     if len(effects) == 1 and is_opponent_counter_choice(effects[0]):
         return target_opponent_counter_choice_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -68,8 +77,33 @@ def fixed_counter_placement_node_capabilities(*, effects, target_schema, mechani
 
 
 def fixed_counter_placement_set_node_capabilities(*, effects, target_schema, mechanic_ids):
-    from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, paired_planeswalker_loyalty_dependencies
+    from .attack_batches import DECLARED_ATTACK_COUNTER_FIELD, declared_attack_counter_effect_capabilities
 
+    if len(effects) == 1 and DECLARED_ATTACK_COUNTER_FIELD in effects[0]:
+        if target_schema is not None or "cr-122-counters" not in mechanic_ids:
+            return ()
+        return declared_attack_counter_effect_capabilities(effects[0])
+    from ..counter_placement_sets import (
+        PAIRED_PLANESWALKER_LOYALTY_FIELD, SOURCE_AND_CONTROLLED_SUBTYPE_FIELD,
+        controlled_nonflying_counter_payload_dependencies, paired_planeswalker_loyalty_dependencies,
+        source_and_controlled_subtype_dependencies,
+    )
+
+    if len(effects) == 1:
+        try:
+            nonflying = controlled_nonflying_counter_payload_dependencies(effects[0])
+        except ValueError:
+            return ()
+        if nonflying:
+            return nonflying if target_schema is None and {"cr-122-counters", "flying"} <= set(mechanic_ids) else ()
+
+    if len(effects) == 1 and SOURCE_AND_CONTROLLED_SUBTYPE_FIELD in effects[0]:
+        if target_schema is not None or "cr-122-counters" not in mechanic_ids:
+            return ()
+        try:
+            return source_and_controlled_subtype_dependencies(effects[0])
+        except (TypeError, ValueError):
+            return ()
     if len(effects) == 1 and PAIRED_PLANESWALKER_LOYALTY_FIELD in effects[0]:
         if target_schema is not None or "cr-122-counters" not in mechanic_ids:
             return ()
@@ -119,13 +153,16 @@ def _base_fixed_counter_placement_node_capabilities(
         return (*public_source, "counter.producer.fixed_effect", *characteristic_capabilities)
     if target_schema is None and isinstance(effect.get("card"), Mapping):
         try:
-            AttachmentReferenceSpec.from_dict(effect["card"])
+            reference = AttachmentReferenceSpec.from_dict(effect["card"])
         except (AttachmentReferenceError, TypeError):
+            return ()
+        if reference.required_color is not None and (effect["counter"] != "+1/+1" or effect["amount"] != 1):
             return ()
         return (
             "counter.producer.fixed_attached_effect",
             'counter.producer.fixed_effect',
             *characteristic_capabilities,
+            *((ATTACHMENT_INFORMATION_CAPABILITY,) if reference.required_color is not None else ()),
         )
     if (
         "cr-115-targets" in mechanics

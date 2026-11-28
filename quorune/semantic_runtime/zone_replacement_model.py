@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..entry_keyword_grants import EntryKeywordGrant
+from ..discard_effect_origin import DiscardEffectOrigin
 from ..entry_counters import EffectEntryCounter, IntrinsicEntryCounter
 from ..entry_state_conditions import FixedEntryMetric
 from ..replacement.entry_counter_types import EntryTimeCounterTypes
@@ -174,6 +175,14 @@ def _validated_prospective_types(subject):
     object_types = tuple(sorted(set(subject.object_types)))
     if any(type(value) is not str or not value for value in object_types):
         raise ZoneReplacementError("Zone replacement subject types must be canonical strings")
+    if type(subject.granted_read_ahead_chapters) is not tuple:
+        raise ZoneReplacementError("Granted Read Ahead chapters require an immutable tuple")
+    if subject.granted_read_ahead_chapters:
+        from ..read_ahead import read_ahead_entry_handler_descriptor
+
+        if subject.destination != "battlefield" or not subject.is_card_object or "saga" not in subject.object_types:
+            raise ZoneReplacementError("Granted Read Ahead requires a physical Saga entering the battlefield")
+        read_ahead_entry_handler_descriptor(subject.granted_read_ahead_chapters)
     counter_view = subject.entry_time_counter_types
     if counter_view is not None and (
         not isinstance(counter_view, EntryTimeCounterTypes)
@@ -182,6 +191,15 @@ def _validated_prospective_types(subject):
     ):
         raise ZoneReplacementError("Time-counter type preview must match the prospective stack entry")
     return object_types
+
+
+def _validate_discard_replacement_origin(subject):
+    origin = subject.discard_effect_origin
+    if origin is not None and (
+        not isinstance(origin, DiscardEffectOrigin) or subject.origin != "hand"
+        or subject.destination != "graveyard" or subject.transition_kind is not ZoneTransitionKind.DISCARD
+    ):
+        raise ZoneReplacementError("Discard replacement provenance requires its original hand discard")
 
 
 @dataclass(frozen=True, slots=True)
@@ -218,8 +236,11 @@ class ZoneChangeSubjectSnapshot:
     card_components: tuple[CardZoneComponent,...] = ()
     active_players: tuple[str,...] = ()
     entry_time_counter_types: EntryTimeCounterTypes | None = None
+    discard_effect_origin: DiscardEffectOrigin | None = None
+    granted_read_ahead_chapters: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
+        _validate_discard_replacement_origin(self)
         if (type(self.active_players) is not tuple or any(type(p) is not str or not p for p in self.active_players)
                 or len(set(self.active_players))!=len(self.active_players)):
             raise ZoneReplacementError('Entry participants must be distinct captured player identities')
@@ -457,7 +478,35 @@ class PreparedZoneChange:
     journal: tuple[ReplacementSelection, ...] = ()
     devour_sacrifices: tuple[PreparedZoneChange,...] = ()
     graveyard_copy_exiles: tuple[PreparedZoneChange,...] = ()
+    entry_land_discard: PreparedZoneChange | None = None
     entry_chosen_card_name: str | None = None
+
+    @property
+    def entry_chosen_basic_land_type(self) -> str | None:
+        return (None if self.event is None or self.destination != "battlefield"
+                else self.event.payload.get("entry_chosen_basic_land_type"))
+
+    @property
+    def entry_chosen_faction(self) -> str | None:
+        return None if self.event is None else self.event.payload.get("entry_chosen_faction")
+
+    @property
+    def entry_chosen_jeskai_temur_faction(self) -> str | None:
+        return (None if self.event is None
+                else self.event.payload.get("entry_chosen_jeskai_temur_faction"))
+
+    @property
+    def resolved_destination_controller(self) -> str | None:
+        if self.event is None or self.destination != "battlefield":
+            return self.destination_controller
+        from ..entry_designations import ENTRY_OPPONENT_FIELD, EntryOpponentChoice
+
+        raw_choice = self.event.payload.get(ENTRY_OPPONENT_FIELD)
+        if raw_choice is not None:
+            choice = EntryOpponentChoice.from_dict(raw_choice)
+            if choice.changes_entry_controller:
+                return choice.seat
+        return self.event.payload["destination_controller"]
 
     def __post_init__(self) -> None:
         sacrifices=tuple(self.devour_sacrifices)
@@ -551,6 +600,10 @@ class PreparedZoneChange:
         except ValueError as exc:
             raise ZoneReplacementError(str(exc)) from exc
         object.__setattr__(self,"graveyard_copy_exiles",exiles)
+        if self.entry_land_discard is not None:
+            from ..rules.entry_land_discard import require_prepared_discard
+
+            require_prepared_discard(self, self.entry_land_discard)
         from ..devour import DevourProposal
         selected={}
         for value in self.event.payload.get('devour_proposals',()):
@@ -572,7 +625,13 @@ class PreparedZoneChange:
                     raise ValueError("The prepared name does not match its original entry choice")
             except ValueError as exc:
                 raise ZoneReplacementError(str(exc)) from exc
-        for kind, value in ((EntryDesignationKind.COLOR, self.entry_chosen_color), (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type)):
+        for kind, value in (
+            (EntryDesignationKind.COLOR, self.entry_chosen_color),
+            (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type),
+            (EntryDesignationKind.BASIC_LAND_TYPE, self.entry_chosen_basic_land_type),
+            (EntryDesignationKind.FACTION, self.entry_chosen_faction),
+            (EntryDesignationKind.JESKAI_TEMUR_FACTION, self.entry_chosen_jeskai_temur_faction),
+        ):
             if value is not None:
                 try:
                     validate_designation(kind, value)

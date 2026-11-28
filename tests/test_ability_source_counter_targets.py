@@ -30,17 +30,19 @@ import test_life_gain_prohibitions as native
 class AbilitySourceCounterModelTests(unittest.TestCase):
     def test_new_source_information_marker_is_optional_strict_and_legacy_hash_neutral(self):
         state=GameState('source-info',GameConfig(),{},{},{},{},[],None,None)
-        self.assertEqual(2,state.to_dict()['ability_source_information_version'])
+        self.assertEqual(3,state.to_dict()['ability_source_information_version'])
+        version_two=GameState.from_dict({**state.to_dict(),'ability_source_information_version':2})
+        self.assertEqual(2,version_two.to_dict()['ability_source_information_version'])
         version_one=GameState.from_dict({**state.to_dict(),'ability_source_information_version':1})
         self.assertEqual(1,version_one.to_dict()['ability_source_information_version'])
         raw=state.to_dict();raw.pop('ability_source_information_version')
         legacy=GameState.from_dict(raw)
         self.assertIsNone(legacy.ability_source_information_version)
         self.assertEqual(raw,legacy.to_dict())
-        for version in (True,False,0,3,1.0,2.0,'1',{}):
+        for version in (True,False,0,4,1.0,2.0,'1',{}):
             with self.subTest(version=version),self.assertRaises(ValueError):
                 GameState.from_dict({**raw,'ability_source_information_version':version})
-        for version in (None,1,2):self.assertEqual(version,ability_source_information_version(version))
+        for version in (None,1,2,3):self.assertEqual(version,ability_source_information_version(version))
 
     def host(self, *, version=1,kind='activated_ability'):
         source=CardInstance(object_id='source',ref='source',oracle_id='source-model',printed_name='Source',

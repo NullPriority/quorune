@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from .riot import GrantedRiotSpec, RIOT_GRANTED_FRAGMENT
+
 from dataclasses import dataclass
 from enum import Enum
 import hashlib
 import re
-from typing import Any, Iterable, Mapping, TypeAlias, get_args
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, TypeAlias, get_args
 
 from .ability_fragment_primitives import (
     AbilityFragmentError,
@@ -29,7 +31,15 @@ from .counter_maximums import (
 )
 from .counter_permission import CounterPermissionError, FixedCounterProhibitionSpec
 from .legend_rule_model import LegendRuleExemptionSpec
+from .granted_activation_model import (
+    GRANTING_ATTACHMENT_PAYMENT_FIELD,
+    GrantingAttachmentPayment,
+    GrantingAttachmentPaymentKind,
+    LINKED_EXILE_ACTIVATION_FRAGMENT,
+    LinkedExileActivatedGrant,
+)
 from .fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_FRAGMENT, FixedKeywordEntryCounterSpec
+from .combat_prevention_draw_model import CombatPreventionDrawSpec, FRAGMENT_KIND as COMBAT_PREVENTION_DRAW_FRAGMENT
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     CharacteristicFragmentError,
@@ -67,6 +77,7 @@ from .static_component_scope import (
 )
 from .util import stable_json
 from .all_colors import AllColorsCharacteristicDefinitionSpec
+from .basic_land_types import AllNonbasicLandTypesDefinitionSpec
 from .off_battlefield_creatures import OffBattlefieldSelfCreatureSpec
 from .copiable_program_source import CopiableProgramSourceSpec
 from .copiable_static_instance import CopiableStaticInstanceSpec
@@ -180,6 +191,7 @@ _CARD_TYPES = frozenset(
 _CARD_TYPE_QUALITIES = {
     **{value: value for value in _CARD_TYPES},
     **{f"{value}s": value for value in _CARD_TYPES},
+    "sorceries": "sorcery",
 }
 _SUBTYPE_QUALITIES = {"aura": "aura", "auras": "aura"}
 _PROTECTION_NONCREATURE_SUBTYPES = frozenset({"arcane", "aura"})
@@ -337,9 +349,12 @@ class ProtectionSpec:
     schema_version: int = 1
     source_predicate: ProtectionSourcePredicateSpec | None = None
     exempt_aura_incarnation: str | None = None
+    attachment_retention: "ProtectionAttachmentRetention | None" = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
+        from .type_subtype_vocabulary import CARD_TYPES
+
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise AbilityFragmentError(
                 "Unsupported protection fragment schema version"
             )
@@ -368,7 +383,7 @@ class ProtectionSpec:
                     "Protection predicates require schema version 2 and a typed source predicate"
                 )
             return
-        if self.schema_version not in {1, 3} or self.source_predicate is not None:
+        if self.schema_version not in {1, 3, 5} or self.source_predicate is not None:
             raise AbilityFragmentError(
                 "Legacy Protection qualities require schema version 1"
             )
@@ -392,7 +407,7 @@ class ProtectionSpec:
         else:
             normalized = normalized.casefold()
             allowed = (
-                _CARD_TYPES
+                CARD_TYPES
                 if self.quality_kind is ProtectionQualityKind.CARD_TYPE
                 else frozenset(_SUBTYPE_QUALITIES.values())
             )
@@ -413,6 +428,9 @@ class ProtectionSpec:
             value["source_predicate"] = self.source_predicate.to_dict()
         if self.schema_version == 3:
             value["exempt_aura_incarnation"] = self.exempt_aura_incarnation
+        if self.schema_version == 5:
+            assert self.attachment_retention is not None
+            value["attachment_retention"] = self.attachment_retention.to_dict()
         return value
 
     @classmethod
@@ -449,6 +467,8 @@ class ProtectionSpec:
             expected_fields.add("source_predicate")
         if schema_version == 3:
             expected_fields.add("exempt_aura_incarnation")
+        if schema_version == 5:
+            expected_fields.add("attachment_retention")
         if set(value) != expected_fields:
             raise AbilityFragmentError(
                 "Protection fragment fields are incomplete or unknown"
@@ -458,12 +478,20 @@ class ProtectionSpec:
             if schema_version == 2
             else None
         )
+        retention = None
+        if schema_version == 5:
+            from .protection_attachment_exceptions import ProtectionAttachmentRetention
+
+            try:
+                retention = ProtectionAttachmentRetention.from_dict(value["attachment_retention"])
+            except ValueError as exc:
+                raise AbilityFragmentError(str(exc)) from exc
         return cls(
             schema_version=schema_version,
             quality_kind=quality_kind,
             quality=value["quality"],
             source_predicate=predicate,
-            exempt_aura_incarnation=value.get('exempt_aura_incarnation'),
+            exempt_aura_incarnation=value.get('exempt_aura_incarnation'), attachment_retention=retention,
         )
 
     @property
@@ -486,6 +514,13 @@ def _nonempty_string(value: Any, *, field: str) -> str:
 
 
 
+if TYPE_CHECKING:
+    from .continuous_effect_model import ContinuousObjectIdentity
+
+
+GRANTED_TRIGGER_PROVIDER_VERSION = 4
+
+
 @dataclass(frozen=True, slots=True)
 class GrantedTriggeredAbilitySpec:
     """A closed executable triggered ability granted in layer 6."""
@@ -496,17 +531,35 @@ class GrantedTriggeredAbilitySpec:
     label: str
     schema_version: int = 1
     cipher_card_ref: str | None = None
+    granting_attachment_payment: GrantingAttachmentPayment | None = None
+    granting_source: ContinuousObjectIdentity | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, GRANTED_TRIGGER_PROVIDER_VERSION}:
             raise AbilityFragmentError(
                 "Unsupported granted triggered-ability schema version"
             )
-        if self.schema_version == 1 and self.cipher_card_ref is not None:
-            raise AbilityFragmentError('Version-one granted triggers reserve Cipher identity')
+        if self.schema_version != 2 and self.cipher_card_ref is not None:
+            raise AbilityFragmentError('Cipher identity requires its own grant version')
         if self.schema_version == 2:
             if type(self.cipher_card_ref) is not str or not self.cipher_card_ref or self.semantic_key != 'builtin:cipher' or self.event != 'damage.dealt.self':
                 raise AbilityFragmentError('Version-two granted triggers require their Cipher identity')
+        payment = self.granting_attachment_payment
+        if self.schema_version == 3:
+            if (self.event != 'creature.attacks' or not isinstance(payment, GrantingAttachmentPayment)
+                    or payment.kind is not GrantingAttachmentPaymentKind.SACRIFICE):
+                raise AbilityFragmentError('A granting Equipment sacrifice requires its attack trigger')
+        elif payment is not None:
+            raise AbilityFragmentError('Granting Equipment payment requires its own grant version')
+        if self.schema_version == GRANTED_TRIGGER_PROVIDER_VERSION and self.event not in {"permanent.tap", "permanent.untap"}:
+            raise AbilityFragmentError("An individually limited grant requires a tap-state trigger")
+        if self.granting_source is not None:
+            from .continuous_effect_model import ContinuousObjectIdentity
+
+            if self.schema_version != GRANTED_TRIGGER_PROVIDER_VERSION or not isinstance(
+                self.granting_source, ContinuousObjectIdentity,
+            ):
+                raise AbilityFragmentError("A provider-scoped grant requires its bound identity and fragment version")
         for field in ("ability_id", "semantic_key", "event", "label"):
             object.__setattr__(
                 self,
@@ -524,6 +577,10 @@ class GrantedTriggeredAbilitySpec:
         }
         if self.schema_version == 2:
             result['cipher_card_ref'] = self.cipher_card_ref
+        if self.granting_attachment_payment is not None:
+            result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
+        if self.granting_source is not None:
+            result["granting_source"] = self.granting_source.to_dict()
         return result
 
     @classmethod
@@ -537,11 +594,28 @@ class GrantedTriggeredAbilitySpec:
             "event",
             "label",
         }
-        if not isinstance(value, Mapping) or set(value) != expected | ({'cipher_card_ref'} if value.get('schema_version') == 2 else set()):
+        if isinstance(value, Mapping):
+            version = value.get('schema_version')
+            if version == 2:
+                expected.add('cipher_card_ref')
+            if version == 3:
+                expected.add(GRANTING_ATTACHMENT_PAYMENT_FIELD)
+            if version == GRANTED_TRIGGER_PROVIDER_VERSION and "granting_source" in value:
+                expected.add("granting_source")
+        if not isinstance(value, Mapping) or set(value) != expected:
             raise AbilityFragmentError(
                 "Granted triggered-ability fragments have a closed schema"
             )
-        return cls(**dict(value))
+        fields = dict(value)
+        if GRANTING_ATTACHMENT_PAYMENT_FIELD in fields:
+            fields[GRANTING_ATTACHMENT_PAYMENT_FIELD] = GrantingAttachmentPayment.from_dict(
+                fields[GRANTING_ATTACHMENT_PAYMENT_FIELD],
+            )
+        if "granting_source" in fields:
+            from .continuous_effect_model import ContinuousObjectIdentity
+
+            fields["granting_source"] = ContinuousObjectIdentity.from_dict(fields["granting_source"])
+        return cls(**fields)
 
 
 @dataclass(frozen=True, slots=True)
@@ -803,14 +877,17 @@ StaticAbilityFragment: TypeAlias = (
     | LinkedGraveyardCreatureEnchantSpec
     | ProtectionSpec
     | GrantedActivatedAbilitySpec
+    | LinkedExileActivatedGrant
     | CrewPowerBonusSpec
     | AttachedUntapRestraintSpec
     | EnchantedPlayerAttackRequirementSpec
     | BoundStaticDeclarationRulesSpec
     | GrantedTriggeredAbilitySpec
+    | GrantedRiotSpec
     | FixedKeywordEntryCounterSpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
+    | CombatPreventionDrawSpec
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
     | PartnerWithSpec
@@ -825,6 +902,7 @@ StaticAbilityFragment: TypeAlias = (
     | AllCreatureTypesCharacteristicDefinitionSpec
     | ColorlessCharacteristicDefinitionSpec
     | AllColorsCharacteristicDefinitionSpec
+    | AllNonbasicLandTypesDefinitionSpec
     | OffBattlefieldSelfCreatureSpec
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
@@ -853,6 +931,12 @@ _STATIC_ABILITY_FRAGMENT_TYPES = get_args(StaticAbilityFragment)
 def ability_fragment_to_dict(
     fragment: StaticAbilityFragment,
 ) -> dict[str, Any]:
+    if isinstance(fragment, GrantedRiotSpec):
+        return {"kind": RIOT_GRANTED_FRAGMENT, "value": fragment.to_dict()}
+    if isinstance(fragment, LinkedExileActivatedGrant):
+        return {"kind": LINKED_EXILE_ACTIVATION_FRAGMENT, "value": fragment.to_dict()}
+    if isinstance(fragment, CombatPreventionDrawSpec):
+        return {"kind": COMBAT_PREVENTION_DRAW_FRAGMENT, "value": fragment.to_dict()}
     if isinstance(fragment,CopiableStaticInstanceSpec):
         kind = 'copiable_static_instance'
     elif isinstance(fragment, CopiableProgramSourceSpec):
@@ -909,6 +993,8 @@ def ability_fragment_to_dict(
         kind = "all_creature_types_characteristic_definition"
     elif isinstance(fragment, ColorlessCharacteristicDefinitionSpec):
         kind = "colorless_characteristic_definition"
+    elif isinstance(fragment, AllNonbasicLandTypesDefinitionSpec):
+        kind = "all_nonbasic_land_types_definition"
     elif isinstance(fragment, AllColorsCharacteristicDefinitionSpec):
         kind = 'all_colors_characteristic_definition'
     elif isinstance(fragment, OffBattlefieldSelfCreatureSpec):
@@ -958,9 +1044,12 @@ def ability_fragment_to_dict(
 
 
 _CHARACTERISTIC_FRAGMENT_READERS = {
+    RIOT_GRANTED_FRAGMENT: GrantedRiotSpec.from_dict,
+    LINKED_EXILE_ACTIVATION_FRAGMENT: LinkedExileActivatedGrant.from_dict,
     "all_creature_types_characteristic_definition": AllCreatureTypesCharacteristicDefinitionSpec.from_dict,
     "colorless_characteristic_definition": ColorlessCharacteristicDefinitionSpec.from_dict,
     "all_colors_characteristic_definition": AllColorsCharacteristicDefinitionSpec.from_dict,
+    "all_nonbasic_land_types_definition": AllNonbasicLandTypesDefinitionSpec.from_dict,
     "off_battlefield_self_creature": OffBattlefieldSelfCreatureSpec.from_dict,
 }
 
@@ -986,6 +1075,8 @@ def ability_fragment_from_dict(
         raise AbilityFragmentError(
             "Ability fragment kind must be a string and value an object"
         )
+    if value["kind"] == COMBAT_PREVENTION_DRAW_FRAGMENT:
+        return CombatPreventionDrawSpec.from_dict(value["value"])
     if value['kind']=='copiable_static_instance':
         return CopiableStaticInstanceSpec.from_dict(value['value'])
     if value['kind']=='copiable_program_source':

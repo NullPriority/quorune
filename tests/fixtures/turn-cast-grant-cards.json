@@ -4,6 +4,315 @@
   "source": "Pinned current source-turn casting permission witnesses",
   "cards": [
     {
+      "defense": null,
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{B}{G}{U}",
+      "name": "Muldrotha, the Gravetide",
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "oracle_text": "During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard. (If a card has multiple permanent types, choose one as you play it.)",
+      "power": "6",
+      "released_at": "2026-01-23",
+      "toughness": "6",
+      "type_line": "Legendary Creature — Elemental Avatar",
+      "cmc": 6.0,
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "produced_mana": []
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Memnite",
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2011-05-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Construct"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "01914751-af8e-4aea-a254-6fa4f9fd3457",
+      "name": "Leafcrown Dryad",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Enchantment Creature — Nymph Dryad",
+      "oracle_text": "Bestow {3}{G} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached.)\nReach\nEnchanted creature gets +2/+2 and has reach.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach",
+        "Bestow"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-09-27",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "defense": null,
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Explore",
+      "oracle_id": "b8f566ea-8283-4afa-9ac8-737e26419283",
+      "oracle_text": "You may play an additional land this turn.\nDraw a card.",
+      "power": null,
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Sorcery",
+      "cmc": 2.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "produced_mana": []
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
       "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
       "name": "Baithook Angler // Hook-Haunt Drifter",
       "mana_cost": null,
@@ -1356,9 +1665,104 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "name": "Yawgmoth's Will",
+      "mana_cost": "{2}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Until end of turn, you may play lands and cast spells from your graveyard.\nIf a card would be put into your graveyard from anywhere this turn, exile that card instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "cmc": 3.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "banned",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      }
     }
   ],
   "rulings": [
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "For example, you may cast an artifact creature spell as your artifact spell and cast another artifact creature spell as your creature spell."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If multiple effects allow you to play a card from your graveyard, you must announce which permission you're using as you begin to play the card."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast a spell this way. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If a permanent card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once you begin to cast a spell, losing control of Muldrotha won't affect the spell."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the cards you play from your graveyard. For example, you can't use Muldrotha to play a land if you don't have an available land play or to cast a planeswalker spell during your end step."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you play a card from your graveyard and then have a new Muldrotha come under your control in the same turn, you may play another land or spell of that type from your graveyard that turn."
+    },
+    {
+      "oracle_id": "e4625704-1d52-44e4-804f-2f45644d76ac",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Use the type of the card as it's played or cast to determine which permanent type to count it as. For example, if you cast a creature spell from your graveyard, you can cast a card with bestow as an enchantment spell."
+    },
     {
       "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
       "published_at": "2023-05-12",
@@ -1796,6 +2200,48 @@
       "published_at": "2021-09-24",
       "source": "wotc",
       "comment": "\"Disturb [cost]\" means \"You may cast this card transformed from your graveyard by paying [cost] rather than its mana cost.\""
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The second ability creates a replacement effect. It applies to both costs and effects."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you play a card using Yawgmoth’s Will and something triggers only when “cast from your hand”, that something will not trigger. Such things trigger based on where the card came from."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "To “play a card” is to either cast a spell or to put a land onto the battlefield using the main phase special action."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If an effect asks you to discard a card, you can’t “discard” something that is in your graveyard. Those cards are not in your hand. Thus, Cycling abilities of cards in the graveyard can’t be activated."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you cast a Buyback spell, then there will be two effects trying to replace where the card goes. You get to choose if the Buyback returns the card to your hand or the card gets exiled."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It will exile itself since it goes to the graveyard after its effect starts."
+    },
+    {
+      "oracle_id": "322f0459-f394-44f0-977b-55fd0cbe0712",
+      "published_at": "2006-10-15",
+      "source": "wotc",
+      "comment": "You cannot Suspend a card from your graveyard, only your hand."
     }
   ]
 }

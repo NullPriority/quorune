@@ -4,8 +4,19 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..cast_origin_replacement import (
+    CREATURE_TARGET, CAST_REPLACEMENT_VERSIONS, GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION,
+    MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_DISCARD_VERSION, MAIN_PHASE_CAST_UNTAP_VERSION,
+    is_main_phase_cast_replacement, validate_cast_origin_replacement, validate_main_phase_cast_replacement,
+)
+from ..graveyard_cast_reanimation_copy import (
+    GRAVEYARD_REANIMATION_COPY_CAPABILITY, GRAVEYARD_REANIMATION_COPY_VERSION,
+    is_graveyard_reanimation_copy_target,
+)
 from ..resolution_conditions import (
+    PUBLIC_SELF_REPLACEMENT_CAPABILITY,
     GREATEST_POWER_TARGET_DISCARD_VERSION,
+    CONTROLLED_ARTIFACT_TAP_EXILE_VERSION,
     CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION,
     RESOLUTION_ALTERNATIVE_SCHEMA_VERSION,
     RESOLUTION_CONDITION_CAPABILITY,
@@ -14,11 +25,17 @@ from ..resolution_conditions import (
     validate_resolution_condition_instruction,
 )
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateFact
-from ..ability_resolution_ordinal import is_second_ability_draw, is_third_ability_result
+from ..ability_resolution_ordinal import (
+    is_first_ability_counter, is_second_ability_draw, is_second_ability_reveal, is_second_ability_scry_replacement,
+    is_third_ability_result,
+)
 from ..other_spell_history_model import is_other_spell_draw
 from .other_spell_history_shapes import other_spell_draw_node_capabilities, other_spell_draw_runtime_dependencies
 from .ability_resolution_ordinal_shapes import (
+    first_ability_counter_node_capabilities, first_ability_counter_runtime_dependencies,
     second_ability_draw_node_capabilities, second_ability_draw_runtime_dependencies,
+    second_ability_reveal_node_capabilities, second_ability_reveal_runtime_dependencies,
+    second_ability_scry_replacement_node_capabilities, second_ability_scry_replacement_runtime_dependencies,
     third_ability_result_node_capabilities, third_ability_result_runtime_dependencies,
 )
 from ..replacement.immutable import thaw_value
@@ -149,23 +166,228 @@ def _paid_sacrifice_capability(condition, reference, prefix, children):
     return ACTIVATION_PAID_SUBTYPE_CAPABILITY
 
 
+def _cast_replacement_capabilities(effects, target_schema, mechanics):
+    from .capabilities import capability_dependencies_for_node
+
+    if len(effects) != 1 or RESOLUTION_CONDITION_MECHANIC not in mechanics:
+        return ()
+    wrapper = effects[0]
+    if is_main_phase_cast_replacement(wrapper):
+        return _main_phase_cast_replacement_capabilities(wrapper, target_schema, mechanics)
+    try:
+        _condition, alternate = validate_cast_origin_replacement(wrapper)
+        if wrapper["schema_version"] == GRAVEYARD_REANIMATION_COPY_VERSION:
+            if not is_graveyard_reanimation_copy_target(target_schema) or not set(wrapper["mechanic_ids"]) <= set(mechanics):
+                return ()
+            movement = capability_dependencies_for_node(
+                effects=tuple(wrapper["otherwise_effects"]), target_schema=target_schema,
+                mechanic_ids=wrapper["otherwise_mechanic_ids"],
+            )
+            if not movement:
+                return ()
+            return tuple(sorted({
+                RESOLUTION_CONDITION_CAPABILITY, GRAVEYARD_REANIMATION_COPY_CAPABILITY,
+                "target.revalidate_resolution", *movement,
+            }))
+        target = CREATURE_TARGET if alternate[0]["op"] == "place_counters" else None
+        if wrapper["schema_version"] == GRAVEYARD_CAST_COPY_REPLACEMENT_VERSION:
+            from ..stack_spell_copy_model import FixedStackSpellCopySpec
+
+            target = FixedStackSpellCopySpec(controlled_only=True).target_schema
+        if thaw_value(target_schema) != target or not set(wrapper["mechanic_ids"]) <= set(mechanics):
+            return ()
+        required = {RESOLUTION_CONDITION_CAPABILITY, PUBLIC_SELF_REPLACEMENT_CAPABILITY}
+        for result in (*alternate, *wrapper["otherwise_effects"]):
+            owned = capability_dependencies_for_node(
+                effects=(result,), target_schema=target_schema, mechanic_ids=wrapper["mechanic_ids"],
+            )
+            if not owned:
+                return ()
+            required.update(owned)
+        return tuple(sorted(required))
+    except (TypeError, ValueError, KeyError):
+        return ()
+
+
+def _main_phase_cast_replacement_capabilities(wrapper, target_schema, mechanics):
+    from .capabilities import capability_dependencies_for_node
+
+    try:
+        _condition, alternate, expected_target = validate_main_phase_cast_replacement(wrapper)
+        result_mechanics = wrapper["mechanic_ids"]
+        if thaw_value(target_schema) != expected_target or not set(result_mechanics) <= set(mechanics):
+            return ()
+        required = {RESOLUTION_CONDITION_CAPABILITY, PUBLIC_SELF_REPLACEMENT_CAPABILITY}
+        from ..cast_origin_replacement import MAIN_PHASE_OPTIONAL_EXILE_VERSION
+
+        if wrapper["schema_version"] == MAIN_PHASE_OPTIONAL_EXILE_VERSION:
+            owned = _main_phase_optional_target_exile_capabilities(wrapper)
+            return tuple(sorted(required.union(owned))) if owned else ()
+        base = wrapper["otherwise_effects"]
+        if wrapper["schema_version"] in (MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_UNTAP_VERSION):
+            bonus = alternate[len(base):]
+            bonus_target = None if bonus[0]["op"] in ("life", "draw") else target_schema
+            branches = ((base, target_schema, wrapper["otherwise_mechanic_ids"]),
+                        (bonus, bonus_target, result_mechanics))
+        else:
+            branches = ((base, target_schema, wrapper["otherwise_mechanic_ids"]),
+                        (alternate, target_schema, result_mechanics))
+        for branch, schema, branch_mechanics in branches:
+            if wrapper["schema_version"] == MAIN_PHASE_CAST_DISCARD_VERSION:
+                from .affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
+
+                owned = fixed_affected_player_discard_node_capabilities(
+                    effects=branch, target_schema=thaw_value(schema), mechanic_ids=branch_mechanics,
+                    allow_targeted_four=True,
+                )
+            else:
+                owned = capability_dependencies_for_node(
+                    effects=branch, target_schema=schema, mechanic_ids=branch_mechanics,
+                )
+            if not owned:
+                return ()
+            required.update(owned)
+        return tuple(sorted(required))
+    except (TypeError, ValueError, KeyError):
+        return ()
+
+
+def _main_phase_optional_target_exile_capabilities(wrapper):
+    from ..cast_origin_replacement import (
+        EXILE_MECHANICS, MAIN_PHASE_OPTIONAL_EXILE_CAPABILITY, OPTIONAL_EXILE_MECHANICS,
+        artifact_or_enchantment_exile_schema, main_phase_exile_instruction, optional_exile_instruction,
+    )
+    from .capabilities import capability_dependencies_for_node
+    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities
+
+    if (tuple(wrapper["mechanic_ids"]) != OPTIONAL_EXILE_MECHANICS
+            or tuple(wrapper["otherwise_mechanic_ids"]) != EXILE_MECHANICS):
+        return ()
+    singleton = artifact_or_enchantment_exile_schema()
+    original = capability_dependencies_for_node(
+        effects=(main_phase_exile_instruction("$target.0"),), target_schema=singleton, mechanic_ids=EXILE_MECHANICS,
+    )
+    optional = fixed_optional_effect_node_capabilities(
+        effects=(optional_exile_instruction("$target.0"),), target_schema=singleton, mechanic_ids=OPTIONAL_EXILE_MECHANICS,
+    )
+    return (MAIN_PHASE_OPTIONAL_EXILE_CAPABILITY, *original, *optional) if original and optional else ()
+
+
+def _fixed_cast_condition_capabilities(effects, target_schema, mechanic_ids):
+    if effects[-1].get("schema_version") in CAST_REPLACEMENT_VERSIONS:
+        return _cast_replacement_capabilities(effects, target_schema, mechanic_ids)
+    from .paid_alternative_cast_facts import paid_alternative_result_capabilities
+    return paid_alternative_result_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+
+
 def resolution_condition_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
     cost_schema: Mapping[str, Any] | None = None,
 ) -> tuple[str, ...]:
-    from .capabilities import capability_dependencies_for_node
+    from .announced_x_draw_replacement import announced_x_draw_replacement_node_capabilities
 
+    announced_draw = announced_x_draw_replacement_node_capabilities(effects, target_schema, cost_schema)
+    if announced_draw is not None:
+        return announced_draw
+    from .ferocious_keyword_append import ferocious_keyword_append_capabilities, uses_ferocious_keyword_append
+
+    if uses_ferocious_keyword_append(effects):
+        return ferocious_keyword_append_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
+        )
+    from .controlled_artifact_token_result import (
+        controlled_artifact_result_node_capabilities, uses_controlled_artifact_result_branch,
+    )
+    from .entrant_power_branch import entrant_power_branch_capabilities, uses_entrant_power_branch
+    from .monarch_movement_replacements import monarch_movement_capabilities, monarch_movement_mode
+    from .monarch_selected_player_mill import monarch_selected_player_mill_capabilities, uses_monarch_selected_player_mill
+    from .monarch_knight_entry_damage import monarch_knight_damage_capabilities, uses_monarch_knight_damage
+    from .monarch_counter_distribution import monarch_counter_distribution_capabilities
+    from ..monarch_counter_doubling_condition import is_monarch_counter_doubling
+    from ..paid_activation_card_types import paid_type_capabilities, uses_paid_type_condition
+
+    if any(uses_paid_type_condition(effect) for effect in effects):
+        return paid_type_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
+        )
+
+    from .named_cast_win import named_cast_win_node_capabilities, uses_named_cast_win
+
+    if any(uses_named_cast_win(effect) for effect in effects):
+        return named_cast_win_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
+        )
+    from .combat_point_counters import point_combat_node_capabilities, uses_point_game_loss
+
+    if any(uses_point_game_loss(effect) for effect in effects):
+        if cost_schema is not None:
+            return ()
+        return point_combat_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    from .counter_recipient_control import counter_recipient_control_node_capabilities, uses_counter_recipient_control
+
+    if any(uses_counter_recipient_control(effect) for effect in effects):
+        return counter_recipient_control_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
+        )
+    if any(uses_controlled_artifact_result_branch(effect) for effect in effects):
+        return controlled_artifact_result_node_capabilities(effects=effects, target_schema=target_schema, cost_schema=cost_schema)
+    if any(is_monarch_counter_doubling(effect) for effect in effects):
+        if cost_schema is not None:
+            return ()
+        try:
+            return monarch_counter_distribution_capabilities(effects, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if any(uses_monarch_knight_damage(effect) for effect in effects):
+        if cost_schema is not None:
+            return ()
+        try:
+            return monarch_knight_damage_capabilities(effects, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if any(uses_monarch_selected_player_mill(effect) for effect in effects):
+        if len(effects) != 1 or cost_schema is not None:
+            return ()
+        try:
+            return monarch_selected_player_mill_capabilities(effects[0], target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if any(monarch_movement_mode(effect) is not None for effect in effects):
+        if len(effects) != 1 or cost_schema is not None:
+            return ()
+        try:
+            return monarch_movement_capabilities(effects[0], target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if any(uses_entrant_power_branch(effect) for effect in effects):
+        if len(effects) != 1 or target_schema is not None or cost_schema is not None:
+            return ()
+        try:
+            return entrant_power_branch_capabilities(effects[0])
+        except (KeyError, TypeError, ValueError):
+            return ()
     if any(is_other_spell_draw(effect) for effect in effects):
         return other_spell_draw_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(is_third_ability_result(effect) for effect in effects):
         return third_ability_result_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if any(is_first_ability_counter(effect) for effect in effects):
+        return first_ability_counter_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if any(is_second_ability_scry_replacement(effect) for effect in effects):
+        return second_ability_scry_replacement_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if any(is_second_ability_draw(effect) for effect in effects):
         return second_ability_draw_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
-    if effects and effects[-1].get('op')==RESOLUTION_CONDITION_OPERATION and effects[-1].get('schema_version')==18:
-        from .paid_alternative_cast_facts import paid_alternative_result_capabilities
-        return paid_alternative_result_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if any(is_second_ability_reveal(effect) for effect in effects):
+        return second_ability_reveal_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if effects and effects[-1].get("op") == RESOLUTION_CONDITION_OPERATION and effects[-1].get("schema_version") in {18, *CAST_REPLACEMENT_VERSIONS}:
+        return _fixed_cast_condition_capabilities(effects, target_schema, mechanic_ids)
 
     if effects and effects[-1].get('schema_version') == 17:
         from .target_replacements import current_target_replacement_capabilities
@@ -181,10 +403,79 @@ def resolution_condition_node_capabilities(
         from .kicked_target_shapes import kicked_target_capabilities
         return kicked_target_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids,cost_schema=cost_schema)
 
+    return _ordinary_resolution_condition_node_capabilities(effects, target_schema, mechanic_ids, cost_schema)
+
+
+def _controlled_artifact_tap_exile_capabilities(effects, target_schema, mechanics, cost_schema):
+    from ..cast_origin_replacement import CREATURE_TARGET
+    from ..characteristic_fragments import characteristic_quantity_capabilities
+    from .capabilities import capability_dependencies_for_node
+
+    if (len(effects) != 2 or cost_schema is not None or thaw_value(target_schema) != CREATURE_TARGET
+            or type(target_schema.get("count")) is not int
+            or effects[0] != {"op": "tap", "card": "$target.0"}):
+        return ()
+    prefix, wrapper = effects
+    try:
+        condition, guarded = validate_resolution_condition_instruction(wrapper)
+    except (ValueError, TypeError, KeyError):
+        return ()
+    if wrapper["player"] != "$controller" or not set((*wrapper["mechanic_ids"], *wrapper["prefix_mechanic_ids"])) <= mechanics:
+        return ()
+    dependencies = {RESOLUTION_CONDITION_CAPABILITY, *characteristic_quantity_capabilities(condition.to_dict())}
+    for children, ids in (((prefix,), wrapper["prefix_mechanic_ids"]), (guarded, wrapper["mechanic_ids"])):
+        closed = capability_dependencies_for_node(effects=children, target_schema=target_schema, mechanic_ids=ids)
+        if not closed:
+            return ()
+        dependencies.update(closed)
+    return tuple(sorted(dependencies))
+
+
+def _independent_paid_mana_results(effects, target_schema, mechanics, cost_schema):
+    from ..spell_mana_conditions import PAID_MANA_CONDITION_MECHANIC
+
+    if target_schema is not None or cost_schema is not None or not 2 <= len(effects) <= 5:
+        return ()
+    used_colors, required = set(), set()
+    for wrapper in effects:
+        try:
+            condition, _ = validate_resolution_condition_instruction(wrapper)
+            owned_mechanics = {RESOLUTION_CONDITION_MECHANIC, PAID_MANA_CONDITION_MECHANIC, *wrapper["mechanic_ids"]}
+            color = condition.mana_type
+            if wrapper["prefix_mechanic_ids"] or color in used_colors or not owned_mechanics <= mechanics:
+                return ()
+        except (AttributeError, TypeError, ValueError, KeyError):
+            return ()
+        dependencies = _ordinary_resolution_condition_node_capabilities((wrapper,), None, owned_mechanics, None)
+        if not dependencies:
+            return ()
+        required.update(dependencies)
+        used_colors.add(color)
+    return tuple(sorted(required))
+
+
+def _ordinary_resolution_condition_node_capabilities(effects, target_schema, mechanic_ids, cost_schema):
+    from .capabilities import capability_dependencies_for_node
+    from .targeted_turn_target_prohibition import uses_targeted_turn_prohibition, targeted_turn_prohibition_node_capabilities
+
+    if uses_targeted_turn_prohibition(effects):
+        return targeted_turn_prohibition_node_capabilities(effects, target_schema, mechanic_ids)
+
+    from ..temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
+
     mechanics = set(mechanic_ids)
     if RESOLUTION_CONDITION_MECHANIC not in mechanics or not effects:
         return ()
+    if len(effects) > 1 and all(effect.get("op") == RESOLUTION_CONDITION_OPERATION
+                                and effect.get("schema_version") == 6 for effect in effects):
+        return _independent_paid_mana_results(effects, target_schema, mechanics, cost_schema)
     wrapper = effects[-1]
+    if wrapper.get("schema_version") == CONTROLLED_ARTIFACT_TAP_EXILE_VERSION:
+        return _controlled_artifact_tap_exile_capabilities(effects, target_schema, mechanics, cost_schema)
+    if wrapper.get("schema_version") == BLOCKER_PROTECTION_CONDITION_VERSION:
+        from .temporary_all_blockers import blocker_protection_node_capabilities
+
+        return blocker_protection_node_capabilities(effects, target_schema, mechanics) if cost_schema is None else ()
     try:
         _condition, conditional = validate_resolution_condition_instruction(wrapper)
         if wrapper.get('schema_version') == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION:
@@ -308,14 +599,62 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
-    from .activation.paid_characteristic_results import activation_paid_characteristic_runtime_dependencies
+    from .activation.bounded_type_sacrifice import paid_type_runtime_dependencies
 
+    if paid_types := paid_type_runtime_dependencies(program):
+        return paid_types
+
+    from .ferocious_keyword_append import ferocious_keyword_append_program_dependencies
+
+    if ferocious := ferocious_keyword_append_program_dependencies(program):
+        return ferocious
+    from .activation.paid_characteristic_results import activation_paid_characteristic_runtime_dependencies
+    from .entrant_power_branch import entrant_power_branch_runtime_dependencies
+    from .monarch_movement_replacements import monarch_movement_runtime_dependencies
+    from .monarch_selected_player_mill import monarch_selected_player_mill_runtime_dependencies
+    from .monarch_knight_entry_damage import monarch_knight_damage_runtime_dependencies
+    from .monarch_counter_distribution import monarch_counter_distribution_program_dependencies
+
+    from .named_cast_win import named_cast_win_runtime_dependencies
+
+    if named_cast := named_cast_win_runtime_dependencies(program):
+        return named_cast
+    if monarch_distribution := monarch_counter_distribution_program_dependencies(program):
+        return monarch_distribution
+    if monarch_knight := monarch_knight_damage_runtime_dependencies(program):
+        return monarch_knight
+    if monarch_mill := monarch_selected_player_mill_runtime_dependencies(program):
+        return monarch_mill
+    if monarch_movement := monarch_movement_runtime_dependencies(program):
+        return monarch_movement
+    if entrant_power := entrant_power_branch_runtime_dependencies(program):
+        return entrant_power
+    from .combat_point_counters import point_combat_runtime_dependencies
+
+    if point_occurrence := point_combat_runtime_dependencies(program):
+        return point_occurrence
     if activation_characteristic := activation_paid_characteristic_runtime_dependencies(program):
         return activation_characteristic
-    ordinal = (other_spell_draw_runtime_dependencies(program) or second_ability_draw_runtime_dependencies(program)
+    ordinal = (first_ability_counter_runtime_dependencies(program) or second_ability_reveal_runtime_dependencies(program)
+               or other_spell_draw_runtime_dependencies(program)
+               or second_ability_scry_replacement_runtime_dependencies(program)
+               or second_ability_draw_runtime_dependencies(program)
                or third_ability_result_runtime_dependencies(program))
     if ordinal:
         return ordinal
+    if any(effect.get("op") == RESOLUTION_CONDITION_OPERATION
+           and effect.get("schema_version") in CAST_REPLACEMENT_VERSIONS for effect in program.effects):
+        from ..card_programs.admission import program_has_declared_complete_source_admission
+        if (program.event != "resolve" or program.active_zone != "stack"
+                or not program.ability_id.startswith("spell:")
+                or not program_has_declared_complete_source_admission(program)):
+            raise ValueError("Cast origin replacement requires its complete original resolving spell")
+        dependencies = _cast_replacement_capabilities(
+            program.effects, program.target_schema, program.coverage,
+        )
+        if not dependencies:
+            raise ValueError("Cast origin replacement requires two independently closed results")
+        return dependencies
     from .paid_alternative_cast_facts import paid_alternative_program_dependencies
     paid_alternative=paid_alternative_program_dependencies(program)
     if paid_alternative:return paid_alternative
@@ -352,11 +691,16 @@ def bound_resolution_condition_runtime_dependencies(program):
             mechanic_ids=mechanics, cost_schema=program.cost_schema)
         if not dependencies:raise ValueError('Public self-replacement requires complete branches and controller binding')
         return tuple(sorted({*intrinsic_dependencies, *dependencies}))
+    from ..temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
     bound_versions = {5, 8, 9, 10, 11, 17, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION,
-                      GREATEST_POWER_TARGET_DISCARD_VERSION}
+                      GREATEST_POWER_TARGET_DISCARD_VERSION, BLOCKER_PROTECTION_CONDITION_VERSION,
+                      CONTROLLED_ARTIFACT_TAP_EXILE_VERSION}
     if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
                for effect in program.effects):
         return ()
+    if (any(effect.get("schema_version") == BLOCKER_PROTECTION_CONDITION_VERSION for effect in program.effects)
+            and (program.event, program.active_zone) != ("resolve", "stack")):
+        raise ValueError("Blocking protection requires the complete resolving spell")
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)
     if not dependencies:

@@ -241,6 +241,17 @@ def pay_life_cost(
     return commit_life_payment(host, prepared)
 
 
+def available_life_for_payment(host: LifeStateHost, player: str) -> int:
+    """Read the current limit used to price nonreplaceable life payments."""
+
+    current = _current_life(host, player)
+    if not current:
+        return 0
+    from .semantic_runtime.life_prohibitions import life_payment_prohibited
+
+    return 0 if life_payment_prohibited(host, player) else current
+
+
 def prepare_life_payment(
     host: LifeStateHost,
     player: str,
@@ -252,10 +263,14 @@ def prepare_life_payment(
         raise LifeStateError(
             "Life payment amounts must be nonnegative integers"
         )
-    current = _current_life(host, player)
-    # CR 119.4b permits zero life even when the current total is negative.
-    if amount > 0 and current < amount:
-        raise LifeStateError("Cannot pay more life than the player has")
+    # CR 119.4b permits zero life even when loss is prohibited.
+    if amount > 0:
+        if _current_life(host, player) < amount:
+            raise LifeStateError("Cannot pay more life than the player has")
+        from .semantic_runtime.life_prohibitions import life_payment_prohibited
+
+        if life_payment_prohibited(host, player):
+            raise LifeStateError("This player cannot pay a positive amount of life")
     plan = plan_life_changes(host, (LifeChange(player, -amount),))
     return PreparedLifePayment(player=player, amount=amount, plan=plan)
 
@@ -278,15 +293,21 @@ def validate_life_payment(
         or (prepared.amount > 0 and transition.before < prepared.amount)
     ):
         raise LifeStateError("Life payment plan does not match its request")
+    if prepared.amount > 0:
+        from .semantic_runtime.life_prohibitions import life_payment_prohibited
+
+        if life_payment_prohibited(host, prepared.player):
+            raise LifeStateError("Life payment is no longer permitted")
     validate_life_changes(host, prepared.plan)
 
 
-def dispatch_life_payment_loss(host: LifeStateHost, payment: LifeTransition) -> None:
+def dispatch_life_payment_loss(host: LifeStateHost, payment: LifeTransition, *, first_loss_player: str | None = None) -> None:
     from .player_result_events import LifeLossEvent, dispatch_life_loss_events
 
     amount = payment.before - payment.after
     if amount > 0:
-        dispatch_life_loss_events(host, (LifeLossEvent(payment.player, amount),))
+        event = LifeLossEvent(payment.player, amount, first_own_turn_loss=payment.player == first_loss_player)
+        dispatch_life_loss_events(host, (event,))
 
 
 def commit_life_payment(
@@ -295,7 +316,10 @@ def commit_life_payment(
 ) -> LifeTransition:
     """Commit a replay-validated nonreplaceable life payment."""
 
+    from .rules.first_own_turn_life_loss import first_own_turn_loss_player_before_commit
+
     validate_life_payment(host, prepared)
+    first_loss_player = first_own_turn_loss_player_before_commit(host)
     payment, = apply_life_changes(host, prepared.plan)
-    dispatch_life_payment_loss(host, payment)
+    dispatch_life_payment_loss(host, payment, first_loss_player=first_loss_player)
     return payment

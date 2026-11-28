@@ -10,7 +10,7 @@ from typing import Any, Mapping
 from ..self_zone_move_followups import FIXED_SELF_RETURN_MECHANIC
 
 _SELF_RETURN = re.compile(
-    r"return this (?P<kind>artifact|creature|enchantment|permanent) "
+    r"return this (?P<kind>artifact|creature|enchantment|land|permanent) "
     r"to its owner'?s hand\.?",
     re.IGNORECASE,
 )
@@ -25,6 +25,7 @@ class FixedSelfReturnTemplate:
             "artifact",
             "creature",
             "enchantment",
+            "land",
             "permanent",
         }:
             raise ValueError("Fixed self-return source kind is unsupported")
@@ -41,9 +42,10 @@ class FixedSelfReturnTemplate:
         None,
         tuple[str, ...],
     ]:
+        source = "$source.zone_object" if self.source_kind == "land" else "$source"
         return (
             self.template_id,
-            ({"op": "bounce", "card": "$source"},),
+            ({"op": "bounce", "card": source},),
             None,
             (FIXED_SELF_RETURN_MECHANIC,),
         )

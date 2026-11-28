@@ -4,6 +4,7 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..rules.graveyard_arrival_order import GraveyardArrivalChoiceRequired
+from ..rules.batched_entry_choices import BatchEntryChoiceRequired
 
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import (
@@ -95,6 +96,39 @@ def _issue_preparation_replacement_choice(
     )
 
 
+def issue_semantic_choice(
+    host: SemanticPreparationCoordinationHost,
+    continuation: SemanticChoiceContinuation,
+    actor: str,
+    payload: Mapping[str, Any],
+    *,
+    allowed_actions: Sequence[str] = ("choose",),
+    simultaneous_actors: tuple[str, ...] = (),
+) -> None:
+    from ..selection.controlled_search import is_registered_library_search, search_control_payload
+
+    scope = {}
+    if is_registered_library_search(continuation.effect):
+        item = next(candidate for candidate in host.state.stack if candidate.ref == continuation.stack_ref)
+        scope = search_control_payload(host, item, actor, ("library",))
+    from ..rules.secret_number_choices import OPERATION as PRIVATE_NUMBER_OPERATION
+
+    is_private_number = continuation.effect.get("op") == PRIVATE_NUMBER_OPERATION
+    if bool(simultaneous_actors) != is_private_number or simultaneous_actors and tuple(allowed_actions) != ("choose",):
+        raise SemanticChoiceError("Simultaneous requests require their typed private choice authority")
+    actors = simultaneous_actors or (actor,)
+    decision = host.permissions.issue(
+        kind="semantic.choice",
+        role=_PILOT_ROLE,
+        actors=list(actors),
+        allowed_actions=list(allowed_actions),
+        payload_by_actor={seat: dict(payload) for seat in actors},
+        simultaneous=is_private_number,
+        continuation={**continuation.to_dict(), **scope},
+    )
+    decision.continuation = {**continuation.with_pending_choice(decision.decision_id).to_dict(), **scope}
+
+
 def _finish_preparation(
     host: SemanticPreparationCoordinationHost,
     *,
@@ -122,17 +156,18 @@ def _finish_preparation(
         return
     if preparation.request is None:
         raise SemanticChoiceError("Semantic preparation has no resume path")
-    decision = host.permissions.issue(
-        kind="semantic.choice",
-        role=_PILOT_ROLE,
-        actors=[actor],
-        allowed_actions=["choose"],
-        payload_by_actor={actor: preparation.request.payload()},
-        continuation=continuation.to_dict(),
-    )
-    decision.continuation = continuation.with_pending_choice(
-        decision.decision_id
-    ).to_dict()
+    from .public_library_pile_departure import pile_concession_offer
+    from .fame_fortune import fame_fortune_concession_offer
+
+    payload = preparation.request.payload()
+    actions = ["choose"]
+    concession = (pile_concession_offer(host, continuation, actor)
+                  or fame_fortune_concession_offer(host, continuation, actor))
+    if concession is not None:
+        payload["legal_actions"].append(concession)
+        actions.append("concede")
+    issue_semantic_choice(host, continuation, actor, payload, allowed_actions=actions,
+                          simultaneous_actors=preparation.request.simultaneous_actors)
 
 
 def continue_semantic_preparation(
@@ -167,6 +202,23 @@ def continue_semantic_preparation(
             raise SemanticChoiceError(
                 "Semantic preparation intent disappeared before replacement resume"
             )
+    if intents and start_index == 0 and preparation.request is None and preparation.auto_continue is not None:
+        from ..semantic_runtime.intents import CopyStackItemIntent
+        from ..selection.prepared_spell_copy_batch import begin_prepared_spell_copy_batch
+        from .model import SemanticChoiceCompletion
+
+        if all(isinstance(intent, CopyStackItemIntent) for intent in intents):
+            item = next((row for row in host.state.stack if row.ref == continuation.stack_ref), None)
+            completion = SemanticChoiceCompletion(
+                intents=intents, prepend_effects=preparation.auto_continue.resolved_effects({}),
+            )
+            if item is not None and begin_prepared_spell_copy_batch(host, item, continuation, actor, {}, completion):
+                return False
+    if not intents and start_index == 0 and preparation.request is None and preparation.auto_continue is not None:
+        from ..selection.prepared_spell_copy_batch import begin_repeated_spell_copy_batch
+
+        if begin_repeated_spell_copy_batch(host, actor, continuation, preparation):
+            return False
     committed_results={}
     for index in range(start_index, len(intents)):
         intent = intents[index]
@@ -205,10 +257,50 @@ def continue_semantic_preparation(
                 from .completed_choice import encode_preparation_after_commit,finish_choice_intent_returns
                 saved=encode_preparation_after_commit(continuation,actor,preparation,intents[index+1:],committed_results)
                 if finish_choice_intent_returns(host,waiting,saved):return False
-        except GraveyardArrivalChoiceRequired as required:
-            from .discard_graveyard_order import prepare_discard_graveyard_order
+        except BatchEntryChoiceRequired as required:
+            from ..semantic_runtime.revealed_remainder_intent import RevealedBattlefieldMoveIntent
+            from .revealed_entry_choices import prepare_revealed_entry_choice
 
-            owner, waiting_order = prepare_discard_graveyard_order(
+            if not isinstance(intent, RevealedBattlefieldMoveIntent):
+                raise
+            owner, waiting_entry = prepare_revealed_entry_choice(
+                host, continuation, intent, required, index=index, count=len(intents),
+            )
+            _finish_preparation(
+                host, continuation=replace(continuation, effect=waiting_entry.continuation_effect),
+                actor=owner, preparation=waiting_entry, committed_results={},
+            )
+            return False
+        except GraveyardArrivalChoiceRequired as required:
+            from ..semantic_runtime.library_selection_intent import LibrarySelectionIntent
+            from ..semantic_runtime.revealed_remainder_intent import RevealedRemainderMoveIntent
+            if isinstance(intent, RevealedRemainderMoveIntent):
+                from .announced_permanent_reveal import prepare_revealed_remainder_order as prepare_order
+            elif isinstance(intent, LibrarySelectionIntent):
+                from ..private_opponent_library_cast_model import uses_damage_library_cast_selection
+                from .damage_library_cast_order import prepare_damage_library_graveyard_order
+                from .public_library_piles import prepare_public_pile_graveyard_order
+
+                if intent.committed_graveyard_treasure:
+                    from .revealed_legendary_graveyard_treasure import prepare_legendary_treasure_graveyard_order
+
+                    prepare_order = prepare_legendary_treasure_graveyard_order
+                else:
+                    prepare_order = (prepare_damage_library_graveyard_order if uses_damage_library_cast_selection(continuation.effect)
+                                     else prepare_public_pile_graveyard_order)
+            elif "_committed_token_sweep" in continuation.effect:
+                from .token_sweep import prepare_token_sweep_order
+
+                prepare_order = prepare_token_sweep_order
+            elif "linked_landfall_settlement" in continuation.effect:
+                from .linked_landfall_settlement import prepare_linked_settlement_order
+                prepare_order = prepare_linked_settlement_order
+            else:
+                from .discard_graveyard_order import prepare_discard_graveyard_order
+
+                prepare_order = prepare_discard_graveyard_order
+
+            owner, waiting_order = prepare_order(
                 host, continuation, intent, required, index=index, count=len(intents),
             )
             _finish_preparation(
@@ -241,6 +333,20 @@ def continue_semantic_preparation(
     return True
 
 
+def _reprepare_saved_choice(host, item, actor, handler, effect):
+    if effect.get("op") != "fixed_library_selection" or effect.get("schema_version") != 3:
+        return handler.prepare(effect, host._semantic_choice_context(item, actor, effect))
+    choice_fields = {
+        "_choice_actor", "_effective_maximum", "_effective_minimum",
+        "_eligible_groups", "_looked_objects", "_stack_label",
+    }
+    instruction = {key: value for key, value in effect.items() if key not in choice_fields}
+    prepared = handler.prepare(instruction, host._semantic_choice_context(item, actor, instruction))
+    if prepared.continuation_effect != effect:
+        raise SemanticChoiceError("Battlefield library selection changed its saved choice frame")
+    return prepared
+
+
 def resume_semantic_preparation(
     host: SemanticPreparationCoordinationHost,
     restored: ReplacementContinuation,
@@ -269,10 +375,7 @@ def resume_semantic_preparation(
             continuation.semantic_frame.to_dict(), item
         )
         actor = restored.semantic_choice_actor
-        preparation = handler.prepare(
-            continuation.effect,
-            host._semantic_choice_context(item, actor, continuation.effect),
-        )
+        preparation = _reprepare_saved_choice(host, item, actor, handler, continuation.effect)
         continue_semantic_preparation(
             host,
             continuation=continuation,

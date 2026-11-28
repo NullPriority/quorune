@@ -5,6 +5,7 @@ from common import ROOT
 from quorune.bounded_hand_cast_model import (
     BoundedHandCastSpec, ResolveBoundedHandCastIntent, validate_bounded_hand_cast_identity,
     bounded_hand_cast_payload_dependencies, bounded_hand_cast_node_capabilities,
+    ANNOUNCED_X_HAND_CAST_VERSION,
     BOUNDED_HAND_CAST_CAPABILITY as CAP, BOUNDED_HAND_CAST_FIELD as FIELD,
 )
 from quorune.compiler.bounded_hand_cast_templates import bounded_hand_cast_template
@@ -127,6 +128,78 @@ class BoundedHandCastCompilerTests(unittest.TestCase):
         self.assertNotEqual('exact',compile_oracle_card(compiler_controls.record(text),capability_registry=registry).status)
         self.assertEqual('exact',compile_oracle_card(compiler_controls.record('Draw two cards.'),capability_registry=registry).status)
 
+class LegendaryWizardHandCastContractTests(unittest.TestCase):
+    def test_legendary_wizard_hand_cast_rejects_forged_limits(self):
+        from copy import deepcopy
+
+        from quorune.bounded_hand_cast_model import (
+            LEGENDARY_WIZARD_HAND_CAST_CAPABILITY, legendary_wizard_hand_cast_effect,
+        )
+        from quorune.characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.query_effect_amount_model import PublicQueryAmountSpec
+
+        effect = legendary_wizard_hand_cast_effect()
+        self.assertIn(LEGENDARY_WIZARD_HAND_CAST_CAPABILITY, bounded_hand_cast_payload_dependencies(effect))
+        all_wizards = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), subtypes_any=("wizard",)),
+        )
+        legendary_wizards = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), subtypes_any=("wizard",), supertypes_all=("legendary",)),
+        )
+        for maximum in (
+            4,
+            PublicQueryAmountSpec(all_wizards, coefficient=2).to_dict(),
+            PublicQueryAmountSpec(legendary_wizards, coefficient=3).to_dict(),
+        ):
+            with self.subTest(maximum=maximum):
+                forged = deepcopy(effect)
+                forged[FIELD]["mana_value_limit"]["maximum"] = maximum
+                with self.assertRaisesRegex(ValueError, "exact live public mana-value limit"):
+                    bounded_hand_cast_payload_dependencies(forged)
+
+    def test_legendary_wizard_hand_cast_requires_own_combat_and_public_count_authority(self):
+        from dataclasses import replace
+
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        supported = (
+            "At the beginning of combat on your turn, you may cast an instant or sorcery spell with mana "
+            "value X or less from your hand without paying its mana cost, where X is twice the number of "
+            "legendary Wizards you control."
+        )
+        creature = replace(compiler_controls.record(supported), type_line="Legendary Creature — Wizard",
+                           power="1", toughness="1")
+        registry = load_default_capability_registry()
+        admitted = compile_oracle_card(creature, capability_registry=registry)
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
+        for unexpected in ("At the beginning of combat,", "At the beginning of the end step on your turn,"):
+            wrong_time = replace(creature, oracle_text=supported.replace(
+                "At the beginning of combat on your turn,", unexpected,
+            ))
+            self.assertNotEqual("exact", compile_oracle_card(wrong_time, capability_registry=registry).status)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        count = next(row for row in raw["capabilities"] if row["id"] == "quantity_expression.public_query_effect_amount")
+        count.update(status="blocked", blockers=["public count authority withdrawn"])
+        registry = CapabilityRegistry(raw)
+        evidence = build_index(
+            registry_value=raw,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()),
+        )
+        registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+        self.assertNotEqual("exact", compile_oracle_card(creature, capability_registry=registry).status)
+        fixed = compiler_controls.record(
+            "You may cast a spell with mana value 3 or less from your hand without paying its mana cost.",
+        )
+        self.assertEqual("exact", compile_oracle_card(fixed, capability_registry=registry).status)
+
+
 class BoundedHandCastRegistrationTests(unittest.TestCase):
     def test_all_five_originals_close_normally_and_variable_neighbor_keeps_its_complete_source(self):
         registry=load_default_capability_registry();semantics=SemanticRegistry()
@@ -141,7 +214,220 @@ class BoundedHandCastRegistrationTests(unittest.TestCase):
                             promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
                         program=compile_best_available_card_program(db,card,semantic_registry=semantics,capability_registry=registry,capability_profile='commander_review')
                         binding=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
-                        self.assertEqual(name!='Electrodominance',bool(binding['strict_capability_ready'] and binding['trust_basis']=='capability_closed'),binding['blockers'])
+                        self.assertTrue(binding['strict_capability_ready'] and binding['trust_basis']=='capability_closed', binding['blockers'])
+                source = db.lookup('Electrodominance', fuzzy=False)
+                from dataclasses import replace
+                unsupported = replace(source, oracle_text=source.oracle_text.replace('mana value X', 'mana value twice X'))
+                self.assertTrue(compile_oracle_card(unsupported, capability_registry=registry).material_residuals)
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+class AnnouncedXHandCastNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import os
+
+        cls.temporary = None
+        pinned = os.environ.get("QUORUNE_ANNOUNCED_HAND_CAST_DB")
+        if pinned:
+            path = Path(pinned)
+            commander, basic = "Isamaru, Hound of Konda", "Plains"
+        else:
+            cls.temporary = tempfile.TemporaryDirectory()
+            directory = Path(cls.temporary.name)
+            fixtures = ROOT / "tests" / "fixtures"
+            data = json.loads((fixtures / "greatest-power-affected-sacrifice-cards.json").read_text(encoding="utf-8"))
+            walker, = [row for row in data["cards"] if row["name"] == "The Wanderer"]
+            walker_fixture = directory / "prevention-cards.json"
+            walker_fixture.write_text(json.dumps({
+                **data, "cards": [walker],
+                "rulings": [row for row in data["rulings"] if row["oracle_id"] == walker["oracle_id"]],
+            }), encoding="utf-8")
+            path = directory / "announced-hand-cast.sqlite3"
+            build_fixture_database([fixtures / "bound-effect-program-cards.json", FIXTURE, walker_fixture], path)
+            commander, basic = "Generic Bound Commander", "Generic Bound Plains"
+        cls.db = CardDatabase(path)
+        cls.db.connection.execute("PRAGMA query_only = ON")
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Announced hand cast",
+                                  [DeckEntry(commander, 1, "commander"), DeckEntry(basic, 30)], [commander])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        if cls.temporary is not None:
+            cls.temporary.cleanup()
+
+    def prepare_spell(self, game, x):
+        self.prepare(game, mana={"R": 2, "C": x})
+        self.checkpoint(game)
+
+    def cast_spell(self, game, source, x, target):
+        self.assert_closed(game, source)
+        rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        row, = [row for row in rows if row.get("card") == source.ref]
+        self.accept(game, {"action_id": row["id"], "x": x, "targets": [target], "pay": "auto"})
+        self.assertEqual(x, game.state.stack[-1].x_value)
+        self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+
+    def option_rows(self, game):
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        return game.packet("pilot:A", full=True)["decision"]["ctx"]["cast_options"]
+
+    def accept(self, game, command, principal="pilot:A"):
+        result = game.act(principal, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def reject_unchanged(self, game, command, principal="pilot:A"):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        command_count = len(game.commands)
+        result = game.act(principal, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertEqual(command_count, len(game.commands))
+
+    def export(self, game, name):
+        import os
+        from quorune.record import authoritative_state_hash, replay_record
+
+        output = os.environ.get("QUORUNE_ANNOUNCED_HAND_CAST_RECORDS")
+        if output:
+            path = Path(output) / name
+            game.save(path, include_review=False)
+            result = replay_record(path, self.db, verify=True)
+            self.assertTrue(result["ok"], result)
+            self.assertEqual(authoritative_state_hash(game.state), result["final_state_hash"])
+
+    def test_actual_x_damage_before_free_sacrifice_and_private_choice_replays(self):
+        from unittest.mock import patch
+        from quorune.errors import GameRuleError
+        from quorune.rules import bounded_hand_cast
+
+        game = self.session(742190101)
+        source = self.add(game.engine, "Electrodominance", zone="hand")
+        child = self.add(game.engine, "Village Rites", zone="hand")
+        above = self.add(game.engine, "Wind Drake", zone="hand")
+        body = self.add(game.engine, "Grizzly Bears")
+        foreign = self.add(game.engine, "Grizzly Bears", seat="B", ref="opposing-creature")
+        self.prepare_spell(game, 2)
+        self.cast_spell(game, source, 2, body.ref)
+        options = self.option_rows(game)
+        option, = [row for row in options if row["card"] == child.ref]
+        self.assertNotIn(above.ref, {row["card"] for row in options})
+        self.assertEqual(("battlefield", 2), (body.zone, body.marked_damage))
+        self.assertIn(body.ref, option["choice_schema"]["sacrifice_cards"]["legal_refs"])
+        for principal in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            context = json.dumps(game.packet(principal, full=True))
+            self.assertNotIn(option["id"], context)
+            self.assertNotIn(above.ref, context)
+
+        forged = BoundedHandCastSpec(ManaValueLimitSpec(3), ANNOUNCED_X_HAND_CAST_VERSION).effect()
+        with self.assertRaisesRegex(GameRuleError, "announced X"):
+            bounded_hand_cast.bounded_hand_cast_options(
+                game.engine, item=game.state.stack[-1], actor="A", effect={**forged, "player": "A"},
+            )
+        child_cast = {"card": child.ref, "cost_option": option["id"], "sacrifice_cards": [body.ref]}
+        command = {"action_id": "choose", "choice": "cast", "cast": child_cast}
+        self.reject_unchanged(game, command, "pilot:D")
+        self.reject_unchanged(game, {**command, "cast": {**child_cast, "sacrifice_cards": [foreign.ref]}})
+        self.export(game, "pending-private-cast")
+        game = self.replay(game, load=True)
+
+        real_commit = bounded_hand_cast.commit_resolving_cast
+
+        def fail_after_cast(*args, **kwargs):
+            real_commit(*args, **kwargs)
+            raise GameRuleError("Injected resolving-cast failure")
+
+        with patch.object(bounded_hand_cast, "commit_resolving_cast", side_effect=fail_after_cast):
+            self.reject_unchanged(game, command)
+        self.assertEqual("battlefield", game.state.cards[body.object_id].zone)
+        self.assertEqual("hand", game.state.cards[child.object_id].zone)
+        self.accept(game, command)
+        self.assertEqual("graveyard", game.state.cards[body.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("stack", game.state.cards[child.object_id].zone)
+        before_draw = len(game.state.players["A"].draw_history)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before_draw + 2, len(game.state.players["A"].draw_history))
+        self.export(game, "resolved-free-cast")
+        self.replay(game, load=True)
+
+    def test_actual_zero_bound_and_child_x_are_independent(self):
+        game = self.session(742190102)
+        source = self.add(game.engine, "Electrodominance", zone="hand")
+        child = self.add(game.engine, "Stonecoil Serpent", zone="hand")
+        self.add(game.engine, "Plains", zone="hand")
+        self.add(game.engine, "Grizzly Bears", zone="hand")
+        self.prepare_spell(game, 0)
+        life = game.state.players["B"].life
+        self.cast_spell(game, source, 0, "B")
+        option, = self.option_rows(game)
+        self.assertEqual(child.ref, option["card"])
+        self.assertEqual(life, game.state.players["B"].life)
+        command = {"action_id": "choose", "choice": "cast",
+                   "cast": {"card": child.ref, "cost_option": option["id"], "x": 0}}
+        self.reject_unchanged(game, {**command, "cast": {**command["cast"], "x": 1}})
+        self.accept(game, command)
+        self.assertEqual(0, game.state.stack[-1].x_value)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[child.object_id].zone)
+        self.export(game, "zero-announced-x")
+        self.replay(game, load=True)
+
+    def test_actual_prevention_keeps_the_announced_limit_and_decline(self):
+        game = self.session(742190103)
+        source = self.add(game.engine, "Electrodominance", zone="hand")
+        child = self.add(game.engine, "Wind Drake", zone="hand")
+        wanderer = self.add(game.engine, "The Wanderer", seat="B")
+        self.assert_closed(game, wanderer)
+        self.prepare_spell(game, 3)
+        life = game.state.players["B"].life
+        self.cast_spell(game, source, 3, "B")
+        option, = self.option_rows(game)
+        self.assertEqual(child.ref, option["card"])
+        self.assertEqual(life, game.state.players["B"].life)
+        self.accept(game, {"action_id": "choose", "choice": "decline"})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[child.object_id].zone)
+        self.export(game, "prevented-damage")
+        self.replay(game, load=True)
+
+    def test_actual_illegal_only_target_withdraws_the_free_cast(self):
+        game = self.session(742190104)
+        source = self.add(game.engine, "Electrodominance", zone="hand")
+        child = self.add(game.engine, "Wind Drake", zone="hand")
+        self.prepare_spell(game, 3)
+        self.cast_spell(game, source, 3, "B")
+        self.priority(game, "B")
+        self.accept(game, {"action_id": "concede", "choices": {"confirm_concede": True}}, "pilot:B")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("hand", game.state.cards[child.object_id].zone)
+        self.export(game, "invalidated-primary-target")
+        self.replay(game, load=True)
+
+    def test_omitted_announced_limit_projection_mutant_is_killed(self):
+        from unittest.mock import patch
+
+        record = self.db.lookup("Electrodominance", fuzzy=False)
+
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry,
+                                     capability_profile="commander_review")
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            damage, hand_cast = node.effects
+            self.assertEqual(damage["amount"], hand_cast[FIELD]["mana_value_limit"]["maximum"])
+
+        witness()
+        with patch("quorune.compiler.declared_effect_amounts.bounded_hand_cast_amount_slot", return_value=False):
+            with self.assertRaises(AssertionError):
+                witness()
 
 class BoundedHandCastRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
@@ -446,3 +732,202 @@ class BoundedHandCastRuntimeTests(unittest.TestCase):
                 self.assertEqual('graveyard',s.state.cards[source.object_id].zone);self.assertEqual('stack',s.state.cards[child.object_id].zone)
                 self.assertIsNone(self.resolve(s));self.assertEqual('graveyard',s.state.cards[child.object_id].zone)
                 self.assertEqual(3,len([c for c in s.state.cards.values() if c.zone=='battlefield' and c.object_kind=='token' and c.controller=='A']));self.replay(s,load=True)
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+ELECTRODOMINANCE = "Electrodominance"
+
+
+class AnnouncedXDamageHandCastNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "bounded-hand-cast-cards.json": {ELECTRODOMINANCE, "Grizzly Bears", "Wind Drake", "Hill Giant", "Unsummon", "Cathartic Reunion"},
+            "announced-x-public-damage-set-cards.json": {"Mending Hands"},
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains", "Generic Bound Growth"},
+        }
+        files = []
+        for filename, names in support.items():
+            doc = json.loads((ROOT / "tests" / "fixtures" / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            oracle_ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in oracle_ids]
+            part = folder / filename
+            part.write_text(json.dumps(doc), encoding="utf-8")
+            files.append(part)
+        path = folder / "electrodominance.sqlite3"
+        build_fixture_database(files, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Announced-X hand cast", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def okay(self, game, seat, command):
+        result = game.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def denied(self, game, seat, command):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def begin(self, game, source, x, target):
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": x, "R": 2})
+        self.checkpoint(game)
+        offer = self.action(game, "A", source)
+        base = {"action_id": offer["id"], "x": x, "pay": "auto"}
+        self.denied(game, "A", {**base, "targets": []})
+        self.okay(game, "A", {**base, "targets": [target]})
+        item, = game.state.stack
+        self.assertEqual((x, [target]), (item.x_value, item.targets))
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        return item
+
+    def hand_options(self, game):
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        return context["cast_options"]
+
+    @staticmethod
+    def choose(option, **fields):
+        return {"action_id": "choose", "choice": "cast", "cast": {"card": option["card"], "cost_option": option["id"], **fields}}
+
+    def test_legal_prevented_damage_still_allows_private_inclusive_hand_cast_or_decline(self):
+        from quorune.bounded_hand_cast_model import ANNOUNCED_X_HAND_CAST_VERSION
+        from quorune.errors import GameRuleError
+        from quorune.rules.bounded_hand_cast import bounded_hand_cast_options
+
+        game = self.session(60802051)
+        source = self.add(game.engine, ELECTRODOMINANCE, zone="hand")
+        prevention = self.add(game.engine, "Mending Hands", seat="B", zone="hand")
+        self.assert_closed(game, prevention)
+        exact = self.add(game.engine, "Wind Drake", zone="hand", ref="electro-exact-child")
+        above = self.add(game.engine, "Hill Giant", zone="hand", ref="electro-above-limit")
+        land = self.add(game.engine, "Generic Bound Plains", zone="hand", ref="electro-not-a-spell")
+        foreign = self.add(game.engine, "Wind Drake", seat="C", zone="hand", ref="electro-foreign-private")
+        game.state.players["B"].mana_pool["W"] = 1
+        original = self.begin(game, source, 3, "B")
+        self.cast_for(game, "B", prevention, ["B"])
+        self.resolve_top(game)
+        self.assertEqual([4], [shield.remaining for shield in game.state.damage_prevention_shields])
+        options = self.hand_options(game)
+        self.assertEqual(40, game.state.players["B"].life)
+        self.assertEqual([1], [shield.remaining for shield in game.state.damage_prevention_shields])
+        self.assertEqual(original.ref, game.state.stack[-1].ref)
+        self.assertEqual({exact.ref}, {option["card"] for option in options})
+        option, = options
+        self.assertEqual(0, sum(option["requirements"].values()))
+        for other in "BCD":
+            packet = json.dumps(game.packet("pilot:" + other, full=True))
+            for ref in (exact.ref, above.ref, land.ref, option["id"]):
+                self.assertNotIn(ref, packet)
+        self.assertNotIn(foreign.ref, json.dumps(game.packet("pilot:A", full=True)))
+        forged = {**BoundedHandCastSpec(ManaValueLimitSpec(4), ANNOUNCED_X_HAND_CAST_VERSION).effect(), "player": "A"}
+        with self.assertRaisesRegex(GameRuleError, "announced X"):
+            bounded_hand_cast_options(game.engine, item=game.state.stack[-1], actor="A", effect=forged)
+        self.denied(game, "B", self.choose(option))
+        self.denied(game, "A", {"action_id": "choose", "choice": "cast", "cast": {"card": above.ref}})
+        declined = self.replay(game, load=True)
+        self.okay(declined, "A", {"action_id": "choose", "choice": "decline"})
+        self.assertEqual("graveyard", declined.state.cards[source.object_id].zone)
+        self.assertEqual("hand", declined.state.cards[exact.object_id].zone)
+        self.replay(declined, load=True)
+
+        self.okay(game, "A", self.choose(option))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("stack", game.state.cards[exact.object_id].zone)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[exact.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_lethal_target_remains_during_offer_and_child_pays_ordinary_additional_cost(self):
+        game = self.session(60802052)
+        source = self.add(game.engine, ELECTRODOMINANCE, zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B", ref="electro-lethal-creature")
+        child = self.add(game.engine, "Cathartic Reunion", zone="hand", ref="electro-paid-child")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="electro-private-discard")
+        spares = [self.add(game.engine, "Generic Bound Plains", zone="hand", ref=f"electro-own-discard-{i}") for i in (1, 2)]
+        self.assert_closed(game, child)
+        self.begin(game, source, 3, target.ref)
+        options = self.hand_options(game)
+        option, = (row for row in options if row["card"] == child.ref)
+        current = game.state.cards[target.object_id]
+        self.assertEqual(("battlefield", 3), (current.zone, current.marked_damage))
+        self.denied(game, "A", self.choose(option, discard_cards=[spares[0].ref, private.ref]))
+        self.denied(game, "A", self.choose(option, discard_cards=[spares[0].ref]))
+        game = self.replay(game, load=True)
+        self.okay(game, "A", self.choose(option, discard_cards=[card.ref for card in spares]))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in (source, target, *spares)))
+        self.assertEqual("hand", game.state.cards[private.object_id].zone)
+        self.assertEqual([child.object_id], [item.card_object_id for item in game.state.stack])
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        draws = len(game.state.players["A"].draw_history)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(draws + 3, len(game.state.players["A"].draw_history))
+        self.replay(game, load=True)
+
+    def test_illegal_sole_target_skips_damage_and_private_hand_cast(self):
+        game = self.session(60802053)
+        source = self.add(game.engine, ELECTRODOMINANCE, zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B", ref="electro-bounced-target")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        child = self.add(game.engine, "Wind Drake", zone="hand", ref="electro-uncast-child")
+        for card in (bounce, child):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool["U"] = 1
+        self.begin(game, source, 3, target.ref)
+        self.cast_for(game, "B", bounce, [target.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[target.object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("hand", game.state.cards[child.object_id].zone)
+        self.assertEqual(0, game.state.cards[target.object_id].marked_damage)
+        self.assertNotIn(child.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.replay(game, load=True)
+
+    def test_exact_damage_sequence_requires_the_mandatory_target_and_shared_announced_x(self):
+        from dataclasses import replace
+
+        from quorune.bounded_hand_cast_model import ANNOUNCED_X_HAND_CAST_CAPABILITY, ANNOUNCED_X_HAND_CAST_VERSION
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.announced_x_damage_hand_cast import announced_x_damage_hand_cast_node_capabilities
+
+        card = self.db.lookup(ELECTRODOMINANCE, fuzzy=False)
+        oracle = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        node, = oracle.faces[0].nodes
+        self.assertIn(ANNOUNCED_X_HAND_CAST_CAPABILITY, node.capability_dependencies)
+        self.assertEqual((0, len(card.oracle_text)), (node.span.start, node.span.end))
+        damage, hand = node.effects
+        self.assertEqual(("damage", "choose_objects", 1), (damage["op"], hand["op"], node.target_schema["count"]))
+        permission = hand[FIELD]
+        self.assertEqual((ANNOUNCED_X_HAND_CAST_VERSION, "$x"), (permission["schema_version"], permission["mana_value_limit"]["maximum"]))
+        self.assertEqual((), announced_x_damage_hand_cast_node_capabilities((hand, damage), node.target_schema, None))
+        self.assertEqual((), announced_x_damage_hand_cast_node_capabilities(node.effects, {**node.target_schema, "count": 0}, None))
+        for changed in (replace(card, mana_cost="{3}{R}{R}"),
+                        replace(card, oracle_text=card.oracle_text.replace("You may cast", "If damage was dealt, you may cast")),
+                        replace(card, oracle_text=card.oracle_text.replace("your hand", "your graveyard"))):
+            self.assertNotEqual("exact", compile_oracle_card(changed, capability_registry=self.registry).status)
+        game = self.session(60802054)
+        source = self.add(game.engine, ELECTRODOMINANCE, zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        deps = tuple(value for value in program.capability_dependencies if value != ANNOUNCED_X_HAND_CAST_CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{ANNOUNCED_X_HAND_CAST_CAPABILITY}", binding["blockers"])

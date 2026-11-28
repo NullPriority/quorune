@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Hellkite Charger",
+      "oracle_id": "d4f28a4b-d821-4132-bdec-4c528318f8e2",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying, haste\nWhenever this creature attacks, you may pay {5}{R}{R}. If you do, untap all attacking creatures and after this phase, there is an additional combat phase.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "d4f28a4b-d821-4132-bdec-4c528318f8e2",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Hellkite Charger’s ability may trigger multiple times in the same turn, since its own ability gives it multiple chances to attack. Each time it resolves, you may create an additional combat phase."
+    },
+    {
+      "oracle_id": "d4f28a4b-d821-4132-bdec-4c528318f8e2",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If two Hellkite Chargers attack at the same time, both of their abilities trigger. If you pay {5}{R}{R} for each, two new combat phases will be created. However, all attacking creatures untap as those abilities resolve, not as the combat phases start. Any creature that attacks in the second combat phase will remain tapped during the third combat phase."
+    },
+    {
+      "oracle_id": "d4f28a4b-d821-4132-bdec-4c528318f8e2",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If you pay {5}{R}{R}, the new combat phase immediately follows the current combat phase. There is no main phase in between."
+    },
+    {
+      "oracle_id": "d4f28a4b-d821-4132-bdec-4c528318f8e2",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "You decide whether to pay {5}{R}{R} as Hellkite Charger’s ability resolves."
+    }
+  ]
+}

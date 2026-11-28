@@ -8,6 +8,7 @@ from ..external_entry_counter_model import (
     EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
     EXTERNAL_ENTRY_COUNTER_CAPABILITY, EXTERNAL_ENTRY_COUNTER_HANDLER,
     ExternalEntryCounterSpec, ExternalEntryCounterSourceSnapshot,
+    EXTERNAL_NONTOKEN_ENTRY_COUNTER_CAPABILITY, EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER,
 )
 from ..replacement import ReplacementClass,ReplacementEffect
 from ..replacement.operations import AddAffectedObjectCounter,GrantAffectedObjectSubtype
@@ -79,3 +80,26 @@ class ExternalChosenSubtypeEntryCounterHandler(ExternalEntryCounterHandler):
     def _spec_with_source(self, spec, source_context):
         subtype = source_context.chosen_creature_type
         return replace(spec, required_subtype=subtype) if subtype is not None else None
+
+
+@dataclass(frozen=True, slots=True)
+class ExternalNontokenEntryCounterHandler(ExternalEntryCounterHandler):
+    handler_id: str = EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER
+    schema_version: int = 3
+    capability_dependencies: tuple[str, ...] = (
+        EXTERNAL_ENTRY_COUNTER_CAPABILITY, "counter.placement.quantity_replacement",
+        EXTERNAL_NONTOKEN_ENTRY_COUNTER_CAPABILITY,
+    )
+
+    def validate(self, descriptor):
+        spec = ExternalEntryCounterHandler.validate(self, descriptor)
+        if spec != ExternalEntryCounterSpec():
+            raise SemanticNodeError("Nontoken entry counters require the exact fixed additional counter")
+        return spec
+
+    def source_replacement_effect(self, descriptor, *, source_ref, source_controller, component_id, source_context):
+        effect = ExternalEntryCounterHandler.source_replacement_effect(
+            self, descriptor, source_ref=source_ref, source_controller=source_controller,
+            component_id=component_id, source_context=source_context,
+        )
+        return replace(effect, conditions={**effect.conditions, "object_kind": {"eq": "card"}})

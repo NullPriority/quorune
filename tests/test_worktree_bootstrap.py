@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from unittest import mock
 
+from scripts.validate_push_refs import GENERATION_SOURCE_PREFIX, validate_push_refs
 from scripts.worktree_bootstrap import (
     DatabaseInspection,
     SNAPSHOT_FIELDS,
@@ -19,6 +20,42 @@ from scripts.worktree_bootstrap import (
     inspect_runtime,
     inspect_worktree,
 )
+
+
+class PrePushRefTests(unittest.TestCase):
+    head = "a" * 40
+
+    def update(self, remote_ref, *, oid=None):
+        return f"HEAD {oid or self.head} {remote_ref} {0:040d}\n"
+
+    def test_cloud_seed_uses_one_exact_reserved_ref(self):
+        reserved = GENERATION_SOURCE_PREFIX + self.head
+        validate_push_refs(
+            [self.update(reserved)], head=self.head, branch="fix/playtest", source_checkpoint=True,
+        )
+        for refs, branch in (
+            ([self.update("refs/heads/fix/playtest")], "fix/playtest"),
+            ([self.update(GENERATION_SOURCE_PREFIX + "b" * 40)], "fix/playtest"),
+            ([self.update(reserved, oid="b" * 40)], "fix/playtest"),
+            ([self.update(reserved), self.update("refs/heads/fix/playtest")], "fix/playtest"),
+            ([self.update(reserved)], "main"),
+            ([self.update(reserved)], ""),
+        ):
+            with self.subTest(refs=refs, branch=branch), self.assertRaises(ValueError):
+                validate_push_refs(refs, head=self.head, branch=branch, source_checkpoint=True)
+
+    def test_ordinary_branch_push_checks_the_outgoing_object(self):
+        branch = "refs/heads/fix/playtest"
+        validate_push_refs([self.update(branch)], head=self.head, branch="fix/playtest", source_checkpoint=False)
+        with self.assertRaisesRegex(ValueError, "exact commit"):
+            validate_push_refs(
+                [self.update(branch, oid="b" * 40)], head=self.head, branch="fix/playtest",
+                source_checkpoint=False,
+            )
+        validate_push_refs(
+            [self.update(branch, oid="0" * 40), self.update("refs/tags/release", oid="b" * 40)],
+            head=self.head, branch="fix/playtest", source_checkpoint=False,
+        )
 
 
 SNAPSHOT = {

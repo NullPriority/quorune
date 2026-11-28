@@ -94,8 +94,8 @@ def authorize_token_creation_reflexive(host, effect, *, actor):
         if not required or not set(required) <= set(program.capability_dependencies):
             raise ValueError("Reflexive token creation lost a required owner")
         _, child = token_creation_reflexive_parts(declared)
-        from .reflexive_triggers import token_creation_reflexive_source
-        token_creation_reflexive_source(host, parent, child)
+        from .reflexive_triggers import resolving_reflexive_source
+        resolving_reflexive_source(host, parent, child)
     except (KeyError, TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
     return parent, child

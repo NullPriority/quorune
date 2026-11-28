@@ -12,9 +12,14 @@ from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.static_cast_rules import (
     STATIC_CAST_LIMIT_HANDLER_ID,
     STATIC_CAST_PROHIBITION_HANDLER_ID,
+    OPPONENT_SORCERY_TIMING_DEPENDENCIES,
     STATIC_CAST_RULE_EVENT,
     STATIC_CAST_TIMING_HANDLER_ID,
     STATIC_UNCOUNTERABLE_HANDLER_ID,
+    SPLIT_SECOND_CAPABILITY,
+    SPLIT_SECOND_GRANT_CAPABILITY,
+    SPLIT_SECOND_GRANT_HANDLER_ID,
+    SPLIT_SECOND_GRANT_QUERY,
     StaticCastCondition,
     StaticCastPlayerScope,
     StaticCastRuleKind,
@@ -334,10 +339,38 @@ def _noncreature_mana_prohibition(normalized: str) -> StaticCastRuleTemplate | N
     return None
 
 
+def _opponent_sorcery_timing_rule(normalized: str) -> StaticCastRuleTemplate | None:
+    if not re.fullmatch(r"Each opponent can cast spells only any time they could cast a sorcery[.]?", normalized, re.I):
+        return None
+    return (
+        "static-opponents-sorcery-timing-v1",
+        _descriptor(
+            handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID,
+            kind=StaticCastRuleKind.CAST_PROHIBITION,
+            scope=StaticCastPlayerScope.SOURCE_OPPONENTS,
+            queries=(_query(),),
+            condition=StaticCastCondition.OUTSIDE_SORCERY_TIMING,
+        ),
+        OPPONENT_SORCERY_TIMING_DEPENDENCIES,
+    )
+
+
 def _cast_prohibition_or_limit_rule(
     normalized: str,
 ) -> StaticCastRuleTemplate | None:
 
+    if re.fullmatch(r"Your opponents can['’]t cast spells with even mana values\.?", normalized, re.I):
+        from ..semantic_runtime.static_cast_rules import OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES
+
+        return (
+            "opponents-cannot-cast-even-mana-value-spells-v1",
+            _descriptor(
+                handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID, kind=StaticCastRuleKind.CAST_PROHIBITION,
+                scope=StaticCastPlayerScope.SOURCE_OPPONENTS, queries=(_query(),),
+                condition=StaticCastCondition.EVEN_MANA_VALUE,
+            ),
+            OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES,
+        )
     mana_prohibition = _noncreature_mana_prohibition(normalized)
     if mana_prohibition is not None:
         return mana_prohibition
@@ -486,6 +519,24 @@ def _uncounterable_rule(
     return None
 
 
+def _split_second_grant(normalized: str) -> StaticCastRuleTemplate | None:
+    reminder = (" (as long as a spell with split second is on the stack, players can't cast spells "
+                "or activate abilities that aren't mana abilities.)")
+    material = " ".join(normalized.casefold().split()).replace("’", "'").removesuffix(reminder)
+    if material.removesuffix(".") != "instant and sorcery spells you control have split second":
+        return None
+    return (
+        "controller-instant-sorcery-split-second-v1",
+        _descriptor(
+            handler_id=SPLIT_SECOND_GRANT_HANDLER_ID,
+            kind=StaticCastRuleKind.SPLIT_SECOND,
+            scope=StaticCastPlayerScope.SOURCE_CONTROLLER,
+            queries=(SPLIT_SECOND_GRANT_QUERY.to_dict(),),
+        ),
+        (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY),
+    )
+
+
 def static_cast_rule_handler(
     text: str,
     *,
@@ -496,8 +547,10 @@ def static_cast_rule_handler(
     normalized = _without_exact_reminder(text)
     return (
         _timing_rule(normalized, source_name=source_name)
+        or _opponent_sorcery_timing_rule(normalized)
         or _cast_prohibition_or_limit_rule(normalized)
         or _uncounterable_rule(normalized)
+        or _split_second_grant(normalized)
     )
 
 

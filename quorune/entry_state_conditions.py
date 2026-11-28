@@ -27,6 +27,7 @@ class FixedEntryMetric(StrEnum):
     CONTROLLER_MOUNTS_OR_VEHICLES = "controller_mounts_or_vehicles"
     OPPONENT_LANDS = "opponent_lands"
     MINIMUM_PLAYER_LIFE = "minimum_player_life"
+    CONTROLLER_ACTIVE_TURN_NUMBER = "controller_active_turn_number"
 
 
 class FixedEntryConditionError(ValueError):
@@ -62,6 +63,12 @@ class FixedEntryCondition:
         ):
             raise FixedEntryConditionError(
                 "Fixed entry condition bounds are reversed"
+            )
+        if self.metric is FixedEntryMetric.CONTROLLER_ACTIVE_TURN_NUMBER and (
+            self.minimum, self.maximum, self.tapped_when_met
+        ) != (1, 3, False):
+            raise FixedEntryConditionError(
+                "The controller turn condition requires exactly the first three active turns"
             )
         if type(self.tapped_when_met) is not bool:
             raise FixedEntryConditionError(

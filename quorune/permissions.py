@@ -2,13 +2,26 @@ from __future__ import annotations
 
 import secrets
 from dataclasses import dataclass
-from typing import Any, Iterable
+from typing import Any, Collection, Iterable, Iterator
 
 from .model import Capability, DecisionGroup, GameState
+from .library_search_control import pending_library_search_control
 
 
 class PermissionDenied(RuntimeError):
     """Raised when a principal attempts an action outside its issued capability."""
+
+
+def current_turn_controller(state: GameState, actor: str) -> str | None:
+    """Read a live controller without changing stored turn-control history."""
+    player = state.players.get(actor)
+    if player is None or not player.in_game:
+        return None
+    controller = player.stats.get("turn_controlled_by")
+    if not isinstance(controller, str) or controller == actor:
+        return None
+    controlling_player = state.players.get(controller)
+    return controller if controlling_player is not None and controlling_player.in_game else None
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,51 +78,90 @@ class CapabilityManager:
         )
         self.state.pending_decision = decision
 
-        for actor in actor_list:
-            if role == "pilot":
-                strategic_controller = self.state.players[
-                    actor
-                ].stats.get("turn_controlled_by")
-                principal = self.pilot_principal(
-                    str(strategic_controller or actor)
-                )
-                capability_actor: str | None = actor
-            else:
-                principal = role
-                capability_actor = None if actor == role else actor
-            token = self._new_token()
-            self.state.capabilities[token] = Capability(
-                token=token,
-                decision_id=decision_id,
-                principal=principal,
-                role=role,
-                actor=capability_actor,
-                allowed_actions=list(decision.allowed_actions),
-                created_revision=self.state.revision,
-            )
+        for token, capability in self._decision_capabilities(
+            decision, actor_list, occupied=self.state.capabilities,
+        ).items():
+            self.state.capabilities[token] = capability
         return decision
 
-    def _new_token(self) -> str:
+    def _actor_grants(
+        self, decision: DecisionGroup, actor: str,
+    ) -> Iterator[tuple[str, str | None, list[str]]]:
+        if decision.role != "pilot":
+            yield decision.role, None if actor == decision.role else actor, decision.allowed_actions
+            return
+        own_principal = self.pilot_principal(actor)
+        search = pending_library_search_control(self.state, decision, actor)
+        if search is not None and search.controller is not None:
+            yield self.pilot_principal(search.controller.controller), actor, ["choose"]
+            return
+        controller = current_turn_controller(self.state, actor)
+        principal = self.pilot_principal(controller) if controller else own_principal
+        actions = decision.allowed_actions
+        delegated_concession = principal != own_principal and "concede" in actions
+        if delegated_concession:
+            actions = [action for action in actions if action != "concede"]
+        yield principal, actor, actions
+        if delegated_concession and decision.kind == "priority":
+            yield own_principal, actor, ["concede"]
+
+    def _decision_capabilities(
+        self, decision: DecisionGroup, actors: Iterable[str], *, occupied: Collection[str] = (),
+    ) -> dict[str, Capability]:
+        proposed: dict[str, Capability] = {}
+        for actor in actors:
+            for principal, capability_actor, allowed_actions in self._actor_grants(decision, actor):
+                token = self._new_token(occupied, proposed)
+                proposed[token] = Capability(
+                    token=token,
+                    decision_id=decision.decision_id,
+                    principal=principal,
+                    role=decision.role,
+                    actor=capability_actor,
+                    allowed_actions=list(allowed_actions),
+                    created_revision=self.state.revision,
+                )
+        return proposed
+
+    @staticmethod
+    def _new_token(occupied: Collection[str], proposed: Collection[str]) -> str:
         while True:
             # 32 random bytes provide 256 bits of bearer capability entropy.
             # The token remains short-lived and decision-scoped; this merely
             # makes guessing safe enough for a real network boundary.
             token = "c_" + secrets.token_urlsafe(32)
-            if token not in self.state.capabilities:
+            if token not in occupied and token not in proposed:
                 return token
 
-    def capability_for(self, principal: str) -> Capability | None:
+    def _capability_actor_is_live(self, capability: Capability) -> bool:
+        if capability.role != "pilot":
+            return True
+        actor = capability.actor
+        player = self.state.players.get(actor) if actor is not None else None
+        if player is None or not player.in_game:
+            return False
+        search = pending_library_search_control(self.state, self.state.pending_decision, player.seat)
+        if search is not None and search.controller is not None:
+            return capability.principal == self.pilot_principal(search.controller.controller)
+        if capability.principal == self.pilot_principal(player.seat):
+            return True
+        controller = current_turn_controller(self.state, player.seat)
+        return controller is not None and capability.principal == self.pilot_principal(controller)
+
+    def pending_capabilities(self) -> Iterator[Capability]:
         decision = self.state.pending_decision
         if not decision:
-            return None
+            return
         for capability in self.state.capabilities.values():
             if (
                 capability.decision_id == decision.decision_id
-                and capability.principal == principal
                 and not capability.consumed
+                and self._capability_actor_is_live(capability)
             ):
-                return capability
-        return None
+                yield capability
+
+    def capability_for(self, principal: str) -> Capability | None:
+        return next((capability for capability in self.pending_capabilities() if capability.principal == principal), None)
 
     def authorize(
         self,
@@ -131,18 +183,31 @@ class CapabilityManager:
             raise PermissionDenied("Capability belongs to an expired decision")
         if capability.principal != principal:
             raise PermissionDenied("Capability was not issued to this principal")
+        if not self._capability_actor_is_live(capability):
+            raise PermissionDenied("Pilot no longer has live authority for this actor")
+        if (
+            action == "concede" and capability.role == "pilot"
+            and principal != self.pilot_principal(capability.actor or "")
+        ):
+            raise PermissionDenied("Only the authenticated pilot for a seat can concede that seat")
         if action not in capability.allowed_actions:
             raise PermissionDenied(
                 f"Action {action!r} is outside capability scope {capability.allowed_actions}"
             )
+        if "action" in payload and payload["action"] != action:
+            raise PermissionDenied("Payload action does not match the authorized action")
+        from .rules.secret_number_choices import is_secret_number_decision, parse_secret_number_response
+
+        if is_secret_number_decision(decision):
+            parse_secret_number_response(payload)
         capability.consumed = True
         return AuthorizedCommand(capability, decision, action, payload)
 
     def record_response(self, command: AuthorizedCommand) -> None:
         actor_key = command.capability.actor or command.capability.principal
         command.decision.responses[actor_key] = {
-            "action": command.action,
             **command.payload,
+            "action": command.action,
         }
 
     def decision_complete(self) -> bool:
@@ -177,32 +242,13 @@ class CapabilityManager:
         unanswered actors when a record is loaded or replayed.
         """
         decision = self.state.pending_decision
-        self.state.capabilities = {}
-        if decision is None:
-            return
-        for actor in decision.actors:
-            actor_key = actor if decision.role == "pilot" else actor
-            if actor_key in decision.responses:
-                continue
-            if decision.role == "pilot":
-                strategic_controller = self.state.players[
-                    actor
-                ].stats.get("turn_controlled_by")
-                principal = self.pilot_principal(
-                    str(strategic_controller or actor)
-                )
-            else:
-                principal = decision.role
-            token = self._new_token()
-            self.state.capabilities[token] = Capability(
-                token=token,
-                decision_id=decision.decision_id,
-                principal=principal,
-                role=decision.role,
-                actor=actor if decision.role == "pilot" else (None if actor == decision.role else actor),
-                allowed_actions=list(decision.allowed_actions),
-                created_revision=self.state.revision,
+        self.state.capabilities = (
+            self._decision_capabilities(
+                decision, (actor for actor in decision.actors if actor not in decision.responses),
             )
+            if decision is not None
+            else {}
+        )
 
     def invalidate_current(self) -> None:
         decision = self.state.pending_decision
@@ -212,3 +258,30 @@ class CapabilityManager:
             if capability.decision_id == decision.decision_id:
                 capability.consumed = True
         self.state.pending_decision = None
+
+
+def decision_context_for_capability(
+    decision: DecisionGroup, capability: Capability,
+) -> dict[str, Any]:
+    """Project a priority response catalog to the participant's authority."""
+    context = decision.payload_by_actor.get(capability.actor or capability.principal, {})
+    if decision.kind != "priority" or "concede" not in decision.allowed_actions:
+        return context
+    legal = context.get("legal") or {}
+    if capability.allowed_actions == ["concede"]:
+        return {"legal": {"actions": [
+            action for action in legal.get("actions", ())
+            if action.get("action") == "concede"
+        ]}}
+    if "concede" not in capability.allowed_actions:
+        return {
+            **context,
+            "legal": {
+                **legal,
+                "actions": [
+                    action for action in legal.get("actions", ())
+                    if action.get("action") != "concede"
+                ],
+            },
+        }
+    return context

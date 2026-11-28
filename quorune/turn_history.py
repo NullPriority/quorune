@@ -8,6 +8,8 @@ from dataclasses import replace
 from typing import Any
 
 from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
+from .turn_history_model import LAND_PLAY_HISTORY_EVENT
+from .turn_history_model import DRAWN_HAND_CARD_EVENT, EXERTED_PERMANENT_EVENT, FIRST_EQUIP_ACTIVATION
 
 
 def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
@@ -20,6 +22,10 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         spell_origin_history_version=history.spell_origin_history_version,
         spell_color_history_version=history.spell_color_history_version,
         plus_one_counter_placement_history_version=history.plus_one_counter_placement_history_version,
+        controlled_creature_counter_history_version=history.controlled_creature_counter_history_version,
+        creature_counter_placement_history_version=history.creature_counter_placement_history_version,
+        permanent_counter_receipt_history_version=history.permanent_counter_receipt_history_version,
+        permanent_entry_token_history_version=history.permanent_entry_token_history_version,
         creature_spell_counter_history_version=history.creature_spell_counter_history_version,
         graveyard_type_history_version=history.graveyard_type_history_version,
         spell_mana_history_version=history.spell_mana_history_version,
@@ -31,6 +37,10 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         public_movement_history_version=history.public_movement_history_version,
         first_life_gain_history_version=history.first_life_gain_history_version,
         venture_history_version=history.venture_history_version,
+        land_play_history_version=history.land_play_history_version,
+        draw_identity_history_version=history.draw_identity_history_version,
+        exert_occurrence_history_version=history.exert_occurrence_history_version,
+        equip_activation_history_version=history.equip_activation_history_version,
     )
 
 
@@ -72,6 +82,32 @@ def roll_turn_history(
         previous_active_player=previous_active_player,
         previous_spell_cast_counts=dict(sorted(counts.items())),
     )
+
+
+def drawn_hand_incarnations_this_turn(history, *, turn_sequence, player):
+    """Return the actor's exact draw results, or unavailable for historical state."""
+    if getattr(history, "draw_identity_history_version", None) != 1:
+        return None
+    if history.turn_sequence != turn_sequence:
+        return ()
+    return tuple(event.object_incarnation for event in history.events
+                 if event.kind == DRAWN_HAND_CARD_EVENT and event.actor == player)
+
+
+def record_exert_occurrence(host, card, *, actor: str) -> None:
+    history = getattr(host.state, "turn_history", None)
+    if getattr(history, "exert_occurrence_history_version", None) == 1:
+        host._record_turn_history(EXERTED_PERMANENT_EVENT, actor=actor, object_incarnation=card.logical_object_id)
+
+
+def incarnation_exerted_this_turn(state, logical_object_id: str) -> bool | None:
+    """Answer from committed current-turn state, with no facts invented for historical records."""
+    history = getattr(state, "turn_history", None)
+    if (getattr(history, "exert_occurrence_history_version", None) != 1
+            or history.turn_sequence != state.turn_sequence):
+        return None
+    return any(event.kind == EXERTED_PERMANENT_EVENT and event.object_incarnation == logical_object_id
+               for event in history.events)
 
 
 def _graveyard_departure_fact(history, card, destination: str) -> TurnHistoryEvent | None:
@@ -153,6 +189,38 @@ def current_turn_history_events(
     return tuple(event for event in history.events if event.kind == kind)
 
 
+def land_played_this_turn(state: Any, player: str) -> bool | None:
+    history = getattr(state, "turn_history", None)
+    if (getattr(history, "land_play_history_version", None) != 1
+            or history.turn_sequence != state.turn_sequence or history.schema_version != 1):
+        return None
+    return any(event.actor == player for event in current_turn_history_events(
+        history, turn_sequence=state.turn_sequence, kind=LAND_PLAY_HISTORY_EVENT,
+    ))
+
+
+def equip_activated_this_turn(state: Any, player: str) -> bool | None:
+    """Read the actor's first committed Equip activation from complete history."""
+    history = getattr(state, "turn_history", None)
+    if (getattr(history, "equip_activation_history_version", None) != 1
+            or history.turn_sequence != state.turn_sequence or history.schema_version != 1):
+        return None
+    return any(event.actor == player for event in current_turn_history_events(
+        history, turn_sequence=state.turn_sequence, kind=FIRST_EQUIP_ACTIVATION,
+    ))
+
+
+def record_first_equip_activation(host: Any, player: str, object_incarnation: str) -> None:
+    if equip_activated_this_turn(host.state, player) is False:
+        host._record_turn_history(FIRST_EQUIP_ACTIVATION, actor=player, object_incarnation=object_incarnation)
+
+
+def record_committed_land_play(host, player: str, object_incarnation: str) -> None:
+    history = getattr(host.state, "turn_history", None)
+    if getattr(history, "land_play_history_version", None) == 1:
+        host._record_turn_history(LAND_PLAY_HISTORY_EVENT, actor=player, object_incarnation=object_incarnation)
+
+
 def ventured_this_turn(state: Any, player: str) -> bool | None:
     history = getattr(state, "turn_history", None)
     if getattr(history, "venture_history_version", None) != 1:
@@ -215,6 +283,36 @@ def current_graveyard_incarnation_qualifies(history, *, turn_sequence, card, qua
              or qualification=='library_arrival_this_turn' and event.origin=='library'
              or qualification=='nonbattlefield_arrival_this_turn' and event.origin!='battlefield')
         for event in current_turn_history_events(history,turn_sequence=turn_sequence,kind=kind))
+
+
+def record_food_entry_history(
+    host: Any, *, controller: str, incarnation: str, types: Iterable[str], subtypes: Iterable[str],
+) -> None:
+    """Retain the committed effective Food fact for a registered, trusted reader."""
+
+    history = getattr(host.state, "turn_history", None)
+    if (
+        getattr(history, "public_movement_history_version", None) != 1
+        or "artifact" not in types or "food" not in subtypes
+    ):
+        return
+    from .public_history_query_model import ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY
+    from .turn_history_model import ARTIFACT_SUBTYPE_ENTRY_EVENT
+
+    semantics = getattr(host, "semantics", None)
+    if semantics is None or not any(
+        ARTIFACT_SUBTYPE_ENTRY_HISTORY_CAPABILITY in program.capability_dependencies
+        and host.semantic_program_is_current_trusted(program)
+        for program in semantics.programs_for_event("creature.attacks")
+    ):
+        return
+    if any(event.kind == ARTIFACT_SUBTYPE_ENTRY_EVENT and event.object_incarnation == incarnation
+           for event in history.events):
+        return
+    host._record_turn_history(
+        ARTIFACT_SUBTYPE_ENTRY_EVENT, actor=controller, object_incarnation=incarnation,
+        target="food", target_kind="artifact_subtype",
+    )
 
 
 def record_creature_attack_history(

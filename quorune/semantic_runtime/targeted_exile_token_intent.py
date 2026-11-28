@@ -32,3 +32,8 @@ class TargetedExileTokensIntent(CommittedTargetExileIntent):
 @dataclass(frozen=True, slots=True)
 class OpponentExileDrawIntent(CommittedTargetExileIntent):
     """Draw for each distinct opponent whose selected permanent reaches exile."""
+
+
+@dataclass(frozen=True, slots=True)
+class ExileControllerLandSearchIntent(CommittedTargetExileIntent):
+    """Search for lands for each former controller whose creature reached exile."""

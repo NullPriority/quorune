@@ -8,6 +8,7 @@ from ..announced_damage import (
     ANNOUNCED_DAMAGE_CAPABILITY,
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
     DAMAGE_ALLOCATION_FIELD,
+    TURN_DAMAGE_MAXIMUM,
     VariableDamageAllocationSpec,
     damage_allocation_spec,
     validate_announced_damage_effect,
@@ -266,8 +267,14 @@ def _fixed_set_damage_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...] | None:
+    from .aggregated_arrival_damage import artifact_arrival_damage_capabilities, uses_artifact_arrival_damage
     from .defending_creature_damage import defending_creature_damage_capabilities, is_defending_creature_damage
+    from .random_opponent_damage import RANDOM_OPPONENT_DAMAGE_FIELD, random_opponent_damage_capabilities
 
+    if uses_artifact_arrival_damage(effect):
+        return artifact_arrival_damage_capabilities(effect, target_schema, mechanics)
+    if RANDOM_OPPONENT_DAMAGE_FIELD in effect:
+        return random_opponent_damage_capabilities(effect, target_schema)
     if DEALT_LIFE_GAIN_FIELD in effect:
         if (target_schema is not None or type(effect[DEALT_LIFE_GAIN_FIELD]) is not int
                 or effect[DEALT_LIFE_GAIN_FIELD] != 1):
@@ -486,8 +493,38 @@ def _targeted_dealt_life_gain_runtime_dependencies(program):
     )
 
 
+def excess_trample_damage_capabilities(effect, target_schema):
+    from ..excess_damage import EXCESS_TRAMPLE_CAPABILITY, EXCESS_TRAMPLE_FIELD
+
+    if (target_schema != _FIXED_DAMAGE_TARGET_SCHEMAS["creature"]
+            or set(effect) != {"op", "source", "target", "amount", EXCESS_TRAMPLE_FIELD}
+            or type(effect[EXCESS_TRAMPLE_FIELD]) is not int or effect[EXCESS_TRAMPLE_FIELD] != 1
+            or effect["op"] != "damage" or effect["source"] != "$source" or effect["target"] != "$target.0"
+            or not _positive_int(effect["amount"])):
+        return ()
+    return (
+        EXCESS_TRAMPLE_CAPABILITY, "damage.amount.positive", "damage.result.multitype_permanent",
+        "damage.source.stack_current_or_lki", "target.revalidate_resolution",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn", "combat.damage.assignment.trample",
+    )
+
+
 def dealt_damage_life_gain_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
+    from ..excess_damage import EXCESS_TRAMPLE_FIELD
+    from .fight_excess_mana import fight_excess_mana_dependencies
+
+    if fight := fight_excess_mana_dependencies(program):
+        return fight
+
+    if any(EXCESS_TRAMPLE_FIELD in effect for effect in nested_effects((program.effects, program.handlers))):
+        if ((program.event, program.active_zone) != ("resolve", "stack") or len(program.effects) != 1
+                or program.handlers or program.cost_schema is not None or program.event_condition is not None):
+            raise ValueError("Committed excess damage requires one complete ordinary resolving spell")
+        required = excess_trample_damage_capabilities(program.effects[0], thaw_value(program.target_schema))
+        if not required:
+            raise ValueError("Committed excess damage lost its original target or complete result")
+        return required
 
     if not any(DEALT_LIFE_GAIN_FIELD in effect for effect in nested_effects((program.effects, program.handlers))):
         return ()
@@ -517,6 +554,8 @@ def damage_death_exile_scope_is_closed(effect, target_schema) -> bool:
         return False
     if scope is DamageDeathExileScope.DEALT_CREATURES:
         return True
+    if scope is DamageDeathExileScope.TARGET_CREATURE_OR_PLANESWALKER:
+        return target_schema == _FIXED_DAMAGE_TARGET_SCHEMAS['creature_or_planeswalker']
     if scope is not DamageDeathExileScope.TARGET:
         return False
     if target_schema == _FIXED_DAMAGE_TARGET_SCHEMAS['creature']:
@@ -553,6 +592,9 @@ def _announced_damage_capabilities(effect, target_schema, mechanics) -> tuple[st
         allocation_capabilities = (ANNOUNCED_DAMAGE_CAPABILITY,)
     del group["min"], group["max"]
     group["count"] = 1
+    if (isinstance(spec, VariableDamageAllocationSpec) and spec.quantity == TURN_DAMAGE_MAXIMUM
+            and (maximum != 0 or group != _FIXED_DAMAGE_TARGET_SCHEMAS["creature"])):
+        return ()
     direct = {"op": "damage", "source": "$source", "target": "$target.0", "amount": amount}
     base = _fixed_direct_damage_capabilities(direct, group, mechanics)
     if not base:
@@ -627,6 +669,11 @@ def fixed_damage_node_capabilities(
     mechanic_ids = tuple(mechanic_ids)
     if any(TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect for effect in effects):
         return _turn_damage_prevention_capabilities(effects, target_schema)
+    from ..turn_match_outcome_model import TURN_OUTCOME_FIELD
+    from .turn_match_outcome_protection import turn_match_outcome_node_capabilities
+
+    if any(TURN_OUTCOME_FIELD in effect for effect in effects):
+        return turn_match_outcome_node_capabilities(effects, target_schema)
     from .event_damage_sources import event_damage_source_node_capabilities
     dealer = event_damage_source_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if dealer:return dealer
@@ -638,6 +685,27 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from ..excess_damage import EXCESS_TRAMPLE_FIELD, EXCESS_TRAMPLE_MECHANIC
+    if EXCESS_TRAMPLE_FIELD in effect:
+        if EXCESS_TRAMPLE_MECHANIC not in mechanics:
+            return ()
+        return excess_trample_damage_capabilities(effect, target_schema)
+    from .random_activation_target import (
+        RANDOM_ACTIVATION_TARGET_CAPABILITY, RANDOM_ACTIVATION_TARGET_FIELD, ordinary_random_activation_damage,
+    )
+    from .announced_three_target_damage import FIELD as SPELL_X_TARGET_FIELD, node_dependencies as spell_x_target_dependencies
+
+    if SPELL_X_TARGET_FIELD in effect:
+        return spell_x_target_dependencies(effect, target_schema)
+    if RANDOM_ACTIVATION_TARGET_FIELD in effect:
+        if target_schema != _FIXED_DAMAGE_TARGET_SCHEMAS["any_target"] or type(target_schema["count"]) is not int:
+            return ()
+        try:
+            ordinary = ordinary_random_activation_damage(effect)
+        except ValueError:
+            return ()
+        required = _fixed_direct_damage_capabilities(ordinary, target_schema, mechanics)
+        return (*required, RANDOM_ACTIVATION_TARGET_CAPABILITY) if required else ()
     if SOURCE_RELATIVE_DAMAGE_VERSION_FIELD in effect:
         if target_schema is not None:
             return ()
@@ -651,6 +719,10 @@ def fixed_damage_node_capabilities(
     if 'fixed_target_controller_damage' in effect:
         from .fixed_dual_damage import fixed_dual_damage_node_capabilities
         return fixed_dual_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from .announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD, scaled_announced_target_damage_node_capabilities
+
+    if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in effect:
+        return scaled_announced_target_damage_node_capabilities(effects, target_schema, mechanics)
     if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
         return _announced_damage_capabilities(effect, target_schema, mechanics)
     if DAMAGE_DEATH_EXILE_FIELD in effect:
@@ -673,6 +745,14 @@ def fixed_damage_node_capabilities(
                 or set(effect)!={'op','source','target','amount'} or effect['op']!='damage'
                 or effect['source']!='$source' or not _positive_int(effect['amount'])):return ()
         return (TARGET_CONTROLLER_INFORMATION_CAPABILITY,'damage.amount.positive','damage.result.player_life','damage.source.stack_current_or_lki')
+    from .excess_damage_treasure import EXCESS_TREASURE_FIELD, excess_treasure_base_damage
+    if EXCESS_TREASURE_FIELD in effect:
+        base = excess_treasure_base_damage(effect, target_schema, mechanics)
+        if base is None:
+            return ()
+        ordinary, extra = base
+        required = _fixed_direct_damage_capabilities(ordinary, target_schema, mechanics)
+        return (*required, *extra) if required else ()
     if effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION:
         return _targeted_dealt_life_gain_capabilities(effect, target_schema, mechanics)
     fixed_set = _fixed_set_damage_capabilities(
@@ -694,5 +774,53 @@ def fixed_damage_node_capabilities(
         return ("damage.amount.positive", "damage.result.player_life", "damage.source.stack_current_or_lki")
     return _fixed_direct_damage_capabilities(effect, target_schema, mechanics)
 
+
+
+def turn_damage_recovery_shape():
+    """Use the ordinary life and spell damage owners for the repeated public amount."""
+    from ..scalar_effect_amount_model import (
+        CONTROLLER_DAMAGE_RECEIVED_FACT, ScalarAmountOrigin, ScalarEffectAmountSpec,
+    )
+
+    amount = ScalarEffectAmountSpec(
+        ScalarAmountOrigin.HISTORY, history_fact=CONTROLLER_DAMAGE_RECEIVED_FACT,
+    )
+    effects = (
+        {"op": "life", "player": "$controller", "delta": amount.to_dict()},
+        {"op": "damage", "source": "$source", "target": "$target.0", "amount": amount.to_dict()},
+    )
+    target = DirectPermanentTargetSpec(types_any=("creature",), controller_relation="you")
+    return effects, target.to_target_schema()
+
+
+def turn_damage_recovery_runtime_dependencies(program):
+    """Require the printed order, exact source, and one controlled creature."""
+    from ..scalar_effect_amount_model import (
+        CONTROLLER_DAMAGE_RECEIVED_FACT, SCALAR_AMOUNT_CAPABILITY, scalar_amount_specs,
+    )
+    from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+    from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
+
+    values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
+    if not any(spec.history_fact == CONTROLLER_DAMAGE_RECEIVED_FACT for spec in scalar_amount_specs(values)):
+        return ()
+    effects, target = turn_damage_recovery_shape()
+    if (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or not program.ability_id.startswith("spell:")
+        or program.event_condition is not None or program.cost_schema is not None or program.handlers
+        or type(program.target_schema.get("count") if program.target_schema else None) is not int
+        or thaw_value(program.target_schema) != target
+        or tuple(thaw_value(effect) for effect in program.effects) != effects
+    ):
+        raise ValueError("Turn damage recovery requires the ordered spell and its exact controlled creature target")
+    life, damage = effects
+    fixed = ({**life, "delta": 1}, {**damage, "amount": 1})
+    owners = fixed_effect_clause_sequence_node_capabilities(
+        effects=fixed, target_schema=target, mechanic_ids=program.coverage,
+    )
+    if not owners:
+        raise ValueError("Turn damage recovery requires the closed life and damage sequence")
+    return (SCALAR_AMOUNT_CAPABILITY, PUBLIC_HISTORY_QUERY_CAPABILITY, *owners)
 
 __all__ = ["fixed_damage_node_capabilities"]

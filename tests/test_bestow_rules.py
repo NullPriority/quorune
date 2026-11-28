@@ -331,7 +331,7 @@ class FixedManaBestowRuntimeTests(unittest.TestCase):
             return 1 if cast_type_line == "Enchantment — Aura" else 0
 
         with patch(
-            "quorune.rules.casting.costs._static_generic_reduction",
+            "quorune.rules.casting.static_modifiers.fixed_generic_reduction",
             side_effect=reduction,
         ):
             action = next(

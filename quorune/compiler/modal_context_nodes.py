@@ -5,8 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, Sequence
 
+from ..event_counter_reference import attached_attack_counter_context_matches
+from .event_counter_results import entry_event_counter_result
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .modal_templates import fixed_nonrepeating_modal_template
+from .captured_counter_keyword_mode import captured_counter_keyword_mode
 
 
 _MODAL_BODY_SENTINEL = "__quorune_fixed_nonrepeating_modal_body__"
@@ -17,7 +20,7 @@ NodeCompiler = Callable[..., OracleNode | None]
 class FixedModalContextBlocks:
     """Precompiled modal rows with source-order residual insertion."""
 
-    nodes: Mapping[int, tuple[OracleNode, tuple[OracleResidual, ...]]]
+    nodes: Mapping[int, tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]]]
     consumed_rows: frozenset[int]
 
     def append_to(
@@ -32,7 +35,7 @@ class FixedModalContextBlocks:
         result = self.nodes.get(row_index)
         if result is None:
             return False
-        node, block_residuals = result
+        (node, *granted_children), block_residuals = result
         residual_offset = len(residuals)
         remapped_ids = tuple(
             f"r{residual_offset + int(residual_id[1:])}"
@@ -46,6 +49,7 @@ class FixedModalContextBlocks:
             for index, residual in enumerate(block_residuals, 1)
         )
         nodes.append(replace(node, residual_ids=remapped_ids))
+        nodes.extend(granted_children)
         return True
 
 
@@ -62,9 +66,81 @@ def _modal_block_end(
     return end
 
 
+def _equipped_attack_binding(header: str, *, card_name: str):
+    if not header.casefold().startswith(("whenever equipped creature attacks,", "when equipped creature attacks,")):
+        return None
+    from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+
+    binding = fixed_counter_trigger_binding(header, card_name=card_name)
+    if binding is None or not attached_attack_counter_context_matches(
+        event=binding.event.value, active_zone=binding.active_zone,
+        event_condition=binding.event_condition,
+    ):
+        return None
+    return binding
+
+
+def _controlled_combat_recipient_branch(header, body):
+    if not header.casefold().startswith("whenever a creature you control deals combat damage to a player, choose one "):
+        return None
+    from ..combat_damage_library_exile import combat_damage_color_cast_exile_effect
+    from ..goad_instruction import GOAD_MECHANIC
+    from ..rules.combat_damage_library_access import combat_damage_recipient_goad
+    from .impulse_access_templates import IMPULSE_ACCESS_MECHANIC_ID
+
+    printed = " ".join(body.casefold().replace("\u2019", "'").split())
+    if printed == "goad target creature that player controls.":
+        effect, target = combat_damage_recipient_goad()
+        return "combat-damage-recipient-goad-v1", (effect,), target, (GOAD_MECHANIC, "cr-115-targets")
+    if printed == (
+        "exile the top card of that player's library. until end of turn, you may cast that card "
+        "and you may spend mana as though it were mana of any color to cast that spell."
+    ):
+        return ("combat-damage-recipient-color-cast-v1", (combat_damage_color_cast_exile_effect(),),
+                None, (IMPULSE_ACCESS_MECHANIC_ID,))
+    return None
+
+
+def _bind_combat_recipient_modes(node, target_schema):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..rules.combat_damage_library_access import (
+        combat_damage_recipient_modal_schema_is_exact, controlled_combat_damage_player_condition,
+        uses_combat_damage_recipient_modes,
+    )
+
+    if node is None or not uses_combat_damage_recipient_modes(target_schema):
+        return node
+    condition = controlled_combat_damage_player_condition(node.event_condition)
+    if (node.event != "damage.dealt" or node.active_zone != "battlefield"
+            or condition is None or not combat_damage_recipient_modal_schema_is_exact(target_schema)):
+        return None
+    return replace(
+        node, event_condition=condition,
+        runtime_coverage=tuple(dict.fromkeys((*node.runtime_coverage, CURRENT_ABILITY_FRAGMENT_COVERAGE))),
+    )
+
+
+def _bind_distinct_graveyard_mode_occurrence(node, target_schema):
+    """Use the committed before-zone occurrence for the versioned graveyard modal."""
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
+    from ..rules.modal_selection import uses_distinct_turn_graveyard_modes
+
+    if node is None or not uses_distinct_turn_graveyard_modes(target_schema):
+        return node
+    if node.event != "card.leave_graveyard" or "one_or_more_event_batch" not in node.runtime_coverage:
+        return None
+    return replace(
+        node, event=GRAVEYARD_DEPARTURE_LOOKBACK_EVENT,
+        runtime_coverage=tuple(dict.fromkeys((*node.runtime_coverage, CURRENT_ABILITY_FRAGMENT_COVERAGE))),
+    )
+
+
 def _context_node(
     *,
     node_id: str,
+    oracle_id: str,
+    face_id: str,
     rows: Sequence[tuple[str, str, SourceSpan]],
     oracle_text: str,
     card_name: str,
@@ -76,13 +152,42 @@ def _context_node(
     effect_template: Any,
     activated_or_event_node: NodeCompiler,
     trigger_node: NodeCompiler,
-) -> tuple[OracleNode, tuple[OracleResidual, ...]] | None:
+) -> tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]] | None:
+    from .temporary_quoted_ability_nodes import temporary_land_mana_mode_nodes
+
+    binding = _equipped_attack_binding(rows[0][1], card_name=card_name)
+    mode_rows = iter(rows[1:])
+    granted_children: list[OracleNode] = []
+
+    def compile_mode(body: str):
+        line, _material, span = next(mode_rows)
+        if combat := _controlled_combat_recipient_branch(rows[0][1], body):
+            return combat
+        ordinary = effect_template(body, card_name=card_name)
+        if ordinary[0] is not None:
+            return ordinary
+        captured = captured_counter_keyword_mode(rows[0][1], body, card_name=card_name)
+        if captured is not None:
+            return captured
+        if binding is not None:
+            counter = entry_event_counter_result(
+                binding, body, effect_template=effect_template, card_name=card_name,
+            )
+            if counter is not None:
+                return counter[0]
+        grant = temporary_land_mana_mode_nodes(body=body, line=line, span=span, oracle_id=oracle_id,
+            face_id=face_id, compile_inner=activated_or_event_node, effect_template=effect_template,
+            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+            capability_profile=capability_profile)
+        if grant is None:
+            return ordinary
+        compiled, child = grant
+        granted_children.append(child)
+        return compiled
+
     modal = fixed_nonrepeating_modal_template(
         rows,
-        compile_effect=lambda body: effect_template(
-            body,
-            card_name=card_name,
-        ),
+        compile_effect=compile_mode,
     )
     if modal is None or not modal.context_prefix:
         return None
@@ -130,11 +235,26 @@ def _context_node(
             residuals=scratch_residuals,
             effect_template=modal_effect_template,
         )
+    node = _bind_combat_recipient_modes(node, target_schema)
+    node = _bind_distinct_graveyard_mode_occurrence(node, target_schema)
     if node is None or not node.lowerable:
+        return None
+    if modal.minimum_modes == 0:
+        from ..rules.modal_selection import optional_trigger_mode_context_dependencies
+
+        if not optional_trigger_mode_context_dependencies(
+            target_schema, event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+        ):
+            return None
+    from ..rules.modal_selection import distinct_turn_trigger_context_matches, has_distinct_turn_trigger_modes
+
+    if has_distinct_turn_trigger_modes(target_schema) and not distinct_turn_trigger_context_matches(
+        event=node.event, active_zone=node.active_zone, event_condition=node.event_condition, schema=target_schema,
+    ):
         return None
     block_text = oracle_text[span.start : span.end]
     return (
-        replace(node, text=block_text, span=span),
+        (replace(node, text=block_text, span=span), *granted_children),
         tuple(
             replace(residual, text=block_text, span=span)
             for residual in scratch_residuals
@@ -145,6 +265,7 @@ def _context_node(
 def fixed_nonrepeating_modal_context_blocks(
     *,
     material_rows: Sequence[tuple[str, str, SourceSpan]],
+    oracle_id: str,
     face_id: str,
     oracle_text: str,
     card_name: str,
@@ -159,7 +280,7 @@ def fixed_nonrepeating_modal_context_blocks(
 ) -> FixedModalContextBlocks:
     """Compile every disjoint header-plus-bullet modal context block."""
 
-    nodes: dict[int, tuple[OracleNode, tuple[OracleResidual, ...]]] = {}
+    nodes: dict[int, tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]]] = {}
     consumed_rows: set[int] = set()
     for start in range(len(material_rows)):
         if start in consumed_rows:
@@ -169,6 +290,8 @@ def fixed_nonrepeating_modal_context_blocks(
             continue
         result = _context_node(
             node_id=f"{face_id}:n{start + 1}",
+            oracle_id=oracle_id,
+            face_id=face_id,
             rows=material_rows[start:end],
             oracle_text=oracle_text,
             card_name=card_name,

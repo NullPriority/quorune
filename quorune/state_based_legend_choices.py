@@ -60,12 +60,17 @@ def validate_legend_choice_plan(host, plan: LegendChoicePlan) -> None:
         raise GameRuleError('Legend choice inputs changed before state-based settlement')
 
 
-def coordinate_state_based_legend_choices(host, batch):
+def read_state_based_legend_inputs(
+    host,
+) -> tuple[LegendChoicePlan | None, tuple[LegendConflictSnapshot, ...]]:
     version = legend_rule_choice_version(getattr(host.state, 'legend_rule_choice_version', None))
     pending = completed_legend_choice_plan(current_legend_choices(), version)
-    if version is None:
-        return batch
-    groups = _current_groups(host)
+    return pending, _current_groups(host) if version is not None else ()
+
+
+def coordinate_state_based_legend_choices(
+    host, batch, *, pending: LegendChoicePlan | None, groups: tuple[LegendConflictSnapshot, ...],
+):
     if not groups:
         if pending is not None:
             raise GameRuleError('Saved legend choices no longer describe current conflicts')

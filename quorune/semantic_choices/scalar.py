@@ -15,12 +15,23 @@ from ..resolution_characteristic_model import (
     ChosenCreatureTypeModifier, ChosenCreatureTypeResult,
 )
 from ..rules.destruction_result_model import CREATURE_TYPE_DESTRUCTION_FIELD, ChosenCreatureTypeDestruction
+from ..rules.draw_step_drawing_settlement import (
+    DRAW_STEP_SETTLEMENT_VERSION_FIELD, draw_step_settlement_can_draw,
+)
+from ..rules.graveyard_return_choices import EACH_GRAVEYARD_RETURN_FIELD, is_each_graveyard_return, is_paired_graveyard_return
+from ..rules.milled_permanent_battlefield import MILL_PERMANENT_CHOICE
+from ..rules.mill_paid_hand_return import MILL_HAND_CHOICE_FIELD
+from ..rules.milled_creature_land_to_hand import MILL_HAND_CHOICE
+from ..rules.paired_token_creators import uses_paired_token_creators
 from ..semantic_runtime.intents import (
     AddManaIntent,
     RecordChoiceIntent,
     SetCardDesignationIntent,
 )
 from .context import SemanticChoiceContext, SemanticChoiceQuery
+from ..rules.permanent_resolution_choices import (
+    TYPE_DESTRUCTION_FIELD, TYPE_DESTRUCTION_TYPES, permanent_type_destruction_result,
+)
 from .model import (
     AutoContinue,
     ScalarChoice,
@@ -261,6 +272,7 @@ class ChooseCreatureTypeHandler:
         "RecordChoiceIntent",
         "apply_fixed_resolution_characteristics",
         "DestroyPermanentSetIntent",
+        "MovePublicZoneSetIntent",
         "DrawCardsIntent",
         "create_resolution_continuous_effect",
     )
@@ -277,6 +289,11 @@ class ChooseCreatureTypeHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.apnap_type_return import TYPE_RETURN_FIELD
+
+        if TYPE_RETURN_FIELD in effect:
+            from .apnap_type_return import prepare_type_return
+            return prepare_type_return(effect, context, _canonical_creature_type_request)
         if _CREATURE_TYPE_RESULT_FIELDS & effect.keys():
             _creature_type_result_scope(effect)
             return SemanticChoicePreparation(
@@ -318,6 +335,11 @@ class ChooseCreatureTypeHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        from ..rules.apnap_type_return import TYPE_RETURN_FIELD
+
+        if TYPE_RETURN_FIELD in continuation.effect:
+            from .apnap_type_return import complete_type_return
+            return complete_type_return(continuation, response, query)
         if _CREATURE_TYPE_RESULT_FIELDS & continuation.effect.keys():
             return _complete_creature_type_result(continuation, response, query)
         if "schema_version" in continuation.effect:
@@ -394,7 +416,7 @@ def _creature_type_result_scope(effect):
         raise SemanticChoiceError(str(exc)) from exc
 
 
-def _creature_type_result_effect(scope, subtype, *, actor, query):
+def _creature_type_result_effect(scope, subtype, *, actor, query, stack_ref):
     if isinstance(scope, ChosenCreatureTypeDestruction):
         return scope.destruction_effect(subtype)
     if isinstance(scope, ChosenCreatureTypeModifier):
@@ -403,6 +425,13 @@ def _creature_type_result_effect(scope, subtype, *, actor, query):
     if scope is ChosenCreatureTypeResult.CONTROLLED_PERMANENT_DRAW:
         count = len(query_objects(query.objects(zones=("battlefield",), controller=actor), predicate))
         return {"op": "draw", "player": actor, "count": count, "private": True}
+    if scope is ChosenCreatureTypeResult.NONMATCHING_CREATURE_RETURN:
+        from ..public_zone_moves import PublicZoneDestination, PublicZoneMoveSetSpec, PublicZoneOrigin
+
+        move = PublicZoneMoveSetSpec(
+            query=predicate, origin=PublicZoneOrigin.BATTLEFIELD, destination=PublicZoneDestination.OWNER_HAND,
+        )
+        return {"op": "move_public_zone_set", "source": stack_ref, "set": move.to_dict()}
     return {
         "op": "modify_all_matching_permanents_until_end_of_turn",
         "predicate": predicate.to_dict(), "power": -3, "toughness": -3,
@@ -415,7 +444,17 @@ def _complete_creature_type_result(continuation, response, query):
     _require_resolving_type_chooser(continuation, query, actor)
     scope = _creature_type_result_scope(effect)
     subtype, chosen = _canonical_creature_type_selection(continuation, response, actor)
-    result = _creature_type_result_effect(scope, subtype, actor=actor, query=query)
+    if scope is ChosenCreatureTypeResult.REVEAL_UNTIL_ENTRY:
+        from ..rules.chosen_type_library_entry import chosen_type_library_entry_intents
+        try:
+            intents = chosen_type_library_entry_intents(query, actor=actor, subtype=subtype,
+                                                       stack_ref=continuation.stack_ref, reason="Chosen-type entry")
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return SemanticChoiceCompletion(intents=(chosen, *intents))
+    result = _creature_type_result_effect(
+        scope, subtype, actor=actor, query=query, stack_ref=continuation.stack_ref,
+    )
     return SemanticChoiceCompletion(intents=(chosen,), prepend_effects=(FrozenMap(result),))
 
 
@@ -489,6 +528,14 @@ class ChooseOptionHandler:
         "then_by_choice",
         "_legal_values",
         "_choice_actor",
+        "cast_trigger_life_payment",
+        "original_stack",
+        "player",
+        "payer_order",
+        "payer_index",
+        "any_paid",
+        EACH_GRAVEYARD_RETURN_FIELD,
+        "_each_graveyard_rows",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
@@ -537,6 +584,34 @@ class ChooseOptionHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if uses_paired_token_creators(effect):
+            from .paired_token_creators import prepare_paired_token_choice
+
+            return prepare_paired_token_choice(effect, context)
+        if "cast_trigger_life_payment" in effect:
+            from .cast_trigger_life_payment import prepare_cast_trigger_life_payment
+
+            return prepare_cast_trigger_life_payment(effect, context)
+        if is_each_graveyard_return(effect):
+            from .graveyard_return import prepare_each_graveyard_return
+
+            return prepare_each_graveyard_return(effect, context)
+        if is_paired_graveyard_return(effect):
+            from .graveyard_return import prepare_paired_graveyard_return
+
+            return prepare_paired_graveyard_return(effect, context)
+        if MILL_HAND_CHOICE_FIELD in effect:
+            from .mill_paid_hand_return import prepare_mill_hand_choice
+
+            return prepare_mill_hand_choice(effect, context)
+        if MILL_HAND_CHOICE in effect:
+            from .milled_creature_land_to_hand import prepare_milled_hand_choice
+
+            return prepare_milled_hand_choice(effect, context)
+        if MILL_PERMANENT_CHOICE in effect:
+            from .milled_permanent_battlefield import prepare_milled_permanent_battlefield
+
+            return prepare_milled_permanent_battlefield(effect, context)
         if "venture" in effect or "take_initiative" in effect:
             from .venture import prepare_dungeon_choice
 
@@ -548,6 +623,18 @@ class ChooseOptionHandler:
             if isinstance(prepared, SemanticChoicePreparation):
                 return prepared
             effect = prepared
+        if DRAW_STEP_SETTLEMENT_VERSION_FIELD in effect:
+            try:
+                allowed = draw_step_settlement_can_draw(
+                    effect, actor=context.actor, controller=context.stack_controller, query=context.query,
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if not allowed:
+                return SemanticChoicePreparation(
+                    request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue("the prospective drawer cannot legally draw two cards"),
+                )
         options = self._options(effect)
         legal_values = tuple(option["id"] for option in options)
         return SemanticChoicePreparation(
@@ -580,6 +667,34 @@ class ChooseOptionHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if uses_paired_token_creators(continuation.effect):
+            from .paired_token_creators import complete_paired_token_choice
+
+            return complete_paired_token_choice(continuation, response, query)
+        if "cast_trigger_life_payment" in continuation.effect:
+            from .cast_trigger_life_payment import complete_cast_trigger_life_payment
+
+            return complete_cast_trigger_life_payment(continuation, response, query)
+        if is_each_graveyard_return(continuation.effect):
+            from .graveyard_return import complete_each_graveyard_return
+
+            return complete_each_graveyard_return(continuation, response, query)
+        if is_paired_graveyard_return(continuation.effect):
+            from .graveyard_return import complete_paired_graveyard_return
+
+            return complete_paired_graveyard_return(continuation, response, query)
+        if MILL_HAND_CHOICE_FIELD in continuation.effect:
+            from .mill_paid_hand_return import complete_mill_hand_choice
+
+            return complete_mill_hand_choice(continuation, response, query)
+        if MILL_HAND_CHOICE in continuation.effect:
+            from .milled_creature_land_to_hand import complete_milled_hand_choice
+
+            return complete_milled_hand_choice(continuation, response, query)
+        if MILL_PERMANENT_CHOICE in continuation.effect:
+            from .milled_permanent_battlefield import complete_milled_permanent_battlefield
+
+            return complete_milled_permanent_battlefield(continuation, response, query)
         if "venture" in continuation.effect:
             from .venture import complete_venture_choice
 
@@ -604,6 +719,23 @@ class ChooseOptionHandler:
                 "Chosen option effects must be a list of mappings"
             )
         actor = str(continuation.effect["_choice_actor"])
+
+        if TYPE_DESTRUCTION_FIELD in continuation.effect:
+            if (actor != continuation.semantic_frame.controller or actor not in query.active_seats
+                    or legal_values != set(TYPE_DESTRUCTION_TYPES)):
+                raise SemanticChoiceError("The resolving controller must choose artifact or enchantment")
+            selected_effects = (permanent_type_destruction_result(choice),)
+        if DRAW_STEP_SETTLEMENT_VERSION_FIELD in continuation.effect:
+            offer = {key: value for key, value in continuation.effect.items()
+                     if key not in {"_choice_actor", "_source_ref", "_legal_values", "_stack_label"}}
+            try:
+                allowed = draw_step_settlement_can_draw(
+                    offer, actor=actor, controller=continuation.semantic_frame.controller, query=query,
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if choice == "draw" and not allowed:
+                raise SemanticChoiceError("The prospective drawer can no longer legally draw two cards")
         from ..rules.collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD, collective_damage_option_followup
         if COLLECTIVE_SOURCE_DAMAGE_FIELD in continuation.effect:
             selected_effects = collective_damage_option_followup(

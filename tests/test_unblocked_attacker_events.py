@@ -12,6 +12,47 @@ from test_granted_skulk import record
 
 
 class UnblockedAttackerCompilerTests(unittest.TestCase):
+    def test_grouped_unblocked_opponent_has_one_shared_recipient_and_complete_source_result(self):
+        from quorune.rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
+        from quorune.unblocked_attacker_model import (
+            UNBLOCKED_PLAYER_ATTACK_EVENT, unblocked_player_attack_condition, unblocked_source_control_effects,
+        )
+
+        caps = load_default_capability_registry()
+        profile = "commander_review"
+        text = ("Whenever one or more creatures an opponent controls attack you and aren't blocked, "
+                "that player draws two cards and gains control of this artifact. Untap it.")
+        def compile_fixture(oracle):
+            return compile_oracle_card(record(oracle, "Artifact"), capability_registry=caps, capability_profile=profile)
+
+        ir = compile_fixture(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(UNBLOCKED_PLAYER_ATTACK_EVENT, node.event)
+        self.assertEqual(unblocked_player_attack_condition(), node.event_condition)
+        self.assertEqual(unblocked_source_control_effects(2), tuple(node.effects))
+        self.assertIsNone(node.target_schema)
+        shape = dict(event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+                     effects=node.effects, target_schema=None, handlers=(), cost_schema=None, coverage=node.mechanics)
+        required = set(unblocked_attacker_runtime_dependencies(SimpleNamespace(**shape)))
+        self.assertTrue(required and required <= set(node.capability_dependencies))
+        for mutated in (
+            {"event_condition": {"field": "attacking_player", "op": "eq", "value": "$source.controller"}},
+            {"effects": tuple(reversed(node.effects))},
+            {"effects": ({**node.effects[0], "player": "$controller"}, *node.effects[1:])},
+            {"effects": ({**node.effects[0], "private": False}, *node.effects[1:])},
+        ):
+            with self.subTest(mutated=mutated), self.assertRaises(ValueError):
+                unblocked_attacker_runtime_dependencies(SimpleNamespace(**{**shape, **mutated}))
+        for before, after in (("attack you", "attack a planeswalker you control"),
+                              ("that player draws", "you draw"),
+                              ("two cards", "X cards"),
+                              ("Untap it.", "You may untap it.")):
+            with self.subTest(excluded=after):
+                self.assertTrue(compile_fixture(text.replace(before, after)).material_residuals)
+        with patch("quorune.compiler.unblocked_attacker_bindings.unblocked_source_control_result", return_value=None):
+            self.assertTrue(compile_fixture(text).material_residuals)
+
     def test_verified_unblocked_event_withdrawal_preserves_ordinary_attack(self):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
@@ -36,6 +77,29 @@ class UnblockedAttackerCompilerTests(unittest.TestCase):
 
 
 class UnblockedAttackerOwnerTests(unittest.TestCase):
+    def test_grouped_unblocked_players_separate_attacker_and_recipient_and_keep_legacy_events(self):
+        from quorune.rules.unblocked_attackers import unblocked_attacker_trigger_items, unblocked_player_attack_pairs
+        from quorune.unblocked_attacker_model import (
+            UNBLOCKED_ATTACKER_EVENT, UNBLOCKED_PLAYER_ATTACK_EVENT, UnblockedAttackerOccurrence,
+        )
+
+        rows = tuple(UnblockedAttackerOccurrence(ref, ref, ref + "@0", owner, defender) for ref, owner, defender in (
+            ("first", "A", "B"), ("second", "A", "B"), ("walker", "A", "B"),
+            ("battle", "A", "B"), ("later", "C", "B"), ("other", "A", "D"),
+        ))
+        targets = {"first": "B", "second": "B", "walker": "walker-B", "battle": "siege-B", "later": "B", "other": "D"}
+        self.assertEqual((("A","B"), ("A","D"), ("C","B")), unblocked_player_attack_pairs(rows, targets))
+        for version in (1, 2):
+            dispatch = Mock(return_value=())
+            state = SimpleNamespace(unblocked_attacker_event_version=version, combat=SimpleNamespace(attackers=targets))
+            host = SimpleNamespace(state=state, _dispatch_semantic_event=dispatch, _semantic_event_sources=Mock(return_value=[]))
+            self.assertEqual(([], ()), unblocked_attacker_trigger_items(host, rows=rows))
+            events = [(call.args[0], call.args[1]) for call in dispatch.call_args_list]
+            self.assertEqual([(UNBLOCKED_ATTACKER_EVENT, row.semantic_context()) for row in rows], events[:len(rows)])
+            extra = [(UNBLOCKED_PLAYER_ATTACK_EVENT, {"attacking_player": a, "defender": d})
+                     for a, d in (("A","B"), ("A","D"), ("C","B"))] if version == 2 else []
+            self.assertEqual(extra, events[len(rows):])
+
     def test_unblocked_event_checkpoint_format_agreement_and_historical_absence_remain_strict(self):
         from quorune.model import GameState,GameConfig
         from quorune.record_state_provenance import format_state_versions,validate_state_versions

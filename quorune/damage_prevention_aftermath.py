@@ -15,6 +15,9 @@ from .counter_placement import (
     validate_counter_placement_commit,
 )
 from .damage_modifier_state import (
+    CreateTokensPreventionAftermath,
+    DamageAftermathRecipient,
+    DamageSubject,
     DealDamagePreventionAftermath,
     GainLifePreventionAftermath,
     PlaceCountersPreventionAftermath,
@@ -52,6 +55,7 @@ from .replacement import (
     ReplacementEffect,
     ReplacementEventBatch,
 )
+from .replacement.operations import UNPREVENTABLE_DAMAGE_ATTEMPTS
 from .semantic_runtime.life_replacements import (
     collect_life_change_replacement_effects,
 )
@@ -87,6 +91,7 @@ class PreventionApplication:
     prevented_amount: int
     damage_event_ids: tuple[str, ...]
     damage_source_controllers: tuple[str, ...]
+    unpreventable_amount: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -185,11 +190,20 @@ def prevention_applications(
 
 def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplication, ...]:
     amounts: dict[str, int] = {}
+    attempts: dict[str, int] = {}
     event_ids: dict[str, list[str]] = {}
     source_controllers: dict[str, set[str]] = {}
     applied: set[str] = set()
     for event in events:
         by_effect = event.payload.get("prevention_applied") or {}
+        attempted = event.payload.get(UNPREVENTABLE_DAMAGE_ATTEMPTS, {})
+        if not isinstance(attempted, Mapping):
+            raise PreventionAftermathError("Unpreventable damage amount data is malformed")
+        for effect_id, amount in attempted.items():
+            if effect_id in sources:
+                if type(amount) is not int or amount < 1:
+                    raise PreventionAftermathError("Unpreventable damage amount is malformed")
+                attempts[effect_id] = attempts.get(effect_id, 0) + amount
         if not isinstance(by_effect, Mapping):
             raise PreventionAftermathError(
                 "Resolved prevention application data is malformed"
@@ -222,6 +236,7 @@ def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplicatio
             effect_id=effect_id,
             source_id=sources[effect_id][0],
             prevented_amount=amounts.get(effect_id, 0),
+            unpreventable_amount=attempts.get(effect_id, 0),
             damage_event_ids=tuple(sorted(set(event_ids.get(effect_id, ())))),
             damage_source_controllers=tuple(
                 sorted(source_controllers.get(effect_id, ()))
@@ -229,6 +244,71 @@ def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplicatio
         )
         for effect_id in sorted(applied)
     )
+
+
+def _reflected_source_subject(host, signature, source_types):
+    ref, object_id, logical_id, controller = signature
+    if "creature" not in source_types:
+        player = host.state.players.get(controller)
+        return DamageSubject(controller, "player", controller) if player is not None and player.in_game else None
+    card = host.state.cards.get(object_id)
+    if (card is None or card.zone != "battlefield" or card.phased_out
+            or card.logical_object_id != logical_id or card.ref != ref):
+        return None
+    types = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))[0]
+    if not {"creature", "planeswalker", "battle"} & types:
+        return None
+    return DamageSubject(card.ref, "permanent", card.controller, card.object_id, card.logical_object_id, card.owner)
+
+
+def _reflected_source_requests(host, events):
+    """Read actual prevention receipts before resolving one return per source occurrence."""
+    reflectors = {
+        shield.effect_id: shield
+        for shield in host.state.damage_prevention_shields
+        if any(isinstance(value, DealDamagePreventionAftermath) and value.schema_version == 2
+               for value in shield.aftermath)
+    }
+    if not reflectors:
+        return ()
+    groups = {}
+    for event in events:
+        for effect_id, amount in (event.payload.get("prevention_applied") or {}).items():
+            shield = reflectors.get(effect_id)
+            if shield is None or amount == 0:
+                continue
+            identity = event.payload.get("source_identity_key")
+            source_types = event.payload.get("source_types")
+            signature = tuple(event.payload.get(field) for field in (
+                "source", "source_object_id", "source_logical_object_id", "source_controller",
+            ))
+            if (type(identity) is not str or not identity or not isinstance(source_types, (list, tuple))
+                    or not all(type(value) is str and value for value in source_types)
+                    or type(signature[0]) is not str or not signature[0]
+                    or type(signature[3]) is not str or signature[3] not in host.state.players
+                    or "creature" in source_types and not all(type(v) is str and v for v in signature[1:3])):
+                raise PreventionAftermathError("Reflected damage lost the prevented source occurrence")
+            key = (shield.application_group_id, identity)
+            groups.setdefault(key, []).append((shield, event.event_id, amount, tuple(source_types), signature))
+
+    result = []
+    for index, (_key, rows) in enumerate(sorted(groups.items())):
+        shield, _, _, source_types, signature = rows[0]
+        if any(candidate.aftermath != shield.aftermath or kinds != source_types or source != signature
+               for candidate, _, _, kinds, source in rows):
+            raise PreventionAftermathError("A reflected source occurrence has conflicting retained facts")
+        subject = _reflected_source_subject(host, signature, source_types)
+        if subject is None:
+            continue
+        amount = sum(value for _, _, value, _, _ in rows)
+        application = PreventionApplication(
+            effect_id=min(row[0].effect_id for row in rows), source_id=shield.source_id,
+            prevented_amount=amount, damage_event_ids=tuple(sorted({row[1] for row in rows})),
+            damage_source_controllers=(signature[3],),
+        )
+        resolved = replace(shield.aftermath[0], recipient=DamageAftermathRecipient("fixed", subject), schema_version=1)
+        result.append((application, index, resolved, amount))
+    return tuple(result)
 
 
 def prevention_aftermath_requests(
@@ -249,7 +329,12 @@ def prevention_aftermath_requests(
     for application in applications:
         _, controller, aftermath_effects = sources[application.effect_id]
         for index, aftermath in enumerate(aftermath_effects):
-            amount = aftermath.amount(application.prevented_amount)
+            if isinstance(aftermath, CreateTokensPreventionAftermath):
+                continue
+            damage_amount = application.prevented_amount
+            if isinstance(aftermath, PlaceCountersPreventionAftermath) and aftermath.counts_unpreventable:
+                damage_amount += application.unpreventable_amount
+            amount = aftermath.amount(damage_amount)
             if amount == 0:
                 continue
             result_event_id: str | None = None
@@ -291,7 +376,8 @@ def prevention_aftermath_requests(
                 )
                 kind, subject = "place_counters", aftermath.subject.ref
             elif isinstance(aftermath, DealDamagePreventionAftermath):
-                damage.append((application, index, aftermath, amount))
+                if aftermath.schema_version == 1:
+                    damage.append((application, index, aftermath, amount))
                 continue
             else:  # pragma: no cover - shield validation closes this union.
                 raise PreventionAftermathError(
@@ -314,7 +400,7 @@ def prevention_aftermath_requests(
         instructions=tuple(instructions),
         life=tuple(life),
         counters=tuple(counters),
-        damage=tuple(damage),
+        damage=(*damage, *_reflected_source_requests(host, events)),
     )
 
 
@@ -743,8 +829,8 @@ def commit_prevention_aftermath(
                 damage_event_ids=instruction.damage_event_ids,
             )
         )
-    from .counter_placement_events import capture_counter_placement_occurrences
-    counter_occurrences=() if prepared.counter_plan is None else capture_counter_placement_occurrences(
+    from .counter_placement_events import capture_counter_damage_occurrences
+    counter_occurrences=() if prepared.counter_plan is None else capture_counter_damage_occurrences(
         host,prepared.counter_plan.prepared.events,reason="damage prevention aftermath")
     return PreventionAftermathResult(
         events=tuple(events),

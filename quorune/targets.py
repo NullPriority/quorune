@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
+from .entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD, EntryExchangeTarget
 from .object_predicate import (
     ObjectQueryError,
     PermanentStatePredicateSpec,
@@ -18,14 +19,20 @@ from .rules.aura_attachment_targets import (
     AURA_ATTACHMENT_TARGET_FIELD, AuraAttachmentTargetSpec, validate_aura_attachment_target_group,
 )
 from .target_forms import SHARED_PERMANENT_TYPE_PAIR_FIELD, SharedPermanentTypePair, TargetCharacteristicForm
-from .target_history import PLAYER_HISTORY_FIELD, TargetDamageHistorySpec, TargetPlayerHistorySpec
+from .target_history import (
+    GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD, PLAYER_HISTORY_FIELD, TargetDamageHistorySpec, TargetPlayerHistorySpec,
+)
 from .target_numeric import TargetNumericCharacteristicSpec
+from .pawprint_modes import (
+    REPEATABLE_MODE_SELECTION_FIELD, has_repeatable_mode_slots, rebase_pawprint_controller_reference,
+)
 
 
 CONTROLLER_ISLAND_TARGET_PREDICATE = "creature_controller_controls_island"
 
 
 ISLAND_COUNT_POWER_TARGET_PREDICATE = "creature_power_at_most_controlled_islands"
+ACTIVATED_TAP_COST_TARGET_PREDICATE = "creature_with_activated_tap_cost"
 
 
 PUBLIC_TARGET_ZONES = {
@@ -128,6 +135,9 @@ def _target_zones(raw: Mapping[str, Any]) -> tuple[str, ...]:
     return zones
 
 
+DEFENDING_CONTROLLER_RELATION = "defending_player"
+
+
 def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
     controller = str(
         raw.get("controller", raw.get("controller_relation", "any"))
@@ -139,7 +149,12 @@ def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
         ("owner", owner),
         ("player", player),
     ):
-        if relation not in ({"any", "you", "opponent", "spell_owner"} if name=="owner" else {"any", "you", "opponent"}):
+        allowed = {"any", "you", "opponent"}
+        if name == "owner":
+            allowed.add("spell_owner")
+        elif name == "controller":
+            allowed.add(DEFENDING_CONTROLLER_RELATION)
+        if relation not in allowed:
             raise ValueError(f"Unknown {name} relation {relation!r}")
     return controller, owner, player
 
@@ -279,7 +294,7 @@ def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
 
 
 _TARGET_COMBAT_STATES = frozenset({
-    "attacking", "unblocked_attacking", "blocking", "attacking_or_blocking",
+    "attacking", "unblocked_attacking", "blocked_attacking", "blocking", "attacking_or_blocking",
     "attacking_actor", "blocking_source", "blocked_by_source", "attacking_or_tapped",
 })
 
@@ -332,6 +347,8 @@ _TARGET_GROUP_FIELDS = frozenset(
         "controller",
         "controller_relation",
         "controller_seat",
+        "owner_seat",
+        ENTRY_EXCHANGE_TARGET_FIELD,
         "owner",
         "owner_relation",
         "player_relation",
@@ -348,6 +365,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "enchantment",
         "permanent",
         "source_exclusion",
+        "exclude_source_incarnation",
         "another",
         "distinct",
         "allow_reuse",
@@ -359,6 +377,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "characteristic_forms_any",
         "numeric_characteristic",
         "damage_history",
+        GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD,
         PLAYER_HISTORY_FIELD,
         AURA_ATTACHMENT_TARGET_FIELD,
         "id",
@@ -381,6 +400,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "same_player_groups",
         "distinct_controllers",
         "retain_controller",
+        "distinct_mana_values",
     }
 )
 
@@ -412,7 +432,9 @@ class TargetGroup:
     mana_value_equal: float | None = None
     controller_relation: str = "any"
     controller_seat: str | None = None
+    entry_exchange_target: EntryExchangeTarget | None = None
     owner_relation: str = "any"
+    owner_seat: str | None = None
     player_relation: str = "any"
     attacking: bool | None = None
     blocking: bool | None = None
@@ -427,6 +449,7 @@ class TargetGroup:
     enchantment: bool | None = None
     permanent: bool | None = None
     source_exclusion: bool = False
+    exclude_source_incarnation: bool = False
     another: bool = False
     min_targets: int = 1
     max_targets: int = 1
@@ -435,6 +458,7 @@ class TargetGroup:
     same_owner: bool = False
     distinct_controllers: bool = False
     retain_controller: bool = False
+    distinct_mana_values: bool = False
     different_from_groups: tuple[str, ...] = ()
     predicate: str = ""
     resolution_condition: dict[str, Any] = field(default_factory=dict)
@@ -444,16 +468,47 @@ class TargetGroup:
     damage_history: TargetDamageHistorySpec | None = None
     player_history: TargetPlayerHistorySpec | None = None
     aura_attachment: AuraAttachmentTargetSpec | None = None
+    graveyard_from_battlefield_this_turn: bool = False
 
     def __post_init__(self) -> None:
+        if self.owner_seat is not None and (
+            type(self.owner_seat) is not str or not self.owner_seat or self.owner_seat.strip() != self.owner_seat
+            or self.owner_seat.startswith('$') and self.owner_seat != '$context.target'
+            or self.zones != ("graveyard",) or self.categories != ("card",) or self.owner_relation != "any"
+        ):
+            raise ValueError("Exact owner seat targets require one represented public graveyard")
+        if self.entry_exchange_target is not None and (
+            not isinstance(self.entry_exchange_target, EntryExchangeTarget)
+            or (self.zones, self.categories, self.min_targets, self.max_targets) != (("battlefield",), ("permanent",), 1, 1)
+        ):
+            raise ValueError("Entry exchange requires one battlefield permanent target")
         if self.aura_attachment is not None:
             validate_aura_attachment_target_group(self)
+        if self.controller_relation == DEFENDING_CONTROLLER_RELATION and (
+            (self.zones, self.categories, self.types_any, self.min_targets, self.max_targets)
+            != (("battlefield",), ("permanent",), ("creature",), 1, 1)
+            or self.controller_seat is not None
+        ):
+            raise ValueError("A defending-player controller requires one battlefield creature")
         if any(type(value)is not bool for value in (self.distinct_controllers,self.retain_controller)):
             raise ValueError('Controller target constraints must be boolean')
         if (self.distinct_controllers or self.retain_controller) and (self.zones!=('battlefield',) or self.categories!=('permanent',)):
             raise ValueError('Controller target constraints require battlefield permanents')
+        if type(self.distinct_mana_values) is not bool or (
+            self.distinct_mana_values
+            and (
+                (self.zones, self.categories, self.owner_relation, self.types_any)
+                != (("graveyard",), ("card",), "you", ("creature",))
+                or self.allow_reuse or not self.distinct
+            )
+        ):
+            raise ValueError("Distinct mana value requires a typed own-graveyard creature group")
         if type(self.same_owner) is not bool:
             raise ValueError("Target same_owner constraint must be boolean")
+        if type(self.exclude_source_incarnation) is not bool or (
+            self.exclude_source_incarnation and (self.source_exclusion or self.another)
+        ):
+            raise ValueError("The exact source-incarnation exclusion is a distinct boolean target constraint")
         if self.combat_state is not None and (
             type(self.combat_state) is not str
             or self.combat_state not in _TARGET_COMBAT_STATES
@@ -507,6 +562,13 @@ class TargetGroup:
                 "Damage-history predicates require one battlefield permanent"
             )
 
+        if type(self.graveyard_from_battlefield_this_turn) is not bool or (
+            self.graveyard_from_battlefield_this_turn and (
+                self.zones != ("graveyard",) or self.categories != ("card",) or self.owner_relation != "you"
+                or self.token is not False
+            )
+        ):
+            raise ValueError("A battlefield arrival predicate requires an original own graveyard card")
         if self.player_history is not None and (
             not isinstance(self.player_history, TargetPlayerHistorySpec)
             or self.zones != ("player",) or self.categories != ("player",)
@@ -614,11 +676,17 @@ class TargetGroup:
                 if raw.get("controller_seat") is not None
                 else None
             ),
+            "entry_exchange_target": (
+                EntryExchangeTarget.from_dict(raw[ENTRY_EXCHANGE_TARGET_FIELD])
+                if ENTRY_EXCHANGE_TARGET_FIELD in raw else None
+            ),
             "owner_relation": owner,
+            "owner_seat": raw.get("owner_seat"),
             "player_relation": player_relation,
             **_target_boolean_fields(raw),
             "combat_state": _target_combat_state(raw),
             "source_exclusion": bool(raw.get("source_exclusion", False)),
+            "exclude_source_incarnation": raw.get("exclude_source_incarnation", False),
             "another": bool(raw.get("another", False)),
             "min_targets": minimum,
             "max_targets": maximum,
@@ -627,6 +695,7 @@ class TargetGroup:
             "same_owner": _optional_bool(raw.get("same_owner")) or False,
             "distinct_controllers": raw.get('distinct_controllers',False),
             "retain_controller": raw.get('retain_controller',False),
+            "distinct_mana_values": raw.get("distinct_mana_values", False),
             "different_from_groups": _strings(raw.get("different_from_groups")),
             "predicate": predicate,
             "resolution_condition": _target_resolution_condition(
@@ -639,6 +708,7 @@ class TargetGroup:
             ),
             "numeric_characteristic": _target_numeric_characteristic(raw),
             "damage_history": _target_damage_history(raw),
+            GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD: raw.get(GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD, False),
             "player_history": (TargetPlayerHistorySpec.from_mapping(raw[PLAYER_HISTORY_FIELD])
                 if PLAYER_HISTORY_FIELD in raw else None),
             "aura_attachment": (AuraAttachmentTargetSpec.from_mapping(raw[AURA_ATTACHMENT_TARGET_FIELD])
@@ -658,6 +728,7 @@ class TargetGroup:
             **({"same_owner": True} if self.same_owner else {}),
             **({'distinct_controllers':True} if self.distinct_controllers else {}),
             **({'retain_controller':True} if self.retain_controller else {}),
+            **({"distinct_mana_values": True} if self.distinct_mana_values else {}),
             "different_from_groups": list(self.different_from_groups),
             "legal_refs": list(legal_refs),
         }
@@ -886,6 +957,10 @@ def mode_effects(
         group_ids=_scoped_mode_group_data(definition,mode)[2] if 'group_scope' in definition else None
         for effect in definition.get('effects', ()):
             rebased=_rebase_mode_effect(dict(effect),target_offset,count,group_reference,group_ids)
+            if has_repeatable_mode_slots(schema):
+                rebased = rebase_pawprint_controller_reference(
+                    rebased, target_offset, count, live_controller=schema.get(REPEATABLE_MODE_SELECTION_FIELD) is True,
+                )
             if has_scoped_modal_targets(schema):
                 from .token_copy_recipes import executable_copy_effects
                 for copy in executable_copy_effects((rebased,)):

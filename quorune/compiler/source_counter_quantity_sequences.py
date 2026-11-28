@@ -1,9 +1,102 @@
 """A fixed source counter prefix before one independently read scalar result."""
+from dataclasses import replace
+import hashlib
+
 from . import regex_working_set as re
 from .closed_effect_programs import ClosedEffectProgramTemplate,_candidate_partitions
 from .counter_placement_templates import fixed_counter_placement_effect_template
 from .scalar_effect_amounts import scalar_effect_amount_template
+from ..fixed_token_production import FIXED_DISTRIBUTED_TOKEN_OPERATION
 from ..scalar_effect_amount_model import scalar_amount_specs,ScalarAmountOrigin
+
+
+
+def _shared_source_counter_results(body, prefix, *, card_name, compile_fixed, event):
+    match = re.fullmatch(
+        r"(?P<create>Each player creates X [^.]+? tokens) and "
+        r"(?P<damage>.+? deals X damage to each player), where X is "
+        r"(?P<count>the number of [a-z0-9+/-]+ counters on .+?)\.",
+        body, re.I,
+    )
+    if match is None:
+        return None
+    results = []
+    for clause, op in (("create", FIXED_DISTRIBUTED_TOKEN_OPERATION), ("damage", "damage_fixed_set")):
+        result = scalar_effect_amount_template(
+            f"{match[clause]}, where X is {match['count']}.",
+            source_name=card_name, event=event, compile_fixed=compile_fixed,
+        )
+        if result is None or result[2] is not None or len(result[1]) != 1 or result[1][0].get("op") != op:
+            return None
+        results.append(result)
+    token_result, damage_result = results
+    token, damage = (result[1][0] for result in results)
+    specs = [scalar_amount_specs(result[1]) for result in results]
+    if any(len(group) != 1 or group[0].counter_name != prefix[1][0]["counter"] for group in specs):
+        return None
+    token_amount, damage_amount = (replace(group[0], binding_id=None) for group in specs)
+    if token_amount != damage_amount or token_amount.origin is not ScalarAmountOrigin.SOURCE:
+        return None
+    binding = "scalar:x:" + hashlib.sha256(body.encode("utf-8")).hexdigest()[:24]
+    amount = replace(token_amount, binding_id=binding).to_dict()
+    return ClosedEffectProgramTemplate(
+        component_template_ids=(prefix[0], token_result[0], damage_result[0]),
+        component_effect_counts=(1, 1, 1),
+        _effects=(*prefix[1], {**token, "token": {**token["token"], "quantity": amount}}, {**damage, "amount": amount}),
+        _target_schema=None,
+        mechanic_ids=tuple(dict.fromkeys(("closed-effect-program", *prefix[3], *token_result[3], *damage_result[3]))),
+    ).compiled()
+
+def _printed_all_player_results(body, *, counter, card_name, compile_fixed):
+    match = re.fullmatch(
+        r"Each player creates X (?P<token>[A-Za-z]+ tokens) and "
+        r"(?P<damage>[^.]+? deals X damage to each player), "
+        r"where X is (?P<definition>the number of [A-Za-z0-9+/-]+ counters on [^.]+)\.",
+        body, re.I,
+    )
+    if match is None:
+        return None
+    token_id, tokens, targets, token_mechanics = compile_fixed(
+        f"Each player creates 2 {match['token']}."
+    )
+    if (token_id is None or targets is not None or len(tokens) != 1
+            or tokens[0].get("op") != FIXED_DISTRIBUTED_TOKEN_OPERATION):
+        return None
+    damage = scalar_effect_amount_template(
+        f"{match['damage']}, where X is {match['definition']}.",
+        source_name=card_name, compile_fixed=compile_fixed,
+    )
+    if (damage is None or damage[2] is not None or len(damage[1]) != 1
+            or damage[1][0].get("op") != "damage_fixed_set"):
+        return None
+    specs = scalar_amount_specs(damage[1])
+    if (len(specs) != 1 or specs[0].origin is not ScalarAmountOrigin.SOURCE
+            or specs[0].counter_name != counter):
+        return None
+    token = {**tokens[0], "token": {**tokens[0]["token"], "quantity": damage[1][0]["amount"]}}
+    return (token_id, damage[0]), (token, *damage[1]), (*token_mechanics, *damage[3])
+
+
+def _normalized_counter_reference(body):
+    body=re.sub(r'(?<= counters on) (?:it|him|her)(?=\.)',' this permanent',body,flags=re.I)
+    return re.sub(r'(?<= counter on) (?:it|him|her)(?=\.)',' this permanent',body,flags=re.I)
+
+
+def _shared_all_player_results(body, normalized, prefix, *, preceded_by_then, card_name, compile_fixed, event):
+    if preceded_by_then and (shared := _printed_all_player_results(
+        body, counter=prefix[1][0]["counter"], card_name=card_name, compile_fixed=compile_fixed,
+    )) is not None:
+        component_ids, effects, mechanics = shared
+        return ClosedEffectProgramTemplate(
+            component_template_ids=(prefix[0], *component_ids),
+            component_effect_counts=(1, 1, 1),
+            _effects=(*prefix[1], *effects),
+            _target_schema=None,
+            mechanic_ids=tuple(dict.fromkeys(("closed-effect-program", *prefix[3], *mechanics))),
+        ).compiled()
+    return _shared_source_counter_results(
+        normalized, prefix, card_name=card_name, compile_fixed=compile_fixed, event=event,
+    )
 
 
 def source_counter_quantity_sequence(text,*,card_name,compile_fixed,allow_pronoun=False,event=None):
@@ -16,9 +109,13 @@ def source_counter_quantity_sequence(text,*,card_name,compile_fixed,allow_pronou
         prefix=counter.compiled()
         if prefix[2] is not None or len(prefix[1])!=1 or prefix[1][0].get('card')!='$source.zone_object':continue
         body=re.sub(r'^Then\s+','',clauses[1],flags=re.I)
-        body=re.sub(r'(?<= counters on) (?:it|him|her)(?=\.)',' this permanent',body,flags=re.I)
-        body=re.sub(r'(?<= counter on) (?:it|him|her)(?=\.)',' this permanent',body,flags=re.I)
-        scalar=scalar_effect_amount_template(body,source_name=card_name,event=event,source_event=allow_pronoun,compile_fixed=compile_fixed)
+        normalized = _normalized_counter_reference(body)
+        if shared := _shared_all_player_results(
+            body, normalized, prefix, preceded_by_then=body != clauses[1],
+            card_name=card_name, compile_fixed=compile_fixed, event=event,
+        ):
+            return shared
+        scalar=scalar_effect_amount_template(normalized,source_name=card_name,event=event,source_event=allow_pronoun,compile_fixed=compile_fixed)
         if scalar is None or scalar[2] is not None or len(scalar[1])!=1:continue
         if any(spec.origin is not ScalarAmountOrigin.SOURCE for spec in scalar_amount_specs(scalar[1])):continue
         if scalar[1][0].get('op') not in {'draw','create_token','life','lose_life','damage','damage_fixed_set'}:continue

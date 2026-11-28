@@ -1,4 +1,5 @@
 """Capture public state and completed battlefield statistics for occurrences."""
+from ..characteristic_read_frames import characteristic_read_method
 from ..object_query import exact_numeric_characteristic
 from ..permanent_event_state_model import (
     PermanentEventState, PERMANENT_EVENT_STATE_KEY, ZONE_EVENT_NUMERICS_KEY,
@@ -34,6 +35,7 @@ def with_zone_event_numerics(host, card, characteristics):
     }}
 
 
+@characteristic_read_method
 def current_zone_event_characteristics(host,card):
     captured = permanent_event_characteristics(host, card, host._effective_card_data(card))
     return with_zone_event_numerics(host, card, captured)

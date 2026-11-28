@@ -7,14 +7,29 @@ from . import regex_working_set as re
 from ..mana_value_limit import ManaValueLimitSpec
 from ..library_battlefield_model import (
     LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, LIBRARY_SHUFFLE_REMAINDER, validate_library_battlefield_effect,
+    random_revealed_creature_entry_effect,
 )
 from .fixed_library_selection_templates import fixed_library_selection_effect_template
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .oracle_source_text import without_ability_word_label
+
+
+_RANDOM_REVEALED_CREATURE = re.compile(
+    rf"Reveal the top (?P<count>{FIXED_COUNT_PATTERN}|thirteen) cards? of your library\. "
+    r"Put a random creature card from among them onto the battlefield\. "
+    r"Put the rest on the bottom of your library in a random order\.?", re.I,
+)
 
 
 def library_battlefield_selection_effect_template(text):
     material=without_ability_word_label(' '.join(text.strip().split()))
     if material is None or re.search(r'\btapped and attacking\b',material,re.I):return None
+    if random_entry := _RANDOM_REVEALED_CREATURE.fullmatch(material):
+        count_text = random_entry["count"].casefold()
+        count = 13 if count_text == "thirteen" else fixed_number(count_text)
+        if count:
+            return ("library-random-revealed-creature-entry-v28",
+                    (random_revealed_creature_entry_effect(count),), None, ("fixed-library-selection",))
     if followup := _revealed_creature_entry_followup(material):
         return followup
     destinations=list(re.finditer(r'onto the battlefield(?P<tapped> tapped)?',material,re.I))

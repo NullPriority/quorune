@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping, Sequence
 
+from .ability_fragments import GrantedTriggeredAbilitySpec
 from .characteristic_evaluation import render_layered_type_line, type_parts
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
@@ -25,6 +26,17 @@ def _unique_words(values: Any, *, allowed: set[str] | frozenset[str], label: str
     if any(type(value) is not str or value not in allowed for value in result) or len(set(result)) != len(result):
         raise TokenCopyRecipeError(f"{label} has an unsupported or duplicate value")
     return result
+
+
+RETAINED_LEGEND_PARTNER_VERSION = 6
+SIGNED_COPY_BASE_STATS_VERSION = 7
+
+
+def retained_legend_rule_fragment():
+    from .legend_rule_model import LegendRuleExemptionSpec
+    from .object_predicate import ObjectQuerySpec
+
+    return LegendRuleExemptionSpec("controller", ObjectQuerySpec(zones=("battlefield",)))
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,7 +58,7 @@ class TokenCopyExceptionSpec:
     add_supertypes: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5} or type(self.remove_legendary) is not bool or type(self.remove_mana_cost) is not bool or self.remove_mana_cost and self.schema_version not in {2,3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, RETAINED_LEGEND_PARTNER_VERSION, SIGNED_COPY_BASE_STATS_VERSION} or type(self.remove_legendary) is not bool or type(self.remove_mana_cost) is not bool or self.remove_mana_cost and self.schema_version not in {2,3}:
             raise TokenCopyRecipeError("Copy exception version or legendary flag is malformed")
         if type(self.retain_source_stats) is not bool or self.name is not None and (type(self.name) is not str or not self.name):
             raise TokenCopyRecipeError('Copy retained name/stats fields are malformed')
@@ -57,18 +69,27 @@ class TokenCopyExceptionSpec:
         if self.schema_version!=3 and (self.name is not None or self.card_types is not None or self.retain_source_stats):
             raise TokenCopyRecipeError('Extended copy values require version three')
         if self.retain_source_stats and self.power is not None:raise TokenCopyRecipeError('Retained and fixed copy stats conflict')
+        signed_stats = self.schema_version == SIGNED_COPY_BASE_STATS_VERSION
         if (self.power is None) != (self.toughness is None) or any(
-            value is not None and (type(value) is not int or value < 0)
+            value is not None and (type(value) is not int or (value < 0 and not signed_stats))
             for value in (self.power, self.toughness)
         ):
-            raise TokenCopyRecipeError("Copy base stats require two nonnegative fixed integers")
+            raise TokenCopyRecipeError("Copy base stats require their closed integer pair")
+        if signed_stats and (self.power is None or self.remove_legendary or self.add_card_types or self.add_subtypes
+                or self.creature_subtypes is not None or self.colors is not None or self.add_keywords
+                or self.add_ability_fragments or self.add_supertypes):
+            raise TokenCopyRecipeError("Signed copy stats require only a fixed base power and toughness pair")
         allowed_subtypes = CREATURE_SUBTYPES | {"food", "equipment", "vehicle"}
         if self.schema_version == 3:
             allowed_subtypes = allowed_subtypes | {"cave"}
+        added_keyword_scope = {
+            5: {"Vanishing"},
+            RETAINED_LEGEND_PARTNER_VERSION: {"Partner"},
+        }
         for field_name, allowed in (
             ("add_card_types", frozenset({"artifact", "creature", "enchantment"})),
             ("add_subtypes", allowed_subtypes),
-            ("add_keywords", FIXED_CHARACTERISTIC_KEYWORDS | ({"Vanishing"} if self.schema_version == 5 else set())),
+            ("add_keywords", FIXED_CHARACTERISTIC_KEYWORDS | added_keyword_scope.get(self.schema_version, set())),
         ):
             object.__setattr__(self, field_name, _unique_words(getattr(self, field_name), allowed=allowed, label=field_name))
         if self.creature_subtypes is not None:
@@ -98,6 +119,12 @@ class TokenCopyExceptionSpec:
                     or self.colors is not None or self.power is not None or self.add_keywords
                     or fragments not in ((), (AllCreatureTypesCharacteristicDefinitionSpec(),))):
                 raise TokenCopyRecipeError("Legendary snow copy values only add their supertypes and changeling")
+        if self.schema_version == RETAINED_LEGEND_PARTNER_VERSION and (
+            self.remove_legendary or self.add_card_types or self.add_subtypes or self.creature_subtypes is not None
+            or self.colors is not None or self.power is not None or self.add_keywords != ("Partner",)
+            or fragments != (retained_legend_rule_fragment(),)
+        ):
+            raise TokenCopyRecipeError("The retained ability exception requires exactly Partner and the controller's legend-rule exemption")
         keyword_entries = tuple(fragment for fragment in fragments if isinstance(fragment, FixedKeywordEntryCounterSpec))
         if self.schema_version == 5:
             triggers = tuple(fragment for fragment in fragments if isinstance(fragment, GrantedTriggeredAbilitySpec))
@@ -141,6 +168,10 @@ class TokenCopyExceptionSpec:
 
 
 GRAVEYARD_TARGET_TOKEN_COPY_VERSION = 6
+EQUIPPED_TOKEN_COPY_VERSION = 7
+POST_ENTRY_COPY_GRANT_VERSION = 8
+NAMED_ADDITIVE_COPY_VERSION = 9
+EQUIPPED_TOKEN_COPY_CAPABILITY = "token.creation.equipped_nonlegendary_haste_copy"
 GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN = "graveyard_target"
 
 
@@ -160,16 +191,22 @@ class TokenCopyRecipeSpec:
     schema_version: int = 1
     creation_origin: str | None = None
     attachment_kind: str | None = None
+    post_entry_grant: GrantedTriggeredAbilitySpec | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, GRAVEYARD_TARGET_TOKEN_COPY_VERSION}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, GRAVEYARD_TARGET_TOKEN_COPY_VERSION, EQUIPPED_TOKEN_COPY_VERSION, POST_ENTRY_COPY_GRANT_VERSION, NAMED_ADDITIVE_COPY_VERSION}:
             raise TokenCopyRecipeError("Copy recipe version is unsupported")
         if (self.creation_origin is not None and (self.schema_version!=2 or self.creation_origin!='embalm')
                 or self.schema_version==2 and self.creation_origin is None):raise TokenCopyRecipeError('Versioned copy creation origin is closed')
         attached = self.origin == "source_attachment"
-        if (self.schema_version == 3) != attached:
-            raise TokenCopyRecipeError("Source attachment requires explicit recipe version three")
-        if attached:
+        if (self.schema_version in {3, EQUIPPED_TOKEN_COPY_VERSION}) != attached:
+            raise TokenCopyRecipeError("Source attachment requires an explicit attachment recipe")
+        if self.schema_version == EQUIPPED_TOKEN_COPY_VERSION:
+            if (self.attachment_kind != "equipped" or self.cleanup != "none"
+                    or self.exception != TokenCopyExceptionSpec(remove_legendary=True)
+                    or tuple(self.temporary_keywords) != ("Haste",) or self.keyword_duration != "zone_object"):
+                raise TokenCopyRecipeError("Equipped copy requires its exact nonlegendary recipe and separate haste")
+        elif attached:
             if (self.attachment_kind != "enchanted" or self.cleanup != "none"
                     or self.temporary_keywords or self.keyword_duration != "zone_object"):
                 raise TokenCopyRecipeError("Enchanted copy recipe has one closed intrinsic lifecycle")
@@ -178,8 +215,10 @@ class TokenCopyRecipeSpec:
         if self.origin not in {"source", "target", "event_object", "source_attachment", "event_spell",
                                "cast_target", GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN} or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise TokenCopyRecipeError("Copy reference origin or exception is unsupported")
-        if self.exception.schema_version in {4, 5}:
+        if self.exception.schema_version in {4, 5, RETAINED_LEGEND_PARTNER_VERSION}:
             raise TokenCopyRecipeError("These copy values require the entry copy owner")
+        if self.exception.schema_version == SIGNED_COPY_BASE_STATS_VERSION:
+            raise TokenCopyRecipeError("Signed copy values require a committed copy outcome")
         cast_origin = {"event_spell": 4, "cast_target": 5}.get(self.origin)
         if cast_origin is not None or self.schema_version in {4, 5}:
             if self.schema_version != cast_origin:
@@ -202,41 +241,115 @@ class TokenCopyRecipeSpec:
             or self.keyword_duration != "zone_object"
         ):
             raise TokenCopyRecipeError("Graveyard token copy requires artifact, granted haste and next-end sacrifice")
+        if self.schema_version == POST_ENTRY_COPY_GRANT_VERSION:
+            grant = self.post_entry_grant
+            if (self.origin != "target" or self.exception != TokenCopyExceptionSpec()
+                    or self.cleanup != "sacrifice_next_end_step" or self.temporary_keywords != ("Haste",)
+                    or self.keyword_duration != "zone_object" or not isinstance(grant, GrantedTriggeredAbilitySpec)
+                    or grant.schema_version != 1 or grant.event != "permanent.graveyard.self"
+                    or ":token:" not in grant.ability_id or not grant.semantic_key.endswith(f":{grant.ability_id}")):
+                raise TokenCopyRecipeError("Post-entry copy grants require the closed target and death-trigger lifecycle")
+        elif self.post_entry_grant is not None:
+            raise TokenCopyRecipeError("Post-entry grant data requires its own recipe version")
+        if self.source_bound_cleanup:
+            exception = self.exception
+            if (self.origin != "target" or self.cleanup != "sacrifice_next_end_step"
+                    or self.temporary_keywords != ("Haste",) or self.keyword_duration != "until_end_of_turn"
+                    or not exception.name or exception.power is None
+                    or exception.add_card_types != ("artifact", "creature")
+                    or len(exception.add_subtypes) != 1 or exception.add_subtypes[0] not in CREATURE_SUBTYPES
+                    or exception != TokenCopyExceptionSpec(
+                        schema_version=3, name=exception.name, power=exception.power,
+                        toughness=exception.toughness, add_card_types=exception.add_card_types,
+                        add_subtypes=exception.add_subtypes,
+                    )):
+                raise TokenCopyRecipeError("Named additive copy requires its fixed copy values and source-bound lifecycle")
+
+    @property
+    def source_bound_cleanup(self) -> bool:
+        return self.schema_version == NAMED_ADDITIVE_COPY_VERSION
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "origin": self.origin,
+        result = {"schema_version": self.schema_version, "origin": self.origin,
                 "exception": self.exception.to_dict(), "cleanup": self.cleanup,
-                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {}), **({"attachment_kind":self.attachment_kind, "attachment_reference":self.attachment_reference()} if self.schema_version==3 else {})}
+                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {}), **({"attachment_kind":self.attachment_kind, "attachment_reference":self.attachment_reference()} if self.schema_version in {3, EQUIPPED_TOKEN_COPY_VERSION} else {})}
+        if self.post_entry_grant is not None:
+            result["post_entry_grant"] = self.post_entry_grant.to_dict()
+        return result
 
     def attachment_reference(self) -> dict[str, Any]:
-        if self.schema_version != 3:
-            raise TokenCopyRecipeError("Only recipe three carries an attachment reference")
+        if self.schema_version not in {3, EQUIPPED_TOKEN_COPY_VERSION}:
+            raise TokenCopyRecipeError("Only an attachment copy recipe carries an attachment reference")
         from .attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
-        return AttachmentReferenceSpec(
-            AttachmentReferenceKind.ENCHANTED, "creature", schema_version=2
-        ).to_dict()
+        relation = AttachmentReferenceKind.EQUIPPED if self.attachment_kind == "equipped" else AttachmentReferenceKind.ENCHANTED
+        return AttachmentReferenceSpec(relation, "creature", schema_version=2).to_dict()
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyRecipeSpec":
         fields={"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}
         if isinstance(value,Mapping) and value.get("schema_version")==2:fields.add("creation_origin")
-        if isinstance(value,Mapping) and value.get("schema_version")==3:fields.update({"attachment_kind", "attachment_reference"})
+        if isinstance(value, Mapping) and type(value.get("schema_version")) is int and value["schema_version"] in {3, EQUIPPED_TOKEN_COPY_VERSION}:
+            fields.update({"attachment_kind", "attachment_reference"})
+        if isinstance(value, Mapping) and value.get("schema_version") == POST_ENTRY_COPY_GRANT_VERSION:
+            fields.add("post_entry_grant")
         if not isinstance(value, Mapping) or set(value) != fields:
             raise TokenCopyRecipeError("Copy recipes have a closed complete schema")
-        if value["schema_version"] == 3:
+        recipe = cls(schema_version=value["schema_version"], origin=value["origin"],
+                     exception=TokenCopyExceptionSpec.from_dict(value["exception"]), cleanup=value["cleanup"],
+                     temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],
+                     creation_origin=value.get("creation_origin"), attachment_kind=value.get("attachment_kind"),
+                     post_entry_grant=(GrantedTriggeredAbilitySpec.from_dict(value["post_entry_grant"])
+                                       if "post_entry_grant" in value else None))
+        if recipe.schema_version in {3, EQUIPPED_TOKEN_COPY_VERSION}:
             from .attachment_references import AttachmentReferenceSpec
+
             reference = AttachmentReferenceSpec.from_dict(value["attachment_reference"])
-            if reference.to_dict() != cls(origin="source_attachment", schema_version=3, attachment_kind="enchanted").attachment_reference():
-                raise TokenCopyRecipeError("Enchanted recipe requires its exact version-two creature reference")
-        return cls(schema_version=value["schema_version"], origin=value["origin"],
-                   exception=TokenCopyExceptionSpec.from_dict(value["exception"]), cleanup=value["cleanup"],
-                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],creation_origin=value.get("creation_origin"), attachment_kind=value.get("attachment_kind"))
+            if reference.to_dict() != recipe.attachment_reference():
+                raise TokenCopyRecipeError("Attached recipe requires its exact version-two creature reference")
+        return recipe
+
+
+OPTIONAL_CONTROLLED_TOKEN_COPY_CAPABILITY = "token.copy.optional_controlled_set"
+OPTIONAL_CONTROLLED_TOKEN_COPY_VERSION = 2
+
+
+def optional_controlled_token_copy_effect(*, player="$controller"):
+    return {"op": "copy_all_tokens", "schema_version": OPTIONAL_CONTROLLED_TOKEN_COPY_VERSION, "player": player}
+
+
+def validate_optional_controlled_token_copy(effect, *, actor="$controller"):
+    if type(effect.get("schema_version")) is not int or dict(effect) != optional_controlled_token_copy_effect(player=actor):
+        raise TokenCopyRecipeError("Optional controlled-token copy requires its exact original controller")
+
+
+def optional_controlled_token_copy_runtime_dependencies(program):
+    if not any(effect.get("op") == "copy_all_tokens" and "schema_version" in effect for effect in program.effects):
+        return ()
+    from .replacement.immutable import thaw_value
+
+    condition = {"all": [
+        {"field": "player", "op": "eq", "value": "$source.controller"},
+        {"field": "step", "op": "eq", "value": "beginning_combat"},
+    ]}
+    if (len(program.effects) != 2 or program.effects[0].get("op") != "create_token"
+            or type(program.effects[0].get("quantity")) is not int or program.effects[0]["quantity"] != 1
+            or program.effects[0].get("controller") != "$controller"
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or program.destination is not None or program.trigger_limit is not None or program.requires_arbiter
+            or (program.event, program.active_zone) != ("step.begin", "battlefield")
+            or thaw_value(program.event_condition) != condition):
+        raise TokenCopyRecipeError("Optional controlled-token copy requires the complete original combat trigger")
+    validate_optional_controlled_token_copy(program.effects[1])
+    return (OPTIONAL_CONTROLLED_TOKEN_COPY_CAPABILITY,)
 
 
 TOKEN_COPY_BATCH_FIELD = "copy_batch"
 TOKEN_COPY_BATCH_CAPABILITY = "token.creation.current_battlefield_copy_batch"
 ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY = "token.creation.announced_opponent_copy_batch"
+ANNOUNCED_HASTY_COPY_BATCH_CAPABILITY = "token.creation.announced_hasty_copy_batch"
 TOKEN_COPY_BATCH_MECHANIC = "current-battlefield-token-copy-batch"
+CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY = "token.creation.current_entered_chosen_type_copy_batch"
+CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE = "create-chosen-entry-token-copy-batch-v1"
 
 
 class TokenCopyBatchKind(str, Enum):
@@ -245,6 +358,8 @@ class TokenCopyBatchKind(str, Enum):
     CONTROLLER_NONTOKEN_CREATURES = "controller_nontoken_creatures"
     CONTROLLER_ARTIFACT_CREATURES = "controller_artifact_creatures"
     ANNOUNCED_OPPONENT_CREATURES = "announced_opponent_creatures"
+    ANNOUNCED_HASTY_COPIES = "announced_hasty_copies"
+    CONTROLLER_ENTERED_CHOSEN_TOKENS = "controller_entered_chosen_tokens"
 
 
 @dataclass(frozen=True, slots=True)
@@ -255,13 +370,19 @@ class TokenCopyBatchSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        version = 2 if self.uses_announced_models else 1
+        version = {TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES: 2,
+                   TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES: 3,
+                   TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS: 4}.get(self.kind, 1)
         if not isinstance(self.kind, TokenCopyBatchKind) or type(self.schema_version) is not int or self.schema_version != version:
             raise TokenCopyRecipeError("Token copy batch kind and version are closed")
 
     @property
     def uses_announced_models(self) -> bool:
-        return self.kind is TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES
+        return self.kind in {TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES, TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES}
+
+    @property
+    def uses_chosen_entry_models(self) -> bool:
+        return self.kind is TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS
 
     @property
     def targets_player(self) -> bool:
@@ -272,9 +393,11 @@ class TokenCopyBatchSpec:
         if self.uses_announced_models:
             from .target_cardinality import AnnouncedTargetCardinality
 
+            relation = ({"controller_relation": "opponent", "distinct_controllers": True, "retain_controller": True}
+                        if self.kind is TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES else {"controller_relation": "you"})
             return {
                 "zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"],
-                "controller_relation": "opponent", "distinct_controllers": True, "retain_controller": True,
+                **relation,
                 "count_parameter": AnnouncedTargetCardinality(
                     selection="up_to", parameter="any_number", schema_version=2,
                 ).to_dict(),
@@ -288,20 +411,38 @@ class TokenCopyBatchSpec:
         from .fixed_token_production import FIXED_TOKEN_COPY_CAPABILITY_ID
 
         result = (TOKEN_COPY_BATCH_CAPABILITY, FIXED_TOKEN_COPY_CAPABILITY_ID)
+        if self.uses_chosen_entry_models:
+            from .entry_designations import ENTRY_DESIGNATION_CAPABILITY
+
+            return (*result, CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
+                    "trigger.effect.fixed_event", "trigger.placement.apnap")
         if self.uses_announced_models:
             from .target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
 
+            if self.kind is TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES:
+                return (*result, ANNOUNCED_HASTY_COPY_BATCH_CAPABILITY, ANY_NUMBER_TARGET_CAPABILITY,
+                        "target.revalidate_resolution", "activation.tap_untap_cost.haste", "combat.attack.haste",
+                        "trigger.delayed.fixed_object_action", "zone.move.fixed_public_set")
             return (*result, ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY, ANY_NUMBER_TARGET_CAPABILITY,
                     "target.set.one_per_player", "target.revalidate_resolution")
         return (*result, "target.revalidate_resolution") if self.targets_player else result
 
     @property
     def exception(self) -> TokenCopyExceptionSpec:
+        if self.kind is TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES:
+            return TokenCopyExceptionSpec(add_keywords=("Haste",))
         return TokenCopyExceptionSpec(remove_legendary=self.kind is TokenCopyBatchKind.CONTROLLER_NONTOKEN_CREATURES)
 
-    def model_query(self, player: str):
-        from .object_predicate import ObjectQuerySpec
+    def model_query(self, player: str, *, chosen_type: str | None = None):
+        from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 
+        if self.uses_chosen_entry_models:
+            from .entry_designations import EntryDesignationKind, validate_designation
+
+            subtype = validate_designation(EntryDesignationKind.CREATURE_TYPE, chosen_type)
+            return ObjectQuerySpec(zones=("battlefield",), controller=player, token=True,
+                                   subtypes_all=(subtype,),
+                                   state_predicate=PermanentStatePredicateSpec(entered_this_turn=True))
         if self.uses_announced_models:
             raise TokenCopyRecipeError("Announced copy models require their revalidated target slots")
         if self.kind is TokenCopyBatchKind.CONTROLLER_ARTIFACT_CREATURES:
@@ -312,8 +453,12 @@ class TokenCopyBatchSpec:
                                token=None if self.targets_player else False)
 
     def to_effect(self) -> dict[str, Any]:
-        return {"op": "create_token_batch", "controller": "$controller",
-                TOKEN_COPY_BATCH_FIELD: {"schema_version": self.schema_version, "kind": self.kind.value}}
+        descriptor = {"schema_version": self.schema_version, "kind": self.kind.value}
+        if self.uses_chosen_entry_models:
+            from .entry_designations import CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
+
+            descriptor["predicate"] = CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
+        return {"op": "create_token_batch", "controller": "$controller", TOKEN_COPY_BATCH_FIELD: descriptor}
 
     @classmethod
     def from_effect(cls, effect: Mapping[str, Any], *, actor: str | None = None) -> "TokenCopyBatchSpec":
@@ -324,13 +469,24 @@ class TokenCopyBatchSpec:
                 or effect["controller"] != ("$controller" if actor is None else actor)):
             raise TokenCopyRecipeError("Token copy batch requires a closed creation instruction and its controller")
         descriptor = effect[TOKEN_COPY_BATCH_FIELD]
-        if not isinstance(descriptor, Mapping) or set(descriptor) != {"schema_version", "kind"}:
+        if not isinstance(descriptor, Mapping):
             raise TokenCopyRecipeError("Token copy batch requires a complete versioned model selection")
         try:
-            kind = TokenCopyBatchKind(descriptor["kind"])
-        except (TypeError, ValueError) as exc:
+            spec = cls(TokenCopyBatchKind(descriptor["kind"]), descriptor["schema_version"])
+        except (KeyError, TypeError, ValueError) as exc:
             raise TokenCopyRecipeError("Token copy batch model selection is unknown") from exc
-        return cls(kind, descriptor["schema_version"])
+        if thaw_value(descriptor) != spec.to_effect()[TOKEN_COPY_BATCH_FIELD]:
+            raise TokenCopyRecipeError("Token copy batch requires its exact versioned model selection")
+        return spec
+
+
+def uses_chosen_entry_token_copy(effect):
+    """Identify the chosen-entry batch, including a malformed version/kind pair."""
+    descriptor = effect.get(TOKEN_COPY_BATCH_FIELD) if isinstance(effect, Mapping) else None
+    return isinstance(descriptor, Mapping) and (
+        descriptor.get("schema_version") == 4
+        or descriptor.get("kind") == TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS.value
+    )
 
 
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:

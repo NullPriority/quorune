@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 from common import keep_all, make_session, pass_current
+import inherited_composition_fixture as grant_actions
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_model import (
     ContinuousEffect,
@@ -877,6 +878,73 @@ class FixedQueryQuotedAbilityGrantRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+
+class IndividuallyLimitedQueryGrantTests(grant_actions.InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "limited-query-grant.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "fixed-stack-spell-copy-cards.json",
+            fixtures / "additional-conditional-modifier-cards.json",
+            fixtures / "same-name-recipient-anthem-cards.json",
+            FIXTURE,
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Individually limited grants", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def tap_for_mana(self, session, recipient):
+        self.priority(session, "A")
+        current = session.state.cards[recipient.object_id]
+        legal = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]
+        action = next(row for row in legal["actions"] if row["id"].startswith(f"activate:{current.ref}:"))
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_two_providers_grant_fresh_uses_per_incarnation_and_keep_pending_effects(self):
+        session = self.session(1190721)
+        recipient = self.add(session.engine, "Llanowar Elves")
+        self.add(session.engine, "Mirror Box")
+        provider_one = self.add(session.engine, "Dionus, Elvish Archdruid", ref="grant-provider-one")
+        self.add(session.engine, "Dionus, Elvish Archdruid", ref="grant-provider-two")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        self.assert_closed(session, provider_one)
+        session.state.config.semantic_policy = "trusted_only"
+        self.prepare(session, mana={"W": 1})
+        self.checkpoint(session)
+
+        self.tap_for_mana(session, recipient)
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        pending = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+        self.assertEqual(2, len(pending))
+        response = session.act("pilot:A", {"action_id": "order", "triggers": [item.ref for item in pending]})
+        self.assertTrue(response.ok, response.summary)
+        prior_identity = session.state.cards[provider_one.object_id].logical_object_id
+        self.cast(session, "A", blink, [provider_one.ref])
+        self.settle(session)
+        self.assertNotEqual(prior_identity, session.state.cards[provider_one.object_id].logical_object_id)
+        self.assertEqual(2, session.state.cards[recipient.object_id].counters["+1/+1"])
+        self.assertFalse(session.state.cards[recipient.object_id].tapped)
+
+        self.tap_for_mana(session, recipient)
+        self.settle(session)
+        self.assertEqual(3, session.state.cards[recipient.object_id].counters["+1/+1"])
+        self.assertFalse(session.state.cards[recipient.object_id].tapped)
+
+        self.tap_for_mana(session, recipient)
+        self.settle(session)
+        self.assertEqual(3, session.state.cards[recipient.object_id].counters["+1/+1"])
+        self.assertTrue(session.state.cards[recipient.object_id].tapped)
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

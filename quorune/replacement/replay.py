@@ -9,7 +9,7 @@ from ..rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from ..trigger_batches import PendingTriggerItem, TriggerBatchError
-from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TurnBoundary
+from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TURN_START_SKIP_RESUME, TurnBoundary
 from .immutable import FrozenMap, thaw_value
 from .model import (
     ReplaceableEvent,
@@ -105,6 +105,7 @@ _TURN_COUNTER_ACTION_FIELDS = {
 _TURN_BOUNDARY_SKIP_FIELDS = _TURN_COUNTER_ACTION_FIELDS - {
     "turn_action_kind", "replacement_selections"
 }
+_TURN_START_SKIP_FIELDS = (_TURN_BOUNDARY_SKIP_FIELDS - {"held_triggers"}) | {"held_turn_entry"}
 _STATE_BASED_DESTRUCTION_FIELDS = {
     "replacement_resume_kind", "state_based_frame", "replacement_selections",
     "replacement_batch", "replacement_effects",
@@ -162,6 +163,8 @@ class ReplacementContinuation:
     turn_action_frame: FrozenMap | None = None
     held_triggers: tuple[PendingTriggerItem, ...] = ()
     opening_hand_entry: FrozenMap | None = None
+    held_turn_entry: FrozenMap | None = None
+    combat_prevention_tokens: FrozenMap | None = None
     state_based_destruction_selections: tuple[str | FrozenMap, ...] = ()
     completed_choice: FrozenMap | None = None
     damage_proposal_ids: tuple[str, ...] = ()
@@ -181,6 +184,18 @@ class ReplacementContinuation:
             return decode_opening_hand_entry(cls,value,batch,effects)
         if resume_kind == "combat_damage":
             return _decode_combat_continuation(cls, value, batch, effects)
+        if resume_kind == "combat_token_aftermath":
+            from ..rules.combat_prevention_tokens import CombatPreventionTokenQueue
+
+            try:
+                queue = CombatPreventionTokenQueue.from_dict(value["combat_prevention_tokens"])
+            except (TypeError, ValueError, KeyError) as exc:
+                raise ReplacementEffectError(str(exc)) from exc
+            return cls(
+                batch=batch, effects=effects, resume_kind=resume_kind,
+                combat_prevention_tokens=FrozenMap(queue.to_dict()),
+                replacement_selections=_decode_combat_selections(value),
+            )
         if resume_kind in {"mana_payment", "priority_action_cost", "face_up_copy"}:
             return _decode_mana_continuation(
                 cls,
@@ -214,13 +229,23 @@ class ReplacementContinuation:
             )
         if resume_kind == TURN_BOUNDARY_SKIP_RESUME:
             return _decode_turn_boundary_skip(cls, value, batch, effects)
+        if resume_kind == TURN_START_SKIP_RESUME:
+            return _decode_turn_start_skip(cls, value, batch, effects)
         if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
+        if resume_kind == "scheduled_draw_result":
+            from ..drawing.scheduled_draw_coordination import decode_scheduled_draw_replacement
+
+            return decode_scheduled_draw_replacement(cls, value, batch, effects)
         if resume_kind == "draw_discard_or_mill":
             from ..drawing.discard_coordination import decode_draw_discard_replacement
 
             return decode_draw_discard_replacement(cls, value, batch, effects)
+        if resume_kind == "draw_library_choice_move":
+            from ..drawing.library_choice_coordination import decode_library_choice_movement
+
+            return decode_library_choice_movement(cls, value, batch, effects)
         if resume_kind == 'conditional_return':
             from ..conditional_exile_return import decode_conditional_return
             return decode_conditional_return(cls,value,batch,effects)
@@ -309,6 +334,9 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             _PRIORITY_ACTION_COST_FIELDS,
             "priority-action cost continuation",
         ),
+        "combat_token_aftermath": ({"replacement_resume_kind", "combat_prevention_tokens",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "combat prevention token continuation"),
         "land_entry": (_LAND_ENTRY_FIELDS, "land-entry continuation"),
         "semantic_counter_completion": (
             _SEMANTIC_COUNTER_COMPLETION_FIELDS,
@@ -331,12 +359,19 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "turn-counter action continuation",
         ),
         TURN_BOUNDARY_SKIP_RESUME: (_TURN_BOUNDARY_SKIP_FIELDS, "scheduled skip continuation"),
+        TURN_START_SKIP_RESUME: (_TURN_START_SKIP_FIELDS, "extra-turn replacement continuation"),
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
         "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
+        "scheduled_draw_result": ({"replacement_resume_kind", "scheduled_draw", "object_refs",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "scheduled draw result continuation"),
         "draw_discard_or_mill": ({"replacement_resume_kind", "draw_discard", "selected_card",
             "replacement_selections", "replacement_batch", "replacement_effects"},
             "draw discard or mill continuation"),
+        "draw_library_choice_move": ({"replacement_resume_kind", "draw_library_choice",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "draw library choice hand movement"),
     }
     shape = shapes.get(resume_kind)
     if shape is None:
@@ -406,6 +441,45 @@ def _decode_turn_boundary_skip(continuation_type, value, batch, effects):
         batch=batch, effects=effects, resume_kind=TURN_BOUNDARY_SKIP_RESUME,
         turn_action_actor=actor, turn_action_frame=FrozenMap(frame),
         held_triggers=_decode_held_turn_triggers(value),
+    )
+
+
+def _decode_turn_start_skip(continuation_type, value, batch, effects):
+    actor = value["turn_action_actor"]
+    frame = value["turn_action_frame"]
+    entry = value["held_turn_entry"]
+    if not isinstance(frame, Mapping) or not isinstance(entry, Mapping):
+        raise ReplacementEffectError("Pending extra turn requires a retained turn and frame")
+    exact_fields(frame, _TURN_ACTION_FRAME_FIELDS, field_name="extra-turn replacement frame")
+    exact_fields(entry, {"turn_id", "player", "extra", "source", "created_sequence", "skip_steps"},
+                 field_name="pending extra turn")
+    if (
+        actor not in batch.apnap_order or entry["player"] != actor or entry["extra"] is not True
+        or type(entry["turn_id"]) is not str or not entry["turn_id"]
+        or entry["source"] is not None and type(entry["source"]) is not str
+        or type(frame["active_player"]) is not str or not frame["active_player"]
+        or type(frame["phase_index"]) is not int or frame["phase_index"] < 0
+        or type(frame["turn_sequence"]) is not int or frame["turn_sequence"] < 0
+        or type(entry["created_sequence"]) is not int or not 0 <= entry["created_sequence"] <= frame["turn_sequence"]
+        or type(entry["skip_steps"]) is not list or entry["skip_steps"]
+        or any(type(frame[field]) is not str or not frame[field] for field in ("phase", "step"))
+        or frame["priority_player"] is not None and frame["priority_player"] not in batch.apnap_order
+    ):
+        raise ReplacementEffectError("Pending extra-turn identity is malformed")
+    string_sequence(frame["stack_refs"], field_name="extra-turn replacement stack")
+    if len(batch.events) != 1 or batch.journal:
+        raise ReplacementEffectError("Extra-turn replacement requires one upcoming turn")
+    event, = batch.events
+    identity = f"turn-start:{entry['turn_id']}"
+    if (event.event_id != identity or batch.batch_id != identity
+            or event.kind != TURN_BOUNDARY_SKIP_EVENT or event.affected_player != actor
+            or event.applied_effects or event.children or event.entry_scope is not None
+            or event.payload != {"skipped": False, "boundary": "turn", "turn_id": entry["turn_id"]}
+            or len(effects) < 2 or any(effect.event_kind != TURN_BOUNDARY_SKIP_EVENT for effect in effects)):
+        raise ReplacementEffectError("Extra-turn replacement event is malformed")
+    return continuation_type(
+        batch=batch, effects=effects, resume_kind=TURN_START_SKIP_RESUME,
+        turn_action_actor=actor, turn_action_frame=FrozenMap(frame), held_turn_entry=FrozenMap(entry),
     )
 
 
@@ -827,18 +901,24 @@ def _casting_zone_cost_event_is_valid(
 
 
 def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | None:
+    from ..rules.activation_zone_change_costs import selected_activation_zone_cost_count
+
     summary=response.get('cost_summary')
     if not isinstance(summary,Mapping):return None
     if 'random_discard' in summary:
         refs=response.get('_random_discard_cost_refs')
         count=summary['random_discard']
-        count_valid=type(count) is int and 1<=count<=4
+        count = count if type(count) is int and 1 <= count <= 4 else None
     else:
         refs=response.get('cost_objects') or response.get('cost_cards')
         choices=summary.get('choose_cost')
         if not isinstance(choices,(list,tuple)) or len(choices)!=1 or not isinstance(choices[0],Mapping):return None
-        count=choices[0].get('n');count_valid=type(count) is int
-    if (not count_valid or not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10
+        from ..rules.activation_zone_change_costs import ANNOUNCED_ZONE_COST_ORIGINS, announced_zone_cost_replay_refs
+        if choices[0].get('k') in ANNOUNCED_ZONE_COST_ORIGINS:
+            resolved = announced_zone_cost_replay_refs(choices[0], response)
+            return resolved if resolved and len(resolved) > 1 else None
+        count = selected_activation_zone_cost_count(response, choices[0])
+    if (count is None or not isinstance(refs,(list,tuple)) or len(refs) < 2
             or count!=len(refs) or any(type(ref) is not str or not ref for ref in refs)
             or len(set(refs))!=len(refs)):
         return None
@@ -853,14 +933,16 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
-    from ..rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, WholeZoneCostFrame
+    from ..rules.mana_life_result import mana_life_replacement_event
+    from ..rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, whole_zone_cost_event_ids
 
+    from ..rules.mana_point_result import mana_point_replacement_event
+
+    mana_result = mana_life_replacement_event(batch, response, seat) or mana_point_replacement_event(batch, response, seat)
+    if mana_result is not None:
+        return {mana_result.event_id}
     if WHOLE_ZONE_COST_FRAME_FIELD in response:
-        if action != "cast":
-            raise ReplacementEffectError("Only a cast can carry an automatic zone cost")
-        frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
-        frame.validate_response(response)
-        return frame.replacement_event_ids(batch, seat=seat)
+        return whole_zone_cost_event_ids(batch, response, action=action, seat=seat)
     if action == 'activate' and len(batch.events) > 1:
         refs=_activation_batch_cost_refs(response)
         if (
@@ -934,8 +1016,14 @@ def _priority_action_cost_event_ids(
             from ..rules.selected_counter_costs import (
                 blight_activation_cost_event_is_valid, is_blight_activation_cost_event,
             )
+            from ..rules.activation.counter_costs import (
+                is_source_counter_placement_event, source_counter_placement_event_is_valid,
+            )
+
             if is_blight_activation_cost_event(event, response):
                 action_valid = blight_activation_cost_event_is_valid(batch, effects, response, seat=seat)
+            elif is_source_counter_placement_event(event, response):
+                action_valid = source_counter_placement_event_is_valid(batch, effects, response, seat=seat)
             else:
                 action_valid = payload.get("counter_name") == "loyalty"
         elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
@@ -1020,6 +1108,9 @@ def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
         if len(batch.events) != 1 or not _casting_zone_cost_event_is_valid(batch.events[0], response, seat=seat):
             raise ReplacementEffectError("The replacement no longer belongs to the ordered cast")
         event = batch.events[0]
+        if frame.event_ids is not None:
+            event_ids = frame.through_pending_escape_event(event)
+            return set(journal).intersection(event_ids) if isinstance(journal, Mapping) else set()
         refs = frame.through_pending_payment(event)
         return _selected_zone_cost_journal_ids(journal, event, refs) if isinstance(journal, Mapping) else set()
     if not isinstance(journal,Mapping) or len(batch.events)!=1 or batch.events[0].kind!='zone.change':return set()
@@ -1039,9 +1130,14 @@ def _counted_activation_cost_event_is_valid(
     if 'random_discard' in summary:destination='graveyard'
     else:
         choices=summary['choose_cost']
-        contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(choices[0].get('k') or ''))
-        if contract is None:return False
-        destination=contract[1]
+        from ..rules.activation_zone_change_costs import ANNOUNCED_ZONE_COST_ORIGINS
+        kind = choices[0].get('k')
+        if kind in ANNOUNCED_ZONE_COST_ORIGINS:
+            destination = 'graveyard'
+        else:
+            contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(kind or ''))
+            if contract is None:return False
+            destination=contract[1]
     payload = {**dict(event.payload), 'destination': destination}
     original = ReplaceableEvent(
         event_id=event.event_id, kind=event.kind, affected_player=event.affected_player,
@@ -1088,6 +1184,10 @@ def _decode_mana_continuation(
         )
     _validate_mana_frame(frame, seat)
     _validate_priority_response(action, response)
+    from ..rules.mana_life_result import mana_life_event_belongs_to_payment, mana_life_replacement_event
+    from ..rules.mana_point_result import mana_point_event_belongs_to_payment, mana_point_replacement_event
+    from ..mana_mode_effects import mana_result_event_belongs_to_payment
+
     prior_mana_event_ids = set()
     damage_proposal_ids = _decode_damage_proposal_ids(value, batch)
     if resume_kind == "face_up_copy":
@@ -1149,11 +1249,20 @@ def _decode_mana_continuation(
     if action == "activate":
         from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
 
-        prior_mana_event_ids = blight_prior_mana_replacement_event_ids(response)
+        prior_mana_event_ids.update(blight_prior_mana_replacement_event_ids(response))
     elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
         from ..rules.casting.blight_costs import blight_cast_prior_mana_event_ids
 
-        prior_mana_event_ids = blight_cast_prior_mana_event_ids(response)
+        prior_mana_event_ids.update(blight_cast_prior_mana_event_ids(response))
+    journal = response.get("_mana_replacement_selections")
+    if isinstance(journal, Mapping):
+        payment_id = response["_mana_payment_id"]
+        if (mana_life_replacement_event(batch, response, seat) is not None
+                or mana_point_replacement_event(batch, response, seat) is not None):
+            prior_mana_event_ids.update(key for key in journal if mana_result_event_belongs_to_payment(key, payment_id))
+        else:
+            prior_mana_event_ids.update(key for key in journal if mana_life_event_belongs_to_payment(key, payment_id)
+                                        or mana_point_event_belongs_to_payment(key, payment_id))
     event_ids.update(prior_mana_event_ids)
     _validate_replacement_journal(
         response,
@@ -1320,6 +1429,7 @@ def _decode_semantic_intent_continuation(
             "resolving_exile_land_play",
             "resolving_shared_type_library_play",
             "targeted_graveyard_cast",
+            "discarded_card_cast",
             "exile_graveyard_copies",
             "life_change",
             "life_gain_cost_batch",
@@ -1328,8 +1438,12 @@ def _decode_semantic_intent_continuation(
             "library_selection",
             "move_objects_simultaneously",
             "move_counters",
+            "distribute_source_counters",
             "targeted_power_sacrifice_life",
+            "counted_sacrifice_token",
+            "counted_sacrifice_quantity",
             "exploit_sacrifice",
+            "opponent_blight_batch",
             "place_counter_batch",
             "place_counters",
             "place_counters_on_set",

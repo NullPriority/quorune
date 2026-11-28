@@ -177,6 +177,18 @@ class DarettiExchangeChoiceHandler:
         return SemanticChoiceCompletion(intents=tuple(intents))
 
 
+_TRANSMUTE_ORDERED_STAGES = {
+    "sacrifice_v2": "sacrifice",
+    "search_v2": "search",
+    "sacrifice_v3": "sacrifice",
+    "search_v3": "search",
+}
+
+
+def transmute_search_uses_canonical_scope(effect: Mapping[str, Any]) -> bool:
+    return effect.get("op") == "transmute_artifact" and effect.get("stage") == "search_v3"
+
+
 @dataclass(frozen=True, slots=True)
 class TransmuteArtifactChoiceHandler:
     operation: str = "transmute_artifact"
@@ -216,13 +228,20 @@ class TransmuteArtifactChoiceHandler:
         value.update(updates)
         return FrozenMap(value)
 
+    @staticmethod
+    def _shuffle(actor: str) -> ShuffleLibraryIntent:
+        return ShuffleLibraryIntent(
+            actor=actor, player=actor, reason="Transmute Artifact resolved",
+        )
+
     def prepare(
         self,
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
         stage = str(effect.get("stage") or "sacrifice")
-        if stage == "sacrifice":
+        phase = _TRANSMUTE_ORDERED_STAGES.get(stage, stage)
+        if phase == "sacrifice":
             rows = _artifacts(
                 context.query,
                 context.actor,
@@ -235,6 +254,8 @@ class TransmuteArtifactChoiceHandler:
                     continuation_effect=FrozenMap(effect),
                     auto_continue=AutoContinue(reason="no artifact to sacrifice"),
                 )
+            if stage in _TRANSMUTE_ORDERED_STAGES:
+                rows = tuple(sorted(rows, key=lambda row: row.ref))
             refs = tuple(row.ref for row in rows)
             prompt = (
                 "Choose exactly one artifact to sacrifice while "
@@ -248,12 +269,21 @@ class TransmuteArtifactChoiceHandler:
                 predicates=FrozenMap({"types": ["artifact"]}),
             )
             public = {"objects": refs}
-        elif stage == "search":
-            rows = _artifacts(
-                context.query,
-                context.actor,
-                zone="library",
-            )
+        elif phase == "search":
+            use_canonical_scope = transmute_search_uses_canonical_scope(effect)
+            if use_canonical_scope and not context.query.library_search_allowed(context.actor):
+                return SemanticChoicePreparation(
+                    request=None,
+                    continuation_effect=FrozenMap(effect),
+                    preparation_intents=(self._shuffle(context.actor),),
+                    auto_continue=AutoContinue(reason="library search is prohibited"),
+                )
+            rows = _artifacts(context.query, context.actor, zone="library")
+            if use_canonical_scope:
+                refs_in_scope = set(context.query.library_search_refs(context.actor))
+                rows = tuple(row for row in rows if row.ref in refs_in_scope)
+            if stage in _TRANSMUTE_ORDERED_STAGES:
+                rows = tuple(sorted(rows, key=lambda row: row.ref))
             refs = tuple(row.ref for row in rows)
             prompt = "Choose an artifact card from your library, or fail to find."
             choice = ObjectChoice(
@@ -274,7 +304,7 @@ class TransmuteArtifactChoiceHandler:
                     for row in rows
                 ]
             }
-        elif stage == "pay":
+        elif phase == "pay":
             card_ref = str(effect.get("card") or "")
             card = context.query.object(card_ref, zones=("library",))
             if card is None or card.owner != context.actor:
@@ -329,9 +359,9 @@ class TransmuteArtifactChoiceHandler:
             "_choice_actor": context.actor,
             "_stack_label": context.stack_label,
         }
-        if stage in {"sacrifice", "search"}:
+        if phase in {"sacrifice", "search"}:
             continuation_effect["_legal_refs"] = refs
-        if stage == "pay":
+        if phase == "pay":
             continuation_effect["_requirements"] = requirements
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
@@ -357,8 +387,9 @@ class TransmuteArtifactChoiceHandler:
         effect = continuation.effect
         actor = str(effect["_choice_actor"])
         stage = str(effect.get("stage") or "sacrifice")
+        phase = _TRANSMUTE_ORDERED_STAGES.get(stage, stage)
         legal = {str(value) for value in effect.get("_legal_refs", ())}
-        if stage == "sacrifice":
+        if phase == "sacrifice":
             selected = str(response.get("card") or "")
             row = query.object(selected, zones=("battlefield",))
             if selected not in legal or row is None or "artifact" not in row.types:
@@ -378,26 +409,25 @@ class TransmuteArtifactChoiceHandler:
                 prepend_effects=(
                     self._next(
                         effect,
-                        stage="search",
+                        stage={
+                            "sacrifice_v2": "search_v2", "sacrifice_v3": "search_v3",
+                        }.get(stage, "search"),
                         sacrificed_mana_value=row.mana_value,
                     ),
                 ),
             )
-        if stage == "search":
+        if phase == "search":
             raw = response.get("card")
             selected = None if raw in {None, ""} else str(raw)
+            if transmute_search_uses_canonical_scope(effect):
+                if not query.library_search_allowed(actor):
+                    raise SemanticChoiceError("Library search is prohibited")
+                if selected is not None and selected not in query.library_search_refs(actor):
+                    raise SemanticChoiceError("Selected artifact is outside the permitted library search")
             if selected is not None and selected not in legal:
                 raise SemanticChoiceError("Selected artifact is not legal")
             if selected is None:
-                return SemanticChoiceCompletion(
-                    intents=(
-                        ShuffleLibraryIntent(
-                            actor=actor,
-                            player=actor,
-                            reason="Transmute Artifact resolved",
-                        ),
-                    )
-                )
+                return SemanticChoiceCompletion(intents=(self._shuffle(actor),))
             row = query.object(selected, zones=("library",))
             if row is None or row.owner != actor or "artifact" not in row.types:
                 raise SemanticChoiceError("The selected artifact is unavailable")
@@ -436,7 +466,7 @@ class TransmuteArtifactChoiceHandler:
                     ),
                 )
             )
-        if stage == "pay":
+        if phase == "pay":
             row = query.object(str(effect.get("card") or ""), zones=("library",))
             if row is None or row.owner != actor:
                 raise SemanticChoiceError("The selected artifact is unavailable")

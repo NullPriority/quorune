@@ -104,7 +104,14 @@ class TargetCharacteristicForm:
         )
 
 
-__all__ = ["TargetCharacteristicForm"]
+HISTORIC_TARGET_FORMS = (
+    TargetCharacteristicForm(types_all=("artifact",)),
+    TargetCharacteristicForm(supertypes_any=("legendary",)),
+    TargetCharacteristicForm(subtypes_any=("saga",)),
+)
+
+
+__all__ = ["HISTORIC_TARGET_FORMS", "TargetCharacteristicForm"]
 
 
 SHARED_PERMANENT_TYPE_PAIR_FIELD = "shared_permanent_type_pair"

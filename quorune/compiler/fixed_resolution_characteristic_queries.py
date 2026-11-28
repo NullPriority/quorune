@@ -9,6 +9,10 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 
 
+CONTROLLED_FLYING_CREATURES_QUERY = ObjectQuerySpec(
+    zones=("battlefield",), controller="$controller", types_all=("creature",), keywords_all=("flying",),
+)
+
 _PLAYER_TARGET_SCHEMA = {
     "zones": ["player"],
     "categories": ["player"],

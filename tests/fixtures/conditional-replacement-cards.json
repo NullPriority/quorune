@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "conditional_replacement_card_data",
+  "source": "The pinned Scryfall Oracle and ruling subset with a constructed fixed life-change witness",
+  "cards": [
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "name": "Phial of Galadriel",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "If you would draw a card while you have no cards in hand, draw two cards instead.\nIf you would gain life while you have 5 or less life, you gain twice that much life instead.\n{T}: Add one mana of any color.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6c540000-2026-4000-8000-000000000001",
+      "name": "Generic Fixed One-Life Gain",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-06",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If you somehow control more than one Phial of Galadriel, each one will effectively add one card. For example, if you control two Phials of Galadriel and would draw a card while you have no cards in hand, the effect of one Phial of Galadriel will replace the event \"draw a card\" with \"draw two cards.\" The effect of the other Phial of Galadriel will replace the drawing of the first of those two cards with \"draw two cards.\" In total, you would draw three cards."
+    },
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If two or more replacement effects would apply to a card-drawing event, the player drawing the card chooses the order in which to apply them."
+    },
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "The second abilities of multiple Phials of Galadriel are cumulative. If you control two, life gained while you have 5 or less life will be multiplied by 4. Three Phials will multiply that life gain by 8. And so on."
+    },
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Any time you are instructed to draw more than one card, you draw them one at a time. For example, if you control Phial of Galadriel and have no cards in hand and you're instructed to \"draw two cards,\" your first card draw is replaced by drawing two cards, then you'll draw the second card from the original instruction. In total, you'll draw three cards."
+    },
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Phial of Galadriel's second ability to apply, even though it will cause your team's life total to increase."
+    },
+    {
+      "oracle_id": "08f17ebc-c0fd-493f-84b3-e9250694543e",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect causes you to gain life equal to the difference. If your life total is 5 or less, Phial of Galadriel will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total \"becomes 10,\" you would gain 7 life which Phial doubles to 14, so your life total will actually become 17."
+    }
+  ]
+}

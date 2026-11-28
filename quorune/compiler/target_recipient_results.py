@@ -15,7 +15,7 @@ TARGET_RECIPIENT_RESULT_TEMPLATE = 'bound-target-recipient-result-v1'
 _TAIL = re.compile(
     r"(?:Then )?(?:(?:Its|That (?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)['’]s) "
     r"(?P<relation>controller|owner)|(?P<owner_player>That player)) "
-    r"(?P<verb>creates|discards|gets|gains|loses|draws) (?P<body>.+)\.", re.I,
+    r"(?P<verb>creates|discards|gets|gains|loses|draws|manifests) (?P<body>.+)\.", re.I,
 )
 
 
@@ -88,7 +88,97 @@ def _target_owner_shuffle_draw_template(text, *, compile_component):
         program._effects, program._target_schema, program.mechanic_ids)
 
 
+_TARGET_DESTRUCTION_MANA_TOKENS = re.compile(
+    r"Destroy target (?P<kind>artifact|enchantment)\.(?P<regeneration> It can['’]t be regenerated\.)? "
+    r"Create X (?P<definition>[^.,]+) creature tokens, where X is that (?P=kind)['’]s mana value\.",
+    re.I,
+)
+
+
+def target_destruction_mana_token_template(text, *, compile_component):
+    match = _TARGET_DESTRUCTION_MANA_TOKENS.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from ..rules.target_destruction_mana_value_tokens import (
+        TARGET_DESTRUCTION_MANA_TOKEN_AMOUNT, target_destruction_mana_token_node_capabilities,
+    )
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+    kind = match["kind"].casefold()
+    prefix = f"Destroy target {kind}."
+    if match["regeneration"]:
+        prefix += " It can't be regenerated."
+    destruction = compile_component(prefix)
+    token_id, token_effects, token_schema, token_mechanics = compile_component(
+        "Create a " + match["definition"] + " creature token.",
+    )
+    if destruction[0] is None or destruction[2] is None or token_id is None or token_schema is not None or len(token_effects) != 1:
+        return None
+    token = {**token_effects[0], "quantity": TARGET_DESTRUCTION_MANA_TOKEN_AMOUNT.to_dict()}
+    schema = destruction[2]
+    components = (destruction, (token_id, (token,), None, (*token_mechanics, SCALAR_AMOUNT_MECHANIC)))
+    program = _program(components, schema=schema)
+    if program is None or not target_destruction_mana_token_node_capabilities(
+        effects=program.effects, target_schema=schema,
+    ):
+        return None
+    return program
+
+
+_DESTROY_CONTROLLED_ARTIFACT_TOKENS = re.compile(
+    r"Destroy target artifact\. If you controlled that artifact, "
+    r"create three (?P<definition>[^.,]+) creature tokens\.",
+    re.I,
+)
+
+
+def controlled_artifact_token_template(text, *, compile_component):
+    match = _DESTROY_CONTROLLED_ARTIFACT_TOKENS.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
+    from ..rules.controlled_artifact_token_result import (
+        controlled_artifact_token_branch, controlled_artifact_token_node_capabilities,
+    )
+
+    destroy = compile_component("Destroy target artifact.")
+    token_id, token_effects, token_schema, token_mechanics = compile_component("Create three " + match["definition"] + " creature tokens.")
+    if destroy[0] is None or destroy[2] is None or token_id is None or token_schema is not None or len(token_effects) != 1:
+        return None
+    branch = controlled_artifact_token_branch(token_effects[0])
+    components = (destroy, (token_id, (branch,), None, (*token_mechanics, RESOLUTION_CONDITION_MECHANIC)))
+    program = _program(components, schema=destroy[2])
+    if program is None or not controlled_artifact_token_node_capabilities(effects=program.effects, target_schema=destroy[2]):
+        return None
+    return program
+
+
+def controlled_artifact_draw_template(text, *, compile_component):
+    if re.fullmatch(r"Destroy up to one target artifact\. If you controlled that (?:permanent|artifact), draw a card\.",
+                    " ".join(text.split()), re.I) is None:
+        return None
+    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
+    from ..rules.controlled_artifact_token_result import (
+        controlled_artifact_draw_branch, controlled_artifact_draw_node_capabilities,
+    )
+
+    destruction = compile_component("Destroy up to one target artifact.")
+    draw_id, effects, target, mechanics = compile_component("Draw a card.")
+    if draw_id is None or target is not None or len(effects) != 1:
+        return None
+    branch = (draw_id, (controlled_artifact_draw_branch(effects[0]),), None, (*mechanics, RESOLUTION_CONDITION_MECHANIC))
+    program = _program((destruction, branch), schema=destruction[2])
+    if program is not None and controlled_artifact_draw_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+    ):
+        return program
+
+
 def target_recipient_result_template(text, *, compile_component):
+    if controlled_tokens := controlled_artifact_token_template(text, compile_component=compile_component):
+        return controlled_tokens
+    if mana_tokens := target_destruction_mana_token_template(text, compile_component=compile_component):
+        return mana_tokens
     if shuffle := _target_owner_shuffle_draw_template(text, compile_component=compile_component):
         return shuffle
     if sacrifice := _target_sacrifice_power_token_template(text, compile_component=compile_component):
@@ -107,9 +197,14 @@ def target_recipient_result_template(text, *, compile_component):
     if not target_recipient_prefix_is_closed(prefix[1][0],schema,relation): return None
     if tail['kind'] and not _target_type_is_guaranteed(schema,tail['kind'].casefold()): return None
     verb = tail['verb'].casefold().removesuffix('s')
-    targeted = verb in {'discard','get'} or verb=='gain' and tail['body'].casefold().startswith('control of ')
-    subject = 'Target player ' + tail['verb'] if targeted else 'Create' if verb=='create' else 'You ' + verb
-    result = compile_component(subject + ' ' + tail['body'] + '.')
+    if verb == 'manifest':
+        if relation != 'controller' or tail['body'].casefold() != 'the top card of their library':
+            return None
+        result = compile_component('Manifest the top card of your library.')
+    else:
+        targeted = verb in {'discard','get'} or verb=='gain' and tail['body'].casefold().startswith('control of ')
+        subject = 'Target player ' + tail['verb'] if targeted else 'Create' if verb=='create' else 'You ' + verb
+        result = compile_component(subject + ' ' + tail['body'] + '.')
     if result[0] is None or len(result[1]) != 1: return None
     recipient = target_controller_reference() if relation == 'controller' else target_owner_reference()
     bound = bind_fixed_recipient_result(result[1][0],result[2],recipient)

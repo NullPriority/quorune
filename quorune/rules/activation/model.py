@@ -119,8 +119,11 @@ class ActivationProposalResult:
     reason: str
     proposal: ActivationProposal | None = None
     offer: ActionOffer | None = None
+    random_target_refs: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
+        if self.random_target_refs and self.offer is None:
+            raise ActivationProposalError("Only a payable offer can retain a random target group")
         if self.status == "payable" and not (self.proposal or self.offer):
             raise ActivationProposalError(
                 "A payable activation result needs a proposal or offer"

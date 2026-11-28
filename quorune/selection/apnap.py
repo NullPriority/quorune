@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from ..apnap_object_payment import DECLINED_LIFE_LOSS
+from ..apnap_object_payment import (
+    DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS, OTHER_PLAYER_SACRIFICE_SCOPE,
+    object_payment_cardinalities,
+)
 
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -15,19 +18,41 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_FIELD, CONTROLLER_SACRIFICE_LIFE_FIELD, ENTRY_SACRIFICE_POWER_DRAW_FIELD,
+    ENTRY_SACRIFICE_POWER_TREASURE_FIELD,
     GREATEST_POWER_SACRIFICE_FIELD, GREATEST_POWER_SACRIFICE_INCARNATIONS,
 )
 from ..public_characteristic_aggregates import greatest_power_creatures
+from ..public_quantity_reductions import public_mana_value
+from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_FIELD, counted_sacrifice_token_commit_fields
+from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_commit_fields
+from ..rules.any_number_sacrifice import (
+    ANY_NUMBER_SACRIFICE_FIELD, any_number_sacrifice_commit_fields, any_number_sacrifice_count,
+    any_number_sacrifice_row_matches,
+    zero_land_sacrifice_search,
+    zero_sacrifice_search_effects,
+)
+from ..rules.target_sacrifice_toughness import TARGET_SACRIFICE_TOUGHNESS_FIELD
+from ..rules.opponent_caster_discard_payment import uses_caster_discard_payment
+from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD, selected_discard_draw_followup
+from ..rules.apnap_counter_attack_truce import FIELD as COUNTER_TRUCE, INCARNATIONS as COUNTER_TRUCE_INCARNATIONS
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.counter_marked_keep import KEEP_COUNTER_COHORT, KEEP_COUNTER_FIELD, keep_counter_followups
 from ..rules.keep_three_sacrifice import (
     KEEP_THREE_OFFERED_FIELD, KEEP_THREE_SACRIFICE_FIELD, unkept_permanents_in_apnap_order,
 )
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
+from ..rules.opponent_blight import uses_opponent_blight
+from .opponent_blight import (
+    OPPONENT_BLIGHT_INCARNATIONS, apply_opponent_blight_choices,
+    opponent_blight_candidates, validate_opponent_blight_choice,
+)
 from .apnap_contract import (
     bind_most_lands_sacrifice_players, sacrifice_life_commit_fields, greatest_power_sacrifice_players, is_typed_hand_exile,
     sacrifice_can_decline, revalidate_sacrifice_incarnations, revalidate_ordered_hand_choices,
-    validate_apnap_choice_effect,
+    caster_discard_player_for_choice, validate_apnap_choice_effect,
 )
+from ..rules.shared_type_sacrifice import SHARED_TYPE_SACRIFICE
+from .shared_type_sacrifice import shared_sacrifice_followup
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
 from ..alternative_discard_model import alternative_discard_count
@@ -95,6 +120,11 @@ class ApnapChoiceOwnerMixin:
         )
 
     def _choice_options(self, seat: str, effect: Mapping[str, Any]) -> list[str]:
+        from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+        if uses_opponent_blight(effect):
+            return list(opponent_blight_candidates(self, seat))
+        sacrifice = effect.get("then") == "sacrifice" and KEEP_COUNTER_FIELD not in effect
         zone = str(effect.get("zone") or "battlefield")
         raw_predicate = effect.get("predicate")
         predicate: ObjectQuerySpec | None = None
@@ -123,10 +153,18 @@ class ApnapChoiceOwnerMixin:
         card_type = str((effect.get("filter") or {}).get("type") or "").casefold()
         controller_only = bool((effect.get("filter") or {}).get("controlled", True))
         candidates: list[str] = []
+        greatest = effect.get(GREATEST_POWER_SACRIFICE_FIELD)
         greatest_rows = [] if GREATEST_POWER_SACRIFICE_FIELD in effect else None
+        rank_mana_value = isinstance(greatest, Mapping) and greatest.get("schema_version") == 3
+        mana_values: dict[str, int] = {}
         excluded_ref = str(effect.get("exclude_ref") or "")
+        if COUNTER_TRUCE in effect:
+            from ..semantic_runtime.counter_permissions import collect_counter_permissions, allows_counter_placement_on_card
+            counter_permissions = collect_counter_permissions(self)
         for object_id in self.state.players[seat].zones.get(zone, []):
             card = self.state.cards[object_id]
+            if sacrifice and greatest_rows is None and sacrifice_is_prohibited(self.state, card):
+                continue
             if excluded_ref and card.ref == excluded_ref:
                 continue
             if controller_only and zone == "battlefield" and card.controller != seat:
@@ -155,29 +193,85 @@ class ApnapChoiceOwnerMixin:
                         == self.state.turn_sequence
                     ),
                 )
-                if not object_matches_query(row, predicate):
+                if not object_matches_query(row, predicate) or not any_number_sacrifice_row_matches(effect, row):
+                    continue
+                if COUNTER_TRUCE in effect and not allows_counter_placement_on_card(
+                    self, card, "+1/+1", 2, permissions=counter_permissions, effective=effective,
+                ):
                     continue
                 if greatest_rows is not None:
                     greatest_rows.append(row)
+                    if rank_mana_value:
+                        try:
+                            mana_values[row.ref] = public_mana_value(effective)
+                        except ValueError as exc:
+                            raise GameRuleError(str(exc)) from exc
             candidates.append(card.ref)
         if greatest_rows is None:
             return candidates
         try:
-            return [row.ref for row in greatest_power_creatures(greatest_rows)]
+            if rank_mana_value:
+                maximum = max(mana_values.values(), default=None)
+                ranked = (row for row in greatest_rows if mana_values[row.ref] == maximum)
+            else:
+                ranked = greatest_power_creatures(greatest_rows)
+            # A prohibition removes a top option after ranking, never promotes a lower one.
+            return [row.ref for row in ranked
+                    if not sacrifice or not sacrifice_is_prohibited(self.state, row)]
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
 
     def _issue_apnap_choice(self, *, effect: Mapping[str, Any], continuation: Mapping[str, Any]) -> None:
+        from ..rules.fixed_opponent_land_search import uses_opponent_land_search
+        from ..rules.colored_permanent_sacrifice import uses_all_colored_sacrifice
+        from ..rules.created_token_fights import uses_created_token_fights
+        from ..rules.apnap_library_reveals import uses_library_reveal_round
+
+        if uses_library_reveal_round(effect):
+            from .apnap_library_reveals import begin_library_reveal_round
+
+            begin_library_reveal_round(self, effect, continuation)
+            return
+        from ..rules.repeated_apnap_payment import is_payment_round
+
+        if uses_opponent_land_search(effect):
+            from .fixed_opponent_land_search import begin_opponent_land_search
+
+            begin_opponent_land_search(self, effect, continuation)
+            return
+
+        if uses_all_colored_sacrifice(effect):
+            from .colored_permanent_sacrifice import resolve_all_colored_permanent_sacrifice
+
+            resolve_all_colored_permanent_sacrifice(self, effect=effect, resume=continuation)
+            return
+
+        if uses_created_token_fights(effect):
+            from .created_token_fights import begin_created_token_fights
+
+            begin_created_token_fights(self, effect, continuation)
+            return
+
+        if is_payment_round(effect):
+            from .repeated_apnap_payment import begin_payment_round
+
+            begin_payment_round(self, effect, continuation)
+            return
+
+        validate_opponent_blight_choice(self, effect, continuation)
         effect = bind_most_lands_sacrifice_players(self, effect, continuation)
         players_spec = effect.get("players", "all")
         greatest_players = greatest_power_sacrifice_players(self, effect, continuation)
-        if greatest_players is not None:
+        if uses_caster_discard_payment(effect):
+            caster = caster_discard_player_for_choice(self, effect, continuation)
+            queue = [caster] if caster in self.active_seats else []
+        elif greatest_players is not None:
             queue = greatest_players
             for seat in queue:
                 self._choice_options(seat, effect)
         elif players_spec == "all":
             queue = self.apnap_order()
-        elif players_spec == "opponents":
+        elif players_spec in ("opponents", OTHER_PLAYER_SACRIFICE_SCOPE):
             actor = str(effect.get("actor") or self.state.stack[-1].controller)
             if actor not in self.active_seats:
                 raise GameRuleError("APNAP opponent choice actor is unavailable")
@@ -207,12 +301,14 @@ class ApnapChoiceOwnerMixin:
             "effect": dict(effect),
             "resume": dict(continuation),
         }
-        if KEEP_THREE_SACRIFICE_FIELD in effect:
-            choice_state[KEEP_THREE_OFFERED_FIELD] = self._keep_three_candidates(effect, queue)
+        cohort = (KEEP_COUNTER_COHORT if KEEP_COUNTER_FIELD in effect else KEEP_THREE_OFFERED_FIELD
+                  if KEEP_THREE_SACRIFICE_FIELD in effect else None)
+        if cohort:
+            choice_state[cohort] = self._retention_candidates(effect, queue)
         seal_fractional_counts(self, choice_state)
         self._issue_next_apnap_choice(choice_state)
 
-    def _keep_three_candidates(self, effect, player_order):
+    def _retention_candidates(self, effect, player_order):
         return {
             seat: {
                 ref: self._resolve_object(seat, ref, zones={"battlefield"}).logical_object_id
@@ -230,16 +326,17 @@ class ApnapChoiceOwnerMixin:
         effect = state["effect"]
         options = self._choice_options(seat, effect)
         count = apnap_required_count(state, seat, options)
-        if effect.get("require_full_count") is True and count < int(
-            effect.get("count", 1)
-        ):
+        requires_full_count = effect.get("require_full_count") is True or DECLINED_LIFE_LOSS in effect
+        if requires_full_count and count < int(effect.get("count", 1)):
             selected = dict(state["selected"])
             selected[seat] = []
             state["selected"] = selected
             state["queue"] = queue[1:]
             self._issue_next_apnap_choice(state)
             return
-        fixed_keep_set = KEEP_THREE_SACRIFICE_FIELD in effect and len(options) == count
+        fixed_keep_set = (
+            (KEEP_THREE_SACRIFICE_FIELD in effect or KEEP_COUNTER_FIELD in effect) and len(options) == count
+        )
         if count == 0 or fixed_keep_set:
             selected = dict(state["selected"])
             selected[seat] = list(options) if fixed_keep_set else []
@@ -257,7 +354,8 @@ class ApnapChoiceOwnerMixin:
                     "prompt": str(effect.get("prompt") or "Choose card(s)"),
                     "count": count,
                     "options": options,
-                    **({"minimum": 0} if sacrifice_can_decline(effect) else {}),
+                    **({"minimum": 0} if COUNTER_TRUCE in effect or sacrifice_can_decline(effect)
+                       or any_number_sacrifice_count(effect.get("count")) else {}),
                     **({"order": HAND_TOP_FIRST} if is_affected_hand_top_choice(effect) else {}),
                     "prior_public_choices": dict(state["selected"]) if not effect.get("hidden") else {},
                     **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS],
@@ -278,6 +376,25 @@ class ApnapChoiceOwnerMixin:
     def _complete_apnap_choice(self, decision: Any) -> None:
         seat = decision.actors[0]
         raw_continuation = decision.continuation
+        from .apnap_library_reveals import OPERATION as library_reveal_operation, complete_library_reveal_choice
+        from .repeated_apnap_payment import OPERATION as repeated_payment_operation, complete_payment_round_choice
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == library_reveal_operation:
+            complete_library_reveal_choice(self, decision)
+            return
+        if (raw_continuation.get("selection") or {}).get("operation_id") == repeated_payment_operation:
+            complete_payment_round_choice(self, decision)
+            return
+        from .fixed_opponent_land_search import OFFER_OPERATION, complete_opponent_land_search_offer
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == OFFER_OPERATION:
+            complete_opponent_land_search_offer(self, decision)
+            return
+        from .created_token_fights import OPERATION, complete_created_token_fights
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == OPERATION:
+            complete_created_token_fights(self, decision)
+            return
         legacy_state = dict(raw_continuation.get("choice_state") or {})
         legacy = SelectionContinuation(
             contract=SelectionContract.NONTARGET_CHOICE,
@@ -330,12 +447,18 @@ class ApnapChoiceOwnerMixin:
             raise GameRuleError("APNAP choice queue actor changed")
         resume = dict(state.get("resume") or {})
         hand_top = is_affected_hand_top_choice(effect)
-        seal_sacrifice = any(key in effect for key in (
+        blight = validate_opponent_blight_choice(self, effect, resume) is not None
+        seal_sacrifice = effect.get("players") == OTHER_PLAYER_SACRIFICE_SCOPE or any(key in effect for key in (
             GREATEST_POWER_SACRIFICE_FIELD, CONTROLLER_SACRIFICE_LIFE_FIELD,
-            ENTRY_SACRIFICE_POWER_DRAW_FIELD, ATTACK_SACRIFICE_STAT_FIELD,
+            ENTRY_SACRIFICE_POWER_DRAW_FIELD, ENTRY_SACRIFICE_POWER_TREASURE_FIELD, ATTACK_SACRIFICE_STAT_FIELD,
+            TARGET_SACRIFICE_TOUGHNESS_FIELD, COUNTED_SACRIFICE_TOKEN_FIELD, ANY_NUMBER_SACRIFICE_FIELD,
+            SHARED_TYPE_SACRIFICE,
+            ORDER_GRAVEYARD_ARRIVALS,
         ))
         if (is_typed_hand_exile(effect) or hand_top or DECLINED_LIFE_LOSS in effect or seal_sacrifice
-                or KEEP_THREE_SACRIFICE_FIELD in effect):
+                or KEEP_THREE_SACRIFICE_FIELD in effect or KEEP_COUNTER_FIELD in effect
+                or COUNTER_TRUCE in effect
+                or 'scheduled_permanent_return_offered' in resume):
             validate_apnap_choice_effect(self, effect, resume)
         if str(resume.get("stack_ref") or "") != str(
             selection.stack_ref or ""
@@ -363,9 +486,16 @@ class ApnapChoiceOwnerMixin:
         if "selection" in raw_continuation and tuple(options) != issued_options:
             raise GameRuleError("APNAP choice candidates changed")
         required = apnap_required_count(state, seat, options)
-        can_decline = DECLINED_LIFE_LOSS in effect or sacrifice_can_decline(effect)
-        allowed_counts = (0, required) if can_decline else (required,)
-        if not alternative_discard_count(effect.get('count')) and len(values) not in allowed_counts:
+        arbitrary = any_number_sacrifice_count(effect.get("count"))
+        if DECLINED_LIFE_LOSS in effect:
+            allowed_counts = object_payment_cardinalities(effect["count"])
+        else:
+            allowed_counts = (0, required) if COUNTER_TRUCE in effect or sacrifice_can_decline(effect) else (required,)
+
+        def count_is_allowed(count):
+            return count <= required if arbitrary else count in allowed_counts
+
+        if not alternative_discard_count(effect.get('count')) and not count_is_allowed(len(values)):
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         refs: list[str] = []
         selected_incarnations = {}
@@ -378,16 +508,22 @@ class ApnapChoiceOwnerMixin:
             if card.ref not in options or card.ref in refs:
                 raise GameRuleError("Invalid or duplicate APNAP choice")
             refs.append(card.ref)
-            if hand_top or seal_sacrifice:
+            if (hand_top
+                    or seal_sacrifice
+                    or COUNTER_TRUCE in effect
+                    or blight):
                 selected_incarnations[card.ref] = card.logical_object_id
         if (not validate_alternative_discard_choice(self,effect,seat,options,refs,response.get('discard_mode'))
-                and len(refs) not in allowed_counts):
+                and not count_is_allowed(len(refs))):
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         selected = dict(state["selected"])
         selected[seat] = refs
-        if hand_top or seal_sacrifice:
-            identity_field = "hand_top_incarnations" if hand_top else GREATEST_POWER_SACRIFICE_INCARNATIONS
+        if hand_top or seal_sacrifice or COUNTER_TRUCE in effect:
+            identity_field = ("hand_top_incarnations" if hand_top else
+                              COUNTER_TRUCE_INCARNATIONS if COUNTER_TRUCE in effect else GREATEST_POWER_SACRIFICE_INCARNATIONS)
             state[identity_field] = {**state.get(identity_field, {}), **selected_incarnations}
+        if blight:
+            state[OPPONENT_BLIGHT_INCARNATIONS] = {**state.get(OPPONENT_BLIGHT_INCARNATIONS, {}), **selected_incarnations}
         queue = list(state["queue"])[1:]
         state["selected"] = selected
         state["queue"] = queue
@@ -395,22 +531,87 @@ class ApnapChoiceOwnerMixin:
 
     def _declined_object_payments(self, state, player_order, actor):
         effect = state['effect']
-        expected = [seat for seat in self.apnap_order() if effect['players'] == 'all' or seat != actor]
+        if uses_caster_discard_payment(effect):
+            caster = caster_discard_player_for_choice(self, effect, state["resume"])
+            expected = [caster] if caster in self.active_seats else []
+        else:
+            expected = [seat for seat in self.apnap_order() if effect['players'] == 'all' or seat != actor]
         if player_order != expected or set(state['selected']) != set(expected):
             raise GameRuleError('APNAP optional payment seats changed')
         declining = []
         for seat in expected:
             refs = state['selected'][seat]
-            if not isinstance(refs, (list, tuple)) or len(refs) > 1:
-                raise GameRuleError('APNAP optional payment requires at most one object')
+            if not isinstance(refs, (list, tuple)) or len(refs) not in object_payment_cardinalities(effect["count"]):
+                raise GameRuleError("APNAP optional payment requires the full payment or a decline")
             if not refs:
                 declining.append(seat)
-            elif refs[0] not in self._choice_options(seat, effect):
+                continue
+            eligible = self._choice_options(seat, effect)
+            if any(ref not in eligible for ref in refs):
                 raise GameRuleError('An APNAP payment object is no longer eligible')
         return declining
 
-    def _apply_apnap_choices(self, state: dict[str, Any]) -> None:
+    def _sacrifice_discard_followup(self, state, player_order, actor):
+        from ..rules.sacrifice_discard_fallback import sacrifice_discard_fallback_effects, uses_sacrifice_discard_fallback
+
         effect = state["effect"]
+        if not uses_sacrifice_discard_fallback(effect):
+            return ()
+        validate_apnap_choice_effect(self, effect, state["resume"])
+        try:
+            return sacrifice_discard_fallback_effects(
+                actor=actor, player_order=player_order, selected=state["selected"], active_seats=self.active_seats,
+            )
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+
+    def _resolve_apnap_retention(self, state, effect, player_order, selected_refs):
+        """Revalidate retained objects before committing the complementary sacrifice set."""
+        counter_keep = KEEP_COUNTER_FIELD in effect
+        cohort = (KEEP_COUNTER_COHORT if counter_keep else KEEP_THREE_OFFERED_FIELD
+                  if KEEP_THREE_SACRIFICE_FIELD in effect else None)
+        kept_refs = tuple(selected_refs)
+        if cohort:
+            validate_apnap_choice_effect(self, effect, state["resume"])
+            if player_order != self.apnap_order():
+                raise GameRuleError("Retention choices lost their current APNAP player order")
+            try:
+                selected_refs = list(unkept_permanents_in_apnap_order(
+                    player_order, state.get(cohort), state["selected"],
+                    self._retention_candidates(effect, player_order), quota=1 if counter_keep else 3,
+                ))
+            except (TypeError, ValueError, KeyError) as exc:
+                raise GameRuleError(str(exc)) from exc
+        if counter_keep:
+            from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+            selected_refs = [ref for ref in selected_refs if not sacrifice_is_prohibited(
+                self.state, self._resolve_object(effect["actor"], ref, zones={"battlefield"}),
+            )]
+        return counter_keep, cohort, kept_refs, selected_refs
+
+    def _apply_apnap_choices(self, state: dict[str, Any]) -> None:
+        if "scheduled_draw_result" in state["resume"]:
+            from ..drawing.scheduled_draw_coordination import complete_scheduled_apnap_result
+
+            complete_scheduled_apnap_result(self, state)
+            return
+        effect = state["effect"]
+        if COUNTER_TRUCE in effect:
+            from ..rules.apnap_counter_attack_truce import counter_attack_truce_commit_effect
+
+            resume = state["resume"]
+            self._continue_resolution(
+                stack_ref=resume["stack_ref"],
+                effects=[counter_attack_truce_commit_effect(self, state), *resume["effects"]],
+                destination=resume.get("destination"),
+                note=str(resume.get("note") or ""),
+                instruction_pointer=resume["semantic_frame"]["instruction_pointer"],
+            )
+            return
+        if blight_item := validate_opponent_blight_choice(self, effect, state["resume"]):
+            apply_opponent_blight_choices(self, state, blight_item)
+            return
         then = str(effect.get("then") or "sacrifice")
         hand_top = is_affected_hand_top_choice(effect)
         selected_refs: list[str] = []
@@ -427,17 +628,9 @@ class ApnapChoiceOwnerMixin:
                 if ref in selected_refs:
                     raise GameRuleError("APNAP choices contain a duplicate object")
                 selected_refs.append(ref)
-        if KEEP_THREE_SACRIFICE_FIELD in effect:
-            validate_apnap_choice_effect(self, effect, state["resume"])
-            if player_order != self.apnap_order():
-                raise GameRuleError("Keep-three sacrifice lost its current APNAP player order")
-            try:
-                selected_refs = list(unkept_permanents_in_apnap_order(
-                    player_order, state.get(KEEP_THREE_OFFERED_FIELD), state["selected"],
-                    self._keep_three_candidates(effect, player_order),
-                ))
-            except (TypeError, ValueError, KeyError) as exc:
-                raise GameRuleError(str(exc)) from exc
+        counter_keep, cohort, kept_refs, selected_refs = self._resolve_apnap_retention(
+            state, effect, player_order, selected_refs,
+        )
         destination = {
             "sacrifice": "graveyard",
             "discard": "graveyard",
@@ -466,13 +659,18 @@ class ApnapChoiceOwnerMixin:
         if DECLINED_LIFE_LOSS in effect:
             validate_apnap_choice_effect(self, effect, resume)
             declining = self._declined_object_payments(state, player_order, actor)
+        order_arrivals = effect.get(ORDER_GRAVEYARD_ARRIVALS) is True or (
+            SHARED_TYPE_SACRIFICE in effect and effect["players"] == "opponents"
+        )
         semantic_frame = dict(resume.get("semantic_frame") or {})
         instruction_pointer = int(
             semantic_frame.get("instruction_pointer", 0)
         )
         full_count_required = effect.get("require_full_count") is True
         full_count_paid = not full_count_required or len(selected_refs) == int(effect.get("count", 1))
-        if LINKED_FADING_HAND_BINDING in effect:
+        if uses_caster_discard_payment(effect) and not player_order:
+            commit_effects = []
+        elif LINKED_FADING_HAND_BINDING in effect:
             validate_apnap_choice_effect(self, effect, resume)
             commit_effects = [{
                 "op": LINKED_EXILE_RETURN_OPERATION, "phase": "exile", "cards": selected_refs,
@@ -504,15 +702,40 @@ class ApnapChoiceOwnerMixin:
                     ),
                     "event_code": f"choice.{then}",
                     "message": f"Applied simultaneous {then} choices.",
+                    **({ORDER_GRAVEYARD_ARRIVALS: True} if order_arrivals else {}),
                     **sacrifice_life_commit_fields(effect, state, actor=actor, selected_refs=selected_refs),
+                    **ordered_opponent_sacrifice_commit_fields(self, item, effect),
+                    **counted_sacrifice_token_commit_fields(
+                        effect, state, actor=actor, selected_refs=selected_refs,
+                        incarnation_field=GREATEST_POWER_SACRIFICE_INCARNATIONS,
+                    ),
+                    **any_number_sacrifice_commit_fields(
+                        self, item, effect, state, actor=actor, selected_refs=selected_refs,
+                        incarnation_field=GREATEST_POWER_SACRIFICE_INCARNATIONS,
+                    ),
+                    **({ORDER_GRAVEYARD_ARRIVALS: True} if counter_keep else {}),
+                    **({SELECTED_DISCARD_DRAW_FIELD: 1} if SELECTED_DISCARD_DRAW_FIELD in effect else {}),
                     **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS], 'declining_players': declining}
                        if declining else {}),
                 }
             ]
+        placement, restriction = (), ()
+        if counter_keep:
+            identities = {ref: identity for rows in state[cohort].values() for ref, identity in rows.items()}
+            placement, restriction = keep_counter_followups(
+                kept_refs, identities, actor=actor, source=self._stack_source_ref(item) or item.ref,
+            )
         self._continue_resolution(
             stack_ref=stack_ref,
             effects=[
+                *placement,
                 *commit_effects,
+                *restriction,
+                *self._sacrifice_discard_followup(state, player_order, actor),
+                *shared_sacrifice_followup(self, effect, actor=actor, selected=selected_refs, declining=declining),
+                *selected_discard_draw_followup(self, item, effect, selected_refs),
+                *zero_land_sacrifice_search(self, item, effect, selected_refs),
+                *zero_sacrifice_search_effects(self, effect, actor, selected_refs),
                 *(dict(item) for item in resume.get("effects", [])),
             ],
             destination=resume.get("destination"),

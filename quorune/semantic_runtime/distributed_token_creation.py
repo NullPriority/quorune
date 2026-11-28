@@ -14,12 +14,35 @@ from ..fixed_token_production import (
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.committed_quantity_followups import COMMITTED_TOKEN_CREATOR_COUNTS_FIELD
+from ..rules.qualified_token_creators import uses_qualified_token_creators, resolved_qualified_token_creators
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import IntentPlan
 from .token_creation_intent import DistributedTokenCreationIntent
 
 
 def _distributed_creators(raw, actor, apnap):
+    from ..rules.tempt_draw_token import CREATORS, resolved_tempt_creators
+
+    if CREATORS in raw:
+        return resolved_tempt_creators(raw, actor, apnap), ()
+    from ..rules.linked_exile_owner_tokens import OWNERS_FIELD, resolved_linked_exile_token_owners
+
+    if OWNERS_FIELD in raw:
+        return resolved_linked_exile_token_owners(raw, apnap), ()
+    from ..rules.event_optional_draw_shapes import ACCEPTED_TOKEN_CREATORS_FIELD
+
+    if ACCEPTED_TOKEN_CREATORS_FIELD in raw:
+        creators = raw[ACCEPTED_TOKEN_CREATORS_FIELD]
+        if (set(raw) != {"op", "controller", "token", ACCEPTED_TOKEN_CREATORS_FIELD}
+                or raw["op"] != FIXED_DISTRIBUTED_TOKEN_OPERATION
+                or not isinstance(creators, (list, tuple)) or not creators
+                or any(type(seat) is not str or seat == actor for seat in creators)
+                or tuple(creators) != tuple(seat for seat in apnap if seat in creators)
+                or raw["token"]["quantity"] != 1):
+            raise ValueError("An opponent offer requires its distinct accepted players in APNAP order")
+        return tuple(creators), ()
+    if uses_qualified_token_creators(raw):
+        return resolved_qualified_token_creators(raw, apnap), ()
     if COMMITTED_TOKEN_CREATOR_COUNTS_FIELD in raw:
         counts = raw[COMMITTED_TOKEN_CREATOR_COUNTS_FIELD]
         fields = {"op", "controller", "token", COMMITTED_TOKEN_CREATOR_COUNTS_FIELD}
@@ -37,6 +60,11 @@ def _distributed_creators(raw, actor, apnap):
         if type(target) is not str or target == actor or target not in apnap:
             raise ValueError("Distributed token target must be a current opponent")
         return tuple(seat for seat in apnap if seat in {actor, target}), ()
+    if scope is FixedTokenCreatorScope.CONTROLLER_AND_CHOSEN_OPPONENT:
+        opponent = raw["opponent"]
+        if type(opponent) is not str or opponent == actor or opponent not in apnap:
+            raise ValueError("Distributed token creator must be the chosen current opponent")
+        return tuple(seat for seat in apnap if seat in {actor, opponent}), ()
     return tuple(seat for seat in apnap if scope is FixedTokenCreatorScope.EACH_PLAYER or seat != actor), ()
 
 
@@ -60,11 +88,23 @@ class DistributedTokenCreationHandler:
             token = raw["token"]
             if raw["controller"] != actor or token.get("controller") not in {actor, "$controller"}:
                 raise ValueError("Distributed token creation controller changed")
-            if not fixed_token_effect_shape_is_closed({**token, "controller": "$controller"}):
+            quantity = token.get("quantity")
+            zero = type(quantity) is int and quantity == 0
+            if not fixed_token_effect_shape_is_closed({
+                **token, "controller": "$controller", **({"quantity": 1} if zero else {}),
+            }):
                 raise ValueError("Distributed token creation requires one closed token definition")
             creators, quantities = _distributed_creators(raw, actor, context.query.apnap_order)
             if not isinstance(selections, (list, tuple)):
                 raise ValueError("Distributed token replacement choices must be ordered")
+            if zero:
+                if raw.get("scope") != FixedTokenCreatorScope.EACH_PLAYER.value:
+                    return IntentPlan(
+                        operation=self.operation, handler_id=self.handler_id, intents=(), result_shape="by_player",
+                    )
+                if selections:
+                    raise ValueError("Zero token creation has no replacement choices")
+                creators = ()
             intent = DistributedTokenCreationIntent(
                 actor, creators, FrozenMap(token), source.stack_ref,
                 source.instruction_pointer, context.default_reason, tuple(selections),

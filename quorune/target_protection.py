@@ -125,9 +125,9 @@ def target_protection_verdict(
         and snapshot.acting_controller != snapshot.protected_controller
     ):
         return TargetProtectionVerdict.HEXPROOF
-    if snapshot.target_is_player:
-        return TargetProtectionVerdict.ALLOWED
     if snapshot.protection_verdict is ProtectionVerdict.BLOCKED:
+        if snapshot.target_is_player:
+            return TargetProtectionVerdict.PLAYER_PROTECTION
         return TargetProtectionVerdict.PROTECTION
     if snapshot.protection_verdict is ProtectionVerdict.UNRESOLVED:
         return TargetProtectionVerdict.UNRESOLVED_PROTECTION

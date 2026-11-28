@@ -12,6 +12,21 @@ else
     exit 1
 fi
 
+# Git supplies the actual outgoing refs on standard input. Bind the checks to
+# those objects before starting any expensive work.
+HEAD_OID=$(git rev-parse HEAD)
+BRANCH=$(git branch --show-current)
+if [ -n "${QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON:-}" ]; then
+    "$PYTHON" "$ROOT/scripts/validate_push_refs.py" --head "$HEAD_OID" --branch "$BRANCH" --source-checkpoint
+    if ! git diff --quiet --ignore-submodules -- ||
+       ! git diff --cached --quiet --ignore-submodules --; then
+        echo "Quorune pre-push: cloud source checkpoints require a clean tracked worktree." >&2
+        exit 1
+    fi
+else
+    "$PYTHON" "$ROOT/scripts/validate_push_refs.py" --head "$HEAD_OID" --branch "$BRANCH"
+fi
+
 # Check current artifacts and the pushed ancestry before dependency validation
 # or census work. A generated receipt cannot waive repository safety policy.
 "$PYTHON" "$ROOT/scripts/validate_repository.py" --tracked-only
@@ -26,22 +41,6 @@ fi
 # generated writer/check, so a new typed operation cannot first fail in CI.
 "$PYTHON" "$ROOT/scripts/test_shards.py" validate
 "$PYTHON" "$ROOT/scripts/build_test_database.py" validate-ci-dependencies --reuse-local-artifact
-
-# A deliberately named feature-branch checkpoint may be pushed before the
-# generated bundle exists so GitHub can perform the expensive writers. This is
-# not final publication authority: the next push must carry an exact receipt.
-if [ -n "${QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON:-}" ]; then
-    BRANCH=$(git branch --show-current)
-    if [ -z "$BRANCH" ] || [ "$BRANCH" = "main" ]; then
-        echo "Quorune pre-push: cloud source checkpoints are forbidden on main or detached HEAD." >&2
-        exit 1
-    fi
-    if ! git diff --quiet --ignore-submodules -- || \
-       ! git diff --cached --quiet --ignore-submodules --; then
-        echo "Quorune pre-push: cloud source checkpoints require a clean tracked worktree so validation matches the pushed commit." >&2
-        exit 1
-    fi
-fi
 
 # Both publication routes must pass the same cheap, full-branch source checks.
 # A current generated receipt cannot stand in for explicit text-I/O validation.
@@ -83,3 +82,11 @@ else
         run_finalizer
     fi
 fi
+
+# Match PR / Plan against the committed source and reports that Git will send.
+if ! git diff --quiet --ignore-submodules -- ||
+   ! git diff --cached --quiet --ignore-submodules --; then
+    echo "Quorune pre-push: commit the generated outputs before publishing the PR head." >&2
+    exit 1
+fi
+"$PYTHON" "$ROOT/scripts/update_architecture_audit.py" --check-source-readiness

@@ -46,6 +46,46 @@ def compiled(body='defending player may draw a card.'):
 
 
 class EventOptionalDrawModelTests(unittest.TestCase):
+    def test_tempting_pair_keeps_its_frozen_recipe_and_distinct_order_authority(self):
+        from quorune.compiler.event_optional_draw_results import EVENT_OPTIONAL_DRAW_MECHANIC, tempting_draw_token_template
+        from quorune.replacement.immutable import FrozenMap
+
+        text = (
+            "Draw a card and create a 1/1 green Saproling creature token. "
+            "Then each opponent may draw a card and create a 1/1 green Saproling creature token. "
+            "For each opponent who does, you draw a card and you create a 1/1 green Saproling creature token."
+        )
+        _, effects, schema, mechanics = tempting_draw_token_template(text)
+        self.assertIsNone(schema)
+        self.assertIn(EVENT_OPTIONAL_DRAW_MECHANIC, mechanics)
+        draw, token, offer = effects
+        self.assertEqual(token, offer["token"])
+        self.assertEqual("Saproling Token", token["name"])
+        self.assertIs(draw["private"], True)
+        deps = event_optional_draw_node_capabilities(effects=effects, target_schema=None, mechanic_ids=mechanics)
+        self.assertIn("token.creation.fixed_distributed", deps)
+        self.assertIn("zone.draw.library_to_hand", deps)
+        materialized = FrozenMap({
+            **offer, "cast_participant": "C", "player": "A",
+            "cast_draw_order": ("D", "A", "B"), "cast_draw_choices": ("draw",),
+            "token": {**token, "controller": "C"},
+        })
+        self.assertEqual(set(deps), set(validate_event_optional_draw_payload(materialized, materialized=True)))
+        for altered in (({**draw, "count": True}, token, offer), (token, draw, offer),
+                        (draw, {**token, "quantity": True}, offer)):
+            with self.subTest(altered=altered):
+                self.assertEqual((), event_optional_draw_node_capabilities(
+                    effects=altered, target_schema=None, mechanic_ids=mechanics,
+                ))
+        for changed in (
+            text.replace("each opponent may", "each player may"),
+            text.replace("who does", "who draws"),
+            text.replace("you create a 1/1 green", "you create a 2/2 green"),
+            text + " Scry 1.",
+        ):
+            with self.subTest(changed=changed):
+                self.assertIsNone(tempting_draw_token_template(changed))
+
     def snapshot(self, permission=None):
         return old.query(permission_a=DrawPermission('A', 0), permission_b=permission or DrawPermission('B', 0))
 

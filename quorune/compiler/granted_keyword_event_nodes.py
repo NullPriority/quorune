@@ -11,7 +11,7 @@ from .conditional_granted_ability_templates import (
 )
 from .continuous_templates import (
     attached_quoted_ability_handler, attached_quoted_ability_text,
-    fixed_query_quoted_ability_handler, fixed_query_quoted_ability_text,
+    fixed_power_toughness_anthem_handler, fixed_query_quoted_ability_handler, fixed_query_quoted_ability_text,
 )
 from .keyword_event_effect_nodes import fixed_keyword_event_effect_node, fixed_keyword_event_effect_spec
 from .oracle_source_text import without_ability_word_label
@@ -20,6 +20,9 @@ from .oracle_source_text import without_ability_word_label
 GRANTED_KEYWORD_EVENT_CAPABILITY = 'continuous.ability.fixed_keyword_event_grant'
 _KEYWORD = re.compile(r'\b(?:Afflict|Annihilator|Firebending|Mobilize|Soulshift) [1-9]\d*\b'
                       r'|\b(?:Ingest|Exploit|Provoke|Persist|Undying)\b', re.I)
+_NONHUMAN_UNDYING_ANTHEM = re.compile(
+    r'(Other non-Human creatures you control) get \+1/\+1 and have undying\.', re.I,
+)
 
 
 def _evolve_grant_shell(material_line):
@@ -41,6 +44,14 @@ def _evolve_grant_shell(material_line):
 
 
 def _grant_shell(material_line, source_name):
+    if re.fullmatch(r"Equipped creature has myriad\.?", material_line.strip(), re.I):
+        def compile_equipped_myriad(fragment, capabilities):
+            return attached_quoted_ability_handler(
+                'Equipped creature has "Myriad".', source_name=source_name,
+                fragment=fragment, fragment_capabilities=capabilities,
+            )
+        return "Myriad", "myriad", compile_equipped_myriad
+
     evolve = _evolve_grant_shell(material_line)
     if evolve is not None:
         return evolve
@@ -93,8 +104,14 @@ def _keyword_inner_node(spec, **values):
             gate=gate, residual_ids=())
         # These keyword definitions observe every permanent's graveyard arrival.
         return replace(node, event='permanent.graveyard.self') if node is not None else None
-    node = fixed_keyword_event_effect_node(node_id=values['node_id'], line=values['line'],
-        material_line=values['material_line'], span=values['span'], mechanics=(spec.keyword,),
+    if spec == "myriad":
+        from .myriad_nodes import fixed_myriad_keyword_node
+
+        lower, keyword = fixed_myriad_keyword_node, "myriad"
+    else:
+        lower, keyword = fixed_keyword_event_effect_node, spec.keyword
+    node = lower(node_id=values['node_id'], line=values['line'],
+        material_line=values['material_line'], span=values['span'], mechanics=(keyword,),
         capability_registry=values['capability_registry'], capability_profile=values['capability_profile'],
         residuals=values['residuals'])
     if node is None:
@@ -108,7 +125,16 @@ def _keyword_inner_node(spec, **values):
 def compile_granted_keyword_event_nodes(*, record, face_id, node_id, line, material_line, span,
         source_name, trusted_mechanics, capability_registry, capability_profile, residuals,
         effect_template, trigger_effect_template, material_line_for):
-    shell = _grant_shell(material_line, source_name)
+    compound = _NONHUMAN_UNDYING_ANTHEM.fullmatch(material_line)
+    anthem = None
+    if compound is not None:
+        subject = compound[1]
+        anthem = fixed_power_toughness_anthem_handler(f"{subject} get +1/+1.")
+        if anthem is None:
+            return None
+        shell = _grant_shell(f"{subject} have undying.", source_name)
+    else:
+        shell = _grant_shell(material_line, source_name)
     if shell is None:
         return None
     keyword, spec, compile_shell = shell
@@ -118,11 +144,20 @@ def compile_granted_keyword_event_nodes(*, record, face_id, node_id, line, mater
         if compiled is None:
             return None
         _template_id, descriptor, capabilities = compiled
-        return ('continuous-fixed-keyword-event-grant-v1', descriptor,
-                tuple(sorted({*capabilities, GRANTED_KEYWORD_EVENT_CAPABILITY})))
+        required = (*capabilities, GRANTED_KEYWORD_EVENT_CAPABILITY)
+        if anthem is None:
+            return ('continuous-fixed-keyword-event-grant-v1', descriptor, tuple(sorted(set(required))))
+        from ..rules.nonhuman_undying_anthem import (
+            NONHUMAN_UNDYING_ANTHEM_DEPENDENCIES, NONHUMAN_UNDYING_ANTHEM_TEMPLATE,
+        )
+
+        if descriptor['condition'] != anthem[1]['condition']:
+            return None
+        return (NONHUMAN_UNDYING_ANTHEM_TEMPLATE, (descriptor, anthem[1]),
+                tuple(sorted({*required, *NONHUMAN_UNDYING_ANTHEM_DEPENDENCIES})))
 
     from .attached_granted_ability_nodes import _compile_granted_ability_pair
-    return _compile_granted_ability_pair(record=record, face_id=face_id, node_id=node_id,
+    pair = _compile_granted_ability_pair(record=record, face_id=face_id, node_id=node_id,
         line=line, material_line=material_line, span=span, quoted=keyword, compile_shell=bind_shell,
         runtime_coverage='fixed_keyword_event_grant',
         dependency_reason='A fixed keyword grant requires its ordinary inner program and current grant owner',
@@ -131,3 +166,8 @@ def compile_granted_keyword_event_nodes(*, record, face_id, node_id, line, mater
         compile_inner=lambda **values: _keyword_inner_node(spec, **values),
         effect_template=effect_template, trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for)
+    if pair is not None and anthem is not None:
+        outer, granted = pair
+        outer = replace(outer, runtime_coverage=(*outer.runtime_coverage, CURRENT_ABILITY_FRAGMENT_COVERAGE))
+        return outer, granted
+    return pair

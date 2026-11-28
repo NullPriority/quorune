@@ -48,10 +48,11 @@ def target_player_sequence_node_capabilities(*,effects,target_schema,mechanic_id
 
 
 def target_player_sequence_runtime_dependencies(program):
-    hand_inspections = tuple(
-        effect for effect in nested_effects((program.effects, getattr(program, "handlers", ())))
-        if effect.get("op") == FIXED_HAND_INSPECTION_OPERATION
-    )
+    from .fractional_player_result_shapes import validate_half_library_draw_program_scope
+
+    nested = tuple(nested_effects((program.effects, getattr(program, "handlers", ()))))
+    validate_half_library_draw_program_scope(program, nested)
+    hand_inspections = tuple(effect for effect in nested if effect.get("op") == FIXED_HAND_INSPECTION_OPERATION)
     if TARGET_PLAYER_SEQUENCE_MECHANIC not in program.coverage:
         if any(effect.get("inspection") == HandInspectionMode.REVEAL.value
                and effect.get("action") == HandInspectionAction.OBSERVE.value for effect in hand_inspections):

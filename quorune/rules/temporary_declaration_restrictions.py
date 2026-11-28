@@ -20,7 +20,10 @@ from ..continuous_effect_state import (
     create_resolution_declaration_rule_effect,
 )
 from ..declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
-from ..declaration_rule_effects import ATTACK_BLOCK_PROHIBITION, ResolutionDeclarationRuleEffect
+from ..declaration_rule_effects import (
+    ATTACK_BLOCK_PROHIBITION, OPPONENT_BLOCKING_PROHIBITION, OPPONENT_BLOCKING_PROHIBITION_KIND,
+    ResolutionDeclarationRuleEffect,
+)
 from ..object_query import ObjectQueryResult
 from ..characteristic_read_frames import characteristic_read_method
 
@@ -73,6 +76,7 @@ class CurrentDeclarationRestriction:
     source: Any
     template: DeclarationRestrictionTemplate
     giver: Any | None = None
+    block_opponents_of: str | None = None
 
 
 def temporary_declaration_restriction(
@@ -123,6 +127,27 @@ def temporary_declaration_restriction(
     )
 
 
+def single_target_schema_from_declaration_group(
+    schema: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Validate the represented group bounds and derive its individual target schema."""
+    count_fields = set(schema) & {"count", "up_to", "min", "max"}
+    if count_fields == {"min", "max"}:
+        if any(type(schema[field]) is not int for field in count_fields) or (schema["min"], schema["max"]) != (1, 2):
+            return None
+    elif count_fields in ({"count"}, {"count", "up_to"}):
+        maximum = schema["count"]
+        if type(maximum) is not int or not 1 <= maximum <= 6:
+            return None
+        if "up_to" in schema and (type(schema["up_to"]) is not int or schema["up_to"] != maximum):
+            return None
+    else:
+        return None
+    single = {key: value for key, value in schema.items() if key not in count_fields}
+    single["count"] = 1
+    return single
+
+
 def commit_temporary_declaration_restriction(
     host: TemporaryDeclarationRestrictionHost,
     *,
@@ -131,6 +156,7 @@ def commit_temporary_declaration_restriction(
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
     expires_on_next_turn_of: str | None = None,
     attack_defender: str | None = None,
+    block_opponents_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect:
     """Create one locked, duration-bound declaration rule."""
 
@@ -144,7 +170,8 @@ def commit_temporary_declaration_restriction(
         raise TemporaryDeclarationRestrictionError(
             "Temporary declaration restrictions require typed resolution source identity"
         )
-    restriction = temporary_declaration_restriction(kind, attack_defender=attack_defender)
+    restriction = (OPPONENT_BLOCKING_PROHIBITION if kind == OPPONENT_BLOCKING_PROHIBITION_KIND
+                   else temporary_declaration_restriction(kind, attack_defender=attack_defender))
     if (isinstance(restriction, DeclarationRequirementTemplate) and restriction.defender is not None
             and restriction.defender not in host.state.players):
         raise TemporaryDeclarationRestrictionError("A specific attack requirement must bind a represented player")
@@ -156,6 +183,7 @@ def commit_temporary_declaration_restriction(
             restriction=restriction,
             duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
             expires_on_next_turn_of=expires_on_next_turn_of,
+            block_opponents_of=block_opponents_of,
         )
     except (ContinuousEffectError, ContinuousEffectStateError) as exc:
         raise TemporaryDeclarationRestrictionError(str(exc)) from exc
@@ -223,6 +251,7 @@ def current_declaration_restrictions(
                     participant_id=f"{source.ref}:resolved:{index}",
                     source=source,
                     template=effect.restriction,
+                    block_opponents_of=effect.block_opponents_of,
                 )
             )
     from .bound_static_declarations import current_bound_declaration_rules
@@ -241,3 +270,91 @@ __all__ = [
     "current_declaration_restrictions",
     "temporary_declaration_restriction",
 ]
+
+
+SOURCE_CONTROLLED_BLOCK_CAPABILITY = "continuous.resolution.declaration_rule_while_source_controlled"
+SOURCE_CONTROLLED_BLOCK_MECHANIC = "source-controlled-block-prohibition"
+
+
+def source_controlled_block_target_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "up_to": 1, "types_any": ["creature"]}
+
+
+def source_controlled_block_effects():
+    from ..declaration_rule_effects import SOURCE_CONTROLLED_BLOCK_FIELD
+    from ..ring_model import RING_TEMPTATION_OPERATION
+
+    return (
+        {"op": "grant_declaration_restriction_until_end_of_turn", "card": "$target.0",
+         "restriction": "cant_block", SOURCE_CONTROLLED_BLOCK_FIELD: 1},
+        {"op": RING_TEMPTATION_OPERATION, "player": "$controller"},
+    )
+
+
+def source_controlled_block_node_capabilities(effects, target_schema):
+    from ..declaration_rule_effects import SOURCE_CONTROLLED_BLOCK_FIELD
+    from ..replacement.immutable import thaw_value
+    from ..ring_model import RING_TEMPTATION_CAPABILITY
+
+    if not any(SOURCE_CONTROLLED_BLOCK_FIELD in effect for effect in effects):
+        return None
+    if (thaw_value(effects) != list(source_controlled_block_effects())
+            or type(effects[0].get(SOURCE_CONTROLLED_BLOCK_FIELD)) is not int
+            or thaw_value(target_schema) != source_controlled_block_target_schema()):
+        return ()
+    return (
+        SOURCE_CONTROLLED_BLOCK_CAPABILITY, "combat.declaration.typed_components",
+        "target.revalidate_resolution", RING_TEMPTATION_CAPABILITY,
+    )
+
+
+def source_controlled_block_program_dependencies(program):
+    owners = source_controlled_block_node_capabilities(program.effects, program.target_schema)
+    if owners is None:
+        return ()
+    if (not owners or (program.event, program.active_zone) != ("saga.chapter.1", "battlefield")
+            or program.event_condition is not None or program.cost_schema is not None or program.handlers):
+        raise ValueError("Source-controlled blocking requires its complete original Saga chapter")
+    return owners
+
+
+def apply_source_controlled_block(host, item, effect, *, actor, reason):
+    from ..continuous_effect_model import ContinuousObjectIdentity
+    from ..control_effects import source_continuity_snapshot
+    from ..declaration_rule_effects import ControlledDeclarationSource, SOURCE_CONTROLLED_BLOCK_FIELD
+    from ..errors import GameRuleError
+
+    expected = dict(source_controlled_block_effects()[0])
+    expected["card"] = effect.get("card")
+    actual = {key: value for key, value in effect.items() if key != "_runtime_source"}
+    if type(effect.get(SOURCE_CONTROLLED_BLOCK_FIELD)) is not int or actual != expected:
+        raise GameRuleError("Controlled blocking requires the exact original scoped instruction")
+    source = ResolutionEffectSource.from_effect(effect)
+    program = host.semantics.get(item.semantic_key) if item is not None else None
+    owners = source_controlled_block_program_dependencies(program) if program is not None else ()
+    if (item is None or item.controller != actor or item.context.get("currently_resolving") is not True
+            or not owners or not host.semantic_program_is_current_trusted(program)
+            or not set(owners) <= set(program.capability_dependencies)
+            or effect["card"] is not None and tuple(item.targets) != (effect["card"],)
+            or (item.source_object_id, item.context.get("source_logical_object_id"))
+                != (source.object_id, source.logical_object_id)):
+        raise GameRuleError("Controlled blocking lost its original resolving chapter and source")
+    if effect["card"] is None:
+        return []
+    card = host.state.cards.get(source.object_id)
+    if (card is None or card.zone != "battlefield" or card.phased_out
+            or card.logical_object_id != source.logical_object_id or card.controller != actor):
+        return []
+    target = host._resolve_object(actor, effect["card"], zones={"battlefield"})
+    controlled = ControlledDeclarationSource(
+        ContinuousObjectIdentity(card.object_id, card.logical_object_id), actor, source_continuity_snapshot(card),
+    )
+    rule = create_resolution_declaration_rule_effect(
+        host, source=source, targets=(target,), restriction=temporary_declaration_restriction("cant_block"),
+        duration=ContinuousEffectDuration.UNTIL_SOURCE_CONTROL_CHANGES, controlled_source=controlled,
+    )
+    if rule is None:
+        raise GameRuleError("Controlled blocking requires the canonical declaration journal")
+    host._log(actor, "combat.declaration_rule", "The targeted creature cannot block while control of the source lasts.",
+              {"object": target.ref, "source": card.ref, "reason": reason}, changed_objects=[target.object_id])
+    return target.ref

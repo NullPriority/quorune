@@ -76,6 +76,7 @@ class WrapperSpec:
     position: int
     kind: str
     default_values: tuple[str, ...] = ()
+    database_parameter: tuple[str, int] | None = None
 
 
 def _canonical_relative_path(value: str, *, field: str) -> str:
@@ -784,6 +785,8 @@ def _wrapper_inventory(
             resolved = _expression_values(default, {})
             if resolved is not None:
                 defaults[parameter.arg] = resolved
+        statements = node.body[1:] if ast.get_docstring(node, clean=False) is not None else node.body
+        first_value = getattr(statements[0], "value", None) if statements else None
         for candidate in walk(node):
             if not isinstance(candidate, ast.Call) or not candidate.args:
                 continue
@@ -811,6 +814,14 @@ def _wrapper_inventory(
                 or argument.id not in parameter_positions
             ):
                 continue
+            database_parameter = None
+            # A direct first lookup receives the caller's database unchanged.
+            if (
+                candidate is first_value
+                and isinstance(receiver, ast.Name)
+                and receiver.id in parameter_positions
+            ):
+                database_parameter = receiver.id, parameter_positions[receiver.id]
             wrappers.add(
                 WrapperSpec(
                     name=node.name,
@@ -818,9 +829,19 @@ def _wrapper_inventory(
                     position=parameter_positions[argument.id],
                     kind=kind,
                     default_values=defaults.get(argument.id, ()),
+                    database_parameter=database_parameter,
                 )
             )
-    return tuple(sorted(wrappers, key=lambda row: (row.name, row.kind, row.position)))
+    return tuple(sorted(wrappers, key=lambda row: (
+        row.name, row.kind, row.position, row.parameter, row.default_values,
+        row.database_parameter or ("", -1),
+    )))
+
+
+def _call_argument(call: ast.Call, parameter: str, position: int) -> ast.AST | None:
+    if 0 <= position < len(call.args):
+        return call.args[position]
+    return next((item.value for item in call.keywords if item.arg == parameter), None)
 
 
 def _local_support_paths(
@@ -861,12 +882,76 @@ def _relative_requirement_path(value: str, *, root: Path) -> str | None:
         return None
 
 
+def _builder_module_literals(
+    tree: ast.Module, environment: Mapping[str, tuple[str, ...]],
+) -> dict[str, tuple[str, ...]]:
+    literals = dict(environment)
+    for statement in tree.body:
+        if not isinstance(statement, (ast.Assign, ast.AnnAssign)):
+            continue
+        targets = statement.targets if isinstance(statement, ast.Assign) else (statement.target,)
+        names = [target.id for target in targets if isinstance(target, ast.Name) and target.id.isupper()]
+        if not names:
+            continue
+        values = _expression_values(statement.value, literals)
+        for name in names:
+            if values is None:
+                literals.pop(name, None)
+            else:
+                literals[name] = values
+    return literals
+
+
+def _fixture_argument_values(
+    argument: ast.AST, environment: Mapping[str, tuple[str, ...]],
+) -> tuple[str, ...]:
+    if isinstance(argument, (ast.List, ast.Tuple)):
+        return tuple(
+            value
+            for item in argument.elts
+            for value in _fixture_argument_values(item, environment)
+        )
+    if isinstance(argument, ast.ListComp) and len(argument.generators) == 1:
+        generator, = argument.generators
+        if isinstance(generator.target, ast.Name) and not generator.ifs and not generator.is_async:
+            values = _expression_values(generator.iter, environment)
+            if values is not None:
+                return _expression_values(argument.elt, {**environment, generator.target.id: values}) or ()
+    return _expression_values(argument, environment) or ()
+
+
+def _static_builder_inputs(
+    call: ast.Call,
+    *,
+    call_name: str,
+    environment: Mapping[str, tuple[str, ...]],
+    root: Path,
+    sources: DependencySourceScope,
+) -> tuple[tuple[str, str], ...]:
+    if call_name == "DeckEntry":
+        name = call.args[0] if call.args else next(
+            (item.value for item in call.keywords if item.arg == "name"), None,
+        )
+        return tuple(("card_name", value) for value in _expression_values(name, environment) or ())
+    if call_name != "build_fixture_database" or not call.args:
+        return ()
+    requirements = []
+    for value in _fixture_argument_values(call.args[0], environment):
+        name = _relative_requirement_path(value, root=root)
+        if (name is not None and name.startswith("tests/fixtures/") and name.endswith(".json")
+                and sources.is_file(root / name)):
+            requirements.append(("local_fixture_file", name))
+    return tuple(requirements)
+
+
 def discover_module_requirements(
     module: str,
     *,
     root: Path,
     sources: DependencySourceScope | None = None,
+    declared_sites: frozenset[tuple[str, str]] = frozenset(),
 ) -> tuple[tuple[Requirement, ...], tuple[DynamicSite, ...], tuple[str, ...]]:
+    root = root.resolve()
     test_path = root / "tests" / f"{module}.py"
     if not test_path.is_file():
         return (), (), (f"Missing test source: tests/{module}.py",)
@@ -926,9 +1011,13 @@ def discover_module_requirements(
         local_class_modes, name_modes = modes_by_path[path]
         class_modes = {**combined_class_modes, **local_class_modes}
         function_parameters: dict[str, set[str]] = {}
+        function_nodes: dict[str, ast.AST] = {}
+        builder_literals = None
+        builder_environments: dict[str, Mapping[str, tuple[str, ...]]] = {}
         for node in walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 symbol = _source_symbol(node, functions)
+                function_nodes[symbol] = node
                 function_parameters[symbol] = {
                     argument.arg
                     for argument in (
@@ -942,6 +1031,28 @@ def discover_module_requirements(
             environment = environments.get(symbol, environments["<module>"])
             provenance = Provenance(module, relative, symbol, int(call.lineno))
             call_name = _call_name(call.func)
+            if call_name == "build_fixture_database" or (
+                call_name == "DeckEntry" and class_modes.get(_class_for_symbol(symbol)) == "compact"
+            ):
+                if builder_literals is None:
+                    builder_literals = _builder_module_literals(tree, environments["<module>"])
+                if symbol not in builder_environments:
+                    function = function_nodes.get(symbol)
+                    local_names = set(function_parameters.get(symbol, ()))
+                    if function is not None:
+                        local_names.update(
+                            node.id for node in walk(function)
+                            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store)
+                        )
+                    builder_environments[symbol] = {
+                        **{name: values for name, values in builder_literals.items() if name not in local_names},
+                        **environment,
+                    }
+                for kind, requirement in _static_builder_inputs(
+                    call, call_name=call_name, environment=builder_environments[symbol],
+                    root=root, sources=sources,
+                ):
+                    requirements.add(Requirement(kind, requirement, "static", provenance))
             direct_kind = {
                 "lookup": "card_name",
                 "by_oracle_id": "oracle_id",
@@ -1019,18 +1130,15 @@ def discover_module_requirements(
                             )
 
             for wrapper in wrappers_by_name.get(call_name, ()):
-                argument: ast.AST | None = None
-                if 0 <= wrapper.position < len(call.args):
-                    argument = call.args[wrapper.position]
-                else:
-                    argument = next(
-                        (
-                            keyword.value
-                            for keyword in call.keywords
-                            if keyword.arg == wrapper.parameter
-                        ),
-                        None,
-                    )
+                # A dynamic declaration can intentionally make a fixture-local
+                # card part of the shared catalog. Preserve that checked input.
+                if wrapper.database_parameter is not None and (relative, symbol) not in declared_sites:
+                    receiver = _call_argument(call, *wrapper.database_parameter)
+                    if receiver is not None and _receiver_mode(
+                        receiver, symbol=symbol, class_modes=class_modes, name_modes=name_modes,
+                    ) == "local":
+                        continue
+                argument = _call_argument(call, wrapper.parameter, wrapper.position)
                 values = (
                     wrapper.default_values
                     if argument is None and wrapper.default_values

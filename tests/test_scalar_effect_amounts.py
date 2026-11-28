@@ -46,6 +46,51 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_postplacement_source_counter_quantity_is_shared_by_all_player_results(self):
+        from quorune.compiler.public_query_effect_amounts import public_query_amount_shape_context
+
+        oracle = (
+            "At the beginning of your upkeep, put three charge counters on this enchantment. "
+            "Then each player creates X Food tokens and this enchantment deals X damage to each player, "
+            "where X is the number of charge counters on this enchantment."
+        )
+        ir = self.compile(oracle, type_line="Enchantment")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIsNone(node.target_schema)
+        placement, distribution, damage = node.effects
+        self.assertEqual(("place_counters", "charge", 3), (placement["op"], placement["counter"], placement["amount"]))
+        self.assertEqual("each_player", distribution["scope"])
+        self.assertEqual("Food Token", distribution["token"]["name"])
+        self.assertEqual("damage_fixed_set", damage["op"])
+        self.assertEqual([{"kind": "players", "relation": "all"}], damage["groups"])
+        self.assertEqual(distribution["token"]["quantity"], damage["amount"])
+        self.assertEqual("charge", damage["amount"]["counter_name"])
+        self.assertTrue(damage["amount"]["binding_id"])
+
+        for altered_amount in ({"binding_id": "split-quantity"}, {"counter_name": "quest"}, {"coefficient": 2}):
+            with self.subTest(altered_amount=altered_amount):
+                changed = deepcopy(node.effects)
+                changed[1]["token"]["quantity"].update(altered_amount)
+                self.assertIsNone(public_query_amount_shape_context(changed, set(node.mechanics)))
+        self.assertIsNone(public_query_amount_shape_context(
+            (placement, damage, distribution), set(node.mechanics),
+        ))
+
+        for before, after in (
+            ("Then each player", "Then each opponent"),
+            ("damage to each player", "damage to each opponent"),
+            ("number of charge", "number of quest"),
+            ("counters on this enchantment.", "counters on target enchantment."),
+            ("Then each player creates", "Then each player may create"),
+        ):
+            with self.subTest(excluded=after):
+                self.assertTrue(self.compile(oracle.replace(before, after), type_line="Enchantment").material_residuals)
+        with mock.patch(
+            "quorune.compiler.source_counter_quantity_sequences._shared_all_player_results", return_value=None,
+        ):
+            self.assertTrue(self.compile(oracle, type_line="Enchantment").material_residuals)
+
     def test_target_mana_value_sequence_promotes_only_its_validated_fixed_shape(self):
         from dataclasses import replace
         from quorune.compiler.public_query_effect_amounts import public_query_amount_program_is_closed
@@ -980,8 +1025,9 @@ class ScalarEffectAmountActionTests(unittest.TestCase):
         self.activate(session, source)
         self.assertEqual(1, len(session.state.stack))
         source.phased_out = True
-        # The checkpoint explicitly contains this constructed phasing state;
-        # no unrecorded mutation occurs after the unrelated action starts.
+        # Reissue the original priority offer for the constructed phasing
+        # state before the unrelated action starts.
+        session.engine.permissions.invalidate_current()
         self.seal(session)
         scalar_context = deepcopy(session.state.stack[0].context)
         self.cast(session, spell, [victim.ref])
@@ -1012,6 +1058,7 @@ class ScalarEffectAmountActionTests(unittest.TestCase):
         spell = self.add(session, spell_name, "MOVEMENT-SPELL")
         self.activate(session, source)
         source.phased_out = True
+        session.engine.permissions.invalidate_current()
         self.seal(session)
         context = deepcopy(session.state.stack[0].context)
         self.cast(session, spell, [card.ref for card in victims])

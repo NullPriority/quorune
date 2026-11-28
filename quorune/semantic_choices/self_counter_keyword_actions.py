@@ -48,7 +48,8 @@ def _validated_effect(
         type(action) is not str
         or action not in _ACTIONS
         or type(amount) is not int
-        or amount <= 0
+        or amount < 0
+        or (amount == 0 and action != "monstrosity")
         or (action in {"fading", "vanishing_upkeep", "vanishing_sacrifice"} and amount != 1)
         or type(source_ref) is not str
         or not source_ref
@@ -256,16 +257,16 @@ class FixedSelfCounterKeywordActionHandler:
                     ),
                 )
 
-        intents = [
-            PlaceCountersIntent(
+        intents = []
+        if amount:
+            intents.append(PlaceCountersIntent(
                 actor=context.actor,
                 object_refs=(source.ref,),
                 counter_name=_COUNTER_NAME,
                 amount=amount,
                 reason=context.stack_label,
                 source_ref=source.ref,
-            )
-        ]
+            ))
         if action == "monstrosity":
             intents.append(
                 BecomeMonstrousIntent(

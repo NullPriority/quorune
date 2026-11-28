@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed announcement and resolution data for divided damage."""
 
 from dataclasses import dataclass, replace
-from typing import Any, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 from .characteristic_fragments import CharacteristicQuantitySpec
 from .public_characteristic_aggregate_model import (
@@ -17,6 +17,8 @@ ANNOUNCED_DAMAGE_CONTEXT = "announced_damage_allocation"
 ANNOUNCED_DAMAGE_EFFECT_FIELD = "announced_allocation"
 ANNOUNCED_DAMAGE_CAPABILITY = "damage.batch.announced_allocation"
 VARIABLE_DAMAGE_ALLOCATION_CAPABILITY = "damage.batch.announced_variable_allocation"
+TURN_DAMAGE_MAXIMUM = "turn_damage_maximum"
+TURN_DAMAGE_MAXIMUM_CAPABILITY = "damage.amount.announced_turn_damage_maximum"
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,7 +70,7 @@ class DamageAllocationSpec:
 class VariableDamageAllocationSpec:
     """One cast-announced total, derived before the cost plan can change the board."""
 
-    quantity: CharacteristicQuantitySpec | PublicCharacteristicAggregateSpec | None = None
+    quantity: CharacteristicQuantitySpec | PublicCharacteristicAggregateSpec | Literal["turn_damage_maximum"] | None = None
     increment: int = 0
     double_from: int | None = None
 
@@ -90,7 +92,7 @@ class VariableDamageAllocationSpec:
                     or self.quantity.exclude_source or self.quantity.exclude_attached_object
                     or self.quantity.multiplier != 1 or self.quantity.offset != 0):
                 raise ValueError("Announced damage counts require public battlefield objects")
-        elif self.quantity is not None and not (
+        elif self.quantity not in (None, TURN_DAMAGE_MAXIMUM) and not (
             isinstance(self.quantity, PublicCharacteristicAggregateSpec)
             and self.quantity.characteristic == "power" and self.quantity.reduction == "maximum"
             and self.quantity.controller_relation == "source_controller"
@@ -102,6 +104,8 @@ class VariableDamageAllocationSpec:
     def capability_dependencies(self) -> tuple[str, ...]:
         from .characteristic_fragments import characteristic_quantity_capabilities
 
+        if self.quantity == TURN_DAMAGE_MAXIMUM:
+            return (VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, TURN_DAMAGE_MAXIMUM_CAPABILITY)
         if isinstance(self.quantity, PublicCharacteristicAggregateSpec):
             return (VARIABLE_DAMAGE_ALLOCATION_CAPABILITY, *self.quantity.capability_dependencies)
         if self.quantity is not None:
@@ -111,6 +115,8 @@ class VariableDamageAllocationSpec:
     def to_dict(self) -> dict[str, Any]:
         if self.quantity is None:
             amount = {"kind": "x", "increment": self.increment, "double_from": self.double_from}
+        elif self.quantity == TURN_DAMAGE_MAXIMUM:
+            amount = {"kind": TURN_DAMAGE_MAXIMUM}
         else:
             amount = {
                 "kind": "count" if isinstance(self.quantity, CharacteristicQuantitySpec) else "aggregate",
@@ -128,6 +134,8 @@ class VariableDamageAllocationSpec:
         kind = amount.get("kind")
         if kind == "x" and set(amount) == {"kind", "increment", "double_from"}:
             return cls(increment=amount["increment"], double_from=amount["double_from"])
+        if kind == TURN_DAMAGE_MAXIMUM and set(amount) == {"kind"}:
+            return cls(quantity=TURN_DAMAGE_MAXIMUM)
         if kind in ("count", "aggregate") and set(amount) == {"kind", "quantity"}:
             quantity_type = CharacteristicQuantitySpec if kind == "count" else PublicCharacteristicAggregateSpec
             return cls(quantity=quantity_type.from_dict(amount["quantity"]))
@@ -142,7 +150,13 @@ class VariableDamageAllocationSpec:
         if self.quantity is None:
             total = self.total_for_x(0 if x is None else x)
         elif x is not None:
-            raise ValueError("The current battlefield defines this spell's damage total")
+            raise ValueError("The spell's damage total is independently determined")
+        elif self.quantity == TURN_DAMAGE_MAXIMUM:
+            from .damage_turn_history import maximum_committed_damage_this_turn
+
+            total = maximum_committed_damage_this_turn(host.state)
+            if total is None:
+                raise ValueError("The complete current-turn damage history is unavailable")
         elif isinstance(self.quantity, PublicCharacteristicAggregateSpec):
             from .public_characteristic_aggregates import current_public_characteristic_aggregate
 

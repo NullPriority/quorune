@@ -13,6 +13,7 @@ from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
+from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.event_outcome_shapes import CAST_EVENT_COUNTER_BIRDS_CAPABILITY as CAPABILITY
 from scripts.build_test_database import build_fixture_database
@@ -183,3 +184,238 @@ class CastEventCounterAndManaValueTokensTests(InheritedNativeFixture, unittest.T
         with patch.object(cast_event_amounts, "committed_cast_mana_value_facts", side_effect=printed_value):
             with self.assertRaisesRegex(AssertionError, "4 != 1"):
                 self.test_actual_x_spell_counters_and_creates_exactly_as_cast_birds_for_its_caster()
+
+class CounterbalanceNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "counterbalance.sqlite3"
+        build_fixture_database([
+            FIXTURES / "bound-effect-program-cards.json",
+            FIXTURES / "cast-event-counter-and-mana-value-tokens-cards.json",
+            FIXTURES / "fixed-stack-spell-copy-cards.json",
+            FIXTURES / "life-gain-prohibition-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Optional reveal on cast", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def library_card(self, game, name, ref):
+        card = self.add(game.engine, name, zone="library", ref=ref)
+        card.known_to = []
+        card.revealed_to = []
+        return card
+
+    def counterbalance_scene(self, seed, *, original="Blaze", top_name="Counterspell"):
+        game = self.session(seed)
+        source = self.add(game.engine, "Counterbalance")
+        spell = self.add(game.engine, original, seat="B", zone="hand", ref="balance-original")
+        top = self.library_card(game, top_name, "balance-initial-top") if top_name else None
+        if top is None:
+            for oid in tuple(game.state.players["A"].zones["library"]):
+                game.engine.move_card(oid, "outside", log=False, semantic_events=False)
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, source)
+        return game, source, spell, top
+
+    def cast_blaze_for_balance(self, game, spell):
+        self.priority(game, "B")
+        offer = self.action(game, "B", spell)
+        result = game.act("pilot:B", {
+            "action_id": offer["id"], "targets": ["D"], "x": 1, "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        cast, trigger = game.state.stack
+        self.assertEqual((cast.ref, 2), (trigger.context["stack"], trigger.context["mana_value"]))
+        self.assertFalse(trigger.targets)
+        return cast.ref
+
+    def balance_choice(self, game, *, hidden=None):
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        decision = game.packet("pilot:A", full=True)["decision"]
+        schema = decision["legal_actions"][0]["choice_schema"]
+        self.assertEqual("choice", schema["field"])
+        self.assertEqual({"apply", "decline"}, set(schema["legal_values"]))
+        if hidden is not None:
+            for principal in ("pilot:A", "pilot:B", "pilot:C", "pilot:D", "spectator"):
+                self.assertNotIn(hidden.ref, json.dumps(game.packet(principal, full=True)))
+            self.assertNotIn(hidden.printed_name, json.dumps(decision))
+            self.assertNotIn(hidden.ref, json.dumps(game.state.pending_decision.continuation))
+        return decision
+
+    def submit_balance(self, game, choice):
+        result = game.act("pilot:A", {"action_id": "choose", "choice": choice})
+        self.assertTrue(result.ok, result.summary)
+
+    def reveal_events(self, game):
+        return [event for event in game.state.events if event.code == "library.top.reveal"]
+
+    def test_actual_counterbalance_matches_committed_x_and_the_current_top_after_response(self):
+        game, _, spell, match = self.counterbalance_scene(70163100)
+        first = self.library_card(game, "Generic Bound Plains", "balance-top-before-draw")
+        draw = self.add(game.engine, "Revitalize", zone="hand")
+        self.prepare(game, actor="B", active="B", mana={"C": 1, "R": 1})
+        game.state.players["A"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        original = self.cast_blaze_for_balance(game, spell)
+        self.cast(game, "A", draw)
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[first.object_id].zone)
+        self.assertEqual([original], [item.context["stack"] for item in game.state.stack
+                                      if item.kind == "triggered_ability"])
+
+        self.balance_choice(game, hidden=match)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "choice": "apply"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self.submit_balance(game, "apply")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(40, game.state.players["D"].life)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertEqual("library", game.state.cards[match.object_id].zone)
+        self.assertEqual(match.object_id, game.state.players["A"].zones["library"][-1])
+        reveal, = self.reveal_events(game)
+        self.assertEqual(match.printed_name, reveal.details["card"])
+        self.replay(game, load=True)
+
+    def test_actual_counterbalance_decline_empty_and_library_x_zero(self):
+        for index, mode in enumerate(("decline", "empty", "library_x")):
+            with self.subTest(mode=mode):
+                top_name = {"decline": "Counterspell", "empty": None, "library_x": "Blaze"}[mode]
+                game, _, spell, top = self.counterbalance_scene(70163110 + index, top_name=top_name)
+                self.prepare(game, actor="B", active="B", mana={"C": 1, "R": 1})
+                self.checkpoint(game)
+                self.cast_blaze_for_balance(game, spell)
+                if top is not None:
+                    self.balance_choice(game, hidden=top)
+                    self.submit_balance(game, "decline" if mode == "decline" else "apply")
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(39, game.state.players["D"].life)
+                if mode == "library_x":
+                    reveal, = self.reveal_events(game)
+                    self.assertEqual(top.printed_name, reveal.details["card"])
+                else:
+                    self.assertFalse(self.reveal_events(game))
+                if top is not None:
+                    self.assertEqual("library", game.state.cards[top.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_actual_counterbalance_preserves_reveal_after_original_departed(self):
+        game, _, spell, top = self.counterbalance_scene(70163120)
+        answer = self.add(game.engine, "Counterspell", zone="hand", ref="balance-other-counterspell")
+        self.prepare(game, actor="B", active="B", mana={"C": 1, "R": 1})
+        game.state.players["A"].mana_pool["U"] = 2
+        self.checkpoint(game)
+        original = self.cast_blaze_for_balance(game, spell)
+        self.cast(game, "A", answer, [original])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertNotIn(original, {item.ref for item in game.state.stack})
+        self.balance_choice(game, hidden=top)
+        game = self.replay(game, load=True)
+        self.submit_balance(game, "apply")
+        self.assertIsNone(self.resolve(game))
+        reveal, = self.reveal_events(game)
+        self.assertEqual(top.printed_name, reveal.details["card"])
+        self.assertEqual(40, game.state.players["D"].life)
+        self.replay(game, load=True)
+
+    def test_actual_counterbalance_reveals_a_match_for_uncounterable_original(self):
+        game, _, spell, top = self.counterbalance_scene(
+            70163130, original="Supreme Verdict", top_name="Supreme Verdict",
+        )
+        bear = self.add(game.engine, "Grizzly Bears")
+        self.prepare(game, actor="B", active="B", mana={"C": 1, "W": 2, "U": 1})
+        self.checkpoint(game)
+        self.cast(game, "B", spell)
+        cast = game.state.stack[0]
+        self.assertFalse(game.engine._stack_item_can_be_countered(cast))
+        self.balance_choice(game, hidden=top)
+        self.submit_balance(game, "apply")
+        self.assertIsNone(self.resolve(game))
+        reveal, = self.reveal_events(game)
+        self.assertEqual(top.printed_name, reveal.details["card"])
+        self.assertEqual("graveyard", game.state.cards[bear.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_counterbalance_ignores_own_cast_and_uncast_copy(self):
+        game, source, unused, top = self.counterbalance_scene(70163140)
+        draw = self.add(game.engine, "Revitalize", zone="hand")
+        copier = self.add(game.engine, "Reverberate", seat="B", zone="hand")
+        self.prepare(game, mana={"C": 1, "W": 1})
+        game.state.players["B"].mana_pool["R"] = 2
+        self.checkpoint(game)
+        self.cast(game, "A", draw)
+        self.assertEqual(["spell"], [item.kind for item in game.state.stack])
+        self.cast(game, "B", copier, [game.state.stack[-1].ref])
+        self.balance_choice(game, hidden=top)
+        self.submit_balance(game, "decline")
+        self.resolve_top(game)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual("B", copied.controller)
+        self.assertFalse(any(item.source_object_id == source.object_id for item in game.state.stack))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, len(game.engine._current_turn_history("spell_cast")))
+        self.assertEqual("hand", game.state.cards[unused.object_id].zone)
+        self.assertFalse(self.reveal_events(game))
+        self.replay(game, load=True)
+
+    def test_actual_counterbalance_distinguishes_a_cast_half_from_the_combined_library_card(self):
+        game, source, split, top = self.counterbalance_scene(
+            70163150, original="Fire // Ice", top_name="Fire // Ice",
+        )
+        self.prepare(game, actor="B", active="B", mana={"C": 1, "U": 1})
+        self.checkpoint(game)
+        command = {"action_id": f"cast:{split.ref}:face:Ice", "targets": [source.ref], "pay": "auto"}
+        cast = game.act("pilot:B", command)
+        self.assertTrue(cast.ok, cast.summary)
+        original, trigger = game.state.stack
+        self.assertEqual((original.ref, 2.0), (trigger.context["stack"], trigger.context["mana_value"]))
+        self.balance_choice(game, hidden=top)
+        self.submit_balance(game, "apply")
+        self.assertIsNone(self.resolve(game))
+        reveal, = self.reveal_events(game)
+        self.assertEqual(top.printed_name, reveal.details["card"])
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual("library", game.state.cards[top.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_counterbalance_descriptor_rejects_wrong_caster_scope_or_rebound_occurrence(self):
+        from quorune.rules.event_outcome_shapes import (
+            CAST_REVEAL_MANA_VALUE_COUNTER, cast_reveal_counter_effect, validate_cast_reveal_counter,
+        )
+
+        for invalid in (True, -1, float("inf"), float("nan")):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                validate_cast_reveal_counter(
+                    cast_reveal_counter_effect(player="A", stack="S1", mana_value=invalid), actor="A",
+                )
+
+        result, semantics = register_card(self.db, self.registry, "Counterbalance")
+        self.assertTrue(result["strict_capability_ready"], result["blockers"])
+        source = self.db.lookup("Counterbalance")
+        program, = semantics.programs_for_oracle(source.oracle_id)
+        original, = program.effects
+        leaf, = original["effects"]
+        substitutions = (
+            replace(program, event_condition=None),
+            replace(program, target_schema={"zones": ["stack"], "categories": ["spell"], "count": 1}),
+            replace(program, effects=({**original, "effects": [{**leaf, "stack": "$target.0"}]},)),
+            replace(program, effects=({**original, "effects": [{
+                **leaf, CAST_REVEAL_MANA_VALUE_COUNTER: {"schema_version": True, "mana_value": "$context.mana_value"},
+            }]},)),
+        )
+        for modified in substitutions:
+            with self.subTest(modified=modified.effects):
+                binding = bind_semantic_program_runtime(modified, capability_registry=self.registry, profile=PROFILE)
+                self.assertFalse(binding["strict"], binding)

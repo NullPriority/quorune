@@ -7,6 +7,7 @@ from ...replacement.immutable import thaw_value
 from ...replacement.ordering import ReplacementChoiceRequired
 from ...zone_trigger_events import ZoneTransitionKind
 from ..casting_additional_costs import fixed_zone_change_cost_candidates
+from ..island_pair_discard_cost import ISLAND_PAIR_DISCARD_VERSION
 from ..fixed_payment_groups import (
     FIXED_DISCARD_SACRIFICE_FIELD, WHOLE_DISCARD_SACRIFICE_VERSION,
     fixed_discard_sacrifice_costs, fixed_discard_sacrifice_dependencies, fixed_discard_sacrifice_order,
@@ -14,7 +15,7 @@ from ..fixed_payment_groups import (
 from .model import CastProposalError
 from .spell_context import fixed_cast_cost_object_context
 from .whole_zone_cost_frame import (
-    WHOLE_ZONE_COST_FRAME_FIELD, WHOLE_ZONE_SELECTION_FIELDS,
+    SELECTED_DISCARD_PAIR_FRAME_VERSION, WHOLE_ZONE_COST_FRAME_FIELD, WHOLE_ZONE_SELECTION_FIELDS,
     WholeZoneCostChoiceRequired, WholeZoneCostFrame, WholeZonePaymentGroup,
 )
 
@@ -42,7 +43,21 @@ def _whole_cost_order(cost_schema, option, response):
         raise CastProposalError(str(exc), reason="additional_cost_malformed") from exc
 
 
+def whole_zone_sacrifice_payable(host, actor):
+    from ...sacrifice_prohibition_model import sacrifice_is_prohibited
+
+    battlefield = (host.state.cards[object_id] for object_id in host.state.players[actor].zones["battlefield"])
+    return not any(
+        card.zone == "battlefield" and card.controller == actor and not card.phased_out
+        and sacrifice_is_prohibited(host.state, card)
+        for card in battlefield
+    )
+
+
 def _cost_objects(host, proposal, cost):
+    if cost.origin_zone == "battlefield" and not whole_zone_sacrifice_payable(host, proposal.seat):
+        raise CastProposalError("A permanent in the required payment set cannot be sacrificed",
+                                reason="sacrifice_prohibited")
     refs = fixed_zone_change_cost_candidates(
         host, actor=proposal.seat, cost=cost, exclude_object_id=proposal.object_id,
     )
@@ -78,8 +93,45 @@ def _pay_zone_group(host, proposal, spell, result, payment, objects):
                   changed_objects=[obj.object_id], changed_players=[proposal.seat])
 
 
+def _commit_island_pair_discard(host, proposal, response, spell, option, result, paid_facts):
+    costs = option.get("additional_costs", ())
+    if not any(raw.get("kind") == "zone_change" and raw.get("schema_version") == ISLAND_PAIR_DISCARD_VERSION
+               for raw in costs):
+        return False
+    selections = option.get("selected_additional_costs", ())
+    if len(costs) != 1 or len(selections) != 1 or paid_facts:
+        raise CastProposalError("Island pair discard needs one exact selected payment",
+                                reason="additional_cost_malformed")
+    from .zone_cost_commit import _resolve_fixed_zone_change_additional_cost
+
+    objects, price, _ = _resolve_fixed_zone_change_additional_cost(
+        host, proposal, {**response, "_mana_replacement_selections": {}}, option, selections[0],
+    )
+    if not price.island_pair:
+        raise CastProposalError("Island pair discard lost its exact price", reason="additional_cost_malformed")
+    members = tuple((card.object_id, card.logical_object_id, card.ref) for card in objects)
+    payment = WholeZonePaymentGroup("hand", members)
+    if WHOLE_ZONE_COST_FRAME_FIELD in response:
+        retained = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
+        if (retained.schema_version != SELECTED_DISCARD_PAIR_FRAME_VERSION
+                or (retained.spell_ref, retained.option_id) != (proposal.card_ref, proposal.cost_option_id)
+                or retained.groups[0].members != members):
+            raise CastProposalError("The selected discard incarnations changed", reason="stale_whole_zone_cost")
+        payment = retained.groups[0]
+    frame = WholeZoneCostFrame(proposal.card_ref, proposal.cost_option_id, (payment,),
+                               schema_version=SELECTED_DISCARD_PAIR_FRAME_VERSION)
+    frame.validate_response(response)
+    try:
+        _pay_zone_group(host, proposal, spell, result, payment, objects)
+    except ReplacementChoiceRequired as required:
+        raise WholeZoneCostChoiceRequired(required, frame) from required
+    return True
+
+
 def commit_whole_zone_costs(host, proposal, response, spell, option, program, result, paid_facts):
-    """Rebuild each whole set at payment and seal the completed prefix on pauses."""
+    """Rebuild each simultaneous set and seal the completed prefix on pauses."""
+    if _commit_island_pair_discard(host, proposal, response, spell, option, result, paid_facts):
+        return True
     order = _whole_cost_order(program.cost_schema if program is not None else None, option, response)
     if not order:
         return False
@@ -89,7 +141,8 @@ def commit_whole_zone_costs(host, proposal, response, spell, option, program, re
     if WHOLE_ZONE_COST_FRAME_FIELD in response:
         frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
         frame.validate_response(response)
-        if (frame.spell_ref, frame.option_id) != (proposal.card_ref, proposal.cost_option_id):
+        if (frame.schema_version != 1
+                or (frame.spell_ref, frame.option_id) != (proposal.card_ref, proposal.cost_option_id)):
             raise CastProposalError("Automatic zone payment option changed", reason="stale_whole_zone_cost")
         retained = frame.groups
     completed = []

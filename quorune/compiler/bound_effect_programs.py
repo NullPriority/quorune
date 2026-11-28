@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed grammatical subject and single-target reference binding."""
 
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from . import regex_working_set as re
 from typing import Any, Mapping
 
@@ -379,12 +379,108 @@ def _linked_followups(clause, schema, compile_component):
     return components if all(component is not None for component in components) else ()
 
 
+_CONTROL_HASTE_UNTAP_GOAD_TEXT = (
+    "until end of turn, gain control of target creature and it gains haste. untap and goad that creature."
+)
+_GOAD_REMINDER = (
+    "(until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)"
+)
+
+
+def _rounded_third_player_rounds(text, compile_component):
+    if text.casefold() != (
+        "each player loses a third of their life, then discards a third of the cards in their hand, "
+        "then sacrifices a third of the creatures they control of their choice, then sacrifices a third "
+        "of the lands they control of their choice. round up each time."
+    ):
+        return None
+    from ..rules.fixed_player_rounds import FIXED_PLAYER_ROUNDS_TEXT
+    from ..rules.third_player_rounds import third_player_round_effects
+    from ..third_quantity_model import THIRD_LIFE_MECHANIC
+
+    fixed = _shared_player_subject(FIXED_PLAYER_ROUNDS_TEXT, compile_component)
+    if fixed is None:
+        return None
+    try:
+        effects = third_player_round_effects(fixed.effects)
+    except (TypeError, ValueError):
+        return None
+    return replace(fixed, _effects=effects, mechanic_ids=(*fixed.mechanic_ids, THIRD_LIFE_MECHANIC))
+
+
+def _qualified_creators_then_destroy(text, compile_component):
+    match = re.fullmatch(
+        r"Each player who controls an artifact or enchantment creates (?P<token>a [^.]+ creature token)\. "
+        r"Then destroy all artifacts and enchantments\.",
+        text, re.I,
+    )
+    if match is None:
+        return None
+    from ..fixed_token_production import FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID
+    from ..rules.qualified_token_creators import qualified_creator_token_effect
+    from .token_templates import fixed_token_creation_effect_template
+
+    token = fixed_token_creation_effect_template("Create " + match["token"] + ".")
+    if token is None:
+        return None
+    try:
+        creation = qualified_creator_token_effect(token.effect)
+    except (TypeError, ValueError):
+        return None
+    first = ("qualified-token-creators-v1", (creation,), None,
+             (*token.mechanics, FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID))
+    return _program((first, compile_component("Destroy all artifacts and enchantments.")), schema=None)
+
+
+def _protect_creature_then_place_paired_counters(text, source_name, compile_component):
+    match = re.fullmatch(
+        r"(?P<grant>Another target creature gains indestructible until end of turn\.) "
+        r"Put a \+1/\+1 counter and a lifelink counter on that creature and "
+        r"a \+1/\+1 counter and a lifelink counter on (?P<source>[^.]+)\.",
+        text, re.I,
+    )
+    if match is None:
+        return None
+    from ..counter_placement_sets import (
+        SOURCE_TARGET_COUNTER_BATCH_CARD_FIELD, SOURCE_TARGET_COUNTER_BATCH_VERSION_FIELD,
+        source_target_counter_batch_projection,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    if not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    grant = compile_component(match["grant"])
+    template, effects, _slot, mechanics = compile_component("Put a +1/+1 counter and a lifelink counter on target creature.")
+    if template is None or len(effects) != 1 or grant[2] is None:
+        return None
+    paired = {**effects[0], SOURCE_TARGET_COUNTER_BATCH_VERSION_FIELD: 1,
+              SOURCE_TARGET_COUNTER_BATCH_CARD_FIELD: "$source.zone_object"}
+    try:
+        source_target_counter_batch_projection(paired)
+    except (ValueError, TypeError, KeyError):
+        return None
+    return _program((grant, (template, (paired,), grant[2], mechanics)), schema=grant[2])
+
+
 def bound_effect_program_template(
-    text: str, *, compile_component: ComponentCompiler
+    text: str, *, compile_component: ComponentCompiler, source_name: str = ""
 ) -> BoundEffectProgramTemplate | None:
     """Lower one grammatical subject or one explicitly established target."""
 
     normalized = " ".join(text.strip().split())
+    if rounded := _rounded_third_player_rounds(normalized, compile_component):
+        return rounded
+    if qualified := _qualified_creators_then_destroy(normalized, compile_component):
+        return qualified
+    if paired := _protect_creature_then_place_paired_counters(normalized, source_name, compile_component):
+        return paired
+    if normalized.casefold() in (
+        _CONTROL_HASTE_UNTAP_GOAD_TEXT, f"{_CONTROL_HASTE_UNTAP_GOAD_TEXT} {_GOAD_REMINDER}",
+    ):
+        normalized = (
+            "Gain control of target creature until end of turn. It gains haste until end of turn. "
+            "Untap that creature. Goad it."
+        )
     linkage_text = re.sub(r"\banother target\b", "target", normalized, flags=re.IGNORECASE)
     if not normalized or any(c in normalized for c in ('"', "(", ")")):
         return None

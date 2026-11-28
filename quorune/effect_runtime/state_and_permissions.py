@@ -7,6 +7,13 @@ from ..counter_placement import CounterPlacementError, place_counters_on_refs
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..model import GoadDesignation
+from ..rules.controller_private_top_exile_model import CONTROLLER_PRIVATE_TOP_EXILE_OPERATION
+from ..rules.private_opponent_top_exile import apply_controller_private_top_exile
+from ..opponent_library_exile import apply_each_opponent_top_exile, apply_opponent_library_exile_play
+from ..rules.target_graveyard_escape import apply_target_graveyard_escape
+from ..rules.target_graveyard_flashback import apply_target_graveyard_flashback
+from ..rules.owned_graveyard_turn_play import apply_owned_graveyard_turn_play
+from ..opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
 from ..permanent_designations import (
     AdvanceClassLevelRequest,
     PermanentDesignationError,
@@ -14,7 +21,9 @@ from ..permanent_designations import (
 )
 from ..semantic_runtime.combat_metadata import active_goading_players
 from ..trigger_processing import schedule_delayed_trigger
+from .all_player_turn_rules import apply_all_player_turn_rule
 from .player_speed import apply_speed_increase
+from .turn_creature_target_prohibition import apply_turn_creature_target_prohibition
 
 
 OPERATIONS = effect_family_contract("state-and-permissions.v1").operations
@@ -77,14 +86,30 @@ def _apply_goad(
 ) -> Any:
     op = operation
     host._require_seat(actor, in_game=True)
-    if effect.get('schema_version') == 2:
-        from ..goad_instruction import resolve_fixed_goad_refs
+    from ..goad_instruction import WATCHED_COMBAT_DRAW_FIELD
+    if WATCHED_COMBAT_DRAW_FIELD in effect:
+        from ..rules.temporary_attack_requirements import resolve_watched_goad_chapter
+        try:
+            return resolve_watched_goad_chapter(host, effect, actor=actor, reason=reason,
+                goad=lambda ref: _apply_goad(host, {"op": "goad", "card": ref}, actor=actor, operation=operation, reason=reason))
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if "schema_version" in effect:
+        from ..goad_instruction import GOAD_BLOCK_PROHIBITION_VERSION, resolve_fixed_goad_refs
         try:
             instruction={key:value for key,value in effect.items() if key!='_runtime_source'}
             refs=resolve_fixed_goad_refs(host,instruction,actor=actor)
         except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+        if effect["schema_version"] == GOAD_BLOCK_PROHIBITION_VERSION:
+            from .declaration_effects import commit_goad_snapshot_block_prohibition
+
+            subjects = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
+        else:
+            subjects = ()
         for ref in refs:
             _apply_goad(host,{'op':'goad','card':ref},actor=actor,operation=operation,reason=reason)
+        if subjects:
+            commit_goad_snapshot_block_prohibition(host, effect, subjects, actor=actor, reason=reason)
         return refs
     card = host._resolve_object(
         actor,
@@ -435,7 +460,22 @@ def _apply_mana(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.fight_excess_mana import RETAIN_ALL_RED_FIELD, is_retained_red
+
+    if RETAIN_ALL_RED_FIELD in effect:
+        from ..mana_provenance import RETAIN_RED_MANA_UNTIL_CLEANUP
+
+        if actor not in host.active_seats or not is_retained_red(effect, actor=actor):
+            raise GameRuleError("Red mana retention requires the original controller")
+        host.state.players[actor].stats[RETAIN_RED_MANA_UNTIL_CLEANUP] = 1
+        return 0
     op = operation
+    from ..rules.turn_retained_resolution_mana import TURN_POOL_COLOR_FIELD, apply_turn_pool_red
+    if TURN_POOL_COLOR_FIELD in effect:
+        try:
+            return apply_turn_pool_red(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if set(effect) - {
         "op",
         "player",
@@ -461,10 +501,24 @@ def _apply_mana(
     source_ref = str(effect.get("source") or "")
     retain_until = effect.get("retain_until")
     restriction = effect.get('spend_restriction')
-    from ..mana_restrictions import valid_mana_spend_restriction
-    if restriction is not None and not valid_mana_spend_restriction(restriction):
+    from ..mana_restriction_model import valid_resolution_mana_spend_restriction
+    if restriction is not None and not valid_resolution_mana_spend_restriction(restriction):
         raise GameRuleError('Semantic mana spend restriction is malformed')
-    if retain_until not in {None, "end_of_combat"}:
+    if retain_until == "end_of_turn":
+        from ..rules.turn_retained_resolution_mana import validate_resolution
+
+        try:
+            validate_resolution(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    elif retain_until == "end_of_combat":
+        from ..rules.attack_declaration_mana import validate_resolution
+
+        try:
+            validate_resolution(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    elif retain_until is not None:
         raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
         seat,
@@ -579,7 +633,13 @@ def _apply_set_day_night(host, effect, *, actor, operation, reason):
 
 
 HANDLERS = {
+    CONTROLLER_PRIVATE_TOP_EXILE_OPERATION: apply_controller_private_top_exile,
+    EACH_OPPONENT_TOP_EXILE_OPERATION: apply_each_opponent_top_exile,
+    OPPONENT_LIBRARY_EXILE_PLAY_OPERATION: apply_opponent_library_exile_play,
     'grant_next_spell_cost_reduction': apply_next_spell_cost_reduction,
+    'grant_target_graveyard_escape': apply_target_graveyard_escape,
+    'grant_target_graveyard_flashback': apply_target_graveyard_flashback,
+    'grant_owned_graveyard_turn_play': apply_owned_graveyard_turn_play,
     'set_day_night': _apply_set_day_night,
     'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
@@ -589,6 +649,8 @@ HANDLERS = {
     'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'grant_turn_spell_source_color_protection': _apply_turn_spell_source_color_protection,
+    'grant_turn_creature_target_prohibition': apply_turn_creature_target_prohibition,
+    'all_player_turn_rule': apply_all_player_turn_rule,
     'mana': _apply_mana,
     'grant_next_spell_payment': _apply_next_spell_payment,
     'grant_cast_cascade': _apply_cast_cascade_grant,

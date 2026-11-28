@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 from common import keep_all, load_assets, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import (
     StaticComponentSpec,
     ability_fragment_to_dict,
@@ -51,7 +52,7 @@ from quorune.continuous_effects import (
     CharacteristicState,
     evaluate_continuous_effects,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance, CombatState, StackItem
 from quorune.oracle_ir import (
@@ -59,7 +60,7 @@ from quorune.oracle_ir import (
     generated_programs,
     register_generated_programs,
 )
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
@@ -69,6 +70,7 @@ from quorune.semantic_runtime import (
     SemanticNodeError,
 )
 from quorune.semantics import SemanticProgram
+from quorune.trigger_participation import WardSpec
 from scripts.build_test_database import build_fixture_database
 
 
@@ -2143,29 +2145,18 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
             defender="B",
         )
         decision = engine.state.pending_decision
-        self.assertEqual("trigger.order", decision.kind)
-        self.assertEqual(["A"], decision.actors)
+        self.assertEqual(("priority", ["A"]), (decision.kind, decision.actors))
         self.assertEqual(
-            "trigger.order",
+            "priority",
             session.packet("pilot:A", full=True)["decision"]["kind"],
         )
         self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
-        pending = [
-            item
-            for batch in engine.state.pending_trigger_batches
-            for item in batch.items
-        ]
-        ordered = session.act(
-            "pilot:A",
-            {
-                "action_id": "order",
-                "triggers": [item.ref for item in pending],
-            },
-        )
-        self.assertTrue(ordered.ok, ordered.summary)
-        self.assertTrue(engine.state.stack)
-        self.assertTrue(
-            all(item.controller == "A" for item in engine.state.stack)
+        self.assertFalse(engine.state.pending_trigger_batches)
+        self.assertEqual(2, len(engine.state.stack))
+        self.assertEqual(2, len({item.ref for item in engine.state.stack}))
+        self.assertEqual(
+            {("A", recipient.object_id)},
+            {(item.controller, item.source_object_id) for item in engine.state.stack},
         )
         for _ in range(16):
             if not engine.state.stack:
@@ -2478,31 +2469,17 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
             {"a": "attack", "atk": {recipient.ref: "B"}},
         )
         self.assertTrue(declared.ok, declared.summary)
-        self.assertEqual("trigger.order", engine.state.pending_decision.kind)
-        pending = [
-            item
-            for batch in engine.state.pending_trigger_batches
-            for item in batch.items
-            if item.source_ability_id == program.key
-        ]
-        self.assertEqual(2, len(pending))
-        self.assertTrue(
-            all(item.source_object_id == recipient.object_id for item in pending)
-        )
-        ordered = session.act(
-            "pilot:A",
-            {
-                "action_id": "order",
-                "triggers": [item.ref for item in pending],
-            },
-        )
-        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertEqual("priority", engine.state.pending_decision.kind)
+        self.assertFalse(engine.state.pending_trigger_batches)
         triggered = [
-            item
-            for item in engine.state.stack
-            if item.semantic_key == program.key
+            item for item in engine.state.stack if item.semantic_key == program.key
         ]
         self.assertEqual(2, len(triggered))
+        self.assertEqual(2, len({item.ref for item in triggered}))
+        self.assertEqual(
+            {("A", recipient.object_id)},
+            {(item.controller, item.source_object_id) for item in triggered},
+        )
         for _ in range(16):
             if not engine.state.stack:
                 break
@@ -2685,6 +2662,186 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
         )
         self.resolve_top(engine)
         self.assertEqual(life_before - 1, engine.state.players["B"].life)
+
+
+
+class BrotherhoodRegaliaTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests" / "fixtures"
+        support = json.loads((fixtures / "source-attack-alone-cards.json").read_bytes())
+        names = {"Disenchant", "Grizzly Bears", "Isamaru, Hound of Konda", "Plains", "Unsummon"}
+        support["cards"] = [row for row in support["cards"] if row["name"] in names]
+        assert {row["name"] for row in support["cards"]} == names
+        ids = {row["oracle_id"] for row in support["cards"]}
+        support["rulings"] = [row for row in support["rulings"] if row["oracle_id"] in ids]
+        subset = folder / "support.json"
+        subset.write_text(json.dumps(support), encoding="utf-8")
+        path = folder / "regalia.sqlite3"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "brotherhood-regalia-cards.json",
+            subset,
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Brotherhood Regalia", [
+            DeckEntry(commander, 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def test_regalia_static_series_keeps_only_the_closed_owners(self):
+        from quorune.compiler.declaration_nodes import fixed_static_declaration_grant_handler
+
+        record = self.db.lookup("Brotherhood Regalia", fuzzy=False)
+        result = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", result.status, result.material_residuals)
+        static, *_ = result.faces[0].nodes
+        self.assertEqual("static-attached-characteristics-bound-rules-v1", static.template_id)
+        characteristic, declaration = static.handlers
+        modifier = characteristic["modifier"]
+        self.assertEqual([{"op": "add_types", "field": "subtypes", "values": ["Assassin"]}],
+                         modifier["type_operations"])
+        self.assertEqual([ability_fragment_to_dict(WardSpec(generic_cost=2))], modifier["add_ability_fragments"])
+        self.assertEqual("attached_option", declaration["fragment"]["value"]["scope"])
+        line = record.oracle_text.splitlines()[0]
+        for unrepresented in (
+            line.replace("ward {2}", "ward {X}"),
+            line.replace("an Assassin", "an Unrepresentedkind"),
+            line.replace("can't be blocked", "can't be blocked by chosen objects"),
+            line + " It also has shroud.",
+        ):
+            with self.subTest(unrepresented=unrepresented):
+                self.assertIsNone(fixed_static_declaration_grant_handler(unrepresented))
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def equip_offers(self, game, equipment):
+        self.priority(game, "A")
+        legal_actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        current = game.state.cards[equipment.object_id]
+        prefix = f"activate:{current.ref}:"
+        for ability in game.engine._activated_abilities(current):
+            action_id = prefix + ability.ability_id
+            for offer in legal_actions:
+                if offer["id"] == action_id:
+                    yield ability.cost_text, offer
+
+    def equip(self, game, offer, card, price):
+        result = game.act("pilot:A", {
+            "action_id": offer["id"], "targets": [card.ref], "pay": "manual", "payment": {"C": price},
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+
+    def subtypes(self, game, card):
+        _, subtypes, _ = game.engine._effective_type_parts(game.state.cards[card.object_id])
+        return subtypes
+
+    def scene(self, seed):
+        game = self.session(seed)
+        equipment = self.add(game.engine, "Brotherhood Regalia", zone="hand")
+        legendary = self.add(game.engine, "Isamaru, Hound of Konda", ref="REGALIA-LEGENDARY")
+        regular = self.add(game.engine, "Grizzly Bears", ref="REGALIA-REGULAR")
+        blocker = self.add(game.engine, "Grizzly Bears", seat="B", ref="REGALIA-BLOCKER")
+        foreign = self.add(game.engine, "Isamaru, Hound of Konda", seat="B", ref="REGALIA-FOREIGN")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        destroy = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        self.add(game.engine, "Plains", seat="B", ref="REGALIA-PLAINS-1")
+        self.add(game.engine, "Plains", seat="B", ref="REGALIA-PLAINS-2")
+        for card in (legendary, regular):
+            card.acquired_control_turn_count = -1
+        self.assert_closed(game, equipment)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"C": 6})
+        game.state.players["B"].mana_pool.update({"C": 2, "U": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", equipment)
+        self.assertIsNone(self.resolve(game))
+        return game, equipment, legendary, regular, blocker, foreign, bounce, destroy
+
+    def ward_choice(self, game, creature, targeting_spell):
+        self.cast(game, "B", targeting_spell, [creature.ref])
+        spell, trigger = game.state.stack
+        self.assertEqual("builtin:ward", trigger.semantic_key)
+        self.assertEqual(creature.object_id, trigger.source_object_id)
+        self.assertEqual(spell.ref, trigger.context["target_stack"])
+        self.assertEqual(WardSpec(generic_cost=2), WardSpec.from_dict(trigger.context["ward_spec"]))
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["B"]), (pending.kind, list(pending.actors)))
+        self.assertEqual({"GENERIC": 2}, pending.payload_by_actor["B"]["cost"])
+        self.reject(game, "C", {"action_id": "choose", "pay": True, "plan": "auto"})
+        return self.replay(game, load=True)
+
+    def test_actual_regalia_equip_modes_ward_and_blocker_domain_follow_reattachment(self):
+        game, equipment, legendary, regular, blocker, foreign, bounce, _ = self.scene(301_502_108)
+        offers = dict(self.equip_offers(game, equipment))
+        self.assertEqual({"{1}", "{3}"}, set(offers))
+        self.assertEqual({legendary.ref}, set(offers["{1}"]["target_schema"]["legal_refs"]))
+        self.assertEqual({legendary.ref, regular.ref}, set(offers["{3}"]["target_schema"]["legal_refs"]))
+        for target in (regular, foreign):
+            self.reject(game, "A", {"action_id": offers["{1}"]["id"], "targets": [target.ref], "pay": "auto"})
+        self.reject(game, "A", {"action_id": offers["{3}"]["id"], "targets": [regular.ref],
+                                 "pay": "manual", "payment": {"C": 1}})
+
+        self.equip(game, offers["{1}"], legendary, 1)
+        self.assertEqual(legendary.object_id, game.state.cards[equipment.object_id].attached_to)
+        self.assertEqual({"dog", "assassin"}, self.subtypes(game, legendary))
+        self.assertEqual({"bear"}, self.subtypes(game, regular))
+        offers = dict(self.equip_offers(game, equipment))
+        self.equip(game, offers["{3}"], regular, 3)
+        self.assertEqual(0, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(regular.object_id, game.state.cards[equipment.object_id].attached_to)
+        self.assertEqual({"dog"}, self.subtypes(game, legendary))
+        self.assertEqual({"bear", "assassin"}, self.subtypes(game, regular))
+        game = self.ward_choice(game, regular, bounce)
+        response = game.act("pilot:B", {"action_id": "choose", "pay": False, "plan": "DECLINE_WARD"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("graveyard", game.state.cards[bounce.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[regular.object_id].zone)
+
+        self.attack(game, [(legendary, "B"), (regular, "B")])
+        self.until(game, lambda s: s.state.pending_decision is not None and s.state.pending_decision.kind == "combat.blockers")
+        domains = game.state.pending_decision.payload_by_actor["B"]["declaration_constraints"]["domains"]
+        self.assertEqual([legendary.ref], domains[blocker.ref])
+        self.reject(game, "B", {"action_id": "block", "blocks": {blocker.ref: regular.ref}})
+        accepted = game.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: legendary.ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(game, load=True)
+
+    def test_actual_regalia_ward_payment_and_equipment_removal_replay(self):
+        game, equipment, legendary, regular, blocker, _, bounce, destroy = self.scene(301_502_109)
+        offers = dict(self.equip_offers(game, equipment))
+        self.equip(game, offers["{1}"], legendary, 1)
+        game = self.ward_choice(game, legendary, bounce)
+        response = game.act("pilot:B", {"action_id": "choose", "pay": True, "plan": "auto"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual(0, game.state.players["B"].mana_pool["C"])
+        self.assertEqual("stack", game.state.cards[bounce.object_id].zone)
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[legendary.object_id].zone)
+        self.assertIsNone(game.state.cards[equipment.object_id].attached_to)
+
+        offers = dict(self.equip_offers(game, equipment))
+        self.equip(game, offers["{3}"], regular, 3)
+        self.assertEqual({"bear", "assassin"}, self.subtypes(game, regular))
+        self.attack(game, [(regular, "B")])
+        # The original Equipment leaves before blockers, so the live restriction is gone.
+        self.cast(game, "B", destroy, [equipment.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[equipment.object_id].zone)
+        self.assertEqual({"bear"}, self.subtypes(game, regular))
+        self.until(game, lambda s: s.state.pending_decision is not None and s.state.pending_decision.kind == "combat.blockers")
+        accepted = game.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: regular.ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(game, load=True)
 
 
 if __name__ == "__main__":

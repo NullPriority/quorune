@@ -6,7 +6,9 @@ from .ring_state import current_ring_rule_views
 from .characteristic_read_frames import memoized_characteristic_read
 
 import copy
+from dataclasses import dataclass
 from functools import partial
+from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 from .carddb_characteristics import separate_custom_display_text
@@ -19,8 +21,10 @@ from .continuous_conditions import (
 )
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    GrantedTriggeredAbilitySpec,
     StaticComponentScopeSpec,
     StaticComponentSpec,
+    ability_fragment_from_dict,
     ability_fragment_to_dict,
     canonical_ability_fragments,
     declared_static_component_keys,
@@ -29,6 +33,7 @@ from .ability_fragments import (
 from .characteristic_evaluation import evaluate_card_characteristics
 from .continuous_effects import (
     ContinuousEffect,
+    ContinuousEffectDuration,
     ContinuousEffectOrigin,
     ContinuousEffectRelation,
     ContinuousObjectIdentity,
@@ -45,6 +50,15 @@ from .model import CardInstance
 from .rules.source_speed_designations import current_source_designations
 from .object_query import ObjectQueryResult, object_query_result
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
+
+
+@dataclass(frozen=True, slots=True)
+class _StaticComponentKeySnapshot:
+    by_object: Mapping[str, tuple[str, ...]]
+
+    def __deepcopy__(self, _memo):
+        # The read-only mapping contains only string keys and tuples of strings.
+        return self
 
 
 _STATIC_COMPONENT_PRESENCE_OPERATIONS = frozenset(
@@ -72,6 +86,44 @@ def _static_component_presence_effects(
         return ()
     # Earlier type changes can alter the affected sets of ability changes.
     return tuple(effect for effect in effects if effect in changes or effect.layer<=Layer.TYPE)
+
+
+def _only_trigger_grants(effects: Sequence[ContinuousEffect]) -> bool:
+    if len(effects) != 1:
+        return False
+    effect = effects[0]
+    return (
+        effect.layer is Layer.ABILITY
+        and effect.origin is ContinuousEffectOrigin.STATIC_ABILITY
+        and effect.duration is ContinuousEffectDuration.WHILE_SOURCE_PRESENT
+        and effect.relation is ContinuousEffectRelation.NONE
+        and not effect.characteristic_defining
+        and not effect.depends_on
+        and effect.recipient_scope_anchor is None
+        and all(
+            operation.op == "add_ability_fragment"
+            and isinstance(
+                ability_fragment_from_dict(operation.value), GrantedTriggeredAbilitySpec
+            )
+            for operation in effect.operations
+        )
+    )
+
+
+def _plain_static_component_source(source: CardInstance) -> bool:
+    return (
+        source.object_kind == "card"
+        and source.active_face is None
+        and source.shared_type_doors is None
+        and source.permanent_composition is None
+        and not source.face_down
+        and not source.annotations
+        and not source.attachments
+        and not source.attached_to
+        and not source.temporary_keywords
+        and not source.counters
+        and source.suspected_at is None
+    )
 
 
 def _carries_query_power_toughness_definition(
@@ -160,6 +212,7 @@ class CharacteristicEvaluationHostMixin:
                 views.append(battlefield_type_dependency_view(
                     member, data, runtime_effects=(*local, *shared),
                     ignore_face_down=(member is card and ignore_face_down),
+                    linked_exile_resolver=self._resolve_linked_exile_characteristics,
                     dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
                 ))
             return battlefield_type_effect_order(views)
@@ -174,6 +227,7 @@ class CharacteristicEvaluationHostMixin:
         runtime_effects: Sequence[ContinuousEffect] = (),
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        include_base_power: bool = False,
         enchanted: bool = False,
         equipped: bool = False,
         modified: bool = False,
@@ -200,10 +254,12 @@ class CharacteristicEvaluationHostMixin:
             )
             else None
         )
+        from .continuous_type_dependencies import uses_live_type_dependencies
+
         type_order = (
             self._type_effect_order_for_recipients(card,base,runtime_effects,ignore_face_down=ignore_face_down)
             if card.zone == "battlefield" and (maximum_layer is None or maximum_layer >= Layer.TYPE)
-            and any(effect.recipient_scope_anchor is not None for effect in runtime_effects)
+            and any(uses_live_type_dependencies(effect) for effect in runtime_effects)
             else None
         )
         return separate_custom_display_text(
@@ -215,14 +271,21 @@ class CharacteristicEvaluationHostMixin:
                 ignore_face_down=ignore_face_down,
                 query_count_resolver=resolver,
                 maximum_layer=maximum_layer,
+                include_base_power=include_base_power,
                 enchanted=enchanted,
                 equipped=equipped,
                 modified=modified,
                 active_player=self.state.active_player,
                 type_order=type_order,
+                linked_exile_resolver=self._resolve_linked_exile_characteristics,
                 dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
             ),
         )
+
+    def _resolve_linked_exile_characteristics(self, value, *, statistics):
+        from .rules.linked_exile_characteristics import resolve_linked_exile_characteristics
+
+        return resolve_linked_exile_characteristics(self, value, statistics=statistics)
 
     def _attachment_public_state(
         self,
@@ -279,6 +342,7 @@ class CharacteristicEvaluationHostMixin:
         _maximum_layer: Layer | None = Layer.COLOR,
     ) -> ObjectQueryResult:
         """Project public facts; default to the cycle-safe layer-5 boundary."""
+        from .carddb_characteristics import public_object_rules_names
 
         effective = self._effective_card_data(
             card,
@@ -314,6 +378,7 @@ class CharacteristicEvaluationHostMixin:
             enchanted=enchanted,
             equipped=equipped,
             modified=modified,
+            public_rules_names=public_object_rules_names(card, effective),
         )
 
     @staticmethod
@@ -343,11 +408,15 @@ class CharacteristicEvaluationHostMixin:
         return memoized_characteristic_read(self, ('static-components',), self._read_static_component_fragments)
 
     def _read_static_component_fragments(self) -> dict[str, tuple]:
-        """Resolve every source's shared layer-6 component snapshot once."""
+        """Resolve component eligibility and copied/granted static instances."""
 
         candidate_effects = self._static_component_candidate_effects()
         component_effects = _static_component_presence_effects(
             candidate_effects
+        )
+        trigger_only = (
+            not getattr(self.semantics, "runtime_handler_compatibility_enabled", True)
+            and _only_trigger_grants(component_effects)
         )
         result = {}
         for seat in self.state.turn_order:
@@ -360,9 +429,8 @@ class CharacteristicEvaluationHostMixin:
                     or source.phased_out
                 ):
                     continue
-                resolution_effects = _static_component_presence_effects(
-                    active_resolution_effects(self.state, source)
-                )
+                active_effects = active_resolution_effects(self.state, source)
+                resolution_effects = _static_component_presence_effects(active_effects)
                 copy_overrides = source.annotations.get("copy_overrides")
                 has_local_component_changes = bool(
                     source.annotations.get("granted_ability_fragments")
@@ -401,9 +469,10 @@ class CharacteristicEvaluationHostMixin:
                 ):
                     result[object_id] = ()
                     continue
+                record = self.card_record(source)
                 base = self._compiled_base_characteristics(
                     source,
-                    self.card_record(source),
+                    record,
                     error_type=GameRuleError,
                 )
                 if (
@@ -415,6 +484,26 @@ class CharacteristicEvaluationHostMixin:
                         base.get("ability_fragments", ()),
                     )
                     continue
+                if (
+                    trigger_only
+                    and not active_effects
+                    and record is not None
+                    and not record.faces
+                    and _plain_static_component_source(source)
+                    and not any(
+                        ability["ability_id"].startswith("intrinsic_")
+                        for ability in base["activated_abilities"]
+                    )
+                ):
+                    fragments = canonical_ability_fragments(base.get("ability_fragments", ()))
+                    # The appended typed trigger has no static key, scope or
+                    # occurrence timestamp. Full characteristic reads still add it.
+                    if all(
+                        isinstance(fragment, (StaticComponentSpec, StaticComponentScopeSpec))
+                        for fragment in fragments
+                    ):
+                        result[object_id] = fragments
+                        continue
                 enchanted, equipped, modified = self._attachment_public_state(
                     source,
                     _enforce_static_component_applicability=False,
@@ -441,8 +530,15 @@ class CharacteristicEvaluationHostMixin:
         return {object_id: static_component_keys(values, source_designations=current_source_designations(
             self.state, self.state.cards[object_id])) for object_id, values in fragments.items()}
 
-    def _effective_static_component_key_map(self):
-        return self._static_keys_from_fragment_map(self._effective_static_component_fragment_map())
+    def _effective_static_component_key_map(self) -> Mapping[str, tuple[str, ...]]:
+        snapshot = memoized_characteristic_read(
+            self,
+            ("static-component-keys",),
+            lambda: _StaticComponentKeySnapshot(MappingProxyType(
+                self._static_keys_from_fragment_map(self._effective_static_component_fragment_map()),
+            )),
+        )
+        return snapshot.by_object
 
     def _granted_characteristic_occurrences(self, source, fragments, keys):
         from .rules.granted_characteristic_shapes import granted_characteristic_occurrences
@@ -482,6 +578,7 @@ class CharacteristicEvaluationHostMixin:
         def collect(presence_only,sources):
             return collect_card_program_continuous_effects(self.state,self.semantics,self.semantic_program_is_current_trusted,
                 maximum_layer=Layer.ABILITY,static_component_presence_only=presence_only,
+                commander_identity_resolver=self._commander_identity,
                 public_object_resolver=partial(self._public_object_query_result,_enforce_static_component_applicability=False),
                 quantity_resolver=partial(query_characteristic_count,self,_enforce_static_component_applicability=False),
                 copied_static_source_resolver=self._copied_static_source_fragments,
@@ -683,20 +780,72 @@ class CharacteristicEvaluationHostMixin:
         printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        include_base_power: bool = False,
         _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         key = ('card', id(card), printed_entry_characteristics, ignore_face_down,
-            maximum_layer, _enforce_static_component_applicability)
+            maximum_layer, include_base_power, _enforce_static_component_applicability)
         return memoized_characteristic_read(self, key, lambda: self._read_effective_card_data(
             card, printed_entry_characteristics=printed_entry_characteristics,
-            ignore_face_down=ignore_face_down, maximum_layer=maximum_layer,
+            ignore_face_down=ignore_face_down, maximum_layer=maximum_layer, include_base_power=include_base_power,
             _enforce_static_component_applicability=_enforce_static_component_applicability), identity=card)
+
+    def _battlefield_program_characteristic_effects(
+        self, *, maximum_layer: Layer | None, enforce_static_components: bool,
+        keys: Mapping[str, Sequence[str]] | None,
+    ) -> tuple[ContinuousEffect, ...]:
+        """Collect board-wide effects once per layer in the current read frame."""
+
+        def collect() -> tuple[ContinuousEffect, ...]:
+            fragments = self._effective_static_component_fragment_map() if keys is not None else None
+            return collect_card_program_continuous_effects(
+                self.state,
+                self.semantics,
+                self.semantic_program_is_current_trusted,
+                maximum_layer=maximum_layer,
+                commander_identity_resolver=self._commander_identity,
+                public_object_resolver=(
+                    partial(self._public_object_query_result,
+                            _enforce_static_component_applicability=enforce_static_components)
+                    if maximum_layer is None or maximum_layer >= Layer.ABILITY else None
+                ),
+                quantity_resolver=(
+                    partial(query_characteristic_count, self,
+                            _enforce_static_component_applicability=enforce_static_components)
+                    if maximum_layer is None or maximum_layer >= Layer.ABILITY else None
+                ),
+                # The existing owner stops graveyard counts and devotion at copy/control/text.
+                setting_quantity_resolver=partial(
+                    query_characteristic_count, self,
+                    _enforce_static_component_applicability=enforce_static_components,
+                ),
+                static_component_resolver=(
+                    (lambda source: keys.get(source.object_id, ())) if keys is not None else None
+                ),
+                early_static_component_resolver=self._static_component_keys_at_layer,
+                copied_static_source_resolver=self._copied_static_source_fragments,
+                ability_source_participation=(
+                    self._static_component_presence_at_ability_start if keys is not None else None
+                ),
+                granted_characteristic_resolver=(
+                    (lambda source: self._granted_characteristic_occurrences(source, fragments, keys))
+                    if fragments is not None else None
+                ),
+                copied_characteristic_resolver=(
+                    (lambda source: self._copied_characteristic_occurrences(source, fragments, keys))
+                    if fragments is not None else None
+                ),
+            )
+
+        return memoized_characteristic_read(
+            self, ("battlefield-program-characteristics", maximum_layer, enforce_static_components), collect,
+        )
 
     def _read_effective_card_data(
         self, value: str | CardInstance, *, printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False, maximum_layer: Layer | None = None,
-        _enforce_static_component_applicability: bool = True,
+        include_base_power: bool = False, _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         record = self.card_record(card)
@@ -707,14 +856,11 @@ class CharacteristicEvaluationHostMixin:
             public_zone_front_faces=(not printed_entry_characteristics
                 and getattr(self.state, 'characteristic_query_boundary_version', None) == PUBLIC_ZONE_FRONT_FACE_VERSION),
         )
-        static_component_fragments = (
-            self._effective_static_component_fragment_map()
-            if card.zone == "battlefield"
-            and _enforce_static_component_applicability
+        static_component_key_map = (
+            self._effective_static_component_key_map()
+            if card.zone == "battlefield" and _enforce_static_component_applicability
             else None
         )
-        static_component_key_map = (self._static_keys_from_fragment_map(static_component_fragments)
-            if static_component_fragments is not None else None)
         runtime_effects = (
             (
                 *active_resolution_effects(self.state, card),
@@ -728,61 +874,10 @@ class CharacteristicEvaluationHostMixin:
                     if static_component_key_map is not None
                     else ()
                 ),
-                *collect_card_program_continuous_effects(
-                    self.state,
-                    self.semantics,
-                    self.semantic_program_is_current_trusted,
+                *self._battlefield_program_characteristic_effects(
                     maximum_layer=maximum_layer,
-                    public_object_resolver=(
-                        partial(
-                            self._public_object_query_result,
-                            _enforce_static_component_applicability=(
-                                _enforce_static_component_applicability
-                            ),
-                        )
-                        if maximum_layer is None
-                        or maximum_layer >= Layer.ABILITY
-                        else None
-                    ),
-                    quantity_resolver=(
-                        partial(
-                            query_characteristic_count,
-                            self,
-                            _enforce_static_component_applicability=(
-                                _enforce_static_component_applicability
-                            ),
-                        )
-                        if maximum_layer is None
-                        or maximum_layer >= Layer.ABILITY
-                        else None
-                    ),
-                    # Setting codecs admit graveyard counts or devotion, whose
-                    # existing owner stops after copy/control/text (CR 700.5a).
-                    setting_quantity_resolver=partial(
-                        query_characteristic_count, self,
-                        _enforce_static_component_applicability=_enforce_static_component_applicability,
-                    ),
-                    static_component_resolver=(
-                        (
-                            lambda source: static_component_key_map.get(
-                                source.object_id, ()
-                            )
-                        )
-                        if static_component_key_map is not None
-                        else None
-                    ),
-                    early_static_component_resolver=self._static_component_keys_at_layer,
-                    copied_static_source_resolver=self._copied_static_source_fragments,
-                    ability_source_participation=(self._static_component_presence_at_ability_start
-                        if static_component_key_map is not None else None),
-                    granted_characteristic_resolver=(
-                        (lambda source: self._granted_characteristic_occurrences(source,
-                            static_component_fragments, static_component_key_map))
-                        if static_component_fragments is not None else None),
-                    copied_characteristic_resolver=(
-                        (lambda source:self._copied_characteristic_occurrences(source,
-                            static_component_fragments,static_component_key_map))
-                        if static_component_fragments is not None else None),
+                    enforce_static_components=_enforce_static_component_applicability,
+                    keys=static_component_key_map,
                 ),
             )
             if card.zone == "battlefield"
@@ -793,19 +888,17 @@ class CharacteristicEvaluationHostMixin:
             if maximum_layer is None or maximum_layer >= Layer.ABILITY:
                 from .compiled_cast_timing import compiled_conditional_flash_stack_effects
                 from .semantic_runtime.battlefield_cascade_grants import stack_cascade_grant_effects
+                from .semantic_runtime.battlefield_ripple_grants import stack_ripple_grant_effects
 
                 runtime_effects = (*runtime_effects, *compiled_conditional_flash_stack_effects(self, card),
-                    *stack_cascade_grant_effects(self, card))
+                    *stack_cascade_grant_effects(self, card), *stack_ripple_grant_effects(self, card))
         if card.zone != "battlefield":
             from .rules.cross_zone_characteristics import cross_zone_type_effects_for_card
+            from .semantic_runtime.continuous_registry import off_battlefield_activation_grant_effects
 
             runtime_effects = (*runtime_effects, *cross_zone_type_effects_for_card(self, card, maximum_layer=maximum_layer))
-        if card.zone == "graveyard" and _enforce_static_component_applicability:
-            from .semantic_runtime.graveyard_unearth_grants import graveyard_unearth_effects_for_card
-
-            runtime_effects = (*runtime_effects, *graveyard_unearth_effects_for_card(
-                self, card, maximum_layer=maximum_layer,
-            ))
+            if _enforce_static_component_applicability:
+                runtime_effects += off_battlefield_activation_grant_effects(self, card, maximum_layer=maximum_layer)
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,
@@ -826,6 +919,7 @@ class CharacteristicEvaluationHostMixin:
             runtime_effects=runtime_effects,
             ignore_face_down=ignore_face_down,
             maximum_layer=maximum_layer,
+            include_base_power=include_base_power,
             enchanted=enchanted,
             equipped=equipped,
             modified=modified,

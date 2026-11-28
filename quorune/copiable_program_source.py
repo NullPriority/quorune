@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from .ability_fragment_primitives import AbilityFragmentError
 
 
+COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
+
+
 @dataclass(frozen=True,slots=True)
 class CopiableProgramSourceSpec:
     oracle_id: str

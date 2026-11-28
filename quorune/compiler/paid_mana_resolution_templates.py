@@ -59,3 +59,34 @@ def paid_mana_resolution_template(text,*,source_name,compile_component):
         *prefix_ids,*conditional[3],*(otherwise[3] if otherwise else ()))))
     return ('paid-mana-same-target-replacement-v1' if replacing else 'paid-mana-resolution-condition-v1',
         (*deepcopy(prefix_effects),wrapper),deepcopy(schema),mechanics)
+
+
+_INDEPENDENT_MANA_RESULT = re.compile(
+    r"(?P<body>.+?) if \{(?P<color>[WUBRG])\} was spent to cast this spell", re.I,
+)
+_MANA_NAMES = dict(zip("WUBRG", ("white", "blue", "black", "red", "green"), strict=True))
+
+
+def independent_paid_mana_results_template(text, *, source_name, compile_component):
+    """Compile ordered, untargeted result clauses with independent actual color checks."""
+    statements = text.strip().removesuffix(".").split(". ")
+    if not 2 <= len(statements) <= len(_MANA_NAMES):
+        return None
+    matched = tuple(_INDEPENDENT_MANA_RESULT.fullmatch(statement) for statement in statements)
+    if None in matched:
+        return None
+    colors = tuple(match["color"].upper() for match in matched)
+    if len(set(colors)) != len(colors):
+        return None
+    effects, mechanics = [], []
+    for match, color in zip(matched, colors, strict=True):
+        clause = f"If at least one {_MANA_NAMES[color]} mana was spent to cast this spell, {match['body']}."
+        compiled = paid_mana_resolution_template(clause, source_name=source_name, compile_component=compile_component)
+        if compiled is None or compiled[0] != "paid-mana-resolution-condition-v1" or len(compiled[1]) != 1:
+            return None
+        _, conditional, schema, owned = compiled
+        if schema is not None:
+            return None
+        effects.extend(conditional)
+        mechanics.extend(owned)
+    return "independent-paid-mana-results-v1", tuple(effects), None, tuple(dict.fromkeys(mechanics))

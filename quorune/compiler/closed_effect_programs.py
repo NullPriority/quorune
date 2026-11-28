@@ -185,6 +185,15 @@ def has_one_closed_target_slot(schema: Mapping[str, Any]) -> bool:
     return one_required
 
 
+def _has_unowned_linkage(clauses: tuple[str, ...]) -> bool:
+    from .temporary_player_rule_templates import _temporary_land_play_allowance_template
+
+    return any(
+        _UNSAFE_LINKAGE.search(clause) and _temporary_land_play_allowance_template(clause) is None
+        for clause in clauses
+    )
+
+
 def closed_effect_program_template(
     text: str,
     *,
@@ -193,9 +202,14 @@ def closed_effect_program_template(
     """Compose independently typed mandatory components in printed order."""
 
     normalized = text.strip()
-    if not normalized or _UNSAFE_LINKAGE.search(normalized):
+    if not normalized:
+        return None
+    has_linkage = _UNSAFE_LINKAGE.search(normalized) is not None
+    if has_linkage and "additional land" not in normalized.casefold():
         return None
     for clauses in _candidate_partitions(normalized):
+        if has_linkage and _has_unowned_linkage(clauses):
+            continue
         compiled = tuple(compile_component(clause) for clause in clauses)
         if any(
             template_id is None

@@ -3,7 +3,15 @@ import json
 import unittest
 from dataclasses import replace
 import top_order_fixture as fixtures
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from common import ROOT
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.record import authoritative_state_hash
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
@@ -512,3 +520,196 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
             for viewer in set("ABCD") - {seat}:
                 self.assertNotIn(json.dumps(ref), json.dumps(session.packet(f"pilot:{viewer}", full=True)))
         self.replay(session, load=True)
+
+class LimDulsVaultNativeTests(fixtures.TopOrderFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "life-paid-library-cycle.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/fixed-top-order-cards.json",
+            ROOT / "tests/fixtures/life-total-prohibition-cards.json",
+            ROOT / "tests/fixtures/match-outcome-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Private life-paid top order", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def vault_scene(self, seed, count, *, life=40, protection=None):
+        game = self.session(seed)
+        spell = self.add(game.engine, "Lim-Dûl's Vault", zone="hand")
+        for oid in tuple(game.state.players["A"].zones["library"]):
+            game.engine.move_card(oid, "outside", log=False, semantic_events=False)
+        for idx in reversed(range(count)):
+            card = self.add(game.engine, "Generic Bound Plains", zone="library", ref=f"vault-private-{idx}")
+            card.known_to = []
+            card.revealed_to = []
+        game.state.players["A"].life = life
+        if protection:
+            permanent = self.add(game.engine, protection)
+            self.assert_closed(game, permanent)
+        self.assert_closed(game, spell)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"U": 1, "B": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", spell)
+        stack_ref = game.state.stack[-1].ref
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        return game, spell, stack_ref
+
+    def vault_stage(self, game, stack_ref, stage, refs):
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        self.assertEqual(stack_ref, game.state.stack[-1].ref)
+        actor = game.packet("pilot:A", full=True)["decision"]
+        ctx = actor["ctx"]
+        self.assertEqual(stage, ctx["stage"])
+        self.assertEqual(list(refs), [row["id"] for row in ctx["cards"]])
+        for other in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            packet = game.packet(other, full=True)
+            self.assertIsNone(packet["decision"])
+            projected = json.dumps(packet)
+            for ref in refs:
+                self.assertNotIn(ref, projected)
+        return actor["legal_actions"][0]["choice_schema"]
+
+    def vault_submit(self, game, **response):
+        result = game.act("pilot:A", {"action_id": "choose", **response})
+        self.assertTrue(result.ok, result.summary)
+
+    def vault_reject(self, game, principal, command):
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act(principal, command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def vault_shuffles(self, game):
+        return game.state.players["A"].stats.get("shuffle_count", 0)
+
+    def test_actual_lim_duls_vault_two_private_paid_cycles_then_shuffle_and_restore(self):
+        import random
+
+        game, spell, stack = self.vault_scene(7012401, 12)
+        before_shuffle = self.vault_shuffles(game)
+        self.vault_reject(game, "pilot:A", {"action_id": "pass"})
+        for number in (1, 2):
+            with self.subTest(iteration=number):
+                refs = self.top_refs(game, 5)
+                choice = self.vault_stage(game, stack, "decide", refs)
+                self.assertEqual({"pay", "stop"}, set(choice["legal_values"]))
+                self.vault_reject(game, "pilot:B", {"action_id": "choose", "choice": "pay"})
+                before = tuple(game.state.players["A"].zones["library"])
+                self.vault_submit(game, choice="pay")
+                self.assertEqual(40 - number, game.state.players["A"].life)
+                self.assertEqual(before, tuple(game.state.players["A"].zones["library"]))
+                schema = self.vault_stage(game, stack, "bottom", refs)
+                self.assertEqual("bottom_to_top", schema["order"])
+                self.assertEqual(set(refs), set(schema["legal_refs"]))
+                self.vault_reject(game, "pilot:A", {"action_id": "choose", "choice": "pay"})
+                self.vault_reject(game, "pilot:A", {"action_id": "choose", "cards": [refs[0]] * 5})
+                game = self.replay(game, load=True)
+                order = tuple(reversed(refs)) if number == 1 else tuple(refs[1:] + refs[:1])
+                by_ref = {card.ref: card.object_id for card in game.state.cards.values()}
+                self.vault_submit(game, cards=list(order))
+                expected = (*[by_ref[ref] for ref in order], *before[:-5])
+                self.assertEqual(expected, tuple(game.state.players["A"].zones["library"]))
+                self.assertEqual(before_shuffle, self.vault_shuffles(game))
+
+        refs = self.top_refs(game, 5)
+        self.vault_stage(game, stack, "decide", refs)
+        self.vault_submit(game, choice="stop")
+        schema = self.vault_stage(game, stack, "top", refs)
+        self.assertEqual("top_to_bottom", schema["order"])
+        self.vault_reject(game, "pilot:A", {"action_id": "choose", "cards": refs[:-1]})
+        game = self.replay(game, load=True)
+        rest = list(game.state.players["A"].zones["library"][:-5])
+        random.Random(f"{game.state.config.seed}|A|shuffle|{before_shuffle + 1}").shuffle(rest)
+        order = refs[2:] + refs[:2]
+        self.vault_submit(game, cards=order)
+        self.settle(game)
+        self.assertEqual(rest, game.state.players["A"].zones["library"][:-5])
+        self.assertEqual(order, self.top_refs(game, 5))
+        self.assertEqual(before_shuffle + 1, self.vault_shuffles(game))
+        self.assertEqual(38, game.state.players["A"].life)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertEqual(2, sum(event.code == "life.pay" for event in game.state.events))
+        self.assertFalse(any(event.code == "library.scry" for event in game.state.events))
+        for other in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            projected = json.dumps(game.packet(other, full=True))
+            for ref in order:
+                self.assertNotIn(ref, projected)
+        self.replay(game, load=True)
+
+    def test_actual_lim_duls_vault_short_singleton_and_empty_libraries(self):
+        for count in (0, 1, 3):
+            with self.subTest(count=count):
+                game, _, stack = self.vault_scene(7012410 + count, count)
+                before = self.vault_shuffles(game)
+                refs = self.top_refs(game, count) if count else []
+                self.vault_stage(game, stack, "decide", refs)
+                if count < 2:
+                    self.vault_submit(game, choice="pay")
+                    self.assertEqual(39, game.state.players["A"].life)
+                    self.vault_stage(game, stack, "decide", refs)
+                game = self.replay(game, load=True)
+                self.vault_submit(game, choice="stop")
+                if count == 3:
+                    self.vault_stage(game, stack, "top", refs)
+                    self.vault_submit(game, cards=list(reversed(refs)))
+                    self.assertEqual(list(reversed(refs)), self.top_refs(game, 3))
+                    self.assertEqual(40, game.state.players["A"].life)
+                self.settle(game)
+                self.assertEqual(count, len(game.state.players["A"].zones["library"]))
+                self.assertEqual(before + 1, self.vault_shuffles(game))
+                self.assertFalse(game.state.players["A"].attempted_empty_draw)
+                self.replay(game, load=True)
+
+    def test_actual_lim_duls_vault_prohibited_or_unaffordable_payment_forces_final_order(self):
+        for index, (life, protection) in enumerate(((40, "Platinum Emperion"), (0, "Platinum Angel"))):
+            with self.subTest(protection=protection):
+                game, _, stack = self.vault_scene(7012420 + index, 3, life=life, protection=protection)
+                before = self.vault_shuffles(game)
+                refs = self.top_refs(game, 3)
+                schema = self.vault_stage(game, stack, "top", refs)
+                self.assertEqual("cards", schema["field"])
+                self.vault_reject(game, "pilot:A", {"action_id": "choose", "choice": "pay"})
+                game = self.replay(game, load=True)
+                self.vault_submit(game, cards=list(reversed(refs)))
+                self.settle(game)
+                self.assertEqual(life, game.state.players["A"].life)
+                self.assertEqual(before + 1, self.vault_shuffles(game))
+                self.assertEqual(list(reversed(refs)), self.top_refs(game, 3))
+                self.assertFalse(any(event.code == "life.pay" for event in game.state.events))
+                self.replay(game, load=True)
+
+    def test_actual_lim_duls_vault_pays_last_life_and_finishes_before_state_actions(self):
+        game, spell, stack = self.vault_scene(7012430, 3, life=1)
+        before = self.vault_shuffles(game)
+        refs = self.top_refs(game, 3)
+        self.vault_stage(game, stack, "decide", refs)
+        self.vault_submit(game, choice="pay")
+        self.assertEqual(0, game.state.players["A"].life)
+        self.assertTrue(game.state.players["A"].in_game)
+        self.vault_stage(game, stack, "bottom", refs)
+        self.vault_reject(game, "pilot:A", {"action_id": "choose", "cards": [refs[0]] * 3})
+        self.assertEqual(0, game.state.players["A"].life)
+        self.assertEqual(1, sum(event.code == "life.pay" for event in game.state.events))
+        self.vault_stage(game, stack, "bottom", refs)
+        game = self.replay(game, load=True)
+        self.vault_submit(game, cards=list(reversed(refs)))
+        last = self.top_refs(game, 3)
+        self.vault_stage(game, stack, "top", last)
+        self.vault_submit(game, cards=last)
+        self.assertFalse(game.state.players["A"].in_game)
+        self.assertEqual("outside", game.state.cards[spell.object_id].zone)
+        self.assertEqual(before + 1, self.vault_shuffles(game))
+        self.assertEqual(1, sum(event.code == "life.pay" for event in game.state.events))
+        self.replay(game, load=True)

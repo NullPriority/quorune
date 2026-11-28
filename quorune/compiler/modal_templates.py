@@ -8,7 +8,13 @@ import hashlib
 from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
+from ..rules.modal_selection import (
+    COMMANDER_CAST_MODE_LIMIT_FIELD, conditional_cast_mode_capability, wizard_cast_mode_limit_matches,
+)
 from ..util import stable_json
+from ..rules.modal_selection import (
+    DISTINCT_TURN_GRAVEYARD_MODES_VERSION, DISTINCT_TURN_TRIGGER_MODES_FIELD, valid_distinct_turn_trigger_modes,
+)
 from .declared_effect_amounts import contains_declared_effect_amount
 from .linked_exile_return_templates import scope_linked_return_bindings
 
@@ -32,8 +38,14 @@ _NONREPEATING_HEADERS = {
     _HEADER: (1, 1),
     "Choose one or both —": (1, 2),
     "Choose one or more —": (1, None),
+    "Choose any number —": (0, None),
+    "Choose up to one —": (0, 1),
     "Choose two —": (2, 2),
 }
+_DISTINCT_TURN_HEADERS = (
+    "Choose one that hasn't been chosen this turn \u2014",
+    "Choose one that hasn't been chosen this turn.",
+)
 _BULLET_PREFIX = "• "
 _NAMED_MODE = re.compile(
     r"^(?P<label>[A-Z][A-Za-z' ]*[A-Za-z']) — (?P<body>.+)$"
@@ -113,23 +125,35 @@ class FixedNonrepeatingModalTemplate:
 
     def __post_init__(self) -> None:
         mode_total = len(self.component_template_ids)
+        schema = deepcopy(dict(self._target_schema))
         supported_bounds = {
+            (0, mode_total),
+            (0, 1),
             (1, 1),
             (1, mode_total),
             (2, 2),
         }
+        if wizard_cast_mode_limit_matches(schema):
+            supported_bounds.add((1, 2))
         if (
             mode_total not in {2, 3, 4, 5}
             or any(not value for value in self.component_template_ids)
-            or not 1 <= self.minimum_modes <= self.maximum_modes <= mode_total
+            or not 0 <= self.minimum_modes <= self.maximum_modes <= mode_total
+            or (self.minimum_modes == 0 and not self.context_prefix)
             or (self.minimum_modes, self.maximum_modes) not in supported_bounds
             or self.mechanic_ids[:1]
             != (FIXED_NONREPEATING_MODAL_MECHANIC,)
         ):
             raise ValueError("Fixed nonrepeating modal template is malformed")
-        schema = deepcopy(dict(self._target_schema))
+        fields = {"mode_count", "min_modes", "max_modes", "modes"}
+        if conditional_cast_mode_capability(schema):
+            fields.add(COMMANDER_CAST_MODE_LIMIT_FIELD)
+        if DISTINCT_TURN_TRIGGER_MODES_FIELD in schema:
+            fields.add(DISTINCT_TURN_TRIGGER_MODES_FIELD)
         if (
-            set(schema) != {"mode_count", "min_modes", "max_modes", "modes"}
+            set(schema) != fields
+            or (DISTINCT_TURN_TRIGGER_MODES_FIELD in schema
+                and (not self.context_prefix or not valid_distinct_turn_trigger_modes(schema)))
             or schema.get("mode_count") != self.minimum_modes
             or schema.get("min_modes") != self.minimum_modes
             or schema.get("max_modes") != self.maximum_modes
@@ -249,8 +273,8 @@ def fixed_nonrepeating_modal_template(
     header = next(
         (
             value
-            for value in _NONREPEATING_HEADERS
-            if header_line.casefold().endswith(value.casefold())
+            for value in (*_NONREPEATING_HEADERS, *_DISTINCT_TURN_HEADERS)
+            if header_line.casefold().replace("\u2019", "'").endswith(value.casefold())
         ),
         None,
     )
@@ -262,9 +286,17 @@ def fixed_nonrepeating_modal_template(
     bodies = tuple(_mode_body(row[1]) for row in material_rows[1:])
     if any(body is None or not body.strip() for body in bodies):
         return None
-    minimum_modes, fixed_maximum = _NONREPEATING_HEADERS[header]
+    distinct_turn_modes = header in _DISTINCT_TURN_HEADERS
+    distinct_turn_version = (
+        DISTINCT_TURN_GRAVEYARD_MODES_VERSION
+        if context_prefix.casefold() == "whenever one or more cards leave your graveyard, "
+        else 1
+    )
+    if distinct_turn_modes and (not context_prefix or len(bodies) != 3):
+        return None
+    minimum_modes, fixed_maximum = (1, 1) if distinct_turn_modes else _NONREPEATING_HEADERS[header]
     maximum_modes = len(bodies) if fixed_maximum is None else fixed_maximum
-    if maximum_modes > len(bodies):
+    if maximum_modes > len(bodies) or (minimum_modes == 0 and not context_prefix):
         return None
     compiled = tuple(compile_effect(str(body)) for body in bodies)
     if any(
@@ -278,6 +310,8 @@ def fixed_nonrepeating_modal_template(
     ):
         return None
 
+    if distinct_turn_modes and any(schema is not None for _, _, schema, _ in compiled):
+        return None
     modes: dict[str, dict[str, Any]] = {}
     mechanic_ids = [FIXED_NONREPEATING_MODAL_MECHANIC]
     for index, (_template, effects, target_schema, mechanics) in enumerate(
@@ -315,6 +349,7 @@ def fixed_nonrepeating_modal_template(
             "min_modes": minimum_modes,
             "max_modes": maximum_modes,
             "modes": modes,
+            **({DISTINCT_TURN_TRIGGER_MODES_FIELD: distinct_turn_version} if distinct_turn_modes else {}),
         },
         mechanic_ids=tuple(dict.fromkeys(mechanic_ids)),
     )

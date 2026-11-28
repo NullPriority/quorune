@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict, CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..exert_model import ExertAttackSpec, EXERT_ATTACK_CAPABILITY, EXERT_UNTAP_CAPABILITY, EXERT_ATTACK_HANDLER
+from ..exert_model import (
+    ExertAttackSpec, EXERT_ATTACK_CAPABILITY, EXERT_FIRST_THIS_TURN_CAPABILITY,
+    EXERT_UNTAP_CAPABILITY, EXERT_ATTACK_HANDLER,
+)
 from ..rules.capabilities import capability_dependencies_for_node
 from ..rules.source_references import SourceReferenceSpec
 from ..source_prevention import SOURCE_SUBJECT_VERSION
@@ -21,6 +24,14 @@ _SELF_COMBAT_SHIELD = re.compile(
 
 
 def _exert_result(body, *, source_name, effect_template):
+    if " ".join(body.casefold().split()) == (
+        "untap all other creatures you control and after this phase, there is an additional combat phase."
+    ):
+        from ..extra_combat_model import EXTRA_COMBAT_MECHANIC, ExtraCombatUntap, extra_combat_effect
+
+        return ("untap-other-creatures-extra-combat-v1",
+                (extra_combat_effect(ExtraCombatUntap.OTHER_CONTROLLED_CREATURES),), None,
+                (EXTRA_COMBAT_MECHANIC,))
     damage = source_pronoun_damage_effect_template(body)
     if damage is not None:
         return damage.compiled()
@@ -42,8 +53,14 @@ def _exert_result(body, *, source_name, effect_template):
 
 def exert_attack_nodes(*,record,face_id,node_id,line,material_line,span,source_name,
         effect_template,capability_registry,capability_profile,residuals):
-    match=re.fullmatch(r'You may exert (?P<source>.+?) as it attacks\. When you do, (?P<body>.+)',material_line,re.I)
-    if match is None or not (match['source'].casefold()=='this creature' or SourceReferenceSpec(source_name).matches(match['source'])):
+    match = re.fullmatch(
+        r"(?P<guard>If this creature hasn['’]t been exerted this turn, )?You may exert "
+        r"(?P<source>.+?) as it attacks\. When you do, (?P<body>.+)", material_line, re.I,
+    )
+    if match is None or not (
+        match["source"].casefold() in {"this creature", "it"} if match["guard"]
+        else match["source"].casefold() == "this creature" or SourceReferenceSpec(source_name).matches(match["source"])
+    ):
         return None
     compiled = _exert_result(match['body'], source_name=source_name, effect_template=effect_template)
     if compiled[0] is None:
@@ -54,9 +71,12 @@ def exert_attack_nodes(*,record,face_id,node_id,line,material_line,span,source_n
     child=capability_dependencies_for_node(effects=effects,target_schema=schema,mechanic_ids=mechanics)
     if not child:
         return None
+    guarded = match["guard"] is not None
+    static_capabilities = (EXERT_ATTACK_CAPABILITY, *((EXERT_FIRST_THIS_TURN_CAPABILITY,) if guarded else ()))
+    spec = ExertAttackSpec(key, schema_version=2 if guarded else 1)
     outer=runtime_handler_node(node_id=node_id,line=line,span=span,
         compiled=('optional-exert-as-attacks-v1',{'handler_id':EXERT_ATTACK_HANDLER,'schema_version':1,
-            'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(ExertAttackSpec(key))},EXERT_ATTACK_CAPABILITY),
+            'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(spec)},static_capabilities),
         kind='static_ability',event='characteristics.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Optional attack Exert requires a typed linked result and player-locked untap restriction.',
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)

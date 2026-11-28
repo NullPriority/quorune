@@ -6,18 +6,22 @@ from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
 
-from ..creature_subtypes import CREATURE_SUBTYPES
+from ..creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from ..named_search_model import LiteralNameBattlefieldSearchSpec
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..library_search_model import (
+    SearchedLandUntapSearch,
+    AnyNumberCreatureSubtypeSearch,
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FixedCountedLibrarySearchTemplate,
     TargetNameLibrarySearchSpec,
+    TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC,
     SEARCH_ALTERNATIVES,
     counted_search_selector_is_closed,
     search_selector,
+    target_player_basic_land_search_effect,
     SEARCH_LAND_SUBTYPES,
     SEARCH_NONCREATURE_SUBTYPES,
     SEARCH_SUBTYPES,
@@ -56,9 +60,19 @@ _FIXED_SEARCH = re.compile(
     rf"then shuffle\.$",
     re.IGNORECASE,
 )
+_BASIC_LAND_SEARCH_THEN_UNTAP = re.compile(
+    r"Search your library for a basic land card, put it onto the battlefield tapped, then shuffle\. "
+    rf"Then if you control (?P<minimum>{FIXED_COUNT_PATTERN}) or more lands, untap that land\.",
+    re.IGNORECASE,
+)
 _FIXED_SEARCH_AND_PUT = re.compile(
     r"(?P<search>Search your library for .+? card) and "
     r"(?P<put>put (?:it|that card) onto the battlefield(?: tapped)?)\. Then shuffle\.",
+    re.IGNORECASE,
+)
+_TARGET_PLAYER_BASIC_LAND_SEARCH = re.compile(
+    r"Target player searches their library for a basic land card, "
+    r"puts it onto the battlefield tapped, then shuffles\.",
     re.IGNORECASE,
 )
 _COUNTED_START = (
@@ -78,12 +92,31 @@ _COUNTED_MOVE = re.compile(
 )
 _COUNTED_TOP = re.compile(
     _COUNTED_START + _COUNTED_REVEAL
-    + r"then shuffle and put (?P<pronoun>it|that card) on top\.", re.I,
+    + r"then shuffle and put (?P<pronoun>it|that card|the card) on top\.", re.I,
 )
 _ALTERNATIVE_CONNECTOR = re.compile(r"(?:\s|,)\s*(?:and/or|or)\s+", re.I)
 _ALTERNATIVE_SEPARATOR = re.compile(r",\s*(?:(?:and/or|or)\s+)?|\s+(?:and/or|or)\s+", re.I)
 _ALTERNATIVE_ARTICLE = re.compile(r"^an?\s+", re.I)
 _CARD_NOUN = re.compile(r"\s+cards?$", re.I)
+
+
+def dragon_graveyard_copy_search_template(text, *, source_name):
+    from ..rules.dragon_graveyard_search_copy import (
+        DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC, dragon_graveyard_copy_search_effect,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    match = re.fullmatch(
+        r"Search your library for a Dragon permanent card and put it into your graveyard\. "
+        r"If you do, (?P<source>.+?) becomes a copy of that card until end of turn\. Then shuffle\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    return (
+        "dragon-graveyard-search-and-self-copy-v1", (dragon_graveyard_copy_search_effect(),), None,
+        (DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC,),
+    )
 
 
 def _or_terms(value: str) -> tuple[str, ...]:
@@ -302,17 +335,42 @@ def _counted_search_selector(match, *, destination):
     return selector
 
 
+def private_search_random_discard_effect_template(text: str):
+    if " ".join(text.split()).casefold() != (
+        "search your library for a card, put that card into your hand, discard a card at random, then shuffle."
+    ):
+        return None
+    from ..library_search_model import PRIVATE_SEARCH_RANDOM_DISCARD_MECHANIC
+    from ..rules.search_random_discard import private_search_random_discard_effects
+
+    return (
+        "private-library-search-random-discard-v1", private_search_random_discard_effects(), None,
+        (PRIVATE_SEARCH_RANDOM_DISCARD_MECHANIC,),
+    )
+
+
 def fixed_counted_library_search_effect_template(
     text: str,
 ) -> FixedCountedLibrarySearchTemplate | None:
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == ("search your library for up to two creature cards with different names, "
+                                  "reveal them, put them into your hand, then shuffle."):
+        return FixedCountedLibrarySearchTemplate(
+            2, True, FrozenMap({"types": ["creature"]}), "hand", True, different_names=True,
+        )
+    if normalized.casefold() == ("search your library for up to two basic land cards that share a land type, "
+                                  "put them onto the battlefield tapped, then shuffle."):
+        return FixedCountedLibrarySearchTemplate(
+            2, True, FrozenMap({"types": ["land"], "supertypes": ["basic"]}), "battlefield", False,
+            enters_tapped=True, shared_land_type=True,
+        )
     normalized = re.sub(r'^Search your library for any card(?=,)', 'Search your library for a card', normalized, flags=re.I)
     match = _COUNTED_MOVE.fullmatch(normalized) or _COUNTED_TOP.fullmatch(normalized)
     if match is None:
         return None
     count = fixed_number(match["count"])
     singular = count == 1
-    pronouns = {"it", "that card"}
+    pronouns = {"it", "that card", "the card"}
     if (
         not 1 <= count <= 10 or singular == bool(match["plural"])
         or singular != (match["pronoun"].casefold() in pronouns)
@@ -407,6 +465,44 @@ def optional_literal_name_any_number_search_template(text):
     ).compiled()
 
 
+def creature_subset_mana_value_search_template(text: str):
+    if " ".join(text.split()).casefold() != (
+        "search your library for any number of creature cards with total mana value 6 or less, "
+        "put them onto the battlefield, then shuffle."
+    ):
+        return None
+    from ..library_search_model import CreatureSubsetManaValueSearch
+
+    return (
+        "creature-subset-total-mana-value-library-search-v23",
+        (CreatureSubsetManaValueSearch(6).effect(),),
+        None,
+        (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,),
+    )
+
+
+def optional_subtype_graveyard_search_template(text):
+    match = re.fullmatch(
+        r"You may search your library for any number of (?P<subtype>[^,.]+) cards, "
+        r"put them into your graveyard, then shuffle\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subtype = canonical_creature_subtype(match["subtype"])
+    if subtype is None:
+        return None
+    from ..library_search_model import SubtypeGraveyardSearchSpec
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+    return FixedOptionalEffectTemplate(
+        component_template_id="creature-subtype-library-graveyard-search-v37",
+        _component_effects=(SubtypeGraveyardSearchSpec(subtype).effect(),),
+        _target_schema=None,
+        mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID),
+    ).compiled()
+
+
 def recruiting_library_search_template(text):
     match = re.fullmatch(
         r"Search your library for any number of (?P<subtype>[^,.]+) cards, "
@@ -447,15 +543,100 @@ def _literal_name_battlefield_search_template(text: str) -> LiteralNameBattlefie
         return None
 
 
+def fixed_creature_group_library_search_template(text):
+    if " ".join(text.split()).casefold() != (
+        "search your library for up to two creature cards, put those cards onto the battlefield, then shuffle."
+    ):
+        return None
+    from ..library_search_model import fixed_creature_group_search_effect
+
+    return ("fixed-creature-group-battlefield-search-v17", (fixed_creature_group_search_effect(),), None,
+            (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,))
+
+
+def qualified_instant_library_cast_template(text: str):
+    from ..mana_value_limit import ManaValueLimitSpec
+    from ..rules.qualified_library_cast import MECHANIC, QualifiedLibraryCastSpec
+
+    pattern = (
+        r"Search your library for a (?P<first>white|blue|black|red|green) or "
+        r"(?P<second>white|blue|black|red|green) instant card with mana value "
+        r"(?P<maximum>0|[1-9][0-9]*) or less and cast that card without paying its mana cost\. Then shuffle\."
+    )
+    match = re.fullmatch(pattern, " ".join(text.split()), re.I)
+    if match is None or match["first"].casefold() == match["second"].casefold():
+        return None
+    symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+    colors = tuple(sorted(symbols[match[group].casefold()] for group in ("first", "second")))
+    spec = QualifiedLibraryCastSpec(ManaValueLimitSpec(int(match["maximum"])), colors)
+    return ("fixed-qualified-library-cast-v1", (spec.effect(),), None, (MECHANIC,))
+
+
+def target_player_basic_land_search_template(text: str):
+    """Lower the complete activated target-player search result."""
+    if not _TARGET_PLAYER_BASIC_LAND_SEARCH.fullmatch(" ".join(text.split())):
+        return None
+    target = {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
+    return (
+        "fixed-target-player-basic-land-search-v21",
+        (target_player_basic_land_search_effect(),),
+        target,
+        (TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC,),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class FixedOpponentLandSearchTemplate:
+    def compiled(self):
+        from ..rules.fixed_opponent_land_search import MECHANIC, opponent_land_search_effect
+
+        return "fixed-opponent-land-search-v1", (opponent_land_search_effect(),), None, (MECHANIC,)
+
+
 def fixed_library_search_effect_template(
     text: str,
 ) -> (FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate
-      | TargetNameLibrarySearchSpec | LiteralNameBattlefieldSearchSpec | None):
+      | TargetNameLibrarySearchSpec | LiteralNameBattlefieldSearchSpec | AnyNumberCreatureSubtypeSearch
+      | FixedOpponentLandSearchTemplate | SearchedLandUntapSearch | None):
     """Lower one fixed restrictive library search directly to the battlefield."""
 
     normalized = " ".join(text.strip().split())
+    if normalized.casefold().removeprefix("tempting offer — ") == (
+        "search your library for a land card and put it onto the battlefield. "
+        "each opponent may search their library for a land card and put it onto the battlefield. "
+        "for each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. "
+        "then each player who searched a library this way shuffles."
+    ):
+        return FixedOpponentLandSearchTemplate()
+    if normalized.casefold() == (
+        "search your library for a basic land card, put it onto the battlefield tapped, then shuffle. "
+        "then if you control four or more lands, untap that land."
+    ):
+        return SearchedLandUntapSearch()
+    if match := _BASIC_LAND_SEARCH_THEN_UNTAP.fullmatch(normalized):
+        minimum = fixed_number(match["minimum"])
+        if not 1 <= minimum <= 10:
+            return None
+        return FixedCountedLibrarySearchTemplate(
+            count=1, optional_count=False, selector=FrozenMap({"types": ["land"], "supertypes": ["basic"]}),
+            destination="battlefield", reveal=False, enters_tapped=True,
+            post_shuffle_untap_minimum_lands=minimum,
+        )
     if literal := _literal_name_battlefield_search_template(normalized):
         return literal
+    if normalized.casefold() == (
+        "search your library for any number of creature cards, put them onto the battlefield, then shuffle."
+    ):
+        return AnyNumberCreatureSubtypeSearch()
+    typed_any_number = re.fullmatch(
+        r"Search your library for any number of (?P<subtype>[A-Za-z][A-Za-z '’-]*?) "
+        r"(?P<creatures_only>creature )?cards, put them onto the battlefield, then shuffle\.",
+        normalized, re.IGNORECASE,
+    )
+    if typed_any_number is not None:
+        subtype = canonical_creature_subtype(typed_any_number["subtype"])
+        return (AnyNumberCreatureSubtypeSearch(subtype, creature_only=typed_any_number["creatures_only"] is not None)
+                if subtype is not None else None)
     if re.fullmatch(
         r"Search your library for a permanent card with the same name as target nontoken creature, "
         r"put that card onto the battlefield, then shuffle\.?", normalized, re.I,
@@ -513,6 +694,10 @@ def fixed_library_search_effect_template(
         # A reveal pronoun can make the broad quality capture span a counted
         # predicate. Let its complete, separately validated production decide.
         return fixed_counted_library_search_effect_template(text)
+    if normalized.casefold() == "search your library for up to two forest cards, put them onto the battlefield, then shuffle.":
+        from ..library_search_model import up_to_two_forest_search
+
+        return up_to_two_forest_search()
     enters_tapped = bool(match.group("tapped"))
     if count > 1 and not (
         enters_tapped

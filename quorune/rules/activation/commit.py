@@ -1,9 +1,14 @@
 from __future__ import annotations
+
+from ..announced_energy_reanimation import activation_energy_payment
 from .transform_snapshot import activation_transform_context
 
 from collections.abc import Mapping, Sequence
 import copy
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from ...cost_payments import ManaCostPayment
 
 from ...abilities import ActivatedAbility
 from ...activation_mana_cost import (
@@ -30,12 +35,14 @@ from ...errors import GameRuleError
 from ...crew import CrewAbilityError, pay_crew_cost
 from ...life_state import LifeStateError, pay_life_cost
 from ...mana_activation import complete_mana_activation
+from ..creature_ability_activation import capture_creature_ability_activation, publish_creature_ability_activation
+from ..chosen_color_draw_price import draw_spend_context
+from ..hand_artifact_mana import artifact_hand_selection_for_commit
 from ...mana_restrictions import ability_mana_spend_context
 from ...mana_undo import clear_mana_undo_stack
 from ...model import StackItem, YieldPolicy
 from ...control_effects import capture_control_duration
 from ...replacement.immutable import thaw_value
-from ...replacement.ordering import ReplacementChoiceRequired
 from ...zone_trigger_events import ZoneTransitionKind
 from ...station import (
     STATION_CONTEXT_KEY,
@@ -52,6 +59,7 @@ from ..activation_costs import (
 from ...combat_entry_activations import (
     begin_ninjutsu_reveal,
     FIXED_COMBAT_RETURN_CONTEXT,
+    NINJUTSU_ACTIVATED_EVENT,
     ENCORE_EFFECT_OPERATION,
     ENCORE_COPY_IDENTITY_FIELD,
     ENCORE_COPY_IDENTITY_CONTEXT,
@@ -62,10 +70,14 @@ from ...cycling_abilities import (
     CYCLING_HANDLER_ID,
     CYCLING_MECHANIC_ID,
     TYPECYCLING_HANDLER_ID,
+    VARIABLE_CYCLING_HANDLER_ID,
 )
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
 from .conditions import activation_condition_status
+from .equip_permissions import (
+    EQUIP_PAYMENT_FIELD, record_committed_equip_activation, selected_equip_price,
+)
 from .counter_costs import (
     commit_source_counter_removal_cost,
     SourceCounterActivationCostError,
@@ -107,7 +119,7 @@ class ActivationCommitHost(Protocol):
 
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
 
-    def _pay_for_cost(self, seat: str, requirements: Mapping[str, int], response: Mapping[str, Any], **kwargs: Any) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
+    def _pay_for_cost(self, seat: str, requirements: Mapping[str, int], response: Mapping[str, Any], **kwargs: Any) -> ManaCostPayment: ...
 
     def move_card(self, object_id: str, zone: str, **kwargs: Any) -> Any: ...
 
@@ -135,7 +147,7 @@ class ActivationCommitHost(Protocol):
 
 def _revalidate_activation(
     host: ActivationCommitHost, proposal: ActivationProposal
-) -> tuple[Any, ActivatedAbility, ActivationManaCostOption | None]:
+) -> tuple[Any, ActivatedAbility, ActivationManaCostOption | None, ActivatedAbility]:
     source = host._resolve_object(
         proposal.seat,
         proposal.source_ref,
@@ -162,6 +174,11 @@ def _revalidate_activation(
             "The selected ability is no longer available",
             reason="stale_ability",
         )
+    if ability.activation_grantor is not None:
+        from .query import activation_actor_allowed
+
+        if not activation_actor_allowed(host, proposal.seat, source, ability):
+            raise ActivationProposalError("Only the original grantor may activate this ability", reason="wrong_grantor")
     condition_status, condition_reason = activation_condition_status(
         host,
         proposal.seat,
@@ -179,6 +196,15 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    original = ability
+    ability = selected_equip_price(host, proposal.seat, source, original, details.get(EQUIP_PAYMENT_FIELD))
+    from .commander_identity_life import ACTIVATION_COMMANDER_LIFE_FIELD, commander_identity_life_details
+
+    current_life_price = commander_identity_life_details(host, proposal.seat, ability)
+    if current_life_price or ACTIVATION_COMMANDER_LIFE_FIELD in details:
+        quoted_life = details.get(ACTIVATION_COMMANDER_LIFE_FIELD)
+        if not current_life_price or type(quoted_life) is not int or quoted_life != current_life_price[ACTIVATION_COMMANDER_LIFE_FIELD]:
+            raise ActivationProposalError("Commander-identity life price changed after proposal", reason="stale_commander_life_price")
     if ability.variable_colored_reveal_price is not None:
         from .variable_colored_reveal import revalidate_variable_colored_reveal_payment
 
@@ -240,7 +266,7 @@ def _revalidate_activation(
             "The selected ability no longer has a complex mana cost",
             reason="stale_activation_mana_cost",
         )
-    return source, ability, mana_option
+    return source, ability, mana_option, original
 
 
 def _commit_symbol_costs(
@@ -278,9 +304,12 @@ def _commit_resource_costs(
     response: Mapping[str, Any],
     mana_option: ActivationManaCostOption | None,
 ) -> None:
+    loyalty_delta = ability.loyalty_delta
+    if ability.loyalty_x:
+        loyalty_delta = -thaw_json(proposal.details)["announced_x"]
     loyalty_prepared = None
     loyalty_event_id = ""
-    if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
+    if loyalty_delta is not None and loyalty_delta > 0:
         payment_id = str(
             response.get("_mana_payment_id") or proposal.fingerprint
         )
@@ -308,7 +337,7 @@ def _commit_resource_costs(
                         subject_kind="permanent",
                         subject_id=source.object_id,
                         counter_name="loyalty",
-                        amount=ability.loyalty_delta,
+                        amount=loyalty_delta,
                         placing_player=proposal.seat,
                         source_ref=source.ref,
                         effect_generated=False,
@@ -322,7 +351,9 @@ def _commit_resource_costs(
             raise ActivationProposalError(
                 str(exc), reason="loyalty_cost_placement"
             ) from exc
-    life_payment = ability.life_payment + (
+    from .commander_identity_life import activation_life_from_proposal
+
+    life_payment = activation_life_from_proposal(ability, proposal.details) + (
         mana_option.life_payment if mana_option is not None else 0
     )
     if life_payment:
@@ -335,19 +366,20 @@ def _commit_resource_costs(
                 reason="life_cost_unpayable",
             ) from exc
     counter_changes = []
-    if ability.energy_payment:
+    energy_payment = activation_energy_payment(ability, thaw_json(proposal.details).get("announced_x"))
+    if energy_payment:
         counter_changes.append(
             CounterChange(
-                "player", proposal.seat, "energy", -ability.energy_payment
+                "player", proposal.seat, "energy", -energy_payment
             )
         )
-    if ability.loyalty_delta is not None and ability.loyalty_delta <= 0:
+    if loyalty_delta is not None and loyalty_delta <= 0:
         counter_changes.append(
             CounterChange(
                 "permanent",
                 source.object_id,
                 "loyalty",
-                ability.loyalty_delta,
+                loyalty_delta,
                 expected_zone="battlefield",
                 expected_logical_object_id=source.logical_object_id,
             )
@@ -364,8 +396,8 @@ def _commit_resource_costs(
                 )
         commit_counter_changes(host, plans)
     loyalty_applied_delta = 0
-    if ability.loyalty_delta is not None and ability.loyalty_delta <= 0:
-        loyalty_applied_delta = ability.loyalty_delta
+    if loyalty_delta is not None and loyalty_delta <= 0:
+        loyalty_applied_delta = loyalty_delta
     if loyalty_prepared is not None:
         try:
             result = commit_prepared_counter_placements(
@@ -379,7 +411,7 @@ def _commit_resource_costs(
                 str(exc), reason="loyalty_cost_placement"
             ) from exc
         loyalty_applied_delta = result[0].placed
-    if ability.loyalty_delta is not None:
+    if loyalty_delta is not None:
         source.annotations["loyalty_initialized"] = True
         source.annotations["loyalty_activated_turn_sequence"] = host.state.turn_sequence
         host._log(
@@ -388,7 +420,7 @@ def _commit_resource_costs(
             f"{proposal.seat} paid {source.ref}'s loyalty cost.",
             {
                 "source": source.ref,
-                "requested_delta": ability.loyalty_delta,
+                "requested_delta": loyalty_delta,
                 "applied_delta": loyalty_applied_delta,
                 "placed": max(0, loyalty_applied_delta),
                 "removed": max(0, -loyalty_applied_delta),
@@ -416,17 +448,23 @@ def _pay_object_and_mana_costs(
     if ability.waterbend is not None:
         from ..waterbend_payments import pay_activation_waterbend
         return pay_activation_waterbend(host,proposal,source,ability,response)
+    from ..forage import has_forage_cost, pay_forage_activation_costs
+    if has_forage_cost(ability):
+        return pay_forage_activation_costs(host, proposal, source, response)
+    source_zone = source.zone
+    # The original creature can leave while paying another part of the cost.
+    source_type_line = (
+        str(host._effective_card_data(source).get("type_line") or "") if source_zone == "battlefield" else None
+    )
     from ..selected_counter_costs import (
-        blight_activation_choice, pay_blight_activation_cost, select_counter_cost_creature,
+        BLIGHT_ACTIVATION_COST_KIND, mana_first_counter_cost_choice, pay_mana_first_counter_cost,
+        reserve_mana_first_counter_payer,
     )
 
-    blight = blight_activation_choice(ability)
-    if blight is not None:
-        try:
-            payer = select_counter_cost_creature(host, proposal.seat, ability, response)
-        except ValueError as exc:
-            raise ActivationProposalError(str(exc), reason="blight_cost_unpayable") from exc
-        payer_identity = (payer.object_id, payer.ref, payer.logical_object_id)
+    counter_choice = mana_first_counter_cost_choice(ability)
+    blight = counter_choice is not None and counter_choice.kind == BLIGHT_ACTIVATION_COST_KIND
+    if counter_choice is not None:
+        payer_identity = reserve_mana_first_counter_payer(host, proposal, ability, counter_choice, response)
         paid_objects, special_cost_context = [], None
     elif ability.saddle_threshold is not None:
         try:
@@ -489,7 +527,7 @@ def _pay_object_and_mana_costs(
         )
         from .paid_characteristic_results import capture_activation_paid_creature_fact
         paid_stat_context = capture_activation_paid_creature_fact(host, proposal, source, ability, response)
-        paid_objects = _pay_selected_object_costs(host, proposal.seat, source, ability, response)
+        paid_objects = _pay_selected_object_costs(host, proposal, source, ability, response)
         special_cost_context = (
             (FIXED_COMBAT_RETURN_CONTEXT, combat_return_context)
             if combat_return_context is not None
@@ -514,42 +552,50 @@ def _pay_object_and_mana_costs(
     activations: list[dict[str, Any]] = []
     mana_response = response
     mana_journal = None
-    if blight is not None and isinstance(response.get("_mana_replacement_selections"), Mapping):
+    if blight and isinstance(response.get("_mana_replacement_selections"), Mapping):
         from ...cost_payments import ExactManaReplacementReplay
 
         mana_journal = ExactManaReplacementReplay(
             response["_mana_replacement_selections"], response.get("_mana_payment_id"),
         )
         mana_response = {**response, "_mana_replacement_selections": mana_journal}
-    payer_protection = {"preserve_source_id": payer_identity[0]} if blight is not None else {}
+    payer_protection = {"preserve_source_id": payer_identity[0]} if counter_choice is not None else {}
     from ..mana_pool_payment import MANA_POOL_PAYMENT_FIELD
 
     if sum(requirements.values()) or snow_required or MANA_POOL_PAYMENT_FIELD in mana_response:
-        spent, activations = host._pay_for_cost(
+        mana_payment = host._pay_for_cost(
             proposal.seat,
             requirements,
             mana_response,
-            spend_context=ability_mana_spend_context(
-                str(host._effective_card_data(source).get("type_line") or "")
-            ),
+            spend_context=draw_spend_context(host, source, ability, ability_mana_spend_context(
+                str(host._effective_card_data(source).get("type_line") or ""),
+                source_zone=source_zone, source_type_line=source_type_line,
+            )),
             snow_required=snow_required,
             **payer_protection,
         )
+        spent, activations = mana_payment.spent, mana_payment.activations
     if mana_journal is not None:
         mana_journal.validate()
-    if blight is not None:
-        try:
-            paid_objects = pay_blight_activation_cost(host, proposal, blight, payer_identity, response)
-        except ReplacementChoiceRequired:
-            raise
-        except ValueError as exc:
-            raise ActivationProposalError(str(exc), reason="blight_cost_unpayable") from exc
+    if counter_choice is not None:
+        paid_objects = pay_mana_first_counter_cost(host, proposal, source, ability, counter_choice, payer_identity, response)
     return paid_objects, activations, spent, special_cost_context
 
 
-def _pay_selected_object_costs(host, seat, source, ability, response):
-    from ..selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, pay_selected_counter_cost
-    if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
+def _pay_selected_object_costs(host, proposal, source, ability, response):
+    seat = proposal.seat
+    from .announced_selected_zone_cost import announced_selected_zone_cost_choice, pay_announced_selected_zone_cost
+
+    if choice := announced_selected_zone_cost_choice(ability):
+        return pay_announced_selected_zone_cost(host, seat, ability, choice, response)
+    from ..selected_counter_costs import (
+        DISTRIBUTED_PLUS_COUNTER_COST_KIND, SELECTED_PLUS_COUNTER_COST_KIND,
+        SELECTED_PERMANENT_COUNTER_COST_KIND, pay_selected_counter_cost,
+    )
+    if any(choice.kind in {
+        SELECTED_PLUS_COUNTER_COST_KIND, DISTRIBUTED_PLUS_COUNTER_COST_KIND, SELECTED_PERMANENT_COUNTER_COST_KIND,
+    }
+           for choice in ability.choices):
         try:
             return pay_selected_counter_cost(host, seat, source, ability, response)
         except ValueError as exc:
@@ -557,10 +603,12 @@ def _pay_selected_object_costs(host, seat, source, ability, response):
     if ability.random_discard_payment:
         from .random_discard_costs import pay_random_discard_activation_cost
         return pay_random_discard_activation_cost(host,seat,source,ability,response)
-    if len(ability.choices) == 1 and ability.choices[0].count > 1 and ability.choices[0].fixed_zone_change_cost() is not None:
+    if (len(ability.choices) == 1 and (ability.choices[0].count > 1 or ability.choices[0].count_parameter is not None)
+            and ability.choices[0].fixed_zone_change_cost() is not None):
         from ..activation_costs import pay_counted_zone_change_activation_cost
         return pay_counted_zone_change_activation_cost(
             host, actor=seat, source=source, choice=ability.choices[0], response=response,
+            announced_x=thaw_json(proposal.details).get("announced_x"),
         )
     return host._pay_ability_choice_costs(seat, source, ability, response)
 
@@ -596,8 +644,12 @@ def _commit_source_cost(
     source: Any,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
-    *, actor: str | None = None,
+    *, actor: str | None = None, source_incarnation: str | None = None,
 ) -> str:
+    from ..whole_hand_mana import is_whole_hand_mana_ability
+
+    if is_whole_hand_mana_ability(ability):
+        return "battlefield"
     origin = source.zone
     if ability.forecast:
         from ...forecast import begin_forecast_reveal
@@ -610,6 +662,10 @@ def _commit_source_cost(
             )
         destination = "graveyard"
     elif ability.sacrifice_source:
+        from ...sacrifice_prohibition_model import sacrifice_is_prohibited
+
+        if sacrifice_is_prohibited(host.state, source):
+            raise ActivationProposalError("The source cannot be sacrificed")
         if source.zone != "battlefield":
             raise ActivationProposalError(
                 "Sacrifice-source cost requires the source on the battlefield"
@@ -617,6 +673,14 @@ def _commit_source_cost(
         destination = "graveyard"
     elif ability.exile_source:
         destination = "exile"
+    elif ability.announced_energy_reanimation:
+        if origin != "battlefield" or source.controller != actor or source.logical_object_id != source_incarnation:
+            raise ActivationProposalError("The original controlled source is unavailable for its return cost")
+        destination = "hand"
+    elif ability.source_library_bottom:
+        if origin != "battlefield" or source.controller != actor:
+            raise ActivationProposalError("Owner-library-bottom cost requires the controlled battlefield source")
+        destination = "library"
     if destination is not None:
         raw_journal = response.get("_mana_replacement_selections") or {}
         if not isinstance(raw_journal, Mapping):
@@ -630,6 +694,13 @@ def _commit_source_cost(
             if type(event_id) is str
             and event_id.startswith("zone.change:")
         )
+        if ability.announced_energy_reanimation and zone_entries:
+            from ..activation_zone_change_costs import energy_reanimation_replacement_entries
+
+            refs, scoped = energy_reanimation_replacement_entries(response, zone_entries)
+            if refs[0] != source.ref:
+                raise ActivationProposalError("Energy reanimation return journal names the wrong source")
+            zone_entries = (scoped[source.ref],) if source.ref in scoped else ()
         if len(zone_entries) > 1 or any(
             not event_id.endswith(f":{source.ref}")
             for event_id, _selections in zone_entries
@@ -644,11 +715,17 @@ def _commit_source_cost(
                 "Activation source-cost replacement selections are malformed",
                 reason="replacement_journal_malformed",
             )
+        if origin == "hand" and ability.exile_source and ability.mana_ability:
+            from ...mana_mode_effects import pay_hand_exile_mana_cost
+
+            pay_hand_exile_mana_cost(host, actor, source, replacement_selections=tuple(selections))
+            return origin
         host.move_card(
             source.object_id,
             destination,
             reason="activated ability cost",
             semantic_events=True,
+            position="bottom" if ability.source_library_bottom else "top",
             replacement_selections=tuple(selections),
             transition_kind=(
                 ZoneTransitionKind.DISCARD
@@ -663,6 +740,17 @@ def _commit_source_cost(
 
 def _activation_payment_context(host,paid_objects,special_cost_context):
     """Finalize paid-object facts without replacing announced source information."""
+    if special_cost_context is not None:
+        from ..paid_artifact_library_search import validate_paid_artifact_search_payment
+        from .paid_mana_value_damage import validate_paid_damage_mana_value_payment
+
+        validate_paid_artifact_search_payment(paid_objects, special_cost_context)
+        from .paid_characteristic_price import PAID_ENCHANTMENT_MANA_VALUE_CONTEXT
+
+        if (special_cost_context[0] == PAID_ENCHANTMENT_MANA_VALUE_CONTEXT
+                and list(paid_objects) != [special_cost_context[1]["paid_object_id"]]):
+            raise ActivationProposalError("The paid enchantment did not match the captured mana value")
+        validate_paid_damage_mana_value_payment(paid_objects, special_cost_context)
     snapshots = [host._target_snapshot(host.state.cards[object_id].ref) for object_id in paid_objects]
     return {
         "cost_objects": [
@@ -724,6 +812,7 @@ def _activation_stack_item(
         visibility=list(host.seats),
         context={
             "source_logical_object_id": source_logical_object_id,
+            **({"activation_grantor": ability.activation_grantor} if ability.activation_grantor is not None else {}),
             **activation_transform_context(host,proposal,source),
             **(
                 {
@@ -762,7 +851,7 @@ def _cycling_event_snapshot(
         if isinstance(descriptor, Mapping)
         and isinstance(descriptor.get("ability"), Mapping)
         and descriptor["ability"].get("ability_id") == proposal.ability_id
-    }.intersection({CYCLING_HANDLER_ID, TYPECYCLING_HANDLER_ID})
+    }.intersection({CYCLING_HANDLER_ID, TYPECYCLING_HANDLER_ID, VARIABLE_CYCLING_HANDLER_ID})
     if program is not None and not handler_ids:
         coverage = {
             str(value).casefold()
@@ -780,9 +869,11 @@ def _cycling_event_snapshot(
         )
     if not handler_ids:
         return None
-    kind = (
-        "typecycling" if TYPECYCLING_HANDLER_ID in handler_ids else "cycling"
-    )
+    kind = {
+        TYPECYCLING_HANDLER_ID: "typecycling",
+        CYCLING_HANDLER_ID: "cycling",
+        VARIABLE_CYCLING_HANDLER_ID: "variable_cycling",
+    }[next(iter(handler_ids))]
     return (
         copy.deepcopy(source),
         copy.deepcopy(host._effective_card_data(source)),
@@ -799,6 +890,12 @@ def _dispatch_cycling_event(
     if snapshot is None:
         return
     source, characteristics, cycling_kind = snapshot
+    paid_x = {}
+    if cycling_kind == "variable_cycling":
+        from ..cycling_activation_x import paid_cycling_x_context
+
+        paid_x = paid_cycling_x_context(item, source)
+        cycling_kind = "cycling"
     event_sources = tuple(
         host._semantic_event_sources(zones={"battlefield"})
     ) + (source,)
@@ -812,6 +909,7 @@ def _dispatch_cycling_event(
             "controller": proposal.seat,
             "owner": source.owner,
             "cycling_kind": cycling_kind,
+            **paid_x,
         },
         sources=event_sources,
         source_zones={source.object_id: "hand"},
@@ -821,9 +919,61 @@ def _dispatch_cycling_event(
     enqueue_trigger_batch(host, trigger_batch)
 
 
-def _source_attachment_snapshot(host: ActivationCommitHost, source: Any, program: Any):
-    relation = required_attachment_relation(program.effects) if program is not None else None
+def _activation_attachment_effects(program, proposal):
+    if program is None:
+        return ()
+    schema = program.target_schema or {}
+    if "modes" not in schema:
+        return program.effects
+    from ...attachment_references import ATTACHMENT_INFORMATION_CAPABILITY
+
+    if ATTACHMENT_INFORMATION_CAPABILITY not in program.capability_dependencies:
+        return program.effects
+    details = thaw_json(proposal.details)
+    modes = (details.get("target_schema_override") or schema).get("modes", {})
+    from ..fixed_resolution_characteristic_shapes import EQUIPPED_STAT_REFERENCE
+
+    # Versioned Equipment modifiers need departure information from the chosen
+    # branch. Legacy modal instructions keep their recorded attachment context.
+    equipped = EQUIPPED_STAT_REFERENCE.to_dict()
+    chosen_effects = (
+        effect for mode in details.get("selected_modes", ())
+        for effect in modes.get(mode, {}).get("effects", ())
+        if effect.get("op") == "modify_stats_until_end_of_turn" and effect.get("card") == equipped
+    )
+    return (*program.effects, *chosen_effects)
+
+
+def _source_attachment_snapshot(host: ActivationCommitHost, source: Any, effects):
+    relation = required_attachment_relation(effects)
     return capture_source_attachment_snapshot(host.state.cards, source, relation) if relation is not None else None
+
+
+def _dispatch_ninjutsu_activation(host, proposal, item, program, ability):
+    from ...semantic_runtime.combat_entry_activations import is_fixed_ninjutsu_activation
+
+    if (FIXED_COMBAT_RETURN_CONTEXT not in item.context
+            or not host.semantics.programs_for_event(NINJUTSU_ACTIVATED_EVENT)
+            or not is_fixed_ninjutsu_activation(program, ability)
+            or not host.semantic_program_is_current_trusted(program)):
+        return
+    triggers: list[StackItem] = []
+    host._dispatch_semantic_event(
+        NINJUTSU_ACTIVATED_EVENT,
+        {"event_id": item.stack_id, "player": proposal.seat},
+        sources=tuple(host._semantic_event_sources(zones={"battlefield"})),
+        trigger_batch=triggers,
+    )
+    enqueue_trigger_batch(host, triggers)
+
+
+def _dispatch_completed_activation_triggers(host, proposal, item, program, ability, cycling_snapshot, creature_activation):
+    _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
+    _dispatch_ninjutsu_activation(host, proposal, item, program, ability)
+    publish_creature_ability_activation(host, creature_activation)
+    from ..nonmana_activation_copy import publish_nonmana_activation_copy_occurrence
+
+    publish_nonmana_activation_copy_occurrence(host, item)
 
 
 def commit_activation(
@@ -843,6 +993,8 @@ def _publish_activation_stack_placement(host, proposal, source, ability, item, *
         host.state.stack.append(item)
     from .variable_colored_reveal import commit_activation_reveal_price
     commit_activation_reveal_price(host, proposal, source, ability, item)
+    from .revealed_hand_land_entry import reveal_activated_hand_land_entry_source
+    reveal_activated_hand_land_entry_source(host, proposal, source, item)
     if not targets_announced:
         dispatch_target_announcements(host, item)
     from ..crime import record_crime_for_stack_placement
@@ -851,112 +1003,10 @@ def _publish_activation_stack_placement(host, proposal, source, ability, item, *
         collect_ward_occurrences(host, item)
 
 
-def _commit_activation_costs_and_stack(
-    host: ActivationCommitHost,
-    proposal: ActivationProposal,
-    response: Mapping[str, Any],
-) -> bool | None:
-    """Commit one revalidated activation proposal through typed state owners."""
+def _log_committed_activation(host, proposal, source, item, ability, *, origin,
+                              spent, activations, paid_objects, mana_option):
+    from .commander_identity_life import activation_life_from_proposal
 
-    source, ability, mana_option = _revalidate_activation(host, proposal)
-    source_logical_object_id = source.logical_object_id
-    source_was_snow = "snow" in host._type_parts(
-        str(host._effective_card_data(source).get("type_line") or "")
-    )[2]
-    program = host.semantics.get(proposal.semantic_key)
-    duration_tracked, duration_snapshot = capture_control_duration(
-        host, program, source, source_logical_object_id,
-    )
-    cycling_snapshot = _cycling_event_snapshot(
-        host,
-        proposal,
-        source,
-        program,
-    )
-    from ...transmute import capture_transmute_discard
-    transmute_context = capture_transmute_discard(host, program, source)
-    attachment_snapshot = _source_attachment_snapshot(host, source, program)
-    from ..attachment_controller_information import capture_attachment_controller_context
-    attachment_controller_context=(capture_attachment_controller_context(host.state.cards,program,attachment_snapshot)
-        if attachment_snapshot is not None and program is not None else {})
-    from ...designation_prevention import capture_program_designation_information, DESIGNATION_INFORMATION_FIELD
-    designation_information = capture_program_designation_information(source, program)
-    if not ability.mana_ability:
-        clear_mana_undo_stack(host.state.players[proposal.seat].stats)
-    from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
-    chosen_source_information = capture_chosen_color_mana_source(source, ability)
-    from .payment_commit import commit_activation_payments, announce_targeted_activation
-    from ...triggered_mana import tap_mana_source
-    trigger_source = tap_mana_source(host, source, tap_source=ability.mana_ability and ability.tap_source)
-    announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
-    from ..target_announcements import announce_initial_target_triggers
-    initial_targets_announced = announce_initial_target_triggers(host, announcement)
-    paid_objects, activations, spent, special_cost_context = commit_activation_payments(
-        host, proposal, source, ability, response, mana_option,
-    )
-    from ...public_quantity_mana_runtime import capture_mana_source_information
-    mana_source_information = capture_mana_source_information(host, proposal.seat, source, ability)
-    origin = _commit_source_cost(host, source, ability, response, actor=proposal.seat)
-    from ...transmute import finalize_transmute_discard
-    finalize_transmute_discard(host, source, transmute_context)
-    source_activation_context = dict(transmute_context) or None
-    if program is not None and any(
-        effect.get("op") == ENCORE_EFFECT_OPERATION
-        for effect in program.effects
-    ):
-        from ...token_creation import token_copy_snapshot
-
-        source_activation_context = {
-            "encore_source_zone": source.zone,
-            "encore_copy_snapshot": token_copy_snapshot(host, source),
-        }
-        if any(effect.get('op')==ENCORE_EFFECT_OPERATION and ENCORE_COPY_IDENTITY_FIELD in effect
-                for effect in program.effects):
-            source_activation_context[ENCORE_COPY_IDENTITY_CONTEXT]=source.logical_object_id
-        else:
-            source_logical_object_id=source.logical_object_id
-    from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
-    if attachment_snapshot is not None and program is not None and attachment_information_capabilities(program.effects):
-        source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}
-    if attachment_controller_context:
-        source_activation_context={**(source_activation_context or {}),**attachment_controller_context}
-    if designation_information is not None:
-        source_activation_context={**(source_activation_context or {}),DESIGNATION_INFORMATION_FIELD:designation_information}
-    if ability.mana_ability:
-        complete_mana_activation(
-            host,
-            seat=proposal.seat,
-            source=source,
-            ability=ability,
-            response=response,
-            origin=origin,
-            paid_objects=paid_objects,
-            payment_activations=activations,
-            source_was_snow=source_was_snow,
-            source_information=mana_source_information or chosen_source_information,
-            mana_payment=spent,
-            trigger_source=trigger_source,
-        )
-        return True
-    item = _activation_stack_item(
-        host,
-        proposal,
-        source,
-        source_logical_object_id,
-        ability,
-        response,
-        paid_objects,
-        attachment_snapshot,
-        special_cost_context,
-        source_activation_context, announcement=announcement,
-    )
-    begin_ninjutsu_reveal(host, source, item)
-    if duration_tracked:
-        item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
-    _publish_activation_stack_placement(
-        host, proposal, source, ability, item, append=announcement is None,
-        targets_announced=initial_targets_announced,
-    )
     host._log(
         proposal.seat,
         "stack.activate",
@@ -980,10 +1030,10 @@ def _commit_activation_costs_and_stack(
             ],
             "targets": item.targets,
             "modes": item.modes,
-            "life_paid": ability.life_payment + (
+            "life_paid": activation_life_from_proposal(ability, proposal.details) + (
                 mana_option.life_payment if mana_option is not None else 0
             ),
-            "energy_paid": ability.energy_payment,
+            "energy_paid": activation_energy_payment(ability, thaw_json(proposal.details).get("announced_x")),
             "source_counter_cost": (
                 None
                 if ability.source_counter_removal_cost is None
@@ -994,7 +1044,129 @@ def _commit_activation_costs_and_stack(
         changed_objects=[source.object_id, *paid_objects],
         changed_players=[proposal.seat],
     )
-    _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
+
+
+def _commit_activation_costs_and_stack(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    response: Mapping[str, Any],
+) -> bool | None:
+    """Commit one revalidated activation proposal through typed state owners."""
+
+    source, ability, mana_option, original = _revalidate_activation(host, proposal)
+    creature_activation = capture_creature_ability_activation(host, proposal.seat, source)
+    source_logical_object_id = source.logical_object_id
+    source_was_snow = ability.mana_ability and "snow" in host._type_parts(
+        str(host._effective_card_data(source).get("type_line") or "")
+    )[2]
+    program = host.semantics.get(proposal.semantic_key)
+    from ..ordered_source_owner_hand_entry import capture_source_owner_draw_land
+
+    source_owner_context = capture_source_owner_draw_land(program, source)
+    duration_tracked, duration_snapshot = capture_control_duration(
+        host, program, source, source_logical_object_id,
+    )
+    cycling_snapshot = _cycling_event_snapshot(
+        host,
+        proposal,
+        source,
+        program,
+    )
+    from ...transmute import capture_transmute_discard
+    transmute_context = capture_transmute_discard(host, program, source)
+    attachment_effects = _activation_attachment_effects(program, proposal)
+    attachment_snapshot = _source_attachment_snapshot(host, source, attachment_effects)
+    from ..attachment_controller_information import capture_attachment_controller_context
+    attachment_controller_context=(capture_attachment_controller_context(host.state.cards,program,attachment_snapshot)
+        if attachment_snapshot is not None and program is not None else {})
+    from ...designation_prevention import capture_program_designation_information, DESIGNATION_INFORMATION_FIELD
+    designation_information = capture_program_designation_information(source, program)
+    if not ability.mana_ability:
+        clear_mana_undo_stack(host.state.players[proposal.seat].stats)
+    from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
+    chosen_source_information = capture_chosen_color_mana_source(source, ability)
+    from .payment_commit import commit_activation_payments, announce_targeted_activation
+    from ...triggered_mana import tap_mana_source
+    trigger_source = tap_mana_source(host, source, tap_source=ability.mana_ability and ability.tap_source)
+    announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
+    from ..target_announcements import announce_initial_target_triggers
+    initial_targets_announced = announce_initial_target_triggers(host, announcement)
+    paid_objects, activations, spent, special_cost_context = commit_activation_payments(
+        host, proposal, source, ability, response, mana_option,
+    )
+    from ...public_quantity_mana_runtime import capture_mana_source_information
+    mana_source_information = capture_mana_source_information(
+        host, proposal.seat, source, ability, paid_objects=paid_objects, paid_cost_fact=special_cost_context,
+    )
+    origin = _commit_source_cost(
+        host, source, ability, response, actor=proposal.seat, source_incarnation=source_logical_object_id,
+    )
+    from ...transmute import finalize_transmute_discard
+    finalize_transmute_discard(host, source, transmute_context)
+    source_activation_context = dict(transmute_context) or None
+    if program is not None and any(
+        effect.get("op") == ENCORE_EFFECT_OPERATION
+        for effect in program.effects
+    ):
+        from ...token_creation import token_copy_snapshot
+
+        source_activation_context = {
+            "encore_source_zone": source.zone,
+            "encore_copy_snapshot": token_copy_snapshot(host, source),
+        }
+        if any(effect.get('op')==ENCORE_EFFECT_OPERATION and ENCORE_COPY_IDENTITY_FIELD in effect
+                for effect in program.effects):
+            source_activation_context[ENCORE_COPY_IDENTITY_CONTEXT]=source.logical_object_id
+        else:
+            source_logical_object_id=source.logical_object_id
+    from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
+    if attachment_snapshot is not None and attachment_information_capabilities(attachment_effects):
+        source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}
+    if attachment_controller_context:
+        source_activation_context={**(source_activation_context or {}),**attachment_controller_context}
+    if source_owner_context:
+        source_activation_context = {**(source_activation_context or {}), **source_owner_context}
+    if designation_information is not None:
+        source_activation_context={**(source_activation_context or {}),DESIGNATION_INFORMATION_FIELD:designation_information}
+    if ability.mana_ability:
+        complete_mana_activation(
+            host,
+            seat=proposal.seat,
+            source=source,
+            ability=ability,
+            response=response,
+            origin=origin,
+            paid_objects=paid_objects,
+            payment_activations=activations,
+            source_was_snow=source_was_snow,
+            source_information=mana_source_information or chosen_source_information or artifact_hand_selection_for_commit(proposal, ability),
+            mana_payment=spent,
+            trigger_source=trigger_source, creature_activation=creature_activation,
+        )
+        return True
+    item = _activation_stack_item(
+        host,
+        proposal,
+        source,
+        source_logical_object_id,
+        ability,
+        response,
+        paid_objects,
+        attachment_snapshot,
+        special_cost_context,
+        source_activation_context, announcement=announcement,
+    )
+    record_committed_equip_activation(host, proposal.seat, source, original, source_logical_object_id)
+    begin_ninjutsu_reveal(host, source, item)
+    if duration_tracked:
+        item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
+    _publish_activation_stack_placement(
+        host, proposal, source, ability, item, append=announcement is None,
+        targets_announced=initial_targets_announced,
+    )
+    _log_committed_activation(host, proposal, source, item, ability, origin=origin,
+        spent=spent, activations=activations, paid_objects=paid_objects, mana_option=mana_option)
+    _dispatch_completed_activation_triggers(host, proposal, item, program, ability, cycling_snapshot, creature_activation)
     if ability.waterbend is not None:
         from ..waterbend_payments import dispatch_waterbend_occurrence
         from ...waterbend import WaterbendPayment

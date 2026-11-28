@@ -3,6 +3,7 @@ from collections.abc import Mapping
 
 PUBLIC_LIFE_GAIN_FIELD='public_life_gain_version'
 PUBLIC_LIFE_GAIN_CAPABILITY='life.gain.fixed_public_scope'
+SELECTED_PUBLIC_LIFE_GAIN_VERSION = 2
 PUBLIC_LIFE_GAIN_MECHANIC='fixed-public-life-gain'
 _RUNTIME_FIELDS=frozenset({'reason','source','cause','_runtime_source','_replacement_selections'})
 
@@ -17,6 +18,15 @@ def validate_public_life_gain(effect, *, runtime=False):
             or effect['delta']<1 or effect.get('scope') not in ('all_active_players','controller_opponents')):
         raise ValueError('Public life gain requires a complete version-one fixed recipient scope')
     return (PUBLIC_LIFE_GAIN_CAPABILITY,'life.change.effect')
+
+
+def validate_selected_public_life_gain(effect):
+    """Version two is a materialized selected public gain with a resolving source."""
+    required = {"op", PUBLIC_LIFE_GAIN_FIELD, "players", "delta", "_runtime_source"}
+    if (not required <= set(effect) or set(effect) - required - _RUNTIME_FIELDS
+            or effect.get("op") != "life" or type(effect[PUBLIC_LIFE_GAIN_FIELD]) is not int
+            or effect[PUBLIC_LIFE_GAIN_FIELD] != SELECTED_PUBLIC_LIFE_GAIN_VERSION):
+        raise ValueError("Selected public life gain requires a complete version-two scope")
 
 
 def public_life_gain_node_capabilities(*,effects,target_schema,mechanic_ids):

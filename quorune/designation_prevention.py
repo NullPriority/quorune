@@ -76,10 +76,10 @@ def capture_program_designation_information(source, program):
     if program is None:
         return None
     result = capture_designation_information(source, (program.effects, program.target_schema))
-    from .rules.chosen_color_target_shapes import current_linked_target_color, uses_source_color_target
+    from .rules.chosen_color_target_shapes import current_linked_entry_color, uses_source_color_target
 
     if result is not None and uses_source_color_target(program.target_schema):
-        result["values"]["color"] = current_linked_target_color(source, program_key=program.key)
+        result["values"]["color"] = current_linked_entry_color(source, program_key=program.key)
     return result
 
 

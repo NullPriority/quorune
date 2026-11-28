@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..errors import GameRuleError
 from ..mana_undo import clear_mana_undo_stack
+from ..mana_restriction_model import ROOM_UNLOCK_MANA_SPEND_CONTEXT
 from ..shared_type_doors import (
     DOOR_UNLOCKED_EVENT,
     FULLY_UNLOCKED_EVENT,
@@ -54,7 +55,9 @@ def _build_paid_offer(host: Any, seat: str, card: Any, face: Mapping[str, Any]) 
     if not cost:
         return None
     requirements, complex_symbols = mana_cost_to_vector(cost)
-    if complex_symbols or not host._cost_is_affordable(seat, requirements, spend_context=None):
+    if complex_symbols or not host._cost_is_affordable(
+        seat, requirements, spend_context=ROOM_UNLOCK_MANA_SPEND_CONTEXT,
+    ):
         return None
     name = face["name"]
     return ActionOffer(
@@ -86,7 +89,9 @@ def commit_room_unlock(host: Any, *, seat: str, response: Mapping[str, Any]) -> 
     prior = current_shared_type_doors(card)
     prepared = prior.unlock(door)
     clear_mana_undo_stack(host.state.players[seat].stats)
-    spent, _ = host._pay_for_cost(seat, offered.to_dict()["requirements"], response, spend_context=None)
+    mana_payment = host._pay_for_cost(
+        seat, offered.to_dict()["requirements"], response, spend_context=ROOM_UNLOCK_MANA_SPEND_CONTEXT,
+    )
     current = host.state.cards.get(card.object_id)
     if (current is None or current.zone != "battlefield" or current.controller != seat
             or current.logical_object_id != response["room_incarnation"]
@@ -94,7 +99,7 @@ def commit_room_unlock(host: Any, *, seat: str, response: Mapping[str, Any]) -> 
         raise GameRuleError("The Room changed while its unlock cost was being paid")
     current.shared_type_doors = prepared
     host._log(seat, "room.unlock_payment", f"{seat} paid to unlock {door}.", {
-        "card": current.ref, "door": door, "payment": {key: value for key, value in spent.items() if value},
+        "card": current.ref, "door": door, "payment": {key: value for key, value in mana_payment.spent.items() if value},
     }, changed_objects=[current.object_id], changed_players=[seat])
     batch = []
     collect_room_unlock_events(host, current, prior, prepared, actor=seat, trigger_batch=batch)

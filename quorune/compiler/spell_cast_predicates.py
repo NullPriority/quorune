@@ -25,7 +25,7 @@ _SPELL_CAST_TRIGGER = re.compile(
 )
 _CHARACTERISTIC_SPELL_CAST_TRIGGER = re.compile(
     r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
-    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z' -]*?) spell, "
+    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z,' -]*?) spell, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -48,6 +48,13 @@ _SPELL_CAST_COLORS = {
     "red": "R",
     "green": "G",
 }
+_CAST_COLOR_WORD = "(?:" + "|".join(_SPELL_CAST_COLORS) + ")"
+_CONTROLLER_CAST_COLOR_LIST = re.compile(
+    rf"Whenever you cast a spell that['’]s "
+    rf"(?P<colors>{_CAST_COLOR_WORD}(?:, {_CAST_COLOR_WORD}){{2,3}}, or {_CAST_COLOR_WORD}), "
+    r"(?P<body>.+)",
+    re.IGNORECASE,
+)
 _SPELL_CAST_SUPERTYPES = frozenset({"legendary", "snow"})
 _SPELL_CAST_NONCREATURE_SUBTYPES = frozenset(
     {"adventure", "arcane", "aura", "equipment", "lesson", "saga", "vehicle"}
@@ -81,6 +88,7 @@ class FixedSpellCastOrigin(str, Enum):
 
     EXILE = "exile"
     GRAVEYARD = "graveyard"
+    HAND = "hand"
     NOT_HAND = "not_hand"
 
 
@@ -159,22 +167,21 @@ class FixedSpellCastCharacteristicTerm:
 
 @dataclass(frozen=True, slots=True)
 class FixedSpellCastCharacteristicQuery:
-    """One to three static spell-characteristic alternatives."""
+    """Bounded spell-characteristic alternatives, including homogeneous color sets."""
 
     terms_any: tuple[FixedSpellCastCharacteristicTerm, ...]
 
     def __post_init__(self) -> None:
         if (
             not isinstance(self.terms_any, tuple)
-            or not 1 <= len(self.terms_any) <= 3
-            or any(
-                not isinstance(term, FixedSpellCastCharacteristicTerm)
+            or not 1 <= len(self.terms_any) <= len(_SPELL_CAST_COLORS)
+            or any(not isinstance(term, FixedSpellCastCharacteristicTerm) for term in self.terms_any)
+            or len(self.terms_any) > 3 and any(
+                term.kind is not FixedSpellCastCharacteristicKind.COLOR or term.value not in _SPELL_CAST_COLORS.values()
                 for term in self.terms_any
             )
         ):
-            raise ValueError(
-                "Spell-cast characteristic queries require one to three typed terms"
-            )
+            raise ValueError("Large spell-cast disjunctions require distinct fixed colors")
         canonical = tuple(
             sorted(set(self.terms_any), key=lambda term: term.variant)
         )
@@ -190,6 +197,8 @@ class FixedSpellCastCharacteristicQuery:
 
     @property
     def event_condition(self) -> Mapping[str, Any]:
+        if len(self.terms_any) > 3:
+            return {"field": "colors", "op": "contains_any", "value": [term.value for term in self.terms_any]}
         conditions = [term.event_condition for term in self.terms_any]
         return conditions[0] if len(conditions) == 1 else {"any": conditions}
 
@@ -388,7 +397,7 @@ class FixedSpellCastSubject:
                 self.quality is not None
                 and self.characteristic_query is not None,
                 self.characteristic_query is not None
-                and len(self.characteristic_query.terms_any) == 3,
+                and len(self.characteristic_query.terms_any) >= 3,
             )
         )
 
@@ -589,11 +598,16 @@ def _spell_cast_characteristic_term(
 def _spell_cast_characteristic_query(
     quality: str,
 ) -> FixedSpellCastCharacteristicQuery | None:
-    parts = tuple(
-        " ".join(value.split()) for value in quality.casefold().split(" or ")
-    )
-    if not 1 <= len(parts) <= 2:
-        return None
+    normalized = " ".join(quality.casefold().split())
+    if "," in normalized:
+        triple = re.fullmatch(r"([^,]+), ([^,]+), or ([^,]+)", normalized)
+        if triple is None:
+            return None
+        parts = triple.groups()
+    else:
+        parts = tuple(normalized.split(" or "))
+        if not 1 <= len(parts) <= 2:
+            return None
     terms = tuple(_spell_cast_characteristic_term(value) for value in parts)
     if any(term is None for term in terms):
         return None
@@ -628,6 +642,7 @@ def _spell_cast_base_predicate(
         "spell": FixedSpellCastQuality.ANY,
         "creature spell": FixedSpellCastQuality.CREATURE,
         "artifact spell": FixedSpellCastQuality.ARTIFACT,
+        "instant or sorcery spell": FixedSpellCastQuality.INSTANT_OR_SORCERY,
         "noncreature spell": FixedSpellCastQuality.NONCREATURE,
     }.get(normalized)
     if ordinary is not None:
@@ -767,6 +782,35 @@ def _subtyped_creature_spell_cast_binding(material_line: str) -> FixedSpellCastB
     )
 
 
+def source_power_cast_binding_spec(material_line: str, *, card_name: str | None):
+    from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+    from ..rules.spell_cast_events import SOURCE_POWER_CAST_CAPABILITIES, source_power_cast_condition
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+
+    match = re.fullmatch(
+        r"Whenever an opponent casts a noncreature spell with mana value less than "
+        r"(?P<source>.+?)['’]s power, (?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subject = match["source"]
+    if source_self_permanent_type(subject) is None and (
+        card_name is None or not SourceReferenceSpec(card_name).matches(subject)
+    ):
+        return None
+    return FixedPublicEventBindingSpec(
+        event="spell.cast",
+        variant="opponent_noncreature_cast_below_source_power",
+        body=match["body"],
+        template_id="fixed-source-power-spell-cast-trigger-v1",
+        mechanic="trigger-event-normalized-spell-cast",
+        condition=source_power_cast_condition(),
+        capabilities=SOURCE_POWER_CAST_CAPABILITIES,
+    )
+
+
 def _mana_value_limit_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
     match = re.fullmatch(
         r"Whenever (?P<caster>a player casts|an opponent casts) a spell with mana value "
@@ -823,17 +867,17 @@ def _history_spell_cast_binding(
                 ordinal.group("ordinal").casefold()
             ],
         )
-    first_opponent_turn = re.fullmatch(
-        r"Whenever you cast your first spell during each opponent's turn, "
-        r"(?P<body>.+)",
+    opponent_turn = re.fullmatch(
+        r"Whenever you cast (?:your (?P<first>first) spell during each|a spell during an) "
+        r"opponent's turn, (?P<body>.+)",
         material_line,
         re.IGNORECASE,
     )
-    if first_opponent_turn is not None:
+    if opponent_turn is not None:
         return _binding(
-            body=first_opponent_turn.group("body"),
+            body=opponent_turn.group("body"),
             controller=FixedSpellCastController.SOURCE,
-            caster_spell_number=1,
+            caster_spell_number=1 if opponent_turn["first"] else None,
             turn_relation=FixedSpellCastTurnRelation.OPPONENT,
         )
     player_ordinal = re.fullmatch(
@@ -906,7 +950,7 @@ def _turn_spell_cast_binding(
             body=controller_main_phase.group("body"),
         )
     turn_relative = re.fullmatch(
-        r"Whenever you cast (?:a )?(?P<descriptor>spell|creature spell) "
+        r"Whenever you cast (?:an? )?(?P<descriptor>spell|creature spell|instant or sorcery spell) "
         r"during (?P<turn>an opponent's|your) turn, (?P<body>.+)",
         material_line,
         re.IGNORECASE,
@@ -952,7 +996,7 @@ def _origin_spell_cast_binding(
     material_line: str,
 ) -> FixedSpellCastBindingSpec | None:
     origin = re.fullmatch(
-        r"Whenever you cast a spell from (?P<origin>exile|your graveyard|"
+        r"Whenever you cast a spell from (?P<origin>exile|your graveyard|your hand|"
         r"anywhere other than your hand), (?P<body>.+)",
         material_line,
         re.IGNORECASE,
@@ -964,6 +1008,7 @@ def _origin_spell_cast_binding(
             origin={
                 "exile": FixedSpellCastOrigin.EXILE,
                 "your graveyard": FixedSpellCastOrigin.GRAVEYARD,
+                "your hand": FixedSpellCastOrigin.HAND,
                 "anywhere other than your hand": FixedSpellCastOrigin.NOT_HAND,
             }[origin.group("origin").casefold()],
         )
@@ -1088,6 +1133,23 @@ def _characteristic_trait_spell_cast_binding(
     )
 
 
+def _controller_cast_color_list_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = _CONTROLLER_CAST_COLOR_LIST.fullmatch(material_line)
+    if match is None:
+        return None
+    colors = match["colors"].casefold().replace(", or ", ", ").split(", ")
+    if len(set(colors)) != len(colors):
+        return None
+    query = FixedSpellCastCharacteristicQuery(tuple(
+        FixedSpellCastCharacteristicTerm(FixedSpellCastCharacteristicKind.COLOR, _SPELL_CAST_COLORS[color])
+        for color in colors
+    ))
+    return FixedSpellCastBindingSpec(
+        subject=FixedSpellCastSubject(controller=FixedSpellCastController.SOURCE, characteristic_query=query),
+        body=match["body"],
+    )
+
+
 def _targeted_creature_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
     match = re.fullmatch(r"Whenever you cast (?P<spell>a spell|an instant or sorcery spell) that targets a creature(?P<controlled> you control)?, (?P<body>.+)", material_line, re.I)
     if match is None:
@@ -1106,6 +1168,7 @@ def fixed_spell_cast_binding_spec(
 
     for parser in (
         _targeted_creature_spell_cast_binding,
+        _controller_cast_color_list_binding,
         _basic_spell_cast_binding,
         _mana_value_limit_spell_cast_binding,
         _history_spell_cast_binding,

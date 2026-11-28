@@ -14,12 +14,14 @@ from .counter_placement import (
     place_counters,
 )
 from .object_query import ObjectQueryResult
+from .announced_counter_allocation import validate_bound_counter_shares
 from .util import stable_json
 
 
 CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD = "controlled_creature_counter_choice"
 CONTROLLED_CREATURE_COUNTER_SNAPSHOTS = "_controlled_creature_counter_incarnations"
 OPPONENT_CREATURE_COUNTER_CHOICE_VERSION = 2
+CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION = 4
 OPPONENT_CREATURE_COUNTER_CHOICE_CAPABILITY = "counter.choice.target_opponent_creature"
 
 
@@ -40,6 +42,15 @@ def controlled_creature_counter_choice_effect() -> dict[str, Any]:
     }
 
 
+def controlled_creature_vigilance_counter_choice_effect() -> dict[str, Any]:
+    return {
+        **controlled_creature_counter_choice_effect(),
+        "prompt": "Choose a creature you control for a vigilance counter.",
+        "then": [{"op": "add_counter_selected", "counter": "vigilance", "amount": 1}],
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD: CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION,
+    }
+
+
 def opponent_creature_counter_choice_effect(player: str = "$target.0") -> dict[str, Any]:
     return {
         **controlled_creature_counter_choice_effect(),
@@ -57,8 +68,25 @@ def controlled_creature_counter_choice_dependencies(
         return ()
     from .replacement.immutable import thaw_value
 
+    from .rules.permanent_resolution_choices import COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_dependencies
+
     data = thaw_value(value)
-    if data.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
+    version = data.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD)
+    if version == COUNTER_KEYWORDS_VERSION:
+        return controlled_counter_keywords_dependencies(data)
+    if version == CONTROLLED_CREATURE_VIGILANCE_COUNTER_CHOICE_VERSION:
+        if (data != controlled_creature_vigilance_counter_choice_effect()
+                or any(type(data[key]) is not int for key in (
+                    "minimum", "maximum", CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
+                ))
+                or type(data["then"][0]["amount"]) is not int):
+            raise ValueError("The controlled creature choice requires one exact vigilance counter")
+        return (
+            "counter.producer.fixed_effect",
+            "counter.characteristic.keyword",
+            "combat.attack.vigilance",
+        )
+    if version == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
         expected = opponent_creature_counter_choice_effect(
             resolved_player if resolved_player is not None else "$target.0",
         )
@@ -272,6 +300,7 @@ def resolve_counter_placement_targets(
     reason: str,
     source_ref: str | None = None,
     replacement_selections: Sequence[str | dict[str, Any]] = (),
+    target_shares: Mapping[str, int] | None = None,
 ) -> tuple[CounterPlacementResult, ...]:
     """Resolve one fixed target set through the canonical counter owner."""
 
@@ -294,6 +323,14 @@ def resolve_counter_placement_targets(
         refs=refs,
         maximum_targets=maximum_targets,
     )
+    if target_shares is not None:
+        try:
+            target_shares = validate_bound_counter_shares(
+                target_shares, refs=refs, counter_name=normalized_counter,
+                amount=amount, maximum_targets=maximum_targets,
+            )
+        except ValueError as exc:
+            raise CounterPlacementTargetSetError(str(exc)) from exc
     if amount == EXISTING_COUNTER_AMOUNT:
         from .counter_doubling import resolve_effect_counters_on_refs
         try:return resolve_effect_counters_on_refs(host,actor=actor,object_refs=tuple(p.ref for p in snapshot.permanents),
@@ -307,7 +344,7 @@ def resolve_counter_placement_targets(
                     subject_kind="permanent",
                     subject_id=value.object_id,
                     counter_name=normalized_counter,
-                    amount=amount,
+                    amount=target_shares[value.ref] if target_shares is not None else amount,
                     placing_player=actor,
                     source_ref=source_ref,
                 )

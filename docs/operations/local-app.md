@@ -43,6 +43,10 @@ $env:MTG_CARD_DB = "data/test-ci.sqlite3"
 the production client build. The legacy `--no-open` flag is a compatibility
 alias for the safe default.
 
+New games advance through empty priority windows automatically. Start with
+`--full-priority-windows` when a local diagnostic needs to observe each
+window. Individual players can also use the table's priority stops.
+
 ## Managed card data
 
 Without `MTG_CARD_DB`, startup checks the Scryfall Oracle and rulings bulk
@@ -52,6 +56,13 @@ refresh never replaces the database underneath an active game. Records pin the
 snapshot metadata hash; referenced old databases remain in the ignored snapshot
 directory until no local record needs them.
 
+Deck review can compare the active database with retained snapshots. For a
+reviewed snapshot that the host maintains separately, store the unchanged
+SQLite file under `data/card-snapshots/reviewed/<metadata-hash>.sqlite3` or under
+`reviewed` in the configured `MTG_CARD_SNAPSHOT_DIR`. Use the snapshot's Game
+Record metadata hash for its filename. Keep that file available for games that
+use it. Managed refresh leaves this directory in place.
+
 A network failure falls back to a usable existing database with a warning. A
 first-run failure remains visible and can be retried. When Windows locks an
 activation target, stop other server processes and restart. If no current
@@ -60,6 +71,27 @@ database exists, activation fails closed.
 The browser receives projected card fields and constrained image routes, never
 the bulk export. Archives, databases, retained snapshots, images, records, and
 caches are local runtime data and must not be committed.
+
+### Verify the staged catalog before a playtest deployment
+
+Run this check from the release checkout before stopping the live app. Pass the
+SQLite database and the Scryfall **All Cards** gzip archive staged for this
+deployment.
+
+```powershell
+$quoruneStagedDb = Read-Host 'Enter the staged Scryfall SQLite path'
+$quoruneAllCards = Read-Host 'Enter the staged All Cards gzip path'
+.\.venv\Scripts\python.exe scripts\verify_playtest_catalog.py `
+  --db $quoruneStagedDb --all-cards $quoruneAllCards
+```
+
+The command fetches the live bulk manifest and reads the two staged files.
+It checks the Oracle and rulings timestamps and exact source URLs in SQLite,
+then checks the all-language archive's name, byte count, and gzip signature.
+The JSON result records the archive's SHA-256. Pass `--all-cards-sha256` with
+the digest from the trusted download receipt to verify it during the check.
+A nonzero exit identifies the stale or unreadable inputs. Refresh them in
+staging and rerun the check before deployment.
 
 ## Environment settings
 
@@ -71,11 +103,13 @@ caches are local runtime data and must not be committed.
 | `MTG_BULK_DIR` | Managed bulk-download directory |
 | `MTG_CARD_SNAPSHOT_DIR` | Record-pinned database retention directory |
 | `MTG_IMAGE_CACHE` | Local image-cache directory |
+| `MTG_CARD_IMAGE_DB` | Optional fallback SQLite catalog for card artwork when using compact card data |
 | `MTG_WEB_DIST` | Built browser asset directory |
 | `MTG_AUTO_UPDATE_CARDS` | Enable or disable managed refresh |
 | `MTG_CARD_UPDATE_SECONDS` | Manifest-check interval |
 | `MTG_ALLOWED_ORIGINS` | Additional development/deployment browser origins |
 | `MTG_SECURE_COOKIES` | Require secure cookies behind HTTPS |
+| `MTG_COOKIE_NAMESPACE` | Public port for an additional listener on the same hostname |
 
 The server's own HTTP origin is accepted automatically for WebSocket upgrades;
 do not repeat it in `MTG_ALLOWED_ORIGINS`. Restrict additional origins exactly.
@@ -92,6 +126,35 @@ If an accepted request loses its response, retry the byte-equivalent command
 with the same client command ID. If an actor fails during ambiguous persistence,
 restart and let durable recovery recreate it. Do not edit checkpoints, SQLite
 rows, journals, or manifests by hand.
+
+## Update a Windows source ZIP installation
+
+Stop the Quorune console with `Ctrl+C`. From a directory outside the installed
+app, run the release's `scripts/update_playtest_windows.ps1` and pass its full
+merged commit. The helper downloads that source archive, keeps the existing
+install as a rollback sibling, copies its runtime data, and builds the
+environment and browser assets at the original path. Leave any configured
+external directories and launch environment settings in place.
+
+```powershell
+$quoruneCommit = Read-Host 'Enter the full merged Quorune commit'
+& .\update_playtest_windows.ps1 -Commit $quoruneCommit
+Set-Location (Join-Path $env:LOCALAPPDATA 'QuorunePlay/app')
+.\.venv\Scripts\quorune-server.exe --host 127.0.0.1 --port 8765
+```
+
+For a comparison using a retained usable database, start with `--offline`.
+Use the same launch environment and Tailscale Serve origin. From another
+terminal, check `(Invoke-RestMethod 'http://127.0.0.1:8765/api/v1/health')`
+for an `ok` status and the expected build. Open **Game menu → About Quorune**
+to compare the browser and server builds. Keep the browser's site data and
+start a fresh game for the first playtest. Saved games still require their
+compatible Oracle and rulings snapshot.
+
+To roll back, stop the new server with `Ctrl+C`, move the current `app`
+directory to an unused sibling to retain any new records, and rename the
+reported `app.rollback-*` directory to `app`. Restart it using the original
+settings and port.
 
 ## Validate browser changes
 

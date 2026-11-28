@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Relentless Assault",
+      "oracle_id": "dc1c0e8c-d0c1-445c-968f-7dec91e5d5fc",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Untap all creatures that attacked this turn. After this main phase, there is an additional combat phase followed by an additional main phase.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Cautious Survivor",
+      "oracle_id": "28eb696f-a42c-4444-8139-dfd62029e020",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elf Survivor",
+      "oracle_text": "Survival — At the beginning of your second main phase, if this creature is tapped, you gain 2 life.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Survival"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "dc1c0e8c-d0c1-445c-968f-7dec91e5d5fc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "A creature that attacks each turn if able must attack only once that turn. It is not forced into each attack that turn. However, a creature that attacks each combat if able must attack again if it can."
+    },
+    {
+      "oracle_id": "dc1c0e8c-d0c1-445c-968f-7dec91e5d5fc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "Abilities that trigger when a creature attacks, blocks, or is blocked will trigger during each combat that turn."
+    },
+    {
+      "oracle_id": "dc1c0e8c-d0c1-445c-968f-7dec91e5d5fc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "If you manage to cast this during a main phase of your opponent's turn, that opponent's creatures will untap and that opponent will be able to attack again. It will not allow you to attack during their turn."
+    },
+    {
+      "oracle_id": "dc1c0e8c-d0c1-445c-968f-7dec91e5d5fc",
+      "published_at": "2025-09-19",
+      "source": "wotc",
+      "comment": "Relentless Assault creates an additional combat and main phase only if it resolves during a main phase."
+    },
+    {
+      "oracle_id": "28eb696f-a42c-4444-8139-dfd62029e020",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a creature with a survival ability isn't tapped when your second main phase begins, the ability won't trigger at all. You won't be able to tap it during your second main phase in time to have that ability trigger."
+    },
+    {
+      "oracle_id": "28eb696f-a42c-4444-8139-dfd62029e020",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a creature's survival ability triggers but that creature is untapped when the ability begins to resolve, that ability won't do anything."
+    },
+    {
+      "oracle_id": "28eb696f-a42c-4444-8139-dfd62029e020",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a creature's survival ability triggers but the creature leaves the battlefield before the ability resolves, use its tapped or untapped status as it last existed on the battlefield to determine whether or not the ability will do anything."
+    },
+    {
+      "oracle_id": "28eb696f-a42c-4444-8139-dfd62029e020",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Survival abilities (and other abilities that trigger at the beginning of your second main phase) will trigger at the beginning of the second main phase you take in a turn. They won't trigger during your third, fourth, or other additional main phases in a single turn, if effects somehow cause you to have more than two main phases."
+    }
+  ]
+}

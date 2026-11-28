@@ -17,10 +17,49 @@ from quorune.deck import (
     parse_deck_text,
     parse_moxfield_json,
 )
+from quorune.deck_imports import DeckImportError, fetch_public_deck, parse_archidekt, parse_tappedout_csv, public_deck_source
 from common import ROOT, keep_all, load_assets, make_session
 from scripts.build_test_database import build_fixture_database
 from quorune.deck_copy_limits import DECK_COPY_LIMIT_CAPABILITY, DECK_COPY_LIMIT_EVENT
 from quorune.record import authoritative_state_hash, replay_record
+
+
+class PublicDeckImportTests(unittest.TestCase):
+    def test_archidekt_preserves_board_tags_and_printing(self):
+        printing = "00000000-0000-4891-8060-00000000da01"
+        payload = {
+            "name": "Fixture", "private": False,
+            "categories": [{"name": "Ramp", "includedInDeck": True}, {"name": "Possibles", "includedInDeck": False}],
+            "cards": [
+                {"quantity": 1, "categories": ["Commander"], "modifier": "Foil",
+                 "card": {"uid": printing, "collectorNumber": "16", "edition": {"editioncode": "otc"},
+                          "oracleCard": {"name": "Test Commander", "lang": "en"}}},
+                {"quantity": 99, "categories": ["Ramp"], "card": {"oracleCard": {"name": "Island"}}},
+                {"quantity": 1, "categories": ["Possibles"], "card": {"oracleCard": {"name": "Consider"}}},
+            ],
+        }
+        deck = parse_archidekt(payload, source="https://archidekt.com/decks/1234/")
+        self.assertEqual(["Test Commander"], deck.commanders)
+        self.assertEqual(100, deck.total_cards())
+        self.assertEqual(["Ramp"], deck.entries[1].tags)
+        self.assertEqual("maybeboard", deck.entries[2].board)
+        self.assertEqual((printing, "otc", "16", "en", "foil"), (
+            deck.entries[0].printing.scryfall_id, deck.entries[0].printing.set_code,
+            deck.entries[0].printing.collector_number, deck.entries[0].printing.language, deck.entries[0].printing.finish,
+        ))
+
+    def test_tappedout_csv_preserves_quoted_names_and_rejects_provider_errors(self):
+        raw = 'Board,Qty,Name,Set,Collector Number,Foil,Tags\nCommander,1,"Krenko, Tin Street Kingpin",WAR,137,Yes,Ramp|Tokens\nMain,99,Mountain,DMU,272,No,\n'
+        deck = parse_tappedout_csv(raw, source="https://tappedout.net/mtg-decks/public-list/", name="Public list")
+        self.assertEqual(["Krenko, Tin Street Kingpin"], deck.commanders)
+        self.assertEqual(["Ramp", "Tokens"], deck.entries[0].tags)
+        self.assertEqual("foil", deck.entries[0].printing.finish)
+        self.assertEqual(100, deck.total_cards())
+        self.assertIsNone(public_deck_source("https://tappedout.net.attacker.invalid/mtg-decks/public-list/"))
+        self.assertIsNone(public_deck_source("https://trusted@archidekt.com/decks/123/"))
+        with patch("quorune.deck_imports._download", side_effect=TimeoutError):
+            with self.assertRaisesRegex(DeckImportError, "Export a text list"):
+                fetch_public_deck("https://tappedout.net/mtg-decks/public-list/", cache_dir=None)
 
 
 class CardAliasResolutionTests(unittest.TestCase):
@@ -105,6 +144,38 @@ class DeckLoaderTests(unittest.TestCase):
         names = {entry.name for entry in deck.entries}
         self.assertIn("Sol Ring", names)
         self.assertNotIn("Sol Ring #Mana-Fast", names)
+
+    def test_moxfield_board_retains_same_name_printings_and_finish(self):
+        # The v3 board/card fields are from a live public Moxfield import.
+        # A second real Scryfall printing exercises the same-name copy split.
+        first = "5205f782-e6af-4152-a15f-080935017e4b"
+        second = "0863a079-1cc2-4388-85bb-a24eae251e99"
+        payload = {"boards": {"mainboard": {"cards": {
+            "kOzVw": {"quantity": 4, "finish": "nonFoil", "card": {
+                "id": "kOzVw", "name": "Swamp", "scryfall_id": first,
+                "set": "brc", "cn": "33", "lang": "en",
+            }},
+            "second-print": {"quantity": 3, "finish": "foil", "card": {
+                "id": "second-print", "name": "Swamp", "scryfall_id": second,
+                "set": "m21", "cn": "268", "lang": "en",
+            }},
+        }}}}
+        deck = parse_moxfield_json(payload)
+        self.assertEqual(7, deck.total_cards())
+        self.assertEqual(["Swamp"] * 7, deck.expanded())
+        self.assertEqual([first, second], [entry.printing.scryfall_id for entry in deck.entries])
+        self.assertEqual(["nonFoil", "foil"], [entry.printing.finish for entry in deck.entries])
+        projected = deck.to_dict()
+        self.assertEqual(projected, type(deck).from_dict(projected).to_dict())
+        self.assertEqual("33", projected["entries"][0]["printing"]["collector_number"])
+
+    def test_plain_text_set_and_collector_number_are_retained(self):
+        deck = parse_deck_text("4 Swamp (BRC) 33\n3 Swamp (M21) 268 *F*")
+        first, second = deck.entries
+        self.assertEqual(("brc", "33"), (first.printing.set_code, first.printing.collector_number))
+        self.assertEqual(("m21", "268", "foil"), (
+            second.printing.set_code, second.printing.collector_number, second.printing.finish,
+        ))
 
     def test_moxfield_source_parsing_is_host_and_path_aware(self):
         public_id = "g5vtVfRuS0W5KxZuYqZHGQ"

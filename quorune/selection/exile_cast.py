@@ -508,12 +508,16 @@ class OneShotExileCastChoiceOwnerMixin:
         if _options_fingerprint(options) != intent.options_fingerprint:
             raise GameRuleError("Madness cast options changed")
         if intent.choice == "decline":
+            from ..rules.discarded_card_exile import pin_discarded_madness_arrival
+
+            exile_counter = card.zone_change_counter
             self.move_card(
                 card.object_id,
                 "graveyard",
                 reason="Madness cast declined",
                 semantic_events=True,
             )
+            pin_discarded_madness_arrival(self, card, exile_counter)
             return
         if not options:
             raise GameRuleError("The Madness cast is not currently payable")

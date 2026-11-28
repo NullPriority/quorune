@@ -13,6 +13,7 @@ from ..rules.capabilities import load_default_capability_registry
 from ..rules.damage_capability_shapes import (
     CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER, controller_damage_result_life_floor_descriptor,
 )
+from ..turn_match_outcome_model import ResolvedTurnMatchOutcomeProtection
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
@@ -275,6 +276,13 @@ def collect_damage_result_replacement_effects(
             source_zones=source_zones,
         )
     )
+    journal = getattr(getattr(host, "state", None), "continuous_effects", None)
+    for rule in journal or ():
+        if isinstance(rule, ResolvedTurnMatchOutcomeProtection) and rule.controller in host.active_seats:
+            effects.append(registry.replacement_effect(
+                controller_damage_result_life_floor_descriptor(),
+                DamageResultReplacementSourceContext(rule.source_id, rule.controller, rule.effect_id),
+            ))
     for source in candidates:
         active_zone = (
             source_zones.get(source.object_id, source.zone)

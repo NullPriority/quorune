@@ -54,6 +54,10 @@ _RECEIVER_UNION_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"any_of"}
 _NONOWNER_CONTROL_QUERY_FIELDS = _QUERY_FIELDS | {"controlled_by_nonowner"}
 NONOWNER_CONTROL_QUERY_CAPABILITY = "state_query.permanent.controlled_by_nonowner"
 NEGATIVE_COLOR_QUERY_CAPABILITY = "state_query.permanent.negative_color"
+FACE_DOWN_CREATURE_QUERY_CAPABILITY = "state_query.permanent.face_down_creature"
+COUNTER_ABSENCE_QUERY_CAPABILITY = "state_query.permanent.counter_absence"
+_FACE_DOWN_STATE_FIELDS = frozenset({"face_down"})
+_COUNTER_ABSENCE_STATE_FIELDS = frozenset({"counter_absence"})
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -72,6 +76,30 @@ _PERMANENT_STATE_FIELDS = _LEGACY_PERMANENT_STATE_FIELDS | {
 }
 
 _TOTAL_COUNTER_STATE_FIELDS = _PERMANENT_STATE_FIELDS | {"minimum_total_counter_count"}
+
+@dataclass(frozen=True, slots=True)
+class CounterAbsenceSpec:
+    """Require zero counters of every kind or of one named kind."""
+
+    counter_name: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.counter_name is None:
+            return
+        if type(self.counter_name) is not str:
+            raise ObjectQueryError("Counter absence requires a counter name or null")
+        try:
+            name = normalized_counter_name(self.counter_name)
+        except CounterStateError as exc:
+            raise ObjectQueryError(str(exc)) from exc
+        object.__setattr__(self, "counter_name", name)
+
+    @classmethod
+    def from_dict(cls, value: Any) -> "CounterAbsenceSpec":
+        if not isinstance(value, Mapping) or set(value) != {"counter_name"}:
+            raise ObjectQueryError("Counter absence requires its exact counter kind field")
+        return cls(value["counter_name"])
+
 
 @dataclass(frozen=True, slots=True)
 class PermanentStatePredicateSpec:
@@ -94,8 +122,32 @@ class PermanentStatePredicateSpec:
         compare=False,
         hash=False,
     )
+    face_down: bool | None = None
+    counter_absence: CounterAbsenceSpec | None = None
 
     def __post_init__(self) -> None:
+        if self.counter_absence is not None:
+            other_fields = (_TOTAL_COUNTER_STATE_FIELDS - {"entered_this_turn"}) | {"face_down"}
+            if (not isinstance(self.counter_absence, CounterAbsenceSpec)
+                    or self.entered_this_turn is not False
+                    or type(self._serialization_version) is not int
+                    or self._serialization_version not in {1, 5}
+                    or any(getattr(self, key) is not None for key in other_fields)):
+                raise ObjectQueryError("Counter absence uses one closed public predicate")
+            object.__setattr__(self, "_serialization_version", 5)
+            return
+        if self.face_down is not None:
+            if (self.face_down is not True or self.entered_this_turn is not False
+                    or type(self._serialization_version) is not int
+                    or self._serialization_version not in {1, 4} or any(
+                        getattr(self, name) is not None for name in (
+                            "tapped", "attacking", "blocking", "enchanted", "equipped", "modified",
+                            "monstrous", "counter_name", "minimum_counter_count", "minimum_total_counter_count",
+                        )
+                    )):
+                raise ObjectQueryError("Face-down status uses one closed public predicate")
+            object.__setattr__(self, "_serialization_version", 4)
+            return
         if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3}:
             raise ObjectQueryError('Permanent-state predicate serialization version is unsupported')
         if type(self.entered_this_turn) is not bool:
@@ -183,6 +235,10 @@ class PermanentStatePredicateSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.counter_absence is not None:
+            return {"counter_absence": {"counter_name": self.counter_absence.counter_name}}
+        if self.face_down is True:
+            return {"face_down": True}
         value = {
             "entered_this_turn": self.entered_this_turn,
             "tapped": self.tapped,
@@ -209,6 +265,12 @@ class PermanentStatePredicateSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "PermanentStatePredicateSpec":
+        if isinstance(value, Mapping) and frozenset(value) == _COUNTER_ABSENCE_STATE_FIELDS:
+            return cls(counter_absence=CounterAbsenceSpec.from_dict(value["counter_absence"]))
+        if isinstance(value, Mapping) and frozenset(value) == _FACE_DOWN_STATE_FIELDS:
+            if value["face_down"] is not True:
+                raise ObjectQueryError("A closed face-down predicate must require face-down status")
+            return cls(face_down=True)
         if not isinstance(value, Mapping) or frozenset(value) not in {
             _LEGACY_PERMANENT_STATE_FIELDS,
             _PERMANENT_STATE_FIELDS,
@@ -234,6 +296,13 @@ class PermanentStatePredicateSpec:
         )
 
 
+def _counter_kind_amount(counters: Mapping[str, Any], name: str) -> int:
+    count = counters.get(name, 0)
+    if type(count) is not int or count < 0:
+        raise ObjectQueryError("Permanent-state counter amounts must be nonnegative integers")
+    return count
+
+
 def permanent_state_predicate_matches(
     spec: PermanentStatePredicateSpec,
     *,
@@ -246,6 +315,7 @@ def permanent_state_predicate_matches(
     equipped: bool = False,
     modified: bool = False,
     monstrous: bool = False,
+    face_down: bool = False,
 ) -> bool:
     """Evaluate one typed predicate over current public permanent state."""
 
@@ -253,8 +323,18 @@ def permanent_state_predicate_matches(
         raise ObjectQueryError(
             "Permanent-state matching requires a typed predicate"
         )
+    if spec.face_down is True:
+        return face_down is True
     if not isinstance(counters, Mapping):
         raise ObjectQueryError("Permanent-state counters must be a mapping")
+    if spec.counter_absence is not None:
+        name = spec.counter_absence.counter_name
+        if name is not None:
+            return _counter_kind_amount(counters, name) == 0
+        try:
+            return permanent_counter_total(counters) == 0
+        except ValueError as exc:
+            raise ObjectQueryError(str(exc)) from exc
     if type(entered_this_turn) is not bool:
         raise ObjectQueryError(
             "Permanent-state turn history must be a boolean"
@@ -295,13 +375,8 @@ def permanent_state_predicate_matches(
         if total < spec.minimum_total_counter_count:
             return False
     if spec.counter_name is not None:
-        raw = counters.get(spec.counter_name, 0)
-        if type(raw) is not int or raw < 0:
-            raise ObjectQueryError(
-                "Permanent-state counter amounts must be nonnegative integers"
-            )
         assert spec.minimum_counter_count is not None
-        if raw < spec.minimum_counter_count:
+        if _counter_kind_amount(counters, spec.counter_name) < spec.minimum_counter_count:
             return False
     return True
 
@@ -467,6 +542,10 @@ class ObjectQuerySpec:
             raise ObjectQueryError(
                 "Object query state predicate must be typed or null"
             )
+        if self.state_predicate is not None and self.state_predicate.face_down is True and (
+            self.zones != ("battlefield",) or self.types_all != ("creature",) or self.include_phased_out
+        ):
+            raise ObjectQueryError("Face-down status requires current public battlefield creatures")
         relational = bool(
             self.excluded_controllers
             or self.minimum_color_count is not None
@@ -795,6 +874,10 @@ def _validate_nonowner_control_query(query: ObjectQuerySpec) -> None:
 def object_query_capabilities(value: Any) -> tuple[str, ...]:
     """Derive authority only from complete typed public-query descriptors."""
     if isinstance(value, PermanentStatePredicateSpec):
+        if value.counter_absence is not None:
+            return (COUNTER_ABSENCE_QUERY_CAPABILITY,)
+        if value.face_down is True:
+            return (FACE_DOWN_CREATURE_QUERY_CAPABILITY,)
         return (ANY_COUNTER_QUERY_CAPABILITY,) if value.minimum_total_counter_count is not None else ()
     if isinstance(value, ObjectQuerySpec):
         from .object_query_union import RECEIVER_UNION_CAPABILITY
@@ -806,6 +889,8 @@ def object_query_capabilities(value: Any) -> tuple[str, ...]:
             *object_query_capabilities(value.state_predicate)}))
     if isinstance(value, Mapping):
         own = (COUNTER_TOTAL_CAPABILITY,) if value.get('reduction') == 'total_counters' else ()
+        if frozenset(value) in {_FACE_DOWN_STATE_FIELDS, _COUNTER_ABSENCE_STATE_FIELDS}:
+            return object_query_capabilities(PermanentStatePredicateSpec.from_dict(value))
         if frozenset(value) == _TOTAL_COUNTER_STATE_FIELDS:
             state = PermanentStatePredicateSpec.from_dict(value)
             own = (ANY_COUNTER_QUERY_CAPABILITY,) if state.minimum_total_counter_count is not None else ()

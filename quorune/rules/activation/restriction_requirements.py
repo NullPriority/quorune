@@ -25,9 +25,12 @@ def activation_restriction_runtime_dependencies(program):
         if any(choice.tap_schema_version == 3 for choice in ability.choices):
             from ..activation_costs import LEGENDARY_TAP_ACTIVATION_CAPABILITY
             required.add(LEGENDARY_TAP_ACTIVATION_CAPABILITY)
-        if any(choice.sacrifice_schema_version is not None for choice in ability.choices):
-            from ...keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
+        from ...keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY, KEYWORD_SACRIFICE_COST_VERSION
+        from ..named_sacrifice_cost_model import NAMED_SACRIFICE_CAPABILITY, NAMED_SACRIFICE_COST_VERSION
+        if any(choice.sacrifice_schema_version == KEYWORD_SACRIFICE_COST_VERSION for choice in ability.choices):
             required.add(KEYWORD_SACRIFICE_CAPABILITY)
+        if any(choice.sacrifice_schema_version == NAMED_SACRIFICE_COST_VERSION for choice in ability.choices):
+            required.add(NAMED_SACRIFICE_CAPABILITY)
         from .public_state_conditions import activation_public_state_dependencies
         required.update(activation_public_state_dependencies(ability.activation_conditions))
         if ability.activation_limit is ActivationLimit.ONCE_PER_OBJECT:required.add(ACTIVATION_ONCE_PER_OBJECT_CAPABILITY)

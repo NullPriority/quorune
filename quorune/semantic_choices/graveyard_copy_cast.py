@@ -11,7 +11,7 @@ from ..errors import GameRuleError
 from ..replacement.immutable import FrozenMap
 from ..rules.graveyard_copy_cast_model import (
     ExileGraveyardCopiesIntent, GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_OFFER, GRAVEYARD_COPY_OPERATION,
-    GRAVEYARD_COPY_RULES, validate_graveyard_copy_effect,
+    GRAVEYARD_COPY_RULES, RANDOM_NONLAND_SCOPE, UNTARGETED_COPY_SCOPES, validate_graveyard_copy_effect,
 )
 from ..rules.library_selection import LibrarySelectionObjectIdentity
 from ..selection.target_query import target_identity_matches_snapshot
@@ -48,35 +48,56 @@ def _current_own_spells(host, actor):
     }
 
 
+def _random_own_nonland(host, *, actor, instruction_key):
+    from ..continuous_effect_model import Layer
+    from ..rules.random_selection import sample_identity_rows
+
+    choices = tuple(
+        {"object_id": card.object_id, "logical_object_id": card.logical_object_id, "ref": card.ref}
+        for card in host.state.cards.values()
+        if card.zone == "graveyard" and card.owner == actor and card.is_card_object
+        and "land" not in host._type_parts(host._effective_card_data(card, maximum_layer=Layer.TYPE)["type_line"])[0]
+    )
+    selected = sample_identity_rows(
+        choices, 1, seed=host.state.config.seed, instruction_key=instruction_key,
+        namespace="random-graveyard-copy-cast", seat=actor,
+    )
+    return tuple(LibrarySelectionObjectIdentity.from_dict(row) for row in selected)
+
+
 def execute_exile_graveyard_copies(host, intent):
     item = next((row for row in host.state.stack if row.ref == intent.stack_ref), None)
     instruction = _require_parent(host, item=item, actor=intent.actor, scope=intent.scope)
     if instruction["copies"] != intent.copies:
         raise GameRuleError("The resolving copy count changed")
-    refs = tuple(identity.ref for identity in intent.originals)
+    originals = (_random_own_nonland(host, actor=intent.actor, instruction_key=item.ref)
+                 if intent.scope == RANDOM_NONLAND_SCOPE else intent.originals)
+    if not originals:
+        return ()
+    refs = tuple(identity.ref for identity in originals)
     if intent.scope == "own_all":
         if set(refs) != _current_own_spells(host, intent.actor):
             raise GameRuleError("The all-graveyard copy set changed")
-    elif refs != tuple(ref for ref in item.targets if ref is not None):
+    elif intent.scope not in UNTARGETED_COPY_SCOPES and refs != tuple(ref for ref in item.targets if ref is not None):
         raise GameRuleError("The surviving graveyard copy targets changed")
-    for identity in intent.originals:
+    for identity in originals:
         card = host.state.cards.get(identity.object_id)
         if (card is None or card.ref != identity.ref or card.logical_object_id != identity.logical_object_id
                 or card.zone != "graveyard" or not card.is_card_object):
             raise GameRuleError("An original graveyard copy target changed incarnation")
-        if intent.scope != "own_all":
+        if intent.scope not in UNTARGETED_COPY_SCOPES:
             snapshot = item.context.get("target_snapshots", {}).get(identity.ref, {})
             if (not isinstance(snapshot, Mapping) or type(snapshot.get("zone_change_counter")) is not int
                     or not target_identity_matches_snapshot(host, identity.ref, snapshot)):
                 raise GameRuleError("The original card is no longer the announced graveyard target")
     moved = host._move_cards_simultaneously(
-        [(identity.object_id, "exile") for identity in intent.originals],
+        [(identity.object_id, "exile") for identity in originals],
         reason=item.label, replacement_selections=intent.replacement_selections,
     )
     from ..zone_object_state import mark_resolving_graveyard_copy
 
     copies = []
-    original_ids = {identity.object_id for identity in intent.originals}
+    original_ids = {identity.object_id for identity in originals}
     for original in moved:
         if original.object_id not in original_ids or original.zone != "exile":
             continue
@@ -102,7 +123,7 @@ def _prepare_exile(effect, context):
         rows = tuple(context.query.object(ref, zones=("graveyard",)) for ref in effect["cards"])
     if any(row is None or row.token or not row.logical_object_id for row in rows):
         raise SemanticChoiceError("Graveyard copy preparation requires current original cards")
-    if not rows:
+    if not rows and scope != RANDOM_NONLAND_SCOPE:
         return SemanticChoicePreparation(None, FrozenMap(effect), auto_continue=AutoContinue("There are no cards to copy"))
     originals = tuple(LibrarySelectionObjectIdentity(row.object_id, row.logical_object_id, row.ref) for row in rows)
     intent = ExileGraveyardCopiesIntent(context.actor, context.stack_ref, scope, effect["copies"], originals)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Capability closure for fixed single-target reanimation."""
+"""Capability closure for exact graveyard-to-battlefield effects."""
 
 from collections.abc import Iterable, Mapping, Sequence
 
@@ -14,7 +14,8 @@ from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY, MANA_VALUE_POWE
 from ..effect_contracts import REANIMATE_OPERATION
 from .reanimation_followup import (
     REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC,
-    REANIMATION_FOLLOWUP_VERSIONS, battlefield_entry_followup_capabilities, validate_reanimation_followup,
+    REANIMATION_FOLLOWUP_VERSIONS, DelayedReanimationSacrifice, ReanimationFinalityHaste,
+    battlefield_entry_followup_capabilities, validate_reanimation_followup,
 )
 from ..targets import TargetGroup
 from ..target_numeric import (
@@ -38,8 +39,36 @@ def fixed_target_reanimation_covered_mechanics(
     if covered and MANA_VALUE_POWER_CAPABILITY in supplied:
         covered = (*covered, RELATIVE_TARGET_REANIMATION_MECHANIC)
     if ATTACKING_CARD_ENTRY_CAPABILITY in supplied:
-        return (*covered, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC)
-    return covered
+        covered = (*covered, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC)
+    from .death_battlefield_return import (
+        DEATH_BATTLEFIELD_RETURN_CAPABILITY, DEATH_BATTLEFIELD_RETURN_MECHANIC,
+        DEATH_EQUIPMENT_RETURN_CAPABILITY, DEATH_EQUIPMENT_RETURN_MECHANIC,
+    )
+
+    if DEATH_EQUIPMENT_RETURN_CAPABILITY in supplied:
+        covered = (*covered, DEATH_EQUIPMENT_RETURN_MECHANIC)
+
+    if DEATH_BATTLEFIELD_RETURN_CAPABILITY in supplied:
+        covered = (*covered, DEATH_BATTLEFIELD_RETURN_MECHANIC)
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY, ORDERED_GRAVEYARD_REANIMATION_MECHANIC,
+    )
+
+    if ORDERED_GRAVEYARD_REANIMATION_CAPABILITY in supplied:
+        covered = (*covered, ORDERED_GRAVEYARD_REANIMATION_MECHANIC)
+    from .enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_CAPABILITY, ENCHANTED_DEPARTURE_RETURN_MECHANIC
+
+    if ENCHANTED_DEPARTURE_RETURN_CAPABILITY in supplied:
+        covered = (*covered, ENCHANTED_DEPARTURE_RETURN_MECHANIC)
+    from .opposing_death_delayed_return import (
+        OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY, OPPOSING_DEATH_DELAYED_RETURN_MECHANIC,
+    )
+
+    if OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY in supplied:
+        covered = (*covered, OPPOSING_DEATH_DELAYED_RETURN_MECHANIC)
+    from .revival_return import CAPABILITY as REVIVAL_CAPABILITY, MECHANIC as REVIVAL_MECHANIC
+
+    return (*covered, REVIVAL_MECHANIC) if REVIVAL_CAPABILITY in supplied else covered
 
 
 def fixed_target_reanimation_node_capabilities(
@@ -48,9 +77,37 @@ def fixed_target_reanimation_node_capabilities(
     target_schema: Mapping[str, object] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Recognize exactly one closed graveyard-to-battlefield target move."""
+    """Recognize one closed graveyard-to-battlefield move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .reanimation_entry_subtype import entry_subtype_reanimation_node_capabilities, uses_entry_subtype_reanimation
+
+    if any(uses_entry_subtype_reanimation(effect) for effect in effects):
+        return entry_subtype_reanimation_node_capabilities(effects, target_schema)
+    from .revival_return import MECHANIC as REVIVAL_MECHANIC, revival_return_node_capabilities
+
+    if REVIVAL_MECHANIC in mechanics:
+        return revival_return_node_capabilities(effects, target_schema)
+    from .ordered_graveyard_reanimation import ORDERED_GRAVEYARD_REANIMATION_MECHANIC
+
+    if ORDERED_GRAVEYARD_REANIMATION_MECHANIC in mechanics:
+        return ordered_graveyard_reanimation_node_capabilities(effects, target_schema)
+    from .enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_MECHANIC
+    from .enchanted_departure_events import enchanted_departure_return_node_capabilities
+
+    if ENCHANTED_DEPARTURE_RETURN_MECHANIC in mechanics:
+        return enchanted_departure_return_node_capabilities(effects, target_schema)
+    from .opposing_death_delayed_return import (
+        OPPOSING_DEATH_DELAYED_RETURN_MECHANIC, opposing_death_delayed_return_node_capabilities,
+    )
+
+    if OPPOSING_DEATH_DELAYED_RETURN_MECHANIC in mechanics:
+        return opposing_death_delayed_return_node_capabilities(effects, target_schema)
+    from .death_battlefield_return import death_battlefield_return_node_capabilities
+
+    death_return = death_battlefield_return_node_capabilities(effects, target_schema, mechanics)
+    if death_return is not None:
+        return death_return
     if len(effects) == 1 and "attacking_card_entry" in effects[0]:
         from .attacking_card_entry import (
             ATTACKING_CARD_ENTRY_CAPABILITY,
@@ -75,20 +132,31 @@ def fixed_target_reanimation_node_capabilities(
         return (*required, ATTACKING_CARD_ENTRY_CAPABILITY, "target.revalidate_resolution") if required else ()
     if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') in REANIMATION_FOLLOWUP_VERSIONS:
         return _reanimation_followup_capabilities(effects[0], target_schema=target_schema, mechanics=mechanics)
+    from .entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD, death_enchantment_return_capabilities
+    if len(effects) == 1 and DEATH_ENCHANTMENT_RETURN_FIELD in effects[0]:
+        return death_enchantment_return_capabilities(effects, target_schema)
+    if len(effects) == 1 and "entry_form" in effects[0]:
+        return event_enchantment_return_capabilities(effects[0], target_schema, mechanics)
     if len(effects) == 1 and effects[0].get('schema_version') == 2:
         from ..event_card_return import (EVENT_BATTLEFIELD_RETURN_MECHANIC,
-            EVENT_BATTLEFIELD_RETURN_CAPABILITY, event_battlefield_return_effect)
+            EVENT_BATTLEFIELD_RETURN_CAPABILITY, EVENT_TRANSFORMED_RETURN_CAPABILITY, event_battlefield_return_effect)
         effect = effects[0]
+        transformed = effect.get("transformed_entry", False)
         try:
             expected = event_battlefield_return_effect(tapped=effect['tapped'],
-                entry_counter=effect['entry_counter'], controller=effect['controller'])
+                entry_counter=effect['entry_counter'], controller=effect['controller'], transformed_entry=transformed)
         except (ValueError, TypeError, KeyError):
             return ()
         if target_schema is not None or EVENT_BATTLEFIELD_RETURN_MECHANIC not in mechanics or dict(effect) != expected:
             return ()
         return (EVENT_BATTLEFIELD_RETURN_CAPABILITY, 'zone.change.destination_replacement',
+            *((EVENT_TRANSFORMED_RETURN_CAPABILITY,) if transformed else ()),
             *(('attachment.reference.current_or_lki',) if effect['controller'] == '$controller' else ()),
             *(('counter.producer.effect_entry',) if effect['entry_counter'] else ()))
+    return _ordinary_target_reanimation_capabilities(effects, target_schema, mechanics)
+
+
+def _ordinary_target_reanimation_capabilities(effects, target_schema, mechanics):
     if (
         FIXED_TARGET_REANIMATION_MECHANIC not in mechanics
         or "cr-115-targets" not in mechanics
@@ -186,19 +254,72 @@ def relative_target_reanimation_node_capabilities(*, effects, target_schema, mec
     return FIXED_TARGET_REANIMATION_CAPABILITY, MANA_VALUE_POWER_CAPABILITY, "target.revalidate_resolution"
 
 
-def attached_event_battlefield_return_runtime_dependencies(program):
-    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC
+def event_enchantment_return_capabilities(effect, target_schema, mechanics):
+    from ..event_card_return import (
+        EVENT_BATTLEFIELD_RETURN_CAPABILITY, EVENT_BATTLEFIELD_RETURN_MECHANIC, EVENT_ENCHANTMENT_RETURN_CAPABILITY,
+        event_enchantment_return_effect,
+    )
+    from ..replacement.immutable import thaw_value
+
+    if (target_schema is not None or EVENT_BATTLEFIELD_RETURN_MECHANIC not in mechanics
+            or type(effect.get("schema_version")) is not int or effect.get("tapped") is not False
+            or thaw_value(effect) != event_enchantment_return_effect()):
+        return ()
+    return (EVENT_ENCHANTMENT_RETURN_CAPABILITY, EVENT_BATTLEFIELD_RETURN_CAPABILITY,
+            "zone.change.destination_replacement", "continuous.resolution.indefinite_enchantment_form")
+
+
+def event_enchantment_return_runtime_dependencies(program):
+    from ..event_card_return import EVENT_ENCHANTMENT_RETURN_VERSION
     from .effect_shape_walkers import nested_effects
 
-    if not any(effect.get('op') == REANIMATE_OPERATION and effect.get('schema_version') == 2
-               and effect.get('controller') == '$controller' for effect in nested_effects(program.effects)):
+    if not any(effect.get("op") == REANIMATE_OPERATION and (
+            "entry_form" in effect or effect.get("schema_version") == EVENT_ENCHANTMENT_RETURN_VERSION)
+            for effect in nested_effects((program.effects, program.handlers))):
         return ()
+    if ((program.event, program.active_zone) != ("creature.dies.self", "battlefield")
+            or program.handlers or program.cost_schema is not None or program.event_condition is not None
+            or len(program.effects) != 1):
+        raise ValueError("Enchantment return requires the original creature-death occurrence")
+    required = event_enchantment_return_capabilities(program.effects[0], program.target_schema, program.coverage)
+    if not required:
+        raise ValueError("Enchantment return requires its original creature incarnation and owner")
+    return required
+
+
+def attached_event_battlefield_return_runtime_dependencies(program):
+    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC, EVENT_TRANSFORMED_RETURN_CAPABILITY
+    from .attachment_source_return import ATTACHMENT_DEATH_TRANSFORM_MECHANIC, attachment_source_return_runtime_dependencies
+    from .effect_shape_walkers import nested_effects
+
+    effects = tuple(nested_effects(program.effects))
+    if EVENT_TRANSFORMED_RETURN_CAPABILITY in program.capability_dependencies or any(
+        "transformed_entry" in effect for effect in effects
+    ):
+        required = fixed_target_reanimation_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (EVENT_TRANSFORMED_RETURN_CAPABILITY not in required
+                or (program.event, program.active_zone) != ("creature.dies.self", "battlefield")
+                or program.event_condition is not None or program.handlers or program.cost_schema is not None):
+            raise ValueError("Transformed return requires the source's exact battlefield death instruction")
+        return required
+    if not any(effect.get('op') == REANIMATE_OPERATION and effect.get('schema_version') == 2
+               and effect.get('controller') == '$controller' for effect in effects):
+        return ()
+    if ATTACHMENT_DEATH_TRANSFORM_MECHANIC in getattr(program, "coverage", ()):
+        return attachment_source_return_runtime_dependencies(program)
     required = fixed_target_reanimation_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=(EVENT_BATTLEFIELD_RETURN_MECHANIC,))
     if (not required or program.active_zone != 'battlefield' or program.event != 'creature.dies'
             or program.event_condition != {'field': 'attachments', 'op': 'contains_any', 'value': ['$source.ref']}):
         raise ValueError('Controller return requires the source-bound attached creature death')
     return required
+
+
+def event_battlefield_return_runtime_dependencies(program):
+    return (event_enchantment_return_runtime_dependencies(program)
+            or attached_event_battlefield_return_runtime_dependencies(program))
 
 
 def source_power_reanimation_runtime_dependencies(program):
@@ -235,22 +356,84 @@ def source_power_reanimation_runtime_dependencies(program):
     return required
 
 
+def ordered_graveyard_reanimation_node_capabilities(effects, target_schema):
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY, validate_ordered_graveyard_reanimation,
+    )
+
+    if target_schema is not None or len(effects) != 1:
+        return ()
+    effect, = effects
+    try:
+        followup = validate_ordered_graveyard_reanimation(effect)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    return (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY,
+        "zone.graveyard.ordered_simultaneous_arrival",
+        *battlefield_entry_followup_capabilities(followup),
+    )
+
+
+def ordered_graveyard_reanimation_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_MECHANIC, is_ordered_graveyard_reanimation,
+    )
+
+    if (ORDERED_GRAVEYARD_REANIMATION_MECHANIC not in program.coverage
+            and not any(is_ordered_graveyard_reanimation(effect) for effect in nested_effects(program.effects))):
+        return ()
+    required = ordered_graveyard_reanimation_node_capabilities(program.effects, program.target_schema)
+    if (not required or program.event != "resolve" or program.active_zone != "stack"
+            or program.event_condition is not None or program.cost_schema is not None or program.handlers):
+        raise ValueError("Ordered graveyard return requires its exact untargeted resolving spell")
+    return required
+
+
 def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
-    if REANIMATION_FOLLOWUP_MECHANIC not in mechanics:
+    from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_MECHANIC
+    from .reanimation_followup import REANIMATION_FINALITY_HASTE_VERSION
+
+    special = effect.get("schema_version") == REANIMATION_FINALITY_HASTE_VERSION
+    if not ({REANIMATION_FOLLOWUP_MECHANIC, REANIMATION_ENTRY_COUNTER_MECHANIC} & set(mechanics)
+            if special else REANIMATION_FOLLOWUP_MECHANIC in mechanics):
         return ()
     try:
         followup = validate_reanimation_followup(effect)
     except (ValueError, TypeError):
         return ()
-    if followup.exile_on_leave and (target_schema is None or "min" in target_schema):
+    if isinstance(followup, DelayedReanimationSacrifice):
+        from ..replacement.immutable import FrozenMap, thaw_value
+
+        if (thaw_value(FrozenMap(target_schema or {})) != followup.target_schema()
+                or type(target_schema.get("count")) is not int):
+            return ()
+    elif isinstance(followup, ReanimationFinalityHaste):
+        from ..replacement.immutable import FrozenMap
+        from .reanimation_followup import saga_reanimation_target_schema
+        from .announced_mana_value_target import (
+            bind_announced_mana_value_limit, has_activation_saga_graveyard_mana_value_equality,
+        )
+
+        if has_activation_saga_graveyard_mana_value_equality(target_schema):
+            try:
+                target_schema = bind_announced_mana_value_limit(target_schema, 0, activation=True)
+            except ValueError:
+                return ()
+        amount = (target_schema or {}).get("mana_value")
+        if (type(amount) is not int or amount < 0
+                or FrozenMap(target_schema) != FrozenMap(saga_reanimation_target_schema(amount))):
+            return ()
+    elif followup.exile_on_leave and (target_schema is None or "min" in target_schema):
         return ()
     base = {key: value for key, value in effect.items() if key not in {"schema_version", "followup"}}
     required = fixed_target_reanimation_node_capabilities(effects=(base,),
         target_schema=target_schema, mechanic_ids=mechanics)
     if not required:
         return ()
-    return (*required, REANIMATION_FOLLOWUP_CAPABILITY, "target.revalidate_resolution",
-        *battlefield_entry_followup_capabilities(followup))
+    return (*required, *((REANIMATION_FOLLOWUP_CAPABILITY,) if not special else ()),
+            "target.revalidate_resolution", *battlefield_entry_followup_capabilities(followup))
 
 
 __all__ = [

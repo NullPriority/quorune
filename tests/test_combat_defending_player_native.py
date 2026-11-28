@@ -17,13 +17,122 @@ class CombatDefendingPlayerNativeTests(InheritedNativeFixture,unittest.TestCase)
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'combat-defending-player.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/combat-defending-player-cards.json'],path)
+        fixture = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixture / "bound-effect-program-cards.json",
+            fixture / "combat-defending-player-cards.json",
+            fixture / "combat-damage-dealer-recipient-control-cards.json",
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Defending player results',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',14)],['Isamaru, Hound of Konda'])
 
     def attach(self, session, source, bearer):
         attach_objects(session.state.cards, source, bearer, source_timestamp=source.zone_timestamp,
                        players=session.state.players)
+
+    def kazuul_ogres(self, game):
+        return [card for card in game.state.cards.values()
+                if card.zone == "battlefield" and card.is_token]
+
+    def kazuul_payment_offer(self, game, actor="A"):
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", [actor]), (pending.kind, pending.actors))
+        ctx = game.packet(f"pilot:{actor}", full=True)["decision"]["ctx"]
+        self.assertEqual(3, ctx["cost"]["GENERIC"])
+        return ctx["payable"]
+
+    def test_kazuul_charges_each_declared_attacker_of_the_defending_player(self):
+        game = self.session(1908001)
+        source = self.add(game.engine, "Kazuul, Tyrant of the Cliffs", seat="B")
+        walker = self.add(game.engine, "Ral, Caller of Storms", seat="B")
+        walker.counters["loyalty"] = 5
+        attackers = [self.add(game.engine, "Grizzly Bears", ref=f"kazuul-attacker-{n}") for n in range(3)]
+        for attacker in attackers:
+            attacker.acquired_control_turn_count = -1
+        lands = [self.add(game.engine, "Plains", ref=f"kazuul-mana-{i}") for i in range(3)]
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, list(zip(attackers, ("B", walker.ref, "C"), strict=True)))
+        self.assertEqual(2, self.trigger_count(game, source))
+        self.assertTrue(self.kazuul_payment_offer(game))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "pay": True}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(self.kazuul_ogres(game))
+        self.assertTrue(all(game.state.cards[land.object_id].tapped for land in lands))
+        self.assertFalse(self.kazuul_payment_offer(game))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "pay": True}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(result.ok, result.summary)
+        ogre, = self.kazuul_ogres(game)
+        self.assertEqual("B", ogre.controller)
+        self.assertFalse(ogre.tapped)
+        current = game.engine._effective_card_data(ogre)
+        self.assertEqual(("Ogre Token", "3", "3"), (current["name"], str(current["power"]), str(current["toughness"])))
+        self.assertEqual(["R"], current["colors"])
+        self.assertEqual(("combat", "declare_attackers"), (game.state.phase, game.state.step))
+        self.until(game, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "combat.blockers"
+                   and current.state.pending_decision.actors == ["B"])
+        result = game.act("pilot:B", {"action_id": "block", "blocks": {ogre.ref: attackers[0].ref}})
+        self.assertTrue(result.ok, result.summary)
+        self.replay(game, load=True)
+
+    def test_kazuul_allows_current_controller_of_original_attacker_to_pay(self):
+        game = self.session(1908003)
+        source = self.add(game.engine, "Kazuul, Tyrant of the Cliffs", seat="B")
+        attacker = self.add(game.engine, "Grizzly Bears")
+        seizure = self.add(game.engine, "Word of Seizing", seat="C", zone="hand")
+        for index in range(5):
+            self.add(game.engine, "Mountain", seat="C", ref=f"kazuul-seizure-mana-{index}")
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(game, source)
+        self.assert_closed(game, seizure)
+        self.prepare(game)
+        self.checkpoint(game)
+        identity = attacker.logical_object_id
+        self.attack(game, [(attacker, "B")])
+        self.cast(game, "C", seizure, [attacker.ref])
+        self.resolve_top(game)
+        stolen = game.state.cards[attacker.object_id]
+        self.assertEqual((identity, "C"), (stolen.logical_object_id, stolen.controller))
+        self.assertFalse(self.kazuul_payment_offer(game, "C"))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "pay": False}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:C", {"action_id": "choose", "pay": False})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["B"], [card.controller for card in self.kazuul_ogres(game)])
+        self.replay(game, load=True)
+
+    def test_kazuul_retains_departed_attacker_incarnation_and_original_payer(self):
+        game = self.session(1908002)
+        source = self.add(game.engine, "Kazuul, Tyrant of the Cliffs", seat="B")
+        attacker = self.add(game.engine, "Grizzly Bears")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        self.add(game.engine, "Plains")
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        old_identity = attacker.logical_object_id
+        self.attack(game, [(attacker, "B")])
+        self.cast(game, "A", blink, [attacker.ref])
+        self.resolve_top(game)
+        self.assertNotEqual(old_identity, game.state.cards[attacker.object_id].logical_object_id)
+        self.assertFalse(self.kazuul_payment_offer(game))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["B"], [card.controller for card in self.kazuul_ogres(game)])
+        self.replay(game, load=True)
 
     def test_actual_aqueous_form_scries_for_the_aura_controller(self):
         s = self.session(508509702)

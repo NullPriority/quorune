@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Mapping, Any
 
 from ..graveyard_card_result_model import (
-    GraveyardCardCounterLifeSpec, GRAVEYARD_CARD_COUNTER_LIFE_OPERATION, GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES,
+    GRAVEYARD_CARD_COUNTER_LIFE_OPERATION, GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES, graveyard_card_counter_recipe,
 )
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
@@ -27,7 +27,8 @@ class GraveyardCardCounterLifeHandler:
         if context.source is None:
             raise SemanticNodeError('Targeted source-counter result requires its original semantic source frame')
         try:
-            result = GraveyardCardCounterLifeSpec.from_dict(effect['result'])
+            value = effect['result']
+            result = graveyard_card_counter_recipe(value).from_dict(value)
             intent = GraveyardCardCounterLifeIntent(actor=context.actor, object_ref=fields.object_ref,
                 reason=fields.reason, replacement_selections=fields.replacement_selections,
                 source_object_id=context.source.object_id, source_logical_object_id=context.source.logical_object_id,

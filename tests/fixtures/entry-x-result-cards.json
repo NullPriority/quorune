@@ -861,6 +861,57 @@
       "type_line": "Legendary Creature \u2014 Alien Insect Scout"
     },
     {
+      "oracle_id": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+      "name": "Wan Shi Tong, Librarian",
+      "oracle_text": "Flash\nFlying, vigilance\nWhen Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.\nWhenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card.",
+      "mana_cost": "{X}{U}{U}",
+      "type_line": "Legendary Creature \u2014 Bird Spirit",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "released_at": "2025-11-21",
+      "cmc": 2.0,
+      "loyalty": null,
+      "defense": null
+    },
+    {
       "cmc": 2.0,
       "color_identity": [
         "R",
@@ -1174,6 +1225,18 @@
       "oracle_id": "e7d79fbe-b02c-41c7-8b0a-6477feb1da7a",
       "published_at": "2022-10-07",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The second triggered ability won't be put on the stack until after the spell or ability causing the opponent to search their library finishes resolving."
+    },
+    {
+      "oracle_id": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Wan Shi Tong, Librarian's second triggered ability won't trigger if you search an opponent's library or if an opponent searches another player's library."
     }
   ],
   "schema_version": 1,

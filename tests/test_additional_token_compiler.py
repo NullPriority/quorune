@@ -61,6 +61,68 @@ class AdditionalTokenDescriptorContractTests(unittest.TestCase):
         self.assertEqual(1, len(token.characteristics()["activated_abilities"]))
 
 
+    def test_matching_additions_use_current_pending_recipes_and_keep_entry_associations(self):
+        from quorune.replacement.operations import MATCH_PENDING_TOKEN_QUANTITY, operation_from_dict
+        from quorune.semantic_runtime.token_replacements import (
+            MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY, MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID,
+            SemanticNodeError, resolve_token_creation_replacements,
+        )
+
+        reference = (
+            "If one or more tokens would be created under your control, those tokens plus that many "
+            "1/1 green Squirrel creature tokens are created instead."
+        )
+        _, descriptor, capability = static_additional_token_replacement_handler(reference)
+        self.assertEqual(MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY, capability)
+        self.assertEqual(MATCH_PENDING_TOKEN_QUANTITY, descriptor["quantity"])
+        handler = GenericAdditionalTokenReplacementHandler(
+            handler_id=MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID, schema_version=3,
+            capability_dependencies=(capability,),
+        )
+        for changed in ({"quantity": 1}, {"condition": {**descriptor["condition"], "created_types_all": ["artifact"]}}):
+            with self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, **changed})
+        context = TokenCreationReplacementContext("source", "A", "A", ("artifact", "creature"))
+        effect = handler.replacement_effect(descriptor, context)
+        op, = effect.operations
+        restored = operation_from_dict(op.to_dict())
+        self.assertEqual(op, restored)
+        originals = (
+            {"name": "Servo Token", "quantity": 2, "tapped": True, "_attacking_group": "assigned",
+             "temporary_keywords": ["Haste"], "characteristics": {"keywords": ["Deathtouch"]}},
+            {"name": "Treasure Token", "quantity": 3, "characteristics": {"type_line": "Token Artifact — Treasure"}},
+        )
+        result = resolve_token_creation_replacements(
+            event_id="create", controller="A", tokens=originals, created_types=("artifact", "creature"),
+            created_subtypes=("servo", "treasure"), effects=(effect,), apnap_order=("A", "B"),
+        )
+        self.assertIsNone(result.pending)
+        additions = tuple(result.tokens[2:])
+        self.assertEqual([2, 3], [token["quantity"] for token in additions])
+        self.assertEqual({"Squirrel Token"}, {token["name"] for token in additions})
+        self.assertEqual(("assigned", True, ("Haste",)),
+                         (additions[0]["_attacking_group"], additions[0]["tapped"], tuple(additions[0]["temporary_keywords"])))
+        self.assertNotIn("_attacking_group", additions[1])
+        self.assertFalse(additions[1].get("tapped"))
+        self.assertFalse(any("Deathtouch" in row["characteristics"]["keywords"] for row in additions))
+        self.assertIn("Deathtouch", result.tokens[0]["characteristics"]["keywords"])
+
+    def test_matching_additional_token_grammar_withdrawal_is_detected(self):
+        from unittest.mock import patch
+
+        reference = (
+            "If one or more tokens would be created under your control, those tokens plus that many "
+            "1/1 green Squirrel creature tokens are created instead."
+        )
+        self.assertIsNotNone(static_additional_token_replacement_handler(reference))
+        for text in (reference.replace("your control", "an opponent's control"),
+                     reference.replace("those tokens plus that many", "instead of those tokens create that many"),
+                     reference.replace("that many", "twice that many")):
+            self.assertIsNone(static_additional_token_replacement_handler(text))
+        with patch("quorune.compiler.token_templates._matching_pending_additional_tokens", return_value=None):
+            self.assertIsNone(static_additional_token_replacement_handler(reference))
+
+
 class AdditionalTokenCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

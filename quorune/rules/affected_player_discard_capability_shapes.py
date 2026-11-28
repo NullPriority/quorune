@@ -37,6 +37,7 @@ def _fixed_affected_player_hand_choice_node_capabilities(
     action: str,
     mechanic: str,
     capability: str,
+    allow_targeted_four: bool = False,
 ) -> tuple[str, ...]:
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
@@ -53,6 +54,10 @@ def _fixed_affected_player_hand_choice_node_capabilities(
     controller = effect.get("players") == ["$controller"]
     if controller and not allow_controller:
         return ()
+    count = effect.get("count")
+    count_is_closed = _literal_hand_choice_count_is_closed(count, controller) or (
+        allow_targeted_four and action == "discard" and targeted and type(count) is int and count == 4
+    )
     expected_fields = {
         "op",
         "actor",
@@ -71,7 +76,7 @@ def _fixed_affected_player_hand_choice_node_capabilities(
         or effect.get("op") != "choose_cards_apnap"
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "hand"
-        or not _literal_hand_choice_count_is_closed(effect.get("count"), controller)
+        or not count_is_closed
         or effect.get("then") != action
         or effect.get("hidden") is not True
         or type(effect.get("prompt")) is not str
@@ -119,11 +124,11 @@ def _fixed_affected_player_hand_choice_node_capabilities(
 
 
 def fixed_affected_player_discard_node_capabilities(
-    *, effects, target_schema, mechanic_ids, allow_controller: bool = False,
+    *, effects, target_schema, mechanic_ids, allow_controller: bool = False, allow_targeted_four: bool = False,
 ) -> tuple[str, ...]:
     return _fixed_affected_player_hand_choice_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
-        allow_controller=allow_controller, action="discard",
+        allow_controller=allow_controller, action="discard", allow_targeted_four=allow_targeted_four,
         mechanic=FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, capability=FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     )
 
@@ -272,6 +277,12 @@ def equipped_damage_discard_untap_runtime_dependencies(program):
 
 
 def fixed_context_player_discard_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .opponent_caster_discard_payment import caster_discard_payment_node_capabilities, uses_caster_discard_payment
+
+    if any(uses_caster_discard_payment(effect) for effect in effects):
+        return caster_discard_payment_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     mechanics = set(mechanic_ids)
     if EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC in mechanics:
         return _equipped_damage_discard_untap_node_capabilities(effects, target_schema, mechanics)
@@ -290,6 +301,16 @@ def fixed_context_player_discard_node_capabilities(*, effects, target_schema, me
 
 def is_closed_fixed_bound_discard_program(program):
     """Admit only a closed producer whose occurrence defines its player slot."""
+    from .opponent_caster_discard_payment import (
+        caster_discard_payment_program_dependencies, uses_caster_discard_payment,
+    )
+
+    if any(uses_caster_discard_payment(effect) for effect in program.effects):
+        try:
+            caster = caster_discard_payment_program_dependencies(program)
+        except (TypeError, ValueError):
+            return False
+        return bool(caster) and set(caster).issubset(program.capability_dependencies)
     if EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC in program.coverage:
         try:
             equipped = equipped_damage_discard_untap_runtime_dependencies(program)

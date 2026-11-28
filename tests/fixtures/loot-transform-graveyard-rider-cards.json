@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "name": "Jace, Vryn's Prodigy // Jace, Telepath Unbound",
+      "mana_cost": "{1}{U} // ",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Wizard // Legendary Planeswalker — Jace",
+      "oracle_text": "Jace, Vryn's Prodigy: {T}: Draw a card, then discard a card. If there are five or more cards in your graveyard, exile Jace, then return him to the battlefield transformed under his owner's control.\n//\nJace, Telepath Unbound: +1: Up to one target creature gets -2/-0 until your next turn.\n−3: You may cast target instant or sorcery card from your graveyard this turn. If that spell would be put into your graveyard, exile it instead.\n−9: You get an emblem with \"Whenever you cast a spell, target opponent mills five cards.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Transform",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2015-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Jace, Vryn's Prodigy",
+          "oracle_text": "{T}: Draw a card, then discard a card. If there are five or more cards in your graveyard, exile Jace, then return him to the battlefield transformed under his owner's control.",
+          "power": "0",
+          "toughness": "2",
+          "type_line": "Legendary Creature — Human Wizard"
+        },
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": "5",
+          "mana_cost": "",
+          "name": "Jace, Telepath Unbound",
+          "oracle_text": "+1: Up to one target creature gets -2/-0 until your next turn.\n−3: You may cast target instant or sorcery card from your graveyard this turn. If that spell would be put into your graveyard, exile it instead.\n−9: You get an emblem with \"Whenever you cast a spell, target opponent mills five cards.\"",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Jace"
+        }
+      ]
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "The mana value of a double-faced card not on the battlefield is the mana value of its front face."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "Each face of a double-faced card has its own set of characteristics: name, types, subtypes, power and toughness, loyalty, abilities, and so on. While a double-faced card is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored. While a double-faced card isn't on the battlefield, consider only the characteristics of its front face."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "A double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "In some rare cases, a spell or ability may cause one of these five cards to transform while it's a creature (front face up) on the battlefield. If this happens, the resulting planeswalker won't have any loyalty counters on it and will subsequently be put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "The back face of a double-faced card (in the case of Magic Origins, the planeswalker face) can't be cast."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "If you don't cast the card that turn, nothing happens. It remains in your graveyard."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "The card is exiled only if it's cast from the graveyard and put back into the graveyard (either by resolving or being countered). If, at any time, the card goes to a hidden zone (such as your hand or your library), the effect loses track of the card. It won't be exiled, even if that card is put into your graveyard later that turn."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "If you activate the second ability of Jace, Telepath Unbound, you must follow the timing rules for the card's types. For example, if you target a sorcery card, you may cast it during your main phase when the stack is empty. You pay all the spell's costs."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "A Magic Origins planeswalker that enters the battlefield because of the ability of its front face will enter with loyalty counters as normal."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "The activated ability of Jace, Vryn's Prodigy checks to see if there are five or more cards in your graveyard after you discard a card. Putting a fifth card into your graveyard at other times won't cause Jace to be exiled, nor will Jace entering the battlefield while there are five or more cards in your graveyard."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "You can activate one of the planeswalker's loyalty abilities the turn it enters the battlefield. However, you may do so only during one of your main phases when the stack is empty. For example, if the planeswalker enters the battlefield during combat, there will be an opportunity for your opponent to remove it before you can activate one of its abilities."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2015-06-22",
+      "source": "wotc",
+      "comment": "If a double-faced card is manifested, it will be put onto the battlefield face down (this is also true if it's put onto the battlefield face down some other way). Note that \"face down\" is not synonymous with \"with its back face up.\" A manifested double-faced card is a 2/2 creature with no name, mana cost, creature types, or abilities. While face down, it can't transform. If the front face of a manifested double-faced card is a creature card, you can turn it face up by paying its mana cost. If you do, its front face will be up. A double-faced card on the battlefield can't be turned face down."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The back face of a double-faced card doesn't have a mana cost. A double-faced permanent with its back face up has a mana value equal to the mana value of its front face. Each back face has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness while resolving the ability of Jace, Vryn's Prodigy, you'll need to already have five other cards in your graveyard to satisfy that ability's condition. You can't choose to put the card directly into your graveyard to satisfy it."
+    },
+    {
+      "oracle_id": "594f6881-c059-46f8-aa4e-7151d502de73",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You can control two of this permanent, one front-face up and the other back-face up, at the same time."
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "716b3ea2-45b7-4a8f-af72-de7f4e510eff",
+      "name": "Goldspan Dragon",
+      "mana_cost": "{3}{R}{R}",
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying, haste\nWhenever this creature attacks or becomes the target of a spell, create a Treasure token.\nTreasures you control have \"{T}, Sacrifice this artifact: Add two mana of any one color.\"",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "cmc": 5.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Treasure",
+        "Haste"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b5eb72bb-897f-4911-a797-3153c31df3e0",
+      "name": "Goldhound",
+      "mana_cost": "{R}",
+      "type_line": "Artifact Creature — Treasure Dog",
+      "oracle_text": "First strike\nMenace (This creature can't be blocked except by two or more creatures.)\n{T}, Sacrifice this creature: Add one mana of any color.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "cmc": 1.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "First strike",
+        "Menace"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "716b3ea2-45b7-4a8f-af72-de7f4e510eff",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If a spell targets Goldspan Dragon more than once, the triggered ability will trigger only once."
+    },
+    {
+      "oracle_id": "716b3ea2-45b7-4a8f-af72-de7f4e510eff",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "An ability that triggers when a creature becomes the target of a spell resolves before the spell that caused it to trigger. Such an ability resolves even if that spell is countered."
+    },
+    {
+      "oracle_id": "716b3ea2-45b7-4a8f-af72-de7f4e510eff",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Players can cast spells and activate abilities after the triggered ability resolves but before the spell that caused it to trigger does."
+    },
+    {
+      "oracle_id": "b5eb72bb-897f-4911-a797-3153c31df3e0",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Since Goldhound is a creature, its {T} ability can't be activated the turn that it enters the battlefield or the turn a player gains control of it unless it has haste."
+    },
+    {
+      "oracle_id": "b5eb72bb-897f-4911-a797-3153c31df3e0",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If an effect refers to a Treasure, it means any Treasure artifact, not just a Treasure artifact token."
+    },
+    {
+      "oracle_id": "b5eb72bb-897f-4911-a797-3153c31df3e0",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "Even when it is on a creature, Treasure is an artifact type and not a creature type. Similarly, Dog is always a creature type and not an artifact type."
+    }
+  ]
+}

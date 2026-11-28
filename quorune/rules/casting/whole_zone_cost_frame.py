@@ -1,4 +1,4 @@
-"""Authoritative restart frame for a cast with two automatic zone costs."""
+"""Authoritative restart frame for priority actions with whole-zone costs."""
 
 from __future__ import annotations
 
@@ -8,9 +8,11 @@ from dataclasses import dataclass, replace
 from ...replacement.immutable import FrozenMap, thaw_value
 from ...replacement.model import ReplacementEffectError
 from ...replacement.ordering import ReplacementChoiceRequired
+from ..island_pair_discard_cost import ISLAND_PAIR_DISCARD_VERSION
 
 
 WHOLE_ZONE_COST_FRAME_FIELD = "_whole_zone_cost_frame"
+SELECTED_DISCARD_PAIR_FRAME_VERSION = 2
 WHOLE_ZONE_SELECTION_FIELDS = frozenset({"cost_cards", "discard_cards", "sacrifice_cards"})
 _TRANSITIONS = {"hand": "discard", "battlefield": "sacrifice"}
 
@@ -57,6 +59,7 @@ class WholeZoneCostFrame:
     spell_ref: str
     option_id: str
     groups: tuple[WholeZonePaymentGroup, ...]
+    schema_version: int = 1
 
     def __post_init__(self):
         if (any(type(value) is not str or not value for value in (self.spell_ref, self.option_id))
@@ -64,25 +67,51 @@ class WholeZoneCostFrame:
                 or len({group.origin for group in self.groups}) != len(self.groups)
                 or not self.groups[-1].members):
             raise ReplacementEffectError("Automatic zone cost frame requires its cast and pending group")
+        if type(self.schema_version) is not int or self.schema_version not in {1, SELECTED_DISCARD_PAIR_FRAME_VERSION}:
+            raise ReplacementEffectError("Zone payment continuation version is unsupported")
+        if self.schema_version == SELECTED_DISCARD_PAIR_FRAME_VERSION and (
+            len(self.groups) != 1 or self.groups[0].origin != "hand" or len(self.groups[0].members) != 2
+        ):
+            raise ReplacementEffectError("The selected discard frame requires exactly two hand cards")
 
     @classmethod
     def from_dict(cls, value):
-        if (not isinstance(value, Mapping)
-                or set(value) != {"schema_version", "spell_ref", "option_id", "groups"}
-                or type(value["schema_version"]) is not int or value["schema_version"] != 1
+        if not isinstance(value, Mapping):
+            raise ReplacementEffectError("Automatic zone cost frame is malformed")
+        version = value.get("schema_version")
+        fields = {"schema_version", "spell_ref", "option_id", "groups"}
+        if version == SELECTED_DISCARD_PAIR_FRAME_VERSION:
+            fields.add("cost_schema_version")
+            if (type(value.get("cost_schema_version")) is not int
+                    or value["cost_schema_version"] != ISLAND_PAIR_DISCARD_VERSION):
+                raise ReplacementEffectError("The selected discard frame requires the exact paired price")
+        if (set(value) != fields or type(version) is not int or version not in {1, SELECTED_DISCARD_PAIR_FRAME_VERSION}
                 or not isinstance(value["groups"], (list, tuple))):
             raise ReplacementEffectError("Automatic zone cost frame is malformed")
         return cls(value["spell_ref"], value["option_id"],
-                   tuple(WholeZonePaymentGroup.from_dict(group) for group in value["groups"]))
+                   tuple(WholeZonePaymentGroup.from_dict(group) for group in value["groups"]),
+                   schema_version=version)
 
     def to_dict(self):
-        return {"schema_version": 1, "spell_ref": self.spell_ref, "option_id": self.option_id,
-                "groups": [group.to_dict() for group in self.groups]}
+        value = {"schema_version": self.schema_version, "spell_ref": self.spell_ref, "option_id": self.option_id,
+                 "groups": [group.to_dict() for group in self.groups]}
+        if self.schema_version == SELECTED_DISCARD_PAIR_FRAME_VERSION:
+            value["cost_schema_version"] = ISLAND_PAIR_DISCARD_VERSION
+        return value
 
     def validate_response(self, response):
-        if (response.get("card") != self.spell_ref or response.get("cost_option") not in (None, self.option_id)
-                or WHOLE_ZONE_SELECTION_FIELDS.intersection(response)):
+        if response.get("card") != self.spell_ref or response.get("cost_option") not in (None, self.option_id):
             raise ReplacementEffectError("Automatic zone cost continuation changed its cast or inputs")
+        fields = WHOLE_ZONE_SELECTION_FIELDS.intersection(response)
+        if self.schema_version == 1:
+            if fields:
+                raise ReplacementEffectError("Automatic zone cost continuation changed its cast or inputs")
+            return
+        if fields not in ({"discard_cards"}, {"cost_cards"}):
+            raise ReplacementEffectError("The selected discard frame needs its original input array")
+        selected = response[next(iter(fields))]
+        if not isinstance(selected, (list, tuple)) or tuple(selected) != tuple(row[2] for row in self.groups[0].members):
+            raise ReplacementEffectError("The selected discard frame lost its announced hand references")
 
     def append_selection(self, selection):
         choice = FrozenMap(selection) if isinstance(selection, Mapping) else selection
@@ -107,6 +136,8 @@ class WholeZoneCostFrame:
             seen.add(ref)
         if not seen:
             raise ReplacementEffectError("An automatic payment replacement requires a pending event")
+        if self.schema_version == SELECTED_DISCARD_PAIR_FRAME_VERSION and seen != set(identities):
+            raise ReplacementEffectError("The selected discard replacement lost one of its announced cards")
         return {event.event_id for event in batch.events}
 
 
@@ -114,3 +145,16 @@ class WholeZoneCostChoiceRequired(ReplacementChoiceRequired):
     def __init__(self, required: ReplacementChoiceRequired, frame: WholeZoneCostFrame):
         super().__init__(batch=required.batch, effects=required.effects, pending=required.pending)
         self.frame = frame
+
+
+def whole_zone_cost_event_ids(batch, response, *, action, seat):
+    frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
+    if action == "activate":
+        from ..activation.whole_hand_mana_costs import validate_activation_frame
+
+        validate_activation_frame(frame, response)
+    elif action == "cast":
+        frame.validate_response(response)
+    else:
+        raise ReplacementEffectError("Automatic zone costs require their exact priority action")
+    return frame.replacement_event_ids(batch, seat=seat)

@@ -114,6 +114,13 @@ class SemanticChoiceRegistry:
                 f"Unknown semantic choice operation {operation!r}"
             ) from exc
 
+    def requires_object_rows(self, effect: Mapping[str, Any]) -> bool:
+        """Use complete object facts unless the typed choice owner opts out."""
+
+        handler = self._by_operation.get(str(effect.get("op") or "").casefold())
+        requirement = getattr(handler, "requires_object_rows", None)
+        return not callable(requirement) or requirement(effect)
+
     def decode_continuation(
         self,
         value: Mapping[str, Any],

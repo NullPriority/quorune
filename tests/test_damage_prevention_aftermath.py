@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 from damage_replacement_support import DamageReplacementPipelineBase
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.damage import (
     commit_prepared_damage_batch,
     prepare_damage_batch,
@@ -36,6 +37,57 @@ from quorune.semantics import SemanticProgram
 
 
 class DamagePreventionAftermathTests(DamageReplacementPipelineBase):
+    def test_grouped_reflection_requires_the_complete_spell_and_versioned_recipient(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.compiler.prevention_templates import fixed_prevention_effect_template
+        from quorune.damage_modifier_state import (
+            PREVENTED_SOURCE_REFLECTION, DamageAftermathRecipient, DamageModifierError,
+            DealDamagePreventionAftermath, prevention_aftermath_from_dict,
+        )
+        from quorune.rules.prevention_component_shapes import targeted_prevention_result_runtime_dependencies
+
+        name = "Fixture Reprisal"
+        text = (
+            "Prevent all damage that would be dealt to you and planeswalkers you control this turn "
+            "by sources you don't control. If damage from a creature source is prevented this way, "
+            "Fixture Reprisal deals that much damage to that creature. If damage from a noncreature source "
+            "is prevented this way, Fixture Reprisal deals that much damage to the source's controller."
+        )
+        template, effects, schema, _ = fixed_prevention_effect_template(text, card_name=name)
+        first, second = effects
+        self.assertIsNone(schema)
+        self.assertEqual(["player"], first["scope"]["target_kinds"])
+        self.assertEqual(["planeswalker"], second["scope"]["target_characteristics_all"])
+        self.assertEqual(("$stack", "$stack"), tuple(row["application_group_id"] for row in effects))
+        data = dict(event="resolve", active_zone="stack", handlers=(), event_condition=None,
+                    target_schema=schema, cost_schema=None, effects=effects, capability_dependencies=(),
+                    provenance={"template_id": template})
+        self.assertEqual(
+            {"damage.prevention.persistent_amount", "damage.prevention.aftermath.damage"},
+            set(targeted_prevention_result_runtime_dependencies(SimpleNamespace(**data))),
+        )
+        for changed in ((first,), (first, first), (first, {**second, "application_group_id": "$source"})):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                targeted_prevention_result_runtime_dependencies(SimpleNamespace(**{**data, "effects": changed}))
+        with patch("quorune.compiler.prevention_templates._reflected_source_prevention", return_value=None):
+            self.assertIsNone(fixed_prevention_effect_template(text, card_name=name))
+
+        engine = self.session(61505210, players=4).engine
+        source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="reflection-codec-source")
+        snapshot = source_snapshot(engine, source.ref, controller="A")
+        for recipient, version in (("prevented_source_controller", 1), (PREVENTED_SOURCE_REFLECTION, 2)):
+            with self.subTest(version=version):
+                value = DealDamagePreventionAftermath(
+                    source=snapshot, recipient=DamageAftermathRecipient(recipient),
+                    per_prevented=1, schema_version=version,
+                )
+                encoded = value.to_dict()
+                self.assertEqual(value, prevention_aftermath_from_dict(encoded))
+                for invalid in (True, 3, 1 if version == 2 else 2):
+                    with self.assertRaises(DamageModifierError):
+                        prevention_aftermath_from_dict({**encoded, "schema_version": invalid})
+
     def _damage_aftermath_shield(
         self,
         engine,
@@ -701,3 +753,191 @@ class DamagePreventionAftermathTests(DamageReplacementPipelineBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CombatPreventionTokenCompilerTests(unittest.TestCase):
+    def test_inkshield_compiles_one_closed_token_aftermath(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.rules.prevention_component_shapes import fixed_prevention_component_capabilities
+        from test_bound_effect_programs import record
+
+        material = (
+            "Prevent all combat damage that would be dealt to you this turn. "
+            "For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying."
+        )
+        registry = load_default_capability_registry()
+        result = compile_oracle_card(record(material), capability_registry=registry)
+        self.assertEqual("exact", result.status, result.material_residuals)
+        node, = result.faces[0].nodes
+        self.assertEqual(material, node.text)
+        self.assertIn("damage.prevention.aftermath.token_creation", node.capability_dependencies)
+        effect, = node.effects
+        recipe, = effect["aftermath"]
+        self.assertEqual("create_tokens", recipe["kind"])
+        self.assertEqual("combat", effect["damage_kind"])
+        self.assertEqual("Inkling Token", recipe["name"])
+        for changed in (
+            {**effect, "damage_kind": "any"},
+            {**effect, "subject": "$target.0"},
+            {**effect, "aftermath": [{**recipe, "schema_version": True}]},
+            {**effect, "aftermath": [{**recipe, "characteristics": {
+                **recipe["characteristics"], "activated_ability_profile": "unrepresented",
+            }}]},
+        ):
+            self.assertEqual((), fixed_prevention_component_capabilities(
+                effects=(changed,), target_schema=None, mechanic_ids=node.mechanics,
+            ))
+
+
+class CombatPreventionTokenNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import json
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains", "Grizzly Bears"},
+            "ability-source-counter-cards.json": {"Shock"},
+            "combat-prevention-source-scopes-cards.json": {"Flaring Pain"},
+            "current-life-effect-amount-cards.json": {"Anointed Procession"},
+            "additional-token-definition-cards.json": {"Parallel Lives"},
+            "combat-prevention-token-aftermath-cards.json": {"Inkshield", "Holy Day"},
+        }
+        pieces = []
+        for filename, names in support.items():
+            data = json.loads((ROOT / "tests/fixtures" / filename).read_bytes())
+            data["cards"] = [card for card in data["cards"] if card["name"] in names]
+            assert {card["name"] for card in data["cards"]} == names
+            ids = {card["oracle_id"] for card in data["cards"]}
+            data["rulings"] = [row for row in data.get("rulings", ()) if row["oracle_id"] in ids]
+            piece = folder / filename
+            piece.write_text(json.dumps(data), encoding="utf-8")
+            pieces.append(piece)
+        database = folder / "combat-prevention-tokens.sqlite3"
+        build_fixture_database(pieces, database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Combat prevention tokens", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _world(self, seed, mode):
+        game = self.session(seed)
+        shield = self.add(game.engine, "Inkshield", seat="B", zone="hand")
+        attackers = [self.add(game.engine, "Grizzly Bears", ref=f"inkshield-attacker-{i}") for i in range(3)]
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        private = self.add(game.engine, "Shock", seat="D", zone="hand", ref="inkshield-private")
+        other = None
+        if mode == "split":
+            other = self.add(game.engine, "Holy Day", seat="C", zone="hand")
+        elif mode == "unpreventable":
+            other = self.add(game.engine, "Flaring Pain", zone="hand")
+        elif mode == "replacement":
+            for name in ("Anointed Procession", "Parallel Lives"):
+                self.assert_closed(game, self.add(game.engine, name, seat="B"))
+        shock = self.add(game.engine, "Shock", zone="hand", ref="inkshield-noncombat") if mode == "base" else None
+        self.assert_closed(game, shield)
+        self.prepare(game, mana={"R": 10, "C": 10})
+        game.state.players["B"].mana_pool.update({"B": 1, "W": 1, "C": 10})
+        game.state.players["C"].mana_pool["W"] = 1
+        self.checkpoint(game)
+        self.cast(game, "B", shield)
+        self.assertIsNone(self.resolve(game))
+        if other:
+            self.assert_closed(game, other)
+            self.cast(game, "C" if mode == "split" else "A", other)
+            self.assertIsNone(self.resolve(game))
+        if shock:
+            self.cast(game, "A", shock, ["B"])
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual(38, game.state.players["B"].life)
+            self.assertEqual([], self._inklings(game))
+        self.attack(game, [(attackers[0], "B"), (attackers[1], "B"), (attackers[2], "C")])
+        return game, private
+
+    @staticmethod
+    def _inklings(game):
+        return [card for card in game.state.cards.values()
+                if card.is_token and card.zone == "battlefield" and card.printed_name == "Inkling Token"]
+
+    def _damage_boundary(self, game):
+        self.until(game, lambda session: session.state.pending_decision.kind == "replacement.order"
+                   or any(row.code == "combat.damage" for row in session.state.events))
+
+    def test_actual_inkshield_uses_only_its_own_combat_prevention_to_create_tokens(self):
+        from quorune.record import authoritative_state_hash
+
+        for mode, amount, life_b, life_c in (("base", 4, 38, 38), ("split", 2, 40, 40), ("unpreventable", 0, 36, 38)):
+            with self.subTest(mode=mode):
+                game, _ = self._world(615500 + len(mode), mode)
+                self._damage_boundary(game)
+                if mode == "split":
+                    shield = next(row for row in game.state.damage_prevention_shields if row.controller == "B")
+                    for occurrence in range(2):
+                        decision = game.packet("pilot:B", full=True)["decision"]
+                        self.assertEqual("replacement.order", decision["kind"])
+                        selected = next(row["id"] for row in decision["ctx"]["options"]
+                                        if (row["id"] == shield.effect_id) == (occurrence == 0))
+                        command = {"action_id": "choose", "choices": {"replacement": selected}}
+                        before = authoritative_state_hash(game.state)
+                        self.assertFalse(game.act("pilot:C", command).ok)
+                        self.assertEqual(before, authoritative_state_hash(game.state))
+                        result = game.act("pilot:B", command)
+                        self.assertTrue(result.ok, result.summary)
+                    self._damage_boundary(game)
+                self.assertEqual((life_b, life_c), (game.state.players["B"].life, game.state.players["C"].life))
+                tokens = self._inklings(game)
+                self.assertEqual(amount, len(tokens))
+                for card in tokens:
+                    self.assertEqual("B", card.controller)
+                    data = game.engine._effective_card_data(card)
+                    self.assertEqual({"W", "B"}, set(data["colors"]))
+                    self.assertEqual(("2", "1"), (str(data["power"]), str(data["toughness"])))
+                    self.assertIn("Flying", data["keywords"])
+                self.replay(game, load=True)
+
+    def test_inkshield_actual_prevention_quantity_mutant_is_killed(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.rules import combat_prevention_tokens
+
+        original = combat_prevention_tokens.combat_prevention_token_requests
+
+        def undercount(host, applications):
+            return tuple(replace(row, amount=row.amount - 1) for row in original(host, applications))
+
+        game, _ = self._world(615512, "base")
+        with patch.object(combat_prevention_tokens, "combat_prevention_token_requests", undercount):
+            self._damage_boundary(game)
+        self.assertEqual(3, len(self._inklings(game)))
+        self.assertEqual(38, game.state.players["B"].life)
+        with self.assertRaisesRegex(AssertionError, "4 != 3"):
+            self.assertEqual(4, len(self._inklings(game)))
+
+    def test_actual_inkshield_token_replacement_replays_the_committed_damage_once(self):
+        import json
+
+        game, private = self._world(615511, "replacement")
+        self._damage_boundary(game)
+        decision = game.packet("pilot:B", full=True)["decision"]
+        self.assertEqual("replacement.order", decision["kind"])
+        self.assertEqual([], self._inklings(game))
+        self.assertEqual(38, game.state.players["C"].life)
+        self.assertNotIn(private.ref, json.dumps(decision))
+        game = self.replay(game, load=True)
+        selected = decision["ctx"]["options"][0]["id"]
+        result = game.act("pilot:B", {"action_id": "choose", "choices": {"replacement": selected}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(16, len(self._inklings(game)))
+        self.assertEqual(1, sum(row.code == "combat.damage" for row in game.state.events))
+        self.assertEqual(38, game.state.players["C"].life)
+        self.replay(game, load=True)

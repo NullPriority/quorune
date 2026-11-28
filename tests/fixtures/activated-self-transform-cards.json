@@ -102,7 +102,7 @@
           "loyalty": null,
           "mana_cost": "{2}{G}",
           "name": "Autumnal Gloom",
-          "oracle_text": "{B}: Mill a card.\nDelirium \u2014 At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.",
+          "oracle_text": "{B}: Mill a card.\nDelirium — At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.",
           "power": null,
           "toughness": null,
           "type_line": "Enchantment"
@@ -118,7 +118,7 @@
           "oracle_text": "Trample, hexproof",
           "power": "4",
           "toughness": "4",
-          "type_line": "Creature \u2014 Treefolk"
+          "type_line": "Creature — Treefolk"
         }
       ],
       "cmc": 3.0,
@@ -165,12 +165,12 @@
       "mana_cost": "{2}{G} // ",
       "name": "Autumnal Gloom // Ancient of the Equinox",
       "oracle_id": "245aa786-d607-414f-ab55-b003b2b9faf4",
-      "oracle_text": "Autumnal Gloom: {B}: Mill a card.\nDelirium \u2014 At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.\n//\nAncient of the Equinox: Trample, hexproof",
+      "oracle_text": "Autumnal Gloom: {B}: Mill a card.\nDelirium — At the beginning of your end step, if there are four or more card types among cards in your graveyard, transform this enchantment.\n//\nAncient of the Equinox: Trample, hexproof",
       "power": null,
       "produced_mana": [],
       "released_at": "2016-04-08",
       "toughness": null,
-      "type_line": "Enchantment // Creature \u2014 Treefolk"
+      "type_line": "Enchantment // Creature — Treefolk"
     },
     {
       "card_faces": [
@@ -258,7 +258,7 @@
           "oracle_text": "{4}{R/P}: Transform this creature. Activate only as a sorcery. ({R/P} can be paid with either {R} or 2 life.)",
           "power": "4",
           "toughness": "5",
-          "type_line": "Creature \u2014 Beast"
+          "type_line": "Creature — Beast"
         },
         {
           "colors": [
@@ -272,7 +272,7 @@
           "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)",
           "power": "7",
           "toughness": "5",
-          "type_line": "Creature \u2014 Phyrexian Beast"
+          "type_line": "Creature — Phyrexian Beast"
         }
       ],
       "cmc": 5.0,
@@ -321,7 +321,7 @@
       "produced_mana": [],
       "released_at": "2023-04-21",
       "toughness": null,
-      "type_line": "Creature \u2014 Beast // Creature \u2014 Phyrexian Beast"
+      "type_line": "Creature — Beast // Creature — Phyrexian Beast"
     },
     {
       "card_faces": [
@@ -336,7 +336,7 @@
           "oracle_text": "{T}, Tap an untapped Vampire you control: Transform this creature.",
           "power": "2",
           "toughness": "2",
-          "type_line": "Creature \u2014 Human"
+          "type_line": "Creature — Human"
         },
         {
           "colors": [
@@ -349,7 +349,7 @@
           "oracle_text": "",
           "power": "4",
           "toughness": "4",
-          "type_line": "Creature \u2014 Vampire"
+          "type_line": "Creature — Vampire"
         }
       ],
       "cmc": 3.0,
@@ -396,7 +396,7 @@
       "produced_mana": [],
       "released_at": "2012-02-03",
       "toughness": null,
-      "type_line": "Creature \u2014 Human // Creature \u2014 Vampire"
+      "type_line": "Creature — Human // Creature — Vampire"
     },
     {
       "card_faces": [],
@@ -434,7 +434,7 @@
           "oracle_text": "Lifelink\nWhen another creature you control dies, transform this creature.",
           "power": "2",
           "toughness": "2",
-          "type_line": "Creature \u2014 Human Peasant"
+          "type_line": "Creature — Human Peasant"
         },
         {
           "colors": [
@@ -447,7 +447,7 @@
           "oracle_text": "Lifelink",
           "power": "4",
           "toughness": "3",
-          "type_line": "Creature \u2014 Human Knight"
+          "type_line": "Creature — Human Knight"
         }
       ],
       "cmc": 3.0,
@@ -495,7 +495,7 @@
       "produced_mana": [],
       "released_at": "2025-01-24",
       "toughness": null,
-      "type_line": "Creature \u2014 Human Peasant // Creature \u2014 Human Knight"
+      "type_line": "Creature — Human Peasant // Creature — Human Knight"
     },
     {
       "cmc": 1.0,
@@ -559,7 +559,7 @@
           "oracle_text": "{4}{G}: Transform this creature.",
           "power": "2",
           "toughness": "1",
-          "type_line": "Creature \u2014 Werewolf Horror"
+          "type_line": "Creature — Werewolf Horror"
         },
         {
           "colors": [],
@@ -570,7 +570,7 @@
           "oracle_text": "This creature can't be blocked by more than one creature.",
           "power": "4",
           "toughness": "4",
-          "type_line": "Creature \u2014 Eldrazi Werewolf"
+          "type_line": "Creature — Eldrazi Werewolf"
         }
       ],
       "cmc": 1.0,
@@ -617,7 +617,7 @@
       "produced_mana": [],
       "released_at": "2016-07-22",
       "toughness": null,
-      "type_line": "Creature \u2014 Werewolf Horror // Creature \u2014 Eldrazi Werewolf"
+      "type_line": "Creature — Werewolf Horror // Creature — Eldrazi Werewolf"
     },
     {
       "card_faces": [
@@ -632,7 +632,7 @@
           "oracle_text": "Flying, prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\n{2}{R}{W}{W}: Transform Monica Rambeau. Activate only as a sorcery.",
           "power": "3",
           "toughness": "3",
-          "type_line": "Legendary Creature \u2014 Human Hero"
+          "type_line": "Legendary Creature — Human Hero"
         },
         {
           "colors": [
@@ -646,7 +646,7 @@
           "oracle_text": "Flying, hexproof, prowess\nWhenever you cast a noncreature spell, put a +1/+1 counter on each other creature you control.",
           "power": "4",
           "toughness": "4",
-          "type_line": "Legendary Creature \u2014 Elemental Hero"
+          "type_line": "Legendary Creature — Elemental Hero"
         }
       ],
       "cmc": 3.0,
@@ -697,7 +697,7 @@
       "produced_mana": [],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Legendary Creature \u2014 Human Hero // Legendary Creature \u2014 Elemental Hero"
+      "type_line": "Legendary Creature — Human Hero // Legendary Creature — Elemental Hero"
     },
     {
       "card_faces": [
@@ -712,7 +712,7 @@
           "oracle_text": "Whenever this creature or another creature you control enters, you gain 1 life.\n{2}, {T}, Sacrifice another permanent: Transform this creature.",
           "power": "2",
           "toughness": "2",
-          "type_line": "Creature \u2014 Human Cleric"
+          "type_line": "Creature — Human Cleric"
         },
         {
           "colors": [
@@ -725,7 +725,7 @@
           "oracle_text": "Whenever this creature or another creature you control dies, target opponent loses 1 life and you gain 1 life.",
           "power": "2",
           "toughness": "4",
-          "type_line": "Creature \u2014 Human Cleric"
+          "type_line": "Creature — Human Cleric"
         }
       ],
       "cmc": 3.0,
@@ -773,7 +773,7 @@
       "produced_mana": [],
       "released_at": "2016-04-08",
       "toughness": null,
-      "type_line": "Creature \u2014 Human Cleric // Creature \u2014 Human Cleric"
+      "type_line": "Creature — Human Cleric // Creature — Human Cleric"
     },
     {
       "cmc": 1.0,
@@ -865,7 +865,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Swamp"
+      "type_line": "Basic Land — Swamp"
     },
     {
       "card_faces": [
@@ -878,7 +878,7 @@
           "oracle_text": "Defender\n{6}: Transform this creature.",
           "power": "2",
           "toughness": "2",
-          "type_line": "Artifact Creature \u2014 Gargoyle"
+          "type_line": "Artifact Creature — Gargoyle"
         },
         {
           "colors": [],
@@ -889,7 +889,7 @@
           "oracle_text": "Flying",
           "power": "4",
           "toughness": "2",
-          "type_line": "Artifact Creature \u2014 Gargoyle Horror"
+          "type_line": "Artifact Creature — Gargoyle Horror"
         }
       ],
       "cmc": 1.0,
@@ -936,7 +936,7 @@
       "produced_mana": [],
       "released_at": "2016-04-08",
       "toughness": null,
-      "type_line": "Artifact Creature \u2014 Gargoyle // Artifact Creature \u2014 Gargoyle Horror"
+      "type_line": "Artifact Creature — Gargoyle // Artifact Creature — Gargoyle Horror"
     },
     {
       "card_faces": [
@@ -951,7 +951,7 @@
           "oracle_text": "Vigilance\nWhenever another creature you control dies, you may transform this creature.",
           "power": "2",
           "toughness": "2",
-          "type_line": "Creature \u2014 Human Soldier"
+          "type_line": "Creature — Human Soldier"
         },
         {
           "colors": [
@@ -964,7 +964,7 @@
           "oracle_text": "Trample",
           "power": "5",
           "toughness": "4",
-          "type_line": "Creature \u2014 Human Soldier"
+          "type_line": "Creature — Human Soldier"
         }
       ],
       "cmc": 4.0,
@@ -1013,7 +1013,7 @@
       "produced_mana": [],
       "released_at": "2011-09-30",
       "toughness": null,
-      "type_line": "Creature \u2014 Human Soldier // Creature \u2014 Human Soldier"
+      "type_line": "Creature — Human Soldier // Creature — Human Soldier"
     },
     {
       "card_faces": [
@@ -1028,7 +1028,7 @@
           "oracle_text": "{T}, Tap an untapped creature you control: Transform this creature.",
           "power": "1",
           "toughness": "1",
-          "type_line": "Creature \u2014 Human"
+          "type_line": "Creature — Human"
         },
         {
           "colors": [
@@ -1041,7 +1041,7 @@
           "oracle_text": "This creature attacks each combat if able.\n{2}: This creature gets +1/+0 until end of turn.",
           "power": "2",
           "toughness": "3",
-          "type_line": "Creature \u2014 Human"
+          "type_line": "Creature — Human"
         }
       ],
       "cmc": 1.0,
@@ -1089,7 +1089,7 @@
       "produced_mana": [],
       "released_at": "2025-01-24",
       "toughness": null,
-      "type_line": "Creature \u2014 Human // Creature \u2014 Human"
+      "type_line": "Creature — Human // Creature — Human"
     },
     {
       "card_faces": [
@@ -1104,7 +1104,7 @@
           "oracle_text": "Defender\n{T}: Add {G}.\n{5}{G}{G}: Transform this creature.",
           "power": "1",
           "toughness": "2",
-          "type_line": "Creature \u2014 Werewolf Horror"
+          "type_line": "Creature — Werewolf Horror"
         },
         {
           "colors": [],
@@ -1115,7 +1115,7 @@
           "oracle_text": "{T}: Add {C}{C}.",
           "power": "4",
           "toughness": "6",
-          "type_line": "Creature \u2014 Eldrazi Werewolf"
+          "type_line": "Creature — Eldrazi Werewolf"
         }
       ],
       "cmc": 2.0,
@@ -1166,7 +1166,7 @@
       ],
       "released_at": "2016-07-22",
       "toughness": null,
-      "type_line": "Creature \u2014 Werewolf Horror // Creature \u2014 Eldrazi Werewolf"
+      "type_line": "Creature — Werewolf Horror // Creature — Eldrazi Werewolf"
     },
     {
       "card_faces": [
@@ -1181,7 +1181,7 @@
           "oracle_text": "Trample, haste\n{5}{G}{G}: Transform this creature.",
           "power": "4",
           "toughness": "4",
-          "type_line": "Creature \u2014 Beast"
+          "type_line": "Creature — Beast"
         },
         {
           "colors": [
@@ -1194,7 +1194,7 @@
           "oracle_text": "Trample, haste\nOther creatures you control get +1/+1 and have trample and haste.",
           "power": "8",
           "toughness": "8",
-          "type_line": "Creature \u2014 Beast Horror"
+          "type_line": "Creature — Beast Horror"
         }
       ],
       "cmc": 4.0,
@@ -1243,7 +1243,7 @@
       "produced_mana": [],
       "released_at": "2021-11-19",
       "toughness": null,
-      "type_line": "Creature \u2014 Beast // Creature \u2014 Beast Horror"
+      "type_line": "Creature — Beast // Creature — Beast Horror"
     },
     {
       "cmc": 1.0,
@@ -1594,6 +1594,293 @@
       "released_at": "2021-09-24",
       "toughness": null,
       "type_line": "Creature — Human Soldier Werewolf // Creature — Werewolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}{W}",
+          "name": "Faithful Squire",
+          "oracle_text": "Whenever you cast a Spirit or Arcane spell, you may put a ki counter on this creature.\nAt the beginning of the end step, if there are two or more ki counters on this creature, you may flip it.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature — Human Soldier"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Kaiso, Memory of Loyalty",
+          "oracle_text": "Flying\nRemove a ki counter from Kaiso: Prevent all damage that would be dealt to target creature this turn.",
+          "power": "3",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Spirit"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "flip",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{W} // ",
+      "name": "Faithful Squire // Kaiso, Memory of Loyalty",
+      "oracle_id": "2358ffc2-6663-4ef3-b3a4-b036a4733ac6",
+      "oracle_text": "Faithful Squire: Whenever you cast a Spirit or Arcane spell, you may put a ki counter on this creature.\nAt the beginning of the end step, if there are two or more ki counters on this creature, you may flip it.\n//\nKaiso, Memory of Loyalty: Flying\nRemove a ki counter from Kaiso: Prevent all damage that would be dealt to target creature this turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2005-02-04",
+      "toughness": "2",
+      "type_line": "Creature — Human Soldier // Legendary Creature — Spirit"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Reach Through Mists",
+      "oracle_id": "c81ca8ff-92f3-481e-82f7-0673b6c74ea0",
+      "oracle_text": "Draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-03-31",
+      "toughness": null,
+      "type_line": "Instant — Arcane"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Changeling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Universal Automaton",
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Shapeshifter"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Vampire Hexmage",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "oracle_text": "First strike\nSacrifice this creature: Remove all counters from target permanent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "1",
+      "type_line": "Creature — Vampire Shaman"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1665,19 +1952,19 @@
       "source": "wotc"
     },
     {
-      "comment": "If, during its controller\u2019s declare attackers step, Incited Rabble is tapped or is affected by a spell or ability that says it can\u2019t attack, then it doesn\u2019t attack. If there\u2019s a cost associated with having Incited Rabble attack, its controller isn\u2019t forced to pay that cost, so it doesn\u2019t have to attack in that case either. Note that transforming Town Gossipmonger won\u2019t untap it.",
+      "comment": "If, during its controller’s declare attackers step, Incited Rabble is tapped or is affected by a spell or ability that says it can’t attack, then it doesn’t attack. If there’s a cost associated with having Incited Rabble attack, its controller isn’t forced to pay that cost, so it doesn’t have to attack in that case either. Note that transforming Town Gossipmonger won’t untap it.",
       "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
       "published_at": "2025-01-24",
       "source": "wotc"
     },
     {
-      "comment": "Incited Rabble\u2019s controller still chooses which player, planeswalker, or battle it attacks.",
+      "comment": "Incited Rabble’s controller still chooses which player, planeswalker, or battle it attacks.",
       "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
       "published_at": "2025-01-24",
       "source": "wotc"
     },
     {
-      "comment": "You can tap any untapped creature you control, including one you haven\u2019t controlled continuously since the beginning of your most recent turn, to pay the cost of Town Gossipmonger\u2019s activated ability. You must have controlled Town Gossipmonger continuously since the beginning of your most recent turn, however.",
+      "comment": "You can tap any untapped creature you control, including one you haven’t controlled continuously since the beginning of your most recent turn, to pay the cost of Town Gossipmonger’s activated ability. You must have controlled Town Gossipmonger continuously since the beginning of your most recent turn, however.",
       "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
       "published_at": "2025-01-24",
       "source": "wotc"
@@ -1719,7 +2006,7 @@
       "source": "wotc"
     },
     {
-      "comment": "A modal double-faced card can\u2019t be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed.",
+      "comment": "A modal double-faced card can’t be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
@@ -1731,31 +2018,31 @@
       "source": "wotc"
     },
     {
-      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \u201cplay\u201d) a specific modal double-faced card, you can\u2019t play it as a land.",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than “play”) a specific modal double-faced card, you can’t play it as a land.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
     },
     {
-      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face\u2019s name.",
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face’s name.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
     },
     {
-      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can\u2019t be put onto the battlefield, it doesn\u2019t enter the battlefield.",
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can’t be put onto the battlefield, it doesn’t enter the battlefield.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
     },
     {
-      "comment": "In the Commander variant, a double-faced card\u2019s color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered.",
+      "comment": "In the Commander variant, a double-faced card’s color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
     },
     {
-      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that\u2019s being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined.",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that’s being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
@@ -1767,7 +2054,7 @@
       "source": "wotc"
     },
     {
-      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you\u2019re playing and ignore the other face\u2019s characteristics.",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you’re playing and ignore the other face’s characteristics.",
       "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
       "published_at": "2020-09-25",
       "source": "wotc"
@@ -1914,6 +2201,18 @@
       "comment": "If Brutal Cathar leaves the battlefield before its enters-the-battlefield/transforms-into ability resolves, the target creature won't be exiled.",
       "oracle_id": "1ed2d8e0-462b-468e-8fd3-1f3c6d99fb8a",
       "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any permanent can be targeted by the second ability, not just one with counters on it.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vampire Hexmage's ability can't target a permanent card in a zone other than the battlefield, such as a suspended card.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
       "source": "wotc"
     }
   ],

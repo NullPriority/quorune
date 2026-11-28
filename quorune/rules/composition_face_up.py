@@ -14,7 +14,7 @@ from ..model import CardInstance
 from ..face_status_timestamp_model import planned_face_up_timestamp
 from ..morph import FACE_DOWN_CAST_METHODS,FACE_DOWN_METHOD_RUNTIME_EVENTS,FixedManaMorphSpec
 from ..nonmana_morph_model import FixedNonmanaMorphSpec
-from ..manifest import ManifestTurnUpSpec,is_manifested,physical_manifest_turn_up_spec
+from ..manifest import ManifestTurnUpSpec,is_cloaked,is_manifested,physical_manifest_turn_up_spec
 from ..semantic_runtime.morph import default_fixed_mana_morph_registry
 from ..zone_object_state import turn_card_face_up
 from .capabilities import load_default_capability_registry
@@ -55,11 +55,12 @@ def composed_turn_up_options(host,seat,card):
     methods=set(FACE_DOWN_CAST_METHODS).intersection(str(word).casefold() for word in data.get('keywords',()))
     manifest_option=None
     storage=card.permanent_composition
-    if is_manifested(card) and not storage.topology.is_token:
+    library_method='manifest' if is_manifested(card) else 'cloak' if is_cloaked(card) else None
+    if library_method and not storage.topology.is_token:
         top=storage.parts[0]
-        spec=physical_manifest_turn_up_spec(host,top.detached_card())
+        spec=physical_manifest_turn_up_spec(host,top.detached_card(),method=library_method)
         if spec is not None:
-            key=top.card_state['oracle_id']+':manifest:'+top.identity.logical_object_id
+            key=top.card_state['oracle_id']+':'+library_method+':'+top.identity.logical_object_id
             manifest_option=ComposedTurnUpOption(key,top.card_state['oracle_id'],spec)
     if not methods and manifest_option is None:return ()
     references=tuple(fragment for fragment in canonical_ability_fragments(data.get('ability_fragments',()))
@@ -94,7 +95,7 @@ def composed_turn_up_options(host,seat,card):
     marker=card.annotations.get('face_down_method')
     original_method=marker.get('kind') if isinstance(marker,dict) else None
     return tuple(sorted(options.values(),key=lambda option:(
-        option.spec.method!='manifest',
+        option.spec.method not in {'manifest','cloak'},
         not (option.source_oracle_id==card.oracle_id and option.spec.method==original_method),option.source_key)))
 
 

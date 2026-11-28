@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..semantic_runtime.action_permissions import land_play_permission_options
+from ..zone_object_state import face_down_exile_viewers
 from .action_catalog import ActionCatalogHost
 
 
@@ -37,7 +38,7 @@ def projected_action_explanations(
     host: ActionCatalogHost,
     seat: str,
 ) -> dict[str, dict[str, Any]]:
-    """Return hidden-safe reasons for the authenticated seat's own lands.
+    """Return hidden-safe reasons for the authenticated seat's own cards.
 
     These are explanatory projections, never executable offers. The browser
     displays them verbatim and does not reproduce Magic timing rules.
@@ -56,6 +57,8 @@ def projected_action_explanations(
         for object_id in object_ids:
             card = host.state.cards[object_id]
             if card.owner != seat:
+                continue
+            if zone == _EXILE_ZONE and card.face_down and seat not in face_down_exile_viewers(host.state, card):
                 continue
             if zone == 'library':
                 from ..semantic_runtime.action_permissions import library_top_visibility
@@ -94,6 +97,20 @@ def projected_action_explanations(
                     active=host.state.active_player,
                 ),
             )
+    for object_id in player.zones["battlefield"]:
+        card = host.state.cards[object_id]
+        if card.controller != seat:
+            continue
+        clauses = [
+            clause for ability in host._activated_abilities(card)
+            for clause in ability.uncompiled_costs if card.zone in ability.zones
+        ]
+        if clauses:
+            result[card.ref] = {
+                "status": "unresolved",
+                "reason": "uncompiled_activation_cost",
+                "message": "Unsupported activation cost · " + ", ".join(dict.fromkeys(clauses)),
+            }
     return result
 
 

@@ -85,6 +85,25 @@ def current_creature_attacking_controller(host, seat: str) -> bool:
     return False
 
 
+def legendary_spell_cast_is_legal(host, seat: str, type_line: str) -> bool:
+    """Apply CR 205.4e to the announced spell's effective type line."""
+    from ...characteristic_evaluation import type_parts
+    from ...continuous_effects import Layer
+
+    card_types, _, supertypes = type_parts(type_line)
+    if "legendary" not in supertypes or not card_types.intersection(("instant", "sorcery")):
+        return True
+    for object_id in host.state.players[seat].zones["battlefield"]:
+        permanent = host.state.cards[object_id]
+        if permanent.zone != "battlefield" or permanent.controller != seat or permanent.phased_out:
+            continue
+        effective = host._effective_card_data(permanent, maximum_layer=Layer.TYPE)
+        types, _, supers = type_parts(str(effective["type_line"]))
+        if "legendary" in supers and types.intersection(("creature", "planeswalker")):
+            return True
+    return False
+
+
 def self_public_condition_dependencies(value):
     from ...self_cast_reductions import CastReductionMetric,CastReductionMetricKind
     from ...object_predicate import object_query_capabilities

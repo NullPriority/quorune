@@ -14,13 +14,35 @@ from .opponent_exile_draw_results import OPPONENT_EXILE_DRAW_FIELD, opponent_exi
 
 
 def per_player_target_node_capabilities(*,effects,target_schema,mechanic_ids):
+    from .controlled_destruction_source_counters import (
+        SOURCE_COUNTER_REWARD_MECHANIC, controlled_destruction_source_counter_node_capabilities,
+    )
+
+    if SOURCE_COUNTER_REWARD_MECHANIC in mechanic_ids:
+        return controlled_destruction_source_counter_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    from ..goad_instruction import WATCHED_COMBAT_DRAW_FIELD
+
+    if any(WATCHED_COMBAT_DRAW_FIELD in effect for effect in effects):
+        from .temporary_attack_requirements import goad_chapter_node_capabilities
+
+        return goad_chapter_node_capabilities(effects, target_schema) or ()
     if not isinstance(target_schema,Mapping):return ()
+    if target_schema.get("distinct_controllers") is True and "retain_controller" not in target_schema:
+        from .paired_target_controllers import paired_controller_target_dependencies
+
+        return paired_controller_target_dependencies(effects, target_schema, mechanic_ids)
     if (target_schema.get('distinct_controllers') is not True or target_schema.get('retain_controller') is not True
             or target_schema.get('zones')!=['battlefield'] or target_schema.get('categories')!=['permanent']
             or target_schema.get('controller_relation','any') not in {'any','opponent'}):return ()
-    if any(is_announced_opponent_exile(effect) for effect in effects):
-        from .linked_exile_return_shapes import linked_exile_return_node_capabilities
+    from .targeted_control_set import TARGETED_CONTROL_SET_VERSION, targeted_control_set_node_capabilities
 
+    if len(effects) == 1 and TARGETED_CONTROL_SET_VERSION in effects[0]:
+        return targeted_control_set_node_capabilities(effects=effects, target_schema=target_schema)
+    from .linked_exile_return_shapes import announced_nonsaga_exile_target_schema, linked_exile_return_node_capabilities
+    if (FrozenMap(target_schema) == FrozenMap(announced_nonsaga_exile_target_schema())
+            or any(is_announced_opponent_exile(effect) for effect in effects)):
         return linked_exile_return_node_capabilities(
             effects=effects, target_schema=target_schema,
             mechanic_ids=(LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"),
@@ -54,6 +76,10 @@ def is_closed_per_player_target_program(program):
 
 
 def per_player_target_runtime_dependencies(program):
+    from .controlled_destruction_source_counters import controlled_destruction_source_counter_program_dependencies
+
+    if required := controlled_destruction_source_counter_program_dependencies(program):
+        return required
     schema=program.target_schema
     def constrained(value):
         if isinstance(value,Mapping):
@@ -81,6 +107,20 @@ def per_player_target_runtime_dependencies(program):
     inferred.update(_OPERATION_MECHANICS[effect['op']] for effect in program.effects if effect.get('op') in _OPERATION_MECHANICS)
     required=per_player_target_node_capabilities(effects=program.effects,target_schema=schema,mechanic_ids=inferred)
     if not required:raise ValueError('Per-player targets lack their closed domain, cardinality or primitive')
+    from .paired_target_controllers import PAIRED_CONTROLLER_CAPABILITY
+
+    if PAIRED_CONTROLLER_CAPABILITY in required and (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or program.event_condition is not None or program.cost_schema is not None or handlers
+    ):
+        raise ValueError("Paired controllers require the complete ordinary resolving spell")
+    from .linked_exile_return_shapes import ANNOUNCED_NONSAGA_EXILE_CAPABILITY
+    if ANNOUNCED_NONSAGA_EXILE_CAPABILITY in required and (
+        program.event not in {"saga.chapter.1", "saga.chapter.2"} or program.active_zone != "battlefield"
+        or program.event_condition is not None or program.cost_schema is not None or program.handlers
+        or not program.ability_id.startswith("trigger:")
+    ):
+        raise ValueError("Each-player non-Saga exile requires its original ordinary Saga chapter")
     if announced_exile and (ANNOUNCED_OPPONENT_EXILE_CAPABILITY not in required
             or program.event != "permanent.enter.self" or program.active_zone != "battlefield"
             or program.event_condition is not None or program.cost_schema is not None or program.handlers):

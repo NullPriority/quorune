@@ -4,6 +4,47 @@
   "source": "Pinned original hand-price cards and one explicitly synthetic unrestricted hand-price control; the control is not a Commander gain.",
   "cards": [
     {
+      "oracle_id": "a37387f0-9d57-49ff-aa38-2c6b359e8916",
+      "name": "Grab the Prize",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards. If the discarded card wasn't a land card, Grab the Prize deals 2 damage to each opponent.",
+      "type_line": "Sorcery",
+      "keywords": [],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "oracle_id": "2fbf95b4-bcf4-4b5e-b5dc-0294f2b48d3e",
       "name": "Aether Tide",
       "mana_cost": "{X}{U}",

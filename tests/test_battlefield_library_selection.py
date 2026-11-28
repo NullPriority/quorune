@@ -2,8 +2,15 @@
 
 from copy import deepcopy
 from dataclasses import replace
+import json
+import os
+from pathlib import Path
+from random import Random
+from tempfile import TemporaryDirectory
 import unittest
 
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.record import authoritative_state_hash
 from quorune.rules.library_selection import LibrarySelectionArrangement,LibrarySelectionObjectIdentity
 
 
@@ -92,6 +99,39 @@ class BattlefieldLibraryArrangementTests(unittest.TestCase):
                     selected_are_public=False,replacement_selections=())
         self.assertEqual(before,library);host._log.assert_not_called()
 
+    def test_diverted_random_entrant_is_excluded_from_the_remainder(self):
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+
+        from quorune.rules.library_battlefield_entry import commit_library_battlefield_selection
+
+        looked = tuple(LibrarySelectionObjectIdentity(f"card-{index}", f"card-{index}@0", f"P{index}")
+                       for index in range(1, 4))
+        arrangement = LibrarySelectionArrangement(looked, ("P2",), ("P1", "P3"),
+                                                   "library_bottom", "random", "battlefield")
+        library = ["unseen", "card-3", "card-2", "card-1"]
+        cards = {identity.ref: SimpleNamespace(ref=identity.ref, object_id=identity.object_id, zone="library")
+                 for identity in looked}
+        host = SimpleNamespace(state=SimpleNamespace(config=SimpleNamespace(seed=4), event_sequence=10,
+                               players={"A": SimpleNamespace(zones={"library": library})}), _log=Mock())
+
+        def exile_instead(changes, **options):
+            self.assertEqual((("card-2", "battlefield"),), changes)
+            library.remove("card-2")
+            cards["P2"].zone = "exile"
+            return (cards["P2"],)
+
+        with patch("quorune.zone_transitions.ZoneTransitionOwner") as owner:
+            move = owner.return_value.move_cards_simultaneously
+            move.side_effect = exile_instead
+            commit_library_battlefield_selection(host, actor="A", player="A", arrangement=arrangement,
+                cards=cards, reason="Public random creature entry", source_stack_ref="STACK", looked_are_public=True,
+                selected_are_public=False, replacement_selections=())
+            move.assert_called_once()
+        self.assertEqual("exile", cards["P2"].zone)
+        self.assertEqual({"card-1", "card-3"}, set(library[:-1]))
+        self.assertEqual("unseen", library[-1])
+
 
 class BattlefieldLibraryChoiceTests(unittest.TestCase):
     def effect(self):
@@ -173,6 +213,35 @@ class BattlefieldLibraryChoiceTests(unittest.TestCase):
                 capability_profile='commander_review').status)
         with patch('quorune.compiler.library_battlefield_templates.library_battlefield_selection_effect_template',return_value=None):
             self.assertNotEqual('exact',compile_oracle_card(source,capability_registry=registry,capability_profile='commander_review').status)
+
+
+    def test_random_revealed_entry_is_closed_and_refuses_player_selection(self):
+        from types import SimpleNamespace
+        from quorune.compiler.library_battlefield_templates import library_battlefield_selection_effect_template
+        from quorune.library_battlefield_model import random_revealed_creature_entry_effect
+        from quorune.rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
+        from quorune.semantic_choices.fixed_library_selection import FixedLibrarySelectionChoiceHandler
+
+        text = ("Reveal the top thirteen cards of your library. Put a random creature card from among them "
+                "onto the battlefield. Put the rest on the bottom of your library in a random order.")
+        _, (effect,), schema, mechanics = library_battlefield_selection_effect_template(text)
+        self.assertEqual(random_revealed_creature_entry_effect(13), effect)
+        self.assertEqual({"library.select.fixed_controller", "library.select.battlefield_controller"},
+            set(fixed_library_selection_node_capabilities(effects=(effect,), target_schema=schema, mechanic_ids=mechanics)))
+        for changed in ({"public_reveal": False}, {"remainder_order": "chosen"}, {"look_count": True},
+                        {"entry_tapped": True}, {"schema_version": 3}, {"minimum": False}, {"player": "B"}):
+            with self.subTest(changed=changed):
+                self.assertEqual((), fixed_library_selection_node_capabilities(
+                    effects=({**effect, **changed},), target_schema=schema, mechanic_ids=mechanics))
+        for variant in ("random land card", "up to one random creature card", "random enchantment card"):
+            self.assertIsNone(library_battlefield_selection_effect_template(text.replace("a random creature card", variant)))
+        handler = FixedLibrarySelectionChoiceHandler()
+        with self.assertRaisesRegex(ValueError, "accepts no player selection"):
+            handler.complete(SimpleNamespace(effect=effect), {"cards": ["P1"]}, self.context().query)
+        context = self.context()
+        context.query.choice_candidate_refs = lambda: ()
+        with self.assertRaisesRegex(ValueError, "lost its selected eligible card"):
+            handler.prepare(random_revealed_creature_entry_effect(3, player="A"), context)
 
 
 class BattlefieldLibraryNativeTests(unittest.TestCase):
@@ -295,3 +364,345 @@ class BattlefieldLibraryNativeTests(unittest.TestCase):
         self.assertEqual('Generic Bound Body',engine.display_name(entered[0].object_id))
         self.assertTrue(all(engine.state.cards[card.object_id].zone=='library' for card in remainder))
         H.replay(self,session,load=True)
+
+
+class GetawayBarrelNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = TemporaryDirectory()
+        database = os.environ.get("MTG_CARD_DB")
+        if database is None:
+            folder = Path(cls.temporary.name)
+            fixtures = ROOT / "tests" / "fixtures"
+            selections = {
+                "battlefield-library-selection-cards.json": {"Getaway Barrel", "Silverback Elder"},
+                "entry-copy-cards.json": {"Grizzly Bears", "Mirror Image", "Sol Ring"},
+                "source-attack-alone-cards.json": {"Disenchant", "Isamaru, Hound of Konda", "Plains"},
+                "attached-destruction-set-cards.json": {"Rest in Peace"},
+                "creature-subtype-set-results-cards.json": {"Ornithopter"},
+            }
+            fixture_paths = []
+            for filename, names in selections.items():
+                payload = json.loads((fixtures / filename).read_bytes())
+                payload["cards"] = [row for row in payload["cards"] if row["name"] in names]
+                assert {row["name"] for row in payload["cards"]} == names
+                ids = {row["oracle_id"] for row in payload["cards"]}
+                payload["rulings"] = [row for row in payload.get("rulings", ()) if row["oracle_id"] in ids]
+                path = folder / filename
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                fixture_paths.append(path)
+            database = folder / "getaway-barrel.sqlite3"
+            build_fixture_database(fixture_paths, database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Getaway Barrel", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def scene(self, seed, names, *, below=(), exile_instead=False, mirror=False):
+        game = self.session(seed)
+        game.state.config.semantic_policy = "trusted_only"
+        for object_id in tuple(game.state.players["A"].zones["library"]):
+            game.engine.move_card(object_id, "outside", log=False)
+        unseen = tuple(self.add(game.engine, name, zone="library", ref=f"BARREL-UNREVEALED-{i}")
+                       for i, name in enumerate(below))
+        for index, card in enumerate(unseen):
+            card.known_to = ["A"] if index == len(unseen) - 1 else []
+            card.revealed_to = []
+        prefix = [self.add(game.engine, names[index], zone="library", ref=f"BARREL-PREFIX-{index}")
+                  for index in reversed(range(len(names)))]
+        source = self.add(game.engine, "Getaway Barrel")
+        removal = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        extra = []
+        if mirror:
+            extra.append(self.add(game.engine, "Grizzly Bears", ref="BARREL-EXISTING-BEARS"))
+        if exile_instead:
+            extra.append(self.add(game.engine, "Rest in Peace", seat="B"))
+        for card in (source, removal, *extra):
+            self.assert_closed(game, card)
+        self.prepare(game, active="B", actor="B", mana={"C": 1, "W": 1})
+        self.checkpoint(game)
+        self.cast(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        if exile_instead:
+            self.assertFalse(game.state.stack)
+        else:
+            trigger, = game.state.stack
+            self.assertEqual(("A", "triggered_ability", source.object_id, []),
+                             (trigger.controller, trigger.kind, trigger.source_object_id, trigger.targets))
+        return game, source, tuple(reversed(prefix)), unseen, extra
+
+    @staticmethod
+    def events(game, code):
+        return [event for event in game.state.events if event.code == code]
+
+    def test_actual_top_thirteen_are_public_and_random_selection_and_bottom_order_replay(self):
+        names = ["Plains"] * 13
+        for index, name in ((1, "Grizzly Bears"), (4, "Ornithopter"), (9, "Grizzly Bears")):
+            names[index] = name
+        seed = 939271
+        game, source, prefix, below, _ = self.scene(seed, names, below=("Silverback Elder", "Sol Ring"))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual([([], []), (["A"], [])],
+            [(game.state.cards[card.object_id].known_to, game.state.cards[card.object_id].revealed_to)
+             for card in below])
+        trigger, = game.state.stack
+        stack_ref = trigger.ref
+        eligible = sorted([prefix[i] for i in (1, 4, 9)], key=lambda card: card.object_id)
+        chosen, = Random(f"{seed}|{stack_ref}|random-revealed-library-creature|A").sample(eligible, 1)
+        self.assertEqual("Ornithopter", chosen.printed_name)
+        original_identity = chosen.logical_object_id
+        self.assertIsNone(self.resolve(game))
+        reveal, = self.events(game, "library.reveal")
+        partition, = self.events(game, "library.selection")
+        self.assertLess(reveal.event_id, partition.event_id)
+        self.assertEqual([{"ref": card.ref, "name": card.printed_name} for card in prefix], reveal.details["cards"])
+        self.assertEqual((13, 1, 12), tuple(partition.details[key]
+            for key in ("looked_count", "selected_count", "remainder_count")))
+        entered = game.state.cards[chosen.object_id]
+        self.assertEqual(("battlefield", "A", False), (entered.zone, entered.controller, entered.tapped))
+        self.assertNotEqual(original_identity, entered.logical_object_id)
+        bottom = [card.object_id for card in prefix if card.object_id != chosen.object_id]
+        rng = Random(f"{seed}|A|library-battlefield-selection|{partition.event_id - 1}|{stack_ref}")
+        rng.shuffle(bottom)
+        self.assertEqual(bottom + [card.object_id for card in below], game.state.players["A"].zones["library"])
+        for oid in bottom:
+            card = game.state.cards[oid]
+            self.assertFalse(card.known_to)
+            self.assertFalse(card.revealed_to)
+        for seat in "ABCD":
+            packet = json.dumps(game.packet(f"pilot:{seat}", full=True))
+            for card in below if seat != "A" else below[:1]:
+                self.assertNotIn(card.ref, packet)
+                self.assertNotIn(card.printed_name, packet)
+            self.assertIn("Ornithopter", packet)
+        self.assertEqual([below[1].ref],
+            [row["id"] for row in game.packet("pilot:A", full=True)["state"]["players"]["A"]["known_top"]])
+        self.assertFalse(self.events(game, "library.shuffle"))
+        self.replay(game, load=True)
+
+    def test_actual_replacement_pending_keeps_selected_identity_and_reveals_once_after_resume(self):
+        game, _, prefix, _, extra = self.scene(939272, ("Plains", "Mirror Image", "Plains"), mirror=True)
+        image = prefix[1]
+        bears, = extra
+        before = list(game.state.players["A"].zones["library"])
+        pending = self.resolve(game)
+        self.assertIsNotNone(pending)
+        self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
+        self.assertEqual(before, game.state.players["A"].zones["library"])
+        self.assertEqual(1, len(self.events(game, "library.reveal")))
+        self.assertFalse(self.events(game, "library.selection"))
+        game = self.replay(game, load=True)
+        rejected_hash = authoritative_state_hash(game.state)
+        rejected = game.act("pilot:B", {"action_id": "choose", "replacement": "forged"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(rejected_hash, authoritative_state_hash(game.state))
+        options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        choice = next(row["id"] for row in options if bears.ref in row["id"] and not row["id"].startswith("decline:"))
+        accepted = game.act("pilot:A", {"action_id": "choose", "replacement": choice})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, len(self.events(game, "library.reveal")))
+        self.assertEqual("battlefield", game.state.cards[image.object_id].zone)
+        self.assertEqual("Grizzly Bears", game.engine.display_name(image.object_id))
+        self.assertEqual({prefix[0].object_id, prefix[2].object_id}, set(game.state.players["A"].zones["library"]))
+        self.replay(game, load=True)
+
+    def test_actual_short_or_empty_prefix_and_exile_replacement(self):
+        for seed, (names, exile_instead) in enumerate((
+            (("Plains", "Sol Ring", "Plains"), False),
+            ((), False),
+            (("Ornithopter",), True),
+            (("Ornithopter", "Plains"), False),
+        ), 939273):
+            with self.subTest(names=names, exile_instead=exile_instead):
+                game, source, prefix, _, _ = self.scene(seed, names, exile_instead=exile_instead)
+                before = tuple(game.state.players["A"].zones["library"])
+                self.assertIsNone(self.resolve(game))
+                if exile_instead or not names:
+                    self.assertFalse(self.events(game, "library.reveal"))
+                    self.assertFalse(self.events(game, "library.selection"))
+                    self.assertEqual(before, tuple(game.state.players["A"].zones["library"]))
+                else:
+                    reveal, = self.events(game, "library.reveal")
+                    partition, = self.events(game, "library.selection")
+                    self.assertEqual([card.ref for card in prefix], [card["ref"] for card in reveal.details["cards"]])
+                    entrant = next((card for card in prefix if card.printed_name == "Ornithopter"), None)
+                    self.assertEqual(int(entrant is not None), partition.details["selected_count"])
+                    if entrant:
+                        self.assertEqual("battlefield", game.state.cards[entrant.object_id].zone)
+                    self.assertEqual(set(before) - ({entrant.object_id} if entrant else set()),
+                                     set(game.state.players["A"].zones["library"]))
+                self.assertEqual("exile" if exile_instead else "graveyard", game.state.cards[source.object_id].zone)
+                self.replay(game, load=True)
+
+
+class PrivateLookLandHandNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "private-look-land-hand.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "battlefield-library-selection-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Land or hand private look", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _genesis(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Planar Genesis", zone="hand")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _cast_genesis(self, game, source):
+        self.prepare(game, mana={"G": 1, "U": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        return self.resolve(game)
+
+    def _check_look(self, game, cards, *, unseen):
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual([card.ref for card in reversed(cards)], [row["id"] for row in packet["ctx"]["objects"]])
+        self.assertNotIn(unseen.ref, json.dumps(game.packet("pilot:A", full=True)))
+        for principal in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            foreign = game.packet(principal, full=True)
+            self.assertIsNone(foreign["decision"])
+            self.assertTrue(all(card.ref not in json.dumps(foreign) for card in cards))
+
+    def _select(self, game, cards, *, actor="A", ok=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, {"action_id": "choose", "cards": cards})
+        self.assertEqual(ok, result.ok, result.summary)
+        if not ok:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _normal_library(self, game):
+        unseen = self.add(game.engine, "Generic Bound Body", zone="library", ref="genesis-unseen-middle")
+        cards = [self.add(game.engine, name, zone="library", ref=f"genesis-looked-{index}")
+                 for index, name in enumerate(("Generic Bound Body", "Forest", "Generic Bound Body", "Generic Bound Plains"))]
+        for card in (unseen, *cards):
+            card.known_to.clear()
+            card.revealed_to.clear()
+        return unseen, cards
+
+    def test_planar_genesis_puts_one_selected_land_onto_the_battlefield_tapped(self):
+        from unittest.mock import patch
+
+        from quorune.rules import library_battlefield_entry
+
+        game, source = self._genesis(77634100)
+        unseen, cards = self._normal_library(game)
+        library = list(game.state.players["A"].zones["library"])
+        self.assertEqual("semantic.choice", self._cast_genesis(game, source).kind)
+        self._check_look(game, cards, unseen=unseen)
+        for refs, actor in (([cards[2].ref], "A"), ([unseen.ref], "A"), ([cards[1].ref], "B")):
+            self._select(game, refs, actor=actor, ok=False)
+        game = self.replay(game, load=True)
+        land = cards[1]
+        with patch.object(library_battlefield_entry, "_finish_library_remainder",
+                          wraps=library_battlefield_entry._finish_library_remainder) as finish:
+            self._select(game, [land.ref])
+            finish.assert_called_once()
+            self.assertEqual("random", finish.call_args.kwargs["arrangement"].remainder_order)
+        self.assertIsNone(self.resolve(game))
+        actual = game.state.cards[land.object_id]
+        self.assertEqual(("battlefield", True, "A"), (actual.zone, actual.tapped, actual.controller))
+        final_library = game.state.players["A"].zones["library"]
+        self.assertEqual({card.object_id for card in cards if card != land}, set(final_library[:3]))
+        self.assertEqual(library[:-4], final_library[3:])
+        opponent = json.dumps(game.packet("pilot:B", full=True))
+        self.assertIn(land.ref, opponent)
+        self.assertTrue(all(card.ref not in opponent for card in cards if card != land))
+        self.replay(game, load=True)
+
+    def test_planar_genesis_decline_reuses_the_same_look_and_can_put_a_land_in_hand(self):
+        from unittest.mock import patch
+
+        from quorune.rules import library_selection
+
+        game, source = self._genesis(77634101)
+        unseen, cards = self._normal_library(game)
+        library = list(game.state.players["A"].zones["library"])
+        self.assertEqual("semantic.choice", self._cast_genesis(game, source).kind)
+        self._check_look(game, cards, unseen=unseen)
+        self._select(game, [])
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        self.assertEqual(library, game.state.players["A"].zones["library"])
+        self._check_look(game, cards, unseen=unseen)
+        self._select(game, [], ok=False)
+        game = self.replay(game, load=True)
+        choice = cards[-1]
+        with patch.object(library_selection, "_shuffle_bottom_selection",
+                          wraps=library_selection._shuffle_bottom_selection) as shuffle:
+            self._select(game, [choice.ref])
+            shuffle.assert_called_once()
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[choice.object_id].zone)
+        self.assertNotIn(choice.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.assertEqual(1, sum(event.code == "library.look" for event in game.state.events))
+        final_library = game.state.players["A"].zones["library"]
+        self.assertEqual({card.object_id for card in cards[:-1]}, set(final_library[:3]))
+        self.assertEqual(library[:-4], final_library[3:])
+        self.replay(game, load=True)
+
+    def test_planar_genesis_handles_short_nonland_and_empty_libraries(self):
+        for count in (0, 1, 2):
+            with self.subTest(count=count):
+                game, source = self._genesis(77634104 + count)
+                for oid in tuple(game.state.players["A"].zones["library"]):
+                    game.engine.move_card(oid, "exile", log=False, semantic_events=False)
+                cards = [self.add(game.engine, "Generic Bound Body", zone="library",
+                                  ref=f"genesis-short-{i}") for i in range(count)]
+                pending = self._cast_genesis(game, source)
+                if not count:
+                    self.assertIsNone(pending)
+                    self.assertEqual([], game.state.players["A"].zones["library"])
+                else:
+                    self.assertEqual("semantic.choice", pending.kind)
+                    self._select(game, [], ok=False)
+                    game = self.replay(game, load=True)
+                    self._select(game, [cards[0].ref])
+                    self.assertEqual("hand", game.state.cards[cards[0].object_id].zone)
+                    self.assertEqual([card.object_id for card in cards[1:]], game.state.players["A"].zones["library"])
+                    self.assertIsNone(self.resolve(game))
+                self.replay(game, load=True)
+
+    def test_planar_genesis_requires_the_complete_private_fallback_recipe(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.private_look_land_or_hand import PRIVATE_LOOK_LAND_OR_HAND_VERSION
+
+        game, source = self._genesis(77634109)
+        card = self.db.lookup(source.printed_name, fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(card, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            self.assertEqual({"op":"fixed_library_selection","schema_version":PRIVATE_LOOK_LAND_OR_HAND_VERSION,
+                              "player":"$controller","look_count":4}, ir.faces[0].nodes[0].effects[0])
+        witness()
+        with patch("quorune.compiler.private_look_land_or_hand_templates.private_look_land_or_hand_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        changed = replace(card, oracle_text=card.oracle_text.replace("random order", "any order"))
+        self.assertNotEqual("exact", compile_oracle_card(changed, capability_registry=self.registry).status)

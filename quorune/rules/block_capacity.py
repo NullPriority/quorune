@@ -9,19 +9,25 @@ from ..block_capacity_rule_model import ResolvedBlockCapacityRule
 from ..continuous_effect_model import ContinuousObjectIdentity
 
 
+def active_resolved_block_capacity_rules(host, card):
+    if card.zone != "battlefield" or card.phased_out:
+        return ()
+    identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    return tuple(effect for effect in host.state.continuous_effects or ()
+                 if isinstance(effect, ResolvedBlockCapacityRule) and effect.subject == identity)
+
+
 def current_block_capacity(host, card, *, eligible_attackers: int) -> int:
     fragments=canonical_ability_fragments(host._effective_card_data(card).get('ability_fragments',()))
     grants=[f for f in fragments if isinstance(f,BlockCapacitySpec)]
     live = card.zone == "battlefield" and not card.phased_out
-    if live:
-        identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
-        grants.extend(effect.capacity for effect in host.state.continuous_effects or ()
-            if isinstance(effect, ResolvedBlockCapacityRule) and effect.subject == identity)
+    grants.extend(effect.capacity for effect in active_resolved_block_capacity_rules(host, card))
     if any(grant.unlimited for grant in grants):
         return eligible_attackers
     extra = sum(grant.additional for grant in grants if grant.schema_version == 1)
     per_equipment = sum(grant.additional for grant in grants if grant.schema_version == 2)
     if per_equipment and live:
+        identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
         extra += per_equipment * _current_equipment_count(host, card, identity)
     return min(eligible_attackers, 1 + extra)
 

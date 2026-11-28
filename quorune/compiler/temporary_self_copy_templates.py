@@ -3,7 +3,8 @@
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from ..rules.temporary_self_copy import (
     linked_temporary_artifact_copy_effect, linked_temporary_artifact_copy_schema,
-    temporary_self_copy_effect, temporary_self_copy_target_schema, TemporaryCreatureCopySet,
+    is_temporary_graveyard_copy_activation, temporary_graveyard_copy_effect, temporary_graveyard_copy_target_schema,
+    temporary_self_copy_effect, temporary_self_copy_target_schema, TemporaryPermanentCopySet,
 )
 from ..rules.temporary_copy_subject import TemporaryCopySubjectScope
 from .any_number_target_sets import ANY_NUMBER_TARGET_MECHANIC
@@ -32,6 +33,19 @@ def temporary_self_copy_template(text, *, source_name):
     )
 
 
+def temporary_graveyard_self_copy_template(ability, *, text, public_timing):
+    from .activated_costs import activated_ability_cost
+
+    if (" ".join(text.split()).casefold() !=
+            "this land becomes a copy of target permanent card in your graveyard until end of turn."
+            or not is_temporary_graveyard_copy_activation(
+                ability, activated_ability_cost(ability, public_timing=public_timing),
+            )):
+        return None
+    return ("temporary-owned-graveyard-self-copy-v1", (temporary_graveyard_copy_effect(),),
+            temporary_graveyard_copy_target_schema(), ("cr-115-targets",))
+
+
 def _linked_temporary_artifact_copy(text, *, source_pattern):
     match = re.fullmatch(
         rf"Until end of turn, (?:{source_pattern}|{source_self_permanent_pattern()}) becomes a copy of target "
@@ -49,13 +63,15 @@ def _linked_temporary_artifact_copy(text, *, source_pattern):
 
 _COPY_SETS = {
     "each other creature becomes a copy of target nonlegendary creature until end of turn.":
-        TemporaryCreatureCopySet.ALL_OTHER_CREATURES,
+        TemporaryPermanentCopySet.ALL_OTHER_CREATURES,
     "choose target creature you control. each other creature you control becomes a copy of it "
     "until end of turn, except those creatures aren't legendary.":
-        TemporaryCreatureCopySet.OTHER_CONTROLLED_CREATURES_NONLEGENDARY,
+        TemporaryPermanentCopySet.OTHER_CONTROLLED_CREATURES_NONLEGENDARY,
     "choose target creature you control. each other creature becomes a copy of that creature "
     "until end of turn, except it isn't legendary.":
-        TemporaryCreatureCopySet.ALL_OTHER_CREATURES_NONLEGENDARY,
+        TemporaryPermanentCopySet.ALL_OTHER_CREATURES_NONLEGENDARY,
+    "choose target artifact you control. each other artifact you control becomes a copy of that artifact until end of turn.":
+        TemporaryPermanentCopySet.OTHER_CONTROLLED_ARTIFACTS,
 }
 
 
@@ -64,7 +80,7 @@ def temporary_creature_copy_set_template(text):
     scope = _COPY_SETS.get(material)
     if scope is None:
         return None
-    return f"temporary-creature-copy-set-{scope.value}-v{scope.schema_version}", (scope.to_effect(),), scope.target_schema(), ("cr-115-targets",)
+    return f"temporary-{scope.card_type}-copy-set-{scope.value}-v{scope.schema_version}", (scope.to_effect(),), scope.target_schema(), ("cr-115-targets",)
 
 
 _COPY_SUBJECT_CHOICES = {
@@ -103,6 +119,27 @@ def linked_exile_self_copy_template(ability, *, source_name, text, public_timing
         LINKED_EXILE_COPY_TEMPLATE, (linked_exile_copy_effect(),),
         linked_exile_copy_target_schema(LINKED_EXILE_COPY_PAIR), ("cr-115-targets",),
     )
+
+
+def announced_artifact_self_copy_template(ability, *, source_name, text, public_timing):
+    from ..rules.announced_artifact_copy import (
+        ANNOUNCED_ARTIFACT_COPY_TEMPLATE, announced_artifact_copy_effect,
+        artifact_copy_target_schema, is_announced_artifact_copy_price,
+    )
+    from .activated_costs import activated_ability_cost
+
+    if (ability.zones != ("battlefield",) or public_timing is not None or ability.sorcery_speed
+            or ability.activation_conditions or not is_announced_artifact_copy_price(activated_ability_cost(ability))):
+        return None
+    source = SourceReferenceSpec(source_name).regex_pattern
+    match = re.fullmatch(
+        rf"(?:{source}|this land) becomes a copy of target nontoken artifact you control with mana value X\.?",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return (ANNOUNCED_ARTIFACT_COPY_TEMPLATE, (announced_artifact_copy_effect(),),
+            artifact_copy_target_schema(), ("cr-115-targets",))
 
 
 def announced_graveyard_self_copy_template(ability, *, source_name, text, public_timing):

@@ -7,13 +7,18 @@ from dataclasses import dataclass, replace
 from typing import Any
 
 from .ability_fragments import static_component_keys
+from .all_player_turn_rule_model import ResolvedTurnLandManaTrigger
 from .attachments import attached_object_identity
 from .errors import GameRuleError
 from .fixed_mana_abilities import FixedManaMode
+from .mana_source_counter_payment_model import LAND_MANA_TAP_VERSION, LAND_MANA_TAP_VERSION_FIELD
 from .triggered_mana_model import (
     CHOSEN_TRIGGERED_MANA_CAPABILITY,
     FIXED_TRIGGERED_MANA_EVENT,
+    LAND_MANA_TAP_EVENT,
     MANA_LAND_SUBTYPES,
+    SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY,
+    SOURCE_MANA_TAP_EVENT,
     TRIGGERED_MANA_OPTION_FIELD,
     FixedTriggeredManaSpec,
     TriggeredManaChoice,
@@ -55,10 +60,14 @@ class _ManaProvider:
     snow: bool
     modifier_id: str | None
     attachment: tuple[str, str] | None
+    chosen_color: str | None = None
 
     def options(self, base: Mapping[str, int]) -> tuple[TriggeredManaOutput, ...]:
         result = self.spec.output
-        options = result.options(base) if isinstance(result, TriggeredManaChoice) else (result,)
+        if self.chosen_color is not None:
+            options = (FixedManaMode.from_bundle({self.chosen_color: result.amount}),)
+        else:
+            options = result.options(base) if isinstance(result, TriggeredManaChoice) else (result,)
         return tuple(TriggeredManaOutput(self.provider_id, self.provider_ref, output,
                                         self.snow, self.modifier_id, len(options) > 1) for output in options)
 
@@ -69,37 +78,108 @@ def tap_mana_source(host: Any, card: Any, *, tap_source: bool) -> TapManaSource 
     from .semantic_runtime.mana_spending import has_tap_mana_multiplier_program
 
     if (not host.semantics.programs_for_event(FIXED_TRIGGERED_MANA_EVENT)
-            and not has_tap_mana_multiplier_program(host)):
+            and not has_tap_mana_multiplier_program(host)
+            and not _observes_mana_taps(host, LAND_MANA_TAP_EVENT)
+            and not _observes_mana_taps(host, SOURCE_MANA_TAP_EVENT)
+            and not any(isinstance(effect, ResolvedTurnLandManaTrigger)
+                        for effect in getattr(host.state, "continuous_effects", None) or ())):
         return None
     types, subtypes, supertypes = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
     return TapManaSource(card.object_id, card.logical_object_id, card.ref,
                          frozenset(types), frozenset(subtypes), frozenset(supertypes))
 
 
+def _observes_mana_taps(host, event):
+    return (getattr(host.state, LAND_MANA_TAP_VERSION_FIELD, None) == LAND_MANA_TAP_VERSION
+            and bool(host.semantics.programs_for_event(event)))
+
+
+def _observes_artifact_mana_taps(host):
+    from .rules.artifact_mana_tap_control import MECHANIC
+
+    return any(MECHANIC in program.coverage and host.semantic_program_is_current_trusted(program)
+               for program in host.semantics.programs_for_event(SOURCE_MANA_TAP_EVENT))
+
+
+def queue_mana_tap_triggers(host, actor, source, bundle):
+    """Stage ordinary triggers after a successful source tap produces mana."""
+    if source is None:
+        return
+    observes_source = _observes_mana_taps(host, SOURCE_MANA_TAP_EVENT)
+    observes_land = _observes_mana_taps(host, LAND_MANA_TAP_EVENT)
+    produced = any(amount > 0 for amount in bundle.values())
+    artifact_observed = observes_source and "artifact" in source.types and _observes_artifact_mana_taps(host)
+    if not produced and not artifact_observed:
+        return
+    if not (observes_source or observes_land):
+        return
+    current = host.state.cards.get(source.object_id)
+    same_source = (current is not None and current.zone == "battlefield"
+                   and current.logical_object_id == source.logical_object_id)
+    context = {"player": actor, "card": source.ref, "card_object_identity": source.logical_object_id}
+    legacy_source_tap = produced and same_source and not current.phased_out
+    if artifact_observed:
+        from .rules.artifact_mana_tap_control import ARTIFACT_TAP_FACT, ARTIFACT_TAP_ONLY, MANA_SOURCE_OBJECT_ID
+
+        host._dispatch_semantic_event(SOURCE_MANA_TAP_EVENT, {
+            **context, ARTIFACT_TAP_FACT: True, MANA_SOURCE_OBJECT_ID: source.object_id,
+            **({ARTIFACT_TAP_ONLY: True} if not legacy_source_tap else {}),
+        })
+    elif observes_source and legacy_source_tap:
+        host._dispatch_semantic_event(SOURCE_MANA_TAP_EVENT, context)
+    if not observes_land or not produced:
+        return
+    types, supertypes = source.types, source.supertypes
+    if same_source:
+        data = host._effective_card_data(current)
+        types, _, supertypes = host._type_parts(str(data.get("type_line") or ""))
+    if "land" in types:
+        host._dispatch_semantic_event(LAND_MANA_TAP_EVENT, {
+            **context, "types": ["land"], "land_basic": "basic" in supertypes,
+        })
+
+
+def resolved_turn_mana_providers(host):
+    providers = []
+    for effect in getattr(host.state, "continuous_effects", None) or ():
+        if isinstance(effect, ResolvedTurnLandManaTrigger):
+            output = FixedManaMode.from_bundle({effect.spec.symbol: 1})
+            spec = FixedTriggeredManaSpec("any", effect.spec.land_subtype, output)
+            providers.append(_ManaProvider("", spec, effect.effect_id, effect.source_id, effect.snow, None, None))
+    return tuple(providers)
+
+
 def fixed_mana_providers(host: Any) -> tuple[_ManaProvider, ...]:
     from .trigger_discovery import applicable_trigger_multipliers
+    from .rules.chosen_color_target_shapes import current_linked_entry_color
 
     programs = {
         program.key: fixed_triggered_mana_spec(program)
         for program in host.semantics.programs_for_event(FIXED_TRIGGERED_MANA_EVENT)
         if host.semantic_program_is_current_trusted(program)
     }
+    temporary = resolved_turn_mana_providers(host)
     if not programs:
-        return ()
-    result = []
+        return temporary
+    result = list(temporary)
     sources = sorted(host._semantic_event_sources(zones={"battlefield"}),
                      key=lambda card: (card.zone_timestamp, card.object_id))
     for source in sources:
         if source.phased_out:
             continue
         data = host._effective_card_data(source)
-        specs = tuple(programs[key] for key in static_component_keys(data.get("ability_fragments", ())) if key in programs)
+        specs = tuple((key, programs[key]) for key in static_component_keys(data.get("ability_fragments", ())) if key in programs)
         if not specs:
             continue
         multipliers = applicable_trigger_multipliers(host, source=source, controller=source.controller,
             event=FIXED_TRIGGERED_MANA_EVENT, context={}, participation_sources=sources, ability_characteristics=data)
         snow = "snow" in host._type_parts(str(data.get("type_line") or ""))[2]
-        for spec in specs:
+        for key, spec in specs:
+            color = None
+            if spec.capability == SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY:
+                color = current_linked_entry_color(source, program_key=key)
+                if color is None:
+                    continue
             if spec.requires_monarch and host.state.monarch != source.controller:
                 continue
             identity = attached_object_identity(host.state.cards, source) if spec.scope == "attached" else None
@@ -107,7 +187,7 @@ def fixed_mana_providers(host: Any) -> tuple[_ManaProvider, ...]:
                 continue
             attachment = (identity.object_id, identity.logical_object_id) if identity is not None else None
             for modifier in (None, *(entry.source_object_id for entry in multipliers)):
-                result.append(_ManaProvider(source.controller, spec, source.object_id, source.ref, snow, modifier, attachment))
+                result.append(_ManaProvider(source.controller, spec, source.object_id, source.ref, snow, modifier, attachment, color))
     return tuple(result)
 
 
@@ -130,6 +210,7 @@ def _matching_outputs(providers: Sequence[_ManaProvider], source: TapManaSource 
         and (provider.attachment is None or provider.attachment == (source.object_id, source.logical_object_id))
         and (not source_departs or (source.object_id not in (provider.provider_id, provider.modifier_id) and provider.attachment is None))
         and (provider.spec.produced_color is None or bundle.get(provider.spec.produced_color, 0) > 0)
+        and (provider.chosen_color is None or provider.attachment is not None or bundle.get(provider.chosen_color, 0) > 0)
         and _subject_matches(provider.spec, source))
 
 
@@ -168,7 +249,7 @@ def modes_with_triggered_mana(host: Any, actor: str, card: Any, modes: tuple, pr
         if not mode.tap_source:
             result.append(mode)
             continue
-        rows = _matching_outputs(providers, source, actor, mode.bundle, source_departs=mode.sacrifices_source)
+        rows = _matching_outputs(providers, source, actor, mode.bundle, source_departs=mode.consumes_source)
         result.extend(replace(mode, triggered_mana=outputs) for outputs in _output_variants(rows, departures))
     return tuple(result)
 

@@ -71,16 +71,21 @@ def _record_creation(host: TokenCreationHost, creation: CommittedTokenCreation, 
         changed_objects=creation.objects,
         changed_players=[controller],
     )
+    from .turn_history import record_food_entry_history
+
     entry_occurrences = []
     for object_id in creation.objects:
         card = host.state.cards[object_id]
         data = host._effective_card_data(card)
-        types, _subtypes, _supertypes = host._type_parts(str(data.get("type_line") or ""))
-        entry_occurrences.append((card.logical_object_id, tuple(sorted(types))))
-    for identity, types in entry_occurrences:
+        types, subtypes, _supertypes = host._type_parts(str(data.get("type_line") or ""))
+        entry_occurrences.append((card.logical_object_id, tuple(sorted(types)), tuple(sorted(subtypes))))
+    history = getattr(host.state, "turn_history", None)
+    entry_token = True if getattr(history, "permanent_entry_token_history_version", None) == 1 else None
+    for identity, types, subtypes in entry_occurrences:
         host._record_turn_history(
-            "permanent_entered", actor=controller, object_incarnation=identity, types=types,
+            "permanent_entered", actor=controller, object_incarnation=identity, types=types, token=entry_token,
         )
+        record_food_entry_history(host, controller=controller, incarnation=identity, types=types, subtypes=subtypes)
     return previous_quantity
 
 
@@ -91,6 +96,8 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
         data = host._effective_card_data(card)
         from .tribute_entry_results import tribute_entry_identity_context
         from .devour import devour_entry_context
+        from .rules.entry_cast_information import direct_token_entry_cast_context
+
         contexts.append({
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
@@ -107,6 +114,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
             "reason": reason,
             **tribute_entry_identity_context(card,card.logical_object_id),
             **devour_entry_context(card, card.logical_object_id),
+            **direct_token_entry_cast_context(host, card),
         })
     return tuple(contexts)
 
@@ -121,6 +129,9 @@ def publish_token_creations(
     """Seal every creator's history and entry facts before dispatch."""
     previous_quantities = tuple(_record_creation(host, creation, reason) for creation in creations)
     contexts = tuple(_entry_contexts(host, creation, reason) for creation in creations)
+    from .rules.unpaid_creature_entry import GROUP_FIELD, token_members
+
+    unpaid_members = token_members(host, contexts)
     trigger_batch: list[Any] = []
     if prepared_counters is not None:
         dispatch_prepared_counter_events(host, prepared_counters, reason=reason, trigger_batch=trigger_batch)
@@ -130,7 +141,8 @@ def publish_token_creations(
             entry = context
             if getattr(host.state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None) == 1:
                 entry = {**context, "putting_player": creation.controller}
-            host._dispatch_semantic_event("permanent.enter", entry, trigger_batch=trigger_batch)
+            permanent_entry = {**entry, GROUP_FIELD: unpaid_members} if unpaid_members else entry
+            host._dispatch_semantic_event("permanent.enter", permanent_entry, trigger_batch=trigger_batch)
             for card_type in ("artifact", "creature", "land", "enchantment"):
                 if card_type in entry["types"]:
                     host._dispatch_semantic_event(f"{card_type}.enter", entry, trigger_batch=trigger_batch)

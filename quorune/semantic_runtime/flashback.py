@@ -7,11 +7,15 @@ from typing import Any, Mapping
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..flashback import (
     FixedManaFlashbackSpec,
+    FixedSacrificeFlashbackSpec,
+    SACRIFICE_FLASHBACK_CAPABILITY_ID,
+    SACRIFICE_FLASHBACK_HANDLER_ID,
     FlashbackError,
     FLASHBACK_CAPABILITY_ID,
     FLASHBACK_HANDLER_ID,
     FLASHBACK_RUNTIME_EVENT,
 )
+from ..harmonize import DEPENDENCIES, EVENT, HANDLER_ID, HarmonizeSpec, harmonize_handler_descriptor
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -31,7 +35,9 @@ class FixedManaFlashbackHandler:
     )
     capability_dependencies: tuple[str, ...] = (FLASHBACK_CAPABILITY_ID,)
 
-    def validate(self, descriptor: Mapping[str, Any]) -> FixedManaFlashbackSpec:
+    def validate(
+        self, descriptor: Mapping[str, Any],
+    ) -> FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec:
         exact_fields(
             descriptor,
             {
@@ -45,6 +51,7 @@ class FixedManaFlashbackHandler:
         )
         if (
             descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
             or descriptor["schema_version"] != self.schema_version
             or descriptor["event"] != self.event
         ):
@@ -54,7 +61,9 @@ class FixedManaFlashbackHandler:
         if descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True:
             raise SemanticNodeError("Flashback requires complete-card admission")
         try:
-            return FixedManaFlashbackSpec.from_dict(descriptor["flashback"])
+            spec_type = (FixedSacrificeFlashbackSpec if self.handler_id == SACRIFICE_FLASHBACK_HANDLER_ID
+                         else FixedManaFlashbackSpec)
+            return spec_type.from_dict(descriptor["flashback"])
         except FlashbackError as exc:
             raise SemanticNodeError(str(exc)) from exc
 
@@ -62,20 +71,52 @@ class FixedManaFlashbackHandler:
         self,
         descriptor: Mapping[str, Any],
         context: object,
-    ) -> tuple[FixedManaFlashbackSpec, ...]:
+    ) -> tuple[FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec, ...]:
         del context
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True, slots=True)
+class HarmonizeCastHandler:
+    handler_id: str = HANDLER_ID
+    schema_version: int = 1
+    family: str = "casting.harmonize.fixed_announced_x"
+    event: str = EVENT
+    rule_references: tuple[str, ...] = ("107.3a", "601.2b", "601.2f", "702.180a", "702.180b")
+    capability_dependencies: tuple[str, ...] = DEPENDENCIES
+
+    def validate(self, descriptor):
+        try:
+            spec = HarmonizeSpec.from_dict(descriptor["harmonize"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if (dict(descriptor) != harmonize_handler_descriptor(spec)
+                or type(descriptor["schema_version"]) is not int
+                or descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True):
+            raise SemanticNodeError("Harmonize requires its exact current graveyard cast descriptor")
+        return spec
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
 class FixedManaFlashbackRegistry(
-    RuntimeComponentRegistry[object, FixedManaFlashbackSpec]
+    RuntimeComponentRegistry[object, FixedManaFlashbackSpec | FixedSacrificeFlashbackSpec | HarmonizeSpec]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_flashback_registry() -> FixedManaFlashbackRegistry:
-    registry = FixedManaFlashbackRegistry((FixedManaFlashbackHandler(),))
+    registry = FixedManaFlashbackRegistry((
+        FixedManaFlashbackHandler(),
+        FixedManaFlashbackHandler(
+            handler_id=SACRIFICE_FLASHBACK_HANDLER_ID,
+            family=SACRIFICE_FLASHBACK_CAPABILITY_ID,
+            capability_dependencies=(SACRIFICE_FLASHBACK_CAPABILITY_ID,),
+        ),
+        HarmonizeCastHandler(),
+    ))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

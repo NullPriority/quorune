@@ -5,6 +5,16 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement import CreateAdditionalToken, MultiplyTokenCreation
+from ..replacement.immutable import thaw_value
+from ..replacement.operations import (
+    MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID, MATCH_PENDING_TOKEN_QUANTITY,
+    ReplaceCreatureTokenDefinition, ReplacePredefinedArtifactTokenSet,
+)
+from ..creature_token_definition_replacement import (
+    CREATURE_TOKEN_DEFINITION_CAPABILITY, CREATURE_TOKEN_DEFINITION_HANDLER,
+    CREATURE_TOKEN_TRIPLING_CAPABILITY, CREATURE_TOKEN_TRIPLING_HANDLER,
+    PREDEFINED_TOKEN_SET_CAPABILITY, PREDEFINED_TOKEN_SET_HANDLER, PREDEFINED_TOKEN_SET_SUBTYPES,
+)
 from ..fixed_token_production import (
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenProductionError,
@@ -34,6 +44,7 @@ from ..standard_token_abilities import (
 
 _ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v1"
 _GENERIC_ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v2"
+MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY = "token.creation.additional_matching_pending_quantity"
 _TOKEN_QUANTITY_HANDLER_ID = "replacement.token.quantity.v1"
 
 
@@ -139,7 +150,7 @@ class AdditionalTokenReplacementNode:
     created_types_all: tuple[str, ...]
     created_subtypes_all: tuple[str, ...]
     event_controller: str
-    quantity: int
+    quantity: int | str
     token: TokenDefinition
 
 
@@ -151,6 +162,7 @@ class TokenCreationReplacementContext:
     created_types: tuple[str, ...]
     created_subtypes: tuple[str, ...] = ()
     component_id: str = ""
+    pending_quantity: int | None = None
 
     def __post_init__(self) -> None:
         if not self.source_ref:
@@ -159,6 +171,8 @@ class TokenCreationReplacementContext:
             raise SemanticNodeError(
                 "Token replacement controllers must be nonempty"
             )
+        if self.pending_quantity is not None and (type(self.pending_quantity) is not int or self.pending_quantity < 0):
+            raise SemanticNodeError("Pending token quantity must be a nonnegative integer")
         for field_name in ("created_types", "created_subtypes"):
             supplied = getattr(self, field_name)
             if not isinstance(supplied, (list, tuple)) or any(
@@ -458,7 +472,7 @@ class AdditionalTokenReplacementHandler:
 
 @dataclass(frozen=True, slots=True)
 class GenericAdditionalTokenReplacementHandler:
-    """Closed compiler-facing fixed additional-token replacement family."""
+    """Closed fixed and pending-quantity additional-token replacement family."""
 
     handler_id: str = _GENERIC_ADDITIONAL_TOKEN_HANDLER_ID
     schema_version: int = 2
@@ -494,7 +508,7 @@ class GenericAdditionalTokenReplacementHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -547,10 +561,11 @@ class GenericAdditionalTokenReplacementHandler:
                 "condition.created_subtypes_all values must be unique"
             )
         quantity = descriptor["quantity"]
-        if type(quantity) is not int or quantity < 1:
-            raise SemanticNodeError(
-                "additional token replacement quantity must be positive"
-            )
+        if self.schema_version == 3:
+            if type(quantity) is not str or quantity != MATCH_PENDING_TOKEN_QUANTITY or created_types or created_subtypes:
+                raise SemanticNodeError("Matching pending tokens requires the unfiltered current creation quantity")
+        elif type(quantity) is not int or quantity < 1:
+            raise SemanticNodeError("Additional token replacement quantity must be positive")
         token = descriptor["token"]
         if not isinstance(token, Mapping):
             raise SemanticNodeError("runtime handler token must be an object")
@@ -578,11 +593,16 @@ class GenericAdditionalTokenReplacementHandler:
             return ()
         if not set(node.created_subtypes_all).issubset(event_subtypes):
             return ()
+        quantity = context.pending_quantity if node.quantity == MATCH_PENDING_TOKEN_QUANTITY else node.quantity
+        if quantity is None:
+            raise SemanticNodeError("Matching pending tokens needs the current creation quantity")
+        if quantity == 0:
+            return ()
         return (
             AdditionalTokenIntent(
                 handler_id=self.handler_id,
                 source_ref=context.source_ref,
-                quantity=node.quantity,
+                quantity=quantity,
                 token=node.token,
             ),
         )
@@ -628,8 +648,9 @@ class GenericAdditionalTokenReplacementHandler:
                 source_ref=context.source_ref,
             ),),
             label=(
-                f"{context.source_ref}: create {node.quantity} additional "
-                f"{node.token.name} token"
+                f"{context.source_ref}: create one additional {node.token.name} token for each pending token"
+                if node.quantity == MATCH_PENDING_TOKEN_QUANTITY
+                else f"{context.source_ref}: create {node.quantity} additional {node.token.name} token"
                 + ("s" if node.quantity != 1 else "")
             ),
         )
@@ -657,6 +678,8 @@ class TokenQuantityReplacementHandler:
         "token.creation.quantity_replacement",
     )
 
+    creature_only: bool = False
+
     def validate(self, descriptor: Mapping[str, Any]) -> int:
         exact_fields(
             descriptor,
@@ -680,21 +703,14 @@ class TokenQuantityReplacementHandler:
         condition = descriptor["condition"]
         if not isinstance(condition, Mapping):
             raise SemanticNodeError("runtime handler condition must be an object")
-        exact_fields(
-            condition,
-            {"event_controller"},
-            field="runtime handler condition",
-        )
-        if condition["event_controller"] != "source_controller":
-            raise SemanticNodeError(
-                "token quantity replacement requires "
-                "event_controller=source_controller"
-            )
+        expected = {"event_controller": "source_controller"}
+        if self.creature_only:
+            expected["created_types"] = ["creature"]
+        if thaw_value(condition) != expected:
+            raise SemanticNodeError("Token multiplication requires its closed controller and member scope")
         multiplier = descriptor["multiplier"]
-        if type(multiplier) is not int or multiplier != 2:
-            raise SemanticNodeError(
-                "token quantity replacement requires multiplier 2"
-            )
+        if type(multiplier) is not int or multiplier != (3 if self.creature_only else 2):
+            raise SemanticNodeError("Token multiplication requires its fixed positive factor")
         return multiplier
 
     def lower(
@@ -711,6 +727,9 @@ class TokenQuantityReplacementHandler:
         context: TokenCreationReplacementContext,
     ) -> ReplacementEffect:
         multiplier = self.validate(descriptor)
+        conditions = {"event_controller": {"eq": context.source_controller}}
+        if self.creature_only:
+            conditions["created_types"] = {"contains_all": ["creature"]}
         return ReplacementEffect(
             effect_id=(
                 f"{self.handler_id}:{context.source_ref}:"
@@ -719,17 +738,122 @@ class TokenQuantityReplacementHandler:
             source_id=context.source_ref,
             event_kind=self.event,
             replacement_class=ReplacementClass.OTHER,
-            conditions={
-                "event_controller": {"eq": context.source_controller},
-            },
+            conditions=conditions,
             operations=(
                 MultiplyTokenCreation(
+                    creature_only=self.creature_only,
                     factor=multiplier,
                     handler_id=self.handler_id,
                     source_ref=context.source_ref,
                 ),
             ),
-            label=f"{context.source_ref}: create twice that many tokens",
+            label=(f"{context.source_ref}: create three times that many creature tokens" if self.creature_only
+                   else f"{context.source_ref}: create twice that many tokens"),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class CreatureTokenQuantityReplacementHandler(TokenQuantityReplacementHandler):
+    handler_id: str = CREATURE_TOKEN_TRIPLING_HANDLER
+    capability_dependencies: tuple[str, ...] = (CREATURE_TOKEN_TRIPLING_CAPABILITY,)
+    creature_only: bool = True
+
+
+@dataclass(frozen=True, slots=True)
+class CreatureTokenDefinitionReplacementHandler:
+    """Controller-scoped substitution over current creature creation members."""
+
+    handler_id: str = CREATURE_TOKEN_DEFINITION_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.token.creature_definition"
+    event: str = "token.create"
+    rule_references: tuple[str, ...] = ("111.3", "614.5", "614.6", "614.16", "616.1")
+    capability_dependencies: tuple[str, ...] = (CREATURE_TOKEN_DEFINITION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> TokenDefinition:
+        exact_fields(
+            descriptor, {"handler_id", "schema_version", "event", "condition", "definition"},
+            field="creature token definition replacement",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+            or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+            or thaw_value(descriptor["condition"]) != {
+                "event_controller": "source_controller", "created_types": ["creature"],
+            }
+        ):
+            raise SemanticNodeError("Creature token definition replacement requires its fixed controller scope")
+        if not isinstance(descriptor["definition"], Mapping):
+            raise SemanticNodeError("Creature token definition data must be an object")
+        definition = TokenDefinition.from_mapping(descriptor["definition"])
+        if "creature" not in _token_characteristic_parts(definition.type_line)[0]:
+            raise SemanticNodeError("Creature token definition replacement must produce a creature")
+        definition.characteristics()
+        return definition
+
+    def lower(self, descriptor, context) -> tuple[AdditionalTokenIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def replacement_effect(self, descriptor, context):
+        definition = self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "event_controller": {"eq": context.source_controller},
+                "created_types": {"contains_all": ["creature"]},
+            },
+            operations=(ReplaceCreatureTokenDefinition(
+                name=definition.name, characteristics=definition.characteristics(),
+                handler_id=self.handler_id, source_ref=context.source_ref,
+            ),),
+            label=f"{context.source_ref}: replace the creature token definitions",
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PredefinedArtifactTokenSetReplacementHandler:
+    """Current controller-scoped substitution on the token creation batch."""
+
+    handler_id: str = PREDEFINED_TOKEN_SET_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.token.predefined_artifact_set"
+    event: str = "token.create"
+    rule_references: tuple[str, ...] = (
+        "111.10a", "111.10b", "111.10f", "614.5", "614.6", "616.1", "616.2", "701.7b",
+    )
+    capability_dependencies: tuple[str, ...] = (PREDEFINED_TOKEN_SET_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(
+            descriptor, {"handler_id", "schema_version", "event", "event_controller"},
+            field="predefined artifact token set replacement",
+        )
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+                or descriptor["event_controller"] != "source_controller"):
+            raise SemanticNodeError("Predefined artifact token substitution requires its fixed controller scope")
+
+    def lower(self, descriptor, context) -> tuple[AdditionalTokenIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def replacement_effect(self, descriptor, context):
+        self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "event_controller": {"eq": context.source_controller},
+                "created_subtypes": {"contains_any": PREDEFINED_TOKEN_SET_SUBTYPES},
+            },
+            operations=(ReplacePredefinedArtifactTokenSet(self.handler_id, context.source_ref),),
+            label=f"{context.source_ref}: create a Clue, a Food, and a Treasure for each matching token",
         )
 
 
@@ -761,7 +885,14 @@ def default_token_creation_replacement_registry(
         (
             AdditionalTokenReplacementHandler(),
             GenericAdditionalTokenReplacementHandler(),
+            GenericAdditionalTokenReplacementHandler(
+                handler_id=MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID, schema_version=3,
+                capability_dependencies=(MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY,),
+            ),
             TokenQuantityReplacementHandler(),
+            CreatureTokenQuantityReplacementHandler(),
+            CreatureTokenDefinitionReplacementHandler(),
+            PredefinedArtifactTokenSetReplacementHandler(),
         )
     )
     registry.require_registered_capabilities(

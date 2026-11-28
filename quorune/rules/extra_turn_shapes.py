@@ -5,14 +5,87 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from ..compiler.extra_turn_templates import (
+    END_TURN_VERSION_FIELD, FIXED_END_TURN_CAPABILITY, FIXED_END_TURN_MECHANIC,
     EXTRA_TURN_END_STEP_LOSS_FIELD, FIXED_EXTRA_TURN_CAPABILITY, FIXED_EXTRA_TURN_MECHANIC,
     OPPONENT_CAST_EXTRA_TURN_COLOR_FIELD, fixed_extra_turn_end_step_loss_effect, opponent_color_extra_turn_effect,
+    fixed_next_turn_control_instruction, fixed_next_turn_control_target,
 )
 from ..public_history_query_model import SPELL_COLOR_HISTORY_FIELD
+from ..replacement.immutable import thaw_value
+from ..turn_priority_model import (
+    FIXED_NEXT_TURN_CONTROL_CAPABILITY, FIXED_NEXT_TURN_CONTROL_MECHANIC,
+    TURN_CONTROL_LIFETIME_VERSION_FIELD, read_turn_control_lifetime_version,
+)
 
 SCHEDULED_EXTRA_TURN_END_STEP_LOSS = "scheduled_extra_turn_end_step_loss"
 _EXTRA_TURN_LOSS_DEPENDENCIES = (FIXED_EXTRA_TURN_CAPABILITY, "game.loss.effect", "trigger.placement.apnap")
 _LOCKED_GRANT_DEPENDENCIES = ("continuous.resolution.fixed_keyword_zone_object", "permanent.indestructible.ordinary")
+
+
+def is_versioned_next_turn_control(effect):
+    return effect.get("op") == "control_next_turn" and TURN_CONTROL_LIFETIME_VERSION_FIELD in effect
+
+
+def validate_versioned_next_turn_control(effect):
+    if read_turn_control_lifetime_version(effect) != 1 or effect != fixed_next_turn_control_instruction():
+        raise ValueError("Turn control requires the exact versioned target-player instruction")
+    return (FIXED_NEXT_TURN_CONTROL_CAPABILITY,)
+
+
+def fixed_next_turn_control_node_capabilities(*, effects, target_schema, mechanic_ids):
+    marked = [effect for effect in effects if is_versioned_next_turn_control(effect)]
+    if not marked:
+        return ()
+    targets = thaw_value(target_schema)
+    if (len(effects) != 1 or targets != fixed_next_turn_control_target()
+            or type(targets["count"]) is not int
+            or FIXED_NEXT_TURN_CONTROL_MECHANIC not in mechanic_ids):
+        raise ValueError("Turn control requires one complete targeted next-turn instruction")
+    return (*validate_versioned_next_turn_control(marked[0]), "target.revalidate_resolution")
+
+
+def is_closed_fixed_next_turn_control_program(program):
+    if (program.event, program.active_zone) != ("activate", "battlefield"):
+        return False
+    if tuple(handler.get("handler_id") for handler in program.handlers) != ("activation.catalog.pinned.v1",):
+        return False
+    required = fixed_next_turn_control_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return bool(required and set(required) <= set(program.capability_dependencies))
+
+
+def is_versioned_end_turn(effect):
+    return effect.get("op") == "end_turn" and END_TURN_VERSION_FIELD in effect
+
+
+def validate_versioned_end_turn(effect):
+    if (set(effect) != {"op", END_TURN_VERSION_FIELD} or effect.get("op") != "end_turn"
+            or type(effect[END_TURN_VERSION_FIELD]) is not int or effect[END_TURN_VERSION_FIELD] != 1):
+        raise ValueError("Ending the turn requires the exact versioned instruction")
+    return (FIXED_END_TURN_CAPABILITY,)
+
+
+def fixed_end_turn_node_capabilities(*, effects, target_schema, mechanic_ids):
+    marked = [effect for effect in effects if is_versioned_end_turn(effect)]
+    if not marked:
+        return ()
+    if len(effects) != 1 or target_schema is not None or FIXED_END_TURN_MECHANIC not in mechanic_ids:
+        raise ValueError("Ending the turn requires one untargeted instruction")
+    return validate_versioned_end_turn(marked[0])
+
+
+def is_closed_fixed_end_turn_program(program):
+    event_zone = (program.event, program.active_zone)
+    if event_zone not in {("resolve", "stack"), ("activate", "battlefield")} or program.target_schema is not None:
+        return False
+    expected = () if program.event == "resolve" else ("activation.catalog.pinned.v1",)
+    if tuple(handler.get("handler_id") for handler in program.handlers) != expected:
+        return False
+    required = fixed_end_turn_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return bool(required and set(required) <= set(program.capability_dependencies))
 
 
 def _locked_grant_instruction(effect):

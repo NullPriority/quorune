@@ -25,8 +25,8 @@ from scripts.build_test_database import build_fixture_database
 import test_attachment_followup_bindings as controls
 
 FIXTURE=ROOT/"tests/fixtures/hand-exile-evoke-cards.json"
-CANDIDATES=("Grief","Fury","Solitude")
-EXCLUDED=("Endurance","Subtlety")
+CANDIDATES=("Grief","Fury","Solitude","Endurance")
+EXCLUDED=("Subtlety",)
 LEGACY=("Mulldrifter","Shriekmaw")
 
 

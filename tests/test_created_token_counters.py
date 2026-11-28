@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 from pathlib import Path
 from copy import deepcopy
-import json,tempfile,unittest
+import json,os,tempfile,unittest
 from unittest.mock import patch
 from common import ROOT
 from quorune.carddb import CardDatabase
@@ -64,6 +64,231 @@ class CreatedTokenCounterTests(unittest.TestCase):
         if option is None:
             option=next((o for o in rows if all(o.get('requirements',{}).get(color,0)==payment.get(color,0) for color in 'WUBRG')),None)
         self.assertIsNotNone(option,rows);self.use(s,card,option,payment,**choices)
+
+    def test_twilight_requires_its_announced_x_and_rejects_authored_exemptions(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.compiler.created_token_counters import created_token_counter_effect_template
+        from quorune.created_token_counter_model import (
+            CREATED_TOKEN_WIPE_CAPABILITY, DESTROY_EXCEPT_CREATED, validate_announced_x_token_wipe,
+        )
+        from quorune.rules.created_token_counter_shapes import validate_announced_x_token_wipe_program
+
+        s = self.session(808359)
+        spell = self.add(s.engine, "White Sun's Twilight", zone='hand')
+        row = self.db.lookup("White Sun's Twilight", fuzzy=False)
+        rendered = row.oracle_text.split(' (Players dealt', 1)[0]
+        kwargs = {'source_name': row.name, 'cast_x_available': True, 'source_is_permanent': False}
+        _, effects, target, unused_mechanics = created_token_counter_effect_template(rendered, **kwargs)
+        effect, = effects
+        self.assertIsNone(target)
+        self.assertEqual(5, effect['minimum'])
+        self.assertIn(CREATED_TOKEN_WIPE_CAPABILITY, typed_result_amount_runtime_dependencies(effect))
+        for mutation in ({'amount': 5}, {'minimum': True}, {'cards': ['forged-token']}):
+            with self.assertRaises(ValueError):
+                validate_announced_x_token_wipe({**effect, **mutation})
+        with self.assertRaises(ValueError):
+            typed_result_amount_runtime_dependencies({'op': DESTROY_EXCEPT_CREATED, 'cards': ['forged-token']})
+        self.assertIsNone(created_token_counter_effect_template(rendered.replace('all other', 'all'), **kwargs))
+        self.assertIsNone(created_token_counter_effect_template(rendered, **{**kwargs, 'cast_x_available': False}))
+        self.assertIsNone(created_token_counter_effect_template(rendered, **{**kwargs, 'source_is_permanent': True}))
+        program = next(program for program in s.engine.semantics.programs_for_oracle(spell.oracle_id)
+            if CREATED_TOKEN_WIPE_CAPABILITY in program.capability_dependencies)
+        self.assertTrue(self.binding(s, spell)['strict_capability_ready'])
+        for altered in (replace(program, event='permanent.enter.self'), replace(program, effects=(*effects, *effects))):
+            with self.assertRaises(ValueError):
+                validate_announced_x_token_wipe_program(altered)
+        reduced = tuple(value for value in program.capability_dependencies if value != CREATED_TOKEN_WIPE_CAPABILITY)
+        reduced_program = replace(program, capability_dependencies=reduced,
+            capability_closure=self.registry.closure(reduced, profile='commander_review').to_dict())
+        binding = bind_semantic_program_runtime(reduced_program, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:' + CREATED_TOKEN_WIPE_CAPABILITY, binding['blockers'])
+
+    def test_twilight_destruction_retains_only_matching_token_incarnations(self):
+        from types import SimpleNamespace
+        from quorune.affected_permanents import AffectedPermanentSetSpec
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        from quorune.destruction_sets import snapshot_destruction_set
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.object_query import ObjectQueryResult
+        from quorune.semantic_choices.destruction_intent_identity import (
+            destruction_intent_identity, validate_destruction_intent_identity,
+        )
+        from quorune.semantic_runtime.intents import DestroyPermanentSetIntent
+
+        def row(object_id, logical_id, token=True):
+            return ObjectQueryResult(object_id=object_id, logical_object_id=logical_id, ref=object_id,
+                printed_name='Shared Token Name', owner='A', controller='A', zone='battlefield',
+                types=('creature',), token=token)
+
+        exempt = tuple(ContinuousObjectIdentity(value, value + '@0') for value in ('committed', 'old', 'nontoken'))
+        group = AffectedPermanentSetSpec(ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)))
+        rows = (row('committed', 'committed@0'), row('old', 'old@1'), row('nontoken', 'nontoken@0', token=False),
+            row('prior', 'prior@0'))
+        query = SimpleNamespace(affected_permanent_active_seats=lambda: ('A',), affected_permanent_apnap_order=lambda: ('A',))
+        chosen = snapshot_destruction_set(query, actor='A', spec=group, object_rows=rows, excluded_created_tokens=exempt)
+        self.assertEqual({'old', 'nontoken', 'prior'}, {result.object_id for result in chosen.permanents})
+        intent = DestroyPermanentSetIntent('A', group, 'Twilight', excluded_created_tokens=exempt)
+        kind, encoded = destruction_intent_identity(intent)
+        self.assertEqual(encoded, validate_destruction_intent_identity(kind, encoded))
+        with self.assertRaises(ValueError):
+            DestroyPermanentSetIntent('A', group, 'Twilight', excluded_created_tokens=(*exempt, exempt[0]))
+        _, legacy = destruction_intent_identity(replace(intent, excluded_created_tokens=()))
+        self.assertNotIn('excluded_created_tokens', legacy)
+
+        from quorune.created_token_counter_model import DESTROY_EXCEPT_CREATED
+        from quorune.semantic_choices.created_token_counters import AnnouncedXCreatedTokenWipeHandler
+        context = SimpleNamespace(actor='A', stack_controller='A', stack_ref='STACK', source_ref='SPELL',
+            stack_label='Twilight', query=SimpleNamespace(active_seats=('A',)))
+        remaining = {'op': DESTROY_EXCEPT_CREATED, 'schema_version': 1, 'controller': 'A', 'source': 'SPELL',
+                     'stack': 'STACK', 'cards': []}
+        preparation = AnnouncedXCreatedTokenWipeHandler(DESTROY_EXCEPT_CREATED, 'local-witness').prepare(remaining, context)
+        wipe, = preparation.preparation_intents
+        self.assertEqual((group, ()), (wipe.spec, wipe.excluded_created_tokens))
+
+    def replay_twilight(self, s, case, *, load=False):
+        from quorune.record import authoritative_state_hash, replay_record
+        from quorune.session import CommanderSession
+
+        saved = os.environ.get('QUORUNE_TWILIGHT_RECORD_PARENT')
+        directory = Path(saved or self.temp.name)
+        if saved:
+            fixture = directory / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = directory / ('twilight-' + case)
+        s.save(path)
+        self.assertEqual(3, json.loads((path / 'manifest.json').read_bytes())['schema_version'])
+        result = replay_record(path, self.db, verify=True)
+        expected = authoritative_state_hash(s.state)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        self.assertEqual(expected, result['final_state_hash'])
+        if saved:
+            proof = directory / (path.name + '.verification.json')
+            proof.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(expected, authoritative_state_hash(resumed.state))
+            return resumed
+
+    def twilight_mites(self, s, expected):
+        from quorune.damage_source import represented_toxic_value
+
+        mites = [card for card in self.tokens(s) if card.printed_name == 'Phyrexian Mite Token']
+        self.assertEqual(expected, len(mites))
+        for card in mites:
+            definition = s.engine._effective_card_data(card)
+            types, subtypes, supertypes = s.engine._type_parts(definition['type_line'])
+            self.assertTrue(card.is_token)
+            self.assertEqual(({'artifact', 'creature'}, {'phyrexian', 'mite'}, set()), (types, subtypes, supertypes))
+            self.assertEqual(('1', '1', ()),
+                (str(definition['power']), str(definition['toughness']), tuple(definition['colors'])))
+            self.assertEqual(1, represented_toxic_value(definition))
+            self.assertFalse(card.tapped)
+        return mites
+
+    def test_twilight_zero_and_four_gain_announced_life_and_leave_other_creatures(self):
+        for x in (0, 4):
+            with self.subTest(x=x):
+                s = self.session(808341 + x)
+                spell = self.add(s.engine, "White Sun's Twilight", zone='hand')
+                opposing = self.add(s.engine, 'Generic Bound Body', seat='B', ref='twilight-opponent')
+                private = self.add(s.engine, 'Generic Bound Growth', seat='C', zone='hand', ref='twilight-private')
+                self.assertTrue(self.binding(s, spell)['strict_capability_ready'])
+                original_life = s.state.players['A'].life
+                if x:
+                    self.add(s.engine, 'Parallel Lives')
+                price = {'C': x, 'W': 2}
+                self.prepare(s, mana=price)
+                self.checkpoint(s)
+                self.normal(s, spell, price, x=x)
+                self.assertEqual([], s.state.stack[-1].targets)
+                self.assertEqual(x, s.state.stack[-1].x_value)
+                self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+                self.assertIsNone(self.settle(s))
+                self.assertEqual(original_life + x, s.state.players['A'].life)
+                self.assertEqual('battlefield', s.state.cards[opposing.object_id].zone)
+                self.assertFalse(any(event.code == 'effect.permanent.destroy_set' for event in s.state.events))
+                for mite in self.twilight_mites(s, 2 * x):
+                    self.assertFalse(s.engine._can_block(s.state.cards[opposing.object_id], mite)[0])
+                self.assertNotIn(private.ref, str(s.packet('pilot:A', full=True)))
+                self.replay_twilight(s, str(x))
+
+    def test_twilight_five_spares_actual_replacement_tokens_and_rolls_back_one_wipe(self):
+        from quorune import destruction_sets as owner
+        from quorune.compiler.token_templates import fixed_token_creation_effect_template
+        from quorune.destruction import DestructionError
+        from quorune.record import authoritative_state_hash
+
+        s = self.session(808350)
+        prior_definition = fixed_token_creation_effect_template(
+            'Create one 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can\'t block.".')
+        old_ref, = s.engine.create_token('A', name=prior_definition.effect['name'],
+            characteristics=prior_definition.effect['characteristics'], quantity=1, reason='Preexisting Mite witness')
+        old_mite = next(card for card in s.state.cards.values() if card.ref == old_ref)
+        chatterfang = self.add(s.engine, 'Chatterfang, Squirrel General')
+        doubler = self.add(s.engine, 'Parallel Lives')
+        own = self.add(s.engine, 'Generic Bound Body', ref='twilight-destroy-A')
+        opposing = self.add(s.engine, 'Generic Bound Body', seat='B', ref='twilight-destroy-B')
+        protected = self.add(s.engine, 'Generic Bound Body', seat='D', ref='twilight-indestructible')
+        protected.temporary_keywords.append('indestructible')
+        artifact = self.add(s.engine, 'Sol Ring', seat='C', ref='twilight-noncreature')
+        spell = self.add(s.engine, "White Sun's Twilight", zone='hand')
+        for card in (spell, chatterfang, doubler):
+            self.assertTrue(self.binding(s, card)['strict_capability_ready'])
+        before_life = s.state.players['A'].life
+        price = {'C': 5, 'W': 2}
+        self.prepare(s, mana=price)
+        self.checkpoint(s)
+        self.normal(s, spell, price, x=5)
+        decision = self.settle(s)
+        self.assertEqual('replacement.order', decision.kind)
+        self.assertEqual(before_life + 5, s.state.players['A'].life)
+        self.twilight_mites(s, 1)
+        self.assertEqual('battlefield', s.state.cards[opposing.object_id].zone)
+        s = self.replay_twilight(s, 'replacement-pending', load=True)
+        ctx = s.packet('pilot:A', full=True)['decision']['ctx']
+        parallel, = [row for row in ctx['options'] if 'Squirrel' not in row['label']]
+        command = {'action_id': 'choose', 'replacement': parallel['id']}
+        self.reject(s, command, 'pilot:D')
+        old_state = authoritative_state_hash(s.state)
+        destroyed = {old_mite.object_id, chatterfang.object_id, own.object_id, opposing.object_id}
+        real_commit = owner.commit_destruction_plan
+        partial = []
+
+        def fail_after_destruction(host, plan, **kwargs):
+            result = real_commit(host, plan, **kwargs)
+            partial.append(set(result.destroyed_object_ids))
+            raise DestructionError('Injected failure after Twilight destruction committed')
+
+        with patch.object(owner, 'commit_destruction_plan', fail_after_destruction):
+            rejected = s.act('pilot:A', command)
+            self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual([destroyed], partial)
+        self.assertEqual(old_state, authoritative_state_hash(s.state))
+        accepted = s.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.settle(s))
+        self.assertEqual(before_life + 5, s.state.players['A'].life)
+        self.assertTrue(all(s.state.cards[card.object_id].zone == 'graveyard' for card in (own, opposing, chatterfang)))
+        self.assertTrue(all(s.state.cards[card.object_id].zone == 'battlefield' for card in (protected, artifact, doubler)))
+        mites = self.twilight_mites(s, 10)
+        self.assertTrue(all(card.object_id != old_mite.object_id for card in mites))
+        squirrels = [card for card in self.tokens(s) if card.printed_name == 'Squirrel Token']
+        self.assertEqual(10, len(squirrels))
+        destruction, = [event for event in s.state.events if event.code == 'effect.permanent.destroy_set']
+        self.assertEqual(destroyed, set(destruction.changed_objects))
+        replacement_results = {card.object_id for card in (*mites, *squirrels)}
+        events = [event for event in s.state.events if event.code == 'token.create'
+                  and replacement_results.intersection(event.changed_objects)]
+        self.assertEqual(replacement_results, {object_id for event in events for object_id in event.changed_objects})
+        self.assertTrue(all(event.event_id < destruction.event_id for event in events))
+        self.assertEqual((5, 4, 1), tuple(destruction.details[key] for key in (
+            'affected_count', 'destroyed_count', 'indestructible_count',
+        )))
+        self.replay_twilight(s, 'replacement-settled')
 
     def test_real_fractal_summoning_pays_announced_x_and_puts_counters_after_entry(self):
         for size in (0,3):

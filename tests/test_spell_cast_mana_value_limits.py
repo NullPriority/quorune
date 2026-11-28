@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from common import ROOT
+from common import DB_PATH, ROOT
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
@@ -290,3 +290,128 @@ class SpellCastManaValueLimitTests(InheritedNativeFixture, unittest.TestCase):
                     self.assertFalse(bound["strict_capability_ready"], bound)
                 other, _ = register_card(self.db, registry, "Blaze")
                 self.assertTrue(other["strict_capability_ready"], other["blockers"])
+
+
+class SourcePowerCastManaValueTests(InheritedNativeFixture, unittest.TestCase):
+    _cast = SpellCastManaValueLimitTests._cast
+
+    @classmethod
+    def setUpClass(cls):
+        cls.db = CardDatabase(DB_PATH)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Cast mana value versus source power",
+            [DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Island", 30)],
+            ["Isamaru, Hound of Konda"],
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+
+    def test_original_has_exact_evolve_and_the_source_power_draw(self):
+        from quorune.rules.spell_cast_events import SOURCE_POWER_CAST_CAPABILITY, source_power_cast_condition
+
+        bound, semantics = register_card(self.db, self.registry, "Pollywog Prodigy")
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        card = self.db.lookup("Pollywog Prodigy", fuzzy=False)
+        compilation = compile_oracle_card(
+            card, capability_registry=self.registry, capability_profile=PROFILE,
+        )
+        self.assertEqual("exact", compilation.status, compilation.material_residuals)
+        programs = semantics.programs_for_oracle(card.oracle_id)
+        self.assertEqual({"creature.enter", "spell.cast"}, {program.event for program in programs})
+        trigger, = (program for program in programs if program.event == "spell.cast")
+        self.assertEqual(source_power_cast_condition(), thaw_value(trigger.event_condition))
+        self.assertEqual([{"op": "draw", "player": "$controller", "count": 1, "private": True}], thaw_value(trigger.effects))
+        requirements = tuple(value for value in trigger.capability_dependencies if value != SOURCE_POWER_CAST_CAPABILITY)
+        incomplete = replace(trigger, capability_dependencies=requirements,
+            capability_closure=self.registry.closure(requirements, profile=PROFILE).to_dict())
+        runtime = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile=PROFILE)
+        self.assertIn("capability:undeclared_runtime_dependency:" + SOURCE_POWER_CAST_CAPABILITY, runtime["blockers"])
+
+    def test_comparison_descriptor_rejects_forged_shapes_and_other_occurrences(self):
+        from types import SimpleNamespace
+
+        from quorune.rules.spell_cast_events import (
+            SOURCE_POWER_CAST_CAPABILITY, source_power_cast_condition, spell_cast_event_runtime_dependencies,
+        )
+
+        shape = source_power_cast_condition()
+        program = {"active_zone": "battlefield", "event": "spell.cast", "event_condition": shape}
+        self.assertIn(SOURCE_POWER_CAST_CAPABILITY,
+                      spell_cast_event_runtime_dependencies(SimpleNamespace(**program), None))
+        for changes in (
+            {"event": "spell.cast_or_copy"},
+            {"active_zone": "graveyard"},
+            {"event_condition": {**shape, "value": 1}},
+            {"event_condition": {"not": shape}},
+        ):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                spell_cast_event_runtime_dependencies(SimpleNamespace(**{**program, **changes}), None)
+
+    def test_actual_opponent_cast_uses_strict_boundary_and_excludes_creature_and_own_spells(self):
+        game = self.session(8230620)
+        source = self.add(game.engine, "Pollywog Prodigy", seat="B")
+        relic = self.add(game.engine, "Tormod's Crypt", zone="hand", ref="relative-power-relic")
+        creature = self.add(game.engine, "Ornithopter", zone="hand", ref="relative-power-creature")
+        equal = self.add(game.engine, "Blaze", zone="hand", ref="relative-power-equal")
+        friendly = self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="relative-power-friendly")
+        source.counters["+1/+1"] = 1
+        self.prepare(game, mana={"R": 1, "C": 1})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.assert_closed(game, source)
+        self.checkpoint(game)
+
+        prior_hand = set(game.state.players["B"].zones["hand"])
+        self._cast(game, "A", relic)
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.assertIsNone(self.resolve(game))
+        added, = set(game.state.players["B"].zones["hand"]) - prior_hand
+        drawn = game.state.cards[added].ref
+        self.assertIn(drawn, json.dumps(game.packet("pilot:B", full=True)))
+        for seat in ("pilot:A", "pilot:C", "pilot:D", "spectator"):
+            self.assertNotIn(drawn, json.dumps(game.packet(seat, full=True)), seat)
+
+        self._cast(game, "A", creature)
+        self.assertEqual(0, self.trigger_count(game, source))
+        self.assertIsNone(self.resolve(game))
+
+        self._cast(game, "A", equal, ["D"], x=1)
+        self.assertEqual(0, self.trigger_count(game, source))
+        self._cast(game, "B", friendly, [creature.ref])
+        self.assertEqual(0, self.trigger_count(game, source))
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+    def test_actual_evolve_qualifies_draw_and_source_departure_does_not_recheck(self):
+        game = self.session(8230621)
+        source = self.add(game.engine, "Pollywog Prodigy")
+        creature = self.add(game.engine, "Grizzly Bears", zone="hand", ref="relative-power-entrant")
+        cheap = self.add(game.engine, "Shock", seat="B", zone="hand", ref="relative-power-cheap")
+        leave = self.add(game.engine, "Unsummon", zone="hand", ref="relative-power-leave")
+        self.prepare(game, mana={"G": 1, "C": 1, "U": 2})
+        game.state.players["B"].mana_pool["R"] = 1
+        self.assert_closed(game, source)
+        self.checkpoint(game)
+
+        self._cast(game, "A", creature)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.cards[source.object_id].counters.get("+1/+1"))
+        self._cast(game, "B", cheap, ["D"])
+        self.assertEqual(1, self.trigger_count(game, source))
+        self._cast(game, "A", leave, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.assertEqual(1, self.trigger_count(game, source))
+        game = self.replay(game, load=True)
+        prior_hand = set(game.state.players["A"].zones["hand"])
+        self.assertIsNone(self.resolve(game))
+        drawn, = set(game.state.players["A"].zones["hand"]) - prior_hand
+        self.assertNotIn(game.state.cards[drawn].ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.replay(game, load=True)
+
+    def test_unconditional_source_power_mutant_breaks_native_boundaries(self):
+        with patch("quorune.rules.spell_cast_events.opposing_noncreature_cast_below_source_power", return_value=True):
+            with self.assertRaises(AssertionError):
+                self.test_actual_opponent_cast_uses_strict_boundary_and_excludes_creature_and_own_spells()

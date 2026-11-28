@@ -1,0 +1,135 @@
+{
+  "cards": [
+    {
+      "oracle_id": "f78af825-023a-42e9-8374-5c52303a1417",
+      "name": "Elspeth, Storm Slayer",
+      "mana_cost": "{3}{W}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Planeswalker — Elspeth",
+      "oracle_text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.\n+1: Create a 1/1 white Soldier creature token.\n0: Put a +1/+1 counter on each creature you control. Those creatures gain flying until your next turn.\n−3: Destroy target creature an opponent controls with mana value 3 or greater.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Landfall"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Felidar Retreat",
+      "oracle_id": "16629f59-bae8-4c19-bf50-443eb0ed6856",
+      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Create a 2/2 white Cat Beast creature token.\n• Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Felidar Retreat's second mode affects only creatures you control at the time the ability resolves, including creatures you control but that for some reason didn't get a +1/+1 counter. Creatures you begin to control later in the turn won't gain vigilance or get a +1/+1 counter.",
+      "oracle_id": "16629f59-bae8-4c19-bf50-443eb0ed6856",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability doesn't trigger if a permanent already on the battlefield becomes a land.",
+      "oracle_id": "16629f59-bae8-4c19-bf50-443eb0ed6856",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A landfall ability triggers whenever a land you control enters for any reason. It triggers whenever you play a land, as well as whenever a spell or ability puts a land onto the battlefield under your control.",
+      "oracle_id": "16629f59-bae8-4c19-bf50-443eb0ed6856",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whenever a land you control enters, each landfall ability of the permanents you control will trigger. You can put them   on the stack in any order. The last ability you put on the stack will be the first one to resolve (As a result, you can have those abilities resolve in the order of your choosing.).",
+      "oracle_id": "16629f59-bae8-4c19-bf50-443eb0ed6856",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "f78af825-023a-42e9-8374-5c52303a1417",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Elspeth’s replacement effect. For example, if an effect tells you to create a token “tapped and attacking,” the additional tokens will also be tapped and attacking."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

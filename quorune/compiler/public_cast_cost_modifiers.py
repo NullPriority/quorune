@@ -5,6 +5,8 @@ from __future__ import annotations
 from . import regex_working_set as re
 
 from ..cast_cost_modifiers import (
+    ADVENTURE_PERMANENT_SPELL,
+    ADVENTURE_PERMANENT_TYPES,
     CastCostAffectedController,
     CastCostModifierError,
     CastCostOrdinal,
@@ -43,8 +45,9 @@ _DYNAMIC_ADJUSTMENT = re.compile(
     re.IGNORECASE,
 )
 _AFFINITY_GRANT = re.compile(
-    r"^(?P<subject>Artifact creature spells you cast|Spells you cast) have "
-    r"affinity for artifacts\.?(?: \(.+\))?$",
+    r"^(?:(?P<artifact_subject>Artifact creature spells you cast|Spells you cast) have "
+    r"affinity for artifacts\.?(?: \(.+\))?|"
+    r"(?P<creature_subject>Instant and sorcery spells you cast) have affinity for creatures\.?)$",
     re.IGNORECASE,
 )
 _VARIABLE_PUBLIC_ADJUSTMENT = re.compile(
@@ -314,125 +317,27 @@ def public_cast_cost_modifier_template(
         return None
 
 
-def public_cast_cost_modifier_v2_template(
-    text: str, *, source_name: str = 'source',
-) -> PublicCastCostModifierV2Spec | None:
-    """Parse the bounded colored and public-value total-cost extension."""
+def _build_v2_cost_modifier(**kwargs) -> PublicCastCostModifierV2Spec | None:
+    try:
+        return PublicCastCostModifierV2Spec(**kwargs)
+    except CastCostModifierError:
+        return None
 
-    def build(**kwargs) -> PublicCastCostModifierV2Spec | None:
-        try:
-            return PublicCastCostModifierV2Spec(**kwargs)
-        except CastCostModifierError:
-            return None
 
-    normalized = re.sub(
-        r"^[A-Za-z][A-Za-z ]+ (?:—|�) ",
-        "",
-        " ".join(text.strip().split()),
-    )
-    power = re.fullmatch(r'(?P<subject>.+?) costs? \{X\} less to cast, where X is (?P<metric>.+?)\.?', normalized, re.I)
-    if power is not None:
-        from .public_value_costs import source_power_cost_metric
-        metric = source_power_cost_metric(power['metric'], source_name=source_name)
-        raw_subject = power['subject']
-        bounded = re.fullmatch(r'(?P<base>.+? spells you cast) with mana value (?P<minimum>[1-9][0-9]*) or greater', raw_subject, re.I)
-        if bounded is not None:
-            raw_subject = bounded['base']
-        subject = _subject_spec(raw_subject)
-        if metric is not None and subject is not None:
-            return build(affected_controller=subject[0], predicates_any=subject[1],
-                mana_adjustment=(('GENERIC', -1),), multiplier=metric.to_dict(),
-                minimum_mana_value=int(bounded['minimum']) if bounded else None,
-                cast_origin_zones=subject[2], excluded_cast_origin_zones=subject[3],
-                turn_relation=subject[4], ordinal=subject[5])
-    affinity = _AFFINITY_GRANT.fullmatch(normalized)
-    if affinity is not None:
-        subject = _subject_spec(affinity.group("subject"))
-        if subject is None:
-            return None
-        query = CastReductionObjectQuery(
-            CastReductionQueryScope.CONTROLLER_ZONE,
-            ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",)),
-        )
-        return build(
-            affected_controller=subject[0],
-            predicates_any=subject[1],
-            mana_adjustment=(("GENERIC", -1),),
-            multiplier=CastReductionMetric(
-                kind=CastReductionMetricKind.OBJECT_COUNT,
-                queries=(query,),
-                schema_version=2,
-            ).to_dict(),
-        )
-
-    variable = _VARIABLE_PUBLIC_ADJUSTMENT.fullmatch(normalized)
-    if variable is not None:
-        subject = _subject_spec(variable.group("subject"))
-        if subject is None:
-            return None
-        return build(
-            affected_controller=subject[0],
-            predicates_any=subject[1],
-            mana_adjustment=(("GENERIC", -1),),
-            multiplier=CastReductionMetric(
-                kind=CastReductionMetricKind.TURN_VALUE,
-                turn_fact=CastReductionTurnFact.CONTROLLER_LIFE_GAINED_AMOUNT,
-                schema_version=2,
-            ).to_dict(),
-        )
-
-    dynamic = _DYNAMIC_ADJUSTMENT.fullmatch(normalized)
-    if dynamic is not None:
-        subject = _subject_spec(dynamic.group("subject"))
-        metric = _dynamic_metric(dynamic.group("metric"))
-        if subject is None or metric is None:
-            return None
-        return build(
-            affected_controller=subject[0],
-            predicates_any=subject[1],
-            mana_adjustment=(("GENERIC", -int(dynamic.group("amount"))),),
-            multiplier=metric.to_dict(),
-        )
-
-    colored = _COLORED_ADJUSTMENT.fullmatch(normalized)
-    if colored is not None:
-        subject = _subject_spec(colored.group("subject"))
-        adjustment = _mana_adjustment(
-            colored.group("amount"),
-            direction=colored.group("direction"),
-        )
-        if subject is None or not adjustment:
-            return None
-        return build(
-            affected_controller=subject[0],
-            predicates_any=subject[1],
-            mana_adjustment=adjustment,
-            cast_origin_zones=subject[2],
-            excluded_cast_origin_zones=subject[3],
-            turn_relation=subject[4],
-            ordinal=subject[5],
-        )
-
-    defense_grid = re.fullmatch(
-        r"Each spell costs \{(?P<amount>[1-9][0-9]*)\} more to cast except "
-        r"during its controller's turn\.?",
-        normalized,
-        re.IGNORECASE,
-    )
-    if defense_grid is not None:
-        return build(
-            affected_controller=CastCostAffectedController.ALL_PLAYERS,
-            predicates_any=(ObjectQuerySpec(),),
-            mana_adjustment=(
-                ("GENERIC", int(defense_grid.group("amount"))),
-            ),
-            turn_relation=CastCostTurnRelation.NOT_CASTER_TURN,
-        )
-
+def _fixed_v2_cost_modifier(normalized: str) -> PublicCastCostModifierV2Spec | None:
     fixed = _ADJUSTMENT.fullmatch(normalized)
     if fixed is None:
         return None
     raw_subject = fixed.group("subject")
+    if raw_subject.casefold() == "spells your opponents cast from graveyards or from exile":
+        if fixed.group("direction").casefold() != "more":
+            return None
+        return _build_v2_cost_modifier(
+            affected_controller=CastCostAffectedController.SOURCE_OPPONENTS,
+            predicates_any=(ObjectQuerySpec(),),
+            mana_adjustment=(("GENERIC", int(fixed.group("amount"))),),
+            cast_origin_zones=("graveyard", "exile"),
+        )
     minimum_mana_value = None
     bounded = re.fullmatch(
         r"(?P<base>.+? spells you cast) with mana value "
@@ -452,7 +357,7 @@ def public_cast_cost_modifier_v2_template(
         return None
     amount = int(fixed.group("amount"))
     sign = 1 if fixed.group("direction").casefold() == "more" else -1
-    return build(
+    return _build_v2_cost_modifier(
         affected_controller=subject[0],
         predicates_any=subject[1],
         mana_adjustment=(("GENERIC", sign * amount),),
@@ -462,6 +367,128 @@ def public_cast_cost_modifier_v2_template(
         ordinal=subject[5],
         minimum_mana_value=minimum_mana_value,
     )
+
+
+def public_cast_cost_modifier_v2_template(
+    text: str, *, source_name: str = 'source',
+) -> PublicCastCostModifierV2Spec | None:
+    """Parse the bounded colored and public-value total-cost extension."""
+
+    normalized = re.sub(
+        r"^[A-Za-z][A-Za-z ]+ (?:—|�) ",
+        "",
+        " ".join(text.strip().split()),
+    )
+    if normalized.casefold() == "permanent spells you cast that have an adventure cost {1} less to cast.":
+        return _build_v2_cost_modifier(
+            affected_controller=CastCostAffectedController.SOURCE_CONTROLLER,
+            predicates_any=(ObjectQuerySpec(types_any=ADVENTURE_PERMANENT_TYPES),),
+            mana_adjustment=(("GENERIC", -1),),
+            schema_version=3,
+            spell_qualification=ADVENTURE_PERMANENT_SPELL,
+        )
+    power = re.fullmatch(r'(?P<subject>.+?) costs? \{X\} less to cast, where X is (?P<metric>.+?)\.?', normalized, re.I)
+    if power is not None:
+        from .public_value_costs import source_power_cost_metric
+        metric = source_power_cost_metric(power['metric'], source_name=source_name)
+        raw_subject = power['subject']
+        bounded = re.fullmatch(r'(?P<base>.+? spells you cast) with mana value (?P<minimum>[1-9][0-9]*) or greater', raw_subject, re.I)
+        if bounded is not None:
+            raw_subject = bounded['base']
+        subject = _subject_spec(raw_subject)
+        if metric is not None and subject is not None:
+            return _build_v2_cost_modifier(affected_controller=subject[0], predicates_any=subject[1],
+                mana_adjustment=(('GENERIC', -1),), multiplier=metric.to_dict(),
+                minimum_mana_value=int(bounded['minimum']) if bounded else None,
+                cast_origin_zones=subject[2], excluded_cast_origin_zones=subject[3],
+                turn_relation=subject[4], ordinal=subject[5])
+    affinity = _AFFINITY_GRANT.fullmatch(normalized)
+    if affinity is not None:
+        artifact_subject = affinity.group("artifact_subject")
+        subject = _subject_spec(artifact_subject or affinity.group("creature_subject"))
+        if subject is None:
+            return None
+        quality = "artifact" if artifact_subject else "creature"
+        query = CastReductionObjectQuery(
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=("battlefield",), types_all=(quality,)),
+        )
+        return _build_v2_cost_modifier(
+            affected_controller=subject[0],
+            predicates_any=subject[1],
+            mana_adjustment=(("GENERIC", -1),),
+            multiplier=CastReductionMetric(
+                kind=CastReductionMetricKind.OBJECT_COUNT,
+                queries=(query,),
+                schema_version=2,
+            ).to_dict(),
+        )
+
+    variable = _VARIABLE_PUBLIC_ADJUSTMENT.fullmatch(normalized)
+    if variable is not None:
+        subject = _subject_spec(variable.group("subject"))
+        if subject is None:
+            return None
+        return _build_v2_cost_modifier(
+            affected_controller=subject[0],
+            predicates_any=subject[1],
+            mana_adjustment=(("GENERIC", -1),),
+            multiplier=CastReductionMetric(
+                kind=CastReductionMetricKind.TURN_VALUE,
+                turn_fact=CastReductionTurnFact.CONTROLLER_LIFE_GAINED_AMOUNT,
+                schema_version=2,
+            ).to_dict(),
+        )
+
+    dynamic = _DYNAMIC_ADJUSTMENT.fullmatch(normalized)
+    if dynamic is not None:
+        subject = _subject_spec(dynamic.group("subject"))
+        metric = _dynamic_metric(dynamic.group("metric"))
+        if subject is None or metric is None:
+            return None
+        return _build_v2_cost_modifier(
+            affected_controller=subject[0],
+            predicates_any=subject[1],
+            mana_adjustment=(("GENERIC", -int(dynamic.group("amount"))),),
+            multiplier=metric.to_dict(),
+        )
+
+    colored = _COLORED_ADJUSTMENT.fullmatch(normalized)
+    if colored is not None:
+        subject = _subject_spec(colored.group("subject"))
+        adjustment = _mana_adjustment(
+            colored.group("amount"),
+            direction=colored.group("direction"),
+        )
+        if subject is None or not adjustment:
+            return None
+        return _build_v2_cost_modifier(
+            affected_controller=subject[0],
+            predicates_any=subject[1],
+            mana_adjustment=adjustment,
+            cast_origin_zones=subject[2],
+            excluded_cast_origin_zones=subject[3],
+            turn_relation=subject[4],
+            ordinal=subject[5],
+        )
+
+    defense_grid = re.fullmatch(
+        r"Each spell costs \{(?P<amount>[1-9][0-9]*)\} more to cast except "
+        r"during its controller's turn\.?",
+        normalized,
+        re.IGNORECASE,
+    )
+    if defense_grid is not None:
+        return _build_v2_cost_modifier(
+            affected_controller=CastCostAffectedController.ALL_PLAYERS,
+            predicates_any=(ObjectQuerySpec(),),
+            mana_adjustment=(
+                ("GENERIC", int(defense_grid.group("amount"))),
+            ),
+            turn_relation=CastCostTurnRelation.NOT_CASTER_TURN,
+        )
+
+    return _fixed_v2_cost_modifier(normalized)
 
 
 __all__ = [

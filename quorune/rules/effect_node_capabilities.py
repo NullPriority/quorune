@@ -13,7 +13,12 @@ from .graveyard_recycling import source_graveyard_recycling_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from ..extra_combat_model import extra_combat_node_capabilities
-from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .entry_and_death_characteristics import creature_entry_pump_node_capabilities
+from .announced_token_sweep import token_sweep_node_capabilities
+from .controlled_combat_tokens import controlled_combat_token_node_capabilities
+from .extra_turn_shapes import (
+    fixed_end_turn_node_capabilities, fixed_extra_turn_node_capabilities, fixed_next_turn_control_node_capabilities,
+)
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 from .combat_removal_shapes import combat_removal_node_capabilities
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
@@ -22,6 +27,7 @@ from .endure_shapes import fixed_endure_node_capabilities
 from .earthbend_shapes import earthbend_node_capabilities
 from .suspect_shapes import suspect_node_capabilities
 from .blight_shapes import fixed_blight_node_capabilities
+from .opponent_blight import fixed_opponent_blight_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -30,8 +36,9 @@ from .source_fixed_protection_shapes import source_fixed_protection_capabilities
 from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
 from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_node_capabilities
+from .main_phase_creature_cohort import creature_cohort_addendum_node_capabilities
 from .prepared_creature_power_damage_shapes import prepared_creature_power_damage_capabilities
-from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
+from .delayed_draw_capability_shapes import delayed_draw_node_capabilities
 from ..delayed_object_model import delayed_object_node_capabilities
 from .delayed_counter_shapes import delayed_counter_node_capabilities
 from .graveyard_card_targets import targeted_graveyard_return_node_capabilities
@@ -45,11 +52,13 @@ from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
 from .counter_removal_capabilities import all_counter_removal_node_capabilities, fixed_counter_removal_node_capabilities
 from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
+from .permanent_protection_life import protection_then_life_capabilities
 from .affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities, fixed_controller_discard_node_capabilities, fixed_context_player_discard_node_capabilities
 from .affected_player_discard_capability_shapes import fixed_affected_player_hand_exile_node_capabilities
 from .alternative_discard_shapes import alternative_discard_node_capabilities
 from .entry_permanent_results import entry_permanent_result_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
+from .commander_return_choice import commander_battlefield_entry_capabilities
 from .node_capability_shapes import fixed_counter_placement_batch_node_capabilities, fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities, fixed_counter_placement_target_set_node_capabilities, fixed_target_effect_sequence_node_capabilities, fixed_source_effect_sequence_node_capabilities, fixed_source_characteristics_node_capabilities, fixed_target_characteristics_node_capabilities, temporary_declaration_restriction_node_capabilities, fixed_player_counter_placement_node_capabilities, fixed_damage_node_capabilities, mass_destruction_node_capabilities, fixed_draw_node_capabilities, fixed_scry_node_capabilities, single_explore_node_capabilities, single_proliferate_node_capabilities, self_regeneration_node_capabilities, fixed_self_counter_keyword_action_node_capabilities, fixed_bolster_node_capabilities, fixed_amass_node_capabilities, targeted_counter_node_capabilities, targeted_destruction_node_capabilities, targeted_exile_node_capabilities, targeted_return_to_hand_node_capabilities, targeted_tap_state_node_capabilities
 from .token_creation_capability_shapes import fixed_token_creation_node_capabilities
 from .event_player_result_shapes import fixed_mill_node_capabilities, fixed_event_player_result_node_capabilities
@@ -79,6 +88,7 @@ from .incubate_capability_shapes import incubate_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
 from .detain import detain_node_capabilities, direct_action_prohibition_node_capabilities
 from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequence_node_capabilities, fixed_controller_effect_sequence_node_capabilities, fixed_life_node_capabilities
+from .artifact_search_exchange import artifact_search_exchange_node_capabilities
 from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities, fixed_optional_mana_payment_node_capabilities, fixed_optional_effect_node_capabilities
 from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities, announced_target_set_node_capabilities
 from .closed_effect_program_shapes import closed_effect_program_node_capabilities
@@ -89,21 +99,51 @@ from .library_bottom_results import library_bottom_result_node_capabilities
 from .temporary_self_copy import temporary_creature_copy_set_node_capabilities, temporary_self_copy_node_capabilities
 from .temporary_copy_subject import temporary_copy_subject_node_capabilities
 from .linked_exile_copy import linked_exile_copy_node_capabilities
+from .announced_artifact_copy import announced_artifact_copy_node_capabilities
 from .announced_graveyard_copy import announced_graveyard_copy_node_capabilities
 from .graveyard_exile_copy import graveyard_exile_copy_node_capabilities
-from .persistent_public_copy import persistent_public_copy_node_capabilities
+from .persistent_public_copy import controlled_artifact_copy_node_capabilities, persistent_public_copy_node_capabilities
 from .temporary_occurrence_copy import temporary_occurrence_copy_node_capabilities
 
 
+from .source_counter_mill_choice import source_counter_mill_node_capabilities
+
+from .recipient_counter_damage import recipient_counter_damage_node_capabilities
+
+from .controller_graveyard_mana_targets import controller_graveyard_mana_node_capabilities
+
+from .paid_discard_damage import paid_nonland_damage_node_capabilities
+
+from .apnap_type_return import type_return_node_capabilities
+
+from .prior_qualified_cast_copy import prior_cast_copy_node_capabilities
+
+from .magecraft_rummage_ordinal import magecraft_ordinal_node_capabilities
+
+from .magecraft_rummage_ordinal import magecraft_ordinal_node_capabilities
+
 _TURN_SCHEDULE_NODE_RESOLVERS = (
+    source_counter_mill_node_capabilities,
+    recipient_counter_damage_node_capabilities,
+    controller_graveyard_mana_node_capabilities,
+    paid_nonland_damage_node_capabilities,
+    type_return_node_capabilities,
+    prior_cast_copy_node_capabilities,
+    magecraft_ordinal_node_capabilities,
+    magecraft_ordinal_node_capabilities,
+    fixed_end_turn_node_capabilities,
     fixed_extra_turn_node_capabilities,
+    fixed_next_turn_control_node_capabilities,
     extra_combat_node_capabilities,
+    token_sweep_node_capabilities,
+    controlled_combat_token_node_capabilities,
     scheduled_turn_skip_node_capabilities,
 )
 
 
 _TEMPORARY_CHARACTERISTIC_RESOLVERS = (
     fixed_target_characteristics_node_capabilities,
+    creature_entry_pump_node_capabilities,
     temporary_target_interaction_node_capabilities,
     fixed_source_characteristics_node_capabilities,
     source_keyword_choice_capabilities,
@@ -112,21 +152,19 @@ _TEMPORARY_CHARACTERISTIC_RESOLVERS = (
     temporary_declaration_restriction_node_capabilities,
     temporary_self_copy_node_capabilities,
     linked_exile_copy_node_capabilities,
+    announced_artifact_copy_node_capabilities,
     announced_graveyard_copy_node_capabilities,
     graveyard_exile_copy_node_capabilities,
     persistent_public_copy_node_capabilities,
+    controlled_artifact_copy_node_capabilities,
     temporary_creature_copy_set_node_capabilities,
     temporary_copy_subject_node_capabilities,
     temporary_occurrence_copy_node_capabilities,
 )
 
 
-def effect_node_capabilities(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanics: set[str],
-) -> set[str]:
+def _effect_node_resolvers():
+    """Return the effect-shape resolvers in their existing dispatch order."""
     from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
     from ..zone_devour import devour_entry_result_node_capabilities
     from .revealed_library_top import reveal_top_node_capabilities
@@ -138,12 +176,10 @@ def effect_node_capabilities(
     from .library_search_rule_shapes import temporary_library_search_node_capabilities
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities,block_counterpart_zone_capabilities
+    from .qualified_entry_effects import flying_entry_haste_node_capabilities
     from .attack_event_results import attack_event_characteristic_capabilities
-    try:
-        dependencies: set[str] = set(attachment_information_capabilities(effects))
-    except AttachmentReferenceError:
-        return set()
-    for resolver in (
+
+    return (
         devour_entry_result_node_capabilities,
         colored_hand_reveal_node_capabilities,
         library_result_node_capabilities,
@@ -164,6 +200,7 @@ def effect_node_capabilities(
         direct_action_prohibition_node_capabilities,
         temporary_library_search_node_capabilities,
         occurrence_object_node_capabilities,
+        flying_entry_haste_node_capabilities,
         entry_permanent_result_capabilities,
         attack_event_characteristic_capabilities,
         temporary_player_rule_node_capabilities,
@@ -182,6 +219,7 @@ def effect_node_capabilities(
         earthbend_node_capabilities,
         suspect_node_capabilities,
         fixed_blight_node_capabilities,
+        fixed_opponent_blight_node_capabilities,
         resolution_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
@@ -199,10 +237,11 @@ def effect_node_capabilities(
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
         fixed_creature_power_damage_node_capabilities,
+        creature_cohort_addendum_node_capabilities,
         prepared_creature_power_damage_capabilities,
         fixed_damage_node_capabilities,
         mass_destruction_node_capabilities,
-        fixed_next_turn_draw_node_capabilities,
+        delayed_draw_node_capabilities,
         delayed_object_node_capabilities,
         delayed_counter_node_capabilities,
         fixed_draw_node_capabilities,
@@ -212,7 +251,9 @@ def effect_node_capabilities(
         fixed_controller_discard_node_capabilities,
         fixed_context_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
+        protection_then_life_capabilities,
         fixed_entry_return_node_capabilities,
+        commander_battlefield_entry_capabilities,
         fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,fixed_event_player_result_node_capabilities,
         event_player_choice_node_capabilities,
         fixed_impulse_access_node_capabilities,
@@ -228,6 +269,7 @@ def effect_node_capabilities(
         fixed_counter_controller_effect_sequence_node_capabilities,
         fixed_effect_clause_sequence_node_capabilities,
         fixed_optional_mana_payment_node_capabilities,
+        artifact_search_exchange_node_capabilities,
         fixed_optional_effect_node_capabilities,
         linked_ability_exile_node_capabilities,
         closed_effect_program_node_capabilities,
@@ -259,7 +301,21 @@ def effect_node_capabilities(
         fixed_public_zone_move_set_node_capabilities,
         targeted_tap_state_node_capabilities,
         fixed_token_creation_node_capabilities,
-    ):
+    )
+
+
+def effect_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: set[str],
+) -> set[str]:
+    resolvers = _effect_node_resolvers()
+    try:
+        dependencies: set[str] = set(attachment_information_capabilities(effects))
+    except AttachmentReferenceError:
+        return set()
+    for resolver in resolvers:
         dependencies.update(
             resolver(
                 effects=effects,
@@ -267,7 +323,38 @@ def effect_node_capabilities(
                 mechanic_ids=mechanics,
             )
         )
+    from .departing_x_reflexive import node_capabilities as departure_x_node_capabilities
+    dependencies.update(departure_x_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
+    from .name_stickers import node_capabilities as name_sticker_node_capabilities
+    dependencies.update(name_sticker_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
+    from ..resolving_cast_budget_model import node_capabilities as budgeted_cast_node_capabilities
+    dependencies.update(budgeted_cast_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics))
     if dependencies:
         from .finality_counters import finality_counter_dependencies
         dependencies.update(finality_counter_dependencies(effects))
     return dependencies
+
+
+def main_phase_extra_combat_program_dependencies(program):
+    from ..extra_combat_model import (
+        EXTRA_COMBAT_FOLLOWUP_FIELD, MAIN_PHASE_EXTRA_COMBAT_MECHANIC,
+        extra_combat_effect_capabilities, main_phase_extra_combat_condition,
+    )
+    from ..replacement.immutable import FrozenMap
+    from .effect_shape_walkers import nested_effects
+
+    marked = tuple(effect for effect in nested_effects((program.effects, program.handlers))
+                   if isinstance(effect.get(EXTRA_COMBAT_FOLLOWUP_FIELD), Mapping)
+                   and "untap_at_granted_combat" in effect[EXTRA_COMBAT_FOLLOWUP_FIELD])
+    if not (marked or MAIN_PHASE_EXTRA_COMBAT_MECHANIC in program.coverage):
+        return ()
+    if (
+        len(marked) != 1 or tuple(program.effects) != marked or program.handlers
+        or program.target_schema is not None or program.cost_schema is not None or program.trigger_limit is not None
+        or (program.event, program.active_zone) != ("land.enter", "battlefield")
+        or FrozenMap(program.event_condition or {}) != FrozenMap(main_phase_extra_combat_condition())
+        or not {"intervening_condition", MAIN_PHASE_EXTRA_COMBAT_MECHANIC}.issubset(program.coverage)
+    ):
+        raise ValueError("Main-phase combat requires its complete untargeted own-main landfall trigger")
+    return (*extra_combat_effect_capabilities(marked[0]),
+            "trigger.event.normalized_zone_change", "trigger.placement.apnap")

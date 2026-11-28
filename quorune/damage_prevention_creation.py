@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .damage import DamageError, recipient_snapshot, source_snapshot
 from .damage_modifier_state import (
     ChosenDamageSource,
+    CreateTokensPreventionAftermath,
     DamageAftermathRecipient,
     DamageModifierDuration,
     DamageModifierError,
@@ -14,6 +15,7 @@ from .damage_modifier_state import (
     DamagePreventionShield,
     DamageSubject,
     DealDamagePreventionAftermath,
+    PREVENTED_SOURCE_REFLECTION,
     GainLifePreventionAftermath,
     PlaceCountersPreventionAftermath,
     PreventionDamageKind,
@@ -92,6 +94,7 @@ class PlaceCountersAftermathRequest:
     per_prevented: int = 0
     fixed_amount: int = 0
     subject_ref: str | None = None
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if not " ".join(str(self.counter_name).casefold().split()):
@@ -136,7 +139,7 @@ class DealDamageAftermathRequest:
                 raise DamagePreventionCreationError(
                     "Fixed prevention damage requires a recipient"
                 )
-        elif self.recipient_kind == "prevented_source_controller":
+        elif self.recipient_kind in {"prevented_source_controller", PREVENTED_SOURCE_REFLECTION}:
             if self.recipient_ref is not None:
                 raise DamagePreventionCreationError(
                     "A prevented-source controller recipient cannot be fixed"
@@ -161,6 +164,7 @@ PreventionAftermathRequest = (
     GainLifeAftermathRequest
     | PlaceCountersAftermathRequest
     | DealDamageAftermathRequest
+    | CreateTokensPreventionAftermath
 )
 
 
@@ -295,6 +299,8 @@ class PreventionShieldCreationRequest:
     application_group_id: str | None = None
     aftermath: tuple[PreventionAftermathRequest, ...] = ()
     triggered_ability: PreventionTriggeredAbilityRequest | None = None
+    lock_battlefield_subjects: bool = False
+    source_next_instance_batch_version: int | None = None
 
     def __post_init__(self) -> None:
         if not str(self.source_id or "") or not str(self.controller or ""):
@@ -317,6 +323,13 @@ class PreventionShieldCreationRequest:
             raise DamagePreventionCreationError(
                 "Prevention creation requires a typed applicability scope"
             )
+        if type(self.lock_battlefield_subjects) is not bool or self.lock_battlefield_subjects and (
+            self.mode is not PreventionMode.ALL or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
+            or self.damage_kind is not PreventionDamageKind.ANY or self.recipient_kind is not PreventionRecipientKind.ANY
+            or self.scope != DamagePreventionScope() or self.chosen_source_ref is not None
+            or self.aftermath or self.triggered_ability is not None or self.source_predicate != ObjectQuerySpec()
+        ):
+            raise DamagePreventionCreationError("Battlefield snapshot subjects require a plain turn-long prevention shield")
         subjects = tuple(self.subjects)
         if not subjects or any(
             not isinstance(value, PreventionSubjectAllocation)
@@ -359,6 +372,7 @@ class PreventionShieldCreationRequest:
                     GainLifeAftermathRequest,
                     PlaceCountersAftermathRequest,
                     DealDamageAftermathRequest,
+                    CreateTokensPreventionAftermath,
                 ),
             )
             for value in aftermath
@@ -492,6 +506,8 @@ def _shield_ids(
     request: PreventionShieldCreationRequest,
     subjects: Sequence[DamageSubject],
 ) -> tuple[str, ...]:
+    from .damage_modifier_state import SOURCE_NEXT_INSTANCE_BATCH_FIELD
+
     seed = stable_json(
         {
             "revision": int(host.state.revision),
@@ -504,6 +520,8 @@ def _shield_ids(
             "amounts": [allocation.amount for allocation in request.subjects],
             "chosen_source": request.chosen_source_ref,
             "source_predicate": request.source_predicate.to_dict(),
+            **({SOURCE_NEXT_INSTANCE_BATCH_FIELD: request.source_next_instance_batch_version}
+               if request.source_next_instance_batch_version is not None else {}),
             "application_group_id": request.application_group_id,
             "aftermath": [
                 (
@@ -523,6 +541,8 @@ def _shield_ids(
                         "fixed_amount": value.fixed_amount,
                     }
                     if isinstance(value, DealDamageAftermathRequest)
+                    else value.to_dict()
+                    if isinstance(value, CreateTokensPreventionAftermath)
                     else {
                         "kind": "place_counters",
                         "subject": value.subject_ref,
@@ -591,15 +611,18 @@ def _aftermath_for_subject(
 ) -> tuple[
     GainLifePreventionAftermath
     | PlaceCountersPreventionAftermath
-    | DealDamagePreventionAftermath,
+    | DealDamagePreventionAftermath
+    | CreateTokensPreventionAftermath,
     ...,
 ]:
     result: list[
-        GainLifePreventionAftermath
-        | PlaceCountersPreventionAftermath
-        | DealDamagePreventionAftermath
+        GainLifePreventionAftermath | PlaceCountersPreventionAftermath
+        | DealDamagePreventionAftermath | CreateTokensPreventionAftermath
     ] = []
     for value in request.aftermath:
+        if isinstance(value, CreateTokensPreventionAftermath):
+            result.append(value)
+            continue
         if isinstance(value, GainLifeAftermathRequest):
             result.append(
                 GainLifePreventionAftermath(
@@ -636,6 +659,7 @@ def _aftermath_for_subject(
                     recipient=recipient,
                     per_prevented=value.per_prevented,
                     fixed_amount=value.fixed_amount,
+                    schema_version=2 if recipient.kind == PREVENTED_SOURCE_REFLECTION else 1,
                 )
             )
             continue
@@ -651,6 +675,7 @@ def _aftermath_for_subject(
                 placing_player=value.placing_player,
                 per_prevented=value.per_prevented,
                 fixed_amount=value.fixed_amount,
+                schema_version=value.schema_version,
             )
         )
     return tuple(result)
@@ -714,6 +739,15 @@ def _triggered_ability(
         raise DamagePreventionCreationError(str(exc)) from exc
 
 
+def _prevention_creation_subject(host, request, ref):
+    if not request.lock_battlefield_subjects:
+        return _damage_subject(host, ref, request.controller)
+    card = host._resolve_object(request.controller, ref, zones={"battlefield"})
+    if card.phased_out:
+        raise DamagePreventionCreationError("Prevention snapshot cannot contain a phased-out permanent")
+    return DamageSubject(card.ref, "permanent", card.controller, card.object_id, card.logical_object_id, card.owner)
+
+
 def plan_prevention_shield_creation(
     host: DamagePreventionCreationHost,
     request: PreventionShieldCreationRequest,
@@ -726,7 +760,7 @@ def plan_prevention_shield_creation(
         )
     try:
         subjects = tuple(
-            _damage_subject(host, allocation.subject_ref, request.controller)
+            _prevention_creation_subject(host, request, allocation.subject_ref)
             for allocation in request.subjects
         )
         chosen = pin_chosen_damage_source(
@@ -755,6 +789,7 @@ def plan_prevention_shield_creation(
                 application_group_id=request.application_group_id,
                 aftermath=_aftermath_for_subject(host, request, subject),
                 triggered_ability=triggered_ability,
+                source_next_instance_batch_version=request.source_next_instance_batch_version,
             )
             for shield_id, subject, allocation in zip(
                 ids, subjects, request.subjects, strict=True

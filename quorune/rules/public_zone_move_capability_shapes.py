@@ -10,6 +10,10 @@ from ..affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
     DEFENDING_PLAYER_UNTAP_SET_FIELD,
+    TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD,
+    TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD,
+    decode_target_player_creature_untap_snapshot,
+    target_player_creature_snapshot_target_schema,
     PermanentControllerRelation,
     decode_defending_player_creature_untap,
 )
@@ -22,12 +26,15 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_c
 from ..public_zone_moves import (
     ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY, ANNOUNCED_GRAVEYARD_RETURN_VERSION,
     ANNOUNCED_MANA_VALUE_MAX_FIELD, PUBLIC_AURA_ENTRY_VERSIONS,
+    SAME_TURN_GRAVEYARD_RETURN_VERSIONS, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION, PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS,
+    same_turn_graveyard_return_history_query, targeted_same_turn_graveyard_return_schema,
     OWN_GRAVEYARD_TYPE_CHOICE_FIELD,
     own_graveyard_type_return_dependencies,
     PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY,
     PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
+    owned_permanent_library_bottom_target_schema,
     OWNER_LIBRARY_POSITION_CAPABILITY, OWNER_LIBRARY_POSITION_MECHANIC, OWNER_LIBRARY_POSITION_OPERATION,
     GRAVEYARD_LIBRARY_TARGET_CAPABILITY,
     GRAVEYARD_LIBRARY_TARGET_FIELD,
@@ -38,6 +45,7 @@ from ..public_zone_moves import (
     PublicZoneSeatRelation,
     stack_spell_exile_node_capabilities,
 )
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..targets import TargetGroup
 from ..util import stable_json
 from .graveyard_card_targets import (
@@ -150,6 +158,14 @@ def fixed_owner_zone_move_covered_mechanics(
 ) -> tuple[str, ...]:
     supplied = set(capability_ids)
     covered: set[str] = set()
+    from .public_exile_result_model import ATTACKING_EXILE_SEARCH_CAPABILITY, ATTACKING_EXILE_SEARCH_MECHANIC
+
+    from ..event_card_return import EVENT_HAND_RETURN_CAPABILITY, EVENT_HAND_RETURN_MECHANIC
+
+    if EVENT_HAND_RETURN_CAPABILITY in supplied:
+        covered.add(EVENT_HAND_RETURN_MECHANIC)
+    if ATTACKING_EXILE_SEARCH_CAPABILITY in supplied:
+        covered.add(ATTACKING_EXILE_SEARCH_MECHANIC)
     if LINKED_EXILE_RETURN_CAPABILITY in supplied:
         covered.update((LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"))
     if OWNER_LIBRARY_POSITION_CAPABILITY in supplied:
@@ -167,6 +183,12 @@ def fixed_owner_zone_move_covered_mechanics(
     if "permanent.tap_state.fixed_set" in supplied:
         covered.update({"fixed-public-tap-state-set", "tap-and-untap"})
     return tuple(sorted(covered))
+
+
+def face_up_exile_owner_shuffle_is_closed(effect, target_schema):
+    return (dict(effect) == {"op": "shuffle_into_library", "card": "$target.0"}
+            and _closed_owner_zone_target_schema(target_schema)
+            and tuple(target_schema["zones"]) == ("exile",))
 
 
 def _closed_owner_zone_target_schema(value: Mapping[str, Any] | None) -> bool:
@@ -273,9 +295,14 @@ def fixed_owner_zone_move_node_capabilities(
     if linked:
         return linked
     from ..event_card_return import (
-        event_library_move_capabilities, is_event_library_move, validate_event_library_move,
+        event_hand_return_node_capabilities, event_library_move_capabilities,
+        is_event_hand_return, is_event_library_move, validate_event_library_move,
     )
 
+    if len(effects) == 1 and is_event_hand_return(effects[0]):
+        return event_hand_return_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
     if len(effects) == 1 and is_event_library_move(effects[0]):
         if target_schema is not None or FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics:
             return ()
@@ -287,6 +314,15 @@ def fixed_owner_zone_move_node_capabilities(
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .opponent_spell_or_permanent_return import (
+        ENTRY_FIELD, FIELD, OPPOSING_SPELL_FIELD, SPELL_FIELD, opponent_spell_or_permanent_return_capabilities,
+    )
+
+    if {FIELD, ENTRY_FIELD, SPELL_FIELD, OPPOSING_SPELL_FIELD}.intersection(effect):
+        return opponent_spell_or_permanent_return_capabilities(effect, target_schema)
+    if target_schema == owned_permanent_library_bottom_target_schema():
+        expected = {"op": "move", "card": "$target.0", "destination": "library", "position": "bottom"}
+        return (FIXED_OWNER_ZONE_MOVE_CAPABILITY, "target.revalidate_resolution") if effect == expected else ()
     if GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
         return ((FIXED_OWNER_ZONE_MOVE_CAPABILITY, GRAVEYARD_LIBRARY_TARGET_CAPABILITY, "target.revalidate_resolution")
                 if _closed_graveyard_library_target(effect, target_schema) else ())
@@ -322,8 +358,10 @@ def fixed_owner_zone_move_node_capabilities(
     if operation == "shuffle_into_library":
         from .target_recipient_results import target_recipient_prefix_is_closed
 
+        face_up_exile_target = face_up_exile_owner_shuffle_is_closed(effect, target_schema)
         if set(effect) != {"op", "card"} or not (
-            attached or targeted and target_recipient_prefix_is_closed(effect, target_schema, "owner")
+            attached or face_up_exile_target
+            or targeted and target_recipient_prefix_is_closed(effect, target_schema, "owner")
         ):
             return ()
     else:
@@ -429,12 +467,43 @@ def triggered_source_exile_runtime_dependencies(program):
     return (_SOURCE_EXILE_BY_ZONE[zone][2],)
 
 
+def _mixed_zone_exile_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..public_zone_moves import FixedMixedZoneExileSpec, MIXED_ZONE_EXILE_CAPABILITY, MixedZoneExileScope
+
+    spec = FixedMixedZoneExileSpec.from_dict(value["set"])
+    if value != spec.effect():
+        raise ValueError("Mixed-zone exile requires its exact original source and set")
+    if spec.scope is MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY:
+        from .controller_hand_exile import DEPENDENCIES
+
+        return DEPENDENCIES
+    return ("zone.move.fixed_public_set", MIXED_ZONE_EXILE_CAPABILITY)
+
+
 def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Require the explicit owners of the versioned public zone sets."""
+    from ..public_zone_moves import is_mixed_zone_exile_spec
+
+    if is_mixed_zone_exile_spec(value["set"]):
+        return _mixed_zone_exile_payload_dependencies(value)
     spec = PublicZoneMoveSetSpec.from_dict(value["set"])
+    from ..public_zone_moves import PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION, NONHISTORIC_NONLAND_RETURN_CAPABILITY
+
+    if spec.schema_version == PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION:
+        if set(value) != {"op", "source", "set"} or value.get("source") != "$source":
+            raise ValueError("Nonhistoric return requires the original complete battlefield set effect")
+        return ("zone.move.fixed_public_set", "zone.change.destination_replacement", NONHISTORIC_NONLAND_RETURN_CAPABILITY)
+    from .cast_name_graveyard_returns import CAST_NAME_RETURN_CAPABILITY, CAST_NAME_RETURN_VERSION
+
+    history = (
+        same_turn_graveyard_return_history_query(spec.seat_relation).capability_dependencies
+        if spec.schema_version in SAME_TURN_GRAVEYARD_RETURN_VERSIONS else ()
+    )
     return (
         "zone.move.fixed_public_set",
+        *history,
         *object_query_capabilities(spec.query),
+        *((CAST_NAME_RETURN_CAPABILITY,) if spec.schema_version == CAST_NAME_RETURN_VERSION else ()),
         *((PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY,)
           if spec.schema_version == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION else ()),
         *(("attachment.aura.typed_restriction",) if spec.schema_version in PUBLIC_AURA_ENTRY_VERSIONS
@@ -446,6 +515,10 @@ def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple
 def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Do not retroactively add payload dependencies to historical set versions."""
     raw = value["set"]
+    from ..public_zone_moves import is_mixed_zone_exile_spec
+
+    if is_mixed_zone_exile_spec(raw):
+        return _mixed_zone_exile_payload_dependencies(value)
     if isinstance(raw, Mapping) and raw.get("schema_version") == ANNOUNCED_GRAVEYARD_RETURN_VERSION:
         from ..query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
 
@@ -455,8 +528,12 @@ def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple
         projected = {**value, "set": {**raw, ANNOUNCED_MANA_VALUE_MAX_FIELD: 2}}
         return (*public_zone_move_set_payload_dependencies(projected), DECLARED_AMOUNT_CAPABILITY)
     spec = PublicZoneMoveSetSpec.from_dict(raw)
+    if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
+        raise ValueError("Chosen graveyard return is generated only by its original public choice")
+    from ..public_zone_moves import PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
+
     return public_zone_move_set_payload_dependencies(value) if spec.schema_version in {
-        *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
+        *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION, PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION,
     } else ()
 
 
@@ -505,12 +582,121 @@ def chosen_color_permanent_return_runtime_dependencies(program):
     return required
 
 
+CHOSEN_TYPE_TAP_STATE_TEMPLATE = "chosen-type-target-player-tap-state-v1"
+CHOSEN_TYPE_TAP_STATE_FIELD = "chosen_type_tap_state"
+CHOSEN_TYPE_TAP_STATE_TARGET = {
+    "zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any",
+}
+CHOSEN_TYPE_TAP_STATE_MECHANICS = (
+    "tap-and-untap", "fixed-public-tap-state-set", "cr-115-targets",
+)
+
+
+def _target_player_tap_set(card_type, tapped):
+    return {
+        "op": "set_public_tap_state", "source": "$source", "tapped": tapped,
+        "set": AffectedPermanentSetSpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=(card_type,), tapped=not tapped),
+            controller_relation=PermanentControllerRelation.TARGET_PLAYER, target_controller="$target.0",
+        ).to_dict(),
+    }
+
+
+def chosen_type_tap_state_effect():
+    types = ("artifact", "creature", "land")
+    return {
+        "op": "choose_option", "player": "$controller", CHOSEN_TYPE_TAP_STATE_FIELD: 1,
+        "prompt": "Choose artifact, creature, or land.",
+        "options": [{"id": kind, "label": kind.title()} for kind in types],
+        "then_by_choice": {
+            kind: [{
+                "op": "choose_option", "player": "$controller",
+                "prompt": "Tap or untap the chosen type?",
+                "options": [{"id": "tap", "label": "Tap"}, {"id": "untap", "label": "Untap"}],
+                "then_by_choice": {
+                    "tap": [_target_player_tap_set(kind, True)],
+                    "untap": [_target_player_tap_set(kind, False)],
+                },
+            }]
+            for kind in types
+        },
+    }
+
+
+def chosen_type_tap_state_capabilities(effect, target_schema, mechanics):
+    expected = chosen_type_tap_state_effect()
+    if (
+        not set(CHOSEN_TYPE_TAP_STATE_MECHANICS) <= set(mechanics)
+        or stable_json(target_schema) != stable_json(CHOSEN_TYPE_TAP_STATE_TARGET)
+        or stable_json(effect) != stable_json(expected)
+    ):
+        return ()
+    dependencies = set()
+    for options in expected["then_by_choice"].values():
+        for result in options[0]["then_by_choice"].values():
+            owned = fixed_public_tap_state_set_node_capabilities(
+                effects=result, target_schema=target_schema, mechanic_ids=mechanics,
+            )
+            if not owned:
+                return ()
+            dependencies.update(owned)
+    return tuple(sorted(dependencies))
+
+
+def targeted_same_turn_graveyard_return_runtime_dependencies(program):
+    if "zone.move.fixed_public_set" not in program.capability_dependencies:
+        return ()
+    from .effect_shape_walkers import nested_effects
+
+    if not any(
+        effect.get("op") == "move_public_zone_set" and isinstance(effect.get("set"), Mapping)
+        and effect["set"].get("schema_version") == TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION
+        for effect in nested_effects((program.effects, program.handlers))
+    ):
+        return ()
+    if (program.event, program.active_zone) != ("resolve", "stack") or program.handlers or len(program.effects) != 1:
+        raise ValueError("Targeted same-turn graveyard return requires its original resolving spell")
+    required = fixed_public_zone_move_set_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required:
+        raise ValueError("Targeted same-turn graveyard return requires its original current arrival target schema")
+    return required
+
+
+def chosen_type_tap_state_runtime_dependencies(program):
+    if not any(CHOSEN_TYPE_TAP_STATE_FIELD in effect for effect in program.effects) and (
+        program.provenance.get("template_id") != CHOSEN_TYPE_TAP_STATE_TEMPLATE
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or not program.ability_id.startswith("spell:")
+        or len(program.effects) != 1 or program.cost_schema is not None or program.handlers
+    ):
+        raise ValueError("A chosen type tap-state set requires one complete resolving spell instruction")
+    required = chosen_type_tap_state_capabilities(program.effects[0], program.target_schema, program.coverage)
+    if not required:
+        raise ValueError("A chosen type tap-state set requires six exact results and the original target player")
+    return required
+
+
 def fixed_public_zone_move_set_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    from ..public_zone_moves import is_mixed_zone_exile_spec
+
+    if (len(effects) == 1 and effects[0].get("op") == "move_public_zone_set"
+            and is_mixed_zone_exile_spec(effects[0].get("set"))):
+        if target_schema is not None:
+            return ()
+        try:
+            return _mixed_zone_exile_payload_dependencies(effects[0])
+        except (ValueError, TypeError, KeyError):
+            return ()
     mechanic_ids = tuple(mechanic_ids)
     stack_exile = stack_spell_exile_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -530,6 +716,8 @@ def fixed_public_zone_move_set_node_capabilities(
     )
     if private_hand:
         return private_hand
+    if len(effects) == 1 and CHOSEN_TYPE_TAP_STATE_FIELD in effects[0]:
+        return chosen_type_tap_state_capabilities(effects[0], target_schema, mechanic_ids)
     public_tap_state = fixed_public_tap_state_set_node_capabilities(
         effects=effects,
         target_schema=target_schema,
@@ -563,10 +751,13 @@ def fixed_public_zone_move_set_node_capabilities(
             return own_graveyard_type_return_dependencies(effect)
         except (TypeError, ValueError):
             return ()
-    from .public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
+    from .public_exile_result_model import ATTACKING_EXILE_SEARCH_MECHANIC, PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
+
+    from .affected_library_search_batch import EXILE_LAND_SEARCH_MECHANIC
 
     has_followup = "followup" in effect
-    if has_followup != (PUBLIC_EXILE_RESULT_MECHANIC in mechanics):
+    supplied_followup = {PUBLIC_EXILE_RESULT_MECHANIC, ATTACKING_EXILE_SEARCH_MECHANIC, EXILE_LAND_SEARCH_MECHANIC} & mechanics
+    if len(supplied_followup) != int(has_followup):
         return ()
     expected = {"op", "source", "set"} | ({"followup"} if has_followup else set())
     if (
@@ -581,10 +772,36 @@ def fixed_public_zone_move_set_node_capabilities(
         if has_followup:
             followup = PublicExileFollowup.from_dict(effect["followup"])
             followup.validate_move(spec)
+            if followup.schema_version == 2:
+                if supplied_followup != {ATTACKING_EXILE_SEARCH_MECHANIC} or dict(target_schema or {}) != _PLAYER_TARGETS[0]:
+                    return ()
+            elif followup.schema_version == 3:
+                if supplied_followup != {EXILE_LAND_SEARCH_MECHANIC} or target_schema is not None:
+                    return ()
+            elif supplied_followup != {PUBLIC_EXILE_RESULT_MECHANIC}:
+                return ()
             result_caps = followup.capability_dependencies
     except (KeyError, TypeError, ValueError):
         return ()
+    if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
+        return ()
+    from .cast_name_graveyard_returns import CAST_NAME_RETURN_VERSION, CAST_NAMES_VALUE
+
+    if spec.schema_version == CAST_NAME_RETURN_VERSION and (
+        has_followup or spec.cast_spell_names != CAST_NAMES_VALUE
+    ):
+        return ()
     dependencies = (*public_zone_move_set_payload_dependencies(effect), *result_caps)
+    if spec.schema_version == TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION:
+        from ..target_history import GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD
+
+        if (
+            spec.target_refs != "$targets" or "cr-115-targets" not in mechanics
+            or thaw_value(FrozenMap(target_schema or {})) != targeted_same_turn_graveyard_return_schema()
+            or type(target_schema.get(GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD)) is not bool
+        ):
+            return ()
+        return (*dependencies, "target.revalidate_resolution")
     targeted = spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
     if targeted:
         if (
@@ -606,7 +823,8 @@ def fixed_private_hand_entry_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     from .hand_entry_followup import (
-        HAND_ENTRY_FOLLOWUP_CAPABILITY, VERSIONED_HAND_ENTRY_FIELDS, decode_hand_entry_followup,
+        HAND_ENTRY_FOLLOWUP_CAPABILITY, HAND_ENTRY_SUBTYPE_LIFE_CAPABILITIES, VERSIONED_HAND_ENTRY_FIELDS,
+        HandEntrySubtypeLife, decode_hand_entry_followup,
     )
     from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, decode_hand_attacking_entry
     from .reanimation_followup import battlefield_entry_followup_capabilities
@@ -640,6 +858,8 @@ def fixed_private_hand_entry_node_capabilities(
         return (*base, ATTACKING_CARD_ENTRY_CAPABILITY)
     if followup is None:
         return base
+    if isinstance(followup, HandEntrySubtypeLife):
+        return (*base, *HAND_ENTRY_SUBTYPE_LIFE_CAPABILITIES)
     return tuple(dict.fromkeys((*base, HAND_ENTRY_FOLLOWUP_CAPABILITY, *battlefield_entry_followup_capabilities(followup))))
 
 
@@ -657,6 +877,17 @@ def fixed_public_tap_state_set_node_capabilities(
         or len(effects) != 1
     ):
         return ()
+    from ..affected_permanents import COMBAT_PLAYER_LAND_TAP_FIELD, decode_combat_player_land_tap
+
+    if COMBAT_PLAYER_LAND_TAP_FIELD in effects[0]:
+        if target_schema is not None or "cr-115-targets" in mechanics:
+            return ()
+        try:
+            group = decode_combat_player_land_tap(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return ("permanent.tap_state.fixed_set", "trigger.event.normalized_damage",
+                *object_query_capabilities(group.query))
     if DEFENDING_PLAYER_UNTAP_SET_FIELD in effects[0]:
         if target_schema is not None or "cr-115-targets" in mechanics:
             return ()
@@ -671,6 +902,19 @@ def fixed_public_tap_state_set_node_capabilities(
         TARGET_UNSPENT_MANA_FIELD, decode_target_unspent_mana_tap, target_unspent_mana_target_schema,
     )
 
+    if TARGET_OPPONENT_NONLAND_UNTAP_SNAPSHOT_FIELD in effects[0]:
+        from .tap_state_capability_shapes import opponent_nonland_tap_capabilities
+        return opponent_nonland_tap_capabilities(effects[0], target_schema, mechanics)
+    if TARGET_PLAYER_CREATURE_UNTAP_SNAPSHOT_FIELD in effects[0]:
+        if ("cr-115-targets" not in mechanics or type((target_schema or {}).get("count")) is not int
+                or target_schema != target_player_creature_snapshot_target_schema()):
+            return ()
+        try:
+            spec = decode_target_player_creature_untap_snapshot(effects[0])
+        except (TypeError, AffectedPermanentSetError):
+            return ()
+        return ("permanent.tap_state.fixed_set", "target.revalidate_resolution",
+                "untap.step.prohibit_next_controller", *object_query_capabilities(spec.query))
     if TARGET_UNSPENT_MANA_FIELD in effects[0]:
         if ("cr-115-targets" not in mechanics or type((target_schema or {}).get("count")) is not int
                 or target_schema != target_unspent_mana_target_schema()):

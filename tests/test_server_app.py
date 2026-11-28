@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+from contextlib import closing
 import json
 from pathlib import Path
 import shutil
 import sqlite3
 import tempfile
+from threading import Event
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from common import DB_PATH, ROOT
 from quorune import CardDatabase
+from quorune.card_programs.binding import bind_card_program_runtime
+from quorune.card_programs.trust import FORMAT_PROFILE_CAPABILITIES
 from quorune.record import database_fingerprint, replay_record
 from server import ServerSettings, create_app
 from server.app import COOKIE_NAME, CSRF_COOKIE_NAME, _websocket_origin_allowed
@@ -64,6 +69,35 @@ class ServerApplicationTests(unittest.TestCase):
         cookie = cookies[0]
         self.client.cookies.set(name, value, domain=cookie.domain, path=cookie.path)
 
+    def test_structured_deck_editor_preserves_board_tags_and_physical_printing(self):
+        token, _ = self.guest("Visual editor owner")
+        auth = self.auth(token)
+        room = self.client.post("/api/v1/rooms", headers=auth, json={}).json()["room"]["room_id"]
+        endpoint = f"/api/v1/rooms/{room}/deck"
+        original = self.client.put(endpoint, headers=auth, json={
+            "name": "Original", "commander": "Krenko, Tin Street Kingpin",
+            "decklist": "Commander:\n1 Krenko, Tin Street Kingpin\nMainboard:\n99 Mountain",
+        })
+        self.assertEqual(200, original.status_code, original.text)
+        prior = original.json()["deck"]["deck_id"]
+        edited = self.client.put(endpoint, headers=auth, json={
+            "name": "Edited", "edited_deck_id": prior,
+            "entries": [
+                {"name": "Krenko, Tin Street Kingpin", "quantity": 1, "board": "commander", "tags": ["Token engine"]},
+                {"name": "Mountain", "quantity": 99, "board": "mainboard", "tags": ["Mana"],
+                 "printing": {"set_code": "dmu", "collector_number": "272", "language": "ja", "finish": "foil"}},
+            ],
+        })
+        self.assertEqual(200, edited.status_code, edited.text)
+        new_id = edited.json()["deck"]["deck_id"]
+        payload = self.client.get(f"/api/v1/me/decks/{new_id}", headers=auth).json()
+        self.assertEqual(["Krenko, Tin Street Kingpin"], payload["deck"]["commanders"])
+        self.assertEqual(["Token engine"], payload["deck"]["entries"][0]["tags"])
+        self.assertEqual({
+            "set_code": "dmu", "collector_number": "272", "language": "ja", "finish": "foil",
+        }, payload["deck"]["entries"][1]["printing"])
+        self.assertIn("Mountain", payload["card_refs"])
+
     def test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy(self):
         player, _ = self.guest("Copy Limit Pilot")
         created = self.client.post("/api/v1/rooms", headers=self.auth(player), json={"seed": 9035})
@@ -88,6 +122,43 @@ class ServerApplicationTests(unittest.TestCase):
                 else:
                     self.assertIn("printed limit", response.text)
 
+    def test_deck_upload_distinguishes_card_rules_from_match_rules(self):
+        player, _ = self.guest("Rules Readiness Pilot")
+        response = self.client.post("/api/v1/rooms", headers=self.auth(player), json={})
+        self.assertEqual(201, response.status_code, response.text)
+        room = response.json()["room"]["room_id"]
+        deck = {
+            "name": "Rules readiness",
+            "commander": "Krenko, Tin Street Kingpin",
+            "decklist": "Commander:\n1 Krenko, Tin Street Kingpin\nMainboard:\n99 Mountain\n",
+        }
+
+        def submit():
+            with patch.dict(FORMAT_PROFILE_CAPABILITIES, {"commander_review": ()}):
+                response = self.client.put(
+                    f"/api/v1/rooms/{room}/deck", headers=self.auth(player), json=deck
+                )
+            self.assertEqual(200, response.status_code, response.text)
+            return response.json()["preflight"]
+
+        ready = submit()
+        self.assertEqual(100, ready["fully_playable_cards"])
+        self.assertTrue(ready["card_rules_ready"])
+        self.assertFalse(ready["trusted_only_ready"])
+
+        commander = self.client.app.state.runtime.card_db.lookup(deck["commander"])
+
+        def missing_commander_binding(program, **kwargs):
+            binding = bind_card_program_runtime(program, **kwargs)
+            if program.oracle_id == commander.oracle_id:
+                binding["strict_capability_ready"] = False
+            return binding
+
+        with patch("quorune.preflight.bind_card_program_runtime", side_effect=missing_commander_binding):
+            blocked = submit()
+        self.assertFalse(blocked["card_rules_ready"])
+        self.assertFalse(blocked["trusted_only_ready"])
+
     def test_websocket_origin_accepts_exact_same_origin_and_rejects_foreign(self):
         configured = ("http://127.0.0.1:5173",)
         self.assertTrue(
@@ -111,6 +182,206 @@ class ServerApplicationTests(unittest.TestCase):
                 configured,
             )
         )
+
+    def test_submitted_deck_readiness_separates_snapshot_drift_and_private_card_reasons(self):
+        from unittest.mock import patch
+
+        host, _ = self.guest("Deck owner")
+        guest, _ = self.guest("Second seat")
+        created = self.client.post("/api/v1/rooms", headers=self.auth(host), json={"player_count": 2})
+        self.assertEqual(201, created.status_code, created.text)
+        room = created.json()["room"]["room_id"]
+        invite = created.json()["invite_code"]
+        joined = self.client.post("/api/v1/rooms/join", headers=self.auth(guest), json={"invite_code": invite, "seat": "B"})
+        self.assertEqual(200, joined.status_code, joined.text)
+
+        assessment = {
+            "trusted_only_ready": False,
+            "source_hash_drift_cards": ["Ornithopter"],
+            "cards": [
+                {"name": "Ornithopter", "status": "partial", "source_hash_match": False, "unresolved": ["cast_cost"]},
+                {"name": "Viscera Seer", "status": "partial", "unresolved": ["activated_ability:ab1"]},
+            ],
+        }
+        with patch("server.deck_readiness.semantic_preflight", return_value=assessment):
+            submitted = self.client.put(f"/api/v1/rooms/{room}/deck", headers=self.auth(host), json={
+                "name": "Saved deck", "commander": "Yargle and Multani",
+                "decklist": "1 Viscera Seer\n1 Ornithopter\n97 Swamp",
+            })
+        self.assertEqual(200, submitted.status_code, submitted.text)
+        self.assertEqual("legal", submitted.json()["format_legality"]["status"])
+        readiness = submitted.json()["preflight"]
+        self.assertFalse(readiness["trusted_only_ready"])
+        self.assertTrue(readiness["data_integrity_issue"])
+        self.assertEqual(readiness["affected_cards"], [
+            {"name": "Ornithopter", "reasons": ["The verified rules use different card data"]},
+            {"name": "Viscera Seer", "reasons": ["Activated ability needs additional rules support"]},
+        ])
+
+        self.restart_client()
+        owned = self.client.get(f"/api/v1/rooms/{room}", headers=self.auth(host)).json()["room"]["seats"][0]
+        public = self.client.get(f"/api/v1/rooms/{room}", headers=self.auth(guest)).json()["room"]["seats"][0]
+        self.assertEqual(readiness, owned["deck"]["preflight"])
+        self.assertFalse(public["ready"])
+        self.assertNotIn("preflight", public["deck"])
+
+    def test_rulings_conflict_saves_a_private_draft_and_blocks_admission(self):
+        from unittest.mock import AsyncMock, patch
+
+        from quorune.card_programs.adapters import card_program_from_semantic_programs
+        from quorune.semantics import SemanticProgram
+
+        host, _ = self.guest("Deck owner")
+        guest, _ = self.guest("Other player")
+        created = self.client.post("/api/v1/rooms", headers=self.auth(host), json={"player_count": 2}).json()
+        room_id = created["room"]["room_id"]
+        room_path = f"/api/v1/rooms/{room_id}"
+        joined = self.client.post("/api/v1/rooms/join", headers=self.auth(guest), json={"invite_code": created["invite_code"], "seat": "B"})
+        self.assertEqual(200, joined.status_code, joined.text)
+        deck = {"name": "Rules check witness", "commander": "Yargle and Multani", "decklist": "99 Swamp"}
+        with patch("server.app.CardImageCache.prefetch", new_callable=AsyncMock):
+            ready = self.client.put(f"{room_path}/deck", headers=self.auth(guest), json=deck)
+        self.assertEqual(200, ready.status_code, ready.text)
+        with CardDatabase(self.settings.card_db) as card_db:
+            oracle_id = card_db.lookup("Swamp", fuzzy=False).oracle_id
+        reviewed = SemanticProgram(key="swamp-reviewed", label="Reviewed fixture", oracle_id=oracle_id, ability_id="ability:reviewed",
+            provenance={"authored_by": "fixture review", "source_rulings_hash": "1" * 64})
+        generated = SemanticProgram(key="swamp-generated", label="Generated fixture", oracle_id=oracle_id, ability_id="ability:generated",
+            provenance={"template_id": "fixture template", "source_rulings_hash": "2" * 64})
+
+        def conflict(*_args, **_kwargs):
+            return card_program_from_semantic_programs([reviewed, generated])
+
+        with patch("server.deck_readiness.semantic_preflight", side_effect=conflict), patch(
+            "server.app.CardImageCache.prefetch", new_callable=AsyncMock,
+        ) as prefetch:
+            draft = self.client.put(f"{room_path}/deck", headers=self.auth(host), json=deck)
+        prefetch.assert_not_called()
+        self.assertEqual(200, draft.status_code, draft.text)
+        receipt = draft.json()
+        self.assertEqual("legal", receipt["format_legality"]["status"])
+        self.assertTrue(receipt["preflight"]["data_integrity_issue"])
+        blocker, = receipt["preflight"]["data_integrity_blockers"]
+        self.assertEqual("rulings_source_mismatch", blocker["kind"])
+        self.assertEqual("Swamp", blocker["card"])
+        self.assertEqual(oracle_id, blocker["oracle_id"])
+        self.assertTrue(blocker["diagnostic_id"].startswith("card-data-"))
+        self.assertEqual({"1" * 64, "2" * 64}, {program["rulings_hash"] for program in blocker["programs"]})
+
+        owned = self.client.get(room_path, headers=self.auth(host)).json()["room"]["seats"][0]
+        other = self.client.get(room_path, headers=self.auth(guest)).json()["room"]["seats"][0]
+        self.assertFalse(owned["ready"])
+        self.assertEqual([blocker], owned["deck"]["preflight"]["data_integrity_blockers"])
+        self.assertNotIn("preflight", other["deck"])
+        deck_id = receipt["deck"]["deck_id"]
+        saved = self.client.get(f"/api/v1/me/decks/{deck_id}", headers=self.auth(host))
+        self.assertEqual(200, saved.status_code, saved.text)
+        self.assertIn("Swamp", {entry["name"] for entry in saved.json()["deck"]["entries"]})
+        self.assertEqual(409, self.client.post(f"{room_path}/start", headers=self.auth(host)).status_code)
+
+    def test_deck_review_compares_all_mismatches_and_pins_reviewed_match(self):
+        from unittest.mock import AsyncMock, patch
+
+        with CardDatabase(self.settings.card_db) as database:
+            earlier_hash = database_fingerprint(database)["metadata_hash"]
+            swat = database.lookup("Deflecting Swat", fuzzy=False).oracle_id
+            rollick = database.lookup("Deadly Rollick", fuzzy=False).oracle_id
+        reviewed_dir = self.settings.card_snapshot_dir / "reviewed"
+        reviewed_dir.mkdir(parents=True)
+        earlier = reviewed_dir / f"{earlier_hash}.sqlite3"
+        self.client.__exit__(None, None, None)
+        shutil.copy2(self.settings.card_db, earlier)
+        with closing(sqlite3.connect(self.settings.card_db)) as connection, connection:
+            connection.execute(
+                "INSERT INTO rulings(oracle_id, published_at, source, comment) VALUES (?, ?, ?, ?)",
+                (swat, "2026-11-20", "wotc", "A new ruling in the test snapshot."),
+            )
+            # The all-ASCII variant is a reviewed equivalent. Changing one
+            # ruling gives this fixture a distinct formatting-only fingerprint.
+            changed = connection.execute(
+                """
+                UPDATE rulings SET comment = REPLACE(comment, ?, ?)
+                WHERE rowid = (
+                    SELECT rowid FROM rulings
+                    WHERE oracle_id = ? AND INSTR(comment, ?) > 0
+                    ORDER BY published_at, source, comment LIMIT 1
+                )
+                """,
+                ("’", "'", rollick, "’"),
+            ).rowcount
+            self.assertEqual(1, changed)
+            connection.execute(
+                "INSERT OR REPLACE INTO metadata(key, value) VALUES (?, ?)",
+                ("scryfall_rulings_updated_at", "2026-11-20T12:00:00Z"),
+            )
+        self.client = TestClient(create_app(self.settings))
+        self.client.__enter__()
+
+        host, _ = self.guest("Host")
+        other, _ = self.guest("Guest")
+        created = self.client.post(
+            "/api/v1/rooms", headers=self.auth(host), json={"player_count": 2},
+        ).json()
+        room_path = f"/api/v1/rooms/{created['room']['room_id']}"
+        joined = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(other), json={"invite_code": created["invite_code"], "seat": "B"},
+        )
+        self.assertEqual(200, joined.status_code, joined.text)
+        with patch("server.app.CardImageCache.prefetch", new_callable=AsyncMock):
+            waiting = self.client.put(f"{room_path}/deck", headers=self.auth(host), json={
+                "name": "Source review", "commander": "Mishra, Eminent One",
+                "decklist": "1 Deflecting Swat\n1 Deadly Rollick\n49 Mountain\n48 Swamp",
+            })
+            ready = self.client.put(f"{room_path}/deck", headers=self.auth(other), json={
+                "name": "Other deck", "commander": "Yargle and Multani", "decklist": "99 Swamp",
+            })
+        self.assertEqual(200, waiting.status_code, waiting.text)
+        self.assertEqual(200, ready.status_code, ready.text)
+        blockers = {
+            item["card"]: item["comparison"]["changes"]
+            for item in waiting.json()["preflight"]["data_integrity_blockers"]
+        }
+        self.assertEqual({"Deadly Rollick", "Deflecting Swat"}, set(blockers))
+        self.assertEqual([{
+            "kind": "added",
+            "after": {"text": "A new ruling in the test snapshot.", "source": "wotc", "published_at": "2026-11-20"},
+        }], blockers["Deflecting Swat"])
+        self.assertEqual({"formatting"}, {change["kind"] for change in blockers["Deadly Rollick"]})
+        visible = self.client.get(room_path, headers=self.auth(other)).json()["room"]["seats"][0]
+        self.assertFalse(visible["ready"])
+        self.assertNotIn("preflight", visible["deck"])
+
+        path = f"{room_path}/start"
+        override = {"use_reviewed_card_data": True, "first_player": "B", "starting_life": 27}
+        self.assertEqual(409, self.client.post(path, headers=self.auth(host)).status_code)
+        self.assertEqual(403, self.client.post(path, headers=self.auth(other), json=override).status_code)
+        unavailable = earlier.with_suffix(".unavailable")
+        self.client.__exit__(None, None, None)
+        earlier.rename(unavailable)
+        self.client = TestClient(create_app(self.settings))
+        self.client.__enter__()
+        missing = self.client.post(path, headers=self.auth(host), json=override)
+        self.assertEqual(409, missing.status_code, missing.text)
+        self.assertIn("No retained card data passed", missing.text)
+        unavailable.rename(earlier)
+        started = self.client.post(path, headers=self.auth(host), json=override)
+        self.assertEqual(200, started.status_code, started.text)
+        game_id = started.json()["game_id"]
+        record_dir = self.settings.game_root / game_id
+        manifest = json.loads((record_dir / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(earlier_hash, manifest["scryfall"]["metadata_hash"])
+        self.assertEqual(["B", "A"], manifest["turn_order"])
+        with CardDatabase(self.settings.card_db) as active:
+            self.assertNotEqual(earlier_hash, database_fingerprint(active)["metadata_hash"])
+
+        self.restart_client()
+        resumed = self.client.get(f"/api/v1/games/{game_id}/state?full=true", headers=self.auth(other))
+        self.assertEqual(200, resumed.status_code, resumed.text)
+        state = resumed.json()["packet"]["state"]
+        self.assertEqual(game_id, state["game"]["id"])
+        self.assertEqual({27}, {player["life"] for player in state["players"].values()})
+        with CardDatabase(earlier) as database:
+            self.assertTrue(replay_record(record_dir, database, verify=True)["ok"])
 
     def test_browser_tabs_keep_distinct_guests_in_one_cookie_jar(self):
         tab_a = "a" * 32
@@ -158,7 +429,7 @@ class ServerApplicationTests(unittest.TestCase):
         created = self.client.post(
             "/api/v1/rooms",
             headers=self.auth(alice),
-            json={"seed": 20260730, "player_count": 2},
+            json={"seed": 1, "player_count": 2},
         )
         self.assertEqual(201, created.status_code, created.text)
         room = created.json()["room"]
@@ -192,6 +463,15 @@ class ServerApplicationTests(unittest.TestCase):
                 },
             )
             self.assertEqual(200, uploaded.status_code, uploaded.text)
+        start_path = f"/api/v1/rooms/{room['room_id']}/start"
+        forbidden = self.client.post(
+            start_path, headers=self.auth(bob), json={"first_player": "B", "starting_life": 27},
+        )
+        self.assertEqual(403, forbidden.status_code, forbidden.text)
+        for options in ({"first_player": "C"}, {"starting_life": 0}, {"starting_life": True}, {"starting_life": 12.5}):
+            with self.subTest(options=options):
+                invalid = self.client.post(start_path, headers=self.auth(alice), json=options)
+                self.assertEqual(422, invalid.status_code, invalid.text)
         add = GameManager.add
 
         async def checked_add(manager, *args, **kwargs):
@@ -203,7 +483,7 @@ class ServerApplicationTests(unittest.TestCase):
             patch.object(GameManager, "add", checked_add),
         ):
             started = self.client.post(
-                f"/api/v1/rooms/{room['room_id']}/start",
+                start_path,
                 headers=self.auth(alice),
             )
         self.assertEqual(1, loader.call_count)
@@ -227,6 +507,7 @@ class ServerApplicationTests(unittest.TestCase):
         )
         self.assertEqual("commander_duel", summary["format_profile"])
         self.assertEqual({"A", "B"}, set(packet["state"]["players"]))
+        self.assertEqual({40}, {player["life"] for player in packet["state"]["players"].values()})
         self.assertEqual(200, progress.status_code, progress.text)
         self.assertEqual(0, progress.json()["queue_depth"])
         self.assertFalse(progress.json()["persistence"]["pending"])
@@ -235,6 +516,7 @@ class ServerApplicationTests(unittest.TestCase):
         checkpoint = json.loads(
             (record_dir / "checkpoint.json").read_text(encoding="utf-8")
         )
+        self.assertEqual(["B", "A"], checkpoint["state"]["turn_order"])
         self.assertEqual(
             "trusted_only", checkpoint["state"]["config"]["semantic_policy"]
         )
@@ -437,10 +719,60 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, response.status_code, response.text)
         self.assertEqual(game_id, response.json()["packet"]["state"]["game"]["id"])
 
-    def create_ready_game(
-        self, player_count: int = 4
-    ) -> tuple[str, list[str], str]:
-        seats = "ABCD"[:player_count]
+    def test_reopened_match_requires_its_saved_rules_build(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        owner = self.auth(tokens[0])
+        packet = self.client.get(f"{base}/state?full=true", headers=owner).json()["packet"]
+        directory = self.settings.game_root / game_id
+        manifest_path = directory / "manifest.json"
+        original = manifest_path.read_bytes()
+        manifest = json.loads(original)
+        manifest["runtime_trust"]["capability_registry_fingerprint"] = "0" * 64
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        before = {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()}
+        self.restart_client()
+
+        refused = self.client.get(f"{base}/state?full=true", headers=owner)
+        self.assertEqual(409, refused.status_code, "Cold load must reject mismatched rules before projecting a hand")
+        detail = refused.json()["detail"]
+        self.assertEqual("game_rules_build_required", detail["code"])
+        self.assertNotIn("packet", refused.json())
+
+        command = {
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "previous-build-keep",
+            "decision_id": packet["decision"]["id"],
+            "action_id": "keep",
+            "capability": packet["decision"]["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        }
+        submitted = self.client.post(f"{base}/commands", headers=owner, json=command)
+        self.assertEqual(409, submitted.status_code, submitted.text)
+        self.assertEqual(detail, submitted.json()["detail"])
+        outsider, _ = self.guest("Outside this room")
+        denied = self.client.get(f"{base}/state?full=true", headers=self.auth(outsider))
+        self.assertEqual(403, denied.status_code, denied.text)
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with self.client.websocket_connect(f"{base}/stream") as socket:
+            self.assertEqual({"type": "terminal", **detail}, socket.receive_json())
+            self.assertEqual(4409, socket.receive()["code"])
+
+        runtime = self.client.app.state.runtime
+        self.assertIsNone(runtime._game_actor(game_id))
+        self.assertEqual(before, {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()})
+
+        manifest_path.write_bytes(original)
+        reopened = self.client.get(f"{base}/state?full=true", headers=owner)
+        self.assertEqual(200, reopened.status_code, reopened.text)
+        self.assertEqual(packet["view_revision"], reopened.json()["packet"]["view_revision"])
+
+    def create_ready_room(
+        self, player_count: int, *, occupied: str | None = None,
+    ) -> tuple[str, list[str]]:
+        seats = occupied or "ABCD"[:player_count]
         tokens = [self.guest(f"Player {seat}")[0] for seat in seats]
         response = self.client.post(
             "/api/v1/rooms",
@@ -492,12 +824,342 @@ class ServerApplicationTests(unittest.TestCase):
                     )
                 ),
             )
+        return room_id, tokens
+
+    def create_ready_game(
+        self, player_count: int = 4, *, first_player: str = "A", starting_life: int | None = None,
+    ) -> tuple[str, list[str], str]:
+        room_id, tokens = self.create_ready_room(player_count)
         response = self.client.post(
             f"/api/v1/rooms/{room_id}/start",
             headers=self.auth(tokens[0]),
+            json={"first_player": first_player, "starting_life": starting_life},
         )
         self.assertEqual(200, response.status_code, response.text)
         return response.json()["game_id"], tokens, room_id
+
+    def test_ready_room_prepares_rules_off_loop_and_start_reuses_them(self):
+        from quorune import session as session_module
+
+        room_id, tokens = self.create_ready_room(4)
+        self.restart_client()
+        room_path = f"/api/v1/rooms/{room_id}"
+        host = self.auth(tokens[0])
+        entered, release = Event(), Event()
+        compile_rules = session_module._compile_session_rules
+
+        def wait_for_room_poll(*args, **kwargs):
+            entered.set()
+            if not release.wait(timeout=15):
+                raise AssertionError("Room poll could not finish during warmup")
+            return compile_rules(*args, **kwargs)
+
+        with patch.object(session_module, "_compile_session_rules", side_effect=wait_for_room_poll) as compiler:
+            try:
+                room = self.client.get(room_path, headers=host)
+                self.assertEqual(200, room.status_code, room.text)
+                self.assertTrue(entered.wait(timeout=10))
+                self.assertEqual(200, self.client.get("/api/v1/health").status_code)
+                self.assertEqual("open", self.client.get(room_path, headers=host).json()["room"]["status"])
+                self.assertEqual([], list(self.settings.game_root.glob("*/manifest.json")))
+            finally:
+                release.set()
+            started = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+            self.assertEqual(200, started.status_code, started.text)
+            self.assertEqual(1, compiler.call_count)
+
+        game_id = started.json()["game_id"]
+        pilot = self.auth(tokens[3])
+        game_path = f"/api/v1/games/{game_id}"
+        packet = self.client.get(f"{game_path}/state", headers=pilot).json()["packet"]
+        decision = packet["decision"]
+        kept = self.client.post(f"{game_path}/commands", headers=pilot, json={
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "prepared-room-keep",
+            "decision_id": decision["id"],
+            "action_id": "keep",
+            "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        })
+        self.assertEqual(200, kept.status_code, kept.text)
+        self.assertTrue(kept.json()["receipt"]["ok"], kept.text)
+        with CardDatabase(self.settings.card_db) as database:
+            replay = replay_record(self.settings.game_root / game_id, database, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_start_uses_submitted_rules_without_waiting_for_a_lobby_poll(self):
+        from quorune.session import CommanderSession
+        from quorune.record_trust import semantics_fingerprint
+
+        room_id, tokens = self.create_ready_room(4)
+        runtime = self.client.app.state.runtime
+        host_id = runtime.store.authenticate(tokens[0])["guest_id"]
+        spec = runtime.store.start_spec(room_id, host_id)
+        ordinary = CommanderSession.prepare_rules(runtime.card_db, spec.decks, review_profile="commander_review")
+        with patch("quorune.session._compile_session_rules", side_effect=AssertionError("Deck rules were recompiled")) as compiler:
+            started = self.client.post(
+                f"/api/v1/rooms/{room_id}/start", headers=self.auth(tokens[0]), json={"first_player": "D"},
+            )
+            self.assertEqual(200, started.status_code, started.text)
+        compiler.assert_not_called()
+
+        game_id = started.json()["game_id"]
+        self.assertTrue((self.settings.game_root / game_id / "manifest.json").is_file())
+        actual = runtime.manager.get(game_id).service.session.engine.semantics
+        self.assertEqual(semantics_fingerprint(ordinary._semantics), semantics_fingerprint(actual))
+        self.assertEqual(ordinary._semantics.card_program_fingerprints(), actual.card_program_fingerprints())
+        for oracle_id in actual.card_program_fingerprints():
+            self.assertEqual(
+                ordinary._semantics.programs_for_oracle(oracle_id),
+                actual.programs_for_oracle(oracle_id),
+            )
+
+    def test_host_selected_starting_seat_and_life_survive_replay(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2, first_player="B", starting_life=27)
+        base = f"/api/v1/games/{game_id}"
+        auth_a, auth_b = (self.auth(token) for token in tokens)
+
+        def observe(auth):
+            response = self.client.get(f"{base}/state?full=true", headers=auth)
+            self.assertEqual(200, response.status_code, response.text)
+            return response.json()["packet"]
+
+        def submit(auth, action):
+            packet = observe(auth)
+            decision = packet["decision"]
+            response = self.client.post(f"{base}/commands", headers=auth, json={
+                "protocol_version": "3.0",
+                "game_id": game_id,
+                "command_id": f"{action}-{packet['view_revision']}",
+                "decision_id": decision["id"],
+                "action_id": action,
+                "capability": decision["cap"],
+                "expected_view_revision": packet["view_revision"],
+                "choices": {},
+            })
+            self.assertEqual(200, response.status_code, response.text)
+            self.assertTrue(response.json()["receipt"]["ok"], response.text)
+
+        opening = observe(auth_a)["state"]["players"]
+        self.assertEqual({"A": 27, "B": 27}, {seat: player["life"] for seat, player in opening.items()})
+        submit(auth_b, "keep")
+        submit(auth_a, "keep")
+        turn = observe(auth_b)["state"]["turn"]
+        self.assertEqual((1, "B", "upkeep"), (turn["seq"], turn["active"], turn["step"]))
+        submit(auth_b, "pass")
+        submit(auth_a, "pass")
+        state = observe(auth_b)["state"]
+        self.assertEqual(("B", "draw"), (state["turn"]["active"], state["turn"]["step"]))
+        self.assertEqual(7, state["players"]["B"]["hand_n"])
+
+        record_dir = self.settings.game_root / game_id
+        checkpoint = json.loads((record_dir / "checkpoint.json").read_text(encoding="utf-8"))["state"]
+        self.assertEqual(27, checkpoint["config"]["starting_life"])
+        self.assertEqual(["B", "A"], checkpoint["turn_order"])
+        with CardDatabase(self.settings.card_db) as database:
+            replay = replay_record(record_dir, database, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_multiplayer_start_rejects_unready_fourth_seat_and_accepts_three(self):
+        room_id, tokens = self.create_ready_room(4, occupied="ABD")
+        room_path = f"/api/v1/rooms/{room_id}"
+        host = self.auth(tokens[0])
+        fourth, _ = self.guest("Joining fourth player")
+        store = self.client.app.state.runtime.store
+        fourth_id = store.authenticate(fourth)["guest_id"]
+        commit = store.commit_started_game
+
+        def join_before_commit(*args, **kwargs):
+            store.join_room(fourth_id, invite_code=self.last_ready_invite, seat="C")
+            commit(*args, **kwargs)
+
+        with patch.object(store, "commit_started_game", side_effect=join_before_commit):
+            raced = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+        self.assertEqual(409, raced.status_code, raced.text)
+        self.assertIn("roster or a deck changed", raced.text)
+        self.assertEqual([], list(self.settings.game_root.glob("*/manifest.json")))
+
+        unready = self.client.post(f"{room_path}/start", headers=host)
+        self.assertEqual(409, unready.status_code, unready.text)
+        self.assertIn("Every seated player must submit a deck", unready.text)
+        removed = self.client.delete(f"{room_path}/seats/C", headers=host)
+        self.assertEqual(200, removed.status_code, removed.text)
+        empty = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "C"})
+        self.assertEqual(422, empty.status_code, empty.text)
+
+        started = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+        self.assertEqual(200, started.status_code, started.text)
+        result = started.json()
+        self.assertEqual("commander_multiplayer", result["profile"])
+        directory = self.settings.game_root / result["game_id"]
+        manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(["D", "A", "B"], manifest["turn_order"])
+        late = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(fourth),
+            json={"invite_code": self.last_ready_invite, "seat": "C"},
+        )
+        self.assertEqual(409, late.status_code, late.text)
+
+    def test_lost_durable_ack_reloads_same_move_without_a_second_commit(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        auth = self.auth(tokens[0])
+        packet = self.client.get(f"{base}/state?full=true", headers=auth).json()["packet"]
+        decision = packet["decision"]
+        command = {
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "lost-durable-ack",
+            "decision_id": decision["id"],
+            "action_id": "keep",
+            "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        }
+        runtime = self.client.app.state.runtime
+        failed_actor = runtime.manager.get(game_id)
+        save = runtime.persistence.save
+
+        def save_without_ack(service):
+            save(service)
+            raise OSError("Injected interruption after the durable commit")
+
+        with patch.object(runtime.persistence, "save", side_effect=save_without_ack):
+            failed = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(503, failed.status_code, failed.text)
+        self.assertEqual("game_recovery_required", failed.json()["detail"]["code"])
+        self.assertTrue(failed_actor.requires_recovery)
+
+        recovered = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[1]))
+        self.assertEqual(200, recovered.status_code, recovered.text)
+        self.assertEqual(packet["view_revision"] + 1, recovered.json()["packet"]["view_revision"])
+        self.assertIsNot(failed_actor, runtime.manager.get(game_id))
+
+        retry = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(200, retry.status_code, retry.text)
+        self.assertTrue(retry.json()["receipt"]["replayed"])
+        self.assertEqual(1, recovered.json()["game"]["commands"])
+
+    def test_priority_holds_require_the_seat_and_do_not_modify_the_game_revision(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        spectator, _ = self.guest("Priority settings spectator")
+        watched = self.client.post("/api/v1/rooms/watch", headers=self.auth(spectator),
+            json={"invite_code": self.last_ready_invite})
+        self.assertEqual(200, watched.status_code, watched.text)
+        url = f"/api/v1/games/{game_id}/priority-holds"
+        settings = {"steps": ["upkeep"], "preserve_empty": False}
+        self.assertEqual(403, self.client.put(url, headers=self.auth(spectator), json=settings).status_code)
+        self.assertEqual(422, self.client.put(url, headers=self.auth(tokens[1]),
+            json={**settings, "steps": ["upkeep", "upkeep"]}).status_code)
+        self.assertEqual(422, self.client.put(url, headers=self.auth(tokens[1]),
+            json={**settings, "seat": "A"}).status_code)
+
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        revision = actor.service.session.state.revision
+        response = self.client.put(url, headers=self.auth(tokens[1]), json=settings)
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual(settings, response.json()["holds"])
+        self.assertEqual({"B": settings}, {seat: value.to_dict() for seat, value in actor.priority_window_holds.items()})
+        self.assertEqual(revision, actor.service.session.state.revision)
+
+    def test_interrupted_record_save_restores_previous_revision(self):
+        from quorune import record
+
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        auth = self.auth(tokens[0])
+        original = self.client.get(f"{base}/state?full=true", headers=auth).json()["packet"]
+        decision = original["decision"]
+        command = {
+            "protocol_version": "3.0", "game_id": game_id, "command_id": "interrupted-record-save",
+            "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+            "expected_view_revision": original["view_revision"], "choices": {},
+        }
+        runtime = self.client.app.state.runtime
+        failed_actor = runtime.manager.get(game_id)
+        directory = runtime.records.game_directory(game_id)
+        before = {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()}
+        write_journal = record._atomic_jsonl
+
+        def fail_after_checkpoint(path, rows):
+            if path.name == "commands.jsonl":
+                self.assertNotEqual(before["checkpoint.json"], (directory / "checkpoint.json").read_bytes())
+                raise OSError("Injected interruption between checkpoint and command journal")
+            return write_journal(path, rows)
+
+        with patch.object(record, "_atomic_jsonl", side_effect=fail_after_checkpoint):
+            failed = self.client.post(f"{base}/commands", headers=auth, json=command)
+        self.assertEqual(503, failed.status_code, failed.text)
+        self.assertTrue(failed_actor.requires_recovery)
+
+        result = self.client.get(f"{base}/state?full=true", headers=auth)
+        self.assertEqual(200, result.status_code, result.text)
+        self.assertEqual(before, {path.name: path.read_bytes() for path in directory.iterdir() if path.is_file()})
+        recovered = result.json()
+        packet = recovered["packet"]
+        self.assertEqual(original["view_revision"], packet["view_revision"])
+        self.assertEqual(0, recovered["game"]["commands"])
+        self.assertIsNot(failed_actor, runtime.manager.get(game_id))
+
+        retry = self.client.post(f"{base}/commands", headers=auth, json={
+            **command, "decision_id": packet["decision"]["id"], "capability": packet["decision"]["cap"],
+        })
+        self.assertTrue(retry.json()["receipt"]["ok"], retry.text)
+        self.assertFalse(retry.json()["receipt"]["replayed"])
+        self.assertEqual(1, len((directory / "commands.jsonl").read_text(encoding="utf-8").splitlines()))
+
+    def test_http_state_captures_projection_and_lifecycle_in_one_actor_read(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=4, first_player="D")
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        for index, seat in enumerate("ABCD"):
+            with self.subTest(seat=seat):
+                before = actor.processed_messages
+                response = self.client.get(
+                    f"/api/v1/games/{game_id}/state?full=true",
+                    headers=self.auth(tokens[index]),
+                )
+                self.assertEqual(200, response.status_code, response.text)
+                self.assertEqual(before + 1, actor.processed_messages)
+                payload = response.json()
+                packet, game = payload["packet"], payload["game"]
+                self.assertEqual(f"pilot:{seat}", packet["principal"])
+                self.assertEqual(seat, game["seat"])
+                self.assertEqual(packet["view_revision"], game["state_revision"])
+                for other, player in packet["state"]["players"].items():
+                    self.assertEqual(other == seat, "hand" in player)
+
+    def test_command_progress_shows_only_the_requesting_pilots_timing(self):
+        game_id, tokens, _room = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        spectator, _ = self.guest("Timing spectator")
+        watched = self.client.post("/api/v1/rooms/watch", headers=self.auth(spectator),
+            json={"invite_code": self.last_ready_invite})
+        self.assertEqual(200, watched.status_code, watched.text)
+        packet = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[0])).json()["packet"]
+        decision = packet["decision"]
+        interaction_id = "timing-test-a-keep"
+        reply = self.client.post(f"{base}/commands", headers=self.auth(tokens[0]), json={
+            "protocol_version": "3.0", "game_id": game_id, "command_id": interaction_id,
+            "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"], "choices": {},
+        })
+        self.assertEqual(200, reply.status_code, reply.text)
+        self.assertTrue(reply.json()["receipt"]["ok"], reply.text)
+        revision = reply.json()["receipt"]["state_revision"]
+        yours = self.client.get(f"{base}/progress", headers=self.auth(tokens[0])).json()["last_command"]
+        self.assertEqual(interaction_id, yours["interaction_id"])
+        self.assertEqual(revision, yours["revision"])
+        for field in ("queue_ms", "execution_ms", "persistence_ms", "actor_ms"):
+            self.assertGreaterEqual(yours[field], 0)
+        for token in (tokens[1], spectator):
+            progress = self.client.get(f"{base}/progress", headers=self.auth(token))
+            self.assertEqual(200, progress.status_code, progress.text)
+            self.assertIsNone(progress.json()["last_command"])
+            self.assertNotIn(interaction_id, progress.text)
+        after = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[1])).json()["packet"]
+        self.assertEqual(revision, after["view_revision"])
 
     def test_spectator_projection_public_log_and_restart_are_read_only(self):
         game_id, tokens, room_id = self.create_ready_game()
@@ -811,6 +1473,43 @@ class ServerApplicationTests(unittest.TestCase):
         me = self.client.get("/api/v1/me", headers=self.auth(alice))
         self.assertEqual("Alice", me.json()["guest"]["display_name"])
 
+    def test_websocket_preserves_packet_and_lifecycle_revision_when_a_move_commits(self):
+        from quorune import CommandEnvelope
+
+        game_id, tokens, _ = self.create_ready_game(player_count=2)
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        observe = actor.observe
+        committed = []
+
+        async def capture_then_commit(*args, **kwargs):
+            captured = await observe(*args, **kwargs)
+            if not committed:
+                packet = captured.get("packet", captured)
+                decision = packet["decision"]
+                envelope = CommandEnvelope.from_mapping({
+                    "protocol_version": "3.0", "game_id": game_id, "command_id": "between-projections",
+                    "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+                    "expected_view_revision": packet["view_revision"], "choices": {},
+                })
+                committed.append(await actor.command("pilot:A", envelope))
+            return captured
+
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with patch.object(actor, "observe", side_effect=capture_then_commit), self.client.websocket_connect(
+            f"/api/v1/games/{game_id}/stream", headers={"origin": "http://testserver"},
+        ) as socket:
+            initial = socket.receive_json()
+            self.assertTrue(committed[0].ok, committed[0].summary)
+            first = initial["packet"]["view_revision"]
+            self.assertEqual(first + 1, committed[0].state_revision)
+            self.assertEqual(first, initial["game"]["state_revision"])
+            self.assertIn("pilot:A", initial["game"]["pending_principals"])
+
+            updated = socket.receive_json()
+            self.assertEqual(first + 1, updated["packet"]["view_revision"])
+            self.assertEqual(first + 1, updated["game"]["state_revision"])
+            self.assertNotIn("pilot:A", updated["game"]["pending_principals"])
+
     def test_four_seat_projection_websocket_reconnect_and_exact_replay(self):
         game_id, tokens, _ = self.create_ready_game()
         packets = []
@@ -1108,6 +1807,64 @@ class ServerApplicationTests(unittest.TestCase):
             database.close()
         self.assertTrue(replay["ok"])
 
+    def test_conceding_pilot_stays_connected_as_a_public_observer(self):
+        game_id, tokens, _ = self.create_ready_game()
+        state_url = f"/api/v1/games/{game_id}/state"
+        command_url = f"/api/v1/games/{game_id}/commands"
+        stream_url = f"/api/v1/games/{game_id}/stream"
+
+        def submit(token, packet, action, command_id, choices):
+            decision = packet["decision"]
+            envelope = {
+                "protocol_version": "3.0", "game_id": game_id,
+                "command_id": command_id, "decision_id": decision["id"],
+                "action_id": action, "capability": decision["cap"],
+                "expected_view_revision": packet["view_revision"], "choices": choices,
+            }
+            response = self.client.post(command_url, headers=self.auth(token), json=envelope)
+            self.assertEqual(200, response.status_code, response.text)
+            return envelope, response.json()["receipt"]
+
+        for index, token in enumerate(tokens):
+            response = self.client.get(state_url, headers=self.auth(token))
+            self.assertEqual(200, response.status_code, response.text)
+            _, receipt = submit(token, response.json()["packet"], "keep", f"keep-{index}", {})
+            self.assertTrue(receipt["ok"], receipt)
+
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
+        with self.client.websocket_connect(stream_url) as socket:
+            pilot = socket.receive_json()["packet"]
+            self.assertEqual("pilot:A", pilot["principal"])
+            self.assertIn("hand", pilot["state"]["players"]["A"])
+            envelope, receipt = submit(tokens[0], pilot, "concede", "observer-A", {"confirm_concede": True})
+            self.assertTrue(receipt["ok"], receipt)
+            updated = socket.receive_json()
+            self.assertEqual("active", updated["game"]["status"])
+            packet = updated["packet"]
+            self.assertEqual("full", packet["mode"])
+            self.assertEqual("spectator", packet["principal"])
+            self.assertEqual(0, packet["state"]["players"]["A"]["in"])
+            self.assertIsNone(packet["decision"])
+            self.assertTrue(all(event.get("pub") is True for event in packet["events"]))
+            self.assertIn("Conceded the game.", [event["s"] for event in packet["events"]])
+            for player in packet["state"]["players"].values():
+                self.assertNotIn("hand", player)
+
+        http = self.client.get(state_url, headers=self.auth(tokens[0])).json()["packet"]
+        self.assertEqual(("full", "spectator"), (http["mode"], http["principal"]))
+        with self.client.websocket_connect(stream_url) as socket:
+            self.assertEqual("spectator", socket.receive_json()["packet"]["principal"])
+
+        retry = self.client.post(command_url, headers=self.auth(tokens[0]), json=envelope).json()["receipt"]
+        self.assertTrue(retry["replayed"])
+        self.assertEqual(receipt["state_revision"], retry["state_revision"])
+        rejection = self.client.post(
+            command_url, headers=self.auth(tokens[0]),
+            json={**envelope, "command_id": "no-observer-command", "action_id": "pass", "choices": {}},
+        ).json()["receipt"]
+        self.assertEqual("player_not_active", rejection["code"])
+        self.assertEqual(receipt["state_revision"], rejection["state_revision"])
+
     def test_completed_concession_survives_restart_and_exact_replay(self):
         game_id, tokens, _ = self.create_ready_game(player_count=2)
         for index in range(2):
@@ -1178,6 +1935,51 @@ class ServerApplicationTests(unittest.TestCase):
                 verify=True,
             )
         self.assertTrue(replay["ok"])
+
+        next_table = f"/api/v1/games/{game_id}/rematch"
+        too_early = self.client.post(next_table, headers=self.auth(tokens[1]))
+        self.assertEqual(409, too_early.status_code, too_early.text)
+        opened = self.client.post(next_table, headers=self.auth(tokens[0]))
+        self.assertEqual(200, opened.status_code, opened.text)
+        room = opened.json()["room"]
+        self.assertNotEqual(payload["game"]["room_id"], room["room_id"])
+        self.assertIsNone(room["game_id"])
+        self.assertTrue(all(seat["ready"] for seat in room["seats"]))
+        for token in tokens[:2]:
+            reused = self.client.post(next_table, headers=self.auth(token))
+            self.assertEqual(room["room_id"], reused.json()["room"]["room_id"])
+
+        own = self.client.get("/api/v1/me/decks", headers=self.auth(tokens[0])).json()["decks"]
+        opposing = self.client.get("/api/v1/me/decks", headers=self.auth(tokens[1])).json()["decks"]
+        self.assertTrue(own)
+        self.assertTrue(opposing)
+        self.assertTrue({deck["id"] for deck in own}.isdisjoint(deck["id"] for deck in opposing))
+        private = self.client.get(
+            f"/api/v1/me/decks/{opposing[0]['id']}", headers=self.auth(tokens[0]),
+        )
+        self.assertEqual(404, private.status_code, private.text)
+
+        room_id = room["room_id"]
+        unready = self.client.delete(f"/api/v1/rooms/{room_id}/deck", headers=self.auth(tokens[0]))
+        self.assertEqual(200, unready.status_code, unready.text)
+        reused = self.client.put(
+            f"/api/v1/rooms/{room_id}/deck", headers=self.auth(tokens[0]),
+            json={"name": "Rematch list", "saved_deck_id": own[0]["id"]},
+        )
+        self.assertEqual(200, reused.status_code, reused.text)
+
+        removed = self.client.delete(f"/api/v1/rooms/{room_id}/seats/B", headers=self.auth(tokens[0]))
+        self.assertEqual(200, removed.status_code, removed.text)
+        newcomer, _ = self.guest("Next table guest")
+        joined = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(newcomer),
+            json={"invite_code": opened.json()["invite_code"], "seat": "B"},
+        )
+        self.assertEqual(200, joined.status_code, joined.text)
+        historical = self.client.get(f"/api/v1/games/{game_id}/state", headers=self.auth(tokens[1]))
+        self.assertEqual(200, historical.status_code, historical.text)
+        inaccessible = self.client.get(f"/api/v1/games/{game_id}/state", headers=self.auth(newcomer))
+        self.assertEqual(403, inaccessible.status_code, inaccessible.text)
 
     def test_owner_stop_resume_inspection_and_restart_are_durable(self):
         game_id, tokens, _ = self.create_ready_game()

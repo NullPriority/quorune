@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic permanent-type return witness",
+  "cards": [
+    {
+      "oracle_id": "fce4c864-73e9-4595-9f09-9e2edcfbb3aa",
+      "name": "Arcway Gnomon",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "Whenever a nonartifact permanent you control enters, you may return another permanent you control that shares a permanent type with it to its owner's hand.",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

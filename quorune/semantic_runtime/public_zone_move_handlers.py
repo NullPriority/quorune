@@ -121,11 +121,15 @@ class MovePublicZoneSetHandler:
             raise SemanticNodeError(
                 "Public zone-move set operation is unsupported"
             )
+        from ..public_zone_moves import FixedMixedZoneExileSpec, is_mixed_zone_exile_spec
+
+        raw = effect["set"]
         try:
-            spec = PublicZoneMoveSetSpec.from_dict(effect["set"])
+            spec = (FixedMixedZoneExileSpec.from_dict(raw) if is_mixed_zone_exile_spec(raw)
+                    else PublicZoneMoveSetSpec.from_dict(raw))
         except (PublicZoneMoveError, KeyError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        if spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER:
+        if isinstance(spec, PublicZoneMoveSetSpec) and spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER:
             context.query.require_active_seat(str(spec.target_seat or ""))
         source_ref = effect.get("source")
         if source_ref is not None and (
@@ -134,7 +138,7 @@ class MovePublicZoneSetHandler:
             raise SemanticNodeError(
                 "Public zone-move source must be a nonempty reference"
             )
-        if spec.exclude_source and source_ref is None:
+        if isinstance(spec, PublicZoneMoveSetSpec) and spec.exclude_source and source_ref is None:
             raise SemanticNodeError(
                 "Source-excluding public zone moves require a source"
             )

@@ -5,7 +5,8 @@ from ..replacement.immutable import FrozenMap
 from ..discover_model import discover_options_fingerprint
 from ..semantic_runtime.intents import RevealLibraryCardsIntent
 from ..rules.library_selection import LibrarySelectionObjectIdentity
-from ..rules.ripple import RIPPLE_FIELD,decode_ripple_instruction
+from ..rules.ripple import decode_revealed_library_cast,decode_ripple_instruction
+from ..rules.revealed_library_cast import HandCastRevealSnapshot
 from ..rules.ripple_resolution_model import (
     RIPPLE_STATE_FIELD,RippleResolutionState,ResolveRippleCastIntent,RippleBottomIntent,
 )
@@ -27,6 +28,32 @@ def _bottom_state(state,query):
     return replace(state,looked=state.remaining(query),stage='bottom')
 
 
+def _revealed_prefix(query, actor, count):
+    refs = query.library_refs(actor, top_first=True)[:count]
+    identities = []
+    for ref in refs:
+        row = query.object(ref, zones=("library",))
+        if row is None or row.owner != actor:
+            raise ValueError("The reveal lost a card from the original library prefix")
+        identities.append(LibrarySelectionObjectIdentity(row.object_id, row.logical_object_id, row.ref))
+    return tuple(identities)
+
+
+def _prepare_mandatory_reveal(effect, context, source):
+    actor = context.actor
+    looked = _revealed_prefix(context.query, actor, source.mana_value)
+    if not looked:
+        return SemanticChoicePreparation(None, FrozenMap(effect),
+            auto_continue=AutoContinue("There are no cards to reveal."))
+    state = RippleResolutionState(None, source, context.stack_ref, looked, actor=actor)
+    reveal = RevealLibraryCardsIntent(actor, actor, actor, tuple(i.ref for i in looked),
+                                      "Reveal the committed mana value", public=True,
+                                      announce_public_prefix=True, retain_public_top_visibility=True)
+    return SemanticChoicePreparation(None, FrozenMap(effect), preparation_intents=(reveal,),
+        auto_continue=AutoContinue("Reveal the original library prefix before offering a spell.",
+                                   prepend_effects=(FrozenMap(state.effect()),)))
+
+
 def prepare_ripple(effect,context):
     actor=context.actor
     if actor!=context.stack_controller:raise SemanticChoiceError('Ripple requires its resolving controller')
@@ -35,7 +62,9 @@ def prepare_ripple(effect,context):
             auto_continue=AutoContinue(reason='The Ripple controller is no longer in the game.'))
     try:
         if RIPPLE_STATE_FIELD not in effect:
-            spec,_=decode_ripple_instruction(effect,actor=actor,allow_symbolic=False)
+            spec, source = decode_revealed_library_cast(effect, actor=actor, allow_symbolic=False)
+            if isinstance(source, HandCastRevealSnapshot):
+                return _prepare_mandatory_reveal(effect, context, source)
             refs=context.query.library_refs(actor,top_first=True)
             if spec.count==0 or not refs:
                 return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
@@ -52,11 +81,15 @@ def prepare_ripple(effect,context):
         if any(row.get('card') not in legal for row in options):
             raise ValueError('A Ripple casting option is outside its original revealed set')
         if not options:
-            return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
-                auto_continue=AutoContinue(reason='No revealed same-name spell can currently be cast.',
+            reason = ("No revealed spell can currently be cast." if state.casts_once
+                      else "No revealed same-name spell can currently be cast.")
+            return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason=reason,
                     prepend_effects=(FrozenMap(_bottom_state(state,context.query).effect()),)))
+        prompt = ("Cast one revealed spell without paying its mana cost, or decline?"
+                  if state.casts_once else 'Cast a revealed spell with the same name without paying its mana cost, or finish Ripple?')
         return SemanticChoicePreparation(request=SemanticChoiceRequest(
-            prompt='Cast a revealed spell with the same name without paying its mana cost, or finish Ripple?',
+            prompt=prompt,
             choice=CastOrDeclineChoice(options),
             public_context=FrozenMap({'stack':context.stack_ref,'operation':'choose_objects','cast_options':options})),
             continuation_effect=FrozenMap({**effect,_OPTIONS:discover_options_fingerprint(options)}))
@@ -65,7 +98,7 @@ def prepare_ripple(effect,context):
 
 def _prepare_bottom(state,context):
     current=_bottom_state(state,context.query);refs=tuple(i.ref for i in current.looked)
-    if len(refs)<=1:
+    if current.casts_once or len(refs)<=1:
         return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(current.effect()),
             preparation_intents=(RippleBottomIntent(context.actor,context.stack_ref,current,refs),) if refs else (),
             auto_continue=AutoContinue(reason='The remaining revealed cards have no ordering choice.'))
@@ -95,16 +128,11 @@ def complete_ripple(continuation,response,query):
             if set(response)-{'action','action_id','choice_schema','choice'} or response.get('choice') not in ('reveal','decline'):
                 raise ValueError('Choose whether to reveal for Ripple')
             if response['choice']=='decline':return SemanticChoiceCompletion()
-            refs=query.library_refs(actor,top_first=True)[:spec.count]
-            identities=[]
-            for ref in refs:
-                row=query.object(ref,zones=('library',))
-                if row is None or row.owner!=actor:raise ValueError('Ripple lost its owned library top')
-                identities.append(LibrarySelectionObjectIdentity(row.object_id,row.logical_object_id,row.ref))
+            identities = _revealed_prefix(query, actor, spec.count)
             if not identities:return SemanticChoiceCompletion()
-            state=RippleResolutionState(spec,source,continuation.stack_ref,tuple(identities),actor=actor)
+            state=RippleResolutionState(spec,source,continuation.stack_ref,identities,actor=actor)
             return SemanticChoiceCompletion(
-                intents=(RevealLibraryCardsIntent(actor,actor,actor,tuple(refs),'Ripple reveal',public=True),),
+                intents=(RevealLibraryCardsIntent(actor,actor,actor,tuple(i.ref for i in identities),'Ripple reveal',public=True),),
                 prepend_effects=(FrozenMap(state.effect()),))
         raw={k:v for k,v in saved.items() if k!=_OPTIONS}
         state=_state(raw,actor,continuation.stack_ref)
@@ -120,5 +148,8 @@ def complete_ripple(continuation,response,query):
         if submitted is None:
             return SemanticChoiceCompletion(prepend_effects=(FrozenMap(_bottom_state(state,query).effect()),))
         intent=ResolveRippleCastIntent(actor,continuation.stack_ref,state,saved[_OPTIONS],submitted)
+        if state.casts_once:
+            return SemanticChoiceCompletion(intents=(intent,),
+                prepend_effects=(FrozenMap(replace(state, stage="bottom").effect()),))
         return SemanticChoiceCompletion(intents=(intent,),repeat_effect=FrozenMap(state.effect()))
     except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc

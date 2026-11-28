@@ -155,6 +155,50 @@ def attached_object_identity(
     )
 
 
+def current_protection_attachment(cards, attachment, target):
+    """Return the exact live relation used by source protection."""
+    from .protection_attachment_exceptions import CurrentProtectionAttachment
+
+    identity = attached_object_identity(cards, attachment)
+    if identity is None or identity.logical_object_id != target.logical_object_id:
+        return None
+    return CurrentProtectionAttachment(
+        attachment.logical_object_id, target.logical_object_id, attachment.controller, attachment.zone_timestamp,
+    )
+
+
+def record_simultaneous_protection_attachments(host, snapshots):
+    """Retain the attachment cohort established by one simultaneous entry."""
+    from .protection_attachment_exceptions import (
+        CONTROLLED_ATTACHMENT_PROTECTION_HANDLER, PROTECTION_ATTACHMENT_CUTOFF_FIELD,
+    )
+    from .entry_copy import copiable_oracle_id
+
+    groups = {}
+    for source, departure in snapshots:
+        if departure.origin != "battlefield" and source.zone == "battlefield":
+            target = attached_object_identity(host.state.cards, source)
+            if target is not None:
+                groups.setdefault(target, []).append(source)
+    for target, sources in groups.items():
+        if len(sources) < 2:
+            continue
+        cutoff = max(source.zone_timestamp for source in sources)
+        for source in sources:
+            if source.zone_timestamp == cutoff:
+                continue
+            programs = host.semantics.programs_for_oracle(copiable_oracle_id(source))
+            if any(
+                descriptor.get("handler_id") == CONTROLLED_ATTACHMENT_PROTECTION_HANDLER
+                and host.semantic_program_is_current_trusted(program)
+                for program in programs for descriptor in program.handlers
+            ):
+                source.annotations[PROTECTION_ATTACHMENT_CUTOFF_FIELD] = {
+                    "source": source.logical_object_id, "target": target.logical_object_id,
+                    "timestamp": source.zone_timestamp, "cutoff": cutoff,
+                }
+
+
 def attach_objects(
     cards: MutableMapping[str, CardInstance],
     source: CardInstance,

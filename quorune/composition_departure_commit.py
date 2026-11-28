@@ -101,7 +101,7 @@ def _parent_occurrence(root,departure,plan,count,reason):
 
 
 
-def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
+def commit_prepared_composition_departures(owner,batch,*,damage_clears=(),simultaneous_life=None):
     """Commit all prepared physical and ordinary arrivals before publication."""
     from .composition_departure_batch import PreparedCompositionDepartureBatch,publish_composition_departure_batch
     from .composition_replacements import project_composition_counters
@@ -115,6 +115,10 @@ def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
     order=batch.request.ordered_ids(batch.orders)
     with owner.host.transaction():
         batch.validate_roots(owner)
+        if simultaneous_life is not None:
+            from .life_change import validate_life_change_batch
+
+            validate_life_change_batch(owner.host, simultaneous_life)
         if damage_clears:
             from .damage_results import clear_damage_for_permanents
 
@@ -179,7 +183,16 @@ def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
             counter_results.append(result)
             log_applied_zone_replacements(owner.host,group.plan.prepared_replacement,group.plan.card,
                 requested_destination=group.plan.requested_destination,error_type=StateInvariantError)
+        if simultaneous_life is not None:
+            from .life_change import commit_life_change_batch
+
+            commit_life_change_batch(owner.host, simultaneous_life, dispatch_events=False)
         publish_composition_departure_batch(owner,batch,tuple(committed),tuple(counter_results))
+        if simultaneous_life is not None:
+            from .player_result_events import dispatch_life_gain_records, dispatch_life_loss_records
+
+            dispatch_life_loss_records(owner.host, simultaneous_life.records)
+            dispatch_life_gain_records(owner.host, simultaneous_life.records)
         for group,cards,_before,_members in committed:
             if group.storage is not None:
                 owner.host._log(group.actor,'composition.departure',f'{group.plan.card.ref} separated into its physical parts.',

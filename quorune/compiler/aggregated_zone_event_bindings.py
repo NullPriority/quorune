@@ -31,3 +31,13 @@ def aggregated_public_zone_event_binding_spec(text: str, *, card_name: str | Non
     verb={'enter':'enters','die':'dies','leave the battlefield':'leaves the battlefield'}[match['verb'].casefold()]
     compiled=qualified_public_zone_event_binding_spec(f"Whenever {article}{subject} {verb}, {match['body']}",card_name=card_name)
     return replace(compiled,variant=AGGREGATED_ZONE_VARIANT) if compiled else None
+
+def artifact_arrival_damage_result(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.aggregated_arrival_damage import ARTIFACT_ARRIVAL_CONDITION, artifact_arrival_damage_effect
+
+    if (binding.variant != AGGREGATED_ZONE_VARIANT or binding.event.value != "permanent.enter"
+            or FrozenMap(binding.event_condition or {}) != ARTIFACT_ARRIVAL_CONDITION
+            or " ".join(body.casefold().split()) != "this creature deals that much damage to each opponent."):
+        return None
+    return "matched-artifact-arrival-damage-v1", (artifact_arrival_damage_effect(),), None, ("cr-120-damage",)

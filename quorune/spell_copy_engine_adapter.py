@@ -57,6 +57,9 @@ def dispatch_normalized_spell_copy_event(
         raise StateInvariantError(
             "A normalized spell-copy occurrence lost its stack object"
         )
+    from .rules.exile_spell_copy_grant import apply_exile_spell_copy_grant
+
+    apply_exile_spell_copy_grant(host, copied, copy_object, copied_from_stack_ref)
     types, _, _ = host._type_parts(
         str(host._effective_card_data(copy_object).get("type_line") or "")
     )

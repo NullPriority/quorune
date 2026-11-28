@@ -50,15 +50,47 @@ def commit_colored_hand_reveal(host: Any, intent: Any) -> tuple[str, ...]:
         card=host.state.cards.get(row['object_id'])
         if card is None or not card.is_card_object:
             raise GameRuleError('Colored reveal lost its original hand card')
-        selection={**dict(row),'oracle_id':card.oracle_id}
+        selection={key:value for key,value in row.items() if key != "mana_value"}
+        selection["oracle_id"] = card.oracle_id
         card=validate_entry_hand_reveal(host,selection)
-        if intent.color not in host._effective_card_data(card).get('colors',[]):
+        data = host._effective_card_data(card)
+        if intent.color is None:
+            from ..public_quantity_reductions import public_mana_value
+
+            if ("land" in host._type_parts(data["type_line"])[0]
+                    or public_mana_value(data) != row["mana_value"]):
+                raise GameRuleError("Nonland reveal changed its original card or mana value")
+        elif intent.color not in data.get('colors',[]):
             raise GameRuleError('Colored reveal card no longer matches its color')
         selections.append(selection)
     for selection in selections:
         commit_selected_hand_reveal(host,selection,source_ref=intent.source_ref,
             summary='A selected hand card was revealed.')
     return tuple(selection['ref'] for selection in selections)
+
+
+def _commit_selected_hand_inspection(host, intent, cards):
+    item = next((entry for entry in host.state.stack if entry.ref == intent.scoped_stack_ref), None)
+    selected = tuple(card for card in cards if card.ref in intent.refs)
+    if (
+        item is None or item.controller != intent.actor or not item.context.get("currently_resolving")
+        or len(intent.refs) != min(3, len(cards)) or len(selected) != len(intent.refs)
+        or any(not card.is_card_object for card in selected)
+    ):
+        raise GameRuleError("Selected hand reveal requires its exact resolving subset")
+    snapshots = tuple({
+        "object_id": card.object_id, "logical_object_id": card.logical_object_id,
+        "ref": card.ref, "player": intent.player, "oracle_id": card.oracle_id,
+        "name": host.display_name(card.object_id),
+    } for card in selected)
+    for snapshot in snapshots:
+        validate_entry_hand_reveal(host, snapshot)
+    for snapshot in snapshots:
+        begin_stack_cost_hand_reveal(
+            host, snapshot, item=item, source_ref=item.ref,
+            summary="A selected card was revealed from hand.",
+        )
+    return intent.refs
 
 
 def commit_hand_inspection(
@@ -71,6 +103,8 @@ def commit_hand_inspection(
     host._require_seat(intent.player, in_game=True)
     hand_ids = tuple(host.state.players[intent.player].zones["hand"])
     cards = tuple(host.state.cards[object_id] for object_id in hand_ids)
+    if intent.scoped_stack_ref is not None:
+        return _commit_selected_hand_inspection(host, intent, cards)
     current_refs = tuple(card.ref for card in cards)
     if len(intent.refs) != len(current_refs) or set(intent.refs) != set(
         current_refs
@@ -151,7 +185,7 @@ def _stack_cost_reveal_rows(item):
 def begin_stack_cost_hand_reveal(
     host, selection, *, item, source_ref, summary="A card was revealed to pay a casting cost.",
 ):
-    """CR701.20a: a revealed casting-cost card stays visible until stack departure."""
+    """Keep a scoped disclosure in the existing stack reveal ledger until departure."""
     card=validate_entry_hand_reveal(host,selection);prior=list(card.revealed_to)
     for pending in host.state.stack:
         for row in _stack_cost_reveal_rows(pending):
@@ -163,6 +197,14 @@ def begin_stack_cost_hand_reveal(
     commit_selected_hand_reveal(host, selection, source_ref=source_ref, summary=summary)
     card.revealed_to=sorted(set(card.revealed_to).union(host.seats))
     item.context['casting_hand_reveals']={'schema_version':1,'reveals':rows}
+
+
+def has_current_stack_reveal(item, card):
+    return any(
+        row["stack_ref"] == item.ref and row["selection"]["object_id"] == card.object_id
+        and row["selection"]["logical_object_id"] == card.logical_object_id
+        for row in _stack_cost_reveal_rows(item)
+    )
 
 
 def cleanup_stack_cost_hand_reveals(host,item):

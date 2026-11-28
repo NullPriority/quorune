@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
-from typing import Any, Iterable, Mapping, TYPE_CHECKING
+from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .activation_mana_cost import ActivationManaCostOption
@@ -86,18 +86,37 @@ class ManaMode:
     triggered_mana: tuple[TriggeredManaOutput, ...] = ()
     base_fundable: bool = True
     tap_mana_multipliers: tuple[tuple[str, int], ...] = ()
+    artifact_hand_mana: str | None = None
+    double_unspent: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.double_unspent) is not bool or self.double_unspent and (
+            self.restriction or self.requires_choice or not self.tap_source or self.side_effects
+        ):
+            raise ValueError("Unspent mana doubling needs one ordinary unrestricted tap mode")
         if type(self.tap_source) is not bool:
             raise ValueError('Mana mode tap cost must be Boolean')
+        if self.artifact_hand_mana is not None and (
+            type(self.artifact_hand_mana) is not str or not self.artifact_hand_mana
+            or not self.requires_choice or not self.tap_source
+        ):
+            raise ValueError("Artifact hand mana requires its exact selectable tap mode")
 
     @property
     def total(self) -> int:
         return sum(self.bundle.values())
 
     @property
+    def exiles_hand_source(self) -> bool:
+        return any(effect.get("op") == "exile_hand_source" for effect in self.side_effects)
+
+    @property
     def sacrifices_source(self) -> bool:
         return any(effect.get("op") == "sacrifice_source" for effect in self.side_effects)
+
+    @property
+    def consumes_source(self) -> bool:
+        return self.exiles_hand_source or self.sacrifices_source
 
     def production_output(self, departed: frozenset[str] = frozenset()) -> dict[str, int]:
         from math import prod
@@ -129,6 +148,12 @@ class ManaMode:
             payload["fx"] = list(self.side_effects)
         if self.requires_choice:
             payload["choice"] = True
+        if self.double_unspent:
+            payload["double_unspent"] = True
+        if self.artifact_hand_mana is not None:
+            from .artifact_hand_mana_model import ARTIFACT_HAND_MANA_STEP
+
+            payload[ARTIFACT_HAND_MANA_STEP] = {"ability_id": self.artifact_hand_mana}
         if not self.tap_source:
             payload['tap'] = False
         if self.price is not None:
@@ -149,7 +174,7 @@ class ManaMode:
 
 
 def mana_modes_preserving_source(modes: tuple[ManaMode, ...]) -> tuple[ManaMode, ...]:
-    return tuple(mode for mode in modes if not mode.sacrifices_source)
+    return tuple(mode for mode in modes if not mode.consumes_source)
 
 
 @dataclass(frozen=True, slots=True)
@@ -590,7 +615,7 @@ def _select_payment_sources(
             _add_planned_output(next_pool, next_snow_pool, produced, snow)
             chosen.append((source, mode))
             dfs(index + 1, next_pool, next_snow_pool, chosen,
-                departed | {source.object_id} if mode.sacrifices_source else departed)
+                departed | {source.object_id} if mode.consumes_source else departed)
             chosen.pop()
         dfs(index + 1, pool, snow_pool, chosen, departed)
 
@@ -610,7 +635,7 @@ def _planned_output_pools(steps, starting_pool, starting_snow_pool):
     departed: frozenset[str] = frozenset()
     for source, mode in steps:
         _add_planned_output(pool, snow_pool, *mode.funding_output(base_snow=source.snow, departed=departed))
-        if mode.sacrifices_source:
+        if mode.consumes_source:
             departed |= {source.object_id}
     return pool, snow_pool
 
@@ -665,7 +690,7 @@ def auto_plan_payment(
             grouped.append((source, modes))
     providers = {provider for source in sources for mode in source.modes for output in mode.triggered_mana
                  for provider in (output.provider_id, output.modifier_id)}
-    grouped.sort(key=lambda pair: (pair[0].object_id in providers and any(mode.sacrifices_source for mode in pair[1]),
+    grouped.sort(key=lambda pair: (pair[0].object_id in providers and any(mode.consumes_source for mode in pair[1]),
         len(pair[1]), -max(sum(mode.funding_output()[0].values()) for mode in pair[1]), pair[0].ref))
 
     best = _select_payment_sources(
@@ -746,14 +771,14 @@ def _mana_plan_steps(steps):
     departed: frozenset[str] = frozenset()
     for source, mode, payment in steps:
         activations.append(_mana_plan_step(source, mode, payment, departed))
-        if mode.sacrifices_source:
+        if mode.consumes_source:
             departed |= {source.object_id}
     return activations
 
 
 def _mana_plan_step(source, mode, payment, departed):
     activation = {
-        "source": source.object_id,
+        "source": source.ref if mode.exiles_hand_source else source.object_id,
         "source_ref": source.ref,
         "bundle": {color: amount for color, amount in mode.bundle.items() if amount},
         "side_effects": list(mode.side_effects),

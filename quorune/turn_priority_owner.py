@@ -18,6 +18,7 @@ from .mana_undo import (
     undo_mana_activation,
 )
 from .model import DecisionGroup, GameState, YieldPolicy
+from .permissions import current_turn_controller
 from .semantic_runtime.action_permissions import land_play_permission_options
 from .rules.action_catalog import action_offer_signature_facts
 from .trigger_processing import start_delayed_trigger_batch
@@ -25,6 +26,7 @@ from .shared_type_doors import shared_type_doors_enabled
 from .turn_priority_model import (
     PriorityGrantPlan,
     PriorityPassPlan,
+    PriorityWindowHolds,
     TurnPriorityHost,
     YieldInvalidationReason,
 )
@@ -43,6 +45,7 @@ class TurnPriorityDecisionOwner:
 
     def __init__(self, host: TurnPriorityHost) -> None:
         self.host = host
+        self.window_holds: Mapping[str, PriorityWindowHolds] = {}
 
     @property
     def state(self) -> GameState:
@@ -108,6 +111,7 @@ class TurnPriorityDecisionOwner:
             "player.speed",
             "game.day_night",
             "permanent.transform",
+            "permanent.convert",
             "token.create",
             "control.change",
             "permanent.goad",
@@ -152,6 +156,7 @@ class TurnPriorityDecisionOwner:
     def grant_priority(self, seat: str | None) -> None:
         if self.host._stabilize():
             return
+        self.state.post_resolution_priority_seat = None
         if not self.host.active_seats:
             return
         cleanup_frame = self.host._active_cleanup_frame()
@@ -182,6 +187,16 @@ class TurnPriorityDecisionOwner:
         )
         if plan is not None:
             self.commit_priority_grant(plan)
+            from .trigger_targeting import observe_received_damage_loop
+
+            observe_received_damage_loop(self.host)
+
+    def defer_post_resolution(self) -> None:
+        if (
+            self.state.post_resolution_priority_version == 1
+            and self.state.pending_decision is not None and not self.state.game_over
+        ):
+            self.state.post_resolution_priority_seat = self.state.active_player
 
     def issue_priority(
         self, seat: str, hints: Mapping[str, Any] | None = None
@@ -223,6 +238,7 @@ class TurnPriorityDecisionOwner:
         response = dict(decision.responses[seat])
         action = response.pop("action")
         if action == "pass":
+            self._validate_pass_intent(decision, seat, response)
             clear_mana_undo_stack(self.state.players[seat].stats)
             self.set_yield(seat, response.get("yield"))
             self.pass_priority(seat)
@@ -257,13 +273,7 @@ class TurnPriorityDecisionOwner:
             except ManaUndoError as exc:
                 raise GameRuleError(str(exc)) from exc
         elif action == "concede":
-            clear_mana_undo_stack(self.state.players[seat].stats)
-            if response.get("confirm_concede") is not True:
-                raise GameRuleError(
-                    "Concession requires explicit confirmation"
-                )
-            self.state.priority_passes = []
-            self.host._eliminate_players([seat], reason="conceded")
+            commit_confirmed_concession(self.host, seat, response)
             if getattr(self.state, "priority_concession_stabilization_version", None) == 1:
                 if not self.state.game_over:
                     self.state.priority_concession_resume_from = seat
@@ -275,6 +285,27 @@ class TurnPriorityDecisionOwner:
                 self.complete_special_action(self.host._next_active_after(seat))
         else:
             raise GameRuleError(f"Unsupported priority action {action}")
+
+    def _validate_pass_intent(self, decision: DecisionGroup, seat: str, response: Mapping[str, Any]) -> None:
+        if "pass_turn_sequence" not in response and "ignored_activation_ids" not in response:
+            return
+        scope = response.get("pass_turn_sequence")
+        if type(scope) is not int or scope != self.state.turn_sequence:
+            raise GameRuleError("The current turn ended. Arm Pass turn again if needed.")
+        ignored = response.get("ignored_activation_ids", [])
+        if (
+            not isinstance(ignored, list)
+            or any(type(ref) is not str for ref in ignored)
+            or len(set(ignored)) != len(ignored)
+        ):
+            raise GameRuleError("Choose distinct activation stops to ignore.")
+        offered = decision.payload_by_actor[seat]["legal"]["actions"]
+        allowed = {
+            row["id"] for row in offered
+            if row.get("action") == "activate" and row.get("mana_ability") is not True
+        }
+        if set(ignored) - allowed:
+            raise GameRuleError("An ignored activation is no longer available.")
 
     def complete_special_action(self, seat: str) -> None:
         """Stabilize one committed no-stack action before restoring priority."""
@@ -517,7 +548,10 @@ class TurnPriorityDecisionOwner:
         self, seat: str, hints: Mapping[str, Any] | None = None
     ) -> bool:
         hints = dict(hints or self.host._priority_action_hints(seat))
-        return any(hints.get(key) for key in ("cast", "lands", "abilities"))
+        return any(hints.get(key) for key in ("cast", "lands", "abilities")) or (
+            self.state.config.priority_special_actions_version == 1
+            and bool(hints.get("special_actions"))
+        )
 
     def record_action_opportunity(
         self,
@@ -634,6 +668,7 @@ class TurnPriorityDecisionOwner:
             if self.state.game_over:
                 if resume_from is not None:
                     self.state.priority_concession_resume_from = None
+                self.state.post_resolution_priority_seat = None
                 return
             if (
                 self.state.pending_decision is not None
@@ -642,6 +677,9 @@ class TurnPriorityDecisionOwner:
                 return
             if not self.state.started:
                 return
+            if self.state.post_resolution_priority_seat is not None:
+                self.grant_priority(self.state.post_resolution_priority_seat)
+                continue
             if (
                 self.state.priority_player is None
                 and self.host._active_cleanup_frame() is not None
@@ -656,13 +694,16 @@ class TurnPriorityDecisionOwner:
                 hints = self.host._priority_action_hints(seat)
                 action_signature = self.meaningful_action_signature(seat, hints)
                 meaningful = self.signature_has_actions(seat, hints)
+                controller = current_turn_controller(self.state, seat) or seat
+                holds = self.window_holds.get(controller)
+                held = holds is not None and holds.matches(self.state, controller)
                 self.increment_optimization(seat, "priority_windows_considered")
                 if self.state.stack:
                     self.increment_optimization(
                         seat,
                         (
                             "stack_interaction_windows_created"
-                            if meaningful
+                            if meaningful or held
                             else "stack_interaction_windows_auto_passed"
                         ),
                     )
@@ -674,6 +715,7 @@ class TurnPriorityDecisionOwner:
                 if (
                     self.state.config.auto_pass_empty_priority
                     and not meaningful
+                    and not held
                     and not self.manual_active_main_phase_window(seat)
                 ):
                     self.increment_optimization(
@@ -691,7 +733,7 @@ class TurnPriorityDecisionOwner:
                     )
                     self.pass_priority(seat, automatic=True)
                     continue
-                if can_yield:
+                if can_yield and not held:
                     self.increment_optimization(seat, "yield_covered_windows")
                     self.record_action_opportunity(
                         seat,
@@ -713,3 +755,12 @@ class TurnPriorityDecisionOwner:
                 return
             self.host._enter_step()
         raise StateInvariantError("Automatic transition limit exceeded")
+
+
+def commit_confirmed_concession(host, seat, response):
+    """Commit the seat's confirmed departure through the game owner."""
+    clear_mana_undo_stack(host.state.players[seat].stats)
+    if response.get("confirm_concede") is not True:
+        raise GameRuleError("Concession requires explicit confirmation")
+    host.state.priority_passes = []
+    host._eliminate_players([seat], reason="conceded")

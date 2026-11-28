@@ -1,6 +1,7 @@
 from copy import deepcopy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -124,8 +125,14 @@ class TargetAnnouncementCounterPaymentTests(InheritedNativeFixture, unittest.Tes
             self.assert_closed(game, card)
         self.prepare(game, active="B", actor="B")
         self.checkpoint(game)
-        self.cast(game, "B", murder, [frost.ref])
+        with patch.object(game.engine, "_dispatch_semantic_event", wraps=game.engine._dispatch_semantic_event) as dispatch:
+            self.cast(game, "B", murder, [frost.ref])
         original, trigger = game.state.stack
+        self.assertEqual([{
+            "schema_version": 1, "stack": original.ref, "stack_controller": "B", "stack_kind": "spell",
+            "card": frost.ref, "controller": "A", "card_object_identity": frost.logical_object_id,
+            "types": ["creature"],
+        }], [call.args[1] for call in dispatch.call_args_list if call.args[0] == TARGET_ANNOUNCEMENT_EVENT])
         self.assertEqual(("spell", murder.object_id, "B"),
             (original.kind, original.card_object_id, original.controller))
         self.assertEqual(("triggered_ability", frost.object_id, "A"),
@@ -261,3 +268,272 @@ class TargetAnnouncementCounterPaymentTests(InheritedNativeFixture, unittest.Tes
                     capability_profile=PROFILE)
                 self.assertTrue(any(n.exact and "untap.step.prohibit_next_controller" in n.capability_dependencies
                     for n in ir.faces[0].nodes))
+
+class DiffusionSliverTargetPaymentTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        snapshot = os.environ.get("MTG_CARD_DB")
+        if snapshot:
+            cls.db = CardDatabase(snapshot)
+        else:
+            sources = (
+                "target-announcement-counter-payment-cards.json",
+                "source-attack-alone-cards.json",
+                "cast-creature-targets.json",
+                "changeling-characteristics-cards.json",
+                "creature-subtype-set-results-cards.json",
+                "targeted-spell-control-cards.json",
+                "fixed-stack-spell-copy-cards.json",
+            )
+            path = folder / "diffusion-sliver.sqlite3"
+            build_fixture_database([FIXTURES / name for name in sources], path)
+            cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Diffusion target payment", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def scene(self, seed):
+        game = self.session(seed)
+        game.state.config.semantic_policy = "trusted_only"
+        return game, self.add(game.engine, "Diffusion Sliver")
+
+    def triggers(self, game, source):
+        return [item for item in game.state.stack
+                if item.kind == "triggered_ability" and item.source_object_id == source.object_id]
+
+    def choose(self, game, seat, **fields):
+        result = game.act(f"pilot:{seat}", {"action_id": "choose", **fields})
+        self.assertTrue(result.ok, result.summary)
+
+    def payment(self, game, controller, stack_ref):
+        decision = self.resolve(game)
+        self.assertIsNotNone(decision)
+        self.assertEqual(("semantic.choice", [controller]), (decision.kind, decision.actors))
+        packet = game.packet(f"pilot:{controller}", full=True)["decision"]
+        self.assertEqual(stack_ref, packet["ctx"]["target_stack"])
+        self.assertEqual(2, packet["ctx"]["cost"]["GENERIC"])
+        for other in set("ABCD") - {controller}:
+            self.assertIsNone(game.packet(f"pilot:{other}", full=True)["decision"])
+
+    def test_diffusion_sliver_admits_the_exact_trigger_under_strict_profile(self):
+        card = self.db.by_oracle_id("458ca9f4-4622-48e1-9ca1-6a8117188973")
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = ir.faces[0].nodes
+        self.assertEqual(TARGET_ANNOUNCEMENT_EVENT, trigger.event)
+        self.assertIsNone(trigger.target_schema)
+        self.assertTrue({TARGET_ANNOUNCEMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_CAPABILITY,
+            "stack.counter.effect", "trigger.placement.apnap"} <= set(trigger.capability_dependencies))
+        binding, _ = register_card(self.db, self.registry, "Diffusion Sliver")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_actual_distinct_sliver_targets_each_require_payment_and_duplicate_target_requires_one(self):
+        for same_target in (False, True):
+            with self.subTest(same_target=same_target):
+                game, source = self.scene(87310520 + same_target)
+                changeling = self.add(game.engine, "Universal Automaton")
+                bond = self.add(game.engine, "Common Bond", seat="B", zone="hand")
+                for card in (source, changeling, bond):
+                    self.assert_closed(game, card)
+                self.prepare(game, active="B", actor="B", mana={"C": 5, "G": 1, "W": 1})
+                self.checkpoint(game)
+                targets = [source.ref, source.ref if same_target else changeling.ref]
+                self.cast(game, "B", bond, targets)
+                original, = (item for item in game.state.stack if item.card_object_id == bond.object_id)
+                self.assertEqual(targets, original.targets)
+                if not same_target:
+                    decision = game.state.pending_decision
+                    self.assertEqual(("trigger.order", ["A"]), (decision.kind, decision.actors))
+                    refs = [item.ref for batch in game.state.pending_trigger_batches for item in batch.items]
+                    self.assertEqual(2, len(refs))
+                    ordered = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+                    self.assertTrue(ordered.ok, ordered.summary)
+                count = 1 if same_target else 2
+                self.assertEqual([("A", [])] * count,
+                    [(trigger.controller, trigger.targets) for trigger in self.triggers(game, source)])
+                for _ in range(count):
+                    self.payment(game, "B", original.ref)
+                    self.choose(game, "B", pay=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(2 if same_target else 1, game.state.cards[source.object_id].counters["+1/+1"])
+                self.assertEqual(0 if same_target else 1,
+                    game.state.cards[changeling.object_id].counters.get("+1/+1", 0))
+                self.assertEqual([original.ref] * count, [event.details["stack"]
+                    for event in game.state.events if event.code == "counter.unless.paid"])
+                self.replay(game, load=True)
+
+    def test_actual_opponent_ability_is_countered_even_after_diffusion_leaves(self):
+        game, source = self.scene(87310522)
+        changeling = self.add(game.engine, "Universal Automaton")
+        pyromancer = self.add(game.engine, "Prodigal Pyromancer", seat="B")
+        pyromancer.acquired_control_turn_count = -1
+        bounce = self.add(game.engine, "Unsummon", zone="hand")
+        for card in (source, changeling, pyromancer, bounce):
+            self.assert_closed(game, card)
+        self.prepare(game, active="B", actor="B", mana={"C": 2})
+        game.state.players["A"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [row for row in actions if row["id"].startswith(f"activate:{pyromancer.ref}:")]
+        result = game.act("pilot:B", {"action_id": offer["id"], "targets": [changeling.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        original, trigger = game.state.stack
+        self.assertEqual(("activated_ability", pyromancer.object_id), (original.kind, original.source_object_id))
+        self.assertEqual(("A", source.object_id), (trigger.controller, trigger.source_object_id))
+        self.cast(game, "A", bounce, [source.ref])
+        self.assertEqual([trigger.ref], [item.ref for item in self.triggers(game, source)])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.payment(game, "B", original.ref)
+        self.choose(game, "B", pay=False)
+        self.assertFalse(game.state.stack)
+        self.assertTrue(game.state.cards[pyromancer.object_id].tapped)
+        self.assertEqual(0, game.state.cards[changeling.object_id].marked_damage)
+        self.assertEqual([original.ref], [event.details["stack"]
+            for event in game.state.events if event.code == "stack.counter"])
+        self.replay(game, load=True)
+
+    def test_actual_diffusion_losing_sliver_type_keeps_protecting_other_slivers(self):
+        game, source = self.scene(87310530)
+        amoeboid = self.add(game.engine, "Amoeboid Changeling")
+        amoeboid.acquired_control_turn_count = -1
+        first = self.add(game.engine, "Giant Growth", seat="B", zone="hand", ref="grow-diffusion")
+        second = self.add(game.engine, "Giant Growth", seat="B", zone="hand", ref="grow-amoeboid")
+        for card in (source, amoeboid, first):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        game.state.players["B"].mana_pool.update({"G": 2})
+        self.checkpoint(game)
+        strip, = [ability for ability in game.engine._activated_abilities(amoeboid)
+                  if "loses all creature types" in ability.effect_text.casefold()]
+        result = game.act("pilot:A", {"action_id": f"activate:{amoeboid.ref}:{strip.ability_id}",
+                                     "targets": [source.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "B", first, [source.ref])
+        self.assertEqual(["spell"], [item.kind for item in game.state.stack])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(4, game.engine._numeric_stat(source.object_id, "power"))
+        self.cast(game, "B", second, [amoeboid.ref])
+        original, trigger = game.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.payment(game, "B", original.ref)
+        self.choose(game, "B", pay=False)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.engine._numeric_stat(amoeboid.object_id, "power"))
+        self.replay(game, load=True)
+
+    def test_actual_friendly_targeting_and_opponent_targeting_unrelated_creatures_do_not_trigger(self):
+        for seed, (caster, target_seat, name) in enumerate((
+            ("A", "A", "Universal Automaton"),
+            ("B", "B", "Universal Automaton"),
+            ("B", "A", "Grizzly Bears"),
+        ), 87310523):
+            with self.subTest(caster=caster, target_seat=target_seat, name=name):
+                game, source = self.scene(seed)
+                target = self.add(game.engine, name, seat=target_seat)
+                growth = self.add(game.engine, "Giant Growth", seat=caster, zone="hand")
+                for card in (source, target, growth):
+                    self.assert_closed(game, card)
+                self.prepare(game, active=caster, actor=caster, mana={"G": 1})
+                self.checkpoint(game)
+                power = game.engine._numeric_stat(target.object_id, "power")
+                self.cast(game, caster, growth, [target.ref])
+                self.assertEqual(["spell"], [item.kind for item in game.state.stack])
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(power + 3, game.engine._numeric_stat(target.object_id, "power"))
+                self.replay(game, load=True)
+
+    def test_actual_opponent_triggered_ability_announces_only_the_chosen_sliver(self):
+        game, source = self.scene(87310529)
+        frost = self.add(game.engine, FROST, seat="B", zone="hand")
+        for card in (source, frost):
+            self.assert_closed(game, card)
+        self.prepare(game, active="B", actor="B", mana={"C": 6, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "B", frost)
+        self.assertIsNotNone(self.resolve(game))
+        self.assertEqual([], self.triggers(game, source))
+        self.target(game, "B", [source.ref])
+        original, trigger = game.state.stack
+        self.assertEqual(("triggered_ability", frost.object_id, "B"),
+            (original.kind, original.source_object_id, original.controller))
+        self.assertEqual(("triggered_ability", source.object_id, "A"),
+            (trigger.kind, trigger.source_object_id, trigger.controller))
+        self.payment(game, "B", original.ref)
+        self.choose(game, "B", pay=False)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.cards[source.object_id].tapped)
+        self.replay(game, load=True)
+
+    def test_actual_control_change_keeps_original_object_and_new_target_is_another_occurrence(self):
+        for retarget in (False, True):
+            with self.subTest(retarget=retarget):
+                game, source = self.scene(87310526 + retarget)
+                changeling = self.add(game.engine, "Universal Automaton")
+                growth = self.add(game.engine, "Giant Growth", seat="B", zone="hand")
+                new_controller = "C" if retarget else "A"
+                snatch = self.add(game.engine, "Aethersnatch", seat=new_controller, zone="hand")
+                for card in (source, changeling, growth, snatch):
+                    self.assert_closed(game, card)
+                self.prepare(game, active="B", actor="B", mana={"C": 2, "G": 1})
+                game.state.players[new_controller].mana_pool.update({"C": 8, "U": 2})
+                self.checkpoint(game)
+                self.cast(game, "B", growth, [source.ref])
+                original, old_trigger = game.state.stack
+                self.cast(game, new_controller, snatch, [original.ref])
+                decision = self.resolve(game)
+                self.assertEqual(("semantic.choice", [new_controller]), (decision.kind, decision.actors))
+                chosen = changeling if retarget else source
+                self.choose(game, new_controller, targets=[chosen.ref])
+                original_item = next(item for item in game.state.stack if item.ref == original.ref)
+                self.assertEqual((new_controller, [chosen.ref]), (original_item.controller, original_item.targets))
+                triggers = self.triggers(game, source)
+                self.assertEqual(2 if retarget else 1, len(triggers))
+                self.assertEqual(old_trigger.ref, triggers[0].ref)
+                for _ in triggers:
+                    self.payment(game, new_controller, original.ref)
+                    before = authoritative_state_hash(game.state)
+                    self.assertFalse(game.act("pilot:B", {"action_id": "choose", "pay": True}).ok)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                    self.choose(game, new_controller, pay=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(4, game.engine._numeric_stat(chosen.object_id, "power"))
+                self.assertEqual(2, game.state.players["B"].mana_pool["C"])
+                self.replay(game, load=True)
+
+    def test_actual_copy_decline_counters_only_the_copy_and_replays_pending_payment(self):
+        game, source = self.scene(87310528)
+        changeling = self.add(game.engine, "Universal Automaton")
+        growth = self.add(game.engine, "Giant Growth", seat="B", zone="hand")
+        twincast = self.add(game.engine, "Twincast", seat="C", zone="hand")
+        for card in (source, changeling, growth, twincast):
+            self.assert_closed(game, card)
+        self.prepare(game, active="B", actor="B", mana={"C": 2, "G": 1})
+        game.state.players["C"].mana_pool.update({"C": 2, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "B", growth, [source.ref])
+        original, old_trigger = game.state.stack
+        self.cast(game, "C", twincast, [original.ref])
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["C"]), (decision.kind, decision.actors))
+        self.choose(game, "C", targets=[changeling.ref])
+        copy, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual(("C", [changeling.ref]), (copy.controller, copy.targets))
+        old, new = self.triggers(game, source)
+        self.assertEqual(old_trigger.ref, old.ref)
+        self.assertNotEqual(old.ref, new.ref)
+        self.payment(game, "C", copy.ref)
+        game = self.replay(game, load=True)
+        self.choose(game, "C", pay=False)
+        self.assertEqual([original.ref, old_trigger.ref], [item.ref for item in game.state.stack])
+        self.payment(game, "B", original.ref)
+        self.choose(game, "B", pay=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(4, game.engine._numeric_stat(source.object_id, "power"))
+        self.assertEqual(1, game.engine._numeric_stat(changeling.object_id, "power"))
+        self.replay(game, load=True)

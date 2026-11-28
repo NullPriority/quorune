@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Public death-event card returns through the existing zone mutation owner."""
+"""Public event-addressed card movement through the existing zone mutation owners."""
 
 from . import regex_working_set as re
 
@@ -8,14 +8,19 @@ from ..event_card_return import (EVENT_CARD_RETURN_MECHANIC, event_card_return_e
     EVENT_BATTLEFIELD_RETURN_MECHANIC, event_battlefield_return_effect,
     EVENT_LIBRARY_MOVE_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_EVENT,
     GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE, graveyard_source_arrival_condition,
-    event_library_departure_condition, event_library_move_effect)
+    CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE, CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT,
+    controlled_creature_death_library_condition,
+    event_library_departure_condition, event_library_move_effect,
+    EVENT_HAND_RETURN_CAPABILITY, EVENT_HAND_RETURN_MECHANIC, event_hand_return_effect,
+    OTHER_LEGENDARY_HAND_RETURN_VARIANT, OTHER_LEGENDARY_HAND_RETURN_CAPABILITY,
+    other_legendary_graveyard_departure_condition)
 from ..public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
 from ..rules.source_references import SourceReferenceSpec
 
 
 _DEPARTURE_LIBRARY_TRIGGER = re.compile(
     r"(?:When|Whenever) (?P<source>.+?) (?P<departure>"
-    r"dies(?: or is put into exile from the battlefield)?|is put into your graveyard from the battlefield), "
+    r"dies(?: or is put into exile from the battlefield)?|is put into (?:a|your) graveyard from the battlefield), "
     r"(?P<body>.+)", re.I,
 )
 _LIBRARY_ORDINALS = {"second": 2, "third": 3, "fourth": 4, "fifth": 5}
@@ -26,19 +31,31 @@ _ARRIVAL_LIBRARY_TRIGGER = re.compile(
 
 
 def _departure_library_instruction(body, *, card_name, scope):
+    if scope == "graveyard" and body.casefold() == "its owner shuffles it into their library.":
+        return event_library_move_effect(position="top", shuffle=True), False, None
     match = re.fullmatch(r"(?P<optional>you may )?(?P<move>.+?)(?:, then scry (?P<scry>[1-9][0-9]*))?\.", body, re.I)
     if match is None or match["optional"] and match["scry"]:
         return None
-    subject = r"(?:it|this card|" + SourceReferenceSpec(card_name).regex_pattern + r")"
-    whose = r"its owner['’]s|your" if scope == "own_graveyard" else r"its owner['’]s"
-    if re.fullmatch(rf"shuffle {subject} into (?:{whose}) library", match["move"], re.I):
+    subject = r"(?P<subject>it|him|her|this card|" + SourceReferenceSpec(card_name).regex_pattern + r")"
+    owner_reference = r"(?P<possessive>its|his|her) owner['’]s"
+    whose = owner_reference + "|your" if scope == "own_graveyard" else owner_reference
+
+    def matches_source_owner(movement):
+        if movement is None:
+            return False
+        possessive = movement["possessive"]
+        expected = {"him": "his", "her": "her"}.get(movement["subject"].casefold(), "its")
+        return possessive is None or possessive.casefold() == expected
+
+    shuffle = re.fullmatch(rf"shuffle {subject} into (?:{whose}) library", match["move"], re.I)
+    if matches_source_owner(shuffle):
         return event_library_move_effect(position="top", shuffle=True), bool(match["optional"]), match["scry"]
     put = re.fullmatch(
         rf"put {subject} (?P<edge>on (?:the )?top of|on (?:the )?bottom of|into) (?:{whose}) library"
         r"(?: (?P<ordinal>second|third|fourth|fifth) from the top)?",
         match["move"], re.I,
     )
-    if put is None:
+    if not matches_source_owner(put):
         return None
     edge = put["edge"].casefold()
     if edge == "into":
@@ -52,9 +69,45 @@ def _departure_library_instruction(body, *, card_name, scope):
     return event_library_move_effect(position=position, shuffle=False), bool(match["optional"]), match["scry"]
 
 
+def source_departure_hand_return_binding(material_line: str, *, card_name: str | None):
+    from .fixed_public_event_trigger_bindings import _source_subject, _spec
+
+    legendary = re.fullmatch(
+        r"Whenever a legendary permanent other than (?P<source>.+?) is put into a graveyard from the battlefield, "
+        r"(?P<body>return that card to its owner['’]s hand[.]?)",
+        material_line, re.IGNORECASE,
+    )
+    if legendary is not None and card_name and SourceReferenceSpec(card_name).matches(legendary["source"]):
+        return _spec("permanent.leave", OTHER_LEGENDARY_HAND_RETURN_VARIANT, legendary["body"],
+                     "fixed-other-legendary-departure-hand-return-v1", "trigger-event-normalized-zone-change",
+                     condition=other_legendary_graveyard_departure_condition(),
+                     capabilities=(EVENT_HAND_RETURN_CAPABILITY, OTHER_LEGENDARY_HAND_RETURN_CAPABILITY))
+
+    match = _DEPARTURE_LIBRARY_TRIGGER.fullmatch(material_line)
+    if (match is None or not card_name or "exile" not in match["departure"].casefold()
+            or not _source_subject(match["source"], card_name=card_name)
+            or re.fullmatch(r"return it to its owner['’]s hand[.]?", match["body"], re.I) is None):
+        return None
+    return _spec("permanent.leave", "source_departure_hand_return", match["body"],
+        "fixed-counter-source-departure-hand-return-v1", "trigger-event-normalized-zone-change",
+        condition=event_library_departure_condition("graveyard_or_exile"),
+        capabilities=(EVENT_HAND_RETURN_CAPABILITY,))
+
+
 def source_departure_library_binding(material_line: str, *, card_name: str | None):
     from .fixed_public_event_trigger_bindings import _source_subject, _spec
 
+    controlled_death = re.fullmatch(
+        r"Whenever a creature you control dies, (?P<body>put it on the bottom of its owner['’]s library[.]?)",
+        material_line, re.I,
+    )
+    if controlled_death is not None:
+        return _spec(
+            "creature.dies", CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT, controlled_death["body"],
+            CONTROLLED_CREATURE_DEATH_LIBRARY_TEMPLATE, "trigger-event-normalized-zone-change",
+            condition=controlled_creature_death_library_condition(),
+            capabilities=(EVENT_LIBRARY_MOVE_CAPABILITY,),
+        )
     arrival = _ARRIVAL_LIBRARY_TRIGGER.fullmatch(material_line)
     if arrival is not None and card_name and _source_subject(arrival["source"], card_name=card_name):
         return _spec(
@@ -64,7 +117,10 @@ def source_departure_library_binding(material_line: str, *, card_name: str | Non
             capabilities=(EVENT_LIBRARY_MOVE_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY),
         )
     match = _DEPARTURE_LIBRARY_TRIGGER.fullmatch(material_line)
-    if match is None or not card_name or not _source_subject(match["source"], card_name=card_name):
+    if match is None or not card_name:
+        return None
+    source = match["source"]
+    if source.casefold() != "this artifact" and not _source_subject(source, card_name=card_name):
         return None
     departure = match["departure"].casefold()
     if "your graveyard" in departure:
@@ -123,8 +179,20 @@ def _source_death_land_exile_result(body):
 
 
 def _source_death_exile_then_owned_return(body):
-    from ..event_card_return import death_source_exile_effect
+    from ..event_card_return import DEATH_SOURCE_RETURN_TARGET_FIELD, death_source_exile_effect
     from .return_to_hand_templates import targeted_own_graveyard_return_to_hand_effect_template
+    from .reanimation_templates import fixed_target_reanimation_effect_template
+
+    battlefield = re.fullmatch(
+        r"Exile it and (return target creature card from your graveyard to the battlefield\.)", body.strip(), re.I,
+    )
+    if battlefield is not None:
+        result = fixed_target_reanimation_effect_template(battlefield[1])
+        if result is not None:
+            template, effects, schema, mechanics = result.compiled()
+            effect, = effects
+            guarded = {**effect, DEATH_SOURCE_RETURN_TARGET_FIELD: 1}
+            return (f"death-exile-then-{template}", (death_source_exile_effect(), guarded), schema, (*mechanics, "exile"))
 
     match = re.fullmatch(
         r"Exile it, then (return another target creature card from your graveyard to your hand\.)", body.strip(), re.I,
@@ -161,9 +229,24 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
     match = re.fullmatch(r'(?:When|Whenever) (?P<source>this creature|.+?) dies, (?P<body>.+)', material_line, re.I)
     if match is None or not (match['source'].casefold() == 'this creature' or card_name and SourceReferenceSpec(card_name).matches(match['source'])):
         return None
+    from ..rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_VARIANT
+
+    if re.fullmatch(
+        r"if it was a creature, return it to the battlefield under its owner['’]s control\. it['’]s an enchantment\.",
+        match["body"], re.I,
+    ):
+        return _spec("creature.dies.self", DEATH_ENCHANTMENT_RETURN_VARIANT, match["body"],
+                     "fixed-source-creature-death-enchantment-return-v1", "trigger-event-normalized-zone-change")
     subject = r"it|this card"
     if card_name:
         subject += "|" + SourceReferenceSpec(card_name).regex_pattern
+    if re.fullmatch(r"return (?:" + subject + r") to the battlefield tapped and transformed under its owner['’]s control[.]?",
+                    match["body"], re.I):
+        from ..event_card_return import EVENT_BATTLEFIELD_RETURN_CAPABILITY, EVENT_TRANSFORMED_RETURN_CAPABILITY
+
+        return _spec("creature.dies.self", "source_death_return", match["body"],
+                     "fixed-own-death-tapped-transformed-return-v1", "trigger-event-normalized-zone-change",
+                     capabilities=(EVENT_BATTLEFIELD_RETURN_CAPABILITY, EVENT_TRANSFORMED_RETURN_CAPABILITY))
     if not re.fullmatch(r"return (?:" + subject + r") to (?:its owner['’]s hand|the battlefield "
             r"(?:tapped )?under its owner['’]s control(?: with a \+1/\+1 counter on it)?)\.?", match['body'], re.I):
         return None
@@ -173,7 +256,97 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
         capabilities=('zone.return.fixed_event_battlefield' if battlefield else 'zone.return.fixed_event_card',))
 
 
+def _controlled_nonflying_death_return(binding, body):
+    from ..rules.death_battlefield_return import (
+        DEATH_BATTLEFIELD_RETURN_MECHANIC, controlled_nonflying_death_condition, death_battlefield_return_effect,
+    )
+    from ..replacement.immutable import FrozenMap
+
+    if (binding.event.value != "creature.dies" or binding.active_zone != "battlefield" or body != binding.body
+            or FrozenMap(binding.event_condition or {}) != FrozenMap(controlled_nonflying_death_condition())
+            or re.fullmatch(r"return it to the battlefield under its owner['’]s control with a flying counter on it\.?",
+                            body, re.I) is None):
+        return None
+    return ("fixed-controlled-death-battlefield-return-v1", (death_battlefield_return_effect(),),
+            None, (DEATH_BATTLEFIELD_RETURN_MECHANIC,))
+
+
+def entry_creature_pump_binding(material_line, *, card_name=None):
+    from .fixed_public_event_trigger_bindings import _spec
+    from ..rules.entry_and_death_characteristics import CREATURE_ENTRY_PUMP_VARIANT, creature_entry_pump_condition
+
+    pump = re.fullmatch(r"Whenever another creature you control enters, (?P<body>it gets \+[1-9][0-9]*/\+0 "
+                        r"and gains haste until end of turn\.)", material_line, re.I)
+    if pump is not None:
+        return _spec("creature.enter", CREATURE_ENTRY_PUMP_VARIANT, pump["body"],
+                     "fixed-other-controlled-entry-creature-pump-v1", "trigger-event-normalized-zone-change",
+                     condition=creature_entry_pump_condition())
+    from ..rules.entry_and_death_characteristics import (
+        NONHAND_ENTRY_PUMP_CAPABILITY, NONHAND_ENTRY_PUMP_VARIANT, nonhand_entry_pump_condition,
+    )
+    nonhand = re.fullmatch(
+        r"Whenever (?P<source>.+?) or another creature you control enters, "
+        r"if you cast it from anywhere other than your hand, "
+        r"(?P<body>it gets \+[1-9][0-9]*/\+0 and gains haste until end of turn\.)",
+        material_line, re.I,
+    )
+    if nonhand is None or not card_name or not SourceReferenceSpec(card_name).matches(nonhand["source"]):
+        return None
+    return _spec("permanent.enter", NONHAND_ENTRY_PUMP_VARIANT, nonhand["body"],
+                 "fixed-nonhand-cast-entry-pump-v1", "trigger-event-normalized-zone-change",
+                 condition=nonhand_entry_pump_condition(),
+                 capabilities=(NONHAND_ENTRY_PUMP_CAPABILITY, "trigger.condition.source_entry_cast"))
+
+
+def _paid_death_equipment_return(binding, body):
+    from ..replacement.immutable import FrozenMap
+    from ..rules.death_battlefield_return import (
+        DEATH_EQUIPMENT_RETURN_MECHANIC,
+        death_equipment_return_effect,
+        own_nontoken_death_condition,
+    )
+
+    result = r"return that card to the battlefield and attach this Equipment to it[.]?"
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("creature.dies", "creature_graveyard_owner", "battlefield")
+        or FrozenMap(binding.event_condition or {}) != FrozenMap(own_nontoken_death_condition())
+        or re.fullmatch(result, body, re.I) is None
+        or re.fullmatch(r"You may pay [{]4[}]\. If you do, " + result, binding.body, re.I) is None
+    ):
+        return None
+    return ("fixed-paid-death-equipment-return-v1", (death_equipment_return_effect(),),
+            None, (DEATH_EQUIPMENT_RETURN_MECHANIC,))
+
+
 def event_card_return_template(binding, body: str, *, card_name: str, effect_template):
+    if paid_return := _paid_death_equipment_return(binding, body):
+        return paid_return
+    from .discarded_card_exile_templates import discarded_card_exile_template
+    from ..rules.entry_and_death_characteristics import (
+        CREATURE_ENTRY_PUMP_VARIANT, NONHAND_ENTRY_PUMP_VARIANT, CREATURE_ENTRY_PUMP_MECHANIC, creature_entry_pump_effect,
+        DEATH_ENCHANTMENT_RETURN_VARIANT, DEATH_ENCHANTMENT_RETURN_MECHANIC, death_enchantment_return_effect,
+    )
+
+    if binding.variant in {CREATURE_ENTRY_PUMP_VARIANT, NONHAND_ENTRY_PUMP_VARIANT} and body == binding.body:
+        power = int(re.search(r"\+([1-9][0-9]*)/\+0", body)[1])
+        return (binding.template_id, (creature_entry_pump_effect(power),), None, (CREATURE_ENTRY_PUMP_MECHANIC,))
+    if binding.variant == DEATH_ENCHANTMENT_RETURN_VARIANT and body == binding.body:
+        return (binding.template_id, (death_enchantment_return_effect(),), None,
+                (DEATH_ENCHANTMENT_RETURN_MECHANIC,))
+    if discarded := discarded_card_exile_template(binding, body):
+        return discarded
+    from .enchanted_departure_return_templates import enchanted_departure_return_template
+
+    if linked := enchanted_departure_return_template(binding, body):
+        return linked
+    from .opposing_death_delayed_return_templates import opposing_death_delayed_return_template
+
+    if delayed := opposing_death_delayed_return_template(binding, body):
+        return delayed
+    controlled = _controlled_nonflying_death_return(binding, body)
+    if controlled is not None:
+        return controlled
     if binding.variant == "source_graveyard_arrival_shuffle" and body == binding.body:
         return (binding.template_id, (event_library_move_effect(position="top", shuffle=True, version=1),),
                 None, (FIXED_OWNER_ZONE_MOVE_MECHANIC,))
@@ -183,9 +356,24 @@ def event_card_return_template(binding, body: str, *, card_name: str, effect_tem
         return _source_death_land_exile_result(body) if body == binding.body else None
     if binding.variant == 'enchanted_creature_dies' and body == binding.body:
         from ..attachment_source_return_model import compile_attachment_source_return_body, MECHANIC
+        from ..rules.attachment_source_return import ATTACHMENT_DEATH_TRANSFORM_MECHANIC, attachment_death_transform_effects
+
+        if " ".join(body.split()).casefold() == (
+            "return it to the battlefield under your control, "
+            "then return this card to the battlefield transformed under your control."
+        ):
+            return ("attachment-death-return-and-transform-v1", attachment_death_transform_effects(), None,
+                    (EVENT_BATTLEFIELD_RETURN_MECHANIC, MECHANIC, ATTACHMENT_DEATH_TRANSFORM_MECHANIC))
         spec = compile_attachment_source_return_body(body)
         if spec is not None:
             return ('attachment-source-return-v1', (spec.effect(),), None, (MECHANIC,))
+    if binding.variant in {"source_departure_hand_return", OTHER_LEGENDARY_HAND_RETURN_VARIANT} and body == binding.body:
+        return (binding.template_id, (event_hand_return_effect(),), None, (EVENT_HAND_RETURN_MECHANIC,))
+    if binding.variant == CONTROLLED_CREATURE_DEATH_LIBRARY_VARIANT:
+        if body != binding.body:
+            return None
+        return (binding.template_id, (event_library_move_effect(position="bottom", shuffle=False),),
+                None, (FIXED_OWNER_ZONE_MOVE_MECHANIC,))
     if binding.variant == "source_library_departure":
         return event_library_move_template(binding, body, card_name=card_name, effect_template=effect_template)
     attached_graveyard = (binding.event.value == 'permanent.graveyard'
@@ -199,6 +387,12 @@ def event_card_return_template(binding, body: str, *, card_name: str, effect_tem
     if (attached_graveyard or attached and body.casefold().startswith('return it ')) and body != binding.body:
         return None
     subject = r'it|this card|' + SourceReferenceSpec(card_name).regex_pattern if source_event else r'it|that card'
+    if (source_event and binding.event.value == "creature.dies.self" and re.fullmatch(
+            r'return (?:' + subject + r") to the battlefield tapped and transformed under its owner['’]s control[.]?",
+            body, re.I)):
+        return ("fixed-own-death-tapped-transformed-return-v1",
+                (event_battlefield_return_effect(tapped=True, transformed_entry=True),),
+                None, (EVENT_BATTLEFIELD_RETURN_MECHANIC,))
     battlefield = re.fullmatch(r'return (?:' + subject + r") to the battlefield "
         r"(?P<tapped>tapped )?under (?P<controller>its owner['’]s|your) control"
         r"(?P<counter> with a \+1/\+1 counter on it)?\.?", body, re.I)

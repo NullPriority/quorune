@@ -36,6 +36,7 @@ from .zone_object_keyword_model import normalized_zone_object_keyword
 from .zone_trigger_events import ZoneTransitionKind
 
 
+FIXED_CAST_LIFECYCLE_MECHANICS = ("buyback", "dash", "retrace", "warp")
 FIXED_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_public"
 FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_zone_cast"
 FIXED_CAST_LIFECYCLE_HANDLER_ID = "casting.lifecycle.fixed-public.v1"
@@ -168,11 +169,26 @@ def _validate_fixed_zone_cast_spec(spec: Any) -> None:
     validate_fixed_zone_cast_spec(spec)
 
 
+GRANTED_ESCAPE_LIFECYCLE_VERSION = 6
+EXTERNAL_PLOT_LIFECYCLE_VERSION = 7
+GRANTED_ESCAPE_EXILE_COUNT = 3
+GRANTED_ESCAPE_CAPABILITY = "casting.lifecycle.source_granted_escape"
+GRANTED_ESCAPE_HANDLER_ID = "permission.cast.source-granted-escape.v1"
+GRANTED_ESCAPE_USE_FIELD = "source_escape_grant"
+
+
+def granted_escape_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": GRANTED_ESCAPE_HANDLER_ID, "schema_version": 1, "event": "cast.cost",
+        "requires_complete_card_program": True, "exile_other_cards": GRANTED_ESCAPE_EXILE_COUNT,
+    }
+
+
 @dataclass(frozen=True, slots=True)
 class FixedCastLifecycleSpec:
-    ability_id: str
-    line_index: int
-    oracle_line: str
+    ability_id: str | None
+    line_index: int | None
+    oracle_line: str | None
     kind: FixedCastLifecycleKind
     cost_text: str | None
     mana_cost: FrozenMap | None
@@ -182,6 +198,24 @@ class FixedCastLifecycleSpec:
     additional_costs: tuple[FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            if self.kind is not FixedCastLifecycleKind.PLOT or self.additional_costs or any(
+                field is not None for field in (
+                    self.ability_id, self.line_index, self.oracle_line, self.cost_text,
+                    self.mana_cost, self.counter_count, self.exile_count,
+                )
+            ):
+                raise FixedCastLifecycleError("External Plot requires a designation without a printed price")
+            return
+        if type(self.schema_version) is int and self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            if (self.kind is not FixedCastLifecycleKind.ESCAPE or type(self.exile_count) is not int
+                    or self.exile_count != GRANTED_ESCAPE_EXILE_COUNT or self.additional_costs
+                    or any(field is not None for field in (
+                        self.ability_id, self.line_index, self.oracle_line, self.cost_text,
+                        self.mana_cost, self.counter_count,
+                    ))):
+                raise FixedCastLifecycleError("Granted Escape requires the printed spell price and three other cards")
+            return
         if type(self.schema_version) is not int or self.schema_version not in {
             1,
             2,
@@ -192,7 +226,7 @@ class FixedCastLifecycleSpec:
             raise FixedCastLifecycleError(
                 "Unsupported fixed cast-lifecycle schema version"
             )
-        if _ABILITY_ID.fullmatch(self.ability_id) is None:
+        if type(self.ability_id) is not str or _ABILITY_ID.fullmatch(self.ability_id) is None:
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle ability ID must be abN"
             )
@@ -302,6 +336,17 @@ class FixedCastLifecycleSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedCastLifecycleSpec":
+        if isinstance(value, Mapping) and value.get("schema_version") == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            if (set(value) != {"schema_version", "kind"} or type(value["schema_version"]) is not int
+                    or value["kind"] != FixedCastLifecycleKind.PLOT.value):
+                raise FixedCastLifecycleError("External Plot has a closed designation-only receipt")
+            return externally_plotted_cast_spec()
+        if isinstance(value, Mapping) and value.get("schema_version") == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            if (set(value) != {"schema_version", "kind", "exile_count"}
+                    or type(value["schema_version"]) is not int or value["kind"] != FixedCastLifecycleKind.ESCAPE.value):
+                raise FixedCastLifecycleError("Granted Escape has a closed printed-price receipt")
+            return cls(None, None, None, FixedCastLifecycleKind.ESCAPE, None, None,
+                       exile_count=value["exile_count"], schema_version=value["schema_version"])
         legacy = {
             "schema_version",
             "ability_id",
@@ -352,6 +397,10 @@ class FixedCastLifecycleSpec:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION:
+            return {"schema_version": self.schema_version, "kind": self.kind.value}
+        if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            return {"schema_version": self.schema_version, "kind": self.kind.value, "exile_count": self.exile_count}
         value = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
@@ -374,13 +423,16 @@ class FixedCastLifecycleSpec:
         return value
 
     def fixed_cost_option(self) -> dict[str, Any]:
+        external_plot = self.schema_version == EXTERNAL_PLOT_LIFECYCLE_VERSION
+        if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            raise FixedCastLifecycleError("Granted Escape uses the current selected spell's printed price")
         if self.kind in {
             FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.RETRACE,
             FixedCastLifecycleKind.SUSPEND,
             FixedCastLifecycleKind.JUMP_START,
             FixedCastLifecycleKind.REBOUND,
-        } or self.mana_cost is None:
+        } or (self.mana_cost is None and not external_plot):
             raise FixedCastLifecycleError(
                 "This lifecycle does not define a fixed-mana cast option"
             )
@@ -391,7 +443,7 @@ class FixedCastLifecycleSpec:
                 if self.kind is FixedCastLifecycleKind.BUYBACK
                 else "alternate"
             ),
-            "label": f"{self.kind.value.title()} {self.cost_text}",
+            "label": "Plot" if external_plot else f"{self.kind.value.title()} {self.cost_text}",
             "requirements": (
                 {field: 0 for field in _MANA_FIELDS}
                 if self.kind is FixedCastLifecycleKind.PLOT
@@ -489,6 +541,13 @@ class FixedCastLifecycleSpec:
                 "Only Retrace decorates a printed cost option"
             )
         return self.printed_zone_cost_option(base_option)
+
+
+def externally_plotted_cast_spec() -> FixedCastLifecycleSpec:
+    """The shared later-turn Plot cast without a hand-staging ability."""
+    return FixedCastLifecycleSpec(
+        None, None, None, FixedCastLifecycleKind.PLOT, None, None, schema_version=EXTERNAL_PLOT_LIFECYCLE_VERSION,
+    )
 
 
 def _fixed_count(value: str) -> int | None:
@@ -1209,6 +1268,27 @@ def _complete_dash_or_warp_resolution(
     )
 
 
+def _validate_resolving_suspend_haste(item: StackItem, card: CardInstance, suspended: Mapping[str, Any]) -> None:
+    if "grants_suspend" in suspended:
+        from .rules.cast_spell_suspend import CastSuspendedExile
+
+        marker = CastSuspendedExile.from_dict(suspended)
+        if (not marker.grants_suspend or item.kind != "spell" or item.card_object_id != card.object_id
+                or item.controller != card.owner or not marker.logical_object_id.startswith(card.object_id + "@")
+                or marker.logical_object_id == card.logical_object_id):
+            raise FixedCastLifecycleError("Suspend Haste lost its original granted exile incarnation")
+        return
+    spec = FixedCastLifecycleSpec.from_dict(suspended)
+    if spec.kind is not FixedCastLifecycleKind.SUSPEND:
+        raise FixedCastLifecycleError("Suspend Haste context has the wrong lifecycle")
+
+
+def expire_granted_suspend_haste(item: StackItem) -> None:
+    suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
+    if isinstance(suspended, Mapping) and "grants_suspend" in suspended:
+        item.context.pop(SUSPEND_HASTE_CONTEXT_FIELD)
+
+
 def complete_fixed_cast_lifecycle_resolution(
     host: FixedCastLifecycleHost,
     *,
@@ -1221,11 +1301,7 @@ def complete_fixed_cast_lifecycle_resolution(
 
     suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
     if isinstance(suspended, Mapping):
-        spec = FixedCastLifecycleSpec.from_dict(suspended)
-        if spec.kind is not FixedCastLifecycleKind.SUSPEND:
-            raise FixedCastLifecycleError(
-                "Suspend Haste context has the wrong lifecycle"
-            )
+        _validate_resolving_suspend_haste(item, card, suspended)
         if card.zone == "battlefield" and card.object_kind == "card":
             _grant_lifecycle_haste(
                 host,

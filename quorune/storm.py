@@ -21,7 +21,8 @@ from .conspire_model import CONSPIRE_SEMANTIC_KEY
 from .declared_cast_cost_model import declared_cost_copy_fields
 from .casualty_model import CASUALTY_SEMANTIC_KEY
 from .semantic_runtime.commander_cast_copies import COMMANDER_CAST_COPY_KEY
-SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY, CASUALTY_SEMANTIC_KEY, COMMANDER_CAST_COPY_KEY})
+from .rules.paid_sacrifice_copy import SEMANTIC_KEY as PAID_SACRIFICE_COPY_KEY
+SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY, CASUALTY_SEMANTIC_KEY, COMMANDER_CAST_COPY_KEY, PAID_SACRIFICE_COPY_KEY})
 
 
 class StormHost(Protocol):
@@ -127,6 +128,19 @@ def spell_copy_template(host, spell, program):
     }
 
 
+def sacrifice_cast_copy_trigger_items(host, *, spell, card, program, committed_costs):
+    """Collect the copy triggers produced by committed creature sacrifice costs."""
+    from .casualty import casualty_trigger_items
+    from .rules.paid_sacrifice_copy import paid_sacrifice_copy_trigger_items
+
+    return (
+        *casualty_trigger_items(host, spell=spell, card=card, program=program),
+        *paid_sacrifice_copy_trigger_items(
+            host, spell=spell, card=card, program=program, committed_costs=committed_costs,
+        ),
+    )
+
+
 def storm_trigger_items(
     host: StormHost,
     *,
@@ -203,6 +217,9 @@ def validated_storm_trigger(
 
 
 def validated_spell_copy_trigger(item, host=None):
+    if item.semantic_key == PAID_SACRIFICE_COPY_KEY:
+        from .rules.paid_sacrifice_copy import validated_paid_sacrifice_copy_trigger
+        return validated_paid_sacrifice_copy_trigger(item)
     if item.semantic_key == COMMANDER_CAST_COPY_KEY:
         from .commander_cast_copies import validated_commander_cast_copy_trigger
         if host is None:

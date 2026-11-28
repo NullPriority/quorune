@@ -3,6 +3,9 @@ from __future__ import annotations
 """Closed public-action and result predicates for typed event triggers."""
 
 from . import regex_working_set as re
+from .day_night_nodes import day_night_counter_binding
+from .nonmana_activation_copy import nonmana_activation_copy_binding
+from .fixed_resolution_mana import player_attack_combat_mana_binding
 from typing import Any, Mapping
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY, DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
@@ -10,7 +13,10 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
-    PHYSICAL_CARD_PLAY_TEMPLATE, physical_card_play_event_condition,
+    OTHER_LAND_PLAY_SACRIFICE_CAPABILITY, OTHER_LAND_PLAY_SACRIFICE_TEMPLATE,
+    PHYSICAL_CARD_PLAY_TEMPLATE, PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE, physical_card_play_event_condition,
+    OWNED_ZONE_EXILE_CAPABILITY, OWNED_ZONE_EXILE_EVENT, OWNED_ZONE_EXILE_VARIANT,
+    other_land_play_condition, owned_zone_exile_condition,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..source_sacrifice_model import SOURCE_UNATTACHMENT_VARIANT, UNATTACHMENT_EVENT, UNATTACHMENT_TRIGGER_CAPABILITY
@@ -37,6 +43,12 @@ _PUBLIC_LAND_PLAY_TRIGGER = re.compile(
     r"(?: or (?P<cast>cast|casts) a spell(?P<spell_origin> from exile|"
     r"(?P<shared_nonhand> from anywhere other than your hand))?)?, (?P<body>.+)",
     re.IGNORECASE,
+)
+_CONTROLLED_FOOD_SACRIFICE_GROUP = re.compile(
+    r"Whenever you sacrifice one or more Foods, (?P<body>.+)", re.IGNORECASE,
+)
+_OTHER_LAND_PLAY_SACRIFICE = re.compile(
+    r"When(?:ever)? you play another land, (?P<body>sacrifice this land\.)", re.IGNORECASE,
 )
 _PUBLIC_SACRIFICE_TRIGGER = re.compile(
     r"^(?:When|Whenever) (?P<actor>you|an opponent|a player) "
@@ -157,7 +169,21 @@ def _actor_condition(
 
 
 def _public_land_play_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
-    if material_line.casefold().rstrip(".") == "whenever you play a card, draw a card":
+    sacrifice = _OTHER_LAND_PLAY_SACRIFICE.fullmatch(material_line)
+    if sacrifice is not None:
+        return _spec(
+            LAND_PLAY_EVENT, "other_land_play_source_sacrifice", sacrifice["body"],
+            OTHER_LAND_PLAY_SACRIFICE_TEMPLATE, "trigger-event-normalized-public-action",
+            condition=other_land_play_condition(), capabilities=(OTHER_LAND_PLAY_SACRIFICE_CAPABILITY,),
+        )
+    normalized = material_line.casefold().rstrip(".")
+    if normalized == "whenever you play a card from exile, create a treasure token":
+        return _spec(
+            LAND_PLAY_EVENT, "independent_dual_event", "Create a Treasure token.", PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE,
+            "trigger-event-normalized-public-action", condition=physical_card_play_event_condition(from_exile=True),
+            capabilities=("trigger.event.normalized_spell_cast", "trigger.subscription.fixed_multi_event"),
+        )
+    if normalized == "whenever you play a card, draw a card":
         return _spec(
             LAND_PLAY_EVENT, "independent_dual_event", "Draw a card.", PHYSICAL_CARD_PLAY_TEMPLATE,
             "trigger-event-normalized-public-action", condition=physical_card_play_event_condition(),
@@ -295,6 +321,19 @@ def _public_sacrifice_spec(
             "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
             condition=_all_conditions(_actor_condition("you", field="previous_controller"), subject),
         )
+    group = _CONTROLLED_FOOD_SACRIFICE_GROUP.fullmatch(material_line)
+    if group is not None:
+        from ..rules.event_subscriptions import (
+            CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY, CONTROLLER_FOOD_SACRIFICE_GROUP_VARIANT,
+            controller_food_sacrifice_group_condition,
+        )
+
+        return _spec(
+            "permanent.sacrificed", CONTROLLER_FOOD_SACRIFICE_GROUP_VARIANT, group["body"],
+            "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+            condition=controller_food_sacrifice_group_condition(),
+            capabilities=(CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY,),
+        )
     match = _PUBLIC_SACRIFICE_TRIGGER.fullmatch(material_line)
     if match is None:
         return None
@@ -338,6 +377,8 @@ def _public_discard_spec(
     combined = cycle_or_discard_binding_spec(material_line)
     if combined is not None:
         return combined
+    if batch := _public_discard_batch_spec(material_line):
+        return batch
     match = _PUBLIC_DISCARD_TRIGGER.fullmatch(material_line)
     if match is None:
         return None
@@ -380,6 +421,22 @@ def _public_discard_spec(
         "trigger-event-normalized-zone-change",
         condition=_all_conditions(*conditions),
     )
+
+
+def _public_discard_batch_spec(material_line):
+    from ..discard_effect_origin import DISCARD_BATCH_CAPABILITY, DISCARD_BATCH_EVENT, DISCARD_BATCH_VARIANT
+    from ..impulse_access_model import ImpulseAccessDuration
+    from .impulse_access_templates import fixed_impulse_access_effect_template
+
+    match = re.fullmatch(r'Whenever you discard one or more cards, (?P<body>.+)', material_line, re.I)
+    if match is None:
+        return None
+    impulse = fixed_impulse_access_effect_template(match['body'])
+    if impulse is None or impulse.count != 1 or impulse.duration != ImpulseAccessDuration.NEXT_END_STEP.value:
+        return None
+    return _spec(DISCARD_BATCH_EVENT, DISCARD_BATCH_VARIANT, match['body'],
+        'fixed-counter-public-zone-trigger-v1', 'trigger-event-normalized-zone-change',
+        condition=_actor_condition('you', field='previous_controller'), capabilities=(DISCARD_BATCH_CAPABILITY,))
 
 
 def _graveyard_departure_spec(
@@ -430,6 +487,35 @@ def _graveyard_departure_spec(
             else None,
         ),
     )
+
+
+def _owned_zone_exile_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever one or more cards are put into exile from your library and/or your graveyard, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(
+        OWNED_ZONE_EXILE_EVENT, OWNED_ZONE_EXILE_VARIANT, match["body"],
+        "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=owned_zone_exile_condition(),
+        capabilities=(OWNED_ZONE_EXILE_CAPABILITY, "trigger.effect.fixed_event"),
+    )
+
+
+def _library_creature_arrival_spec(material_line):
+    from ..rules.library_creature_arrival import CAPABILITY, EVENT, VARIANT, arrival_condition
+
+    match = re.fullmatch(
+        r"Whenever one or more creature cards are put into your graveyard from your library, (?P<body>.+)",
+        material_line,re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(EVENT,VARIANT,match["body"],"fixed-counter-public-zone-trigger-v1",
+                 "trigger-event-normalized-zone-change",condition=arrival_condition(),
+                 capabilities=(CAPABILITY,"trigger.effect.fixed_event"))
 
 
 def _public_token_zone_spec(
@@ -615,6 +701,8 @@ def _public_zone_spec(
         or _public_controlled_departure_spec(material_line)
         or _public_entry_zone_spec(material_line)
         or _graveyard_departure_spec(material_line)
+        or _owned_zone_exile_spec(material_line)
+        or _library_creature_arrival_spec(material_line)
         or _public_sacrifice_spec(material_line, card_name=card_name)
         or _public_discard_spec(material_line)
     )
@@ -673,6 +761,17 @@ def _qualified_damage_match_spec(match, *, singular: bool):
 
 
 def _qualified_damage_batch_spec(text: str):
+    above_base = re.fullmatch(
+        r"Whenever one or more creatures you control each with power greater than its base power "
+        r"deals combat damage to a player, (?P<body>draw a card[.]?)", text, re.I,
+    )
+    if above_base is not None:
+        from ..permanent_event_state_model import ABOVE_BASE_POWER_CAPABILITY, above_base_power_combat_damage_condition
+
+        return _spec("damage.dealt", QUALIFIED_DAMAGE_BATCH_VARIANT, above_base["body"],
+            "fixed-counter-public-damage-trigger-v1", "trigger-event-normalized-damage",
+            condition=above_base_power_combat_damage_condition(),
+            capabilities=(QUALIFIED_DAMAGE_BATCH_CAPABILITY, ABOVE_BASE_POWER_CAPABILITY))
     match = _QUALIFIED_DAMAGE_BATCH.fullmatch(text)
     return _qualified_damage_match_spec(match, singular=False) if match is not None else None
 
@@ -682,9 +781,83 @@ def _qualified_damage_singular_spec(text: str):
     return _qualified_damage_match_spec(match, singular=True) if match is not None else None
 
 
+def _point_combat_spec(material_line):
+    from ..rules.combat_point_counters import (
+        INBOUND_POINT_VARIANT, OUTBOUND_POINT_VARIANT,
+        point_combat_condition, point_combat_effects, point_combat_node_capabilities,
+    )
+
+    incoming = re.fullmatch(
+        r"Whenever a creature deals combat damage to you, (?P<body>remove a point counter from this artifact[.])",
+        material_line, re.I,
+    )
+    outgoing = re.fullmatch(
+        r"Whenever a creature you control deals combat damage to an opponent, "
+        r"(?P<body>put a point counter on this artifact[.] Then if it has ten or more point counters on it, "
+        r"remove them all and that player loses the game[.])", material_line, re.I,
+    )
+    match = incoming or outgoing
+    if match is None:
+        return None
+    outbound = outgoing is not None
+    capabilities = point_combat_node_capabilities(
+        effects=point_combat_effects(outbound=outbound), target_schema=None,
+        mechanic_ids=("cr-122-counters",),
+    )
+    return _spec("damage.dealt", OUTBOUND_POINT_VARIANT if outbound else INBOUND_POINT_VARIANT,
+                 match["body"], "fixed-combat-point-occurrence-v1", "trigger-event-normalized-damage",
+                 condition=point_combat_condition(outbound=outbound), capabilities=capabilities)
+
+
+def fixed_source_combat_damage_recipient_condition(recipient):
+    return _all_conditions(
+        {"field": "source", "op": "eq", "value": "$source.ref"},
+        {"field": "combat", "op": "truthy", "value": True},
+        {"any": [
+            {"field": "target_kind", "op": "eq", "value": "player"},
+            {"all": [
+                {"field": "target_kind", "op": "eq", "value": "permanent"},
+                {"field": "target_types", "op": "contains_any", "value": [recipient]},
+            ]},
+        ]},
+    )
+
+
 def _public_damage_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
+    countered_batch = re.fullmatch(
+        r"Whenever one or more creatures you control with counters on them deal combat damage to a player, "
+        r"(?P<body>you may draw a card and proliferate[.]?)", material_line, re.IGNORECASE,
+    )
+    if countered_batch is not None:
+        from ..permanent_event_state_model import (
+            COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY, any_counter_combat_damage_condition,
+        )
+
+        return _spec(
+            "damage.dealt", "one_or_more_controlled_creatures_combat_damage_player", countered_batch["body"],
+            "countered-combat-damage-draw-proliferate-v1", "trigger-event-normalized-damage",
+            condition=any_counter_combat_damage_condition(),
+            capabilities=(COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY,),
+        )
+    points = _point_combat_spec(material_line)
+    if points is not None:
+        return points
+    countered = re.fullmatch(
+        r"Whenever a creature you control with a \+1/\+1 counter on it deals combat damage to a player, "
+        r"(?P<body>you may draw a card[.]?)", material_line, re.IGNORECASE,
+    )
+    if countered is not None:
+        from ..permanent_event_state_model import (
+            COUNTERED_DAMAGE_SOURCE_CAPABILITY, COUNTERED_DAMAGE_SOURCE_VARIANT,
+            countered_creature_combat_damage_condition,
+        )
+
+        return _spec("damage.dealt", COUNTERED_DAMAGE_SOURCE_VARIANT, countered["body"],
+                     "countered-creature-combat-damage-draw-v1", "trigger-event-normalized-damage",
+                     condition=countered_creature_combat_damage_condition(),
+                     capabilities=(COUNTERED_DAMAGE_SOURCE_CAPABILITY,))
     batch = _PUBLIC_DAMAGE_BATCH_TRIGGER.fullmatch(material_line)
     if batch is not None:
         kind = batch.group("kind").casefold()
@@ -732,33 +905,7 @@ def _public_damage_spec(
             extended.group("body"),
             "fixed-counter-public-damage-trigger-v1",
             "trigger-event-normalized-damage",
-            condition=_all_conditions(
-                {"field": "source", "op": "eq", "value": "$source.ref"},
-                {"field": "combat", "op": "truthy", "value": True},
-                {
-                    "any": [
-                        {
-                            "field": "target_kind",
-                            "op": "eq",
-                            "value": "player",
-                        },
-                        {
-                            "all": [
-                                {
-                                    "field": "target_kind",
-                                    "op": "eq",
-                                    "value": "permanent",
-                                },
-                                {
-                                    "field": "target_types",
-                                    "op": "contains_any",
-                                    "value": [recipient],
-                                },
-                            ]
-                        },
-                    ]
-                },
-            ),
+            condition=fixed_source_combat_damage_recipient_condition(recipient),
         )
     opponent = _OPPONENT_NONCOMBAT_DAMAGE_TRIGGER.fullmatch(material_line)
     if opponent is None:
@@ -818,10 +965,34 @@ def _public_attack_spec(
     )
 
 
+def _player_or_walker_attacked_spec(text):
+    from ..rules.attacking_opponent_library_exile import (
+        ATTACKED_PLAYER_OR_WALKER_EVENT, ATTACKED_PLAYER_OR_WALKER_VARIANT,
+        attack_top_exile_condition,
+    )
+
+    from .opponent_library_exile_templates import ATTACK_EXILE_BODY, ATTACK_EXILE_HEADER
+
+    header, separator, body = text.partition(", ")
+    if (not separator or header.casefold() != ATTACK_EXILE_HEADER
+            or " ".join(body.casefold().replace("’", "'").split()) != ATTACK_EXILE_BODY):
+        return None
+    return _spec(
+        ATTACKED_PLAYER_OR_WALKER_EVENT, ATTACKED_PLAYER_OR_WALKER_VARIANT, body,
+        "fixed-player-or-planeswalker-attacked-v1", "trigger-event-normalized-public-action",
+        condition=attack_top_exile_condition(),
+    )
+
+
 def direct_player_attack_binding_spec(text: str) -> FixedPublicEventBindingSpec | None:
+    from ..attack_batch_model import ATTACHED_PLAYER_ATTACK_VARIANT
+    from ..rules.attack_batches import ATTACKING_OPPONENT_TOKEN_CAPABILITY
+    from .attack_event_results import attached_player_attack_token_body_is_closed
+
     match = re.fullmatch(
         r"Whenever (?P<head>you attack a player|you attack the player who has the initiative|"
-        r"(?:an opponent|a player) attacks you)(?P<count> with two or more creatures)?, (?P<body>.+)",
+        r"(?:an opponent|a player) attacks you|enchanted player is attacked)"
+        r"(?P<count> with two or more creatures)?, (?P<body>.+)",
         text, re.IGNORECASE,
     )
     if match is None:
@@ -832,14 +1003,24 @@ def direct_player_attack_binding_spec(text: str) -> FixedPublicEventBindingSpec 
             return None
         variant = ("controller_attacks_initiative_holder" if head.endswith("initiative")
                    else "controller_attacks_player")
+    elif head == "enchanted player is attacked":
+        if match["count"] or not attached_player_attack_token_body_is_closed(match["body"]):
+            return None
+        variant = ATTACHED_PLAYER_ATTACK_VARIANT
     else:
         variant = ("opponent_attacks_controller_with_two" if match["count"]
                    else "opponent_attacks_controller")
     capabilities = (DIRECT_PLAYER_ATTACK_CAPABILITY,)
     if variant == "controller_attacks_initiative_holder":
         capabilities += (TAKE_INITIATIVE_CAPABILITY,)
+    if variant == ATTACHED_PLAYER_ATTACK_VARIANT:
+        capabilities += (ATTACKING_OPPONENT_TOKEN_CAPABILITY,)
+    body = match["body"]
+    if (variant == "opponent_attacks_controller"
+            and body.casefold() == "choose target creature attacking you. put a stun counter on that creature."):
+        body = "Put a stun counter on target creature that's attacking you."
     return _spec(
-        DIRECT_PLAYER_ATTACK_EVENT, variant, match["body"], "fixed-counter-direct-player-attack-v1",
+        DIRECT_PLAYER_ATTACK_EVENT, variant, body, "fixed-counter-direct-player-attack-v1",
         "trigger-event-normalized-public-action", condition=direct_player_attack_condition(variant),
         capabilities=capabilities,
     )
@@ -865,6 +1046,66 @@ def _public_cycle_spec(
     )
 
 
+def _creature_activation_draw_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.creature_ability_activation import (
+        CREATURE_ABILITY_ACTIVATED, CREATURE_ABILITY_ACTIVATION_CAPABILITY, creature_ability_activator_condition,
+    )
+
+    match = re.fullmatch(r"Whenever you activate an ability of a creature, (?P<body>draw a card\.)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        CREATURE_ABILITY_ACTIVATED, "controller_activates_creature_ability", match["body"],
+        "fixed-creature-activation-draw-v1", "trigger-event-normalized-public-action",
+        condition=creature_ability_activator_condition(), capabilities=(CREATURE_ABILITY_ACTIVATION_CAPABILITY,),
+    )
+
+
+def _gift_given_draw_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.gift_occurrence import (
+        GIFT_GIVEN_CAPABILITY, GIFT_GIVEN_EVENT, GIFT_GIVEN_VARIANT, gift_giver_condition,
+    )
+
+    match = re.fullmatch(r"Whenever you give a gift, (?P<body>draw a card\.)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        GIFT_GIVEN_EVENT, GIFT_GIVEN_VARIANT, match["body"],
+        "fixed-controller-gives-gift-draw-v1", "trigger-event-normalized-public-action",
+        condition=gift_giver_condition(), capabilities=(GIFT_GIVEN_CAPABILITY,),
+    )
+
+
+def _public_ninjutsu_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..combat_entry_activations import (
+        NINJUTSU_ACTIVATED_CAPABILITY, NINJUTSU_ACTIVATED_EVENT, ninjutsu_activation_controller_condition,
+    )
+
+    match = re.fullmatch(r"Whenever you activate a ninjutsu ability, (?P<body>.+)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        NINJUTSU_ACTIVATED_EVENT, "controller_activates_ninjutsu", match["body"],
+        "fixed-controller-ninjutsu-activation-trigger-v1", "trigger-event-normalized-public-action",
+        condition=ninjutsu_activation_controller_condition(),
+        capabilities=(NINJUTSU_ACTIVATED_CAPABILITY,),
+    )
+
+
+def fixed_ninjutsu_observer_effect(compiled):
+    """Add the explicit hand-size offer to the exact private observer result."""
+    from ..rules.library_selection_capability_shapes import (
+        PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION, private_one_hand_ordered_bottom_shape,
+    )
+
+    template, effects, target_schema, mechanics = compiled
+    if (template is None or len(effects) != 1 or target_schema is not None
+            or not private_one_hand_ordered_bottom_shape(effects[0])):
+        return None, (), None, ()
+    effect = {**effects[0], "schema_version": PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION}
+    return template, (effect,), None, mechanics
+
+
 def _equipment_unattachment_spec(material_line):
     match = re.fullmatch(
         r"Whenever this Equipment becomes unattached from a permanent, (?P<body>sacrifice that permanent\.)",
@@ -884,12 +1125,23 @@ def fixed_public_action_event_binding_spec(
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one bounded action/result occurrence without compiling its body."""
+    from .artifact_mana_tap_control import artifact_mana_tap_control_binding
 
     return (
         direct_player_attack_binding_spec(material_line)
+        or _player_or_walker_attacked_spec(material_line)
+        or day_night_counter_binding(material_line, card_name=card_name)
         or _equipment_unattachment_spec(material_line)
+        or player_attack_combat_mana_binding(material_line)
         or _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
+        or _controller_life_loss_draw_spec(material_line)
+        or _source_mana_tap_token_spec(material_line)
+        or _source_mana_tap_damage_spec(material_line)
+        or artifact_mana_tap_control_binding(material_line, _spec)
+        or _source_mana_tap_target_token_spec(material_line)
+        or _land_mana_tap_damage_spec(material_line)
+        or _mana_tapped_land_untap_spec(material_line)
         or _public_expend_spec(material_line)
         or _public_ring_spec(material_line)
         or _public_waterbend_spec(material_line)
@@ -897,6 +1149,116 @@ def fixed_public_action_event_binding_spec(
         or _public_damage_spec(material_line)
         or _public_zone_spec(material_line, card_name=card_name)
         or _public_cycle_spec(material_line)
+        or _creature_activation_draw_spec(material_line)
+        or _gift_given_draw_spec(material_line)
+        or _public_ninjutsu_spec(material_line)
+        or nonmana_activation_copy_binding(material_line)
+    )
+
+
+def _controller_life_loss_draw_spec(material_line):
+    from ..life_change import LIFE_LOSS_CAPABILITY, LIFE_LOSS_EVENT
+    from ..rules.event_outcome_shapes import CONTROLLER_LIFE_LOSS_DRAW_VARIANT, controller_life_loss_draw_condition
+
+    match = re.fullmatch(r"Whenever you lose life, (?P<body>draw that many cards\.)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        LIFE_LOSS_EVENT, CONTROLLER_LIFE_LOSS_DRAW_VARIANT, match["body"],
+        "fixed-counter-controller-life-loss-draw-v1", "trigger-event-normalized-life-loss",
+        condition=controller_life_loss_draw_condition(), capabilities=(LIFE_LOSS_CAPABILITY,),
+    )
+
+
+def _source_mana_tap_token_spec(material_line):
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TOKEN_CAPABILITY, SOURCE_MANA_TAP_TOKEN_VARIANT,
+        source_mana_tap_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever you tap this land for mana, (?P<body>target opponent creates a "
+        r"1/1 colorless Spirit creature token\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TOKEN_VARIANT, match["body"],
+        "fixed-source-mana-tap-opponent-token-v1", "trigger-event-normalized-public-action",
+        condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_TOKEN_CAPABILITY,),
+    )
+
+
+def _source_mana_tap_damage_spec(material_line):
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_CAPABILITY, SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT,
+        source_mana_tap_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever you tap this creature for mana, (?P<body>it deals 1 damage to each opponent\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT, match["body"],
+        "fixed-counter-source-mana-tap-trigger-v1", "trigger-event-normalized-public-action",
+        condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_CAPABILITY,),
+    )
+
+
+def _source_mana_tap_target_token_spec(material_line):
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY, SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE,
+        SOURCE_MANA_TAP_VARIANT, source_mana_tap_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever you tap this land for mana, "
+        r"(?P<body>target opponent creates a 1/1 colorless Spirit creature token\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        SOURCE_MANA_TAP_EVENT, SOURCE_MANA_TAP_VARIANT, match["body"],
+        SOURCE_MANA_TAP_TARGET_TOKEN_TEMPLATE, "trigger-event-normalized-public-action",
+        condition=source_mana_tap_condition(), capabilities=(SOURCE_MANA_TAP_TARGET_TOKEN_CAPABILITY,),
+    )
+
+
+def _land_mana_tap_damage_spec(material_line):
+    from ..triggered_mana_model import LAND_MANA_TAP_EVENT, LAND_MANA_TAP_VARIANT, land_mana_tap_condition
+
+    match = re.fullmatch(
+        r"Whenever a player taps a (?P<nonbasic>nonbasic )?land for mana, "
+        r"(?P<body>this enchantment deals 1 damage to that player\.)", material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        LAND_MANA_TAP_EVENT, LAND_MANA_TAP_VARIANT, match["body"],
+        "fixed-counter-land-mana-tap-trigger-v1", "trigger-event-normalized-public-action",
+        condition=land_mana_tap_condition(nonbasic=match["nonbasic"] is not None),
+    )
+
+
+def _mana_tapped_land_untap_spec(material_line):
+    from ..rules.tap_state_capability_shapes import MANA_TAPPED_LAND_UNTAP_VARIANT, mana_tapped_land_untap_condition
+    from ..triggered_mana_model import LAND_MANA_TAP_EVENT
+
+    match = re.fullmatch(
+        r"Whenever an opponent taps a land for mana, "
+        r"(?P<body>that land doesn['’]t untap during its controller['’]s next untap step\.)", material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        LAND_MANA_TAP_EVENT, MANA_TAPPED_LAND_UNTAP_VARIANT, match["body"],
+        "fixed-counter-mana-tapped-land-untap-v1", "trigger-event-normalized-public-action",
+        condition=mana_tapped_land_untap_condition(),
     )
 
 

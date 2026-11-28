@@ -91,6 +91,10 @@ def _defending_hand_observation_dependencies(program):
 
 
 def combat_defending_player_runtime_dependencies(program):
+    from .counter_scaled_annihilator import counter_scaled_annihilator_program_dependencies
+
+    if annihilator := counter_scaled_annihilator_program_dependencies(program):
+        return annihilator
     from .defending_creature_damage import defending_creature_damage_runtime_dependencies
 
     if damage := defending_creature_damage_runtime_dependencies(program):

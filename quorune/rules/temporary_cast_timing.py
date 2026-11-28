@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-"""Controller-bound instant timing for same-turn spell and creature-card play."""
+"""Controller-bound instant timing for temporary spell and creature-card play."""
 
 from collections.abc import Mapping
 from enum import StrEnum
 
 from ..cast_timing import CastTimingPermission, type_line_has_card_type
+from ..temporary_cast_rule_model import ResolvedNextTurnSorceryTiming
 from ..errors import GameRuleError
 
 
@@ -13,6 +14,8 @@ TEMPORARY_CAST_TIMING_OPERATION = "grant_cast_permission"
 TEMPORARY_CAST_TIMING_FIELD = "temporary_cast_timing"
 TEMPORARY_CAST_TIMING_CAPABILITY = "timing.cast.temporary_controller_permission"
 NEXT_CREATURE_CARD_TIMING_CAPABILITY = "timing.play.next_creature_card"
+NEXT_TURN_SORCERY_TIMING_CAPABILITY = "timing.cast.sorcery_until_controller_next_turn"
+NEXT_TURN_SORCERY_TIMING_VERSION = 2
 TEMPORARY_CAST_TIMING_MECHANIC = "temporary-controller-cast-timing"
 
 
@@ -38,14 +41,22 @@ def temporary_cast_timing_effect_scope(effect, *, actor="$controller") -> Tempor
     if (not isinstance(effect, Mapping)
             or set(effect) != {"op", "schema_version", "player", TEMPORARY_CAST_TIMING_FIELD}
             or effect["op"] != TEMPORARY_CAST_TIMING_OPERATION
-            or type(effect["schema_version"]) is not int or effect["schema_version"] != 1
+            or type(effect["schema_version"]) is not int
+            or effect["schema_version"] not in {1, NEXT_TURN_SORCERY_TIMING_VERSION}
             or effect["player"] != actor or type(effect[TEMPORARY_CAST_TIMING_FIELD]) is not str):
         raise ValueError("Temporary cast timing requires a closed controller result")
-    return TemporaryCastTimingScope(effect[TEMPORARY_CAST_TIMING_FIELD])
+    scope = TemporaryCastTimingScope(effect[TEMPORARY_CAST_TIMING_FIELD])
+    if effect["schema_version"] == NEXT_TURN_SORCERY_TIMING_VERSION and scope is not TemporaryCastTimingScope.SORCERY_SPELLS:
+        raise ValueError("Next-turn flash timing requires the exact sorcery-only scope")
+    return scope
 
 
 def temporary_cast_timing_payload_dependencies(effect):
     scope = temporary_cast_timing_effect_scope(effect)
+    if effect["schema_version"] == NEXT_TURN_SORCERY_TIMING_VERSION:
+        from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY
+
+        return (TEMPORARY_CAST_TIMING_CAPABILITY, NEXT_TURN_EFFECT_CAPABILITY, NEXT_TURN_SORCERY_TIMING_CAPABILITY)
     if scope is TemporaryCastTimingScope.NEXT_CREATURE_CARD:
         return (TEMPORARY_CAST_TIMING_CAPABILITY, NEXT_CREATURE_CARD_TIMING_CAPABILITY)
     return (TEMPORARY_CAST_TIMING_CAPABILITY,)
@@ -101,6 +112,16 @@ def expire_temporary_cast_timing(stats):
     stats.pop(TEMPORARY_CAST_TIMING_FIELD, None)
 
 
+def _grant_next_turn_sorcery_timing(host, effect, actor):
+    from ..continuous_effect_state import commit_continuous_effect, resolution_effect_source
+
+    source = resolution_effect_source(host, effect)
+    timing = ResolvedNextTurnSorceryTiming(
+        host._next_ref("CT"), source.object_id or source.stack_ref, host._next_zone_timestamp(), actor,
+    )
+    commit_continuous_effect(host.state, timing)
+
+
 def apply_temporary_cast_timing(host, effect, *, actor, reason):
     if actor not in host.active_seats:
         raise GameRuleError("Temporary cast timing requires the active ability controller")
@@ -110,7 +131,10 @@ def apply_temporary_cast_timing(host, effect, *, actor, reason):
         scope = temporary_cast_timing_effect_scope(
             {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}}, actor=actor,
         )
-        _store_scopes(stats, turn_sequence, (*_active_scopes(stats, turn_sequence), scope))
+        if effect["schema_version"] == NEXT_TURN_SORCERY_TIMING_VERSION:
+            _grant_next_turn_sorcery_timing(host, effect, actor)
+        else:
+            _store_scopes(stats, turn_sequence, (*_active_scopes(stats, turn_sequence), scope))
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
     host._log(actor, "permission.temporary_cast_timing", f"{actor} gains a temporary casting timing permission.",
@@ -120,6 +144,9 @@ def apply_temporary_cast_timing(host, effect, *, actor, reason):
 
 def temporary_cast_timing_permissions(host, actor, card, *, face=None) -> tuple[CastTimingPermission, ...]:
     scopes = _active_scopes(host.state.players[actor].stats, host.state.turn_sequence)
+    if any(isinstance(effect, ResolvedNextTurnSorceryTiming) and effect.controller == actor
+           for effect in getattr(host.state, "continuous_effects", None) or ()):
+        scopes += (TemporaryCastTimingScope.SORCERY_SPELLS,)
     if not scopes:
         return ()
     data = face if face is not None else host._effective_card_data(card)

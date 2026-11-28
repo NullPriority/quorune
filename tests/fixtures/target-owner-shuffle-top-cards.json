@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "source": "Read-only selection from the pinned Oracle and rulings snapshot",
+  "cards": [
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "name": "Chaos Warp",
+      "mana_cost": "{2}{R}",
+      "type_line": "Instant",
+      "oracle_text": "The owner of target permanent shuffles it into their library, then reveals the top card of their library. If it's a permanent card, they put it onto the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "cmc": 3.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "A permanent card is a card with one or more of the following card types: artifact, creature, enchantment, land, or planeswalker."
+    },
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If the permanent is an illegal target by the time Chaos Warp tries to resolve, it won't resolve and none of its effects will occur. No library will be shuffled and no card will be revealed."
+    },
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If the revealed card is a permanent card but can't enter (perhaps because it's an Aura with nothing to enchant), it remains on top of that library."
+    },
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If the revealed card is not a permanent card, it remains on top of that library."
+    },
+    {
+      "oracle_id": "07a0cba9-8768-4fd9-a3d5-b0f83b4bf8e8",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "The owner of a token is the player under whose control the token was put onto the battlefield. If a token is shuffled into a player's library this way, that player shuffles before revealing the top card of that library."
+    }
+  ]
+}

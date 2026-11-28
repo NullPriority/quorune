@@ -23,7 +23,10 @@ from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
-from quorune.rules.component_resolution import implementation_component_resolves
+from quorune.rules.component_resolution import (
+    component_resolution_snapshot,
+    implementation_component_resolves,
+)
 from quorune.semantics import SemanticProgram
 
 
@@ -67,6 +70,43 @@ def _lightning_bolt_record() -> CardRecord:
 
 
 class CapabilityValidationSnapshotTests(unittest.TestCase):
+    def test_fresh_batches_follow_default_registry_and_evidence_path_changes(self):
+        from quorune.rules import capabilities, evidence
+        from quorune.rules.evidence import _capability_validation_snapshot, CapabilityEvidenceError
+        from quorune.rules.evidence_storage import unpack_evidence_document
+
+        registry_bytes = REGISTRY_PATH.read_bytes()
+        evidence_bytes = evidence.DEFAULT_CAPABILITY_EVIDENCE.read_bytes()
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            valid_registry, changed_registry = root / "original-registry.json", root / "changed-registry.json"
+            valid_evidence, changed_evidence = root / "original-evidence.json", root / "changed-evidence.json"
+            valid_registry.write_bytes(registry_bytes)
+            valid_evidence.write_bytes(evidence_bytes)
+            replacement = json.loads(registry_bytes)
+            replacement["registry_version"] += 1
+            changed_registry.write_text(json.dumps(replacement), encoding="utf-8")
+            expected = unpack_evidence_document(json.loads(evidence_bytes))["fingerprint"].encode("ascii")
+            changed = evidence_bytes.replace(expected, b"0" * 64, 1)
+            self.assertNotEqual(evidence_bytes, changed)
+            changed_evidence.write_bytes(changed)
+
+            def load(registry_path, evidence_path):
+                with patch.object(capabilities, "DEFAULT_CAPABILITY_REGISTRY", registry_path), patch.object(
+                    evidence, "DEFAULT_CAPABILITY_EVIDENCE", evidence_path
+                ), _capability_validation_snapshot():
+                    return load_default_capability_registry()
+
+            first = load(valid_registry, valid_evidence)
+            with self.assertRaisesRegex(CapabilityEvidenceError, "registry fingerprint is stale"):
+                load(changed_registry, valid_evidence)
+            with self.assertRaisesRegex(CapabilityEvidenceError, "fingerprint does not match"):
+                load(valid_registry, changed_evidence)
+            recovered = load(valid_registry, valid_evidence)
+            self.assertIsNot(first, recovered)
+            self.assertEqual(first.fingerprint, recovered.fingerprint)
+            self.assertEqual(first.evidence_fingerprint, recovered.evidence_fingerprint)
+
     def test_separate_batches_reread_same_metadata_registry_and_evidence_edits(self):
         from quorune.rules import capabilities, evidence
         from quorune.rules.evidence import _capability_validation_snapshot, CapabilityEvidenceError
@@ -153,6 +193,113 @@ class CapabilityValidationSnapshotTests(unittest.TestCase):
 
 
 class ComponentResolutionTests(unittest.TestCase):
+    def test_new_snapshot_rereads_root_module_precedence_and_exact_source_bytes(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            absent, present = root / "first" / "quorune", root / "second" / "quorune"
+            for package in (absent, present):
+                (package / "rules").mkdir(parents=True)
+            package = present / "witness"
+            package.mkdir()
+            (package / "__init__.py").write_text("class PackageExport: pass\n", encoding="utf-8")
+            module = present / "witness.py"
+            module.write_text("class ModuleExport: pass\n", encoding="utf-8")
+            stamp = module.stat()
+            resolver = "quorune.rules.component_resolution.__file__"
+            old, new = (str(path / "rules" / "component_resolution.py") for path in (absent, present))
+            with patch(resolver, old), component_resolution_snapshot():
+                self.assertFalse(implementation_component_resolves("quorune.witness.ModuleExport"))
+                with patch(resolver, new), component_resolution_snapshot():
+                    self.assertFalse(implementation_component_resolves("quorune.witness.ModuleExport"))
+
+            with patch(resolver, new):
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.ModuleExport"))
+                    self.assertFalse(implementation_component_resolves("quorune.witness.PackageExport"))
+                    module.write_text("class HiddenExport: pass\n", encoding="utf-8")
+                    os.utime(module, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+                    self.assertEqual(stamp.st_size, module.stat().st_size)
+                    self.assertEqual(stamp.st_mtime_ns, module.stat().st_mtime_ns)
+                    self.assertTrue(implementation_component_resolves("quorune.witness.ModuleExport"))
+                with component_resolution_snapshot():
+                    self.assertFalse(implementation_component_resolves("quorune.witness.ModuleExport"))
+                    self.assertTrue(implementation_component_resolves("quorune.witness.HiddenExport"))
+                module.unlink()
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.PackageExport"))
+
+    def test_absent_parent_probes_share_only_the_current_validation_snapshot(self):
+        with TemporaryDirectory() as directory:
+            package = Path(directory) / "quorune"
+            rules = package / "rules"
+            rules.mkdir(parents=True)
+            module = package / "witness.py"
+            module.write_text("class First: pass\nclass Second: pass\n", encoding="utf-8")
+            absent = package / "witness"
+            checked_directories = []
+            checked_files = []
+            original_is_dir, original_is_file = Path.is_dir, Path.is_file
+
+            def is_dir(path):
+                checked_directories.append(path)
+                return original_is_dir(path)
+
+            def is_file(path):
+                checked_files.append(path)
+                return original_is_file(path)
+
+            resolver_path = rules / "component_resolution.py"
+            with (
+                patch("quorune.rules.component_resolution.__file__", str(resolver_path)),
+                patch.object(Path, "is_dir", is_dir),
+                patch.object(Path, "is_file", is_file),
+            ):
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.First"))
+                    self.assertTrue(implementation_component_resolves("quorune.witness.Second"))
+                    self.assertFalse(implementation_component_resolves("quorune.witness.Missing"))
+                self.assertEqual(1, checked_directories.count(absent))
+                self.assertFalse(any(absent in path.parents for path in checked_files))
+
+                absent.mkdir()
+                (absent / "child.py").write_text("class Nested: pass\n", encoding="utf-8")
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.child.Nested"))
+                    self.assertTrue(implementation_component_resolves("quorune.witness.First"))
+                self.assertEqual(2, checked_directories.count(absent))
+                self.assertIn(absent / "child.py", checked_files)
+
+    def test_registry_component_snapshot_reads_module_once_and_refreshes(self):
+        with TemporaryDirectory() as directory:
+            package = Path(directory) / "quorune"
+            rules = package / "rules"
+            rules.mkdir(parents=True)
+            module = package / "witness.py"
+            module.write_text("First = 1\nSecond = 2\n", encoding="utf-8")
+            with patch("quorune.rules.component_resolution.__file__", str(rules / "component_resolution.py")):
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.First"))
+                    module.write_text("First = 1\n", encoding="utf-8")
+                    self.assertTrue(implementation_component_resolves("quorune.witness.Second"))
+                self.assertFalse(implementation_component_resolves("quorune.witness.Second"))
+
+    def test_registry_snapshot_reuses_a_module_read_and_refreshes_next_time(self):
+        from quorune.rules.component_resolution import _component_source_snapshot
+
+        prefix = "quorune.rules.component_resolution."
+        source = "class First: pass\nclass Other: pass\n"
+        with patch.object(Path, "read_text", return_value=source) as read:
+            with _component_source_snapshot():
+                self.assertTrue(implementation_component_resolves(prefix + "First"))
+                self.assertTrue(implementation_component_resolves(prefix + "Other"))
+                self.assertFalse(implementation_component_resolves(prefix + "Absent"))
+                read.assert_called_once()
+            read.return_value = source.replace("First", "Gone_")
+            with _component_source_snapshot():
+                self.assertFalse(implementation_component_resolves(prefix + "First"))
+                self.assertTrue(implementation_component_resolves(prefix + "Other"))
+            self.assertEqual(2, read.call_count)
+
     def test_identical_source_reuses_exports_without_importing_the_module(self):
         source = (
             "raise RuntimeError('component validation must not execute source')\n"

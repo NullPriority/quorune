@@ -8,10 +8,37 @@ ANNOUNCED_ACTIVATION_X_CAPABILITY = 'activation.mana_cost.announced_x'
 ANNOUNCED_ACTIVATION_X_SACRIFICE_CAPABILITY = 'activation.mana_cost.announced_x_source_sacrifice'
 ANNOUNCED_ACTIVATION_X_SOURCE_DISCARD_CAPABILITY = 'activation.mana_cost.announced_x_source_discard'
 ANNOUNCED_ACTIVATION_X_FIELD = 'announced_x_symbols'
+CONTROLLED_LAND_RETURN_X_COST = "{X}{W}, Return a land you control to its owner's hand"
+
+
+def controlled_land_return_x_choice():
+    from .activation_cost_choice import CostChoice
+    from .object_predicate import ObjectQuerySpec
+    from .replacement.immutable import FrozenMap
+
+    return CostChoice(kind="return_one_to_owner_hand", predicate=FrozenMap(
+        ObjectQuerySpec(zones=("battlefield",), types_all=("land",), controller="$actor", known_to_actor=True).to_dict()))
+
+
+def has_controlled_land_return_x_price(ability):
+    return (ability.cost_text == CONTROLLED_LAND_RETURN_X_COST
+            and ability.choices == (controlled_land_return_x_choice(),))
+
+
+def validate_activation_x_selected_cost(ability):
+    if ability.cost_text == CONTROLLED_LAND_RETURN_X_COST:
+        if not has_controlled_land_return_x_price(ability):
+            raise ValueError("Activation X requires its exact controlled land return")
+    else:
+        from .activation_x_discard import validate_activation_x_discard
+        validate_activation_x_discard(ability)
 
 
 def activation_x_symbols(cost_text: str, *, allow_source_sacrifice: bool = False,
-        allow_fixed_discard: bool = False, allow_source_discard: bool = False) -> int | None:
+        allow_fixed_discard: bool = False, allow_source_discard: bool = False,
+        allow_controlled_land_return: bool = False) -> int | None:
+    if allow_controlled_land_return and cost_text == CONTROLLED_LAND_RETURN_X_COST:
+        return 1
     if allow_source_discard:
         suffix = ', Discard this card'
         if not cost_text.endswith(suffix):
@@ -73,18 +100,31 @@ def source_discard_activation_x_program_dependencies(program) -> tuple[str, ...]
             or any(type(value) is not int or value < 0 for value in mana.values())
             or any(mana.get(key, 0) != expected.get(key, 0) for key in set(mana) | set(expected))):
         raise ValueError('Hand-source activation X fixed mana differs from its typed price')
+    from .cycling_abilities import VARIABLE_CYCLING_HANDLER_ID
+
+    if any(isinstance(descriptor, Mapping) and descriptor.get("handler_id") == VARIABLE_CYCLING_HANDLER_ID
+           for descriptor in getattr(program, "handlers", ())):
+        from .rules.cycling_activation_x import variable_cycling_payment_program_dependencies
+
+        return variable_cycling_payment_program_dependencies(program)
     return (ANNOUNCED_ACTIVATION_X_CAPABILITY, ANNOUNCED_ACTIVATION_X_SOURCE_DISCARD_CAPABILITY)
 
 
 def validate_activation_x_ability(ability) -> None:
     symbols = ability.announced_x_symbols
+    minimum = ability.announced_x_minimum
+    if (type(minimum) is not int or minimum not in {0, 1}
+            or minimum and (symbols != 2 or ability.cost_text != "{X}{X}, {T}"
+                            or not ability.tap_source or ability.zones != ("battlefield",))):
+        raise ValueError("A positive announced activation X requires its exact double-X tap cost")
     if symbols is None:
         if '{X}' in ability.cost_text.upper() and 'X' not in ability.complex_symbols:
             raise ValueError('An X activation cost requires its retained typed price binding')
         return
     if (type(symbols) is not int or symbols <= 0
             or activation_x_symbols(ability.cost_text, allow_source_sacrifice=True,
-                allow_fixed_discard=True, allow_source_discard=ability.discard_source is True) != symbols
+                allow_fixed_discard=True, allow_source_discard=ability.discard_source is True,
+                allow_controlled_land_return=has_controlled_land_return_x_price(ability)) != symbols
             or not activation_x_origin_is_supported(ability) or ability.mana_ability
             or ability.complex_symbols or ability.uncompiled_costs
             or ability.mana_cost_options or ability.waterbend is not None
@@ -100,16 +140,42 @@ def validate_activation_x_ability(ability) -> None:
         raise ValueError('Activation X tap obligation must match its printed cost')
     if ability.sacrifice_source != (', Sacrifice this ' in ability.cost_text):
         raise ValueError('Activation X sacrifice obligation must match its printed cost')
-    from .activation_x_discard import validate_activation_x_discard
-    validate_activation_x_discard(ability)
+    validate_activation_x_selected_cost(ability)
+
+
+def exact_mana_only_x_activation_cost(cost) -> bool:
+    from collections.abc import Mapping
+
+    from .replacement.immutable import thaw_value
+
+    expected = {
+        "text": "{X}", "mana": dict.fromkeys(("GENERIC", *"WUBRGC"), 0),
+        "complex_symbols": [], "tap_source": False, "untap_source": False,
+        "discard_source": False, "sacrifice_source": False, "exile_source": False,
+        "life_payment": 0, "energy_payment": 0, "loyalty_delta": None,
+        "source_counter_removal_cost": None, "choices": [], "uncompiled_costs": [],
+        "announced_x_symbols": 1,
+    }
+    if not isinstance(cost, Mapping):
+        return False
+    mana = cost.get("mana")
+    return (isinstance(mana, Mapping) and all(type(amount) is int for amount in mana.values())
+            and type(cost.get("announced_x_symbols")) is int and thaw_value(cost) == expected)
 
 
 def chosen_activation_x(ability, response) -> int | None:
     if not ability.chooses_activation_x:
         return None
     value = response.get('x')
-    if type(value) is not int or value < 0:
-        raise ValueError('Activation X must be an explicit nonnegative integer')
+    minimum = ability.announced_x_minimum
+    if type(value) is not int or value < minimum:
+        if minimum:
+            raise ValueError("Activation X must be an explicit positive integer")
+        raise ValueError("Activation X must be an explicit nonnegative integer")
+    from .rules.announced_artifact_sacrifice_return import has_announced_artifact_sacrifice
+
+    if value == 0 and has_announced_artifact_sacrifice(ability):
+        raise ValueError('Artifact surrender requires an explicitly positive X')
     return value
 
 
@@ -124,5 +190,5 @@ def bind_activation_target_cardinality(ability, schema, response, *, hint=False,
         return bind_announced_target_schema(schema, target_limit)
     if not ability.chooses_activation_x:
         raise ValueError('Variable target cardinality requires the typed activation-X cost')
-    value = 0 if hint else chosen_activation_x(ability, response)
+    value = ability.announced_x_minimum if hint else chosen_activation_x(ability, response)
     return bind_announced_target_schema(schema, value)

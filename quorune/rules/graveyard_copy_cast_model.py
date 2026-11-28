@@ -16,7 +16,17 @@ GRAVEYARD_COPY_PARENT_FIELD = "resolving_graveyard_copy_parent"
 GRAVEYARD_COPY_RULES = (
     "118.8c", "400.7j", "601.2", "608.2b", "608.2g", "608.3f", "704.5e", "707.10f", "707.12", "707.12a",
 )
-_SCOPES = ("any", "opponent", "paired", "own", "own_all", "own_source_power", "public_source_power")
+RANDOM_NONLAND_SCOPE = "own_random_nonland"
+UNTARGETED_COPY_SCOPES = frozenset({"own_all", RANDOM_NONLAND_SCOPE})
+_SCOPES = frozenset({"any", "opponent", "paired", "own", "own_source_power", "public_source_power"}) | UNTARGETED_COPY_SCOPES
+
+
+def mill_random_graveyard_copy_effects():
+    return (
+        {"op": "mill", "player": "$controller", "count": 2},
+        {"op": GRAVEYARD_COPY_OPERATION, "player": "$controller", "scope": RANDOM_NONLAND_SCOPE,
+         "copies": 1, "cards": []},
+    )
 
 
 def _copy_count(scope, count):
@@ -33,10 +43,12 @@ def validate_graveyard_copy_effect(effect, *, resolved=False):
         if (type(effect["player"]) is not str or not effect["player"] or not isinstance(cards, (list, tuple))
                 or any(type(ref) is not str or not ref for ref in cards) or len(set(cards)) != len(cards)):
             raise ValueError("The graveyard copy instruction requires distinct current targets")
-    elif effect["player"] != "$controller" or (cards not in ([], ()) if effect["scope"] == "own_all" else cards != "$targets"):
+    elif effect["player"] != "$controller" or (
+        cards not in ([], ()) if effect["scope"] in UNTARGETED_COPY_SCOPES else cards != "$targets"
+    ):
         raise ValueError("The graveyard copy instruction requires its declared target group")
-    if effect["scope"] == "own_all" and tuple(cards):
-        raise ValueError("An all-graveyard instruction does not announce targets")
+    if effect["scope"] in UNTARGETED_COPY_SCOPES and tuple(cards):
+        raise ValueError("Untargeted graveyard copy instructions do not announce targets")
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,9 +61,12 @@ class ExileGraveyardCopiesIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self):
+        if self.scope == RANDOM_NONLAND_SCOPE and self.originals:
+            raise ValueError("An engine-random copy cannot carry nominated originals")
         if (any(type(value) is not str or not value for value in (self.actor, self.stack_ref))
                 or self.scope not in _SCOPES or not _copy_count(self.scope, self.copies)
-                or not isinstance(self.originals, tuple) or not self.originals
+                or not isinstance(self.originals, tuple)
+                or (not self.originals and self.scope != RANDOM_NONLAND_SCOPE)
                 or any(not isinstance(value, LibrarySelectionObjectIdentity) for value in self.originals)
                 or len({value.object_id for value in self.originals}) != len(self.originals)
                 or self.scope != "own_all" and len(self.originals) > (2 if self.scope == "paired" else 1)):

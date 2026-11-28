@@ -22,6 +22,80 @@ from inherited_composition_fixture import InheritedNativeFixture
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_artifact_threshold_tap_then_exile_closes_one_original_target(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.resolution_condition_shapes import resolution_condition_node_capabilities
+        from test_bound_effect_programs import record
+
+        registry = load_default_capability_registry()
+        template = "Tap target creature.\nIf you control {count} or more artifacts, exile that creature."
+        for count in ("two", "three"):
+            material = template.format(count=count)
+            compiled = compile_oracle_card(record(material), capability_registry=registry)
+            self.assertEqual("exact", compiled.status, compiled.material_residuals)
+            node, = compiled.faces[0].nodes
+            self.assertEqual(material, node.text)
+            prefix, condition = node.effects
+            self.assertEqual({"op": "tap", "card": "$target.0"}, prefix)
+            self.assertEqual([{"op": "exile_permanent", "card": "$target.0"}], condition["effects"])
+            self.assertEqual(1, node.target_schema["count"])
+            forged = copy.deepcopy(condition)
+            forged["effects"][0]["card"] = "$target.1"
+            self.assertEqual((), resolution_condition_node_capabilities(
+                effects=(prefix, forged), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+            self.assertEqual((), resolution_condition_node_capabilities(
+                effects=(condition,), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+
+        for body in (
+            "Tap target creature. If you control three or more lands, exile that creature.",
+            "Tap target creature. If you control three or more artifacts, exile another target creature.",
+            "Tap target creature. If you control three or more artifacts, exile that creature. Rewrite history.",
+        ):
+            compiled = compile_oracle_card(record(body), capability_registry=registry)
+            self.assertNotEqual("exact", compiled.status)
+
+    def test_controlled_land_threshold_repeats_only_the_draw_and_tapped_entry(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+
+        registry = load_default_capability_registry()
+        text = (
+            "{T}, Sacrifice another creature: Draw a card. "
+            "You may put a land card from your hand onto the battlefield tapped. "
+            "If you control six or more lands, repeat this process once."
+        )
+        ir = compile_oracle_card(
+            record(text, "Creature — Human"),
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.to_dict())
+        node, = ir.faces[0].nodes
+        draw, entry, repeat = node.effects
+        self.assertEqual(("draw", "put_card_from_hand"), (draw["op"], entry["op"]))
+        self.assertEqual(1, draw["count"])
+        self.assertIs(entry["tapped"], True)
+        self.assertEqual("apply_if_public_condition", repeat["op"])
+        self.assertEqual(6, repeat["condition"]["amount"])
+        self.assertEqual([draw, entry], repeat["effects"])
+        self.assertTrue(node.cost["tap_source"])
+        self.assertEqual("sacrifice_one", node.cost["choices"][0]["k"])
+        for invalid in (
+            text.replace("repeat this process once", "repeat this process twice"),
+            text.replace("draw a card", "draw two cards").replace("Draw a card", "Draw two cards"),
+            text.replace("a land card", "a basic land card"),
+            text.replace("more lands", "more creatures"),
+        ):
+            with self.subTest(invalid=invalid):
+                unsupported = compile_oracle_card(
+                    record(invalid, "Creature — Human"),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertTrue(unsupported.material_residuals)
+
     def test_public_alternative_preserves_prefix_and_validates_both_result_shapes(self):
         from quorune.resolution_conditions import RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
         from quorune.rules.resolution_condition_shapes import resolution_condition_node_capabilities
@@ -961,6 +1035,8 @@ class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
             ROOT / "tests/fixtures/bound-effect-program-cards.json",
             ROOT / "tests/fixtures/resolution-public-condition-cards.json",
             ROOT / "tests/fixtures/public-condition-surface-cards.json",
+            ROOT / "tests/fixtures/public-condition-self-replacement-cards.json",
+            ROOT / "tests/fixtures/controlled-artifact-tap-exile-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -968,6 +1044,62 @@ class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
             DeckEntry("Generic Bound Commander", 1, "commander"),
             DeckEntry("Generic Bound Plains", 32),
         ], ["Generic Bound Commander"])
+
+    def test_actual_dispatch_checks_the_current_controller_count_and_taps_before_exile(self):
+        # CR 109.5, 608.2b/c/h and the original ruling distinguish the locked
+        # target from the public artifact count read after the tap.
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        cases = (
+            ("two", 2, None, False, "battlefield", True),
+            ("three", 3, None, False, "exile", True),
+            ("already tapped", 3, None, True, "exile", False),
+            ("artifact removed", 3, "Disenchant", False, "battlefield", True),
+            ("target removed", 3, "Unsummon", False, "hand", False),
+        )
+        for i, (name, count, response_name, initially_tapped, destination, changed_tap) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(60823001 + i)
+                source = self.add(session.engine, "Dispatch", zone="hand")
+                target = self.add(session.engine, "Grizzly Bears", seat="C", ref="dispatch-target")
+                target.tapped = initially_tapped
+                artifacts = [self.add(session.engine, "Memnite", ref=f"dispatch-artifact-{j}")
+                             for j in range(count)]
+                self.add(session.engine, "Memnite", seat="D", ref="dispatch-foreign-artifact")
+                private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand",
+                                   ref="dispatch-private-hand")
+                response = (self.add(session.engine, response_name, seat="B", zone="hand")
+                            if response_name else None)
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"W": 1})
+                session.state.players["B"].mana_pool.update({"W": 1, "C": 1, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", source, [target.ref])
+                if response:
+                    self.assert_closed(session, response)
+                    subject = artifacts[-1] if response_name == "Disenchant" else target
+                    self.cast(session, "B", response, [subject.ref])
+                    self.resolve_top(session)
+                observed_tapped = []
+                move = ZoneTransitionOwner.move_card
+
+                def observe_exile(owner, object_id, next_zone, **kwargs):
+                    if object_id == target.object_id and next_zone == "exile":
+                        observed_tapped.append(owner.state.cards[object_id].tapped)
+                    return move(owner, object_id, next_zone, **kwargs)
+
+                with patch.object(ZoneTransitionOwner, "move_card", observe_exile):
+                    self.assertIsNone(self.resolve(session))
+                self.assertEqual([True] if destination == "exile" else [], observed_tapped)
+                self.assertEqual(destination, session.state.cards[target.object_id].zone)
+                if destination == "battlefield":
+                    self.assertTrue(session.state.cards[target.object_id].tapped)
+                target_events = [event.code for event in session.state.events
+                                 if target.object_id in event.changed_objects]
+                self.assertEqual(int(changed_tap), target_events.count("permanent.tap"))
+                for seat in "ABC":
+                    self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+                self.replay(session, load=True)
 
     def test_actual_cosmos_elixir_takes_only_one_branch_at_the_starting_life_boundary(self):
         for initial_life in (37, 38):

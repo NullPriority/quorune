@@ -16,7 +16,7 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
-from quorune.semantics import SemanticProgram
+from quorune.semantics import SemanticProgram, SemanticRegistry
 
 
 class SemanticPrivateSearchTests(unittest.TestCase):
@@ -605,6 +605,15 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         engine.permissions.invalidate_current()
         engine.state.pending_decision = None
         hulk = self._card(engine, "B", "Protean Hulk")
+        # Load the compatibility payload explicitly as an earlier checkpoint
+        # would. A separate native test covers current card registration.
+        legacy = SemanticRegistry().get(f"{hulk.oracle_id}:trigger:dies")
+        self.assertIsNotNone(legacy)
+        restored = SemanticProgram.from_dict(legacy.to_dict())
+        self.assertNotIn("schema_version", restored.effects[0])
+        for current in engine.semantics.programs_for_oracle(hulk.oracle_id):
+            engine.semantics.remove(current.key)
+        engine.semantics.put(restored)
         engine.move_card(
             hulk.object_id,
             "battlefield",
@@ -640,6 +649,9 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertEqual(
             "semantic.search", engine.state.pending_decision.kind
         )
+        session.commands.clear()
+        session.decisions.clear()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
         rejected = session.act(
             "pilot:B",
             {
@@ -668,6 +680,12 @@ class SemanticPrivateSearchTests(unittest.TestCase):
             "battlefield",
             self._card(engine, "B", "Bloodghast").zone,
         )
+        with tempfile.TemporaryDirectory() as temporary:
+            record = Path(temporary) / "historical-hulk-search"
+            session.save(record)
+            replay = replay_record(record, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual("command_replay", replay["mode"])
 
     def test_private_and_revealed_hand_search_visibility(self):
         for reveal in (False, True):
@@ -992,6 +1010,19 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertEqual(starting_life - 1, session.state.players["B"].life)
         self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
         return session, fetch, pool, spelunking
+
+    def test_fetch_previews_include_entry_life_only_for_eligible_lands_and_the_chooser(self):
+        session, _, pool, _ = self._activate_fetch_with_spelunking()
+        decision = session.packet("pilot:B", full=True)["decision"]
+        previews = decision["ctx"]["preview_cards"]
+        selected = next(row for row in previews if row["id"] == pool.ref)
+        self.assertEqual(pool.printed_name, selected["n"])
+        self.assertEqual(2, selected["entry_life"])
+        self.assertTrue(any("entry_life" not in row for row in previews))
+        for principal in ("pilot:A", "spectator"):
+            packet = session.packet(principal, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(pool.printed_name, json.dumps(packet))
 
     def test_fetch_entry_choice_preserves_paid_activation_and_exact_replay(self):
         for pay_life in (False, True):

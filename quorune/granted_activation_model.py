@@ -17,7 +17,10 @@ if TYPE_CHECKING:
 _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
 RESTRICTED_MANA_GRANT_CAPABILITY = 'continuous.ability.restricted_mana_grant'
 GRANTING_ATTACHMENT_PAYMENT_CAPABILITY = 'activation.granting_attachment.fixed_payment'
+SOURCE_EQUIPMENT_UNATTACH_CAPABILITY = 'activation.source_equipment.unattach_payment'
 GRANTING_ATTACHMENT_PAYMENT_FIELD = 'granting_attachment_payment'
+GRANTING_ATTACHMENT_SACRIFICE_REF = '$granting_attachment.zone_object'
+GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY = 'trigger.attachment.granting_source_reflexive_sacrifice'
 GRANTED_SOURCE_COUNTER_CAPABILITY = 'activation.source_counter_removal.fixed'
 GRANTED_SPORE_COUNTER_COST = FrozenMap({'schema_version': 1, 'counter_name': 'spore', 'amount': 2})
 
@@ -25,6 +28,7 @@ GRANTED_SPORE_COUNTER_COST = FrozenMap({'schema_version': 1, 'counter_name': 'sp
 class GrantingAttachmentPaymentKind(StrEnum):
     UNATTACH = 'unattach'
     SACRIFICE = 'sacrifice'
+    UNATTACH_SOURCE = 'unattach_source'
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,7 +41,9 @@ class GrantingAttachmentPayment:
             raise AbilityFragmentError('Granting Equipment payment requires a typed operation')
         if self.granting_object is not None:
             from .continuous_effect_model import ContinuousObjectIdentity
-            if not isinstance(self.granting_object, ContinuousObjectIdentity):
+            if self.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE or not isinstance(
+                self.granting_object, ContinuousObjectIdentity
+            ):
                 raise AbilityFragmentError('Granting Equipment payment requires an exact incarnation')
 
     def bind(self, object_id: str, logical_object_id: str) -> GrantingAttachmentPayment:
@@ -63,8 +69,24 @@ class GrantingAttachmentPayment:
         return cls(GrantingAttachmentPaymentKind(value['kind']), identity)
 
 
+def has_source_equipment_unattach(ability):
+    payment = getattr(ability, "granting_attachment_payment", None)
+    return isinstance(payment, GrantingAttachmentPayment) and payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE
+
+
 def validate_bound_granting_attachment_payment(ability) -> None:
     payment = ability.granting_attachment_payment
+    if has_source_equipment_unattach(ability):
+        if (payment.granting_object is not None or ability.zones != ('battlefield',)
+                or ability.mana_ability or ability.sorcery_speed or ability.tap_source or ability.untap_source
+                or ability.sacrifice_source or ability.discard_source or ability.exile_source
+                or ability.life_payment or ability.energy_payment or ability.mana_cost_options
+                or not any(ability.mana.values()) or ability.choices or ability.complex_symbols
+                or ability.uncompiled_costs or ability.source_counter_removal_cost is not None
+                or ability.source_counter_placement_cost is not None or ability.loyalty_delta is not None
+                or ability.waterbend is not None or ability.announced_x_symbols is not None):
+            raise AbilityFragmentError('Unattaching the source Equipment requires its exact fixed-mana activation')
+        return
     if (
         not isinstance(payment, GrantingAttachmentPayment) or payment.granting_object is None
         or ability.zones != ('battlefield',) or not ability.tap_source or not ability.builtin_semantic_key
@@ -122,6 +144,11 @@ def _nonempty_string(value: Any, *, field: str) -> str:
 
 GRANTED_UNEARTH_VERSION = 8
 GRAVEYARD_UNEARTH_GRANT_CAPABILITY = "continuous.ability.graveyard_unearth_grant"
+GRANTED_NINJUTSU_VERSION = 9
+HAND_NINJUTSU_GRANT_CAPABILITY = "continuous.ability.hand_ninjutsu_grant"
+GRANTOR_REDIRECTION_VERSION = 10
+GRANTOR_REDIRECTION_CAPABILITY = "activation.grantor_only.finite_damage_redirect"
+_INCARNATION_BOUND_GRANT_VERSIONS = (GRANTED_UNEARTH_VERSION, GRANTED_NINJUTSU_VERSION)
 
 
 @dataclass(frozen=True, slots=True)
@@ -148,9 +175,10 @@ class GrantedActivatedAbilitySpec:
     source_counter_removal_cost: Mapping[str, Any] | None = None
     announced_x_symbols: int | None = None
     grant_incarnation: str | None = None
+    activation_grantor: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, GRANTED_UNEARTH_VERSION}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, *_INCARNATION_BOUND_GRANT_VERSIONS, GRANTOR_REDIRECTION_VERSION}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -159,6 +187,7 @@ class GrantedActivatedAbilitySpec:
         if self.schema_version==3 and self.crew_threshold is None:raise AbilityFragmentError('Granted Crew schema requires its threshold')
         if self.schema_version == 5:
             if (not isinstance(self.granting_attachment_payment, GrantingAttachmentPayment) or not self.tap_source
+                    or self.granting_attachment_payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE
                     or self.mana_ability or self.untap_source or self.sacrifice_source or self.life_payment
                     or self.choices or self.mana_spend_restriction is not None or self.sorcery_speed):
                 raise AbilityFragmentError('Granting Equipment payment requires a fixed tap activation')
@@ -250,42 +279,66 @@ class GrantedActivatedAbilitySpec:
         elif self.announced_x_symbols is not None:
             raise AbilityFragmentError("Announced-X grants require schema version 7")
 
-        if self.schema_version == GRANTED_UNEARTH_VERSION:
-            self._validate_unearth_grant()
+        if self.schema_version in _INCARNATION_BOUND_GRANT_VERSIONS:
+            self._validate_off_battlefield_grant()
         elif self.grant_incarnation is not None:
-            raise AbilityFragmentError("A source incarnation requires a versioned Unearth grant")
+            raise AbilityFragmentError("A source incarnation requires a versioned off-battlefield grant")
 
-    def _validate_unearth_grant(self) -> None:
+        self._validate_grantor_contract()
+
+    def _validate_grantor_contract(self) -> None:
+        if self.schema_version != GRANTOR_REDIRECTION_VERSION:
+            if self.activation_grantor is not None:
+                raise AbilityFragmentError("Only the versioned grantor activation carries an activating player")
+            return
         if (
-            not self.sorcery_speed
+            type(self.activation_grantor) is not str or not self.activation_grantor.strip()
+            or self.activation_grantor.strip() != self.activation_grantor
+            or self.cost_text != "{0}" or any((self.mana, self.tap_source, self.untap_source,
+                self.sacrifice_source, self.life_payment, self.choices, self.mana_ability,
+                self.sorcery_speed, self.mana_spend_restriction, self.fixed_mana_outputs))
+            or not self.ability_id.startswith("ability:granted:") or not self.semantic_key.endswith(":" + self.ability_id)
+        ):
+            raise AbilityFragmentError("Grantor-only redirection requires a closed free battlefield activation")
+
+    def _validate_off_battlefield_grant(self) -> None:
+        sorcery_speed = self.schema_version == GRANTED_UNEARTH_VERSION
+        if (
+            self.sorcery_speed is not sorcery_speed
             or any((self.tap_source, self.untap_source, self.sacrifice_source, self.life_payment,
                     self.choices, self.mana_ability, self.mana_spend_restriction,
                     self.fixed_mana_outputs, self.crew_threshold))
             or not self.ability_id.startswith("ability:granted:")
             or not self.semantic_key.endswith(":" + self.ability_id)
         ):
-            raise AbilityFragmentError("Granted Unearth requires a fixed sorcery-speed activation")
+            raise AbilityFragmentError("Off-battlefield grants require the keyword's fixed activation timing")
         if self.grant_incarnation is not None:
             value = self.grant_incarnation
             if type(value) is not str:
-                raise AbilityFragmentError("Unearth grant incarnation must be text")
+                raise AbilityFragmentError("Grant incarnation must be text")
             object_id, separator, incarnation = value.rpartition("@")
             if not object_id or not separator or not incarnation.isascii() or not incarnation.isdecimal():
-                raise AbilityFragmentError("Unearth grant requires a source incarnation")
+                raise AbilityFragmentError("Off-battlefield grants require a source incarnation")
         if re.fullmatch(ORDINARY_FIXED_MANA_PATTERN, self.cost_text) is None:
-            raise AbilityFragmentError("Unearth grant requires a fixed ordinary mana cost")
+            raise AbilityFragmentError("Off-battlefield grants require a fixed ordinary mana cost")
         expected, complex_symbols = mana_cost_to_vector(self.cost_text)
         if complex_symbols or {key: amount for key, amount in expected.items() if amount} != self.mana_bundle:
-            raise AbilityFragmentError("Unearth grant mana vector must match its cost")
+            raise AbilityFragmentError("Off-battlefield grant mana vector must match its cost")
 
     @property
     def activation_zones(self) -> tuple[str, ...]:
+        if self.schema_version == GRANTED_NINJUTSU_VERSION:
+            return ("hand",)
         return ("graveyard",) if self.schema_version == GRANTED_UNEARTH_VERSION else ("battlefield",)
 
     @property
     def capability_id(self) -> str | None:
+        if self.schema_version == GRANTOR_REDIRECTION_VERSION:
+            return GRANTOR_REDIRECTION_CAPABILITY
         if self.schema_version == GRANTED_UNEARTH_VERSION:
             return GRAVEYARD_UNEARTH_GRANT_CAPABILITY
+        if self.schema_version == GRANTED_NINJUTSU_VERSION:
+            return HAND_NINJUTSU_GRANT_CAPABILITY
         if self.schema_version == 7:
             return "activation.mana_cost.announced_x"
         if self.schema_version == 6:
@@ -330,8 +383,10 @@ class GrantedActivatedAbilitySpec:
             result["source_counter_removal_cost"] = thaw_value(self.source_counter_removal_cost)
         if self.announced_x_symbols is not None:
             result["announced_x_symbols"] = self.announced_x_symbols
-        if self.schema_version == GRANTED_UNEARTH_VERSION:
+        if self.schema_version in _INCARNATION_BOUND_GRANT_VERSIONS:
             result["grant_incarnation"] = self.grant_incarnation
+        if self.activation_grantor is not None:
+            result["activation_grantor"] = self.activation_grantor
         return result
 
     @classmethod
@@ -362,12 +417,14 @@ class GrantedActivatedAbilitySpec:
         attachment_extended = {*extended, GRANTING_ATTACHMENT_PAYMENT_FIELD}
         source_counter_fields = {*expected, "source_counter_removal_cost"}
         announced_x_fields = {*expected, "announced_x_symbols"}
-        unearth_fields = {*expected, "grant_incarnation"}
+        incarnation_bound_fields = {*expected, "grant_incarnation"}
+        grantor_bound_fields = {*expected, "activation_grantor"}
         if (
             not isinstance(value, Mapping)
+            or type(value.get("schema_version")) is not int
             or set(value) not in {frozenset(expected), frozenset(extended), frozenset(crew_extended),
                                   frozenset(attachment_extended), frozenset(source_counter_fields), frozenset(announced_x_fields),
-                                  frozenset(unearth_fields)}
+                                  frozenset(incarnation_bound_fields), frozenset(grantor_bound_fields)}
             or (value.get("schema_version") == 1 and set(value) != expected)
             or (value.get("schema_version") == 2 and set(value) != extended)
             or (value.get("schema_version") == 3 and set(value) != crew_extended)
@@ -375,7 +432,9 @@ class GrantedActivatedAbilitySpec:
             or (value.get("schema_version") == 5 and set(value) != attachment_extended)
             or (value.get("schema_version") == 6 and set(value) != source_counter_fields)
             or (value.get("schema_version") == 7 and set(value) != announced_x_fields)
-            or (value.get("schema_version") == GRANTED_UNEARTH_VERSION and set(value) != unearth_fields)
+            or (value.get("schema_version") in _INCARNATION_BOUND_GRANT_VERSIONS
+                and set(value) != incarnation_bound_fields)
+            or (value.get("schema_version") == GRANTOR_REDIRECTION_VERSION and set(value) != grantor_bound_fields)
         ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
@@ -419,4 +478,36 @@ class GrantedActivatedAbilitySpec:
             source_counter_removal_cost=value.get("source_counter_removal_cost"),
             announced_x_symbols=value.get("announced_x_symbols"),
             grant_incarnation=value.get("grant_incarnation"),
+            activation_grantor=value.get("activation_grantor"),
         )
+
+
+LINKED_EXILE_ACTIVATION_FRAGMENT = "linked_exile_activated_grant"
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedExileActivatedGrant:
+    source_object_id: str
+    source_logical_object_id: str
+    pair: str
+    schema_version: int = 1
+
+    def __post_init__(self):
+        from .continuous_effect_model import ContinuousObjectIdentity
+
+        ContinuousObjectIdentity(self.source_object_id, self.source_logical_object_id)
+        if (type(self.schema_version) is not int or self.schema_version != 1
+                or type(self.pair) is not str or not self.pair or self.pair.strip() != self.pair):
+            raise ValueError("Linked exile activation requires a version-one canonical pair identity")
+
+    def to_dict(self) -> dict:
+        return {"schema_version": 1, "source_object_id": self.source_object_id,
+                "source_logical_object_id": self.source_logical_object_id, "pair": self.pair}
+
+    @classmethod
+    def from_dict(cls, value: Mapping):
+        if not isinstance(value, Mapping) or set(value) != {
+            "schema_version", "source_object_id", "source_logical_object_id", "pair",
+        }:
+            raise ValueError("A linked activation grant fragment has a closed shape")
+        return cls(**value)

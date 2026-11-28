@@ -280,7 +280,7 @@
       "produced_mana": [],
       "released_at": "2020-07-17",
       "toughness": "2",
-      "type_line": "Legendary Creature \u2014 Dog"
+      "type_line": "Legendary Creature — Dog"
     },
     {
       "cmc": 0.0,
@@ -327,7 +327,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Mountain"
+      "type_line": "Basic Land — Mountain"
     },
     {
       "cmc": 2.0,
@@ -376,7 +376,7 @@
       "produced_mana": [],
       "released_at": "2024-02-09",
       "toughness": "2",
-      "type_line": "Creature \u2014 Dryad"
+      "type_line": "Creature — Dryad"
     },
     {
       "cmc": 1.0,
@@ -605,7 +605,7 @@
       "produced_mana": [],
       "released_at": "2019-07-12",
       "toughness": "4",
-      "type_line": "Artifact Creature \u2014 Golem"
+      "type_line": "Artifact Creature — Golem"
     },
     {
       "cmc": 0.0,
@@ -652,7 +652,7 @@
       "produced_mana": [],
       "released_at": "2026-04-24",
       "toughness": "0",
-      "type_line": "Artifact Creature \u2014 Snake"
+      "type_line": "Artifact Creature — Snake"
     },
     {
       "cmc": 0.0,
@@ -742,7 +742,7 @@
       "produced_mana": [],
       "released_at": "2019-06-14",
       "toughness": "2",
-      "type_line": "Creature \u2014 Human Wizard"
+      "type_line": "Creature — Human Wizard"
     },
     {
       "cmc": 3.0,
@@ -789,7 +789,7 @@
       "produced_mana": [],
       "released_at": "2018-04-06",
       "toughness": "2",
-      "type_line": "Creature \u2014 Human Wizard"
+      "type_line": "Creature — Human Wizard"
     },
     {
       "cmc": 1.0,
@@ -885,7 +885,7 @@
       ],
       "released_at": "2014-06-16",
       "toughness": null,
-      "type_line": "Land \u2014 Island Mountain"
+      "type_line": "Land — Island Mountain"
     },
     {
       "cmc": 0.0,
@@ -1313,6 +1313,49 @@
       "released_at": "2014-06-16",
       "toughness": null,
       "type_line": "Land — Forest Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Fabled Passage",
+      "oracle_id": "0c85b8f7-0bd0-4680-9ec5-d4b110460a54",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Then if you control four or more lands, untap that land.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Land"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1426,7 +1469,7 @@
       "source": "wotc"
     },
     {
-      "comment": "Because the \u201csearch\u201d requires you to find a card with certain characteristics, you don\u2019t have to find the card if you don\u2019t want to.",
+      "comment": "Because the “search” requires you to find a card with certain characteristics, you don’t have to find the card if you don’t want to.",
       "oracle_id": "852bd598-6e48-43c8-9211-740ae9e0c42e",
       "published_at": "2004-10-04",
       "source": "wotc"
@@ -1456,7 +1499,7 @@
       "source": "wotc"
     },
     {
-      "comment": "If the target land is an illegal target by the time Cleansing Wildfire tries to resolve, the spell doesn\u2019t resolve. No player searches for a basic land card and you don\u2019t draw a card. If the target is legal but not destroyed (most likely because it has indestructible), its controller does search for a basic land card and you do draw a card.",
+      "comment": "If the target land is an illegal target by the time Cleansing Wildfire tries to resolve, the spell doesn’t resolve. No player searches for a basic land card and you don’t draw a card. If the target is legal but not destroyed (most likely because it has indestructible), its controller does search for a basic land card and you do draw a card.",
       "oracle_id": "993b92f4-4160-4171-9e67-90dc935030fe",
       "published_at": "2020-09-25",
       "source": "wotc"
@@ -1480,7 +1523,7 @@
       "source": "wotc"
     },
     {
-      "comment": "You may find any card with Plains, Island, Swamp, Mountain, or Forest on its type line. The land doesn\u2019t need to be a basic land, so you can find a land such as Overgrown Tomb or Tropical Island.",
+      "comment": "You may find any card with Plains, Island, Swamp, Mountain, or Forest on its type line. The land doesn’t need to be a basic land, so you can find a land such as Overgrown Tomb or Tropical Island.",
       "oracle_id": "d552f5cb-19b6-4def-90d5-6d2d9570f93d",
       "published_at": "2005-10-01",
       "source": "wotc"
@@ -1502,6 +1545,18 @@
       "oracle_id": "ffc95093-24a2-4616-a44a-24788e8df9c8",
       "published_at": "2021-03-19",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "0c85b8f7-0bd0-4680-9ec5-d4b110460a54",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "If you control four or more lands, the basic land doesn't enter untapped; it enters tapped and then you untap it."
+    },
+    {
+      "oracle_id": "0c85b8f7-0bd0-4680-9ec5-d4b110460a54",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "The land that you put onto the battlefield will be counted when determining whether you control four or more lands, but Fabled Passage will not."
     }
   ],
   "schema_version": 1,

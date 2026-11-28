@@ -5,7 +5,9 @@ from __future__ import annotations
 from . import regex_working_set as re
 
 from ..rules.graveyard_card_targets import graveyard_copy_scope_schema
-from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION
+from ..rules.graveyard_copy_cast_model import (
+    GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION, mill_random_graveyard_copy_effects,
+)
 from ..rules.source_references import matches_source_power_reference
 
 _ONE = re.compile(
@@ -36,6 +38,21 @@ _PUBLIC_RELATIVE = re.compile(
     r"from a graveyard and copy it\. You may cast the copy without paying its mana cost\.",
     re.IGNORECASE,
 )
+
+
+_MILL_RANDOM_COPY = re.compile(
+    r"Mill two cards, then exile a nonland card at random from your graveyard\. "
+    r"Copy it\. You may cast the copy without paying its mana cost\.",
+    re.IGNORECASE,
+)
+
+
+def mill_random_graveyard_copy_template(binding, body):
+    if (binding.variant == "your end step" and body == binding.body
+            and _MILL_RANDOM_COPY.fullmatch(" ".join(body.split()))):
+        return ("controller-mill-random-graveyard-copy-v1", mill_random_graveyard_copy_effects(),
+                None, ("mill", GRAVEYARD_COPY_MECHANIC))
+    return None
 
 
 def relative_graveyard_copy_template(text, *, card_name, event):

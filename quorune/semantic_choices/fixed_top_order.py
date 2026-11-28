@@ -9,21 +9,192 @@ from ..library_order_model import (
     HAND_TOP_ORDER_RULES,
     GRAVEYARD_LIBRARY_ORDER_OPERATION, GRAVEYARD_LIBRARY_ORDER_CAPABILITY,
     GRAVEYARD_LIBRARY_ORDER_RULES, DepartedLibraryArrivalOrder, LibraryArrivalOrder,
-    validate_graveyard_library_order_effect,
+    PAID_PRIVATE_TOP_CYCLE, paid_private_top_cycle_effect, uses_paid_private_top_cycle,
+    validate_graveyard_library_order_effect, validate_paid_private_top_cycle,
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.library_partition import partition_refs, LibraryPartitionError
-from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+from ..rules.library_selection import LibrarySelectionArrangement, LibrarySelectionObjectIdentity
+from ..semantic_runtime.intents import (
+    LibrarySelectionIntent, MoveObjectsSimultaneouslyIntent, PayLifeIntent, ReorderLibraryTopIntent,
+    RevealLibraryCardsIntent, ShuffleLibraryIntent,
+)
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .ordering import LibraryOrderingHandler
 from .model import (
-    AutoContinue, ObjectChoice, OrderingChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
+    AutoContinue, ObjectChoice, OrderingChoice, ScalarChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
     SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest,
 )
 
 
+_PAID_CYCLE_STATE = "_paid_private_top_cycle_state"
+
+
+@dataclass(frozen=True, slots=True)
+class PaidPrivateTopCycleState:
+    actor: str
+    stack_ref: str
+    label: str
+    looked: tuple[LibrarySelectionObjectIdentity, ...]
+    stage: str = "decide"
+
+    def __post_init__(self):
+        if (any(type(value) is not str or not value for value in (self.actor, self.stack_ref, self.label))
+                or self.stage not in {"decide", "bottom", "top"}
+                or not isinstance(self.looked, tuple) or len(self.looked) > 5
+                or any(not isinstance(card, LibrarySelectionObjectIdentity) for card in self.looked)
+                or len(set(self.refs)) != len(self.looked)
+                or len({card.object_id for card in self.looked}) != len(self.looked)
+                or len({card.logical_object_id for card in self.looked}) != len(self.looked)
+                or self.stage == "bottom" and len(self.looked) < 2):
+            raise SemanticChoiceError("The paid private look lost its actor, stage, or exact cards")
+
+    @property
+    def refs(self):
+        return tuple(card.ref for card in self.looked)
+
+    def effect(self):
+        return FrozenMap({
+            **paid_private_top_cycle_effect(self.actor),
+            _PAID_CYCLE_STATE: {
+                "actor": self.actor, "stack_ref": self.stack_ref, "label": self.label, "stage": self.stage,
+                "looked": [card.to_dict() for card in self.looked],
+            },
+        })
+
+    @classmethod
+    def from_effect(cls, effect):
+        raw = effect.get(_PAID_CYCLE_STATE)
+        if not isinstance(raw, Mapping) or set(raw) != {"actor", "stack_ref", "label", "stage", "looked"}:
+            raise SemanticChoiceError("The private cycle continuation requires its original looked group")
+        looked = tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in raw["looked"])
+        state = cls(raw["actor"], raw["stack_ref"], raw["label"], looked, raw["stage"])
+        if FrozenMap(effect) != state.effect():
+            raise SemanticChoiceError("The private cycle continuation changed its represented instruction")
+        return state
+
+
+def _paid_top_cycle_group(query, actor):
+    rows = tuple(query.object(ref, zones=("library",)) for ref in query.library_refs(actor, top_first=True)[:5])
+    if any(row is None or row.owner != actor or not row.physical_card or not row.logical_object_id for row in rows):
+        raise SemanticChoiceError("The looked prefix requires exact physical cards in its owner's library")
+    return rows
+
+
+def _cycle_identities(rows):
+    return tuple(LibrarySelectionObjectIdentity(row.object_id, row.logical_object_id, row.ref) for row in rows)
+
+
+def _bound_paid_top_cycle(state, query, controller, stack_ref):
+    stack = query.stack_object(stack_ref)
+    if (state.actor != controller or state.stack_ref != stack_ref or state.actor not in query.active_seats
+            or stack is None or stack.controller != state.actor or stack.label != state.label or stack.targets):
+        raise SemanticChoiceError("The private cycle has left its original resolving state")
+    rows = _paid_top_cycle_group(query, state.actor)
+    if _cycle_identities(rows) != state.looked:
+        raise SemanticChoiceError("The exact looked prefix changed before the private choice")
+    return rows
+
+
+def _paid_top_cycle_request(state, rows):
+    if state.stage == "decide":
+        choice = ScalarChoice("choice", ("stop", "pay"))
+        prompt = "Stop and shuffle the rest, or pay 1 life to look again?"
+    else:
+        bottom = state.stage == "bottom"
+        choice = OrderingChoice(
+            field_name="cards", legal_refs=state.refs, visibility="actor_private",
+            schema_extras=FrozenMap({"order": "bottom_to_top" if bottom else "top_to_bottom"}),
+        )
+        prompt = ("Order these cards from the library bottom upward." if bottom
+                  else "Order the last looked-at cards from the library top downward.")
+    return SemanticChoiceRequest(prompt, choice, FrozenMap({
+        "stack": state.stack_ref, "operation": TOP_ORDER_OPERATION, "stage": state.stage,
+        "cards": [{"id": row.ref, "name": row.printed_name} for row in rows],
+    }))
+
+
+def _paid_top_cycle_bottom(state, order):
+    return LibrarySelectionIntent(
+        actor=state.actor, player=state.actor, source_stack_ref=state.stack_ref, reason=state.label,
+        arrangement=LibrarySelectionArrangement(
+            looked=state.looked, selected_refs=(), remainder_refs=order,
+            remainder_destination="library_bottom", remainder_order="chosen",
+        ),
+        looked_are_public=False, selected_are_public=False,
+    )
+
+
+def _paid_top_cycle_finish(state, order):
+    if not order:
+        return ShuffleLibraryIntent(state.actor, state.actor, state.label)
+    return ReorderLibraryTopIntent(state.actor, state.actor, state.actor, order, state.label, shuffle_remainder=True)
+
+
+def _prepare_paid_top_cycle(effect, context):
+    actor = context.actor
+    if actor != context.stack_controller:
+        raise SemanticChoiceError("The resolving controller owns the private library look")
+    inspected = ()
+    if _PAID_CYCLE_STATE in effect:
+        state = PaidPrivateTopCycleState.from_effect(effect)
+        rows = _bound_paid_top_cycle(state, context.query, context.stack_controller, context.stack_ref)
+    else:
+        validate_paid_private_top_cycle(effect, actor=actor)
+        rows = _paid_top_cycle_group(context.query, actor)
+        state = PaidPrivateTopCycleState(actor, context.stack_ref, context.stack_label, _cycle_identities(rows))
+        _bound_paid_top_cycle(state, context.query, context.stack_controller, context.stack_ref)
+        if state.looked:
+            inspected = (RevealLibraryCardsIntent(actor, actor, actor, state.refs, state.label),)
+    if state.stage == "decide" and context.query.player_life_for_payment(actor) < 1:
+        state = replace(state, stage="top")
+    if state.stage == "top" and len(state.refs) < 2:
+        return SemanticChoicePreparation(
+            None, state.effect(), preparation_intents=(*inspected, _paid_top_cycle_finish(state, state.refs)),
+            auto_continue=AutoContinue(reason="Shuffle and restore the final private look"),
+        )
+    return SemanticChoicePreparation(
+        _paid_top_cycle_request(state, rows), state.effect(), preparation_intents=inspected,
+    )
+
+
+def _complete_paid_top_cycle(continuation, response, query):
+    state = PaidPrivateTopCycleState.from_effect(continuation.effect)
+    rows = _bound_paid_top_cycle(state, query, continuation.semantic_frame.controller, continuation.stack_ref)
+    field = "choice" if state.stage == "decide" else "cards"
+    if (set(response) - {"action", "action_id", "choice_schema"} != {field}
+            or response.get("action", "choose") != "choose" or response.get("action_id", "choose") != "choose"):
+        raise SemanticChoiceError("Provide only the currently authorized private cycle response")
+    issued = _paid_top_cycle_request(state, rows).choice.choice_schema()
+    if "choice_schema" in response and FrozenMap(response["choice_schema"]) != FrozenMap(issued):
+        raise SemanticChoiceError("The private cycle response changed its issued choice")
+    value = response[field]
+    restart = FrozenMap(paid_private_top_cycle_effect(state.actor))
+    if state.stage == "decide":
+        if value == "stop":
+            return SemanticChoiceCompletion(repeat_effect=replace(state, stage="top").effect())
+        if value != "pay" or query.player_life_for_payment(state.actor) < 1:
+            raise SemanticChoiceError("The resolving controller cannot pay for another look")
+        payment = PayLifeIntent(state.actor, state.actor, 1, state.label)
+        if len(state.refs) >= 2:
+            return SemanticChoiceCompletion(intents=(payment,), repeat_effect=replace(state, stage="bottom").effect())
+        bottom = (_paid_top_cycle_bottom(state, state.refs),) if state.refs else ()
+        return SemanticChoiceCompletion(intents=(payment, *bottom), repeat_effect=restart)
+    order = partition_refs(value, field="cards")
+    if len(order) != len(state.refs) or set(order) != set(state.refs):
+        raise SemanticChoiceError("Order every card in the exact looked group once")
+    if state.stage == "bottom":
+        return SemanticChoiceCompletion(intents=(_paid_top_cycle_bottom(state, order),), repeat_effect=restart)
+    return SemanticChoiceCompletion(intents=(_paid_top_cycle_finish(state, order),))
+
+
 class FixedTopLibraryOrderingHandler(LibraryOrderingHandler):
     def prepare(self, effect, context):
+        if uses_paid_private_top_cycle(effect):
+            try:
+                return _prepare_paid_top_cycle(effect, context)
+            except (TypeError, ValueError, KeyError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         try:
             spec = FixedTopLibraryOrderSpec.from_effect(effect)
         except (TypeError, ValueError) as exc:
@@ -46,6 +217,11 @@ class FixedTopLibraryOrderingHandler(LibraryOrderingHandler):
 
     def complete(self, continuation, response, query):
         effect = continuation.effect
+        if uses_paid_private_top_cycle(effect):
+            try:
+                return _complete_paid_top_cycle(continuation, response, query)
+            except (TypeError, ValueError, KeyError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         local = {'_choice_actor', '_looked_refs', '_stack_label', '_looked_incarnations'}
         try:
             spec = FixedTopLibraryOrderSpec.from_effect({
@@ -307,7 +483,7 @@ FIXED_TOP_ORDER_HANDLERS = (FixedTopLibraryOrderingHandler(
     capability_dependencies=(TOP_ORDER_CAPABILITY,),
     continuation_fields=(
         'count', 'player', '_choice_actor', '_looked_refs', '_stack_label',
-        '_looked_incarnations',
+        '_looked_incarnations', PAID_PRIVATE_TOP_CYCLE, _PAID_CYCLE_STATE,
     ),
     test_modules=('tests.test_fixed_top_order',),
 ), FixedHandTopOrderingHandler(), GraveyardLibraryOrderingHandler())

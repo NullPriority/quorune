@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """CR 702.23 uses current blockers once at resolution of each instance."""
 
+from .combat import current_attacker_blocker_count
+
 
 def rampage_occurrence_drafts(event):
     from .ability_fragments import CombatKeywordTriggerKind
@@ -16,7 +18,5 @@ def rampage_resolution_bonus(host, occurrence):
     if (card is None or card.zone != 'battlefield' or card.phased_out
             or card.logical_object_id != occurrence.source.logical_object_id):
         return 0
-    blockers = host.state.combat.blockers.get(card.object_id, ())
-    count = sum(1 for oid in dict.fromkeys(blockers) if (blocker := host.state.cards.get(oid)) is not None
-        and blocker.zone == 'battlefield' and not blocker.phased_out and blocker.blocking is not None)
+    count = current_attacker_blocker_count(host.state, card.object_id)
     return max(0, count - 1) * occurrence.amount

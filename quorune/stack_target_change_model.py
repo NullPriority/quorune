@@ -9,11 +9,15 @@ from .replacement.immutable import thaw_value
 
 
 SINGLE_ANNOUNCED_STACK_TARGET = "single_announced_stack_target"
+ANNOUNCED_STACK_TARGET = "announced_stack_target"
+POWER_ADJUSTED_RETARGET_ROLL = "power_adjusted_retarget_roll"
+COPY_AFTER_RETARGET = "_copy_after_power_adjusted_retarget"
 MANDATORY_STACK_TARGET_CHANGE_FIELD = "mandatory_single_stack_target_change"
 OPTIONAL_STACK_TARGET_CHANGE_FIELD = "optional_stack_target_change"
 STACK_SPELL_CONTROL_FIELD = "stack_spell_control"
 STACK_SPELL_CONTROL_CONTEXT = "stack_spell_control_history"
 STACK_TARGET_CHANGE_PAYMENT_VERSION = 15
+STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND = "stack_target_spell_mana_value_loss"
 STACK_TARGET_CHANGE_FIELDS = frozenset((MANDATORY_STACK_TARGET_CHANGE_FIELD, OPTIONAL_STACK_TARGET_CHANGE_FIELD))
 REPRESENTED_STACK_TARGET_CHANGE_KINDS = frozenset(("spell", "spell_copy", "activated_ability", "triggered_ability"))
 
@@ -40,6 +44,21 @@ class SingleStackTargetChangeSpec:
         }
 
 
+def stack_target_spell_mana_value_loss_amount():
+    return {
+        "kind": STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND,
+        "schema_version": 1,
+        "stack": "$target.0",
+    }
+
+
+def stack_target_change_with_mana_value_loss_effects():
+    return (
+        *SingleStackTargetChangeSpec(False).effects,
+        {"op": "lose_life", "player": "$controller", "amount": stack_target_spell_mana_value_loss_amount()},
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class OptionalStackTargetChangeSpec:
     spell_or_ability: bool
@@ -60,6 +79,18 @@ class OptionalStackTargetChangeSpec:
             "source_exclusion": True,
             "count": 1,
         }
+
+
+def power_adjusted_retarget_roll():
+    return {"op": "retarget_stack_item", "stack": "$target.0", POWER_ADJUSTED_RETARGET_ROLL: 1}
+
+
+def power_adjusted_retarget_target_schema():
+    return {**OptionalStackTargetChangeSpec(True).target_schema, "predicate": ANNOUNCED_STACK_TARGET}
+
+
+def matches_announced_stack_target(item):
+    return item.kind in REPRESENTED_STACK_TARGET_CHANGE_KINDS and any(item.targets)
 
 
 @dataclass(frozen=True, slots=True)

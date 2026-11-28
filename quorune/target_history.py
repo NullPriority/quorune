@@ -94,6 +94,22 @@ def target_damage_history_matches(
     )
 
 
+GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD = "graveyard_from_battlefield_this_turn"
+
+
+def target_graveyard_battlefield_arrival_matches(*, history, turn_sequence, actor, card):
+    """The current own graveyard card must retain its actual arrival this turn."""
+    if (
+        history is None or getattr(history, "arrival_history_version", None) != 1
+        or card is None or card.zone != "graveyard" or card.owner != actor or not card.is_card_object
+    ):
+        return False
+    return any(
+        event.actor == actor and event.origin == "battlefield" and event.object_incarnation == card.logical_object_id
+        for event in current_turn_history_events(history, turn_sequence=turn_sequence, kind="card_arrived_graveyard")
+    )
+
+
 PLAYER_HISTORY_FIELD = "player_history"
 
 

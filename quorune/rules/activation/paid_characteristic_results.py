@@ -7,7 +7,7 @@ from ...activation_paid_characteristic_model import (
     ActivationPaidCreatureFact, ActivationPaidCreatureCharacteristics, ACTIVATION_PAID_SUBTYPE_CONTEXT,
 )
 from ...scalar_effect_amount_model import (PaidCreatureStatSnapshot, ScalarAmountOrigin, ScalarEffectAmountSpec,
-    SCALAR_AMOUNT_CAPABILITY, scalar_amount_specs)
+    SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC, scalar_amount_specs)
 from ...object_predicate import ObjectQuerySpec
 from ...object_query import exact_numeric_characteristic
 from ...paid_sacrifice_conditions import (
@@ -19,16 +19,63 @@ from ...paid_sacrifice_conditions import (
 from ..activation_costs import activation_choice_candidates
 from .paid_characteristic_price import (
     activation_creature_sacrifice_choice, activation_paid_creature_choice, activation_paid_suspected_choice,
+    source_sacrifice_power_price_is_closed,
 )
 
+SOURCE_SACRIFICE_POWER_LIFE_MECHANIC = "source-sacrifice-power-life"
+SOURCE_SACRIFICE_POWER_LIFE_TEMPLATE = "source-sacrifice-power-life-v1"
 
-def _activation_price_matches(ability, program, choice):
+
+def source_sacrifice_power_life_effect():
+    amount = ScalarEffectAmountSpec(ScalarAmountOrigin.SOURCE, characteristic="power")
+    return {"op": "life", "player": "$controller", "delta": amount.to_dict()}
+
+
+def source_sacrifice_power_life_capabilities(*, effects, target_schema, mechanics, active_zone, cost_schema):
+    from ...replacement.immutable import thaw_value
+    from ...util import stable_json
+
+    if (
+        active_zone == "battlefield" and target_schema is None
+        and {SOURCE_SACRIFICE_POWER_LIFE_MECHANIC, SCALAR_AMOUNT_MECHANIC, "cr-119-life"} <= set(mechanics)
+        and stable_json(thaw_value(effects)) == stable_json([source_sacrifice_power_life_effect()])
+        and source_sacrifice_power_price_is_closed(cost_schema)
+    ):
+        return (SCALAR_AMOUNT_CAPABILITY, "life.change.effect", "activation.source_zone_change.fixed")
+    return ()
+
+
+def source_sacrifice_power_life_runtime_dependencies(program):
+    if (SOURCE_SACRIFICE_POWER_LIFE_MECHANIC not in program.coverage
+            and program.provenance.get("template_id") != SOURCE_SACRIFICE_POWER_LIFE_TEMPLATE):
+        return ()
+    from ...compiler.activated_costs import activated_ability_cost
+    from ...replacement.immutable import thaw_value
+    from ...semantic_runtime.activated_abilities import ActivatedAbilityCatalogHandler
+
+    capabilities = source_sacrifice_power_life_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanics=program.coverage,
+        active_zone=program.active_zone, cost_schema=program.cost_schema,
+    )
+    if (not capabilities or program.event != "activate" or program.event_condition is not None
+            or program.provenance.get("granted_only") is True or len(program.handlers) != 1):
+        raise ValueError("Source sacrifice life gain requires its closed battlefield activation")
+    ability = ActivatedAbilityCatalogHandler().validate(program.handlers[0])
+    if (ability.builtin_semantic_key != program.key or ability.mana_ability or ability.sorcery_speed
+            or ability.activation_conditions or ability.target_schema is not None
+            or ability.zones != ("battlefield",)
+            or activated_ability_cost(ability) != thaw_value(program.cost_schema)):
+        raise ValueError("Source sacrifice life gain does not match its activation catalog")
+    return capabilities
+
+
+def _activation_price_matches(ability, program, choice, *, card_type="creature"):
     from ...replacement.immutable import thaw_value
 
     return (
         ability.builtin_semantic_key == program.key
         and not ability.mana_ability
-        and activation_creature_sacrifice_choice(ability) == choice
+        and activation_creature_sacrifice_choice(ability, card_type=card_type) == choice
         and dict(ability.mana) == dict(program.cost_schema['mana'])
         and ability.tap_source == program.cost_schema['tap_source']
         and thaw_value(ability.target_schema) == thaw_value(program.target_schema)
@@ -152,9 +199,49 @@ def _capture_activation_paid_characteristics(host, proposal, source, ability, re
 
 
 def capture_activation_paid_creature_fact(host, proposal, source, ability, response):
+    from ...public_quantity_mana_model import PAID_ACTIVATION_MANA_VALUE_CONTEXT, PAID_SACRIFICE_QUANTITY_MANA_VERSION
+    from ...public_quantity_mana_runtime import public_quantity_output
+
+    output = public_quantity_output(ability)
+    if output is not None and output.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION:
+        from ...public_quantity_reductions import public_mana_value
+        from ...scalar_effect_amount_model import PaidSacrificeManaValueSnapshot
+
+        choice, = ability.choices
+        card = _selected_paid_creature(host, proposal, source, ability, response, choice)
+        snapshot = PaidSacrificeManaValueSnapshot(card.logical_object_id, public_mana_value(host._effective_card_data(card)))
+        return PAID_ACTIVATION_MANA_VALUE_CONTEXT, {"paid_object_id": card.object_id, "snapshot": snapshot.to_dict()}
+
     program = host.semantics.get(proposal.semantic_key)
     if program is None:
         return None
+    from ..paid_artifact_library_search import capture_paid_artifact_search_receipt, is_paid_artifact_search
+
+    if any(is_paid_artifact_search(effect) for effect in program.effects):
+        return capture_paid_artifact_search_receipt(host, proposal, source, ability, response, program)
+    if any(s.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE for s in scalar_amount_specs(program.effects)):
+        from ...public_quantity_reductions import public_mana_value
+        from ...scalar_effect_amount_model import PaidSacrificeManaValueSnapshot
+        from .paid_characteristic_price import (
+            PAID_ENCHANTMENT_MANA_VALUE_CONTEXT, activation_enchantment_pump_is_exact,
+            activation_enchantment_sacrifice_choice,
+        )
+
+        choice = activation_enchantment_sacrifice_choice(program.cost_schema)
+        if (not activation_enchantment_pump_is_exact(
+                effects=program.effects, cost_schema=program.cost_schema, target_schema=program.target_schema,
+            ) or not _activation_price_matches(ability, program, choice, card_type="enchantment")):
+            raise ValueError("Paid activation mana value has no current enchantment-sacrifice authority")
+        card = _selected_paid_creature(host, proposal, source, ability, response, choice)
+        snapshot = PaidSacrificeManaValueSnapshot(card.logical_object_id, public_mana_value(host._effective_card_data(card)))
+        return PAID_ENCHANTMENT_MANA_VALUE_CONTEXT, {
+            "paid_object_id": card.object_id, "snapshot": snapshot.to_dict(),
+            "program": program.key, "source_logical": source.logical_object_id,
+        }
+    from .paid_mana_value_damage import PAID_DAMAGE_MANA_VALUE_MECHANIC, capture_paid_damage_mana_value
+
+    if PAID_DAMAGE_MANA_VALUE_MECHANIC in program.coverage:
+        return capture_paid_damage_mana_value(host, proposal, source, ability, response, program)
     if any(is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in program.effects):
         return _capture_activation_paid_characteristics(host, proposal, source, ability, response, program)
     if not any(s.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE for s in scalar_amount_specs(program.effects)):

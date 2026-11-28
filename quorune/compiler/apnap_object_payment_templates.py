@@ -1,4 +1,4 @@
-"""One fixed optional discard or sacrifice per affected player."""
+"""Fixed optional object payments use the existing APNAP choice owner."""
 
 from . import regex_working_set as re
 
@@ -9,7 +9,7 @@ from .affected_player_sacrifice_templates import fixed_affected_player_sacrifice
 
 _INSTRUCTION = re.compile(
     r'(?P<subject>Each (?:player|opponent)) loses (?P<loss>[1-9]\d*) life unless they '
-    r'(?:(?P<discard>discard a card)|sacrifice (?P<object>(?:a|an) .+?))\.?', re.I,
+    r'(?:(?P<discard>discard (?:a card|two cards))|sacrifice (?P<object>(?:a|an) .+?))\.?', re.I,
 )
 
 
@@ -18,13 +18,18 @@ def apnap_object_payment_template(text):
     if match is None:
         return None
     subject = match['subject']
+    expected_count = 1
     if match['discard']:
-        template = fixed_affected_player_discard_effect_template(f'{subject} discards a card.')
-        payment = 'discard a card'
+        payment = match['discard'].casefold()
+        if payment == "discard two cards":
+            if subject.casefold() != "each opponent":
+                return None
+            expected_count = 2
+        template = fixed_affected_player_discard_effect_template(f'{subject} discards {payment.removeprefix("discard ")}.')
     else:
         template = fixed_affected_player_sacrifice_effect_template(f'{subject} sacrifices {match["object"]}.')
         payment = 'sacrifice an eligible permanent'
-    if template is None or template.count != 1:
+    if template is None or template.count != expected_count:
         return None
     amount = int(match['loss'])
     effect, = template.effects

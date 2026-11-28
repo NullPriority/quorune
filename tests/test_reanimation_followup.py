@@ -401,3 +401,208 @@ class ReanimationFollowupNativeTests(unittest.TestCase):
         self.assertEqual("exile", session.state.cards[target.object_id].zone)
         self.assertFalse(any(isinstance(effect, ResolvedLinkedDepartureExile) for effect in session.state.continuous_effects))
         self.replay(session, load=True)
+
+
+PORTAL_ORACLE = (
+    "When this artifact enters, each opponent sacrifices three creatures of their choice.\n"
+    "At the beginning of your upkeep, put target creature card from a graveyard onto the battlefield under your control. "
+    "It's a Phyrexian in addition to its other types."
+)
+
+
+class PortalToPhyrexiaNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = ReanimationFollowupNativeTests.session
+    add = ReanimationFollowupNativeTests.add
+    checkpoint = ReanimationFollowupNativeTests.checkpoint
+    resolve = ReanimationFollowupNativeTests.resolve
+    replay = ReanimationFollowupNativeTests.replay
+    prepare = ReanimationFollowupNativeTests.prepare
+    cast = ReanimationFollowupNativeTests.cast
+    assert_closed = ReanimationFollowupNativeTests.assert_closed
+    native_until = ReanimationFollowupNativeTests.native_until
+    until = ReanimationFollowupNativeTests.until
+    tearDownClass = classmethod(ReanimationFollowupNativeTests.tearDownClass.__func__)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "ordered-opponent-portal.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "scryfall-exact-lists.json",
+            "reanimation-followup-cards.json", "chosen-type-event-cards.json",
+            "conditional-receiver-union-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Ordered opponent and upkeep witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 20),
+        ], ["Generic Bound Commander"])
+
+    def command(self, game, seat, **command):
+        result = game.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def reject_portal(self, game, seat, **command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_portal_opponents_choose_available_three_with_actual_owner_orders(self):
+        game = self.session(611201)
+        engine = game.engine
+        portal = self.add(engine, "Portal to Phyrexia", zone="hand", ref="portal-source")
+        own = self.add(engine, "Generic Bound Body", ref="portal-own-creature")
+        b = [self.add(engine, "Generic Bound Body", seat="B", ref=f"portal-b-{i}") for i in range(3)]
+        c = self.add(engine, "Generic Bound Body", seat="C", ref="portal-c")
+        borrowed = [self.add(engine, "Generic Bound Body", ref=f"portal-borrowed-{i}") for i in range(2)]
+        for card, seat in zip(borrowed, "BC", strict=True):
+            engine.change_control(card.object_id, seat, reason="borrowed creature fixture")
+        private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="portal-unrelated-private")
+        self.assert_closed(game, portal)
+        self.prepare(game, mana={"C": 9})
+        self.checkpoint(game)
+        self.cast(game, "A", portal)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        self.assertEqual(1, sum(row.source_object_id == portal.object_id for row in game.state.stack))
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        b_selected = [b[0], b[1], borrowed[0]]
+        self.reject_portal(game, "B", action_id="choose", cards=[card.ref for card in b_selected[:2]])
+        self.reject_portal(game, "A", action_id="choose", cards=[card.ref for card in b_selected])
+        self.command(game, "B", action_id="choose", cards=[card.ref for card in b_selected])
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        decision = game.packet("pilot:C", full=True)["decision"]
+        self.assertEqual([card.ref for card in b_selected], decision["ctx"]["prior_public_choices"]["B"])
+        self.assertNotIn(private.ref, json.dumps(decision))
+        self.command(game, "C", action_id="choose", cards=[borrowed[1].ref, c.ref])
+        held = (*b_selected, borrowed[1], c)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in held))
+        game = self.replay(game, load=True)
+        for seat, ordered in (("A", borrowed[::-1]), ("B", b[:2][::-1])):
+            decision = game.packet("pilot:" + seat, full=True)["decision"]
+            self.assertEqual("permanent.composition_order", decision["kind"])
+            refs = [card.ref for card in ordered]
+            self.assertEqual(set(refs), {row["id"] for row in decision["ctx"]["cards"]})
+            self.reject_portal(game, "D", action_id="order", cards=refs)
+            self.reject_portal(game, seat, action_id="order", cards=[refs[0], refs[0]])
+            self.command(game, seat, action_id="order", cards=refs)
+            if seat == "A":
+                self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in held))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([card.object_id for card in borrowed[::-1]], game.state.players["A"].zones["graveyard"])
+        self.assertEqual([card.object_id for card in b[:2][::-1]], game.state.players["B"].zones["graveyard"])
+        self.assertEqual("graveyard", game.state.cards[c.object_id].zone)
+        for card in (b[2], own):
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+        self.replay(game, load=True)
+
+    def upkeep_target(self, game, portal):
+        self.assert_closed(game, portal)
+        self.prepare(game, actor="D", active="D")
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "semantic.target")
+        self.assertEqual("A", game.state.active_player)
+        self.assertEqual("upkeep", game.state.step)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        decision = game.packet("pilot:A", full=True)["decision"]
+        return decision["ctx"]["target_schema"]["legal_refs"]
+
+    def test_portal_upkeep_targets_any_graveyard_and_enters_with_its_added_subtype(self):
+        game = self.session(611205)
+        engine = game.engine
+        portal = self.add(engine, "Portal to Phyrexia", ref="portal-upkeep-source")
+        target = self.add(engine, "Generic Bound Body", seat="B", zone="graveyard", ref="portal-upkeep-creature")
+        other = self.add(engine, "Generic Bound Body", seat="C", zone="graveyard", ref="portal-other-yard-creature")
+        noncreature = self.add(engine, "Generic Bound Plains", seat="D", zone="graveyard", ref="portal-yard-land")
+        censor = self.add(engine, "Generic Non-Phyrexian Entry Witness", seat="C", ref="portal-censor")
+        discovery = self.add(engine, "Kindred Discovery", ref="portal-phyrexian-observer")
+        discovery.annotations["chosen_creature_type"] = "phyrexian"
+        removal = self.add(engine, "Disenchant", seat="B", zone="hand", ref="portal-remove-source")
+        bounce = self.add(engine, "Unsummon", seat="D", zone="hand", ref="portal-remove-result")
+        for i in range(2):
+            self.add(engine, "Generic Bound Plains", seat="B", ref=f"portal-removal-mana-{i}")
+        self.add(engine, "Island", seat="D", ref="portal-bounce-mana")
+        for card in (censor, discovery, removal, bounce):
+            self.assert_closed(game, card)
+        offered = self.upkeep_target(game, portal)
+        self.assertEqual({target.ref, other.ref}, set(offered))
+        self.assertNotIn(noncreature.ref, offered)
+        self.reject_portal(game, "B", action_id="choose", targets=[target.ref])
+        self.reject_portal(game, "A", action_id="choose", targets=[noncreature.ref])
+        self.command(game, "A", action_id="choose", targets=[target.ref])
+        hand_before = len(game.state.players["A"].zones["hand"])
+        self.cast(game, "B", removal, [portal.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[target.object_id]
+        self.assertEqual(("battlefield", "B", "A", False), (current.zone, current.owner, current.controller, current.tapped))
+        _, subtypes, _ = game.engine._type_parts(game.engine._effective_card_data(current)["type_line"])
+        self.assertEqual({"human", "phyrexian"}, subtypes)
+        self.assertEqual("graveyard", game.state.cards[portal.object_id].zone)
+        self.assertEqual(hand_before + 1, len(game.state.players["A"].zones["hand"]))
+        self.cast(game, "D", bounce, [current.ref])
+        self.assertIsNone(self.resolve(game))
+        departed = game.state.cards[target.object_id]
+        self.assertEqual(("hand", "B"), (departed.zone, departed.owner))
+        self.assertNotIn("Phyrexian", game.engine._effective_card_data(departed)["type_line"])
+        self.replay(game, load=True)
+
+    def test_portal_upkeep_rejects_a_stale_original_target(self):
+        game = self.session(611208)
+        engine = game.engine
+        portal = self.add(engine, "Portal to Phyrexia", ref="portal-stale-source")
+        target = self.add(engine, "Generic Bound Body", seat="C", zone="graveyard", ref="portal-stale-target")
+        response = self.add(engine, "Return to Nature", seat="B", zone="hand", ref="portal-stale-exile")
+        private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="portal-stale-private")
+        for i in range(2):
+            self.add(engine, "Forest", seat="B", ref=f"portal-stale-mana-{i}")
+        self.assert_closed(game, response)
+        self.assertIn(target.ref, self.upkeep_target(game, portal))
+        self.command(game, "A", action_id="choose", targets=[target.ref])
+        for _ in range(12):
+            if game.state.priority_player == "B":
+                break
+            self.command(game, game.state.priority_player, action_id="pass")
+        self.command(game, "B", action_id=f"cast:{response.ref}", modes=["mode_3"], targets=[target.ref], pay="auto")
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[target.object_id]
+        self.assertEqual("exile", current.zone)
+        self.assertNotIn("Phyrexian", game.engine._effective_card_data(current)["type_line"])
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_portal_strict_nodes_reject_changed_scope_and_capability_withdrawal(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.ordered_opponent_creature_sacrifice import CAPABILITY as ordered_capability, ordered_opponent_sacrifice_is_closed
+        from quorune.rules.reanimation_entry_subtype import CAPABILITY as subtype_capability, entry_subtype_reanimation_node_capabilities
+
+        ir = compile_oracle_card(record(PORTAL_ORACLE, "Artifact"), capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        entry, upkeep = ir.faces[0].nodes
+        self.assertEqual(("permanent.enter.self", "step.begin"), (entry.event, upkeep.event))
+        self.assertFalse(ordered_opponent_sacrifice_is_closed({**entry.effects[0], "count": 2}))
+        self.assertFalse(ordered_opponent_sacrifice_is_closed({**entry.effects[0], "players": "all"}))
+        self.assertEqual((), entry_subtype_reanimation_node_capabilities(upkeep.effects,
+                            {**upkeep.target_schema, "owner_relation": "you"}))
+        self.assertEqual((), entry_subtype_reanimation_node_capabilities(
+            ({**upkeep.effects[0], "reanimation_entry_subtype": "not a creature type"},), upkeep.target_schema))
+        game = self.session(611211)
+        portal = self.add(game.engine, "Portal to Phyrexia", zone="hand")
+        self.assert_closed(game, portal)
+        current = game.engine.semantics.programs_for_oracle(portal.oracle_id)
+        self.assertEqual({"trigger:front:n1", "trigger:front:n2"}, {program.ability_id for program in current})
+        self.assertEqual(2, len(current))
+        for authority in (ordered_capability, subtype_capability):
+            program, = [value for value in game.engine.semantics.programs_for_oracle(portal.oracle_id)
+                        if authority in value.capability_dependencies]
+            deps = tuple(value for value in program.capability_dependencies if value != authority)
+            mutant = replace(program, capability_dependencies=deps,
+                             capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{authority}", binding["blockers"])

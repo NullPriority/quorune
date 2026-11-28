@@ -36,9 +36,9 @@ from ..compiler.fixed_source_effect_sequences import (
 from ..keyword_counters import keyword_counter_mechanic
 from .temporary_declaration_restrictions import (
     TEMPORARY_DECLARATION_RESTRICTION_KINDS,
+    single_target_schema_from_declaration_group,
     temporary_declaration_restriction,
 )
-from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
 from .amass_capability_shapes import fixed_amass_node_capabilities
 from .cumulative_upkeep_capability_shapes import (
     fixed_life_cumulative_upkeep_node_capabilities,
@@ -50,6 +50,7 @@ from .destruction_regeneration_capability_shapes import (
     targeted_destruction_node_capabilities as _targeted_destruction_capabilities,
 )
 from .damage_capability_shapes import fixed_damage_node_capabilities
+from .fixed_target_sequence_shapes import fixed_target_effect_sequence_node_capabilities
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -175,12 +176,8 @@ _TARGETED_EXPLORE_SCHEMA = {
     "controller_relation": "you",
     "count": 1,
 }
-_FIXED_TARGET_SEQUENCE_MECHANIC = "fixed-target-effect-sequence"
 _FIXED_TARGET_SEQUENCE_KEYWORDS = frozenset(
     value.title() for value in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
-)
-_FIXED_TARGET_ZONE_OBJECT_KEYWORDS = frozenset(
-    value.title() for value in ZONE_OBJECT_KEYWORDS
 )
 _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     _COUNTER_STACK_BASE,
@@ -208,6 +205,7 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     ),
     {**_COUNTER_STACK_BASE, "predicate": "nonblue_spell"},
     {**_COUNTER_STACK_BASE, "colorless": True},
+    {**_COUNTER_STACK_BASE, "color_count_min": 2},
     {**_COUNTER_STACK_BASE, 'predicate': 'blue_instant_spell'},
     *tuple(
         {**_COUNTER_STACK_BASE, 'categories':['spell','ability'], 'predicate':predicate}
@@ -437,8 +435,11 @@ def single_proliferate_node_capabilities(
     ):
         return ()
     from ..counter_placement_event_model import has_canonical_proliferate_choice_order
+    from .proliferate_phase_out import uses_proliferate_phase_out, validate_proliferate_phase_out
 
     try:
+        if uses_proliferate_phase_out(effects[0]):
+            return validate_proliferate_phase_out(effects[0])
         if dict(effects[0]) != {"op": "proliferate"} and not has_canonical_proliferate_choice_order(effects[0]):
             return ()
     except (TypeError, ValueError):
@@ -455,6 +456,11 @@ def fixed_self_counter_keyword_action_node_capabilities(
     """Return ownership for one exact fixed self-counter keyword action."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .controlled_counter_monstrosity import (
+        CONTROLLED_COUNTER_MONSTROSITY_MECHANIC, controlled_counter_monstrosity_node_capabilities,
+    )
+    if CONTROLLED_COUNTER_MONSTROSITY_MECHANIC in mechanics:
+        return controlled_counter_monstrosity_node_capabilities(effects, target_schema)
     if (
         target_schema is not None
         or len(effects) != 1
@@ -659,6 +665,8 @@ def fixed_stack_counter_target_schema_is_closed(target_schema: Mapping[str, Any]
         value = schema.pop(next(iter(numeric)))
         if type(value) is not int or value < 0:
             return False
+    if "color_count_min" in schema and type(schema["color_count_min"]) is not int:
+        return False
     return schema in _TARGETED_COUNTER_SCHEMAS
 
 
@@ -670,7 +678,15 @@ def targeted_counter_node_capabilities(
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct stack-counter grammar."""
 
-    if effects and effects[0].get("op") == "resolve_stack_counter_followup":
+    from ..stack_counter import COUNTERED_ABILITY_ACTIVATION_LOCK_FIELD, COUNTERED_ABILITY_SOURCE_LOSS_FIELD
+
+    from .stack_counter_name_scan import COUNTER_NAME_SCAN_OPERATION
+
+    if effects and (
+        effects[0].get("op") in {"resolve_stack_counter_followup", COUNTER_NAME_SCAN_OPERATION}
+        or COUNTERED_ABILITY_SOURCE_LOSS_FIELD in effects[0]
+        or COUNTERED_ABILITY_ACTIVATION_LOCK_FIELD in effects[0]
+    ):
         from .stack_counter_followup import stack_counter_followup_node_capabilities
         return stack_counter_followup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if len(effects) == 1 and effects[0].get("op") == "counter_unless_pay":
@@ -815,131 +831,6 @@ def fixed_counter_placement_batch_node_capabilities(
             "target.revalidate_resolution",
         )
     return ()
-
-
-def fixed_target_effect_sequence_node_capabilities(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanic_ids: Iterable[str],
-) -> tuple[str, ...]:
-    """Return ownership for one closed target-threaded counter sequence."""
-
-    mechanics = {str(value).casefold() for value in mechanic_ids}
-    if any(
-        effect.get("op") == "grant_zone_object_keyword"
-        for effect in effects
-    ):
-        if not {
-            _FIXED_TARGET_SEQUENCE_MECHANIC,
-            "cr-115-targets",
-            "cr-122-counters",
-            "cr-611-continuous-effects",
-        }.issubset(mechanics) or len(effects) != 2:
-            return ()
-        counter, grant = effects
-        if (
-            set(counter) != {"op", "card", "counter", "amount", "source"}
-            or counter.get("op") != "place_counters"
-            or counter.get("card") != "$target.0"
-            or type(counter.get("counter")) is not str
-            or not counter.get("counter")
-            or type(counter.get("amount")) is not int
-            or counter.get("amount", 0) <= 0
-            or counter.get("source") != "$source"
-            or not fixed_counter_target_schema_is_closed(target_schema)
-        ):
-            return ()
-        keyword = grant.get("keyword")
-        keyword_mechanic = keyword_counter_mechanic(keyword)
-        if (
-            set(grant) != {"op", "card", "keyword"}
-            or grant.get("op") != "grant_zone_object_keyword"
-            or grant.get("card") != "$target.0"
-            or keyword not in _FIXED_TARGET_ZONE_OBJECT_KEYWORDS
-            or keyword_mechanic is None
-            or keyword_mechanic not in mechanics
-        ):
-            return ()
-        counter_mechanic = keyword_counter_mechanic(counter.get("counter"))
-        if counter_mechanic is not None and counter_mechanic not in mechanics:
-            return ()
-        return (
-            "continuous.resolution.fixed_keyword_zone_object",
-            *(("counter.characteristic.keyword",) if counter_mechanic else ()),
-            "counter.producer.fixed_effect",
-            "resolution.effect_sequence.fixed_target",
-            *direct_target_predicate_capabilities(target_schema),
-            "target.revalidate_resolution",
-        )
-    if not {
-        _FIXED_TARGET_SEQUENCE_MECHANIC,
-        "cr-115-targets",
-        "cr-122-counters",
-        "cr-611-continuous-effects",
-    }.issubset(mechanics) or not 2 <= len(effects) <= 4:
-        return ()
-    if not fixed_counter_target_schema_is_closed(target_schema):
-        return ()
-    assert target_schema is not None
-    counter_count = 0
-    keyword_counter = False
-    characteristic_count = 0
-    granted_keywords: set[str] = set()
-    for effect in effects:
-        operation = effect.get("op")
-        if operation == "place_counters":
-            if (
-                set(effect) != {"op", "card", "counter", "amount", "source"}
-                or effect.get("card") != "$target.0"
-                or type(effect.get("counter")) is not str
-                or not effect.get("counter")
-                or type(effect.get("amount")) is not int
-                or effect.get("amount", 0) <= 0
-                or effect.get("source") != "$source"
-            ):
-                return ()
-            counter_mechanic = keyword_counter_mechanic(effect.get("counter"))
-            if counter_mechanic is not None:
-                if counter_mechanic not in mechanics:
-                    return ()
-                keyword_counter = True
-            counter_count += 1
-            continue
-        if operation == "modify_stats_until_end_of_turn":
-            if (
-                set(effect) != {"op", "card", "power", "toughness"}
-                or effect.get("card") != "$target.0"
-                or type(effect.get("power")) is not int
-                or type(effect.get("toughness")) is not int
-                or (effect.get("power") == 0 and effect.get("toughness") == 0)
-            ):
-                return ()
-            characteristic_count += 1
-            continue
-        if operation == "grant_keyword_until_end_of_turn":
-            keyword = effect.get("keyword")
-            if (
-                set(effect) != {"op", "card", "keyword"}
-                or effect.get("card") != "$target.0"
-                or keyword not in _FIXED_TARGET_SEQUENCE_KEYWORDS
-                or keyword in granted_keywords
-            ):
-                return ()
-            granted_keywords.add(keyword)
-            characteristic_count += 1
-            continue
-        return ()
-    if counter_count != 1 or characteristic_count < 1:
-        return ()
-    return (
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
-        *(("counter.characteristic.keyword",) if keyword_counter else ()),
-        "counter.producer.fixed_effect",
-        "resolution.effect_sequence.fixed_target",
-        *direct_target_predicate_capabilities(target_schema),
-        "target.revalidate_resolution",
-    )
 
 
 def fixed_source_effect_sequence_node_capabilities(
@@ -1246,6 +1137,11 @@ def temporary_declaration_restriction_node_capabilities(
     if len(effects) != 1:
         return ()
     effect = effects[0]
+    from .temporary_attack_requirements import (
+        LIVE_OPPONENT_ATTACK_RULES, live_opponent_attack_node_capabilities,
+    )
+    if effect.get("restriction") in LIVE_OPPONENT_ATTACK_RULES:
+        return live_opponent_attack_node_capabilities(effect, target_schema, mechanic_ids)
     if NEXT_TURN_EFFECT_FIELD in effect:
         try:
             original, _ = split_next_turn_effect(effect)
@@ -1287,13 +1183,9 @@ def temporary_declaration_restriction_node_capabilities(
             return ()
         schema = dict(target_schema or {})
         if group_target:
-            maximum = schema.get("count")
-            if type(maximum) is not int or not 1 <= maximum <= 6:
+            single = single_target_schema_from_declaration_group(schema)
+            if single is None:
                 return ()
-            if "up_to" in schema and (type(schema["up_to"]) is not int or schema["up_to"] != maximum):
-                return ()
-            single = {key: value for key, value in schema.items() if key != "up_to"}
-            single["count"] = 1
             if not direct_permanent_target_schema_is_closed(single) or not (
                 "creature" in single.get("types_all", ()) or single.get("types_any") == ["creature"]
             ):
@@ -1489,7 +1381,15 @@ def fixed_player_counter_placement_node_capabilities(
         return ()
     effect = effects[0]
     subject = effect.get("subjects")
+    from ..rad_counter_model import RAD_CAPABILITY, RAD_PRODUCER_FIELD, versioned_rad_player_counter_effect
+
+    try:
+        versioned_rad = versioned_rad_player_counter_effect(effect)
+    except ValueError:
+        return ()
     base_fields = {"op", "subjects", "counter", "amount", "source"}
+    if versioned_rad:
+        base_fields.add(RAD_PRODUCER_FIELD)
     expected_fields = (
         base_fields | {"target"} if subject == "target" else base_fields
     )
@@ -1505,12 +1405,11 @@ def fixed_player_counter_placement_node_capabilities(
         or effect.get("source") != "$source"
     ):
         return ()
+    required = ("counter.producer.fixed_player_effect",)
+    if versioned_rad:
+        required = (*required, RAD_CAPABILITY)
     if subject != "target":
-        return (
-            ("counter.producer.fixed_player_effect",)
-            if target_schema is None
-            else ()
-        )
+        return required if target_schema is None else ()
     valid_schemas = (
         {
             "zones": ["player"],
@@ -1530,10 +1429,7 @@ def fixed_player_counter_placement_node_capabilities(
         or dict(target_schema or {}) not in valid_schemas
     ):
         return ()
-    return (
-        "counter.producer.fixed_player_effect",
-        "target.revalidate_resolution",
-    )
+    return (*required, "target.revalidate_resolution")
 
 
 __all__ = [

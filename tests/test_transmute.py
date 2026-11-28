@@ -247,3 +247,30 @@ class TransmuteRuntimeTests(unittest.TestCase):
         denied=session.act('pilot:A',{'action_id':transmute_action,'pay':'auto'})
         self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
         self.assertEqual('hand',source.zone);self.replay(session,load=True)
+
+    def test_perplex_native_transmute_keeps_its_original_mana_value_and_replay(self):
+        session = self.session(702540)
+        source = self.add(session.engine, "Perplex", zone="hand", ref="perplex-transmute")
+        match = self.add(session.engine, "Drift of Phantasms", zone="library", ref="perplex-value-three")
+        wrong = self.add(session.engine, "Generic Bound Plains", zone="library", ref="perplex-value-zero")
+        self.ready(session, source, {"U": 1, "B": 1, "C": 1})
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["search_cards"]
+        ids = {row["id"] for row in options}
+        self.assertIn(match.ref, ids)
+        self.assertNotIn(wrong.ref, ids)
+        for seat in "BCD":
+            self.assertNotIn(match.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        session = self.replay(session, load=True)
+        chosen = session.act("pilot:A", {"action_id": "choose", "cards": [match.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual("hand", session.state.cards[match.object_id].zone)
+        self.assertEqual(1, sum(event.code == "library.shuffle" for event in session.state.events))
+        self.replay(session)

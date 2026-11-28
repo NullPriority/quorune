@@ -12,6 +12,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face
+from ..characteristic_read_frames import characteristic_read_method
 from ..continuous_conditions import (
     FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
 )
@@ -40,10 +41,14 @@ ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID = (
     "permission.action.activate-controlled-creature-as-haste.v1"
 )
 SOURCE_LOYALTY_INSTANT_CAPABILITY = "activation.permission.self_loyalty_instant"
+EQUIP_INSTANT_CAPABILITY = "activation.permission.own_turn_equip_instant"
+FIRST_EQUIP_ZERO_CAPABILITY = "activation.price.first_equip_zero"
 LIBRARY_TOP_VISIBILITY_HANDLER_ID = (
     "permission.action.library-top-visibility.v1"
 )
 LIBRARY_TOP_ACTION_HANDLER_ID = "permission.action.library-top-action.v1"
+LIBRARY_TOP_LIFE_ACTION_HANDLER_ID = "permission.action.library-top-mana-value-life.v1"
+LIBRARY_TOP_LIFE_ACTION_CAPABILITY = "library.action.top.mana_value_life"
 QUALIFIED_LIBRARY_TOP_HANDLER_ID = 'permission.action.library-top-action.v2'
 QUALIFIED_LIBRARY_TOP_CAPABILITY = 'library.action.top.qualified'
 LIBRARY_TOP_MANA_VALUE_CAPABILITY = 'library.action.top.mana_value'
@@ -53,6 +58,10 @@ SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play
 SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY = "land.play.additional.all_players"
 OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefield.v1"
 OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
+OPENING_HAND_LUCK_HANDLER_ID = "permission.action.opening-hand-luck.v1"
+OPENING_HAND_LUCK_CAPABILITY = "game.opening_hand.nonstarter_luck_entry"
+MULLIGAN_REDRAW_HANDLER_ID = "permission.action.mulligan-redraw.v1"
+MULLIGAN_REDRAW_CAPABILITY = "game.opening_hand.exile_and_redraw"
 
 
 class ActionPermissionKind(StrEnum):
@@ -64,15 +73,20 @@ class ActionPermissionKind(StrEnum):
     TRIPLE_BASIC_LAND_TAP_MANA = "triple_basic_land_tap_mana"
     PUBLIC_HAND = 'public_hand'
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
+    OPENING_HAND_LUCK = "opening_hand_luck"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
+    MULLIGAN_REDRAW = "mulligan_redraw"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE = (
         "activate_controlled_creature_as_haste"
     )
     ACTIVATE_SOURCE_LOYALTY_AT_INSTANT = "activate_source_loyalty_at_instant"
     ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT = "activate_entered_source_loyalty_at_instant"
+    ACTIVATE_EQUIP_AT_INSTANT = "activate_equip_at_instant"
+    FIRST_EQUIP_ZERO = "first_equip_zero"
     LIBRARY_TOP_VISIBILITY = "library_top_visibility"
     LIBRARY_TOP_ACTION = "library_top_action"
+    LINKED_GRAVEYARD_EXILE_PLAY = "linked_graveyard_exile_play"
     ADDITIONAL_LAND_PLAY = "additional_land_play"
     LIBRARY_SEARCH_RULE = 'library_search_rule'
 
@@ -80,6 +94,18 @@ class ActionPermissionKind(StrEnum):
 SOURCE_LOYALTY_INSTANT_HANDLERS = {
     ActionPermissionKind.ACTIVATE_SOURCE_LOYALTY_AT_INSTANT: "permission.action.self-loyalty-instant.v1",
     ActionPermissionKind.ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT: "permission.action.entered-self-loyalty-instant.v1",
+}
+
+
+EQUIP_ACTION_PERMISSION_HANDLERS = {
+    ActionPermissionKind.ACTIVATE_EQUIP_AT_INSTANT: (
+        "permission.action.own-turn-equip-instant.v1", EQUIP_INSTANT_CAPABILITY,
+        ("101.1", "117.1b", "602.5d", "611.3a", "702.6a"),
+    ),
+    ActionPermissionKind.FIRST_EQUIP_ZERO: (
+        "permission.action.first-equip-zero.v1", FIRST_EQUIP_ZERO_CAPABILITY,
+        ("118.9", "601.2f", "602.2b", "611.3a", "702.6a"),
+    ),
 }
 
 
@@ -93,12 +119,17 @@ class ActionPermissionScope(StrEnum):
     ALL_PLAYERS = "all_players"
 
 
+class LibraryTopSpellPrice(StrEnum):
+    MANA_VALUE_IN_LIFE = "mana_value_in_life"
+
+
 class LibraryTopQualifier(StrEnum):
     ATTACHED_TO_CREATURE = 'attached_to_creature'
     DISTINCT_CREATURE_POWERS = 'distinct_creature_powers'
     OPPONENT_MORE_LANDS = 'opponent_more_lands'
     CHOSEN_CREATURE_TYPE = 'chosen_creature_type'
     MINIMUM_SPELL_MANA_VALUE = 'minimum_spell_mana_value'
+    ARTIFACT_OR_COLORLESS_SPELL = 'artifact_or_colorless_spell'
     SOURCE_ATTACKED_THIS_TURN = 'source_attacked_this_turn'
     CONTROLLER_CAST_THIS_TURN = 'controller_cast_this_turn'
 
@@ -107,6 +138,10 @@ _DISTINCT_POWER = PublicCharacteristicAggregateSpec(
     'power', 'distinct_count', 'source_controller', CONTROLLED_CREATURES_POWER_QUERY, schema_version=2,
 )
 _BATTLEFIELD_LAND = ObjectQuerySpec(zones=('battlefield',), types_all=('land',))
+ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES = (
+    ObjectQuerySpec(types_all=('artifact',), excluded_types=('land',)),
+    ObjectQuerySpec(colorless=True, excluded_types=('land',)),
+)
 _LIBRARY_TOP_HISTORY_CONDITIONS = {
     LibraryTopQualifier.SOURCE_ATTACKED_THIS_TURN: FixedPublicStateConditionSpec(
         FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1, schema_version=4,
@@ -155,6 +190,8 @@ class StaticActionPermission:
     library_search_rule: LibrarySearchRuleSpec | None = None
     library_top_qualifier: LibraryTopQualifier | None = None
     minimum_spell_mana_value: int | None = None
+    top_spell_price: LibraryTopSpellPrice | None = None
+    linked_exile_ability_pair: str | None = None
 
     def __post_init__(self):
         if self.kind is ActionPermissionKind.LIBRARY_SEARCH_RULE and not isinstance(self.library_search_rule,LibrarySearchRuleSpec):
@@ -232,6 +269,22 @@ class OpeningHandBattlefieldPermissionHandler(StaticActionPermissionHandler):
             raise SemanticNodeError('Opening-hand entry requires complete-card admission')
         return StaticActionPermissionHandler.validate(self,
             {k:v for k,v in descriptor.items() if k!='requires_complete_card_program'})
+
+
+@dataclass(frozen=True, slots=True)
+class OpeningHandLuckPermissionHandler(OpeningHandBattlefieldPermissionHandler):
+    handler_id: str = OPENING_HAND_LUCK_HANDLER_ID
+    permission: ActionPermissionKind = ActionPermissionKind.OPENING_HAND_LUCK
+    rule_references: tuple[str, ...] = ("103.6", "103.6a", "122.1", "609.3")
+    capability_dependencies: tuple[str, ...] = (OPENING_HAND_LUCK_CAPABILITY,)
+
+
+@dataclass(frozen=True, slots=True)
+class MulliganRedrawPermissionHandler(OpeningHandBattlefieldPermissionHandler):
+    handler_id: str = MULLIGAN_REDRAW_HANDLER_ID
+    permission: ActionPermissionKind = ActionPermissionKind.MULLIGAN_REDRAW
+    rule_references: tuple[str, ...] = ("103.5", "103.5b", "103.5c", "121.2", "406.3")
+    capability_dependencies: tuple[str, ...] = (MULLIGAN_REDRAW_CAPABILITY,)
 
 
 @dataclass(frozen=True,slots=True)
@@ -350,6 +403,7 @@ class LibraryTopActionHandler:
     capability_dependencies: tuple[str, ...] = (
         "library.action.top.static",
     )
+    top_spell_price: LibraryTopSpellPrice | None = None
 
     def validate(
         self,
@@ -404,10 +458,19 @@ class LibraryTopActionHandler:
             raise SemanticNodeError(
                 "Library-top spell queries must exclude the land type"
             )
+        if self.top_spell_price is LibraryTopSpellPrice.MANA_VALUE_IN_LIFE and (
+            land_queries != (ObjectQuerySpec(types_all=("land",)),)
+            or spell_queries != (ObjectQuerySpec(excluded_types=("land",)),)
+        ):
+            raise SemanticNodeError("The library-top life price requires its complete land and spell permission")
         if qualifier is LibraryTopQualifier.CHOSEN_CREATURE_TYPE and (
             land_queries or spell_queries != (ObjectQuerySpec(types_all=('creature',), excluded_types=('land',)),)
         ):
             raise SemanticNodeError('Chosen-type library access requires its closed creature spell query')
+        if qualifier is LibraryTopQualifier.ARTIFACT_OR_COLORLESS_SPELL and (
+            land_queries or spell_queries != ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES
+        ):
+            raise SemanticNodeError('Artifact or colorless library access requires its closed spell-only query')
         if qualifier is LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE:
             amount = descriptor['minimum_spell_mana_value']
             if not spell_queries or type(amount) is not int or not 1 <= amount <= 99:
@@ -450,8 +513,17 @@ class LibraryTopActionHandler:
                 top_spell_queries=spell_queries,
                 library_top_qualifier=self.qualifier(descriptor),
                 minimum_spell_mana_value=descriptor.get('minimum_spell_mana_value'),
+                top_spell_price=self.top_spell_price,
             ),
         )
+
+
+LIBRARY_TOP_LIFE_ACTION_HANDLER = LibraryTopActionHandler(
+    handler_id=LIBRARY_TOP_LIFE_ACTION_HANDLER_ID,
+    rule_references=("107.3b", "118.9", "118.9a", "202.3", "305.2", "401.5", "601.2b", "601.2f", "601.2h"),
+    capability_dependencies=("library.action.top.static", LIBRARY_TOP_LIFE_ACTION_CAPABILITY),
+    top_spell_price=LibraryTopSpellPrice.MANA_VALUE_IN_LIFE,
+)
 
 
 _QUALIFIED_LIBRARY_TOP_HANDLER = LibraryTopActionHandler(handler_id=QUALIFIED_LIBRARY_TOP_HANDLER_ID, schema_version=2,
@@ -546,8 +618,9 @@ class ActionPermissionRegistry(
 
 @lru_cache(maxsize=1)
 def default_action_permission_registry() -> ActionPermissionRegistry:
-    from .library_search_rules import LibrarySearchRuleHandler
+    from .library_search_rules import LibrarySearchRuleHandler, SEARCH_CONTROL_CAPABILITY, SEARCH_CONTROL_HANDLER
     from .hand_visibility import StaticHandVisibilityHandler
+    from .linked_graveyard_exile_play import LinkedGraveyardPlayPermissionHandler
     from .mana_spending import (
         TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY, mana_spending_handlers, tap_mana_multiplier_handlers,
     )
@@ -562,14 +635,30 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             )
             for permission, handler_id in SOURCE_LOYALTY_INSTANT_HANDLERS.items()
         )
+    equip_handlers = tuple(
+        StaticActionPermissionHandler(
+            handler_id=handler_id, permission=permission, rule_references=rules,
+            capability_dependencies=(capability,),
+        )
+        for permission, (handler_id, capability, rules) in EQUIP_ACTION_PERMISSION_HANDLERS.items()
+        if capabilities.capability(capability) is not None
+    )
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
+            LibrarySearchRuleHandler(handler_id=SEARCH_CONTROL_HANDLER,
+                family="permission.action.library-search-control",
+                rule_references=("611.3b", "616.1", "701.23a", "701.23b", "701.23f", "723.4", "723.5"),
+                capability_dependencies=(SEARCH_CONTROL_CAPABILITY,)),
             StaticHandVisibilityHandler(),
+            LinkedGraveyardPlayPermissionHandler(),
             *mana_spending_handlers(),
             *(tap_mana_multiplier_handlers() if capabilities.capability(TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY) is not None else ()),
             *loyalty_handlers,
+            *equip_handlers,
             OpeningHandBattlefieldPermissionHandler(),
+            OpeningHandLuckPermissionHandler(),
+            MulliganRedrawPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(
                 handler_id=LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
@@ -596,6 +685,7 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             LibraryTopVisibilityHandler(),
             LibraryTopActionHandler(),
             _QUALIFIED_LIBRARY_TOP_HANDLER,
+            LIBRARY_TOP_LIFE_ACTION_HANDLER,
             AdditionalLandPlayHandler(),
             AdditionalLandPlayHandler(
                 handler_id=SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
@@ -632,6 +722,7 @@ class ActionPermissionHost(Protocol):
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
+@characteristic_read_method
 def controller_action_permissions(
     host: ActionPermissionHost,
     player: str,
@@ -748,7 +839,9 @@ def _opponent_controls_more_lands(host: ActionPermissionHost, player: str) -> bo
 def _bound_library_top_queries(host: ActionPermissionHost, permission: StaticActionPermission, *, spell: bool):
     queries = permission.top_spell_queries if spell else permission.top_land_queries
     qualifier = permission.library_top_qualifier
-    if not queries or qualifier in {None, LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE}:
+    if not queries or qualifier in {
+        None, LibraryTopQualifier.MINIMUM_SPELL_MANA_VALUE, LibraryTopQualifier.ARTIFACT_OR_COLORLESS_SPELL,
+    }:
         return queries
     if qualifier is LibraryTopQualifier.OPPONENT_MORE_LANDS:
         return queries if _opponent_controls_more_lands(host, permission.player) else ()
@@ -778,25 +871,41 @@ def _bound_library_top_queries(host: ActionPermissionHost, permission: StaticAct
     return tuple(replace(query, subtypes_all=(chosen,)) for query in queries) if chosen is not None else ()
 
 
+def _face_down_library_spell_query(host: ActionPermissionHost, card: Any) -> ObjectQueryResult:
+    from ..morph import MORPH_CAST_METHOD, MORPH_FACE_DOWN_ANNOTATION, face_down_characteristics
+
+    view = replace(card, zone='stack', face_down=True, annotations={
+        **card.annotations, MORPH_FACE_DOWN_ANNOTATION: face_down_characteristics(MORPH_CAST_METHOD),
+    })
+    return host._public_object_query_result(view)
+
+
 def _matching_library_top_permissions(
     host: ActionPermissionHost,
     player: str,
     card: Any,
     *,
     spell: bool,
+    face_down: bool = False,
 ) -> tuple[StaticActionPermission, ...]:
     if not _is_owned_library_top(host, player, card):
         return ()
     matching = []
-    row = None
+    front_row = face_down_row = None
     for permission in controller_action_permissions(host, player):
         if permission.kind is not ActionPermissionKind.LIBRARY_TOP_ACTION:
             continue
         queries = _bound_library_top_queries(host, permission, spell=spell)
         if not queries:
             continue
-        if row is None:
-            row = host._public_object_query_result(card)
+        if face_down and permission.library_top_qualifier is LibraryTopQualifier.ARTIFACT_OR_COLORLESS_SPELL:
+            if face_down_row is None:
+                face_down_row = _face_down_library_spell_query(host, card)
+            row = face_down_row
+        else:
+            if front_row is None:
+                front_row = host._public_object_query_result(card)
+            row = front_row
         if any(object_matches_query(row, query) for query in queries):
             matching.append(permission)
     return tuple(matching)
@@ -806,11 +915,26 @@ def controller_has_library_top_land_permission(host: ActionPermissionHost, playe
     return bool(_matching_library_top_permissions(host, player, card, spell=False))
 
 
+def controller_life_priced_library_top_permissions(host: ActionPermissionHost, player: str, card: Any):
+    return tuple(permission for permission in _matching_library_top_permissions(host, player, card, spell=True)
+                 if permission.top_spell_price is LibraryTopSpellPrice.MANA_VALUE_IN_LIFE)
+
+
+def controller_has_face_down_library_top_spell_permission(host: ActionPermissionHost, player: str, card: Any) -> bool:
+    return any(
+        permission.library_top_qualifier is LibraryTopQualifier.ARTIFACT_OR_COLORLESS_SPELL
+        for permission in _matching_library_top_permissions(host, player, card, spell=True, face_down=True)
+    )
+
+
 def controller_library_top_spell_minimum_x(
     host: ActionPermissionHost, player: str, card: Any, *, face_down: bool = False,
 ) -> int | None:
     """Read the lowest announced X any matching static permission would accept."""
-    matching = _matching_library_top_permissions(host, player, card, spell=True)
+    matching = tuple(
+        permission for permission in _matching_library_top_permissions(host, player, card, spell=True, face_down=face_down)
+        if permission.top_spell_price is None
+    )
     if not matching:
         return None
     threshold = min(permission.minimum_spell_mana_value or 0 for permission in matching)
@@ -834,7 +958,8 @@ def controller_library_top_spell_minimum_x(
 
 
 def controller_has_library_top_spell_permission(host: ActionPermissionHost, player: str, card: Any) -> bool:
-    return controller_library_top_spell_minimum_x(host, player, card) is not None
+    return (controller_library_top_spell_minimum_x(host, player, card) is not None
+            or bool(controller_life_priced_library_top_permissions(host, player, card)))
 
 
 def additional_land_play_permission_slots(

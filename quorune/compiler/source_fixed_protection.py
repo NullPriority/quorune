@@ -22,3 +22,21 @@ def source_fixed_protection_template(text, *, source_is_permanent, source_card_t
         return None
     effect = source_color_protection_effect(match['color'].title())
     return 'temporary-source-fixed-protection-v1', (effect,), None, (MECHANIC, 'protection', 'cr-611-continuous-effects')
+
+
+def each_color_protection_template(text):
+    from ..rules.temporary_ability_grant import (
+        TEMPORARY_QUOTED_GRANT_MECHANIC, each_color_protection_instruction,
+    )
+
+    match = re.fullmatch(
+        r"(?P<subject>target|each) creature you control gains protection from each color until end of turn\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    targeted = match["subject"].casefold() == "target"
+    instruction, schema = each_color_protection_instruction(targeted=targeted)
+    mechanics = (TEMPORARY_QUOTED_GRANT_MECHANIC, "protection", "cr-611-continuous-effects")
+    return ("temporary-each-color-protection-v1", (instruction,), schema,
+            (*mechanics, *(("cr-115-targets",) if targeted else ())))

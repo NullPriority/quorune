@@ -126,6 +126,33 @@ class FixedOverloadModelCompilerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 self.test_overload_binds_distinct_nonmodal_programs_and_rejects_unclosed_variants()
 
+    def test_controller_exile_search_requires_both_independently_closed_overload_views(self):
+        from quorune.rules.affected_library_search_batch import EXILE_LAND_SEARCH_CAPABILITY
+        from quorune.rules.capabilities import DEFAULT_CAPABILITY_REGISTRY
+
+        body = ("Exile target creature you don't control. For each creature exiled this way, its controller searches "
+                "their library for a basic land card. Those players put those cards onto the battlefield tapped, then shuffle.")
+        record = self.record(cost="Overload {4}{W}{W}", body=body, mana_cost="{1}{W}",
+                             type_line="Sorcery", colors=("W",), color_identity=("W",))
+        ir = self.compile(record)
+        self.assertFalse(ir.material_residuals)
+        ordinary, overload = ir.faces[0].nodes
+        self.assertEqual("opponent", ordinary.target_schema["controller_relation"])
+        self.assertIsNone(overload.target_schema)
+        self.assertTrue(all(EXILE_LAND_SEARCH_CAPABILITY in node.capability_dependencies for node in (ordinary, overload)))
+        for before, after in (("its controller", "its owner"), ("basic land card", "land card"),
+                              ("battlefield tapped", "battlefield")):
+            with self.subTest(after=after):
+                self.assertTrue(self.compile(replace(record, oracle_text=record.oracle_text.replace(before, after))).material_residuals)
+        with mock.patch("quorune.compiler.public_exile_followup_templates._exile_land_search_compensation", return_value=None):
+            self.assertTrue(self.compile(record).material_residuals)
+        raw = json.loads(DEFAULT_CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
+        row = next(item for item in raw["capabilities"] if item["id"] == EXILE_LAND_SEARCH_CAPABILITY)
+        row.update(status="blocked", blockers=["test exile-controller search capability withdrawal"])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified(self.registry.evidence_fingerprint)
+        self.assertTrue(self.compile(record, withdrawn).material_residuals)
+
 
 class FixedOverloadRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
@@ -166,6 +193,145 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
         result = session.act('pilot:A', {'action_id': 'cast:' + current.ref,
             'cost_option': 'overload', 'targets': [], 'pay': 'auto', **payment})
         self.assertTrue(result.ok, result.summary)
+
+    def test_actual_winds_overload_collects_private_counts_and_commits_one_tapped_entry_batch(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        session = self.session(70296231)
+        engine = session.engine
+        source = self.add(engine, "Winds of Abandon", zone="hand")
+        protected = self.add(engine, "Gladecover Scout", seat="B")
+        borrowed = self.add(engine, "Generic Bound Body", seat="C", ref="winds-borrowed-body")
+        engine.change_control(borrowed.object_id, "B", reason="Compensation control witness")
+        third = self.add(engine, "Generic Bound Body", seat="C", ref="winds-c-body")
+        friendly = self.add(engine, "Generic Bound Body", ref="winds-friendly-body")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4, "W": 2})
+        self.checkpoint(session)
+        lands = {seat: [session.state.cards[object_id] for object_id in session.state.players[seat].zones["library"][-count:]]
+                 for seat, count in (("B", 2), ("C", 1))}
+        initial_shuffles = {seat: int(session.state.players[seat].stats.get("shuffle_count", 0)) for seat in "BCD"}
+        self.cast_overloaded(session, source)
+        self.assertEqual([], session.state.stack[-1].targets)
+        first = self.resolve(session)
+        self.assertEqual(("semantic.search", ["B"]), (first.kind, first.actors))
+        b_packet = session.packet("pilot:B", full=True)["decision"]["ctx"]
+        self.assertEqual(2, b_packet["search_spec"]["count"]["maximum"])
+        self.assertEqual(["exile"] * 3, [session.state.cards[card.object_id].zone for card in (protected, borrowed, third)])
+        self.assertEqual("battlefield", session.state.cards[friendly.object_id].zone)
+        before = authoritative_state_hash(session.state)
+        for seat, refs in (("C", [lands["C"][0].ref]), ("B", [lands["C"][0].ref])):
+            self.assertFalse(session.act("pilot:" + seat, {"action_id": "choose", "search_cards": refs}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"action_id": "choose", "search_cards": [card.ref for card in lands["B"]]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(["pilot:C"], session.pending_principals())
+        c_packet = session.packet("pilot:C", full=True)["decision"]["ctx"]
+        self.assertEqual(1, c_packet["search_spec"]["count"]["maximum"])
+        self.assertTrue(all(card.ref not in json.dumps(c_packet) for card in lands["B"]))
+        self.assertIsNone(session.packet("pilot:D", full=True)["decision"])
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "library" for cards in lands.values() for card in cards))
+        self.assertEqual(initial_shuffles, {seat: int(session.state.players[seat].stats.get("shuffle_count", 0))
+                                           for seat in "BCD"})
+        session = self.replay(session, load=True)
+
+        arrival_observations = []
+        shuffles = []
+        move = ZoneTransitionOwner.move_cards_simultaneously
+        shuffle = ZoneTransitionOwner.shuffle_library
+        found_ids = {card.object_id for cards in lands.values() for card in cards}
+
+        def observe(owner, changes, **kwargs):
+            changes = tuple(changes)
+            moved = move(owner, changes, **kwargs)
+            if found_ids.intersection(object_id for object_id, _ in changes):
+                arrival_observations.append(changes)
+                for expected in lands.values():
+                    for card in expected:
+                        current = session.state.cards[card.object_id]
+                        self.assertEqual(("battlefield", True), (current.zone, current.tapped))
+            return moved
+
+        def observe_shuffle(owner, seat, **kwargs):
+            self.assertEqual(1, len(arrival_observations))
+            shuffles.append(seat)
+            return shuffle(owner, seat, **kwargs)
+
+        with (mock.patch.object(ZoneTransitionOwner, "move_cards_simultaneously", observe),
+              mock.patch.object(ZoneTransitionOwner, "shuffle_library", observe_shuffle)):
+            accepted = session.act("pilot:C", {"action_id": "choose", "search_cards": [lands["C"][0].ref]})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, len(arrival_observations))
+        self.assertCountEqual([(object_id, "battlefield") for object_id in found_ids], arrival_observations[0])
+        self.assertEqual(["B", "C"], shuffles)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_winds_normal_has_one_target_and_allows_failing_to_find(self):
+        session = self.session(70296232)
+        source = self.add(session.engine, "Winds of Abandon", zone="hand")
+        protected = self.add(session.engine, "Gladecover Scout", seat="B")
+        target = self.add(session.engine, "Generic Bound Body", seat="C")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+        action = f"cast:{source.ref}"
+        self.reject(session, action, cost_option="normal", targets=[protected.ref], pay="auto")
+        accepted = session.act("pilot:A", {"action_id": action, "cost_option": "normal", "pay": "auto",
+                                            "targets": [target.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        decision = self.resolve(session)
+        self.assertEqual(("semantic.search", ["C"]), (decision.kind, decision.actors))
+        self.assertEqual("battlefield", session.state.cards[protected.object_id].zone)
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        start = len(session.state.events)
+        accepted = session.act("pilot:C", {"action_id": "choose", "search_cards": []})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(["C"], [event.actor for event in session.state.events[start:] if event.code == "library.shuffle"])
+        self.replay(session, load=True)
+
+    def test_actual_winds_replays_a_private_entry_replacement_before_shuffling(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(70296233)
+        source = self.add(session.engine, "Winds of Abandon", zone="hand")
+        self.add(session.engine, "Archelos, Lagoon Mystic")
+        orb = self.add(session.engine, "Orb of Dreams")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+        before = int(session.state.players["B"].stats.get("shuffle_count", 0))
+        selected = session.state.cards[session.state.players["B"].zones["library"][-1]]
+        accepted = session.act("pilot:A", {"action_id": f"cast:{source.ref}", "cost_option": "normal",
+                                            "pay": "auto", "targets": [target.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        accepted = session.act("pilot:B", {"action_id": "choose", "search_cards": [selected.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(("replacement.order", ["B"]),
+                         (session.state.pending_decision.kind, session.state.pending_decision.actors))
+        self.assertEqual(before, int(session.state.players["B"].stats.get("shuffle_count", 0)))
+        self.assertEqual("library", session.state.cards[selected.object_id].zone)
+        for seat in "ACD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(selected.ref, json.dumps(packet))
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        orb_first = next(row["id"] for row in options if orb.ref in row["id"])
+        session = self.replay(session, load=True)
+        command = {"action_id": "choose", "replacement": orb_first}
+        checkpoint = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", command).ok)
+        self.assertEqual(checkpoint, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[selected.object_id]
+        self.assertEqual(("battlefield", "B", False), (current.zone, current.controller, current.tapped))
+        self.assertEqual(before + 1, int(session.state.players["B"].stats.get("shuffle_count", 0)))
+        self.replay(session, load=True)
 
     def test_actual_electrickery_overload_ignores_hexproof_and_affects_later_creature(self):
         session = self.session(70296001)
@@ -375,7 +541,8 @@ class FixedOverloadRuntimeTests(unittest.TestCase):
     def test_original_overload_cards_require_both_complete_bodies_and_paired_normal_registration(self):
         expected = {'Mind Rake', 'Scale Up', 'Stirring Address', 'Mizzium Mortars', 'Dynacharge',
                     'Electrickery', 'Dragonshift', "Mizzix's Mastery", 'Blustersquall', 'Cyclonic Rift',
-                    'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge', 'March of Progress'}
+                    'Damn', 'Downsize', 'Mizzium Skin', 'Vandalblast', 'Weapon Surge', 'March of Progress',
+                    'Eldritch Immunity', 'Winds of Abandon'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if 'Overload' in r.get('keywords', ())]
         self.assertEqual(27, len(rows))
         session = self.session(70296008)

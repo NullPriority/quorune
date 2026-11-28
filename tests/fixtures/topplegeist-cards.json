@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "name": "Topplegeist",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Spirit",
+      "oracle_text": "Flying\nWhen this creature enters, tap target creature an opponent controls.\nDelirium — At the beginning of each opponent's upkeep, if there are four or more card types among cards in your graveyard, tap target creature that player controls.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Delirium"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-04-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Because you consider only the characteristics of a double-faced card's front face while it's not on the battlefield, the types of its back face won't be counted for delirium."
+    },
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "In some rare cases, you can have a token or a copy of a spell in your graveyard at the moment that an object's delirium ability counts the card types among cards in your graveyard, before that token or copy ceases to exist. Because tokens and copies of spells are not cards, even if they are copies of cards, their types will never be counted."
+    },
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "Most triggered delirium abilities use an intervening \"if\" clause. There must be four or more card types among cards in your graveyard in order for these abilities to trigger, otherwise they never trigger at all. There's no way to have the ability trigger if there aren't enough card types, even if you intend to raise that number in response to the triggered ability. The number of card types is checked again as the trigger resolves, and if it has become too low somehow, the ability does nothing. If which card types are in your graveyard changes but the quantity of card types stays the same (or increases), then the delirium triggered ability will still resolve."
+    },
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The card types in Magic are artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery. Supertypes (such as legendary and basic) and subtypes (such as Human and Equipment) are not counted."
+    },
+    {
+      "oracle_id": "4a71f404-e48d-4c86-882e-4e21c8210dea",
+      "published_at": "2016-04-08",
+      "source": "wotc",
+      "comment": "The number of card types matters, not the number of cards. For example, Wicker Witch (an artifact creature) along with Catalog (an instant) and Chaplain's Blessing (a sorcery) will enable delirium."
+    }
+  ]
+}

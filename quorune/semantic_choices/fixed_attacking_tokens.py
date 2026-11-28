@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from ..replacement.immutable import FrozenMap
 from ..rules.attacking_token_results import (ATTACKING_TOKEN_OPERATION, ATTACKING_TOKEN_CAPABILITY,
     attacking_token_result_closure)
+from ..rules.targeted_attack_die_copy import is_rolled_attacking_copy, validate_attacking_copy
 from ..semantic_runtime.intents import CreateTokenIntent
 from .model import AutoContinue, SemanticChoiceCompletion, SemanticChoiceError, SemanticChoicePreparation
 from .token_destination_plans import prepare_attacking_destinations, complete_attacking_destinations
@@ -14,9 +15,21 @@ def _validate_effect(effect, actor):
     public = {key: value for key, value in effect.items() if key != '_replacement_selections'}
     if public.get('player') != actor or not isinstance(effect.get('_replacement_selections', ()), (list, tuple)):
         raise SemanticChoiceError('Fixed attacking token principal or replacements are malformed')
-    public['player'] = '$controller'
     try:
-        attacking_token_result_closure(public)
+        if is_rolled_attacking_copy(public):
+            validate_attacking_copy(public, actor)
+            return
+        if effect.get('token_entry_version') == 4:
+            from ..rules.attacking_entry_copy import validate_materialized
+            validate_materialized(public, actor)
+            return
+        public['player'] = '$controller'
+        from ..rules.source_counter_attacking_tokens import source_counter_attacking_token_closure, uses_source_counter_attacking_tokens
+
+        if uses_source_counter_attacking_tokens(public):
+            source_counter_attacking_token_closure(public, resolved=True)
+        else:
+            attacking_token_result_closure(public)
     except (TypeError, ValueError, KeyError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
 
@@ -32,7 +45,7 @@ class FixedAttackingTokenDestinationHandler:
         'tapped', 'token_entry_version', '_choice_actor', '_token_ids', '_destinations',
         '_stack_label', '_preview_specs', '_outside_combat', 'token_cleanup', '_token_cleanup_plan',
         'opponent_scope', '_opponents', '_opponent_by_token', '_assignments',
-        '_current_opponent', '_pending_token_ids')
+        '_current_opponent', '_pending_token_ids', 'copy_of', 'copy_snapshot')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ('prompt', 'destinations',
         'legal_actions.choice_schema.legal_refs', 'legal_actions.choice_schema.legal_values')
@@ -54,6 +67,20 @@ class FixedAttackingTokenDestinationHandler:
                 raise SemanticChoiceError('Temporary attacking tokens require their resolving source')
             plan = CreatedTokenCleanupPlan(CreatedTokenCleanupSpec.from_dict(effect['token_cleanup']), source)
             effect = {**dict(effect), '_token_cleanup_plan': plan.to_dict()}
+        if not context.query.attacking_token_entry_allowed and effect.get('token_entry_version') == 4:
+            return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason='the trigger controller is not attacking'))
+        if not context.query.attacking_token_entry_allowed and is_rolled_attacking_copy(effect):
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                preparation_intents=(CreateTokenIntent(
+                    actor=context.actor, controller=context.actor, name="", quantity=1, tapped=True,
+                    copy_of=effect["copy_of"], copy_snapshot=FrozenMap(effect["copy_snapshot"]),
+                    reason=str(context.stack_label or "Token creation"),
+                    replacement_selections=tuple(effect.get("_replacement_selections", ())),
+                ),),
+                auto_continue=AutoContinue(reason="The token enters tapped without a combat assignment."),
+            )
         if not context.query.attacking_token_entry_allowed:
             return SemanticChoicePreparation(request=None,
                 continuation_effect=FrozenMap({**dict(effect), '_choice_actor': context.actor,
@@ -103,5 +130,5 @@ class FixedAttackingTokenDestinationHandler:
                 replacement_selections=tuple(effect.get('_replacement_selections', ()))),))
         if not query.attacking_token_entry_allowed:
             raise SemanticChoiceError('Attacking token continuation is outside combat')
-        return complete_attacking_destinations(effect, response, query, name=effect['name'],
+        return complete_attacking_destinations(effect, response, query, name=effect.get('name', ''),
             tapped=effect['tapped'], sacrifice=False, label='Entering', token_cleanup=plan)

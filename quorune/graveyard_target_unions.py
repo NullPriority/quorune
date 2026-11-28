@@ -4,7 +4,7 @@ from dataclasses import dataclass,fields
 from collections.abc import Mapping
 import re
 
-from .target_forms import TargetCharacteristicForm
+from .target_forms import HISTORIC_TARGET_FORMS, TargetCharacteristicForm
 from .rules.graveyard_card_targets import OwnGraveyardCardTargetSpec,GraveyardCardTargetError
 from .creature_subtypes import canonical_creature_subtype
 
@@ -34,11 +34,13 @@ class MixedOwnGraveyardTargetSpec(OwnGraveyardCardTargetSpec):
         forms=self.characteristic_forms_any
         if not isinstance(forms,(list,tuple)) or not 2<=len(forms)<=4 or len(set(forms))!=len(forms):
             raise GraveyardCardTargetError('Mixed graveyard alternatives require two through four distinct leaves')
+        historic = set(forms) == set(HISTORIC_TARGET_FORMS)
         kinds=set()
         for form in forms:
             if not isinstance(form,TargetCharacteristicForm):raise GraveyardCardTargetError('Mixed leaves must be typed')
             words=(*form.types_all,*form.subtypes_any,*form.supertypes_any)
-            if len(words)!=1 or form!=_leaf(words[0]):raise GraveyardCardTargetError('Mixed leaves must contain one canonical quality')
+            if not historic and (len(words)!=1 or form!=_leaf(words[0])):
+                raise GraveyardCardTargetError('Mixed leaves must contain one canonical quality')
             kinds.add('type' if form.types_all else 'subtype' if form.subtypes_any else 'supertype')
         if len(kinds)<2:raise GraveyardCardTargetError('Homogeneous alternatives retain their existing owner')
         if any(getattr(self,f.name)!=f.default for f in fields(self)
@@ -76,6 +78,8 @@ def mixed_graveyard_target_from_schema(value):
 
 def mixed_graveyard_target(description):
     normalized=' '.join(description.casefold().split())
+    if normalized == "historic":
+        return MixedOwnGraveyardTargetSpec(None, characteristic_forms_any=HISTORIC_TARGET_FORMS)
     if re.fullmatch(r"[a-z][a-z'-]*(?:, [a-z][a-z'-]*)*(?:,? or [a-z][a-z'-]*)",normalized) is None:return None
     words=tuple(re.split(r', (?:or )?| or ',normalized))
     try:return MixedOwnGraveyardTargetSpec(None,characteristic_forms_any=tuple(_leaf(word) for word in words))

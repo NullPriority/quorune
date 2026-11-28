@@ -44,7 +44,7 @@ from .entry_counter_coordination import (
     resume_resolving_entry_replacement,
 )
 from .turn_counter_coordination import resume_turn_counter_replacement
-from .turn_skip_model import TURN_BOUNDARY_SKIP_RESUME
+from .turn_skip_model import TURN_BOUNDARY_SKIP_RESUME, TURN_START_SKIP_RESUME
 
 
 _PILOT_ROLE = "pilot"
@@ -236,7 +236,7 @@ def _priority_action_cost_event_id(batch: ReplacementEventBatch) -> str:
     event = batch.events[0]
     from .replacement.face_status_copy import FACE_UP_COPY_EVENT
 
-    if event.kind not in {"counter.place", "zone.change", FACE_UP_COPY_EVENT} or not event.event_id:
+    if event.kind not in {"counter.place", "zone.change", "life.change", FACE_UP_COPY_EVENT} or not event.event_id:
         raise ReplacementEffectError(
             "Priority-action cost continuation has an unsupported event"
         )
@@ -263,6 +263,8 @@ def _validate_mana_payment_frame(
 
 
 def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .excess_damage import EXCESS_TRAMPLE_FIELD
+    from .rules.fight_excess_mana import FIGHT_EXCESS_MANA_FIELD
     from .fixed_damage_set_model import DEALT_LIFE_GAIN_FIELD, TARGETED_DEALT_LIFE_GAIN_VERSION
     from .semantic_runtime.domain_intent import DomainEffectIntent
     from .semantic_runtime.earthbend_intents import EarthbendIntent
@@ -275,22 +277,50 @@ def _quantity_followup_plan(plan: IntentPlan) -> bool:
     from .semantic_runtime.graveyard_exile_type_outcome_intent import GraveyardExileTypeOutcomeIntent
     from .semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
     from .semantic_runtime.targeted_exile_token_intent import CommittedTargetExileIntent
+    from .semantic_runtime.zone_move_intent import ReturnedCreatureCounterIntent
     from .semantic_runtime.intents import (
-        DealFixedDamageSetIntent, DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent,
+        DealFixedDamageSetIntent, DestroyPermanentIntent, DestroyPermanentSetIntent, DestroyPermanentTargetsIntent,
+        MillCardsIntent, MovePublicZoneSetIntent, RemoveCountersIntent, RevealEachLibraryTopIntent,
     )
 
+    from .delayed_object_model import RESOLVE_OBJECT_ACTION, SOURCE_BOUND_RETURN_OFFER, is_source_bound_creature_return
+    from .rules.granted_death_role_return import is_granted_death_role_return
+    from .rules.hand_entry_followup import uses_committed_hand_entry_life
+    from .phasing_model import uses_counted_creature_phase_hold
+    from .public_zone_moves import FixedMixedZoneExileSpec, MixedZoneExileScope
+    from .rules.excess_damage_treasure import EXCESS_TREASURE_FIELD
+    from .rules.random_graveyard_returns import RandomGraveyardReturnIntent
+
     return any(
-        isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
-            GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent, CommittedTargetExileIntent))
+        isinstance(intent, DomainEffectIntent) and intent.operation == RESOLVE_OBJECT_ACTION
+        and is_source_bound_creature_return(intent.effect) and intent.effect.get("action") == SOURCE_BOUND_RETURN_OFFER
+        or isinstance(intent, DomainEffectIntent) and is_granted_death_role_return(intent.effect)
+        or isinstance(intent, DomainEffectIntent) and uses_committed_hand_entry_life(intent.effect)
+        or isinstance(intent, DomainEffectIntent) and uses_counted_creature_phase_hold(intent.effect)
+        or isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
+            GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent,
+            CommittedTargetExileIntent, ReturnedCreatureCounterIntent))
+        or isinstance(intent, RandomGraveyardReturnIntent) and intent.selection.exile_for_cast
         or isinstance(intent, FixedSourceSacrificeIntent) and intent.cast_participant is not None
         or isinstance(intent, DealFixedDamageSetIntent) and intent.gain_life_from_dealt
+        or isinstance(intent, RemoveCountersIntent) and intent.gain_life_from_removed
+        or (isinstance(intent, MovePublicZoneSetIntent) and isinstance(intent.spec, FixedMixedZoneExileSpec)
+            and intent.spec.scope is MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY)
         or (
             isinstance(intent, DomainEffectIntent)
             and intent.operation == "damage"
-            and intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+            and (intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+                 or EXCESS_TREASURE_FIELD in intent.effect
+                 or intent.effect.get(EXCESS_TRAMPLE_FIELD) == 1)
         )
         or (
-            isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
+            isinstance(intent, DomainEffectIntent)
+            and intent.operation == "creature_power_damage"
+            and intent.effect.get(FIGHT_EXCESS_MANA_FIELD) == 1
+        )
+        or (
+            isinstance(intent, (DestroyPermanentIntent, DestroyPermanentSetIntent, DestroyPermanentTargetsIntent,
+                                MillCardsIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
             and intent.followup is not None
         )
         for intent in plan.intents
@@ -330,11 +360,41 @@ def apply_effect_with_replacement_choice(
     from .transform_order_model import TransformTimestampOrderRequired
     from .transform_timestamp_order import issue_transform_resolution_order
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
+    from .resolving_library_exile import resolving_library_exile_source
+    from .rules.attached_copy_payment import FALLBACK_FIELD, committed_copy_fallback
+    from .rules.linked_death_token_copy import (
+        EXILE as LINKED_DEATH_COPY_EXILE, RETURN as LINKED_DEATH_COPY_RETURN,
+        commit_linked_death_copy, return_linked_death_token_cards,
+    )
+
     committed_followup = False
+    result = None
     try:
-        with composition_resolution_actor(item.controller):
-            if plan is None:
-                host.apply_effect(effect, actor=item.controller, as_cost=False)
+        with composition_resolution_actor(item.controller), resolving_library_exile_source(host, item):
+            from .rules.announced_token_sweep import TOKEN_SWEEP_FIELD, create_tokens_for_sweep
+
+            if TOKEN_SWEEP_FIELD in effect:
+                try:
+                    remaining = (*create_tokens_for_sweep(host, item, effect), *remaining)
+                except ValueError as exc:
+                    raise GameRuleError(str(exc)) from exc
+                committed_followup = True
+            elif FALLBACK_FIELD in effect:
+                fallback = committed_copy_fallback(effect, player=item.controller)
+                created = (host.apply_effect(effect, actor=item.controller, as_cost=False) if plan is None
+                           else execute_intent_plan(host, plan))
+                if not isinstance(created, (list, tuple)) or any(type(ref) is not str or not ref for ref in created):
+                    raise GameRuleError("Copy fallback requires the committed token references")
+                if not created:
+                    remaining = (fallback, *remaining)
+                    committed_followup = True
+            elif effect.get("op") == LINKED_DEATH_COPY_EXILE:
+                remaining = (*commit_linked_death_copy(host, item, effect), *remaining)
+                committed_followup = True
+            elif effect.get("op") == LINKED_DEATH_COPY_RETURN:
+                return_linked_death_token_cards(host, item, effect)
+            elif plan is None:
+                result = host.apply_effect(effect, actor=item.controller, as_cost=False)
             elif _quantity_followup_plan(plan):
                 from .conditional_exile_return import return_deferred_source_departures
 
@@ -342,7 +402,7 @@ def apply_effect_with_replacement_choice(
                 committed_followup = True
                 return_deferred_source_departures(host, waiting)
             else:
-                execute_intent_plan(host, plan)
+                result = execute_intent_plan(host, plan)
     except TransformTimestampOrderRequired as required:
         issue_transform_resolution_order(host,item,required,effect,remaining,destination,note,instruction_pointer)
         return False
@@ -387,6 +447,11 @@ def apply_effect_with_replacement_choice(
             required=required,
         )
         return False
+    from .rules.death_battlefield_return import CommittedDeathEquipmentFollowup
+
+    if isinstance(result, CommittedDeathEquipmentFollowup) and result.effects:
+        remaining = (*(thaw_value(value) for value in result.effects), *remaining)
+        committed_followup = True
     can_continue = item in host.state.stack and host._semantic_pause_annotation() is None
     if committed_followup and can_continue:
         host._continue_resolution(
@@ -522,7 +587,7 @@ def _resume_mana_replacement(
     try:
         _validate_mana_payment_frame(host, restored.thaw_priority_frame())
         response = restored.thaw_priority_response()
-        if WHOLE_ZONE_COST_FRAME_FIELD in response:
+        if WHOLE_ZONE_COST_FRAME_FIELD in response and all(event.kind == "zone.change" for event in restored.batch.events):
             frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
             response[WHOLE_ZONE_COST_FRAME_FIELD] = frame.append_selection(selection).to_dict()
             resume_mana_choice_capable_priority_action(
@@ -676,6 +741,11 @@ def _resume_semantic_replacement(
 
 
 def _scope_replayed_event_choice(host, restored, pending, selection):
+    from .rules.repeated_apnap_payment import is_payment_round
+
+    if restored.resume_kind == "semantic" and is_payment_round(restored.thaw_effect()):
+        fields = {"effect_id": selection} if isinstance(selection, str) else dict(selection)
+        return {**fields, "event_id": fields.get("event_id", pending.event_id)}
     if (restored.resume_kind == 'semantic_intent_completion'
             and restored.semantic_intent_kind == 'graveyard_library_cost_batch'):
         fields = {'effect_id': selection} if isinstance(selection, str) else dict(selection)
@@ -745,6 +815,16 @@ def complete_replacement_order_choice(
         from .opening_hand import resume_opening_hand_replacement
         resume_opening_hand_replacement(host,restored,selection)
         return
+    if restored.resume_kind == "scheduled_draw_result":
+        from .drawing.scheduled_draw_coordination import resume_scheduled_draw_replacement
+
+        resume_scheduled_draw_replacement(host, restored, selection, error_type=error_type)
+        return
+    if restored.resume_kind == "draw_library_choice_move":
+        from .drawing.library_choice_coordination import resume_library_choice_movement
+
+        resume_library_choice_movement(host, restored, selection, error_type=error_type)
+        return
     if restored.resume_kind == "draw_discard_or_mill":
         from .drawing.discard_coordination import resume_draw_discard_replacement
 
@@ -760,6 +840,11 @@ def complete_replacement_order_choice(
         return
     if restored.resume_kind == "combat_damage":
         _resume_combat_replacement(host, restored, selection)
+        return
+    if restored.resume_kind == "combat_token_aftermath":
+        from .rules.combat_prevention_tokens import resume_combat_prevention_tokens
+
+        resume_combat_prevention_tokens(host, restored, selection)
         return
     if restored.resume_kind in {"mana_payment", "priority_action_cost", "face_up_copy"}:
         _resume_mana_replacement(
@@ -810,6 +895,11 @@ def complete_replacement_order_choice(
             selection,
             error_type=error_type,
         )
+        return
+    if restored.resume_kind == TURN_START_SKIP_RESUME:
+        from .turn_skip_replacements import resume_turn_start_skip
+
+        resume_turn_start_skip(host, restored, selection, error_type=error_type)
         return
     if restored.resume_kind == TURN_BOUNDARY_SKIP_RESUME:
         from .turn_skip_replacements import resume_turn_boundary_skip

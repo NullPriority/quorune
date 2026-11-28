@@ -1,4 +1,4 @@
-import type { CommandEnvelope, CommandReceipt } from "./generated/protocol";
+import type { CommandEnvelope, CommandReceipt, JsonValue } from "./generated/protocol";
 
 const TAB_STORAGE_KEY = "commander-browser-tab";
 
@@ -21,10 +21,12 @@ export function beginGuestSession(): void {
 }
 
 function csrfToken(): string {
-  const row = document.cookie
-    .split(";")
-    .map((value) => value.trim())
-    .find((value) => value.startsWith("commander_csrf="));
+  const cookies = document.cookie.split(";").map((value) => value.trim());
+  const port = window.location.port;
+  const scopedCookie = port
+    ? cookies.find((value) => value.startsWith("commander_csrf_" + port + "="))
+    : undefined;
+  const row = scopedCookie ?? cookies.find((value) => value.startsWith("commander_csrf="));
   return row ? decodeURIComponent(row.split("=", 2)[1]) : "";
 }
 
@@ -51,9 +53,17 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       ...(init.headers ?? {}),
     },
   });
-  const payload = (await response.json()) as { detail?: unknown };
+  let payload: { detail?: unknown };
+  try {
+    payload = (await response.json()) as { detail?: unknown };
+  } catch {
+    throw new ApiError(
+      response.ok ? "The server returned an unreadable response." : `Request failed: ${response.status}`,
+      response.status, null,
+    );
+  }
   if (!response.ok) {
-    const detail = payload.detail;
+    const detail = payload?.detail;
     const message = typeof detail === "string"
       ? detail
       : detail && typeof detail === "object" && "message" in detail
@@ -70,6 +80,65 @@ export interface Guest {
   expires_at: string;
 }
 
+export interface SavedDeck {
+  id: string;
+  name: string;
+  commanders: string[];
+}
+
+export type DeckPrinting = {
+  scryfall_id?: string; set_code?: string; collector_number?: string;
+  language?: string; finish?: string; provider_id?: string; faces?: string[];
+};
+
+export type DeckBoard = "commander" | "mainboard" | "sideboard" | "companion" | "maybeboard";
+export type EditableDeckEntry = {
+  name: string; quantity: number; board: DeckBoard; tags: string[]; printing?: DeckPrinting;
+};
+
+export type DeckPrintingPage = {
+  name: string; cid: string; has_more: boolean;
+  printings: { printing: DeckPrinting; set_name: string; finishes: string[] }[];
+};
+
+export interface RecentGame {
+  game_id: string;
+  room_id: string;
+  status: GameLifecycle["status"];
+  created_at: string;
+  format_profile: string;
+}
+
+export interface DeckPreflight {
+  trusted_only_ready: boolean;
+  card_rules_ready?: boolean;
+  data_integrity_issue?: boolean;
+  card_behavior_ready?: boolean;
+  format_verification_pending?: boolean;
+  affected_cards?: { name: string; reasons: string[] }[];
+  affected_card_count?: number;
+  data_integrity_blockers?: CardDataMismatch[];
+}
+
+export interface CardSourceExcerpt {
+  text: string;
+  published_at?: string;
+  source?: string;
+}
+
+export interface CardDataMismatch {
+  diagnostic_id: string;
+  kind: string;
+  card: string;
+  oracle_id: string;
+  programs: { key: string; origin: string; oracle_hash: string | null; rulings_hash: string | null }[];
+  comparison?: {
+    reviewed_date: string | null;
+    current_date: string | null;
+    changes: { kind: "added" | "removed" | "changed" | "formatting"; before?: CardSourceExcerpt; after?: CardSourceExcerpt }[];
+  };
+}
+
 export interface Seat {
   seat: string;
   guest_id: string | null;
@@ -80,6 +149,7 @@ export interface Seat {
     deck_id: string;
     name: string;
     deck_list_fingerprint: string;
+    preflight?: DeckPreflight;
     format_legality: {
       status: string;
       issue_count: number;
@@ -115,6 +185,14 @@ export interface Room {
   seat_count: 2 | 4;
   spectator: boolean;
   seats: Seat[];
+}
+
+export type StartingPlayer = "random" | "A" | "B" | "C" | "D";
+
+interface RoomStartOptions {
+  first_player?: StartingPlayer;
+  starting_life?: number;
+  use_reviewed_card_data?: boolean;
 }
 
 export interface GameLifecycle {
@@ -158,6 +236,7 @@ export interface PublicGameEvent {
   actor: string | null;
   summary: string;
   importance: number;
+  cards?: JsonValue[];
 }
 
 export interface PublicEventPage {
@@ -169,6 +248,7 @@ export interface PublicEventPage {
 export interface SystemStatus {
   server: string;
   protocol: string;
+  build?: string;
   card_data: {
     ready: boolean;
     phase: string;
@@ -197,6 +277,12 @@ export interface SystemStatus {
   browser: { served_by_server: boolean };
 }
 
+export type DeckSubmission = {
+  deck: { deck_id: string; name: string; commanders: string[] };
+  preflight: DeckPreflight;
+  format_legality: { status: string; issues: LegalityIssue[] };
+};
+
 export const api = {
   system: () => request<SystemStatus>("/api/v1/system"),
   refreshSystem: () =>
@@ -205,6 +291,15 @@ export const api = {
       { method: "POST", body: JSON.stringify({}) },
     ),
   me: () => request<{ guest: Guest }>("/api/v1/me"),
+  savedDecks: () => request<{ decks: SavedDeck[] }>("/api/v1/me/decks"),
+  savedDeck: (deckId: string) => request<{
+    deck: { name: string; commanders: string[]; entries: EditableDeckEntry[] };
+    card_refs: Record<string, string>;
+  }>(`/api/v1/me/decks/${deckId}`),
+  deckPrintings: (name: string, page = 1) => request<DeckPrintingPage>(
+    `/api/v1/me/deck-editor/printings?${new URLSearchParams({ name, page: String(page) })}`,
+  ),
+  recentGames: () => request<{ games: RecentGame[] }>("/api/v1/me/games"),
   guest: (display_name: string) =>
     request<{ guest: Guest }>("/api/v1/guests", {
       method: "POST",
@@ -251,12 +346,10 @@ export const api = {
     decklist: string,
     source_url?: string,
     legality_confirmation?: string,
+    saved_deck_id?: string,
+    edited?: { entries: EditableDeckEntry[]; edited_deck_id?: string },
   ) =>
-    request<{
-      deck: unknown;
-      preflight: { trusted_only_ready: boolean };
-      format_legality: { status: string; issues: LegalityIssue[] };
-    }>(
+    request<DeckSubmission>(
       `/api/v1/rooms/${roomId}/deck`,
       {
         method: "PUT",
@@ -266,6 +359,8 @@ export const api = {
           decklist,
           source_url: source_url || null,
           legality_confirmation: legality_confirmation || null,
+          saved_deck_id: saved_deck_id || null,
+          ...(edited ?? {}),
         }),
       },
     ),
@@ -273,13 +368,17 @@ export const api = {
     request<{ room: Room }>(`/api/v1/rooms/${roomId}/deck`, {
       method: "DELETE",
     }),
-  start: (roomId: string) =>
+  start: (roomId: string, options: RoomStartOptions = {}) =>
     request<{ game_id: string }>(`/api/v1/rooms/${roomId}/start`, {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify(options),
     }),
   game: (gameId: string) =>
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}`),
+  rematch: (gameId: string) =>
+    request<{ room: Room; invite_code: string }>(`/api/v1/games/${gameId}/rematch`, {
+      method: "POST", body: JSON.stringify({}),
+    }),
   events: (gameId: string, after = 0, limit = 100) =>
     request<PublicEventPage>(
       `/api/v1/games/${gameId}/events?after=${after}&limit=${limit}`,
@@ -293,6 +392,10 @@ export const api = {
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}/resume`, {
       method: "POST",
       body: JSON.stringify({}),
+    }),
+  priorityHolds: (gameId: string, holds: { steps: string[]; preserve_empty: boolean }) =>
+    request<{ holds: typeof holds }>(`/api/v1/games/${gameId}/priority-holds`, {
+      method: "PUT", body: JSON.stringify(holds),
     }),
   command: (gameId: string, envelope: CommandEnvelope) =>
     request<{ receipt: CommandReceipt }>(`/api/v1/games/${gameId}/commands`, {

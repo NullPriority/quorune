@@ -31,6 +31,158 @@ _POLICIES = {
 }
 
 
+FIXED_TOP_RANDOM_BOTTOM_VERSION = 11
+RESOLVED_TOP_RANDOM_BOTTOM_VERSION = 26
+TOP_RANDOM_BOTTOM_VERSIONS = (FIXED_TOP_RANDOM_BOTTOM_VERSION, RESOLVED_TOP_RANDOM_BOTTOM_VERSION)
+FIXED_UP_TO_TWO_HAND_SELECTION_VERSION = 12
+REVEALED_TOP_HAND_LIFE_VERSION = 13
+PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_VERSION = 15
+PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_CAPABILITY = "library.top.private_fixed_take_or_graveyard"
+PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION = 16
+
+_PRIVATE_FIXED_TOP_FILTERS = {
+    "land": ObjectQuerySpec(zones=("library",), types_all=("land",)),
+    "creature": ObjectQuerySpec(zones=("library",), types_all=("creature",)),
+    "zombie": ObjectQuerySpec(zones=("library",), subtypes_any=("zombie",)),
+}
+
+
+def private_fixed_top_take_or_graveyard_effect(quality: str, *, player: str = "$controller") -> dict:
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_VERSION,
+        "player": player,
+        "look_count": 1,
+        "public_reveal": False,
+        "selected_reveal": True,
+        "selection_policy": "up_to_matching",
+        "minimum": 0,
+        "maximum": 1,
+        "predicate_groups": [[_PRIVATE_FIXED_TOP_FILTERS[quality].to_dict()]],
+        "remainder_destination": "optional_graveyard",
+        "remainder_order": "chosen",
+    }
+
+
+def validate_private_fixed_top_take_or_graveyard(effect, *, player: str = "$controller") -> ObjectQuerySpec:
+    from ..replacement.immutable import thaw_value
+
+    actual = thaw_value(effect)
+    if (
+        not isinstance(actual, Mapping)
+        or any(type(actual.get(field)) is not int for field in ("schema_version", "look_count", "minimum", "maximum"))
+        or actual.get("public_reveal") is not False or actual.get("selected_reveal") is not True
+    ):
+        raise ValueError("The fixed top choice requires one private look and an optional revealed take")
+    groups = actual.get("predicate_groups")
+    if not (isinstance(groups, list) and len(groups) == 1
+            and isinstance(groups[0], list) and len(groups[0]) == 1):
+        raise ValueError("The fixed top choice requires one closed predicate")
+    query = ObjectQuerySpec.from_dict(groups[0][0])
+    match = next((quality for quality, expected in _PRIVATE_FIXED_TOP_FILTERS.items() if query == expected), None)
+    if match is None or actual != private_fixed_top_take_or_graveyard_effect(match, player=player):
+        raise ValueError("The fixed top choice requires its exact actor, filter and optional graveyard destination")
+    return query
+
+
+def private_one_hand_ordered_bottom_shape(effect, *, player="$controller") -> bool:
+    """Match a mandatory private one-card result with a chosen bottom order."""
+    return (
+        set(effect) - {"schema_version"} == _EFFECT_FIELDS
+        and effect.get("op") == "fixed_library_selection"
+        and effect.get("player") == player
+        and type(effect.get("look_count")) is int
+        and effect["look_count"] > 0
+        and effect.get("public_reveal") is False
+        and effect.get("selected_reveal") is False
+        and effect.get("selection_policy") == "fixed_any"
+        and type(effect.get("minimum")) is int
+        and type(effect.get("maximum")) is int
+        and effect["minimum"] == effect["maximum"] == 1
+        and effect.get("predicate_groups") in ([], ())
+        and effect.get("remainder_destination") == "library_bottom"
+        and effect.get("remainder_order") == "chosen"
+    )
+
+
+def revealed_top_hand_life_effect(*, player="$controller"):
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": REVEALED_TOP_HAND_LIFE_VERSION,
+        "player": player,
+        "life_loss": "revealed_top_mana_value",
+    }
+
+
+def validate_revealed_top_hand_life(effect, *, player="$controller"):
+    if (not isinstance(effect, Mapping) or type(effect.get("schema_version")) is not int
+            or dict(effect) != revealed_top_hand_life_effect(player=player)):
+        raise ValueError("Reveal the current top card, move it to hand, then lose its mana value")
+
+
+
+def fixed_up_to_two_hand_selection(look_count, *, player="$controller", remainder_destination):
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": FIXED_UP_TO_TWO_HAND_SELECTION_VERSION,
+        "player": player,
+        "look_count": look_count,
+        "public_reveal": False,
+        "selected_reveal": False,
+        "selection_policy": "up_to_any",
+        "minimum": 0,
+        "maximum": min(2, look_count),
+        "predicate_groups": [],
+        "remainder_destination": remainder_destination,
+        "remainder_order": "chosen" if remainder_destination == "graveyard" else "random",
+    }
+
+
+def validate_fixed_up_to_two_hand_selection(effect, *, player="$controller"):
+    from ..replacement.immutable import thaw_value
+
+    count = effect.get("look_count")
+    destination = effect.get("remainder_destination")
+    if (type(count) is not int or count < 1 or destination not in ("graveyard", "library_bottom")
+            or destination == "graveyard" and count > 5
+            or any(type(effect.get(field)) is not int for field in ("schema_version", "minimum", "maximum"))
+            or effect.get("public_reveal") is not False or effect.get("selected_reveal") is not False
+            or thaw_value(effect) != fixed_up_to_two_hand_selection(count, player=player, remainder_destination=destination)):
+        raise ValueError("The private hand selection requires its exact count, choice and remainder")
+
+
+
+def fixed_top_random_bottom_selection(look_count, *, player="$controller", version=FIXED_TOP_RANDOM_BOTTOM_VERSION):
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": version,
+        "player": player,
+        "look_count": look_count,
+        "public_reveal": False,
+        "selected_reveal": False,
+        "selection_policy": "up_to_any",
+        "minimum": 0,
+        "maximum": 1,
+        "predicate_groups": [],
+        "selected_destination": "library_top",
+        "remainder_destination": "library_bottom",
+        "remainder_order": "random",
+    }
+
+
+def validate_fixed_top_random_bottom_selection(effect, *, player="$controller"):
+    from ..replacement.immutable import thaw_value
+
+    count = effect.get("look_count")
+    version = effect.get("schema_version")
+    if (type(count) is not int or count < 1 or version not in TOP_RANDOM_BOTTOM_VERSIONS
+            or (version == FIXED_TOP_RANDOM_BOTTOM_VERSION and count > 5)
+            or any(type(effect.get(field)) is not int for field in ("schema_version", "minimum", "maximum"))
+            or effect.get("public_reveal") is not False or effect.get("selected_reveal") is not False
+            or thaw_value(effect) != fixed_top_random_bottom_selection(count, player=player, version=version)):
+        raise ValueError("A private top selection keeps at most one card and randomly bottoms the rest")
+
+
 CHOSEN_TYPE_LIBRARY_SELECTION_VERSION = 5
 CHOSEN_TYPE_LIBRARY_SELECTION_CAPABILITY = "library.select.source_chosen_creature_type"
 CHOSEN_TYPE_TOP_SELECTION_VERSION = 6
@@ -205,6 +357,92 @@ def fixed_library_selection_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    from .library_play_partition import (
+        PRIVATE_HAND_BOTTOM_EXILE_DEPENDENCIES, uses_private_hand_bottom_exile, validate_private_hand_bottom_exile,
+    )
+
+    if uses_private_hand_bottom_exile(effect):
+        try:
+            validate_private_hand_bottom_exile(effect)
+        except (TypeError, ValueError):
+            return ()
+        return PRIVATE_HAND_BOTTOM_EXILE_DEPENDENCIES
+    from .blocked_damage_cast import represents_window, window_dependencies
+
+    if represents_window(effect):
+        try:
+            return window_dependencies(effect)
+        except (TypeError, ValueError, KeyError):
+            return ()
+    from ..hideaway_model import uses_hideaway_selection
+    if uses_hideaway_selection(effect):
+        from .hideaway_library import hideaway_selection_node_capabilities
+
+        return hideaway_selection_node_capabilities(effects=effects, target_schema=target_schema)
+    from .revealed_legendary_graveyard_treasure import TREASURE_FIELD, revealed_legendary_treasure_capabilities
+
+    if TREASURE_FIELD in effect:
+        try:
+            return revealed_legendary_treasure_capabilities(effect)
+        except (TypeError, ValueError, KeyError):
+            return ()
+    if (type(effect.get("schema_version")) is int
+            and effect["schema_version"] == PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION):
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY,) if private_one_hand_ordered_bottom_shape(effect) else ()
+    from ..linked_library_imprint_model import uses_library_imprint_selection
+    from .linked_library_imprint import library_imprint_node_capabilities
+
+    if uses_library_imprint_selection(effect):
+        return library_imprint_node_capabilities(effects=effects, target_schema=target_schema)
+    from .one_revealed_card_placement import (
+        OneRevealedCardPlacement, REVEAL_ONE_TOP_OPERATION,
+    )
+
+    if effect.get("op") == REVEAL_ONE_TOP_OPERATION:
+        try:
+            return OneRevealedCardPlacement.from_effect(effect).capabilities
+        except (TypeError, ValueError):
+            return ()
+    if effect.get("schema_version") == PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_VERSION:
+        try:
+            validate_private_fixed_top_take_or_graveyard(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY, PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_CAPABILITY)
+    from .repeat_top_hand_life import (
+        REPEAT_TOP_HAND_LIFE_CAPABILITY, REPEAT_TOP_HAND_LIFE_FIELD,
+        validate_repeat_top_hand_life,
+    )
+
+    if REPEAT_TOP_HAND_LIFE_FIELD in effect:
+        try:
+            if validate_repeat_top_hand_life(effect) == "start":
+                return (FIXED_LIBRARY_SELECTION_CAPABILITY, REPEAT_TOP_HAND_LIFE_CAPABILITY, "life.change.effect")
+        except (TypeError, ValueError):
+            pass
+        return ()
+    from .private_look_land_or_hand import PRIVATE_LOOK_LAND_OR_HAND_VERSION, private_land_hand_capabilities
+
+    if effect.get("schema_version") == PRIVATE_LOOK_LAND_OR_HAND_VERSION:
+        return private_land_hand_capabilities(effect)
+    if effect.get("schema_version") == REVEALED_TOP_HAND_LIFE_VERSION:
+        try:
+            validate_revealed_top_hand_life(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY, "life.change.effect")
+    if effect.get("schema_version") == FIXED_UP_TO_TWO_HAND_SELECTION_VERSION:
+        try:
+            validate_fixed_up_to_two_hand_selection(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY,)
+    if effect.get("schema_version") == FIXED_TOP_RANDOM_BOTTOM_VERSION:
+        try:
+            validate_fixed_top_random_bottom_selection(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY,)
     if effect.get("schema_version") == CHOSEN_TYPE_LIBRARY_SELECTION_VERSION:
         try:
             validate_chosen_type_library_selection(effect)
@@ -217,11 +455,21 @@ def fixed_library_selection_node_capabilities(
         except (TypeError, ValueError):
             return ()
         return (FIXED_LIBRARY_SELECTION_CAPABILITY, CHOSEN_TYPE_TOP_SELECTION_CAPABILITY)
-    from ..library_battlefield_model import LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, library_battlefield_payload_dependencies
-    if type(effect.get('schema_version')) is int and effect['schema_version'] in (3,LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION):
+    from ..library_battlefield_model import (
+        LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, PRIVATE_TOP_LAND_VERSIONS, library_battlefield_payload_dependencies,
+        RANDOM_REVEALED_CREATURE_ENTRY_VERSION,
+    )
+    if type(effect.get('schema_version')) is int and effect['schema_version'] in (
+        3, LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, *PRIVATE_TOP_LAND_VERSIONS,
+        RANDOM_REVEALED_CREATURE_ENTRY_VERSION,
+    ):
         try:required=library_battlefield_payload_dependencies(effect)
         except (TypeError,ValueError,KeyError):return ()
         return required if effect.get('player')=='$controller' else ()
+    return _ordinary_fixed_library_selection_capabilities(effect)
+
+
+def _ordinary_fixed_library_selection_capabilities(effect):
     version_two=effect.get('schema_version')==2 and type(effect.get('schema_version')) is int
     expected=_EFFECT_FIELDS|{'schema_version','selected_destination'} if version_two else _EFFECT_FIELDS
     if set(effect) != expected or version_two and (effect.get('selected_destination')!='library_top'

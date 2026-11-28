@@ -1,10 +1,17 @@
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 import tempfile
+import unittest
+from unittest.mock import patch
 
+from common import ROOT
 from damage_replacement_support import DamageReplacementPipelineBase
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.damage import resolve_damage_batch, source_snapshot
 from quorune.damage_modifier_state import (
     DamageModifierDuration,
@@ -29,6 +36,8 @@ from quorune.record import (
     replay_record,
 )
 from quorune.semantics import SemanticProgram
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 class PreventionTriggerStackTests(DamageReplacementPipelineBase):
@@ -633,7 +642,227 @@ class PreventionTriggerStackTests(DamageReplacementPipelineBase):
         self.assertEqual(expected_hash, replay["final_state_hash"])
 
 
+class StaticSelfPreventionTriggerTests(InheritedNativeFixture, unittest.TestCase):
+    source_name = "Static Prevention Test Creature"
+
+    @classmethod
+    def source_fixture(cls):
+        return {"cards": [{
+            "name": cls.source_name, "oracle_id": "1f443bf3-8128-495f-9a22-07a3631e5e41",
+            "type_line": "Creature — Horror", "mana_cost": "{W}{W}{W}{W}", "cmc": 4,
+            "color_identity": ["W"], "colors": ["W"], "power": "5", "toughness": "5", "keywords": ["Flying"],
+            "oracle_text": "Flying\nIf damage would be dealt to this creature, prevent that damage. "
+                           "When damage is prevented this way, this creature deals that much damage to any other target.",
+        }]}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "static-prevention-trigger.sqlite3"
+        fixture = path.with_suffix(".json")
+        payload = {**cls.source_fixture(), "schema_version": 1}
+        payload["cards"].append({
+            "name": "Static Prevention Test Flier", "oracle_id": "5eaeed04-b360-4c8f-bcd7-d55da0842ba6",
+            "type_line": "Creature — Bird", "power": "2", "toughness": "6",
+            "oracle_text": "Flying", "keywords": ["Flying"],
+        })
+        fixture.write_text(json.dumps(payload), encoding="utf-8")
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "intrinsic-noncombat-prevention-life-gain-cards.json",
+            fixture,
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Static prevention", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def submit(self, game, seat, action, **params):
+        result = game.act(f"pilot:{seat}", {"action_id": action, **params})
+        self.assertTrue(result.ok, result.summary)
+
+    def reject(self, game, seat, action, **params):
+        before = authoritative_state_hash(game.state)
+        result = game.act(f"pilot:{seat}", {"action_id": action, **params})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def target_offer(self, game, seat):
+        self.assertEqual(("semantic.target", [seat]),
+                         (game.state.pending_decision.kind, game.state.pending_decision.actors))
+        return game.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["target_schema"]["legal_refs"]
+
+    def test_static_trigger_scope_closes_and_rejects_malformed_foreign_roles(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.static_prevention_trigger import CAPABILITY
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.targets import TargetGroup
+
+        game = self.session(6151301)
+        source = self.add(game.engine, self.source_name)
+        self.assert_closed(game, source)
+        program, = [value for value in game.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if CAPABILITY in value.capability_dependencies]
+        field, = program.handlers
+        for changed in ({**field, "modification": {"amount": 2}}, {**field, "schema_version": True}):
+            with self.assertRaisesRegex(SemanticNodeError, "closed self scope"):
+                replace(program, handlers=(changed,))
+        remaining = tuple(capability for capability in program.capability_dependencies if capability != CAPABILITY)
+        bad = replace(program, capability_dependencies=remaining,
+                      capability_closure=self.registry.closure(remaining, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(bad, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"], binding)
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])
+        for flags in ({"exclude_source_incarnation": 1}, {"exclude_source_incarnation": True, "another": True}):
+            with self.assertRaises(ValueError):
+                TargetGroup.from_mapping(flags)
+
+    def test_static_trigger_other_target_excludes_only_the_original_incarnation(self):
+        from quorune.rules.static_prevention_trigger import other_damage_target_schema
+        from quorune.target_source import ability_targeting_source
+        from quorune.targets import TargetGroup
+
+        game = self.session(6151305)
+        source = self.add(game.engine, self.source_name)
+        ref = source.ref
+        original = ability_targeting_source(game.engine, source)
+        group = TargetGroup.from_mapping(other_damage_target_schema())
+        options = lambda: game.engine._target_candidates("A", group, source_ref=ref, acting_source=original)
+        self.assertNotIn(ref, options())
+        game.engine.move_card(source.object_id, "exile", log=False, reason="Source incarnation fixture")
+        game.engine.move_card(source.object_id, "battlefield", log=False, reason="Source incarnation fixture")
+        returned = game.state.cards[source.object_id]
+        self.assertEqual(ref, returned.ref)
+        self.assertNotEqual(original.logical_object_id, returned.logical_object_id)
+        self.assertIn(returned.ref, options())
+
+    def test_static_trigger_aggregates_combat_then_places_ordinary_apnap_targets_and_replays(self):
+        game = self.session(6151302)
+        source = self.add(game.engine, self.source_name, ref="prevention-attacker")
+        defender = self.add(game.engine, self.source_name, seat="B", ref="prevention-blocker")
+        flyers = [self.add(game.engine, "Static Prevention Test Flier", seat="B", ref=f"flier-{i}") for i in range(2)]
+        second = self.add(game.engine, "Generic Bound Body", ref="second-attacker")
+        other = self.add(game.engine, "Generic Bound Body", ref="unprevented-attacker")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="private-hand-card")
+        for card in (source, second, other):
+            card.acquired_control_turn_count = -1
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self.submit(game, "A", "attack", attackers={source.ref: "B", second.ref: "B", other.ref: "D"})
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.blockers")
+        self.submit(game, "B", "block", blocks={
+            defender.ref: second.ref, **{flier.ref: source.ref for flier in flyers},
+        })
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.damage")
+        self.submit(game, "A", "assign_damage", assignments=[
+            {"source": source.ref, "target": flyers[0].ref, "amount": 5},
+            {"source": second.ref, "target": defender.ref, "amount": 2},
+            {"source": other.ref, "target": "D", "amount": 2},
+        ])
+        offer = self.target_offer(game, "A")
+        self.assertNotIn(source.ref, offer)
+        self.assertNotIn(private.ref, offer)
+        self.assertIn("D", offer)
+        self.assertIn(defender.ref, offer)
+        self.assertEqual(0, game.state.cards[source.object_id].marked_damage)
+        self.assertEqual(0, game.state.cards[defender.object_id].marked_damage)
+        self.assertEqual(38, game.state.players["D"].life)
+        self.reject(game, "A", "choose", targets=[source.ref])
+        self.reject(game, "B", "choose", targets=["C"])
+        game = self.replay(game, load=True)
+        self.submit(game, "A", "choose", targets=["D"])
+        offer = self.target_offer(game, "B")
+        self.assertNotIn(defender.ref, offer)
+        self.assertIn(source.ref, offer)
+        self.submit(game, "B", "choose", targets=["C"])
+        triggers = [value for value in game.state.stack if value.context.get("event") == "damage.prevented"]
+        self.assertEqual([("A", 4), ("B", 2)],
+                         [(trigger.controller, trigger.context["prevented_amount"]) for trigger in triggers])
+        self.assertEqual(2, len(triggers[0].context["damage_event_ids"]))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(38, game.state.players["C"].life)
+        self.assertEqual(34, game.state.players["D"].life)
+        self.replay(game)
+
+    def test_static_trigger_uses_only_own_prevented_amount_and_survives_source_departure(self):
+        game = self.session(6151303)
+        source = self.add(game.engine, self.source_name)
+        healer = self.add(game.engine, "Samite Healer")
+        shot = self.add(game.engine, "Shock", seat="B", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        healer.acquired_control_turn_count = -1
+        self.prepare(game)
+        game.state.players["B"].mana_pool.update({"R": 1, "U": 1})
+        self.checkpoint(game)
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ability = next(row["id"] for row in actions if row["id"].startswith(f"activate:{healer.ref}:"))
+        self.submit(game, "A", ability, targets=[source.ref], pay="auto")
+        self.resolve_top(game)
+        shield, = game.state.damage_prevention_shields
+        self.cast_for(game, "B", shot, [source.ref], reserve={"U": 1})
+        choice = self.resolve(game)
+        self.assertEqual(("replacement.order", ["A"]), (choice.kind, choice.actors))
+        self.reject(game, "B", "choose", replacement=shield.effect_id)
+        game = self.replay(game, load=True)
+        self.submit(game, "A", "choose", replacement=shield.effect_id)
+        self.target_offer(game, "A")
+        self.submit(game, "A", "choose", targets=["C"])
+        trigger = game.state.stack[-1]
+        self.assertEqual(1, trigger.context["prevented_amount"])
+        self.cast_for(game, "B", bounce, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(39, game.state.players["C"].life)
+        self.replay(game)
+
+    def test_static_trigger_creates_nothing_when_damage_cannot_be_prevented(self):
+        game = self.session(6151304)
+        source = self.add(game.engine, self.source_name)
+        shot = self.add(game.engine, "Shock", seat="B", zone="hand")
+        pain = self.add(game.engine, "Flaring Pain", seat="B", zone="hand")
+        self.prepare(game)
+        game.state.players["B"].mana_pool.update({"C": 1, "R": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "B", pain, reserve={"R": 1})
+        self.resolve_top(game)
+        self.cast_for(game, "B", shot, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, game.state.cards[source.object_id].marked_damage)
+        self.assertFalse(game.state.stack)
+        self.replay(game)
+
+    def test_static_trigger_revalidates_its_only_target(self):
+        game = self.session(6151306)
+        source = self.add(game.engine, self.source_name)
+        other = self.add(game.engine, "Generic Bound Body", ref="departing-damage-target")
+        shot = self.add(game.engine, "Shock", seat="B", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.prepare(game)
+        game.state.players["B"].mana_pool.update({"R": 1, "U": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "B", shot, [source.ref], reserve={"U": 1})
+        self.assertEqual("semantic.target", self.resolve(game).kind)
+        self.submit(game, "A", "choose", targets=[other.ref])
+        self.cast_for(game, "B", bounce, [other.ref])
+        self.resolve_top(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[other.object_id].zone)
+        self.assertEqual(0, game.state.cards[other.object_id].marked_damage)
+        self.assertTrue(any(event.code == "target.illegal" for event in game.state.events))
+        self.replay(game)
+
+    def test_static_trigger_producer_mutation_is_killed(self):
+        with patch("quorune.rules.static_prevention_trigger.applied_static_prevention_trigger", return_value=None):
+            with self.assertRaisesRegex(AssertionError, "semantic.target.*priority"):
+                self.test_static_trigger_aggregates_combat_then_places_ordinary_apnap_targets_and_replays()
+
+
 if __name__ == "__main__":
-    import unittest
 
     unittest.main()

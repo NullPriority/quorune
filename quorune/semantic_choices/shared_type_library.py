@@ -6,10 +6,11 @@ from ..replacement.immutable import FrozenMap
 from ..shared_creature_type_model import SharedCreatureTypeObject, canonical_creature_types
 from ..rules.shared_type_library_model import (
     SHARED_TYPE_LIBRARY_OPERATION, SHARED_TYPE_LIBRARY_CAPABILITY, SHARED_TYPE_PLAY_MECHANIC,
-    SharedCreatureTypeComparison, SharedTypeLibraryResult,
+    SharedCreatureTypeComparison, SharedTypeLibraryResult, uses_mandatory_shared_type_reveal,
 )
 from ..semantic_runtime.intents import RevealLibraryCardsIntent
 from ..rules.shared_type_library_play_model import PLAY_STAGE
+from .fixed_library_selection import _identity
 from .shared_type_library_play import complete_shared_type_play, prepare_shared_type_play
 from .model import (AutoContinue, ScalarChoice, SemanticChoiceCompletion,
     SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest)
@@ -68,6 +69,29 @@ def _comparison(query, top):
     return SharedCreatureTypeComparison(source, candidate)
 
 
+def _prepare_mandatory_reveal(effect, context):
+    actor = context.actor
+    spec, stage = _decode(effect, actor)
+    if not spec.mandatory_reveal or stage != "look" or set(effect) != _BASE or actor != context.stack_controller:
+        raise ValueError("The public reveal requires its original resolving controller")
+    top = _top(context.query, actor) if actor in context.query.active_seats else None
+    if top is None:
+        return SemanticChoicePreparation(None, FrozenMap(effect),
+            auto_continue=AutoContinue(reason="No controller library card can be revealed"))
+    followup = FrozenMap({
+        **effect, "_shared_type_stage": PLAY_STAGE, "_revealed_identity": _identity(top).to_dict(),
+        "_stack_label": context.stack_label,
+    })
+    return SemanticChoicePreparation(None, FrozenMap(effect),
+        preparation_intents=(RevealLibraryCardsIntent(
+            actor, actor, actor, (top.ref,), context.stack_label, public=True, announce_public_top=True,
+            retain_public_top_visibility=True,
+        ),),
+        auto_continue=AutoContinue(reason="Evaluate the publicly revealed controller library card",
+                                   prepend_effects=(followup,)),
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class SharedTypeLibraryHandler:
     operation: str = SHARED_TYPE_LIBRARY_OPERATION
@@ -76,7 +100,7 @@ class SharedTypeLibraryHandler:
     rule_references: tuple = ("207.2c", "608.2h", "701.20a", "701.20b", "701.20c", "701.20e")
     capability_dependencies: tuple = (SHARED_TYPE_LIBRARY_CAPABILITY,)
     continuation_fields: tuple = ("player", "result", "_shared_type_stage", "_top", "_comparison",
-                                  "_stack_ref", "_options_fingerprint")
+                                  "_stack_ref", "_options_fingerprint", "_revealed_identity", "_stack_label")
     private_data: tuple = ("looked card identity", "matching creature types")
     projected_fields: tuple = ("prompt", "objects", "cast_options", "legal_actions.choice_schema")
     mutation_path: tuple = ("RevealLibraryCardsIntent", "SemanticChoiceCompletion.prepend_effects",
@@ -88,6 +112,8 @@ class SharedTypeLibraryHandler:
         if effect.get("_shared_type_stage") == PLAY_STAGE:
             return prepare_shared_type_play(effect, context)
         try:
+            if uses_mandatory_shared_type_reveal(effect):
+                return _prepare_mandatory_reveal(effect, context)
             spec, stage = _decode(effect, context.actor)
             if context.actor != context.stack_controller:
                 raise ValueError("Shared-type library actor differs from ability controller")

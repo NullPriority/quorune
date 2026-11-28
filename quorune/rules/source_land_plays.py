@@ -20,7 +20,8 @@ class SourceLandPlayChoice:
     def __post_init__(self):
         if not isinstance(self.source_use,FrozenMap):object.__setattr__(self,'source_use',FrozenMap(self.source_use))
         spec=validate_turn_cast_grant_use(self.source_use)
-        if not spec.allow_land_play or not self.permission_id or not self.numeric_permission:
+        if (not spec.allow_land_play or not self.permission_id or not self.numeric_permission
+                or spec.per_permanent_type and self.source_use.get("permanent_type") != "land"):
             raise ValueError('Source land choice requires a shared land grant and numeric allowance')
 
 

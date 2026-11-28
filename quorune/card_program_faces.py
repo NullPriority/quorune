@@ -71,6 +71,33 @@ def current_shared_type_doors(card: Any):
     return doors.rebind(copied) if doors is not None else SharedTypeDoors(copied, printed=False)
 
 
+def controlled_unlocked_room_door_count(state, controller, public_object):
+    """Count current unlocked doors of the controller's public Rooms."""
+    from .shared_type_doors import shared_type_doors_enabled
+
+    if not shared_type_doors_enabled(state):
+        return None
+    player = state.players.get(controller)
+    if player is None or not player.in_game:
+        return None
+    total = 0
+    for object_id in player.zones["battlefield"]:
+        card = state.cards.get(object_id)
+        if card is None:
+            return None
+        if card.zone != "battlefield" or card.controller != controller or card.phased_out or card.face_down:
+            continue
+        doors = current_shared_type_doors(card)
+        if doors is None or not doors.unlocked:
+            continue
+        visible = public_object(card)
+        if visible is None:
+            return None
+        if "room" in visible.subtypes and "enchantment" in visible.types:
+            total += len(doors.unlocked)
+    return total
+
+
 def room_program_face_is_active(card: Any, program: Any) -> bool:
     doors = current_shared_type_doors(card)
     if doors is None:

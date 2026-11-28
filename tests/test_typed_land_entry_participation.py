@@ -785,8 +785,9 @@ class TypedLandEntryRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", spell.zone)
         self.assertEqual("hand", target.zone)
 
+    @patch("quorune.compiler.announced_mana_value_target._distinct_graveyard_return_template", return_value=None)
     def test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes(
-        self,
+        self, omitted_front_template,
     ):
         session = self.session(61401266)
         engine = session.engine
@@ -1197,3 +1198,204 @@ class RevealEntryRuntimeTests(unittest.TestCase):
         with patch('quorune.semantic_runtime.zone_replacements.entry_reveal_replacement_effects',return_value=()):
             with self.assertRaises(AssertionError):
                 self.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay()
+
+
+class ChosenBasicLandEntryTests(unittest.TestCase):
+    setUpClass = classmethod(TypedLandEntryRuntimeTests.setUpClass.__func__)
+    tearDownClass = classmethod(TypedLandEntryRuntimeTests.tearDownClass.__func__)
+    session = TypedLandEntryRuntimeTests.session
+    add_card = TypedLandEntryRuntimeTests.add_card
+    stage_main = staticmethod(TypedLandEntryRuntimeTests.stage_main)
+    issue_priority = staticmethod(TypedLandEntryRuntimeTests.issue_priority)
+    legal_actions = TypedLandEntryRuntimeTests.legal_actions
+
+    def play(self, session, name, source, *, life=40, seat="A"):
+        engine = session.engine
+        land = self.add_card(engine, seat=seat, name=name, ref=source, register_all=True)
+        engine.state.players[seat].life = life
+        self.stage_main(engine, seat)
+        self.issue_priority(engine, seat)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        played = session.act(f"pilot:{seat}", {"action_id": f"play-land:{land.ref}"})
+        self.assertTrue(played.ok, played.summary)
+        return land.object_id
+
+    def options(self, session, seat="A"):
+        decision = StateProjector(self.db, session.state)._decision(f"pilot:{seat}")
+        return decision["ctx"]["options"]
+
+    def choose(self, session, selected, seat="A"):
+        result = session.act(f"pilot:{seat}", {"action_id": "choose", "replacement": selected})
+        self.assertTrue(result.ok, result.summary)
+
+    def pick_type(self, session, subtype, seat="A"):
+        option = next(row for row in self.options(session, seat) if f":pay" not in row["id"]
+                      and f"basic land type {subtype}" in row["label"])
+        self.choose(session, option["id"], seat)
+
+    def replay_entry(self, session):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "chosen-basic-land-entry"
+            session.save(directory)
+            result = replay_record(directory, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(len(session.commands), result["commands"])
+
+    def test_actual_basic_land_type_then_pay_and_native_mana_replay(self):
+        session = self.session(61401300)
+        engine = session.engine
+        object_id = self.play(session, "Multiversal Passage", "TYPE-PAID")
+        options = self.options(session)
+        self.assertEqual(5, len(options))
+        self.assertEqual({"plains", "island", "swamp", "mountain", "forest"},
+                         {option["label"].rsplit(" ", 1)[1] for option in options})
+        projector = StateProjector(self.db, engine.state)
+        self.assertIsNone(projector._decision("pilot:B"))
+        self.assertNotIn("replacement_batch", json.dumps(projector._decision("pilot:A")))
+        before = authoritative_state_hash(engine.state)
+        for prefix, choice in (("pilot:B", options[0]["id"]), ("pilot:A", "unknown basic type")):
+            rejected = session.act(prefix, {"action_id": "choose", "replacement": choice})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.pick_type(session, "island")
+        self.assertEqual(("hand", 40), (engine.state.cards[object_id].zone, engine.state.players["A"].life))
+        self.replay_entry(session)
+        payment = next(row for row in self.options(session) if row["label"] == "Pay 2 life")
+        self.choose(session, payment["id"])
+        land = engine.state.cards[object_id]
+        self.assertEqual(("battlefield", False, 38), (land.zone, land.tapped, engine.state.players["A"].life))
+        types, subtypes, supertypes = engine._effective_type_parts(land)
+        self.assertEqual({"land"}, set(types))
+        self.assertEqual({"island"}, set(subtypes))
+        self.assertNotIn("basic", supertypes)
+        mana = [row for row in self.legal_actions(session) if row.get("source") == land.ref]
+        self.assertEqual(1, len(mana), mana)
+        spent = session.act("pilot:A", {"action_id": mana[0]["id"]})
+        self.assertTrue(spent.ok, spent.summary)
+        self.assertEqual(1, engine.state.players["A"].mana_pool["U"])
+        self.assertTrue(engine.state.cards[object_id].tapped)
+        self.replay_entry(session)
+
+    def test_decline_low_life_and_new_incarnation_keep_the_exact_type(self):
+        for life in (40, 1):
+            with self.subTest(life=life):
+                session = self.session(61401320 + life)
+                engine = session.engine
+                object_id = self.play(session, "Multiversal Passage", f"TYPE-TAPPED-{life}", life=life, seat="B")
+                self.pick_type(session, "mountain", seat="B")
+                if life == 40:
+                    self.assertEqual("hand", engine.state.cards[object_id].zone)
+                    decline = next(row for row in self.options(session, "B") if row["id"].startswith("decline:"))
+                    self.choose(session, decline["id"], seat="B")
+                land = engine.state.cards[object_id]
+                self.assertEqual(("battlefield", True, life),
+                                 (land.zone, land.tapped, engine.state.players["B"].life))
+                self.assertEqual({"mountain"}, set(engine._effective_type_parts(land)[1]))
+                self.replay_entry(session)
+                prior_identity = land.logical_object_id
+                engine.move_card(object_id, "hand", log=False)
+                land = engine.state.cards[object_id]
+                self.assertNotEqual(prior_identity, land.logical_object_id)
+                self.assertNotIn("chosen_basic_land_type", land.annotations)
+                self.stage_main(engine, "B")
+                self.issue_priority(engine, "B")
+                session.initial_checkpoint = checkpoint_envelope(engine.state)
+                session.commands.clear()
+                session.decisions.clear()
+                self.assertTrue(session.act("pilot:B", {"action_id": f"play-land:{land.ref}"}).ok)
+                self.pick_type(session, "swamp", seat="B")
+                if life == 40:
+                    decline = next(row for row in self.options(session, "B") if row["id"].startswith("decline:"))
+                    self.choose(session, decline["id"], seat="B")
+                self.assertEqual({"swamp"}, set(engine._effective_type_parts(engine.state.cards[object_id])[1]))
+                self.replay_entry(session)
+
+    def test_ambient_entry_order_and_blood_moon_use_prospective_land(self):
+        session = self.session(61401301)
+        engine = session.engine
+        self.add_card(engine, seat="C", name="Root Maze", ref="TYPE-MAZE", zone="battlefield", register_all=True)
+        object_id = self.play(session, "Multiversal Passage", "TYPE-MAZED")
+        self.assertGreater(len(self.options(session)), 5)
+        self.pick_type(session, "forest")
+        options = self.options(session)
+        self.assertEqual(2, len(options), options)
+        self.choose(session, next(row["id"] for row in options if row["label"] == "Pay 2 life"))
+        land = engine.state.cards[object_id]
+        self.assertEqual((True, 38), (land.tapped, engine.state.players["A"].life))
+        self.assertEqual({"forest"}, set(engine._effective_type_parts(land)[1]))
+        self.replay_entry(session)
+        session = self.session(61401302)
+        engine = session.engine
+        self.add_card(engine, seat="C", name="Blood Moon", ref="TYPE-MOON", zone="battlefield", register_all=True)
+        object_id = self.play(session, "Multiversal Passage", "TYPE-SUPPRESSED")
+        land = engine.state.cards[object_id]
+        self.assertEqual(("battlefield", False, 40), (land.zone, land.tapped, engine.state.players["A"].life))
+        self.assertNotIn("chosen_basic_land_type", land.annotations)
+        self.assertEqual({"mountain"}, set(engine._effective_type_parts(land)[1]))
+        self.replay_entry(session)
+
+    def test_copied_land_gets_fresh_type_and_pays_its_own_controller(self):
+        session = self.session(61401303)
+        engine = session.engine
+        original_id = self.play(session, "Multiversal Passage", "TYPE-ORIGINAL")
+        self.pick_type(session, "island")
+        self.choose(session, next(row["id"] for row in self.options(session) if row["label"] == "Pay 2 life"))
+        original = engine.state.cards[original_id]
+        copy_id = self.play(session, "Vesuva", "TYPE-COPY", seat="B")
+        copy_choice = next(option for option in self.options(session, "B")
+                           if "as a copy" in option["label"] and original.ref in option["label"])
+        self.choose(session, copy_choice["id"], "B")
+        self.pick_type(session, "forest", "B")
+        self.choose(session, next(row["id"] for row in self.options(session, "B")
+                                  if row["label"] == "Pay 2 life"), "B")
+        copied = engine.state.cards[copy_id]
+        self.assertEqual(("battlefield", True, "B"), (copied.zone, copied.tapped, copied.controller))
+        self.assertEqual({"island"}, set(engine._effective_type_parts(engine.state.cards[original_id])[1]))
+        self.assertEqual({"forest"}, set(engine._effective_type_parts(copied)[1]))
+        self.assertEqual((38, 38), tuple(engine.state.players[seat].life for seat in ("A", "B")))
+        self.replay_entry(session)
+
+    def test_pair_compilation_requires_both_original_source_spans(self):
+        from quorune.compiler.chosen_basic_land_entry import basic_land_entry_choice_handler
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.semantic_runtime.chosen_basic_land_entry import ChosenBasicLandEntryHandler
+
+        text = ("As this land enters, choose a basic land type. Then you may pay 2 life. "
+                "If you don't, it enters tapped.\nThis land is the chosen type.")
+        first, second = text.splitlines()
+        def compile_card(material):
+            return compile_oracle_card(_record(material), capability_registry=self.capabilities,
+                                       capability_profile="commander_review")
+        native = compile_card(text)
+        self.assertEqual("exact", native.status, native.material_residuals)
+        from quorune.card_programs import bind_card_program_runtime
+
+        card = compile_card_program(
+            self.db, self.db.lookup("Multiversal Passage"), capability_registry=self.capabilities,
+            capability_profile="commander_review", trust_level="trusted",
+        )
+        binding = bind_card_program_runtime(card, capability_registry=self.capabilities, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        self.assertEqual([1, 2], [node.span.line for node in native.faces[0].nodes])
+        for incomplete in (first, second, text.replace("basic land", "creature"),
+                           text.replace("the chosen type.", "the chosen type during your turn.")):
+            self.assertNotEqual("exact", compile_card(incomplete).status, incomplete)
+        descriptor = basic_land_entry_choice_handler(first)[1]
+        for malformed in ({"life": True}, {"life": 0}, {"requires_complete_card_program": False}):
+            with self.assertRaises(ValueError):
+                ChosenBasicLandEntryHandler().validate({**descriptor, **malformed})
+        with patch("quorune.compiler.entry_designation_templates.basic_land_entry_choice_handler", return_value=None):
+            self.assertNotEqual("exact", compile_card(text).status)
+
+
+    def test_preflight_admits_exact_source_bound_entry_and_type(self):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.preflight import semantic_preflight
+
+        deck = DeckDefinition("Chosen land entry", [DeckEntry("Multiversal Passage", 1)], [])
+        row, = semantic_preflight(self.db, deck, capability_profile="commander_review")["cards"]
+        self.assertEqual("fully_playable", row["status"], row["unresolved"])
+        self.assertTrue(row["card_program_strict_capability_ready"])
+        self.assertTrue(row["source_hash_match"])

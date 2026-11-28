@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -12,10 +13,17 @@ from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.discover_model import ExileCastProgress
+from quorune.engine import TURN_STEPS
+from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.graveyard_card_targets import graveyard_copy_cast_runtime_dependencies
-from quorune.rules.graveyard_copy_cast_model import GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_OFFER
+from quorune.rules.graveyard_copy_cast_model import (
+    GRAVEYARD_COPY_CAPABILITY, GRAVEYARD_COPY_OFFER, RANDOM_NONLAND_SCOPE,
+    ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity,
+    mill_random_graveyard_copy_effects,
+)
+from quorune.trigger_participation import WardSpec
 from quorune.rules.library_selection import LibrarySelectionObjectIdentity
 from scripts.build_test_database import build_fixture_database
 
@@ -182,6 +190,117 @@ class GraveyardCopyCastRuntimeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertNotIn(source.object_id, str(packet["ctx"]))
         for seat in "BCD":
             self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+
+    def _wondrous_end_step(self, session):
+        self.prepare(session)
+        session.state.phase_index = TURN_STEPS.index(("postcombat_main", "main"))
+        session.state.phase = "postcombat_main"
+        self.checkpoint(session)
+        self.until(session, lambda game: bool(game.state.stack))
+        self.assertEqual("end_step", session.state.step)
+
+    def test_original_wondrous_mills_before_offering_a_permanent_copy_and_replays(self):
+        session = self.session(70117712)
+        engine = session.engine
+        source = self.add(engine, "Wondrous Crucible")
+        original = self.add(engine, "Grizzly Bears", zone="library", ref="wondrous-top")
+        land = self.add(engine, "Generic Bound Plains", zone="library", ref="wondrous-next")
+        self.add(engine, "Grizzly Bears", seat="B", zone="graveyard", ref="wondrous-opponent")
+        library = session.state.players["A"].zones["library"]
+        library.remove(land.object_id)
+        library.insert(len(library) - 1, land.object_id)
+        self.assert_closed(session, source)
+        ward, = [fragment for fragment in engine._effective_ability_fragments(source) if isinstance(fragment, WardSpec)]
+        self.assertEqual(2, ward.generic_cost)
+        self._wondrous_end_step(session)
+
+        options = self._choice(session, optional=True)
+        option, = options
+        state = session.state
+        self.assertEqual("exile", state.cards[original.object_id].zone)
+        self.assertEqual("graveyard", state.cards[land.object_id].zone)
+        copies = [card for card in state.cards.values() if card.is_card_copy]
+        copy, = copies
+        self.assertEqual("Grizzly Bears", copy.printed_name)
+        self.assertEqual("exile", copy.zone)
+        session = self.replay(session, load=True)
+        baseline = authoritative_state_hash(session.state)
+        foreign = session.act("pilot:B", {"action_id": "choose", "choice": "decline"})
+        self.assertFalse(foreign.ok)
+        self.assertEqual(baseline, authoritative_state_hash(session.state))
+        self._cast_copy(session, option)
+        self.assertIsNone(self.resolve(session))
+        permanent = session.state.cards[copy.object_id]
+        self.assertTrue(permanent.is_token)
+        self.assertEqual("battlefield", permanent.zone)
+        self.assertEqual("exile", session.state.cards[original.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_original_wondrous_decline_and_empty_own_nonland_domain_replay(self):
+        for eligible in (True, False):
+            with self.subTest(eligible=eligible):
+                session = self.session(70117740 + eligible)
+                engine = session.engine
+                source = self.add(engine, "Wondrous Crucible")
+                top_land = self.add(engine, "Generic Bound Plains", zone="library", ref="wondrous-land-top")
+                other_land = self.add(engine, "Generic Bound Plains", zone="library", ref="wondrous-land-next")
+                other = self.add(engine, "Grizzly Bears", seat="B", zone="graveyard", ref="wondrous-foreign")
+                original = (self.add(engine, "Grizzly Bears", zone="graveyard", ref="wondrous-prior")
+                            if eligible else None)
+                self.assert_closed(session, source)
+                self._wondrous_end_step(session)
+                if eligible:
+                    option, = self._choice(session, optional=True)
+                    self.assertTrue(option["id"])
+                    denied = session.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+                    self.assertTrue(denied.ok, denied.summary)
+                    self.assertEqual("exile", session.state.cards[original.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[other.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[top_land.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[other_land.object_id].zone)
+                self.assertFalse(any(card.zone in {"exile", "stack", "battlefield"} and card.is_card_copy
+                                     for card in session.state.cards.values()))
+                self.replay(session, load=True)
+
+    def test_wondrous_requires_ordered_mill_and_the_original_untargeted_scope(self):
+        record = self.db.lookup("Wondrous Crucible", fuzzy=False)
+        trigger = record.oracle_text.splitlines()[-1]
+
+        def compile_current(text):
+            return compile_oracle_card(replace(record, oracle_text=text), capability_registry=self.registry,
+                                       capability_profile="commander_review")
+
+        def require_exact():
+            ir = compile_current(record.oracle_text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = [node for face in ir.faces for node in face.nodes if node.event == "step.begin"]
+            self.assertIsNone(node.target_schema)
+            self.assertEqual(tuple(mill_random_graveyard_copy_effects()), tuple(node.effects))
+            return node
+
+        node = require_exact()
+        for invalid in (
+            trigger.replace("your end step", "each end step"),
+            trigger.replace("mill two cards", "mill three cards"),
+            trigger.replace("nonland card at random", "nonland card of your choice"),
+            trigger.replace("your graveyard", "a graveyard"),
+        ):
+            with self.subTest(text=invalid):
+                self.assertNotEqual("exact", compile_current(record.oracle_text.replace(trigger, invalid)).status)
+        program = SimpleNamespace(effects=tuple(reversed(node.effects)), target_schema=None, coverage=node.mechanics)
+        with self.assertRaises(ValueError):
+            graveyard_copy_cast_runtime_dependencies(program)
+        with patch("quorune.compiler.graveyard_copy_cast_templates._MILL_RANDOM_COPY") as matcher:
+            matcher.fullmatch.return_value = None
+            with self.assertRaises(AssertionError):
+                require_exact()
+        intent = ExileGraveyardCopiesIntent("A", "S1", RANDOM_NONLAND_SCOPE, 1, ())
+        self.assertEqual(intent.identity(), decode_exile_graveyard_copies_identity(intent.identity()))
+        with self.assertRaises(ValueError):
+            decode_exile_graveyard_copies_identity({
+                **intent.identity(), "originals": [LibrarySelectionObjectIdentity("card", "card@1", "O1").to_dict()],
+            })
 
     def test_original_arcane_proxy_uses_cast_entry_and_current_prototype_power(self):
         for prototype in (False, True):

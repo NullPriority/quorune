@@ -18,6 +18,15 @@ from .intents import (
 )
 
 
+def execute_counter_removal(sink, intent: RemoveCountersIntent):
+    result = sink.remove_counters_intent(intent)
+    if intent.gain_life_from_removed:
+        from ..rules.upkeep_power_counter_balance import life_after_upkeep_counter_removal
+
+        return life_after_upkeep_counter_removal(result)
+    return result
+
+
 @dataclass(frozen=True, slots=True)
 class FixedCounterRemovalHandler:
     handler_id: str = "generic.fixed-counter-removal.v1"
@@ -42,9 +51,17 @@ class FixedCounterRemovalHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..rules.upkeep_power_counter_balance import REMOVAL_FOLLOWUP
+
         unavailable = effect.get('card', '') is None
+        gain_life = REMOVAL_FOLLOWUP in effect
+        if gain_life and (unavailable or type(effect[REMOVAL_FOLLOWUP]) is not int or effect[REMOVAL_FOLLOWUP] != 1
+                          or context.source is None or context.source.card_ref != effect.get("card")
+                          or context.source.card_ref != effect.get("source")):
+            raise SemanticNodeError("Life from counter removal requires the original resolving source")
+        direct = {key: value for key, value in effect.items() if key != REMOVAL_FOLLOWUP} if gain_life else effect
         fields = validate_direct_target_effect(
-            {**effect, 'card': '$source.zone_object'} if unavailable else effect,
+            {**direct, 'card': '$source.zone_object'} if unavailable else direct,
             context,
             operation=self.operation,
             reference_field="card",
@@ -78,6 +95,7 @@ class FixedCounterRemovalHandler:
                 amount=amount,
                 reason=fields.reason,
                 source_ref=source_ref,
+                gain_life_from_removed=gain_life,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

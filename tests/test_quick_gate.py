@@ -25,7 +25,7 @@ class QuickGatePlanTests(unittest.TestCase):
         hook = (root / '.githooks' / 'pre-push').read_text(encoding='utf-8')
         guard = hook.index('"$ROOT/scripts/validate_repository.py" --tracked-only')
         self.assertLess(guard, hook.index('validate-ci-dependencies'))
-        self.assertLess(guard, hook.index('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON'))
+        self.assertLess(guard, hook.index('authorized cloud source checkpoint:'))
         self.assertLess(guard, hook.index('--verify-receipt'))
 
     @patch('scripts.quick_gate.validate_partition')

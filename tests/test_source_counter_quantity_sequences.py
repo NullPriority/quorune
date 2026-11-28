@@ -22,12 +22,54 @@ class SourceCounterQuantityCompilerTests(unittest.TestCase):
                 'At the beginning of your upkeep, put a muster counter on this enchantment. Then create a 1/1 red and white Soldier creature token with haste for each muster counter on this enchantment.',
                 '{2}, {T}: Put a charge counter on this artifact, then draw a card for each charge counter on it.'):
             with self.subTest(text=text):
-                ir=compile_oracle_card(replace(query_record(text),type_line='Artifact Creature — Goblin'),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+                ir=compile_oracle_card(replace(query_record(text),type_line='Artifact Creature â€” Goblin'),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
                 self.assertEqual('exact',ir.status,ir.material_residuals)
                 effects=ir.faces[0].nodes[0].effects
                 self.assertEqual(2,len(effects));self.assertEqual('place_counters',effects[0]['op'])
                 self.assertEqual('$source.zone_object',effects[0]['card'])
                 self.assertIn(effects[1]['op'],{'draw','create_token'})
+
+    def test_shared_counter_results_preserve_order_binding_and_closed_source(self):
+        from unittest.mock import patch
+        from quorune.compiler import source_counter_quantity_sequences as owner
+
+        prefix = "At the beginning of your upkeep, put two omen counters on this enchantment. Then "
+        result = ("each player creates X Treasure tokens and this enchantment deals X damage to each player, "
+                  "where X is the number of omen counters on this enchantment.")
+
+        def compile_text(text):
+            return compile_oracle_card(
+                replace(query_record(text), type_line="Enchantment"),
+                capability_registry=load_default_capability_registry(),
+            )
+
+        def witness():
+            ir = compile_text(prefix + result)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            placement, tokens, damage = ir.faces[0].nodes[0].effects
+            self.assertEqual("place_counters", placement["op"])
+            self.assertEqual("create_distributed_tokens", tokens["op"])
+            self.assertEqual("damage_fixed_set", damage["op"])
+            self.assertEqual(tokens["token"]["quantity"], damage["amount"])
+            self.assertIsNotNone(damage["amount"]["binding_id"])
+
+        witness()
+        original = owner._shared_source_counter_results
+
+        def reordered(*args, **kwargs):
+            identifier, (counter, tokens, damage), schema, mechanics = original(*args, **kwargs)
+            return identifier, (counter, damage, tokens), schema, mechanics
+
+        with patch.object(owner, "_shared_source_counter_results", side_effect=reordered):
+            with self.assertRaises(AssertionError):
+                witness()
+        for boundary in (
+            result.replace("number of omen", "number of charge"),
+            result.replace("damage to each player", "damage to target player"),
+            result.replace("this enchantment deals", "that creature deals"),
+        ):
+            with self.subTest(boundary=boundary):
+                self.assertNotEqual("exact", compile_text(prefix + boundary).status)
 
     def test_open_context_and_linked_result_do_not_gain_source_reference(self):
         for text in ('Whenever another creature attacks, put a +1/+1 counter on it, then draw a card for each counter on it.',
@@ -116,3 +158,102 @@ class SourceCounterQuantityNativeTests(InheritedNativeFixture,unittest.TestCase)
         self.assertIsNone(self.resolve(s))
         self.assertTrue(all(s.engine._numeric_stat(token.object_id,'power')==2 for token in tokens))
         self.assertEqual(2,s.state.cards[source.object_id].counters['rally']);self.replay(s,load=True)
+
+
+    def start_upkeep(self, session, source):
+        self.assert_closed(session, source)
+        self.prepare(session, mana={})
+        from special_trigger_fixture import SpecialTriggerFixture
+
+        SpecialTriggerFixture.begin_prepared_turn(self, session, "A")
+        self.until(session, lambda game: game.state.step == "upkeep" and bool(game.state.stack))
+        trigger = session.state.stack[-1]
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.assertFalse(trigger.targets)
+
+    def treasure_counts(self, session):
+        return {
+            seat: sum(card.zone == "battlefield" and card.is_token
+                      and card.printed_name == "Treasure Token" and card.controller == seat
+                      for card in session.state.cards.values())
+            for seat in "ABCD"
+        }
+
+    def test_actual_descent_uses_committed_replaced_counter_count_for_treasure_first_and_damage(self):
+        from unittest.mock import patch
+
+        session = self.session(608200410)
+        source = self.add(session.engine, "Descent into Avernus")
+        source.counters["descent"] = 1
+        replacement = self.add(session.engine, "Doubling Season")
+        self.assert_closed(session, replacement)
+        self.start_upkeep(session, source)
+        life = {seat: session.state.players[seat].life for seat in "ABCD"}
+        expected = {"A": 10, "B": 5, "C": 5, "D": 5}
+        actual_at_damage = []
+        actual_damage = session.engine.deal_fixed_damage_set_intent
+
+        def observe(*args, **kwargs):
+            actual_at_damage.append(self.treasure_counts(session))
+            return actual_damage(*args, **kwargs)
+
+        with patch.object(session.engine, "deal_fixed_damage_set_intent", side_effect=observe):
+            self.assertIsNone(self.resolve(session))
+        self.assertEqual([expected], actual_at_damage)
+        self.assertEqual(expected, self.treasure_counts(session))
+        self.assertEqual(5, session.state.cards[source.object_id].counters["descent"])
+        self.assertEqual({seat: total - 5 for seat, total in life.items()},
+                         {seat: session.state.players[seat].life for seat in "ABCD"})
+        self.replay(session, load=True)
+
+    def test_actual_descent_departure_uses_last_known_counters_and_zero_makes_no_events(self):
+        for counters in (0, 3):
+            with self.subTest(counters=counters):
+                session = self.session(608200411 + counters)
+                source = self.add(session.engine, "Descent into Avernus")
+                if counters:
+                    source.counters["descent"] = counters
+                removal = self.add(session.engine, "Disenchant", zone="hand")
+                self.assert_closed(session, removal)
+                lands = [self.add(session.engine, "Plains", ref=f"descent-plains-{i}") for i in range(2)]
+                self.start_upkeep(session, source)
+                life = {seat: session.state.players[seat].life for seat in "ABCD"}
+                self.priority(session, "A")
+                for land in lands:
+                    rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action = next(row for row in rows if row.get("mana_ability") and land.ref in row["id"])
+                    self.assertTrue(session.act("pilot:A", {"action_id": action["id"], "pay": "auto"}).ok)
+                self.cast(session, "A", removal, [source.ref])
+                self.resolve_top(session)
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(dict.fromkeys("ABCD", counters), self.treasure_counts(session))
+                self.assertEqual({seat: total - counters for seat, total in life.items()},
+                                 {seat: session.state.players[seat].life for seat in "ABCD"})
+                self.replay(session, load=True)
+
+    def test_actual_descent_uses_last_known_counters_when_phased_out(self):
+        session = self.session(608200419)
+        source = self.add(session.engine, "Descent into Avernus")
+        source.counters["descent"] = 2
+        phase = self.add(session.engine, "Clever Concealment", zone="hand")
+        self.assert_closed(session, phase)
+        lands = [self.add(session.engine, "Plains", ref=f"descent-phase-plains-{i}") for i in range(4)]
+        self.start_upkeep(session, source)
+        self.priority(session, "A")
+        life = {seat: session.state.players[seat].life for seat in "ABCD"}
+        for land in lands:
+            rows = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            action = next(row for row in rows if row.get("mana_ability") and land.ref in row["id"])
+            self.assertTrue(session.act("pilot:A", {"action_id": action["id"], "pay": "auto"}).ok)
+        self.cast(session, "A", phase, [source.ref])
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[source.object_id].phased_out)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(dict.fromkeys("ABCD", 2), self.treasure_counts(session))
+        self.assertEqual(2, session.state.cards[source.object_id].counters["descent"])
+        self.assertEqual({seat: total - 2 for seat, total in life.items()},
+                         {seat: session.state.players[seat].life for seat in "ABCD"})
+        self.replay(session, load=True)

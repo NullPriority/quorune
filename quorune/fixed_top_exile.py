@@ -4,8 +4,21 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .impulse_access_model import ImpulseAccessDuration
+from .rules.elected_nonland_exile import (
+    ELECTED_NONLAND_EXILE_CAPABILITY, ELECTED_NONLAND_EXILE_MECHANIC, ELECTED_NONLAND_EXILE_SCOPE,
+    SCAN_FIELD, is_nonland_election_offer, validate_elected_nonland_exile_instruction,
+    validate_nonland_election_offer, validate_nonland_scan,
+)
+from .land_exile_source_return_model import (
+    LAND_EXILE_RETURN_CAPABILITY, LAND_EXILE_RETURN_MECHANIC, LAND_EXILE_RETURN_SCOPE,
+    uses_land_exile_source_return, validate_land_exile_source_return,
+)
 from .mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE, TOTAL_MANA_EXILE_CAPABILITY, TOTAL_MANA_EXILE_MECHANIC
 from .rules.library_selection import LibrarySelectionObjectIdentity
+from .targeted_exile_land_entry import (
+    TARGETED_EXILE_LAND_ENTRY_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_MECHANIC,
+    TARGETED_EXILE_LAND_ENTRY_SCOPE, uses_targeted_exile_land_entry, validate_targeted_exile_land_entry,
+)
 
 
 FIXED_TOP_EXILE_OPERATION = "exile_fixed_library_tops_and_cast"
@@ -16,16 +29,33 @@ CHOSEN_IMPULSE_SCOPE = "controller_chosen_impulse"
 CHOSEN_IMPULSE_MECHANIC = "chosen-top-impulse-access"
 CHOSEN_IMPULSE_CAPABILITY = "zone.impulse_access.chosen_top_exile"
 CHOSEN_IMPULSE_GRANT_FIELD = "chosen_impulse_access"
+OPPONENT_CHOSEN_IMPULSE_SCOPE = "opponent_chosen_impulse"
+OPPONENT_CHOSEN_IMPULSE_VERSION = 8
+OPPONENT_CHOSEN_IMPULSE_CAPABILITY = "zone.impulse_access.chosen_target_opponent_top_exile"
+CHOSEN_IMPULSE_SCOPES = frozenset({CHOSEN_IMPULSE_SCOPE, OPPONENT_CHOSEN_IMPULSE_SCOPE})
 RESOLVING_TOP_PLAY_SCOPE = "controller_resolving_play"
 RESOLVING_TOP_PLAY_MECHANIC = "fixed-top-resolving-play"
 RESOLVING_TOP_PLAY_CAPABILITY = "zone.exile.fixed_top_resolving_play"
-OWN_LIBRARY_EXILE_SCOPES = frozenset({CHOSEN_IMPULSE_SCOPE, RESOLVING_TOP_PLAY_SCOPE})
+ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE = "announced_opponent_resolving_free_play"
+ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC = "announced-opponent-top-resolving-free-play"
+ANNOUNCED_OPPONENT_FREE_PLAY_CAPABILITY = "zone.exile.announced_opponent_top_resolving_free_play"
+RESOLVING_TOP_PLAY_SCOPES = frozenset({RESOLVING_TOP_PLAY_SCOPE, ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE})
+from .rules.blocked_damage_cast import OFFER_SCOPE as DAMAGE_WINDOW_CAST_SCOPE
+
+OWN_LIBRARY_EXILE_SCOPES = frozenset({CHOSEN_IMPULSE_SCOPE, RESOLVING_TOP_PLAY_SCOPE, DAMAGE_WINDOW_CAST_SCOPE})
 _CHOSEN_DURATIONS = {ImpulseAccessDuration.END_OF_TURN.value, ImpulseAccessDuration.END_OF_NEXT_TURN.value}
 FIXED_TOP_EXILE_MECHANIC_CAPABILITIES = {
     FIXED_TOP_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY,),
     CHOSEN_IMPULSE_MECHANIC: (CHOSEN_IMPULSE_CAPABILITY,),
     RESOLVING_TOP_PLAY_MECHANIC: (RESOLVING_TOP_PLAY_CAPABILITY,),
+    ANNOUNCED_OPPONENT_FREE_PLAY_MECHANIC: (ANNOUNCED_OPPONENT_FREE_PLAY_CAPABILITY,),
     TOTAL_MANA_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY),
+    ELECTED_NONLAND_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, ELECTED_NONLAND_EXILE_CAPABILITY),
+    LAND_EXILE_RETURN_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, LAND_EXILE_RETURN_CAPABILITY),
+    "fixed-each-opponent-library-top-exile": ("library.exile.each_opponent_top",),
+    "fixed-controlled-opponent-library-exile-play": ("permission.exile.controlled_opponent_library_batch",),
+    "trigger-event-resolving-opponent-library-exile": ("trigger.event.resolving_opponent_library_exile",),
+    TARGETED_EXILE_LAND_ENTRY_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_CAPABILITY),
 }
 FIXED_TOP_EXILE_RULES = ("400.7j", "601.2", "608.2c", "608.2d", "608.2g", "712.8a", "712.11")
 FIXED_TOP_EXILE_DAMAGE_CAPABILITIES = (
@@ -44,27 +74,72 @@ class ResolvingExileLandPlayIntent:
     card: LibrarySelectionObjectIdentity
     option_id: str
     replacement_selections: tuple = ()
+    supplier: str | None = None
 
     def __post_init__(self):
         if (not _seat(self.actor) or not _seat(self.stack_ref) or not _seat(self.option_id)
                 or not isinstance(self.card, LibrarySelectionObjectIdentity)
-                or not isinstance(self.replacement_selections, tuple)):
+                or not isinstance(self.replacement_selections, tuple)
+                or self.supplier is not None and (not _seat(self.supplier) or self.supplier == self.actor)):
             raise ValueError("Resolving land play requires a current option, card, and stack identity")
 
     def identity(self):
-        return {"schema_version": 1, "actor": self.actor, "stack_ref": self.stack_ref,
-                "card": self.card.to_dict(), "option_id": self.option_id}
+        identity = {"schema_version": 1, "actor": self.actor, "stack_ref": self.stack_ref,
+                    "card": self.card.to_dict(), "option_id": self.option_id}
+        if self.supplier is not None:
+            identity.update(schema_version=2, supplier=self.supplier)
+        return identity
 
 
 def validate_resolving_land_play_identity(value):
-    if (not isinstance(value, Mapping) or set(value) != {"schema_version", "actor", "stack_ref", "card", "option_id"}
-            or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+    fields = {"schema_version", "actor", "stack_ref", "card", "option_id"}
+    version = value.get("schema_version") if isinstance(value, Mapping) else None
+    if (type(version) is not int or version not in (1, 2)
+            or set(value) != (fields | {"supplier"} if version == 2 else fields)
+            or version == 2 and not _seat(value["supplier"])):
         raise ValueError("Resolving land play continuation identity is malformed")
     return ResolvingExileLandPlayIntent(value["actor"], value["stack_ref"],
-        LibrarySelectionObjectIdentity.from_dict(value["card"]), value["option_id"]).identity()
+        LibrarySelectionObjectIdentity.from_dict(value["card"]), value["option_id"],
+        supplier=value.get("supplier")).identity()
+
+
+def opponent_chosen_impulse_instruction(count):
+    if type(count) is not int or not 2 <= count <= 10:
+        raise ValueError("Opponent impulse access requires a bounded fixed count")
+    return {"op": FIXED_TOP_EXILE_OPERATION, "scope": OPPONENT_CHOSEN_IMPULSE_SCOPE,
+            "schema_version": OPPONENT_CHOSEN_IMPULSE_VERSION, "player": "$controller",
+            "supplier": "$target.0", "count": count, "duration": ImpulseAccessDuration.END_OF_NEXT_TURN.value}
 
 
 def validate_fixed_top_exile(effect, *, resolved=False):
+    if isinstance(effect, Mapping) and effect.get("scope") == ELECTED_NONLAND_EXILE_SCOPE:
+        if resolved and SCAN_FIELD in effect:
+            validate_nonland_scan(effect)
+            return ELECTED_NONLAND_EXILE_SCOPE
+        return validate_elected_nonland_exile_instruction(effect, resolved=resolved)
+    if isinstance(effect, Mapping) and effect.get("scope") == OPPONENT_CHOSEN_IMPULSE_SCOPE:
+        expected = opponent_chosen_impulse_instruction(effect.get("count"))
+        if resolved:
+            actor, supplier = effect.get("player"), effect.get("supplier")
+            if not _seat(actor) or not _seat(supplier) or actor == supplier:
+                raise ValueError("Opponent impulse access requires a separate targeted library owner")
+            expected.update(player=actor, supplier=supplier)
+        if type(effect.get("schema_version")) is not int or dict(effect) != expected:
+            raise ValueError("Opponent impulse access requires its original targeted instruction and duration")
+        return OPPONENT_CHOSEN_IMPULSE_SCOPE
+    if isinstance(effect, Mapping) and effect.get("scope") == DAMAGE_WINDOW_CAST_SCOPE:
+        from .rules.blocked_damage_cast import validate_exile_offer_instruction
+
+        return validate_exile_offer_instruction(effect, resolved=resolved)
+    from .rules.random_graveyard_returns import EXILE_CAST_SCOPE, validate_random_exile_cast_instruction
+
+    if isinstance(effect, Mapping) and effect.get("scope") == EXILE_CAST_SCOPE:
+        validate_random_exile_cast_instruction(effect, resolved=resolved)
+        return EXILE_CAST_SCOPE
+    if uses_targeted_exile_land_entry(effect):
+        return validate_targeted_exile_land_entry(effect, resolved=resolved)
+    if uses_land_exile_source_return(effect):
+        return validate_land_exile_source_return(effect, resolved=resolved)
     if isinstance(effect, Mapping) and effect.get('scope') == TOTAL_MANA_EXILE_SCOPE:
         from .rules.mana_value_exile import validate_total_mana_instruction, validate_total_mana_step
         if type(effect.get('schema_version')) is int and effect['schema_version'] == 5 and resolved:
@@ -75,6 +150,8 @@ def validate_fixed_top_exile(effect, *, resolved=False):
         return _validate_chosen_impulse(effect, resolved=resolved)
     if isinstance(effect, Mapping) and effect.get("scope") == RESOLVING_TOP_PLAY_SCOPE:
         return _validate_resolving_top_play(effect, resolved=resolved)
+    if isinstance(effect, Mapping) and effect.get("scope") == ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE:
+        return _validate_announced_opponent_free_play(effect, resolved=resolved)
     fields = {"op", "schema_version", "player", "scope", "supplier", "decline"}
     if (not isinstance(effect, Mapping) or set(effect) != fields
             or effect["op"] != FIXED_TOP_EXILE_OPERATION
@@ -118,6 +195,24 @@ def _validate_resolving_top_play(effect, *, resolved):
     return RESOLVING_TOP_PLAY_SCOPE
 
 
+def announced_opponent_free_play_effect(*, player="$controller", supplier="$target.0", count="$x"):
+    return {"op": FIXED_TOP_EXILE_OPERATION, "schema_version": 4, "player": player,
+            "scope": ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE, "supplier": supplier, "count": count}
+
+
+def _validate_announced_opponent_free_play(effect, *, resolved):
+    if resolved:
+        player, supplier, count = (effect.get(key) for key in ("player", "supplier", "count"))
+        if not (_seat(player) and _seat(supplier) and player != supplier and type(count) is int and count >= 0):
+            raise ValueError("Announced opponent exile requires distinct seats and its nonnegative X")
+        expected = announced_opponent_free_play_effect(player=player, supplier=supplier, count=count)
+    else:
+        expected = announced_opponent_free_play_effect()
+    if dict(effect) != expected or type(effect.get("schema_version")) is not int:
+        raise ValueError("Announced opponent exile requires its closed targeted resolution instruction")
+    return ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE
+
+
 def chosen_impulse_grant(effect, *, actor):
     fields = {"op", "schema_version", "player", CHOSEN_IMPULSE_GRANT_FIELD}
     if (not isinstance(effect, Mapping) or set(effect) != fields or effect["op"] != "grant_cast_permission"
@@ -131,6 +226,20 @@ def chosen_impulse_grant(effect, *, actor):
     return LibrarySelectionObjectIdentity.from_dict(payload["identity"]), ImpulseAccessDuration(payload["duration"])
 
 
+def chosen_opponent_impulse_grant(effect, *, actor):
+    fields = {"op", "schema_version", "player", CHOSEN_IMPULSE_GRANT_FIELD}
+    if (not isinstance(effect, Mapping) or set(effect) != fields or effect["op"] != "grant_cast_permission"
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != 2
+            or not _seat(actor) or effect["player"] != actor):
+        raise ValueError("Opponent impulse grant requires its original controller")
+    payload = effect[CHOSEN_IMPULSE_GRANT_FIELD]
+    if (not isinstance(payload, Mapping) or set(payload) != {"identity", "duration", "supplier"}
+            or payload["duration"] != ImpulseAccessDuration.END_OF_NEXT_TURN.value
+            or not _seat(payload["supplier"]) or payload["supplier"] == actor):
+        raise ValueError("Opponent impulse grant requires its original library owner and duration")
+    return LibrarySelectionObjectIdentity.from_dict(payload["identity"]), payload["supplier"]
+
+
 def _valid_decline_damage(value, *, resolved):
     fields = {"op", "source", "amount"}
     return (isinstance(value, Mapping) and set(value) in ((fields, fields | {"source_snapshot"}) if resolved else (fields,))
@@ -142,23 +251,40 @@ def fixed_top_exile_dependencies(effect):
     if effect.get("op") != FIXED_TOP_EXILE_OPERATION:
         return ()
     scope = validate_fixed_top_exile(effect)
+    if scope == LAND_EXILE_RETURN_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, LAND_EXILE_RETURN_CAPABILITY, "target.revalidate_resolution")
+    if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_CAPABILITY,
+                "target.revalidate_resolution", "zone.change.destination_replacement", "zone.entry.tapped_state")
     if scope == TOTAL_MANA_EXILE_SCOPE:
         return (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY)
+    if scope == ELECTED_NONLAND_EXILE_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, ELECTED_NONLAND_EXILE_CAPABILITY)
     if scope == CHOSEN_IMPULSE_SCOPE:
         return (FIXED_TOP_EXILE_CAPABILITY, CHOSEN_IMPULSE_CAPABILITY, "zone.impulse_access.fixed")
+    if scope == OPPONENT_CHOSEN_IMPULSE_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, CHOSEN_IMPULSE_CAPABILITY, OPPONENT_CHOSEN_IMPULSE_CAPABILITY,
+                "zone.impulse_access.fixed", "zone.change.destination_replacement", "target.revalidate_resolution")
     if scope == RESOLVING_TOP_PLAY_SCOPE:
         return (FIXED_TOP_EXILE_CAPABILITY, RESOLVING_TOP_PLAY_CAPABILITY)
+    if scope == ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, ANNOUNCED_OPPONENT_FREE_PLAY_CAPABILITY,
+                "target.revalidate_resolution", "zone.change.destination_replacement")
     return (FIXED_TOP_EXILE_CAPABILITY, *(
         FIXED_TOP_EXILE_DAMAGE_CAPABILITIES if scope == "controller_library" else ()))
 
 
 def fixed_top_exile_result_rows(effect):
+    if is_nonland_election_offer(effect):
+        return validate_nonland_election_offer(effect)[3]
     fields = {"op", "instruction", "results"}
     if (not isinstance(effect, Mapping) or set(effect) != fields
             or effect["op"] != FIXED_TOP_EXILE_OFFER_OPERATION or not isinstance(effect["results"], (tuple, list))):
         raise ValueError("Fixed top exile offer requires its captured result set")
     instruction = effect["instruction"]
     scope = validate_fixed_top_exile(instruction, resolved=True)
+    if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE and effect["results"]:
+        raise ValueError("The land entry offer reads the whole public exile zone")
     results = []
     for row in effect["results"]:
         if not isinstance(row, Mapping) or set(row) != {"owner", "identity"} or not _seat(row["owner"]):
@@ -166,12 +292,15 @@ def fixed_top_exile_result_rows(effect):
         results.append((row["owner"], LibrarySelectionObjectIdentity.from_dict(row["identity"])))
     if len({identity.object_id for _, identity in results}) != len(results):
         raise ValueError("Fixed top exile results require distinct cards")
-    if scope in OWN_LIBRARY_EXILE_SCOPES:
+    if (scope in OWN_LIBRARY_EXILE_SCOPES
+            or scope == OPPONENT_CHOSEN_IMPULSE_SCOPE
+            or scope == ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE):
         if len(results) > instruction["count"]:
             raise ValueError("Fixed top exile captured too many cards")
     elif scope != TOTAL_MANA_EXILE_SCOPE and len({owner for owner, _ in results}) != len(results):
         raise ValueError("Fixed top exile results require one distinct card per library")
-    owner = instruction["supplier"] if scope == "cast_event_library" else instruction["player"]
+    owner = (instruction["supplier"] if scope in {"cast_event_library", LAND_EXILE_RETURN_SCOPE, OPPONENT_CHOSEN_IMPULSE_SCOPE, ANNOUNCED_OPPONENT_FREE_PLAY_SCOPE}
+             else instruction["player"])
     if scope != "each_library" and any(supplier != owner for supplier, _ in results):
         raise ValueError("Fixed top exile result came from an unrepresented library")
     return tuple(results)

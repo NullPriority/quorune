@@ -6,6 +6,7 @@ from typing import Mapping
 
 from ..rules.capabilities import capability_dependencies_for_node
 from ..rules.modal_capability_shapes import FIXED_MODAL_WRAPPER_MECHANICS
+from ..rules.modal_node_capabilities import attached_attack_modal_counter_dependencies
 from ..semantic_runtime.activated_abilities import (
     activated_abilities_from_descriptors,
 )
@@ -73,6 +74,10 @@ def is_closed_fixed_modal_program(program: SemanticProgram) -> bool:
             cost_schema=program.cost_schema,
         )
     )
+    try:
+        required.update(attached_attack_modal_counter_dependencies(program))
+    except ValueError:
+        return False
     if program.event == "activate":
         abilities = activated_abilities_from_descriptors(program.handlers)
         if len(abilities) != 1:

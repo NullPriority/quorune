@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .ability_fragments import GrantedTriggeredAbilitySpec
 
 
 STACK_SPELL_COPY_CAPABILITY = 'stack.copy.fixed_instant_or_sorcery'
@@ -11,6 +15,8 @@ STACK_SPELL_COPY_MECHANIC = 'fixed-stack-spell-copy'
 QUALIFIED_STACK_COPY_CAPABILITY = 'stack.copy.fixed_qualified_target'
 QUALIFIED_STACK_COPY_MECHANIC = 'fixed-qualified-stack-copy'
 FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD = 'fixed_copy_count'
+COPYABLE_STACK_ITEM_PREDICATE = "instant_sorcery_or_activated_triggered_ability"
+_MIXED_STACK_COPY = "instant_sorcery_or_ability"
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,15 +61,18 @@ class FixedQualifiedStackCopySpec:
     copy_count: int = 1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version not in (1, 2)
+        if (type(self.schema_version) is not int or self.schema_version not in (1, 2, 3)
                 or type(self.target_kind) is not str
-                or self.target_kind not in {'permanent_spell', 'activated_or_triggered_ability', 'triggered_ability'}
+                or self.target_kind not in {
+                    'permanent_spell', 'activated_or_triggered_ability', 'triggered_ability', _MIXED_STACK_COPY,
+                }
+                or (self.schema_version == 3) != (self.target_kind == _MIXED_STACK_COPY)
                 or self.source_filter is not None and type(self.source_filter) is not str
-                or self.source_filter not in {None, 'artifact', 'colorless'}
+                or self.source_filter not in {None, 'artifact', 'colorless', 'legendary_noncommander'}
                 or self.source_filter is not None and self.target_kind != 'activated_or_triggered_ability'):
-            raise ValueError('Qualified stack copies require one represented controlled target kind')
+            raise ValueError("Qualified stack copies require one represented target kind and version")
         if (type(self.copy_count) is not int
-                or self.schema_version == 1 and self.copy_count != 1
+                or self.schema_version in (1, 3) and self.copy_count != 1
                 or self.schema_version == 2 and (self.target_kind != 'permanent_spell' or self.copy_count != 3)):
             raise ValueError('Only the controlled permanent spell recipe has a distinct three-copy count')
 
@@ -89,6 +98,11 @@ class FixedQualifiedStackCopySpec:
 
     @property
     def target_schema(self):
+        if self.target_kind == _MIXED_STACK_COPY:
+            return {
+                "zones": ["stack"], "categories": ["spell", "ability"], "source_exclusion": True,
+                "count": 1, "predicate": COPYABLE_STACK_ITEM_PREDICATE,
+            }
         schema = {'zones': ['stack'], 'categories': ['spell' if self.target_kind == 'permanent_spell' else 'ability'],
             'source_exclusion': True, 'count': 1, 'controller_relation': 'you'}
         if self.target_kind == 'permanent_spell':
@@ -96,8 +110,14 @@ class FixedQualifiedStackCopySpec:
         elif self.target_kind == 'triggered_ability':
             schema['predicate'] = 'triggered_ability'
         else:
-            schema['predicate'] = ('artifact_ability_source' if self.source_filter == 'artifact' else
-                'colorless_ability_source' if self.source_filter == 'colorless' else 'activated_or_triggered_ability')
+            from .ability_source_information import DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER
+
+            schema['predicate'] = {
+                'artifact': 'artifact_ability_source',
+                'colorless': 'colorless_ability_source',
+                'legendary_noncommander': DIFFERENT_LEGENDARY_NONCOMMANDER_SOURCE_FILTER,
+                None: 'activated_or_triggered_ability',
+            }[self.source_filter]
         return schema
 
     @property
@@ -105,12 +125,18 @@ class FixedQualifiedStackCopySpec:
         return ('cr-115-targets',)
 
 
+def mixed_stack_copy_spec() -> FixedQualifiedStackCopySpec:
+    return FixedQualifiedStackCopySpec(_MIXED_STACK_COPY, schema_version=3)
+
+
 def qualified_stack_copy_specs():
     return (FixedQualifiedStackCopySpec('permanent_spell'), FixedQualifiedStackCopySpec('triggered_ability'),
-        *(FixedQualifiedStackCopySpec('activated_or_triggered_ability', source) for source in (None, 'artifact', 'colorless')))
+        mixed_stack_copy_spec(),
+        *(FixedQualifiedStackCopySpec('activated_or_triggered_ability', source) for source in (None, 'artifact', 'colorless', 'legendary_noncommander')))
 
 
 
+EXILE_CAST_COPY_CAPABILITY = "stack.copy.exile_cast_permanent_grant"
 PERMANENT_SPELL_COPY_FIELD = "permanent_spell_copy"
 PERMANENT_SPELL_COPY_CAPABILITY = "stack.copy.permanent_spell.fixed_exception"
 
@@ -121,19 +147,33 @@ class PermanentSpellCopySpec:
 
     kind: str
     schema_version: int = 1
+    grant: GrantedTriggeredAbilitySpec | None = None
 
     def __post_init__(self) -> None:
+        if self.kind == "exile_cast_grant":
+            from .ability_fragments import GrantedTriggeredAbilitySpec
+
+            if (type(self.schema_version) is not int or self.schema_version != 2
+                    or not isinstance(self.grant, GrantedTriggeredAbilitySpec)
+                    or self.grant.schema_version != 1 or self.grant.event != "step.begin"):
+                raise ValueError("An exile-cast copy requires the exact recurring triggered grant")
+            return
         if (
             type(self.kind) is not str or self.kind not in {"nonlegendary", "artifact"}
-            or type(self.schema_version) is not int or self.schema_version != 1
+            or type(self.schema_version) is not int or self.schema_version != 1 or self.grant is not None
         ):
             raise ValueError("Permanent spell copy requires a closed characteristic exception")
 
     def to_dict(self):
-        return {"schema_version": self.schema_version, "kind": self.kind}
+        return {"schema_version": self.schema_version, "kind": self.kind,
+                **({"grant": self.grant.to_dict()} if self.grant is not None else {})}
 
     @classmethod
     def from_dict(cls, value):
+        if isinstance(value, Mapping) and set(value) == {"schema_version", "kind", "grant"}:
+            from .ability_fragments import GrantedTriggeredAbilitySpec
+
+            return cls(value["kind"], value["schema_version"], GrantedTriggeredAbilitySpec.from_dict(value["grant"]))
         if not isinstance(value, Mapping) or set(value) != {"schema_version", "kind"}:
             raise ValueError("Permanent spell copy exception fields are closed")
         return cls(value["kind"], value["schema_version"])
@@ -146,10 +186,10 @@ class PermanentSpellCopySpec:
 
     @property
     def effects(self):
-        if self.kind == "artifact":
+        if self.kind in {"artifact", "exile_cast_grant"}:
             from .event_spell_copy_model import event_spell_copy_effect
 
-            effect = event_spell_copy_effect(retain_targets_only=True)
+            effect = event_spell_copy_effect(retain_targets_only=self.kind == "artifact")
         else:
             effect = {"op": "copy_stack_item", "stack": "$target.0", "retain_targets_only": True}
         return ({**effect, PERMANENT_SPELL_COPY_FIELD: self.to_dict()},)

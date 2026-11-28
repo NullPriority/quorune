@@ -24,9 +24,19 @@ def sequential_condition_node_capabilities(*,effects,target_schema,mechanic_ids)
 
 
 def sequential_condition_runtime_dependencies(program):
+    from .counter_recipient_control import counter_recipient_control_program_dependencies
+
+    if counter_controller := counter_recipient_control_program_dependencies(program):
+        return counter_controller
     effects=program.effects
     marked=getattr(program,'provenance',{}).get('template_id')==SEQUENTIAL_CONDITION_TEMPLATE
     if not marked and not (len(effects)>1 and all(e.get('op')==RESOLUTION_CONDITION_OPERATION for e in effects)):return ()
+    if len(effects) > 1 and all(effect.get("op") == RESOLUTION_CONDITION_OPERATION
+                                and effect.get("schema_version") == 6 for effect in effects):
+        from .paid_mana_resolution import paid_mana_resolution_dependencies
+
+        return paid_mana_resolution_dependencies(program)
+
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
     composed=composed_spell_family_runtime_dependencies(program,capability=SEQUENTIAL_CONDITION_CAPABILITY,
         mechanic=SEQUENTIAL_CONDITION_MECHANIC)

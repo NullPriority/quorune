@@ -8,6 +8,10 @@ import json
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.rules.trigger_source_information import (
+    TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY, tapped_draw_damage_condition,
+)
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -503,6 +507,230 @@ class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(40,session.state.players['A'].life)
         self.assertTrue(any(e.kind=='player_damaged' and e.target=='D' and e.amount==1 for e in session.state.turn_history.events))
         self.replay(session)
+
+
+
+
+class ManaVaultTriggerTests(InheritedNativeFixture, unittest.TestCase):
+    enter_draw_step = AdditionalDrawStepRuntimeTests.enter_draw_step
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "mana-vault.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "mana-vault-cards.json",
+            fixtures / "targeted-tap-state-cards.json",
+            fixtures / "announced-x-source-sacrifice-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Source tap status on draw", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def vault(self, game, *, tapped=True, **other):
+        source = self.add(game.engine, "Mana Vault", **other)
+        self.assert_closed(game, source)
+        game.state.config.semantic_policy = "trusted_only"
+        source.tapped = tapped
+        return source
+
+    def lands(self, game, seat, count, *, tapped=False):
+        cards = tuple(self.add(game.engine, "Generic Bound Plains", seat=seat, ref=f"vault-{seat}-{i}")
+                      for i in range(count))
+        for card in cards:
+            card.tapped = tapped
+        return cards
+
+    def act(self, game, seat, command):
+        result = game.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:" + seat, command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def offered_ability(self, game, source, *, actor="A"):
+        actions = game.packet("pilot:" + actor, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row["id"] for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+
+    def vault_triggers(self, game, source, step):
+        return [item for item in game.state.stack if item.source_object_id == source.object_id
+                and item.context.get("event") == "step.begin" and item.context.get("step") == step]
+
+    def damage(self, game, source):
+        return [event.details for event in game.state.events
+                if event.code == "effect.damage" and event.details.get("source") == source.ref]
+
+    def test_original_vault_upkeep_pay_or_decline_after_real_untap_and_exact_draw_replay(self):
+        from test_fixed_untap_participation import FixedUntapParticipationRuntimeTests as untap
+
+        for index, paid in enumerate((False, True)):
+            with self.subTest(paid=paid):
+                game = self.session(603_450_110 + index)
+                source = self.vault(game)
+                foreign = self.vault(game, seat="B", ref="foreign-vault")
+                lands = self.lands(game, "A", 4, tapped=True)
+                untap.end_step(self, game, active="D")
+                self.checkpoint(game)
+                untap.next_turn(self, game, active="D")
+                self.assertEqual(("A", "upkeep"), (game.state.active_player, game.state.step))
+                self.assertTrue(game.state.cards[source.object_id].tapped)
+                self.assertTrue(all(not game.state.cards[land.object_id].tapped for land in lands))
+                upkeep, = self.vault_triggers(game, source, "upkeep")
+                self.assertEqual("A", upkeep.controller)
+                self.assertFalse(self.vault_triggers(game, foreign, "upkeep"))
+
+                self.until(game, lambda s: s.state.pending_decision is not None
+                           and s.state.pending_decision.kind == "semantic.choice")
+                self.assertEqual(["A"], game.state.pending_decision.actors)
+                choice = game.packet("pilot:A", full=True)["decision"]["ctx"]
+                self.assertEqual(4, choice["cost"]["GENERIC"])
+                self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+                game = self.replay(game, load=True)
+                command = {"action_id": "choose", "pay": paid}
+                self.reject(game, "B", command)
+                self.reject(game, "A", {**command, "pay": "invalid"})
+                self.act(game, "A", command)
+                self.assertEqual(not paid, game.state.cards[source.object_id].tapped)
+                self.assertTrue(all(game.state.cards[land.object_id].tapped == paid for land in lands))
+                self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+
+                self.until(game, lambda s: s.state.active_player == "A" and s.state.step == "draw")
+                self.assertFalse(self.vault_triggers(game, foreign, "draw"))
+                self.assertEqual(int(not paid), len(self.vault_triggers(game, source, "draw")))
+                self.assertEqual(40, game.state.players["A"].life)
+                if paid:
+                    action = self.offered_ability(game, source)
+                    self.reject(game, "A", {"action_id": action, "mana_output": {"C": 2}})
+                    self.act(game, "A", {"action_id": action})
+                    self.assertEqual(3, game.state.players["A"].mana_pool["C"])
+                    self.assertFalse(self.vault_triggers(game, source, "draw"))
+                else:
+                    self.resolve_top(game)
+                self.assertEqual(40 if paid else 39, game.state.players["A"].life)
+                self.assertEqual([40, 40, 40], [game.state.players[seat].life for seat in "BCD"])
+                self.assertEqual(int(not paid), len(self.damage(game, source)))
+                if not paid:
+                    hit, = self.damage(game, source)
+                    self.assertEqual(("A", 1, 1), (hit["target"], hit["amount"], hit["assigned_amount"]))
+                self.replay(game, load=True)
+
+    def test_original_vault_three_colorless_automatically_pays_an_actual_spell_and_replays(self):
+        game = self.session(603_450_120)
+        source = self.vault(game, tapped=False)
+        spell = self.add(game.engine, "Darksteel Ingot", zone="hand")
+        self.assert_closed(game, spell)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertFalse(any(game.state.players["A"].mana_pool.values()))
+        self.assertEqual([spell.object_id], [item.card_object_id for item in game.state.stack])
+        self.assertFalse(self.damage(game, source))
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_original_vault_pending_draw_damage_rechecks_after_a_real_untap(self):
+        game = self.session(603_450_130)
+        source = self.vault(game)
+        key = self.add(game.engine, "Voltaic Key")
+        payer, = self.lands(game, "A", 1)
+        self.assert_closed(game, key)
+        self.enter_draw_step(game, "A")
+        trigger, = self.vault_triggers(game, source, "draw")
+        self.assertEqual("A", trigger.controller)
+        game = self.replay(game, load=True)
+        action = self.offered_ability(game, key)
+        self.act(game, "A", {"action_id": action, "targets": [source.ref], "pay": "auto"})
+        self.resolve_top(game)
+        self.assertTrue(game.state.cards[payer.object_id].tapped)
+        self.assertFalse(game.state.cards[source.object_id].tapped)
+        self.assertEqual([trigger.ref], [item.ref for item in self.vault_triggers(game, source, "draw")])
+        self.resolve_top(game)
+        self.assertEqual(40, game.state.players["A"].life)
+        self.assertFalse(self.damage(game, source))
+        self.replay(game, load=True)
+
+    def test_original_vault_draw_damage_keeps_tapped_last_known_information_after_departure(self):
+        game = self.session(603_450_140)
+        source = self.vault(game)
+        removal = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        payer = self.lands(game, "B", 2)
+        self.assert_closed(game, removal)
+        self.enter_draw_step(game, "A")
+        trigger, = self.vault_triggers(game, source, "draw")
+        self.cast_for(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertTrue(all(game.state.cards[land.object_id].tapped for land in payer))
+        pending, = self.vault_triggers(game, source, "draw")
+        self.assertEqual(trigger.ref, pending.ref)
+        self.assertTrue(pending.context["original_source_tap_status"]["departure_tapped"])
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        hit, = self.damage(game, source)
+        self.assertEqual(("A", 1, 39), (hit["target"], hit["amount"], game.state.players["A"].life))
+        self.replay(game, load=True)
+
+    def test_vault_tapped_draw_binding_owns_only_the_exact_trigger_and_condition(self):
+        from dataclasses import replace
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.capabilities import CapabilityRegistry
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Mana Vault", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        damage, = [node for node in ir.faces[0].nodes if TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY in node.capability_dependencies]
+        self.assertEqual(tapped_draw_damage_condition(), damage.event_condition)
+        self.assertEqual(({"op": "damage", "source": "$source", "target": "$controller", "amount": 1},),
+                         tuple(damage.effects))
+
+        for old, new in (
+            ("your draw step", "each player's draw step"),
+            ("artifact is tapped", "artifact is untapped"),
+            ("deals 1 damage to you", "deals 2 damage to you"),
+            ("deals 1 damage to you", "deals 1 damage to each opponent"),
+        ):
+            with self.subTest(replacement=new):
+                mutated = compile_oracle_card(replace(card, oracle_text=card.oracle_text.replace(old, new)), **options)
+                self.assertFalse(any(TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY in node.capability_dependencies
+                                     for face in mutated.faces for node in face.nodes))
+        data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in data["capabilities"] if row["id"] == TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY)
+        capability.update(status="blocked", blockers=["tapped draw status withdrawn"])
+        withdrawn = CapabilityRegistry(data)
+        withdrawn.mark_evidence_verified("0" * 64)
+        blocked = compile_oracle_card(card, capability_registry=withdrawn, capability_profile="commander_review")
+        self.assertEqual(3, sum(node.exact for node in blocked.faces[0].nodes))
+        self.assertTrue(any(TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY in blocker
+                            for residual in blocked.material_residuals for blocker in residual.blockers))
+
+        report, semantics = register_card(self.db, self.registry, "Mana Vault")
+        self.assertTrue(report["strict_capability_ready"], report)
+        program, = [p for p in semantics.programs_for_oracle(card.oracle_id)
+                    if TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY in p.capability_dependencies]
+        for change in ({"event_condition": None},
+                       {"effects": [{**program.effects[0], "amount": True}]}):
+            with self.subTest(runtime=change):
+                mutated = bind_semantic_program_runtime(replace(program, **change),
+                    capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(mutated["strict"], mutated)
+
+    def test_vault_native_witness_detects_omitted_live_tap_recheck(self):
+        with patch("quorune.rules.trigger_source_information.recheck_original_source_tap", return_value=True) as omitted:
+            with self.assertRaises(AssertionError):
+                self.test_original_vault_pending_draw_damage_rechecks_after_a_real_untap()
+        omitted.assert_called_once()
 
 
 if __name__=='__main__':unittest.main()

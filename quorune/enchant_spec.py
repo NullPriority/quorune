@@ -516,11 +516,10 @@ class TypedEnchantSpec:
 class LinkedGraveyardCreatureEnchantSpec:
     """Closed linked Enchant restriction used by reanimating Auras.
 
-    The initial restriction selects a creature card in a graveyard. Once the
-    reviewed semantic instruction records the linked physical object, the
-    restriction follows only that object on the battlefield. This models the
-    rules-bearing transition without reparsing Oracle text or storing a raw
-    target-schema override on the Aura.
+    The initial restriction selects a creature card in a graveyard. The new
+    restriction follows only the returned battlefield incarnation. A present
+    but empty link means the restriction changed without a battlefield arrival.
+    Earlier reviewed records retain their physical-object encoding.
     """
 
     link_annotation: str
@@ -547,16 +546,33 @@ class LinkedGraveyardCreatureEnchantSpec:
         if not isinstance(self.controller_relation, AuraControllerRelation):
             raise AuraRuleError("Unsupported Enchant controller relation")
 
-    def linked_target_object_id(self, source: Any) -> str | None:
+    def _links(self, source: Any) -> Mapping[str, Any]:
         annotations = getattr(source, "annotations", None)
-        if not isinstance(annotations, Mapping):
-            return None
-        value = annotations.get(self.link_annotation)
-        return str(value) if isinstance(value, str) and value else None
+        return annotations if isinstance(annotations, Mapping) else {}
+
+    def linked_target_object_id(self, source: Any) -> str | None:
+        value = self._links(source).get(self.link_annotation)
+        if isinstance(value, Mapping):
+            value = value.get("object_id")
+        return value if isinstance(value, str) and value else None
+
+    def linked_target_allows(self, source: Any, target: Any) -> bool:
+        links = self._links(source)
+        if self.link_annotation not in links:
+            return True
+        value = links[self.link_annotation]
+        if isinstance(value, str):
+            # The earlier reviewed Game Record v3 program stored a physical ID.
+            return target.object_id == value
+        return (
+            isinstance(value, Mapping)
+            and set(value) == {"object_id", "logical_object_id"}
+            and target.object_id == value["object_id"]
+            and target.logical_object_id == value["logical_object_id"]
+        )
 
     def target_schema(self, source: Any | None = None) -> dict[str, Any]:
-        linked_id = self.linked_target_object_id(source)
-        if linked_id is not None:
+        if self.link_annotation in self._links(source):
             return {
                 "zones": ["battlefield"],
                 "categories": ["permanent"],

@@ -52,6 +52,22 @@
     "semantics_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "action_template_id": {"type": ["string", "null"]},
     "normalized_payload": {"type": "object"},
+    "priority_window_holds": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["steps", "preserve_empty"],
+        "properties": {
+          "steps": {"type": "array", "uniqueItems": true, "items": {"enum": [
+            "upkeep", "draw", "precombat_main", "combat", "beginning_combat", "declare_attackers",
+            "declare_blockers", "first_strike_damage", "combat_damage", "end_combat", "postcombat_main",
+            "end_step", "cleanup"
+          ]}},
+          "preserve_empty": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
     "selected_object_refs": {"type": "array", "items": {"type": "string"}},
     "targets": {"type": "array"},
     "modes": {"type": "array"},

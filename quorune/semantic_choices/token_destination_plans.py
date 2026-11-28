@@ -57,6 +57,8 @@ def complete_attacking_destinations(effect, response, query, *, name, tapped, sa
     return SemanticChoiceCompletion(intents=(CreateTokenIntent(actor=actor, controller=actor,
         name=name, quantity=int(effect.get('quantity', 0)),
         characteristics=FrozenMap(dict(effect.get('characteristics') or {})), tapped=tapped,
+        copy_of=effect.get('copy_of'),
+        copy_snapshot=FrozenMap(effect['copy_snapshot']) if 'copy_snapshot' in effect else None,
         attacking_assignments=tuple(decisions[token_id] for token_id in token_ids),
         attacking_groups=tuple('any' for _ in range(int(effect.get('quantity', 0)))),
         sacrifice_at_end_step=sacrifice, token_cleanup=token_cleanup, reason=str(effect.get('_stack_label') or label),

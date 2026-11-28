@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "ed14be15-8f8d-4fe3-a147-f5da8ed873bf",
+      "name": "Conduit of Worlds",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Artifact",
+      "oracle_text": "You may play lands from your graveyard.\n{T}: Choose target nonland permanent card in your graveyard. If you haven't cast a spell this turn, you may cast that card. If you do, you can't cast additional spells this turn. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "cmc": 4.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ed14be15-8f8d-4fe3-a147-f5da8ed873bf",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "The second ability of Conduit of Worlds will count spells you cast earlier in the turn even if Conduit of Worlds wasn't on the battlefield or under your control at that time. It will also count a spell you cast that subsequently was countered or failed to resolve. Notably, it will also include Conduit of Worlds itself on the turn you cast it."
+    },
+    {
+      "oracle_id": "ed14be15-8f8d-4fe3-a147-f5da8ed873bf",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "The second ability of Conduit of Worlds allows you to cast the target card as the ability resolves. You can't wait and cast that card later in the turn. If you cast it, you can't cast any other spells this turn, even if another effect would allow you to."
+    },
+    {
+      "oracle_id": "ed14be15-8f8d-4fe3-a147-f5da8ed873bf",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "The first ability of Conduit of Worlds doesn't change the times when you can play those land cards. You can still play only one land per turn, and only during your main phase when you have priority and the stack is empty."
+    }
+  ]
+}

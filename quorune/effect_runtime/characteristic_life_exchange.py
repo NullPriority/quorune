@@ -72,10 +72,11 @@ def apply_characteristic_life_exchange(host, effect, *, actor, operation, reason
     if resolved is None:
         return None
     source, card, player, spec = resolved
+    permissions = collect_life_gain_permissions(host)
     plan = plan_characteristic_life_exchange(
         life_total=host.state.players[player].life,
         effective_characteristic=host._numeric_stat(card.object_id, spec.characteristic),
-        can_gain_life=collect_life_gain_permissions(host).allows_gain(player), can_lose_life=True,
+        can_gain_life=permissions.allows_gain(player), can_lose_life=permissions.allows_loss(player),
     )
     if plan is None:
         return None

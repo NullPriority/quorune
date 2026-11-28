@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..stack_spell_copy_model import (
     FixedStackSpellCopySpec, STACK_SPELL_COPY_CAPABILITY, STACK_SPELL_COPY_MECHANIC,
     PERMANENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec,
-    FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, FixedQualifiedStackCopySpec,
+    COPYABLE_STACK_ITEM_PREDICATE, FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, FixedQualifiedStackCopySpec,
 )
 
 
@@ -22,7 +22,20 @@ def permanent_spell_copy_node_dependencies(effect, target_schema):
         return ()
     if spec.kind == "artifact":
         return (PERMANENT_SPELL_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY)
+    if spec.kind == "exile_cast_grant":
+        from ..stack_spell_copy_model import EXILE_CAST_COPY_CAPABILITY
+
+        return (EXILE_CAST_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY,
+                "continuous.resolution.fixed_keyword_zone_object", "token.creation.fixed_copy",
+                "trigger.event.normalized_spell_cast", "trigger.placement.apnap")
     return (PERMANENT_SPELL_COPY_CAPABILITY, QUALIFIED_STACK_COPY_CAPABILITY, "target.revalidate_resolution")
+
+
+def _qualified_copy_matches(spec, effects, schema):
+    return (
+        tuple(effects) == spec.effects and schema == spec.target_schema
+        and (spec.schema_version != 3 or type(schema.get("count")) is int)
+    )
 
 
 def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic_ids):
@@ -30,6 +43,10 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
         qualified_stack_copy_specs)
     if len(effects) == 1 and PERMANENT_SPELL_COPY_FIELD in effects[0]:
         return permanent_spell_copy_node_dependencies(effects[0], target_schema)
+    from .announced_ability_copies import COPY_FIELD, node_dependencies
+
+    if any(COPY_FIELD in leaf for leaf in effects):
+        return node_dependencies(effects=effects, schema=target_schema)
     mechanics = set(mechanic_ids)
     if any(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect for effect in effects):
         expected = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
@@ -38,7 +55,7 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
             return (QUALIFIED_STACK_COPY_CAPABILITY, 'target.revalidate_resolution')
         return ()
     for spec in qualified_stack_copy_specs():
-        if tuple(effects) == spec.effects and target_schema == spec.target_schema:
+        if _qualified_copy_matches(spec, effects, target_schema):
             from ..ability_source_information import ability_source_filter_dependencies
             return (QUALIFIED_STACK_COPY_CAPABILITY, 'target.revalidate_resolution',
                 *ability_source_filter_dependencies(target_schema))
@@ -47,7 +64,13 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
     from ..event_spell_copy_model import EVENT_SPELL_COPY_CAPABILITY,EVENT_SPELL_COPY_MECHANIC,event_spell_copy_effect
     if EVENT_SPELL_COPY_MECHANIC in mechanics:
         return (EVENT_SPELL_COPY_CAPABILITY,) if any(tuple(effects)==(event_spell_copy_effect(retain_targets_only=retain),) for retain in (False,True)) and target_schema is None else ()
-    if STACK_SPELL_COPY_MECHANIC not in mechanics or len(effects) != 1:
+    if STACK_SPELL_COPY_MECHANIC not in mechanics:
+        return ()
+    if len(effects) == 2:
+        from .opponent_spell_or_permanent_return import copy_and_return_spell_capabilities
+
+        return copy_and_return_spell_capabilities(effects, target_schema)
+    if len(effects) != 1:
         return ()
     for controlled in (False, True):
         spec = FixedStackSpellCopySpec(controlled)
@@ -70,6 +93,10 @@ def qualified_stack_copy_runtime_dependencies(program):
     from collections.abc import Mapping
     from ..stack_spell_copy_model import qualified_stack_copy_specs, QUALIFIED_STACK_COPY_MECHANIC
 
+    from .announced_ability_copies import program_dependencies
+
+    if required := program_dependencies(program):
+        return required
     effects = tuple(getattr(program, 'effects', ()))
     schema = getattr(program, 'target_schema', None)
     from .effect_shape_walkers import nested_effects
@@ -91,7 +118,7 @@ def qualified_stack_copy_runtime_dependencies(program):
     if any(PERMANENT_SPELL_COPY_FIELD in effect for effect in effects):
         if len(effects) == 1:
             spec = PermanentSpellCopySpec.from_dict(effects[0][PERMANENT_SPELL_COPY_FIELD])
-            if spec.kind == 'artifact':
+            if spec.kind in {'artifact', 'exile_cast_grant'}:
                 return ()
             if required := permanent_spell_copy_node_dependencies(effects[0], schema):
                 return required
@@ -100,12 +127,13 @@ def qualified_stack_copy_runtime_dependencies(program):
             and effect.get('stack') == '$target.0' for effect in effects)):
         return ()
     for spec in qualified_stack_copy_specs():
-        if effects == spec.effects and schema == spec.target_schema:
+        if _qualified_copy_matches(spec, effects, schema):
             return fixed_stack_spell_copy_node_capabilities(effects=effects, target_schema=schema,
                 mechanic_ids=(QUALIFIED_STACK_COPY_MECHANIC,))
     permanent = bool(set(schema.get('types_any') or ()) &
         {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'})
-    if schema.get('categories') == ['ability'] or permanent:
+    if (schema.get('categories') == ['ability'] or permanent
+            or schema.get("predicate") == COPYABLE_STACK_ITEM_PREDICATE):
         raise ValueError('Qualified stack-copy target or retained-target policy is malformed')
     return ()
 
@@ -113,9 +141,10 @@ def qualified_stack_copy_runtime_dependencies(program):
 def reviewed_stack_copy_with_current_policy(current, old):
     """Compare only complete, closed compiler copies with exact legacy shapes.
 
-    The old permanent-spell row omitted the printed retained-target policy.
-    Only an admitted current source may replace that row, using normal strict
-    binding and the shared source-hash/catalog-price checks in its caller.
+    The reviewed permanent-spell shape omits the printed retained-target
+    policy. The reviewed artifact-source predicate predates current/LKI source
+    qualification. Existing records retain both reviewed shapes. The caller
+    checks source hashes, catalog, price and strict binding for the current view.
     """
     from dataclasses import replace
     from copy import deepcopy
@@ -128,6 +157,8 @@ def reviewed_stack_copy_with_current_policy(current, old):
     for spec in specs:
         if tuple(current.effects) != spec.effects or current.target_schema != spec.target_schema:
             continue
+        if spec.schema_version == 3:
+            return None
         legacy = deepcopy(spec.target_schema)
         legacy.pop('source_exclusion')
         legacy['controller'] = legacy.pop('controller_relation')
@@ -140,7 +171,10 @@ def reviewed_stack_copy_with_current_policy(current, old):
         elif isinstance(spec, FixedStackSpellCopySpec):
             legacy['types_any'] = ['Instant', 'Sorcery']
         if old.target_schema != legacy:
-            continue
+            if (kind != 'activated_or_triggered_ability' or spec.source_filter != 'artifact'
+                    or old.target_schema != {**legacy, 'predicate': 'artifact_source'}
+                    or type(old.target_schema['count']) is not int):
+                continue
         handlers = deepcopy(old.handlers)
         if len(handlers) != 1 or handlers[0].get('handler_id') != 'activation.catalog.pinned.v1':
             return None

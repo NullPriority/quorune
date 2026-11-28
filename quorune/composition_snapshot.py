@@ -25,7 +25,7 @@ class CompositionObjectSnapshot:
 
     def __post_init__(self):
         from .model import CardInstance
-        if (type(self.schema_version) is not int or self.schema_version!=1
+        if (type(self.schema_version) is not int or self.schema_version not in (1, 2)
                 or not isinstance(self.card_state,Mapping) or not isinstance(self.copiable_values,Mapping)
                 or not _text(self.controller)):
             raise ValueError('A composition snapshot requires its closed version, object data and current controller')
@@ -41,7 +41,11 @@ class CompositionObjectSnapshot:
                 or any(type(value) is not bool for value in (card.is_token,card.is_commander,card.face_down,card.tapped))
                 or FrozenMap(card.to_dict())!=state):
             raise ValueError('Composition card data must be a canonical physical-state snapshot')
-        if card.zone=='battlefield':
+        if self.schema_version == 2:
+            if (card.zone != "exile" or not card.is_card_object or card.is_token or self.controller != card.owner
+                    or self.stack_ref is not None or self.stack_kind is not None):
+                raise ValueError("A meld component requires its actual physical exile snapshot")
+        elif card.zone=='battlefield':
             if self.controller!=card.controller or self.stack_ref is not None or self.stack_kind is not None:
                 raise ValueError('A battlefield snapshot requires its current permanent controller and no stack context')
         elif card.zone=='stack':
@@ -52,10 +56,10 @@ class CompositionObjectSnapshot:
         object.__setattr__(self,'copiable_values',values)
 
     @classmethod
-    def capture(cls,card,*,copiable_values,controller,stack_ref=None,stack_kind=None):
+    def capture(cls,card,*,copiable_values,controller,stack_ref=None,stack_kind=None,schema_version=1):
         from .model import CardInstance
         if not isinstance(card,CardInstance):raise ValueError('Physical capture requires an authoritative CardInstance')
-        return cls(card.to_dict(),copiable_values,controller,stack_ref,stack_kind)
+        return cls(card.to_dict(),copiable_values,controller,stack_ref,stack_kind,schema_version)
 
     @property
     def identity(self):

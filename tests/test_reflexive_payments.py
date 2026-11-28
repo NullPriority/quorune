@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import unittest
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
@@ -21,7 +22,88 @@ import test_bound_effect_programs as actions
 import test_self_public_zone_casting as zone_actions
 
 
+INTI_ATTACK = ('Whenever you attack, you may discard a card. When you do, put a +1/+1 counter '
+    'on target attacking creature. It gains trample until end of turn.')
+INTI_DISCARD = ('Whenever you discard one or more cards, exile the top card of your library. '
+    'You may play that card until your next end step.')
+
+
 class ReflexivePaymentCompilerTests(unittest.TestCase):
+    def test_inti_binds_the_paid_attack_and_grouped_discard_to_independent_authority(self):
+        from copy import deepcopy
+        from quorune.discard_effect_origin import DISCARD_BATCH_CAPABILITY, DISCARD_BATCH_EVENT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.discarded_card_exile import discarded_card_exile_runtime_dependencies
+        from quorune.rules.reflexive_payment_shapes import (
+            BOUND_DISCARD_ATTACK_CAPABILITY, reflexive_payment_parts, reflexive_payment_runtime_dependencies,
+        )
+
+        registry = load_default_capability_registry()
+        source = record(INTI_ATTACK + '\n' + INTI_DISCARD, 'Legendary Creature — Human Knight')
+        result = compile_oracle_card(source, capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', result.status, result.material_residuals)
+        attack, impulse = result.faces[0].nodes
+        self.assertIsNone(attack.target_schema)
+        self.assertIsNone(impulse.target_schema)
+        self.assertEqual(DISCARD_BATCH_EVENT, impulse.event)
+        payment, child = reflexive_payment_parts(attack.effects[0])
+        self.assertEqual(('discard', 1), (payment.kind, payment.amount))
+        self.assertEqual('attacking', child.target_schema['combat_state'])
+        self.assertEqual(['place_counters', 'grant_keyword_until_end_of_turn'], [effect['op'] for effect in child.effects])
+        self.assertEqual(['$target.0', '$target.0'], [effect['card'] for effect in child.effects])
+        self.assertIn(BOUND_DISCARD_ATTACK_CAPABILITY, attack.capability_dependencies)
+        self.assertIn(DISCARD_BATCH_CAPABILITY, impulse.capability_dependencies)
+        attack_program = SimpleNamespace(event=attack.event, event_condition=attack.event_condition,
+            ability_id='trigger:inti-test', active_zone='battlefield', target_schema=None, cost_schema=None,
+            handlers=(), coverage=attack.mechanics, effects=attack.effects)
+        self.assertIn(BOUND_DISCARD_ATTACK_CAPABILITY, reflexive_payment_runtime_dependencies(attack_program))
+        attack_program.event = 'card.discarded'
+        with self.assertRaises(ValueError):
+            reflexive_payment_runtime_dependencies(attack_program)
+        impulse_program = SimpleNamespace(event=impulse.event, event_condition=impulse.event_condition,
+            active_zone='battlefield', target_schema=None, cost_schema=None, handlers=(), effects=impulse.effects)
+        self.assertEqual((DISCARD_BATCH_CAPABILITY,), discarded_card_exile_runtime_dependencies(impulse_program))
+        impulse_program.effects = ({**impulse.effects[0], 'count': True},)
+        with self.assertRaises(ValueError):
+            discarded_card_exile_runtime_dependencies(impulse_program)
+        for capability in (BOUND_DISCARD_ATTACK_CAPABILITY, DISCARD_BATCH_CAPABILITY):
+            raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_bytes())
+            next(row for row in raw['capabilities'] if row['id'] == capability).update(
+                status='blocked', blockers=['Withdrawn focused ownership'])
+            blocked = CapabilityRegistry(raw)
+            blocked.mark_evidence_verified(registry.evidence_fingerprint)
+            self.assertNotEqual('exact', compile_oracle_card(source, capability_registry=blocked,
+                capability_profile='commander_review').status)
+        for text in (INTI_ATTACK.replace('Whenever you attack', 'Whenever this creature enters'),
+                INTI_ATTACK.replace('target attacking creature', 'target creature'),
+                INTI_DISCARD.replace('until your next end step', 'this turn')):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Creature — Human'),
+                capability_registry=registry, capability_profile='commander_review').status)
+        altered = deepcopy(attack.effects[0])
+        altered['reflexive_program']['effects'][0]['amount'] = True
+        with self.assertRaises(ValueError):
+            reflexive_payment_parts(altered)
+
+    def test_inti_batch_projection_groups_actual_discarders_without_card_data(self):
+        from quorune.discard_effect_origin import DISCARD_BATCH_CAPABILITY, DISCARD_BATCH_EVENT
+        from quorune.zone_trigger_events import ZoneTransitionKind
+        from quorune.zone_trigger_processing import dispatch_committed_discard_groups
+
+        dispatched = []
+        subscriber = SimpleNamespace(capability_dependencies=(DISCARD_BATCH_CAPABILITY,))
+        host = SimpleNamespace(semantics=SimpleNamespace(programs_for_event=lambda _: (subscriber,)),
+            _dispatch_semantic_event=lambda event, context, trigger_batch: dispatched.append((event, context, trigger_batch)))
+        def moved(owner, destination, kind=ZoneTransitionKind.DISCARD):
+            return SimpleNamespace(owner=owner, origin='hand', destination=destination, transition_kind=kind)
+        collected = []
+        dispatch_committed_discard_groups(host, (moved('A', 'graveyard'), moved('A', 'exile'),
+            moved('B', 'graveyard'), moved('C', 'hand'), moved('D', 'exile', ZoneTransitionKind.ORDINARY)),
+            trigger_batch=collected)
+        self.assertEqual([(DISCARD_BATCH_EVENT, {'previous_controller': 'A', 'discard_count': 2}, collected),
+            (DISCARD_BATCH_EVENT, {'previous_controller': 'B', 'discard_count': 1}, collected)], dispatched)
+        dispatch_committed_discard_groups(host, (moved('A', 'graveyard'),), trigger_batch=collected)
+        self.assertEqual((DISCARD_BATCH_EVENT, {'previous_controller': 'A', 'discard_count': 1}, collected), dispatched[-1])
+
     def test_paired_entry_and_step_allow_a_local_linked_target(self):
         from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
 
@@ -1019,3 +1101,172 @@ class ReflexivePaymentRuntimeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         self.assertEqual(35, session.state.players['D'].life)
         self.replay(session, load=True)
+
+class IntiNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'inti-reflexive.sqlite3'
+        fixtures = ROOT / 'tests/fixtures'
+        build_fixture_database([fixtures / name for name in (
+            'bound-effect-program-cards.json', 'reflexive-payment-cards.json', 'mayhem-cards.json',
+            'discover-cards.json', 'per-opponent-attacking-token-cards.json',
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Original attack and grouped discard',
+            [DeckEntry('Generic Bound Commander', 1, 'commander'), DeckEntry('Generic Bound Plains', 30)],
+            ['Generic Bound Commander'])
+
+    def record_folder(self):
+        return Path(os.environ.get('QUORUNE_INTI_RECORD_PARENT') or self.temporary.name)
+
+    def replay_inti(self, game, case, *, load=False):
+        from quorune.record import replay_record
+        from quorune.session import CommanderSession
+
+        folder = self.record_folder()
+        if os.environ.get('QUORUNE_INTI_RECORD_PARENT'):
+            fixture = folder / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = folder / ('inti-' + case)
+        game.save(path)
+        self.assertEqual(3, json.loads((path / 'manifest.json').read_bytes())['schema_version'])
+        result = replay_record(path, self.db, verify=True)
+        expected = authoritative_state_hash(game.state)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        self.assertEqual(expected, result['final_state_hash'])
+        if os.environ.get('QUORUNE_INTI_RECORD_PARENT'):
+            proof = folder / (path.name + '.verification.json')
+            proof.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(expected, authoritative_state_hash(resumed.state))
+            return resumed
+
+    def reject_inti(self, game, command, principal):
+        before = authoritative_state_hash(game.state)
+        result = game.act(principal, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def choose_inti(self, game, **response):
+        result = game.act('pilot:A', {'action_id': 'choose', **response})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_inti_attack_once_and_targets_only_after_original_controller_discards(self):
+        from quorune.session import CommanderSession
+        game = self.session(1942001)
+        inti = self.add(game.engine, 'Inti, Seneschal of the Sun')
+        adeline = self.add(game.engine, 'Adeline, Resplendent Cathar')
+        first, second = [self.add(game.engine, 'Grizzly Bears', ref=f'inti-attacker-{i}') for i in range(2)]
+        for card in (first, second):
+            card.acquired_control_turn_count = -1
+        self.add(game.engine, 'Island', seat='B')
+        bounce = self.add(game.engine, 'Unsummon', seat='B', zone='hand')
+        discard = self.add(game.engine, 'Generic Bound Growth', zone='hand', ref='inti-private-cost')
+        self.assert_closed(game, inti)
+        self.assert_closed(game, adeline)
+        self.prepare(game, mana={})
+        self.checkpoint(game)
+        self.until(game, lambda s: s.state.pending_decision is not None and s.state.pending_decision.kind == 'combat.attackers')
+        result = game.act('pilot:A', {'action_id': 'attack', 'attackers': {first.ref:'B', second.ref:'C'}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('trigger.order', game.state.pending_decision.kind)
+        announced = {item.source_object_id: item.ref for batch in game.state.pending_trigger_batches for item in batch.items}
+        self.assertEqual({inti.object_id, adeline.object_id}, set(announced))
+        result = game.act('pilot:A', {'action_id':'order', 'triggers':[announced[inti.object_id], announced[adeline.object_id]]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(adeline.object_id, game.state.stack[-1].source_object_id)
+        self.resolve_top(game)
+        newly_attacking = [card for card in game.state.cards.values() if card.is_token and card.attacking]
+        self.assertEqual(3, len(newly_attacking))
+        parent, = [item for item in game.state.stack if item.source_object_id == inti.object_id]
+        self.assertFalse(parent.targets)
+        self.assertEqual('A', parent.controller)
+        self.cast(game, 'B', bounce, [inti.ref])
+        self.resolve_top(game)
+        self.assertEqual('hand', game.state.cards[inti.object_id].zone)
+        self.assertEqual('semantic.choice', self.resolve(game).kind)
+        self.assertEqual(parent.ref, game.state.stack[-1].ref)
+        self.assertNotIn(discard.ref, json.dumps(game.packet('pilot:B', full=True)))
+        self.reject_inti(game, {'action_id':'choose', 'cards':[discard.ref]}, 'pilot:B')
+        game = self.replay_inti(game, 'attack-discard-pending', load=True)
+        declined = CommanderSession.load(self.db, self.record_folder() / 'inti-attack-discard-pending')
+        self.choose_inti(declined, cards=[])
+        self.assertIsNone(self.resolve(declined))
+        self.assertEqual('hand', declined.state.cards[discard.object_id].zone)
+        self.assertFalse(declined.state.stack)
+        self.replay_inti(declined, 'attack-declined')
+        self.choose_inti(game, cards=[discard.ref])
+        self.assertEqual('graveyard', game.state.cards[discard.object_id].zone)
+        self.assertEqual('semantic.target', game.state.pending_decision.kind)
+        child, = game.state.stack
+        self.assertEqual(('A', parent.ref), (child.controller, child.context['reflexive_parent']))
+        self.reject_inti(game, {'action_id':'choose', 'targets':[adeline.ref]}, 'pilot:A')
+        game = self.replay_inti(game, 'reflexive-target-pending', load=True)
+        target = min(newly_attacking, key=lambda card: card.ref)
+        self.choose_inti(game, targets=[target.ref])
+        self.assertIsNone(self.resolve(game))
+        updated = game.state.cards[target.object_id]
+        self.assertEqual(1, updated.counters['+1/+1'])
+        self.assertIn('trample', game.engine._combat_keywords(updated))
+        self.assertFalse(any(card.counters.get('+1/+1') for card in (
+            game.state.cards[first.object_id], game.state.cards[second.object_id],
+        )))
+        self.replay_inti(game, 'reflexive-settled')
+
+    def test_inti_simultaneous_discards_grant_one_actual_play_and_separate_occurrence_expires(self):
+        from quorune.discard_effect_origin import DISCARD_BATCH_EVENT
+        game = self.session(1942010)
+        inti = self.add(game.engine, 'Inti, Seneschal of the Sun')
+        looting = self.add(game.engine, 'Faithless Looting', zone='hand')
+        voice = self.add(game.engine, 'Tormenting Voice', zone='hand')
+        cards = [self.add(game.engine, 'Generic Bound Body', zone='hand', ref=f'inti-discard-group-{i}') for i in range(3)]
+        timed = self.add(game.engine, 'Unsummon', zone='library', ref='inti-expires')
+        land = self.add(game.engine, 'Island', zone='library', ref='inti-land-play')
+        self.add(game.engine, 'Grizzly Bears', zone='library', ref='inti-looting-draw-two')
+        self.add(game.engine, 'Generic Bound Body', zone='library', ref='inti-looting-draw-first')
+        for source in (inti, looting, voice):
+            self.assert_closed(game, source)
+        self.prepare(game, mana={'R': 3, 'C': 1})
+        self.checkpoint(game)
+        self.cast(game, 'A', looting)
+        self.assertIsNotNone(self.resolve(game))
+        self.reject_inti(game, {'action_id':'choose','cards':[cards[0].ref, cards[1].ref]}, 'pilot:B')
+        self.choose_inti(game, cards=[cards[0].ref, cards[1].ref])
+        self.assertTrue(all(game.state.cards[card.object_id].zone == 'graveyard' for card in cards[:2]))
+        grouped, = [item for item in game.state.stack if item.source_object_id == inti.object_id]
+        self.assertEqual((DISCARD_BATCH_EVENT, 2), (grouped.context['event'], grouped.context['discard_count']))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('exile', game.state.cards[land.object_id].zone)
+        self.assertEqual('library', game.state.cards[timed.object_id].zone)
+        self.priority(game, 'A')
+        moves = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        play, = [row for row in moves if row.get('card') == land.ref and row.get('kind') != 'cast']
+        game = self.replay_inti(game, 'grouped-land-pending', load=True)
+        result = game.act('pilot:A', {'action_id': play['id']})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('battlefield', game.state.cards[land.object_id].zone)
+        self.priority(game, 'A')
+        moves = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast, = [row for row in moves if row['id'] == 'cast:' + voice.ref]
+        result = game.act('pilot:A', {'action_id':cast['id'], 'cost_cards':[cards[2].ref], 'pay':'auto'})
+        self.assertTrue(result.ok, result.summary)
+        single, = [item for item in game.state.stack if item.source_object_id == inti.object_id]
+        self.assertEqual((DISCARD_BATCH_EVENT, 1), (single.context['event'], single.context['discard_count']))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('exile', game.state.cards[timed.object_id].zone)
+        self.priority(game, 'A')
+        view = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertTrue(any(row['id'] == 'cast:' + timed.ref for row in view))
+        self.replay_inti(game, 'separate-impulse-open')
+        self.until(game, lambda s: s.state.phase == 'ending' and s.state.step == 'end_step'
+            and s.state.pending_decision is not None and s.state.pending_decision.kind == 'priority')
+        self.assertEqual('exile', game.state.cards[timed.object_id].zone)
+        view = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'] == 'cast:' + timed.ref for row in view))
+        self.assertFalse(game.state.cards[land.object_id].tapped)
+        self.replay_inti(game, 'next-end-step-expired')

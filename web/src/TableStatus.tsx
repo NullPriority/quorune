@@ -1,4 +1,5 @@
 import type { JsonValue, LegalAction } from "./generated/protocol";
+import { ManaText } from "./ManaText";
 
 
 function asRecord(value: JsonValue): Record<string, JsonValue> {
@@ -7,14 +8,42 @@ function asRecord(value: JsonValue): Record<string, JsonValue> {
 
 
 export function CommanderDamage({ seat, value }: { seat: string; value: JsonValue }) {
-  const sources = Array.isArray(value) ? value.map(asRecord) : [];
-  const summary = sources.length
-    ? sources.map((source) => `${String(source.amount ?? 0)} from ${String(source.n ?? "commander")}`).join(" · ")
-    : "0";
+  const sources = (Array.isArray(value) ? value.map(asRecord) : [])
+    .filter((source) => typeof source.amount === "number" && source.amount > 0);
+  if (!sources.length) return null;
+
   return (
-    <div className="commander-damage" data-testid={`commander-damage-${seat}`}>
-      <span>Commander damage</span>
-      <strong>{summary}</strong>
+    <span className="commander-damage" role="group" aria-label="Commander damage received" data-testid={"commander-damage-" + seat}>
+      {sources.map((source, index) => {
+        const owner = typeof source.owner === "string" ? source.owner : "";
+        const name = String(source.n ?? "Commander");
+        const amount = String(source.amount);
+        return (
+          <span
+            key={String(source.cid ?? index)}
+            className="commander-damage-chip"
+            data-seat-accent={owner || undefined}
+            data-commander-id={String(source.cid ?? "")}
+            role="group"
+            tabIndex={0}
+            aria-label={amount + " commander damage from " + name + (owner ? ", Seat " + owner : "")}
+          >
+            <strong className="commander-damage-amount">{amount}</strong>
+            <span className="commander-damage-tooltip" aria-hidden="true">{name}</span>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+
+export function PlayerIdentity({ seat, mine, damage }: { seat: string; mine: boolean; damage: JsonValue }) {
+  return (
+    <div className="player-name">
+      <strong>Seat {seat}</strong>
+      {mine && <span className="you-chip">You</span>}
+      <CommanderDamage seat={seat} value={damage} />
     </div>
   );
 }
@@ -31,7 +60,7 @@ export function ManaHelp({
 }) {
   return (
     <div className="mana-help" role="status">
-      <span>Click a highlighted untapped permanent to add mana in the order you choose. Before spending or passing, click that tapped source again to remove its mana and untap it.</span>
+      <span>Tap a highlighted source to add mana. Tap it again before spending or passing to undo.</span>
       {actions.map((action) => (
         <button type="button" key={action.id} disabled={disabled} onClick={() => onSelect(action)}>
           {action.label ?? "Undo last mana activation"}
@@ -39,6 +68,21 @@ export function ManaHelp({
       ))}
     </div>
   );
+}
+
+
+export function ManaPoolStatus({ pool }: { pool: JsonValue | undefined }) {
+  const values = asRecord(pool ?? {});
+  const mana = ["W", "U", "B", "R", "G", "C"].flatMap((type) => {
+    const amount = Number(values[type] ?? 0);
+    return amount > 0 ? [{ type, amount }] : [];
+  });
+  return <div className="mana-pool-status" aria-live="polite" aria-label="Your mana pool">
+    <strong>Mana pool</strong>
+    {mana.length ? mana.map(({ type, amount }) => <span key={type} className="mana-pool-amount">
+      <ManaText text={`{${type}}`} /><span>×{amount}</span>
+    </span>) : <span>Empty</span>}
+  </div>;
 }
 
 
@@ -62,7 +106,7 @@ export function AutomationControls({
         data-testid="auto-pass-toggle"
         title="Automatically submit pass-only priority capabilities. Turn this off to hold every priority stop, including stops during another player's turn."
         onClick={onAutoPass}
-      >{autoPass ? "Auto-pass enabled" : "Hold every priority"}</button>
+      >{autoPass ? "Auto-pass enabled" : <>Full control<span className="priority-control-description"> · Hold every priority</span></>}</button>
       <button
         type="button"
         className={`table-control-toggle${autoMana ? " active" : " manual-control"}`}

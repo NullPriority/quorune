@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+A linked death copy and its granted token-departure return are admitted
+through their complete triggered program shapes. The replacement-decision
+owner resumes those same instructions after a replacement choice.
+
+A token replacement that adds one token for each pending token uses the current
+creation recipes after earlier replacements. Added tokens retain the individual
+creation instructions for status and attack assignment and have their own token
+characteristics. An activation can bind X to an announced exact sacrifice of
+one permanent subtype. The shared selected-object payment commits the public
+group before the existing temporary characteristic result reads that X.
+
 Half-life Recover prices use a separate version-two Recover descriptor inside
 the existing version-twelve lifecycle instruction. The price quotes the locked
 payer's current signed life and rounds its nonnegative half upward through the
@@ -18,6 +29,16 @@ graveyard incarnation follows the return branch. Decline follows the existing
 exile branch. Resolved prices use an explicit version-thirteen cost kind;
 positive fixed-life and fixed-mana Recover encodings keep their meanings.
 Unscoped resolved prices, other rounding and unrepresented riders fail closed.
+
+A controller-first mana contribution gives each remaining player a resolution
+choice in turn order. Each player can activate represented mana abilities,
+contribute zero, or select the exact eligible units from their own pool. The
+payment owner rechecks the current quote and the selected units on submission.
+Once every contribution is committed, the draw owner uses the combined amount
+for each player’s private draws in active-player order. Saved continuations
+preserve the next payer, the amount already paid, and pending mana replacement
+choices. The compiler admits the complete draw instruction. Other printed
+contribution results remain unresolved.
 
 Death-controller optional draws use version two of the event optional-draw
 instruction. The complete all-creature death occurrence retains the creature's
@@ -57,6 +78,11 @@ their dedicated owners. An omitted third-person player subject keeps its
 explicit first-clause player relation. Resolution order, later choices and
 target legality use the existing sequence and instruction owners.
 
+A whole-hand counter payment belongs to the targeted spell's current controller.
+The private choice seals every card in that hand and checks the same identities
+before moving the complete paid batch. An empty hand can pay the cost. Decline
+uses the ordinary spell counter and its existing restrictions.
+
 A targeted-player graveyard-exile instruction gives that player a required
 choice of one current card from their own graveyard. The card is not a target;
 the public-zone query filters physical cards and seals their incarnations.
@@ -78,12 +104,28 @@ the optional choice; previously present cards remain eligible. Declining the
 return leaves the preceding instructions committed. The resolving controller
 owns the choice even if control of its permanent source later changes.
 
+A fixed hand-source land activation uses the stack-scoped reveal ledger for
+its original physical card. The ordinary entry owner moves that card if its
+hand incarnation survives until resolution. An optional creature phase-out
+on entry uses the normal trigger target choice and phasing transaction.
+
 Explore completion uses the canonical reveal, counter and movement transaction.
 Its qualified creature event reads the same incarnation's current types or
 the existing ability-source LKI snapshot. A returned physical card cannot
 replace the departed explorer's identity or controller. The legacy permanent
 completion and qualified creature completion join one ordinary APNAP batch;
 the type facts remain transient choice and intent data.
+
+Ordinary artifact departure can produce one counter batch for the original source and a current controlled subtype set. The query retains the trigger controller, and both contributions to an overlapping recipient are combined before replacements. A departed or newer source incarnation receives only independently applicable subtype counters.
+
+The fixed creature counter result reads the original recipient's current or departure controller at each written instruction. It consumes one confirmed grouped placement and delegates to the existing draw and life owners.
+
+A trigger that names an artifact an opponent controls reads its battlefield controller immediately before departure. Its fixed counter result queries the trigger controller's current creatures for either printed subtype. A creature with both subtypes receives one placement.
+
+A temporary combat prevention ability binds the creature that currently has the grant and the player receiving the damage event. Its additional draws use the damage amount at application, including when prevention is prohibited. The ordinary ordered draw coordinator retains both participants, replacement choices, and private cards. [Assassin’s Creed release notes](https://magic.wizards.com/en/news/feature/assassins-creed-release-notes)
+
+A fixed stackless payment adds its selected mana, then resolves positive life gain for the original payer through current life replacements. A pending replacement choice retains the same payment identity and resumes that action.
+
 
 Public source-counter results reuse the counter compiler's self-reference
 vocabulary and closed counter/controller sequence owner. Source growth followed
@@ -97,17 +139,41 @@ flying, base statistics or modifiers use their own layers with one
 resolution timestamp. The result locks its affected objects through the
 end of the turn.
 
+Player turn rules use the continuous-effect journal and expire at cleanup.
+Hexproof grants can apply to every player or to the resolving spell's
+controller. Both use the normal opposing-source check. Life-loss prohibition
+blocks positive life payments and preserves life gain and other results of
+dealt damage. Match outcome prohibition applies to explicit and state-based
+wins and losses. Players can still concede, and the last remaining player
+wins. The resolved rules remain in force after their caster leaves the game.
+
 A two-player life exchange snapshots the two valid participants and their
 current totals. The life owner checks whether both requests can proceed,
 then prepares their replacements and commits the pair in one transaction.
 For an optional upkeep trigger, targets are chosen when it is put on the
 stack and the controller chooses whether to exchange on resolution.
 
+A targeted source handoff uses the existing control journal for the original
+battlefield incarnation. A committed change places a separate reflexive
+trigger under the activation controller. The draw resolves for that controller
+and the quest counter can be placed only on the same battlefield incarnation.
+A source-departure Soldier trigger uses the sealed quest-counter quantity and
+creates the tapped tokens for the source owner, independently of the departing
+permanent’s last controller.
+
 A paired exchange can precede token creation within one resolving spell.
 The token instruction reads the two legal players’ current totals after
 the exchange and its replacement choices. It can create a zero-size token
 and lets normal state-based actions handle the result. A token replacement
 choice resumes that instruction while retaining the completed exchange.
+
+An untargeted pair of token instructions can use the announced X for
+the first token's power and toughness and the second token's quantity.
+The resolving controller chooses a current opponent separately for each
+instruction, even when X is zero. Each instruction prepares token
+replacements for the controller and the chosen opponent before committing
+both players' tokens simultaneously. State-based actions wait until
+the spell finishes resolving.
 
 The draw-step exception reads the existing count of completed draws.
 Only the first completed draw in the affected player’s own draw step is
@@ -137,12 +203,23 @@ The shared target matcher also checks the type and, when specified,
 controller of its current attached permanent. Both must match at
 announcement and when the ability resolves.
 
+A paid nonmana activation copy observes the committed stack ability after its costs.
+The trigger controller may pay once, then use the ordinary stack-copy target choice.
+If the original departs, its recorded state preserves X, modes, target identities
+and source information without activating the copy or charging its costs again.
+
 A fixed-receiver spell-copy trigger observes a cast with one distinct
 creature target other than its source. The optional copy uses the retained
 spell's modes, paid choices, and ordered target groups. The copy validator
 checks the original source incarnation against every target slot before
 offering the choice and again when the player accepts. A legal Aura spell
 copy enters as a token attached to that receiver.
+
+A source-attacking spell-copy trigger qualifies the controller's original cast
+against the source's current combat membership. After the trigger has occurred,
+losing the source does not suppress it. The common cast-event copy owner
+retains the spell and its choices, creates one compulsory copy, and allows new
+legal targets for that copy.
 
 The creature-set spell-copy trigger observes an instant or sorcery cast
 whose only distinct target is its original source. The ability controller
@@ -247,6 +324,11 @@ after the draw, includes the resulting hand, and remains private to its chooser.
 Arbitrary linked conditions, random counts, and unrepresented player variants
 remain residuals.
 
+A source can offer fixed opponent life loss after a controller cast on an
+opponent's turn. Each qualifying cast independently uses the retained
+turn and caster facts. The optional chooser can decline or commit one
+opponent-only life batch.
+
 Optional-result validation receives the existing immutable resolving-source
 snapshot from the owning stack item, both when preparing a choice and when
 validating its continuation. Source-dependent handlers retain their ordinary
@@ -332,7 +414,9 @@ name and its permanent type. Another face's permanent type cannot authorize an
 unsupported spell half under the trusted-only policy; offers and proposals
 share that same trust predicate.
 
-Player speed starts through the canonical state-based owner and persists after
+Player speed starts through the canonical state-based owner. It checks for a
+registered Start Your Engines handler before reading current battlefield
+ability fragments. A player's speed persists after
 its starter leaves. Committed opponent life losses queue one source-free
 inherent trigger during the speed owner's turn, recording usage at creation.
 The closed `increase_speed` instruction checks its intervening limit and
@@ -417,6 +501,17 @@ Consecutive upkeep steps retain the disclosure. Ending it preserves learned
 identity and independent public-hand permissions. A later hand incarnation
 gets independent usage and reveal state.
 
+An announced artifact sacrifice uses a positive X as a selected-object count.
+Its fixed mana fee stays separate. The issued target bounds and ordinary
+resolution recheck use the same X for the owned graveyard creature’s maximum
+power. The counted payment and replacement journal retain the original
+artifact references, including an eligible ability source.
+
+A source-entry choice can create Treasure from the paid creature’s power. The
+existing sacrifice transaction captures power before departure, and a completed
+replacement departure still pays the choice. The result creates the ordinary
+Treasure tokens in one batch.
+
 Announced activation X can compose with a fixed sacrifice of its own source,
 with or without a printed tap cost. The catalog keeps both the X symbol count
 and the existing sacrifice flag, validated against the entire printed cost.
@@ -476,6 +571,13 @@ chooser identity, extra fields, and nested optional wrappers. Specialized
 optional choices such as fixed counter placement retain their historical
 operation and replay identity rather than being rewritten through this owner.
 
+A subtype-conditioned activation tests the original source’s current subtype
+as it resolves. The ordinary layer journal keeps the resulting subtype, base
+stats, keyword or granted ability on that battlefield incarnation. The bound
+combat-damage child uses its controller’s current Ring count and the original
+damaged player. It chooses the regular Ring temptation or game-loss effect
+once before the selected effect starts.
+
 The public resolution-condition handler receives one immutable result from the
 canonical public-state query at the current instruction boundary. A known false
 condition skips its result; an unavailable fact rejects instead of becoming
@@ -492,10 +594,30 @@ only the uncommitted return. Delayed return uses one ordinary controller-locked
 trigger with the exact exiled identities; departure and reentry invalidate
 those identities. Entry counters use the canonical nested replacement tree,
 and immediate keyword riders use the ordinary incarnation-locked layer journal.
+The graveyard exchange uses three ordered instructions. It exiles each player’s
+creature cards in one batch and retains only their committed exile incarnations.
+It then prepares the sacrifices of all current creatures in a separate batch.
+Replacement choices determine the actual destinations. Each receiving owner
+chooses the order of their arriving physical cards before the batch moves them.
+The return uses the retained incarnations and each card’s original exiling
+player. A pending replacement or order resumes the uncommitted instruction.
+
 No state-based action runs between an immediate exile and return. In particular,
 Commander exile-to-command choice happens after immediate blink finishes, but
 may remove a delayed-return card from exile. Old records retain their pinned
 trust provenance; this new grammar does not reinterpret historical records.
+
+A fixed immediate owner return can carry a separate post-return counter.
+The linked journal pins the actual new battlefield incarnation. The later
+phase uses its effective Spirit subtype and ordinary counter placement.
+Replacement choices in that phase resume the counter without repeating the
+already completed exile and return.
+
+A life-paid library-top activation uses the normal activation cost and zone
+owners. Each resolution retains the resulting face-down exile incarnation
+and schedules one independent trigger for the controller's next end step.
+The delayed return puts the retained object in that player's hand. An empty
+library or redirected move leaves the delayed trigger with no object to return.
 
 Schema four adds the separately gated immediate transformed-source return.
 The linked owner derives an eligible back face from the physical card and gives
@@ -554,6 +676,14 @@ battlefield return with a fixed counter uses the same incarnation check.
 The entry transaction places the counter and applies replacements before
 publishing the battlefield entry.
 
+The controlled nonflying creature death result uses the last battlefield
+controller and effective flying. Its trigger retains every physical card that
+reached the graveyard from the same death, including the parts of a merged
+permanent. Resolution revalidates each incarnation and returns the eligible
+cards together under their owners. The entry transaction places the flying
+counters before publishing entry events. An arriving Aura uses its owner's
+ordinary nonspell attachment choice before movement.
+
 The same payment registration accepts a closed v3 source-maintenance payload.
 Its fixed cost uses the shared v2 cost preparation and completion helpers.
 Decline sacrifices only the original source incarnation while the trigger's
@@ -563,6 +693,13 @@ auto-continues without a payment decision. Optional payment remains available
 when the source has left, returned or changed controller, because the printed
 unless instruction has no intervening source-presence condition. A successful
 cost payment suppresses the default even when a replacement redirects its cards.
+
+A mandatory self-entry land sacrifice can create a separate reflexive search
+trigger after the original controlled incarnation departs. The zone owner
+settles destination replacements before the reflexive trigger is queued.
+The child uses the resolving controller's private search over the three
+displayed Basic land subtypes, then the ordinary shuffle and one-life
+instruction. Failing to find preserves the shuffle and life gain.
 
 An explicit source-tap default uses the same source-maintenance choice for a
 positive fixed life price at its controller's upkeep. The trigger's controller
@@ -589,6 +726,14 @@ pending. At the bound end step, normal trigger placement gives players priority
 to respond before the loss can resolve. The next step boundary retires a loss
 whose turn was skipped or otherwise removed from the turn queue. Historical
 unmarked extra-turn instructions replay through their stored scheduling path.
+
+A spell can watch a targeted creature for combat damage during the current
+turn. The delayed ability retains the creating spell as its source and that
+spell's resolving controller as its draw recipient. It watches the chosen
+creature's original incarnation. Each positive committed combat damage
+occurrence to a player or planeswalker contributes its replacement-adjusted
+amount through the normal trigger queue. The watch stays available for later
+combat damage steps that turn. A new turn retires it.
 
 Normalized opponent life-loss triggers use positive committed loss records
 from ordinary life effects, life payments, and the damage transaction. Damage
@@ -651,12 +796,35 @@ the grant while later activations use the current controller. Later entrants
 and departed recipients do not inherit the earlier effect. A departure event
 uses the canonical predeparture fragment snapshot to publish its already
 triggered ability with the departing recipient as source.
+
+An activated ability can grant one quoted combat-damage trigger and prevent
+the same revalidated creature from being blocked that turn. When the
+creature deals combat damage to a player, its controller at trigger time
+draws one card per counter kind present on that source at resolution. The
+draw amount uses last-known counters for a departed source. Cleanup ends
+the temporary ability and block restriction.
+
 The event-bound battlefield-return instruction emits the existing typed zone
 move with its exact graveyard incarnation, owner controller, tapped entry and
 optional fixed entry counter. Replacement preparation receives the same
 requested tapped state as commit, so the prepared identity remains valid when
 entry counters and tapped entry occur together. The existing Persist/Undying
 owner follows the same entering-controller counter attribution.
+
+A source-bound delayed graveyard return retains the original battlefield
+source and the physical cards from the qualifying departure. The one-shot
+scheduler checks the source at the next end step. Resolution checks it
+again before offering the return to the delayed trigger's controller. The
+existing zone owner returns eligible graveyard incarnations simultaneously
+and collects any Aura attachment choices before movement.
+
+An opposing-death return records the physical graveyard arrivals and the
+resolving trigger's controller. It uses the next actual end step and returns
+only the retained incarnations that still qualify. The zone move carries
+the extra entry counter through the normal replacement path. It commits
+the additive characteristics on the new battlefield incarnation before
+publishing its entry occurrence. Prospective replacement decisions continue
+to use their existing inputs.
 
 Reanimation instruction version seven represents an Aura returning after its
 enchanted creature dies. The occurrence captures the Aura's battlefield
@@ -729,6 +897,21 @@ result. Replacement suspension retains the intent identity; conditional return
 suspension retains the already bound draws through the existing completed-choice
 continuation. No new game-state cache or mutation owner is introduced.
 
+Counted Ward lets the original targeting stack object's controller pay with
+two distinct permanents that player controls. The shared object-payment owner
+validates and moves both as one cost. Declining attempts to counter that stack
+object. Variable Annihilator uses the defending player from the original attack
+and counts the attacking incarnation's +1/+1 counters at resolution, with last
+known information after departure. It reuses the fixed Annihilator sacrifice
+instruction with the resolved count.
+
+A declared attack batch can place a counter on its original source and then
+create tapped attacking tokens according to that source's actual counter
+count. The scalar query runs after placement replacements. If the original
+source has left, the retained last known counters supply the count. A zero
+count skips token creation. The fixed attacking-token owner assigns each
+actual token a defending recipient and commits the replacement-aware batch.
+
 Mandatory “sacrifice a permanent” instructions for the resolving controller
 reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
 The controller chooses only current eligible permanents they control, including
@@ -738,6 +921,39 @@ commit. Empty sets perform no sacrifice, short sets sacrifice their available
 members, and destination replacements retain the sealed choice before the
 remaining instructions resume. Sacrifice uses its own transition cause and
 does not consume destruction or regeneration effects.
+
+The controller-end-step shared-type payment first offers the resolving
+controller a single optional sacrifice. A chosen payment retains the full
+effective battlefield card-type set and completes through the ordinary zone
+owner before the opponent stage. Opponents choose in APNAP order using any
+shared type. After replacement choices, an owner with multiple arriving
+physical cards orders those arrivals. The sacrifices commit simultaneously.
+Nonpayers then lose life and the controller privately draws one card for each
+nonpayer.
+
+The controlled land-entry counter-and-keyword mode uses the immutable
+battlefield incarnations of creatures its controller controls at resolution.
+The counter owner attempts all placements in one batch. The continuous-effect
+owner grants vigilance to the retained creatures until end of turn, including
+creatures whose placement was prohibited. Later entrants are outside the
+captured set. Copies keep the announced mode and sample their own controller's
+creatures at resolution.
+
+The mandatory all-colored instruction queries live colors for every active
+controller. It submits one sacrifice batch without a permanent selection
+decision. Destination replacements resolve before the owner order choices, so
+a borrowed permanent belongs to its owner's group and a redirected card
+leaves that group. Tokens share the movement without becoming order choices.
+
+An ordered fixed opponent sacrifice collects ordinary affected-player
+selections before proposing the batch. Each player with fewer legal
+creatures selects all they can. Actual physical receiving owners order
+their replacement-adjusted graveyard groups before movement.
+
+The targeted upkeep return may add one creature subtype to the actual
+battlefield incarnation. The same addition informs prospective entry
+replacements and the committed entry event. It remains attached to that
+incarnation through the layer journal.
 
 Keep-three instructions use the public affected-player choice. The ability
 limits the original battlefield set to the lands each player controls. The
@@ -758,6 +974,14 @@ hand is inspected; the discard still applies when those draws are prevented.
 Each player's selected cards stay hidden from other principals and remain in
 hand until the existing simultaneous discard commit. Ordinary fixed and
 fractional choice payloads retain their previous form and validation.
+
+A spell that draws for cards discarded by each other player uses the same
+private APNAP hand choices and simultaneous discard. Empty hands contribute
+no choice. The draw receipt matches the original selected hand incarnations
+against committed discard occurrences after replacements. A discarded card
+sent to exile still counts. The controller draws privately for the committed
+total. No additional public log exposes cards selected for an uncommitted
+discard.
 
 Fixed hand exile uses the same APNAP choice owner. The targeted player or
 each affected player chooses the required available cards privately from
@@ -1016,6 +1240,12 @@ ability addition and removal therefore retain the shared applicability and
 timestamp ordering rules; the duration owner does not special-case whether an
 ability came from a static or resolving source.
 
+An exact spell-only owner-hand return uses the revalidated stack target
+and the ordinary replacement-aware zone owner. The move can return an
+uncounterable spell. When present, the following controller draw runs after
+destination settlement. An illegal sole target causes the whole spell to
+fail at resolution, including the draw.
+
 Mandatory direct stack counters lower through a separate strict handler to one
 typed intent. The focused stack owner performs counterability, stack removal,
 replacement-aware physical spell movement, normalized pre-counter and
@@ -1063,15 +1293,15 @@ controller remains the life recipient. Only an exact final typed result parent
 may append this follow-up. Replacement and remaining-choice encodings retain
 the nested result without changing historical version-one records.
 
-The direct-card counterpart uses the ordinary public-graveyard exile owner and
-a closed creature-card result. It emits a committed receipt only after exile
-finishes. The existing receipt consumer inserts the ordinary source counter
-and controller life instructions before later instructions. A vanished, phased,
-or new source incarnation receives no counter; the independent life instruction
-still resolves. The original one-card graveyard target schema remains
-unrestricted by type, and target revalidation rejects the whole ability when
-that target becomes illegal. Plain exile descriptors and handlers retain their
-existing encodings.
+The direct-card counterpart uses the ordinary public-graveyard exile owner.
+The result uses the current public card types or the saved last-known types
+after the movement. A creature-card result adds one source counter and gives
+the ability controller one life. A permanent-card result adds one source
+counter and includes noncreature permanent cards such as lands. A vanished,
+phased, or new source incarnation receives no counter. The creature-card
+recipe's independent life instruction still resolves. The one-card graveyard
+target remains unrestricted by type. Target revalidation stops the ability
+when that target becomes illegal.
 
 Targeted graveyard exile can also carry a typed outcome for fixed life drain,
 counted life gain, or one predefined Clue or Food. The existing target-set
@@ -1109,3 +1339,44 @@ the resolving player as its expiry anchor. The ordinary declaration
 solver collects that fixed mana requirement for each chosen attack
 against the player or a planeswalker they control. The source can leave
 while the payment remains active. The player's next turn ends the rule.
+
+## Public opponent choices and temporary control
+
+Fame and Fortune choices are public and proceed in turn order from the
+active player, skipping the spell controller. The spell controller
+chooses a current creature for each Fame player who controls one. The
+control owner applies the full set together, then untaps the creatures
+and gives them haste through cleanup. Each Fortune result keeps the
+ordinary private draw and public Treasure creation. An opponent who
+concedes on their choice leaves the remaining decisions intact.
+
+An actual creature death can return its original physical card from the
+graveyard under its owner as an enchantment. The requested entry preview
+has only the enchantment card type before entry replacements are checked.
+The layer-four setting applies to the resulting incarnation before entry
+events are published. It does not change the card's copiable values.
+A later noncreature departure makes no creature-death return trigger.
+
+The other-controlled-creature entry result seals the entering incarnation
+without targeting it. Only that permanent receives the temporary power and
+haste changes. Later zone changes and the turn boundary end those changes.
+
+A tapped-entry untap trigger reads the permanent's committed entry state.
+A source can observe its own tapped entry. Simultaneous arrivals each have
+their own sealed incarnation and ordinary trigger placement. The result
+untaps only the original entrant. Tapping it after an untapped entry does
+not create a trigger.
+
+A resolving spell can offer its targeted discard recipient a separate choice to copy
+the spell. The ordinary private discard finishes first, even with an empty hand.
+The existing stack-copy owner retains the current spell's copiable values and
+gives the affected player control and the standard target assignment choice.
+
+For a targeted nonland return, the ordinary bounce puts the permanent into
+its owner's hand. The target-controller information owner retains the prior
+controller for the optional land sacrifice. A committed sacrifice opens a
+separate optional copy choice. The copy retains the original target by
+default, including an illegal target, or chooses a new legal one through the
+same stack-copy owner. The copy resolves with its own target and can repeat
+the procedure for that target's controller. Raw arbiter validation rejects
+these internal payment and copy stages.

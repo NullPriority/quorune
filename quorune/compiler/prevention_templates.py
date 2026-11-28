@@ -238,6 +238,23 @@ def _chosen_source_next_instance(
     )
 
 
+def _reflected_source_prevention(normalized, *, card_name):
+    if not card_name:
+        return None
+    name = SourceReferenceSpec(card_name).regex_pattern
+    if re.fullmatch(
+        r"Prevent all damage that would be dealt to you and planeswalkers you control this turn "
+        r"by sources you don['’]t control\. If damage from a creature source is prevented this way, "
+        rf"{name} deals that much damage to that creature\. If damage from a noncreature source "
+        rf"is prevented this way, {name} deals that much damage to the source['’]s controller[.]?",
+        normalized, re.I,
+    ) is None:
+        return None
+    from ..rules.prevention_component_shapes import reflected_source_prevention_effects
+
+    return "fixed-source-reflection-v2", reflected_source_prevention_effects(), None, _rules(None)
+
+
 def _chosen_source_damage_aftermath(
     normalized: str,
 ) -> PreventionTemplate | None:
@@ -474,6 +491,19 @@ def _scaled_life_aftermath(normalized: str) -> PreventionTemplate | None:
             _rules(target_schema, "cr-119-life"),
         )
     return None
+
+
+def _full_counter_aftermath(normalized: str) -> PreventionTemplate | None:
+    if re.fullmatch(
+        r"Choose target creature you control\. If damage would be dealt to that creature this turn, "
+        r"prevent that damage and put that many \+1/\+1 counters on it[.]?", normalized, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import TARGET_FULL_COUNTER_TEMPLATE, target_full_counter_aftermath_effect
+
+    schema = direct_permanent_target_spec("target creature you control").to_target_schema()
+    return TARGET_FULL_COUNTER_TEMPLATE, (target_full_counter_aftermath_effect(),), schema, _rules(schema, "cr-122-counters")
 
 
 def _counter_aftermath(normalized: str) -> PreventionTemplate | None:
@@ -860,6 +890,7 @@ _PREVENTION_PRODUCTIONS = (
     _chosen_source_all_damage,
     _scaled_life_aftermath,
     _counter_aftermath,
+    _full_counter_aftermath,
     _shared_color_creatures,
     _fixed_combat_shield,
     _all_combat_damage,
@@ -888,6 +919,25 @@ def _target_source_next_damage_life_result(text):
     )
 
 
+def _target_source_next_damage_life_aftermath(normalized):
+    if re.fullmatch(
+        r"The next time target creature would deal damage this turn, prevent that damage\. "
+        r"You gain life equal to the damage prevented this way[.]?",
+        normalized, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import target_source_next_damage_life_aftermath_effect
+
+    schema = direct_permanent_target_spec("target creature").to_target_schema()
+    return (
+        "target-source-next-damage-life-aftermath-v1",
+        (target_source_next_damage_life_aftermath_effect(),),
+        schema,
+        _rules(schema, "cr-119-life"),
+    )
+
+
 def _target_combat_mana_value_toughness_result(text):
     if re.fullmatch(
         r"Prevent all combat damage that would be dealt by target creature this turn\. "
@@ -907,6 +957,7 @@ def _target_combat_mana_value_toughness_result(text):
 
 def _targeted_damage_source_prevention(normalized):
     if result := (_target_source_next_damage_life_result(normalized)
+                  or _target_source_next_damage_life_aftermath(normalized)
                   or _target_combat_mana_value_toughness_result(normalized)):
         return result
     recipient=re.fullmatch(r'prevent all damage that would be dealt to (?P<subject>target .+?) this turn\.?',normalized,re.I)
@@ -948,6 +999,35 @@ def _attached_recipient_prevention(normalized, source_attachment_relation):
     return ('damage-prevention-bound-attachment-v1',(effect,),None,_rules(None))
 
 
+def _combat_token_aftermath(normalized):
+    match = re.fullmatch(
+        r"Prevent all combat damage that would be dealt to you this turn\. "
+        r"For each 1 damage prevented this way, (?P<token>create .+ token(?: with [^.]+)?\.)",
+        normalized, re.I,
+    )
+    if match is None:
+        return None
+    from .token_templates import fixed_token_creation_effect_template
+    from ..fixed_token_production import fixed_token_effect_shape_is_closed
+    from ..rules.prevention_component_shapes import (
+        COMBAT_TOKEN_AFTERMATH_TEMPLATE, combat_token_aftermath_effect, decode_combat_token_aftermath,
+    )
+
+    token = fixed_token_creation_effect_template(match["token"])
+    if (token is None or token.target_schema is not None or not fixed_token_effect_shape_is_closed(token.effect)
+            or token.effect["quantity"] != 1 or "tapped" in token.effect):
+        return None
+    try:
+        recipe = decode_combat_token_aftermath({
+            "kind": "create_tokens", "schema_version": 1, "name": token.effect["name"],
+            "characteristics": token.effect["characteristics"],
+        })
+    except (TypeError, ValueError):
+        return None
+    return (COMBAT_TOKEN_AFTERMATH_TEMPLATE, (combat_token_aftermath_effect(recipe),),
+            None, _rules(None, *token.mechanics))
+
+
 def fixed_prevention_effect_template(
     text: str,
     *,
@@ -957,6 +1037,8 @@ def fixed_prevention_effect_template(
     """Lower one closed finite CR 615 sentence through ordered productions."""
 
     normalized = " ".join(text.strip().split())
+    if token_aftermath := _combat_token_aftermath(normalized):
+        return token_aftermath
     targeted_source=_targeted_damage_source_prevention(normalized)
     if targeted_source is not None:return targeted_source
     attached=_attached_recipient_prevention(normalized,source_attachment_relation)
@@ -967,6 +1049,8 @@ def fixed_prevention_effect_template(
     )
     if triggered is not None:
         return triggered
+    if reflected := _reflected_source_prevention(normalized, card_name=card_name):
+        return reflected
     for production in _PREVENTION_PRODUCTIONS:
         result = production(normalized)
         if result is not None:

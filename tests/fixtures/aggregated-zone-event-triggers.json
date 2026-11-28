@@ -955,6 +955,55 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "3233af43-7826-4895-b67e-03c6102c2cd5",
+      "name": "Kutzil, Malamet Exemplar",
+      "mana_cost": "{1}{G}{W}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Cat Warrior",
+      "oracle_text": "Your opponents can't cast spells during your turn.\nWhenever one or more creatures you control each with power greater than its base power deals combat damage to a player, draw a card.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1030,6 +1079,24 @@
       "oracle_id": "bda83ef4-e345-495d-878c-4da171f997ba",
       "published_at": "2021-02-05",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "3233af43-7826-4895-b67e-03c6102c2cd5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some creatures have base power and toughness 0/0 and an ability that gives them a bonus based on some criteria. Those are not characteristic-defining abilities, and that ability doesn't change its base power and toughness. Such a creature will have power greater than its base power if the ability is raising its power above 0."
+    },
+    {
+      "oracle_id": "3233af43-7826-4895-b67e-03c6102c2cd5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Normally, a creature's base power and toughness are the power and toughness printed on the card or, for a token, the power and toughness set by the effect that created it. If another effect sets a creature's power and toughness to specific numbers or values, those become its base power and toughness. If an effect modifies a creature's power and/or toughness without setting them, that is not included when determining its base power and toughness."
+    },
+    {
+      "oracle_id": "3233af43-7826-4895-b67e-03c6102c2cd5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If a creature has a characteristic-defining ability that sets its power and toughness, indicated with a */* or similar in the power and toughness box, that ability is taken into account when determining its base power and toughness."
     }
   ],
   "schema_version": 1,

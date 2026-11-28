@@ -9,6 +9,49 @@ CAPABILITY='quantity_expression.source_entry_x'
 
 
 class EntryXResultCompilerTests(unittest.TestCase):
+    def test_entry_x_token_batch_requires_two_unscaled_quantities_and_one_self_entry(self):
+        from copy import deepcopy
+        from types import SimpleNamespace
+
+        from quorune.entry_x_amount_model import (
+            EntryXAmountSpec, is_zero_entry_x_token_batch,
+            project_entry_x_token_batch,
+        )
+        from quorune.rules.token_creation_capability_shapes import entry_x_program_runtime_dependencies
+
+        body = "When this creature enters, create X 1/1 white Halfling creature tokens and X Food tokens."
+        record = replace(query_record(body), mana_cost="{X}{G}{W}",
+                         type_line="Creature — Halfling", power="1", toughness="1")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        effect, = node.effects
+        self.assertEqual("create_token_batch", effect["op"])
+        self.assertEqual(2, len(effect["tokens"]))
+        self.assertEqual([EntryXAmountSpec()] * 2,
+                         [EntryXAmountSpec.from_dict(token["quantity"]) for token in effect["tokens"]])
+        self.assertEqual([2, 2], [token["quantity"] for token in project_entry_x_token_batch(effect)["tokens"]])
+
+        for changed in (1, {"kind": "source_entry_x_amount", "schema_version": 1, "coefficient": 2},
+                        {"kind": "source_entry_x_amount", "schema_version": True, "coefficient": 1}):
+            malformed = deepcopy(effect)
+            malformed["tokens"][1]["quantity"] = changed
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                project_entry_x_token_batch(malformed)
+
+        base = dict(event="permanent.enter.self", active_zone="battlefield", effects=(effect,),
+                    target_schema=None, event_condition=None, handlers=(), cost_schema=None, coverage=node.mechanics)
+        self.assertIn(CAPABILITY, entry_x_program_runtime_dependencies(SimpleNamespace(**base)))
+        for changed in ({"event": "permanent.enter"}, {"target_schema": {"count": 1}},
+                        {"effects": (effect, {"op": "draw", "player": "$controller", "count": 1})}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                entry_x_program_runtime_dependencies(SimpleNamespace(**{**base, **changed}))
+        zero = {**effect, "tokens": [{**token, "quantity": 0} for token in effect["tokens"]]}
+        self.assertTrue(is_zero_entry_x_token_batch(effect, zero))
+        zero["tokens"][0]["quantity"] = 1
+        self.assertFalse(is_zero_entry_x_token_batch(effect, zero))
+
     def test_unrelated_source_text_does_not_construct_an_entry_binding(self):
         from quorune.compiler.entry_x_results import entry_x_trigger_effect_compiler
         def ordinary(*args,**kwargs):return 'existing compiler'
@@ -112,7 +155,13 @@ class EntryXResultNativeTests(InheritedNativeFixture,unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'entry-x-results.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/entry-x-result-cards.json'],path)
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/entry-x-result-cards.json',
+            ROOT / 'tests/fixtures/counted-library-search-cards.json',
+            ROOT / 'tests/fixtures/scryfall-exact-lists.json',
+            ROOT / 'tests/fixtures/fixed-created-token-haste-cards.json',
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Entry X results',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',20)],['Isamaru, Hound of Konda'])
 
@@ -122,6 +171,154 @@ class EntryXResultNativeTests(InheritedNativeFixture,unittest.TestCase):
         command={'action_id':row['id'],'x':x,'pay':'auto'};before=authoritative_state_hash(s.state)
         self.assertFalse(s.act('pilot:D',command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
         result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+
+    def test_wan_uses_sealed_entry_x_for_counters_and_rounded_draw_even_after_departure(self):
+        for leaves_before_resolution in (False, True):
+            with self.subTest(leaves_before_resolution=leaves_before_resolution):
+                game = self.session(10731050 + int(leaves_before_resolution))
+                source = self.add(game.engine, "Wan Shi Tong, Librarian", zone="hand")
+                bounce = self.add(game.engine, "Unsummon", zone="hand")
+                reserve = self.add(game.engine, "Island", ref="wan-reserve-island")
+                self.assert_closed(game, source)
+                self.assert_closed(game, bounce)
+                self.prepare(game, mana={"C": 5, "U": 3})
+                self.checkpoint(game)
+                self.cast_x(game, source, 5)
+                self.resolve_top(game)
+                self.assertEqual(1, self.trigger_count(game, source))
+                if leaves_before_resolution:
+                    self.priority(game, "A")
+                    actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    mana = next(action for action in actions if action.get("mana_ability") and reserve.ref in action["id"])
+                    payment = game.act("pilot:A", {"action_id": mana["id"], "pay": "auto"})
+                    self.assertTrue(payment.ok, payment.summary)
+                    self.cast(game, "A", bounce, [game.state.cards[source.object_id].ref])
+                    self.resolve_top(game)
+                    self.assertEqual("hand", game.state.cards[source.object_id].zone)
+                game = self.replay(game, load=True)
+                initial_draws = len(game.state.players["A"].draw_history)
+                self.resolve_top(game)
+                entered = game.state.cards[source.object_id]
+                self.assertEqual(0 if leaves_before_resolution else 5, entered.counters.get("+1/+1", 0))
+                self.assertEqual(initial_draws + 2, len(game.state.players["A"].draw_history))
+                self.replay(game, load=True)
+
+    def test_wan_only_observes_opponents_completing_their_own_library_search(self):
+        from unittest.mock import patch
+        from quorune.rules.opponent_library_search import dispatch_own_library_search
+
+        game = self.session(10731055)
+        source = self.add(game.engine, "Wan Shi Tong, Librarian", zone="hand")
+        own = self.add(game.engine, "Worldly Tutor", zone="hand", ref="wan-own-search")
+        opponent = self.add(game.engine, "Worldly Tutor", seat="B", zone="hand", ref="wan-opponent-search")
+        self.add(game.engine, "Forest", ref="wan-forest-a")
+        self.add(game.engine, "Forest", seat="B", ref="wan-forest-b")
+        for card in (source, own, opponent):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"U": 2, "G": 1})
+        game.state.players["B"].mana_pool["G"] = 1
+        self.checkpoint(game)
+        self.cast_x(game, source, 0)
+        self.resolve_top(game)
+        self.resolve_top(game)
+        self.assertEqual(0, game.state.cards[source.object_id].counters.get("+1/+1", 0))
+        self.cast_for(game, "B", opponent)
+        choice = self.resolve(game)
+        self.assertEqual(("semantic.search", ("B",)), (choice.kind, tuple(choice.actors)))
+        self.assertEqual(0, self.trigger_count(game, source))
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:B", {"action_id": "choose", "search_cards": []})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.assertFalse(any(item.card_object_id == opponent.object_id for item in game.state.stack))
+        initial_draws = len(game.state.players["A"].draw_history)
+        self.resolve_top(game)
+        self.assertEqual(1, game.state.cards[source.object_id].counters.get("+1/+1"))
+        self.assertEqual(initial_draws + 1, len(game.state.players["A"].draw_history))
+        self.cast_for(game, "A", own)
+        choice = self.resolve(game)
+        self.assertEqual(("semantic.search", ("A",)), (choice.kind, tuple(choice.actors)))
+        accepted = game.act("pilot:A", {"action_id": "choose", "search_cards": []})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, self.trigger_count(game, source))
+        with patch.object(game.engine, "_dispatch_semantic_event") as notify:
+            dispatch_own_library_search(game.engine, searcher="B", owner="A")
+            notify.assert_not_called()
+        self.replay(game, load=True)
+
+    def test_wan_requires_the_original_rational_entry_and_own_library_event(self):
+        from dataclasses import replace
+        from quorune.entry_x_amount_model import ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY
+        from quorune.rules.opponent_library_search import OPPONENT_OWN_LIBRARY_SEARCH_CAPABILITY
+
+        source = self.db.lookup("Wan Shi Tong, Librarian", fuzzy=False)
+
+        def compiler(record):
+            return compile_oracle_card(record, capability_registry=self.registry,
+                                       capability_profile="commander_review")
+
+        ir = compiler(source)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        nodes = {node.event: node for node in ir.faces[0].nodes}
+        self.assertIn(ENTRY_X_COUNTER_HALF_DRAW_CAPABILITY, nodes["permanent.enter.self"].capability_dependencies)
+        self.assertIn(OPPONENT_OWN_LIBRARY_SEARCH_CAPABILITY, nodes["library.searched"].capability_dependencies)
+        for before, after in (
+            ("rounded down", "rounded up"),
+            ("searches their library", "searches a library"),
+            ("and draw a card", "and mill a card"),
+        ):
+            with self.subTest(after=after):
+                self.assertNotEqual("exact", compiler(replace(
+                    source, oracle_text=source.oracle_text.replace(before, after),
+                )).status)
+
+    def test_actual_farmer_cotton_combined_batch_and_noncast_zero_replay(self):
+        from quorune.ravenous_model import ENTRY_X_FIELD, EntryXInformation
+
+        def tokens(session):
+            created = [card for card in session.state.cards.values()
+                       if card.is_token and card.zone == "battlefield" and card.controller == "A"]
+            subtypes = [session.engine._type_parts(session.engine._effective_card_data(card)["type_line"])[1]
+                        for card in created]
+            return sum("halfling" in value for value in subtypes), sum("food" in value for value in subtypes)
+
+        def entry_amounts(session):
+            return [EntryXInformation.from_dict(item.context[ENTRY_X_FIELD]).amount for item in session.state.stack
+                    if item.kind == "triggered_ability" and ENTRY_X_FIELD in item.context]
+
+        session = self.session(107300208)
+        cotton = self.add(session.engine, "Farmer Cotton", zone="hand")
+        took = self.add(session.engine, "Peregrin Took")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        plains = self.add(session.engine, "Plains")
+        for card in (cotton, took, blink):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 2, "G": 1, "W": 1})
+        self.checkpoint(session)
+
+        self.cast_x(session, cotton, 2)
+        self.resolve_top(session)
+        self.assertEqual([2], entry_amounts(session))
+        original = session.state.cards[cotton.object_id].logical_object_id
+        session = self.replay(session, load=True)
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        mana = next(row for row in actions if row.get("mana_ability") and plains.ref in row["id"])
+        self.assertTrue(session.act("pilot:A", {"action_id": mana["id"], "pay": "auto"}).ok)
+        self.cast(session, "A", blink, [session.state.cards[cotton.object_id].ref])
+        self.resolve_top(session)
+        self.assertNotEqual(original, session.state.cards[cotton.object_id].logical_object_id)
+        self.assertEqual([2, 0], entry_amounts(session))
+        session = self.replay(session, load=True)
+
+        self.resolve_top(session)
+        self.assertEqual((0, 0), tokens(session))
+        self.assertEqual([2], entry_amounts(session))
+        self.assertIsNone(self.resolve(session))
+        # The one replacement adds one Food to the combined creation event.
+        self.assertEqual((2, 3), tokens(session))
+        self.replay(session, load=True)
 
     def test_actual_zoanthrope_retains_entry_x_after_source_return_and_counter_replacement(self):
         s=self.session(107300201)

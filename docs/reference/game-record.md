@@ -14,6 +14,23 @@ The checkpoint state and its hash come from one captured state payload.
 The hash normalizes top-level log and capability fields and preserves
 historical omissions. The stored checkpoint owns an independent copy
 of its mutable values.
+The durable writer shares each state's canonical JSON member bytes between
+the checkpoint and its hash. The wire state retains fields that are omitted
+or normalized for hashing, and the complete checkpoint replaces the previous
+file atomically.
+
+A physical card can carry imported printing details in the optional
+`printing` field. Oracle identity still selects the card's rules program.
+Historical cards without printing data continue to omit the field when
+serialized.
+
+The current reviewed turn-control effect declares `turn_control_lifetime_version`
+with value `1`. Pending control keeps `next_turn_control_lifetime_version` in the
+target player's stats until their next actual turn. Active control uses
+`turn_control_lifetime_version` through exceptional priority and every repeated
+cleanup. The following actual turn clears the marker. Archived programs without
+the descriptor retain their original early-cleanup expiration. Declared null,
+boolean and unknown marker values are invalid.
 
 Fixed-mana Evoke descriptor version two emits payment-marker version two and
 records `evoke_source_identity_version: 2` with the source battlefield incarnation.
@@ -28,6 +45,14 @@ state. It records how many phases remain queued, whether an added phase is
 active, and how many actual draws have completed during its draw step.
 Each added phase follows the normal untap, upkeep and draw sequence in the
 current turn. Checkpoints omit the field when no queued or active phase exists.
+
+The optional `main_phase_extra_combats` queue records a version-one main
+phase anchor, current turn, and newest-first phase grants. A combat grant
+carries the original landfall stack reference. Beginning that combat passes
+the reference to the ordinary delayed trigger, which enters priority before
+attackers declare. Returning to the normal turn or ending it clears the
+queue. Combat-origin grants retain the existing `extra_combat_phases`
+integer and the record omits the main-phase queue when it is unused.
 
 The optional paid Impending choice carries the fixed price and time-counter
 count on the stack. A copied spell carries the same choice. When the spell
@@ -225,6 +250,31 @@ pins the mode from the initial checkpoint. Records that omit it retain the
 historical net life transitions from damage. The mode persists when the
 turn history resets.
 
+The continuous-effect journal can contain a version-five
+`temporary_life_gain_prohibition` record. Its duration is
+`until_end_of_game` and its relation is `damage_recipients`. It retains the
+resolving stack reference and a nonempty, canonically ordered list of the
+players who received positive damage. This rule survives turn history resets
+and departure of its source. Versions one through four keep their existing
+duration, player scope and encoding.
+
+The existing damage-source choice can persist a `redirection` continuation
+for a whole-event replacement. The resolving activation retains the target
+and original source identity. Completion records the selected damage source
+using the existing chosen-source snapshot and the uncapped redirection
+journal form. A rule with `chosen_source_scope_version` set to `1` requires
+current phased-in permanent roles and discovers protection at the new
+destination. Earlier redirection records without this field keep their
+original encoding and scope. Prevention continuations retain their shield
+payload.
+
+The optional `turn_history.permanent_entry_token_history_version` is `1` in
+new games. Each committed `permanent_entered` event then records a Boolean
+token fact with the controller, types, and incarnation observed at entry.
+The nontoken creature-entry count requires a complete current-turn journal.
+Records with an omitted version retain their original entry-event payloads
+through replay and through later turn resets.
+
 The optional `turn_history.permanent_death_history_version` is `1` in
 current games. Each committed battlefield-to-graveyard permanent departure
 records its previous controller, incarnation, card types, creature subtypes
@@ -239,6 +289,12 @@ permanent arrivals in an owner's hand or graveyard, card arrivals in exile,
 and the artifact subtypes of sacrificed permanents. Graveyard arrivals retain
 prior battlefield types. Exile facts carry no characteristics. Earlier
 checkpoints omit the mode and keep their original turn-history hashes.
+
+Food entry history retains the effective artifact subtype, committed entry
+controller and exact entered incarnation using the public movement journal.
+The token and permanent entry paths record this fact when a trusted attack
+program in the frozen registry reads it. A turn reset discards the fact.
+Records with the prior frozen registry retain their original entry events.
 
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
@@ -374,6 +430,11 @@ scope. Schema-four physical ordering requests bind the existing departure batch
 and previously collected group permutations. Each issued order belongs to the
 current destination's principal, and no component moves before all groups are
 ordered. Earlier request schemas retain their codecs.
+
+Schema-five physical ordering requests bind a resolving sacrifice batch to
+the version-two departure plan and retain completed owner permutations. The
+choice belongs to the receiving owner and is collected before that instruction
+moves any object. Replay resumes the same resolving instruction.
 
 Cipher records retain a version-one typed `cipher_encoding` link on the
 physical exiled card, including both original incarnations. A committed encoded
@@ -520,7 +581,7 @@ before consuming a grant or advancing the scheduler.
 | `pilot-seat-memory/` | Optional bounded memory isolated by seat |
 | `plans.json` | Remaining validated ordered actions for safe fixed-seat resume |
 | `review.json`, `review.md` | Derived diagnostics and fidelity review; rebuildable and nonauthoritative |
-| `hidden-information-audit.json` | Derived projection and reference-leak audit |
+| `hidden-information-audit.json` | Derived projection and reference-leak audit generated with the postgame or paused review |
 | `call-benchmark.json` | Derived observed provider/opportunity metrics with provenance |
 
 Raw capability tokens, guest tokens, invite codes, provider credentials, and
@@ -584,6 +645,12 @@ their current controller owns the resolving cast choice. Saved casting choices
 revalidate the live trigger, complete source and current cost options before
 delegating mutation to the ordinary casting owner.
 
+A mulligan declaration can carry a private hand-redraw offer pinned to the
+current source incarnation and its complete semantic program. A successful
+submission returns to the same declaration cursor. Exile is public and
+replacement draws are private. Records whose frozen semantic registry omits
+the permission retain their original declaration payloads.
+
 An `opening.hand` decision records a versioned private continuation containing
 turn order, remaining final-hand source incarnations and the current chooser.
 Only that chooser's eligible references enter the projected payload. Nested
@@ -599,6 +666,12 @@ semantic program identities, and records revealed hand incarnations with any
 earlier disclosure. The final opening action ends that reveal duration before
 starting the first turn. Pending records retain already created delayed
 triggers; loading does not reveal again or recreate the scheduled result.
+
+A fixed alternative price can use an inner version-three descriptor for one
+life and one blue card from the caster's hand. The existing casting command
+records the selected alternative and the ordinary typed payment leaves.
+Replay revalidates those payments through the same casting transaction.
+Earlier single-payment and announced-X descriptors retain their encodings.
 
 A spell with a paid hand-reveal cost records a version-one
 `casting_hand_reveals` context containing selected physical/logical identities,
@@ -641,6 +714,14 @@ payment; the fixed reservation distinguishes those resources when validating
 Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
+
+A controller's game-duration unbounded cleanup limit is a typed
+`resolved_no_maximum_hand_size` continuous-journal entry. It records the resolving
+stack reference, fixed recipient, and creation timestamp. Round trips preserve
+its precedence alongside static hand-size settings. When a rolled draw
+suspends, the ordinary draw continuation carries its already-bound count and
+the following cleanup instruction. Earlier checkpoints retain their existing
+shape.
 
 Fixed random spell prices use the closed `random_discard` additional-cost
 descriptor with schema one and count one. Suspended payments reuse the private
@@ -919,6 +1000,11 @@ Receiver-bound attack characteristic results reuse the sealed
 incarnation is skipped at resolution; the observer's identity remains the
 effect's source. Public quantity evaluation retains the trigger controller.
 
+A resolution-created turn land mana trigger has a version-one journal record
+with its own effect identity, resolving stack source, fixed land subtype,
+mana symbol, Snow provenance, and cleanup duration. Save/load and command
+replay use that record for both funding and immediate mana production.
+
 Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
 Each original cast stores an optional version-one `mana_spent_counts` stack
 fact with its physical/logical incarnation and exact concrete WUBRGC amounts.
@@ -1089,6 +1175,13 @@ manifest binds this mode to the initial checkpoint. Expend occurrences retain
 an immutable player and before/after payment totals; later spending cannot
 change a queued crossing.
 
+
+`turn_history.land_play_history_version` enables the complete current-turn
+land-play facts when set to one and is mirrored in format provenance. A
+committed play records its acting seat and the land incarnation. Turn reset
+clears the facts and preserves the mode. A historical checkpoint without
+this mode records no additional land-play facts during replay.
+
 The version-one `qualified_spell_cast_number` event condition stores one
 closed spell-history query and a fixed positive equality threshold. It locates
 the exact committed cast incarnation in the existing current-turn journal and
@@ -1182,11 +1275,25 @@ The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
 
+The supported Gift spells record a version-one optional recipient in
+stack context. Copies carry the original recipient choice. The tapped Fish
+variant rebinds its exact target domain from that retained choice. The resolved
+player hexproof grant uses version two of the player turn-rule journal entry
+with a fixed player identity. All-player grants retain their version-one
+encoding. The private card draw uses the existing draw continuation and
+visibility rules.
+
 A resolved Defender permission uses declaration-rule schema five and a
 typed `permission` field. It carries either one locked battlefield
 incarnation or a live public creature query with an empty locked list.
 Its duration expires at end of turn. Older rule schemas and temporary
 Defender instruction schema three retain their replay encodings.
+
+The first-main-phase paid Mill stores its fixed price and its committed
+public card identities in the existing optional payment frame. It passes
+the same identities into the following selection frame only after payment.
+Public destinations, zone changes, and the decoding of both stages survive
+save and load.
 
 Version-five linked reanimation adds the `exile_on_leave` rider. The
 `resolution_linked_departure_exile` journal record retains the source and one
@@ -1355,10 +1462,34 @@ destination scope when reconstructing the batch. Damage clearing commits only
 after the movement preflight succeeds. An absent version preserves the
 historical selection and commit order.
 
+The `saga_intrinsic_ability_version` binds Saga entry and turn actions to the
+initial checkpoint. Version one uses chapter-aware Saga entry. Version two
+also evaluates granted Read Ahead and checks its chapter timing throughout
+the entry turn. Records without the field retain their historical Saga
+behavior.
+
+The version-one rad trigger marker, `rad_trigger_version`, appears in both
+the initial checkpoint state and the record format. It enables radiation at
+the active player's precombat main phase. Historical records omit the marker
+and keep passive rad counters through replay. A present null, boolean,
+unknown version, or disagreement between the two locations rejects the record.
+
+The controlled-creature Addendum uses the existing main-phase cast fact and
+seals public creature references and their zone incarnations at resolution.
+A counter replacement choice retains the later vigilance instruction with
+the original cohort. The existing continuous-effect journal tracks the
+resulting protection through cleanup.
+
 Fresh games record the version-one `counter_quantity_provenance_version` field.
 Counter replacement continuations preserve whether a positive quantity
 replacement has changed the placement's origin for effect-only matching.
 Records with the field absent retain the historical matching behavior.
+
+The version-one `permanent_counter_receipt_history_version` binds the initial
+checkpoint to current-turn counter receipt history. Committed placements and
+entry counters record one receipt per receiving battlefield incarnation. A
+receipt remains valid after counter removal and the next turn starts a new
+journal. Earlier records keep their original placement history.
 
 An Endure counter-payment continuation records `effect_generated=false` in
 its intent identity. Resume checks the choosing controller, source
@@ -1412,11 +1543,23 @@ and `corrupt`. A pause has a structured reason. An administrative browser stop
 does not add a synthetic game command or advance state; resume may clear only
 that administrative reason.
 
-Record components are written atomically and the manifest is the final commit
-marker. Accepted network commands are persisted before acknowledgement.
-Integrity verification rejects manifest/journal counter disagreement, invalid
-hashes, malformed continuations, and incompatible source identity rather than
-trusting a stale summary.
+An accepted command may carry `priority_window_holds`, the server's snapshot
+of the pilots' priority hold settings for that command. Replay restores those
+settings when scheduling priority windows. Older commands with no settings
+use their recorded game's original advancement behavior.
+
+New checkpoints pin `priority_special_actions_version` in their game config.
+An otherwise empty priority window stays open when the action catalog offers a
+special action such as suspend or turning a face-down permanent face up. Older
+checkpoints without that field replay with their original empty-window rule.
+
+The record writer replaces the checkpoint and journals before publishing the
+manifest. The server retains the previous files in a private recovery directory
+until the entire save finishes. An interrupted save restores that revision before
+the game loads, even when a new server process opens the record. The server
+acknowledges an accepted move after the save commits. Integrity verification
+checks that the manifest, journals, hashes, continuations, and source identity
+agree.
 
 ## Privacy and derived artifacts
 
@@ -1506,10 +1649,13 @@ The suspended instruction stays bound to the original trigger and the current
 Aura's exile incarnation.
 
 New games carry an internal `mandatory_linked_loop` witness with schema
-version one. It holds one comparison digest and the current trigger cursor.
-Replay rebuilds the witness and terminal draw from accepted target and priority
-commands. Historical checkpoints omit the field and keep their original rule
-behavior. Projection leaves the witness in the authoritative record.
+version two. The witness retains its comparison digest, trigger cursor,
+recurrence progress, and proof family. An empty witness has a null family.
+The linked-exile and reciprocal received-damage proofs share the recurrence
+owner. Replay rebuilds any witness and terminal draw from the native command
+stream. Version-one witnesses retain their linked-exile behavior and field
+set. Historical checkpoints can also omit the witness. Projection keeps all
+versions in the authoritative record.
 
 An ordered mana activation can retain an `input` object with its
 `ability_id`, `cost_option`, and exact colored or colorless `payment`.

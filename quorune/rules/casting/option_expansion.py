@@ -3,9 +3,24 @@ from __future__ import annotations
 """Assemble represented optional mana and resource prices in their fixed order."""
 
 import copy
+from collections.abc import Mapping
+
+from ...kicker import POSITIVE_GENERIC_KICKER_X
+
+
+def has_positive_generic_kicker_cost(schema):
+    return any(raw.get(POSITIVE_GENERIC_KICKER_X) is True for raw in schema.get("optional_costs", ()))
 
 
 def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=False):
+    submission = response or {}
+    announced_x = submission.get("x")
+    if has_positive_generic_kicker_cost(schema):
+        if not hint and announced_x is not None and type(announced_x) is not int:
+            return []
+        base = [{**option, "x_value_policy": "zero"} for option in base]
+    from ...opponent_library_exile import LEGACY_FREE_EXILE_CAST_FIELD
+
     expanded = list(base)
     for raw in schema.get("optional_costs", []):
         additional = dict(raw)
@@ -15,6 +30,13 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
         ):
             continue
         additional_vector = host._mana_vector(additional.get("requirements"))
+        if additional.get(POSITIVE_GENERIC_KICKER_X) is True:
+            paid_x = 1 if hint else announced_x
+            if type(paid_x) is not int or paid_x < 1:
+                continue
+            additional[POSITIVE_GENERIC_KICKER_X] = paid_x
+            additional["x_value_policy"] = None
+            additional_vector["GENERIC"] += paid_x
         for base_option in base:
             combined = host._mana_vector(base_option["requirements"])
             for symbol, amount in additional_vector.items():
@@ -23,14 +45,21 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
             if base_option.get('_additional_option_costs') and additional.get('_additional_option_costs'):
                 metadata['_additional_option_costs'] = [*copy.deepcopy(base_option['_additional_option_costs']),
                     *copy.deepcopy(additional['_additional_option_costs'])]
+            explicit_base = base_option.get('battlefield_alternative_cost') or base_option.get(LEGACY_FREE_EXILE_CAST_FIELD)
+            option_id = (
+                str(base_option["id"]) + "+" + str(additional["id"])
+                if explicit_base
+                else str(additional["id"])
+            )
+            if POSITIVE_GENERIC_KICKER_X in additional and not hint and submission.get("cost_option") != option_id:
+                continue
             expanded.append(
                 {
                     **base_option,
                     **metadata,
                     **({'label': str(base_option.get('label') or '')+' + '+str(additional.get('label') or additional['id'])}
-                       if base_option.get('battlefield_alternative_cost') else {}),
-                    "id": (str(base_option['id'])+'+'+str(additional['id'])
-                           if base_option.get('battlefield_alternative_cost') else str(additional["id"])),
+                       if explicit_base else {}),
+                    "id": option_id,
                     "kind": str(
                         additional.get("kind") or "optional_additional"
                     ),
@@ -51,8 +80,19 @@ def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_sourc
     """Existing price owners retain their own selection and composition guards."""
     from .additional_zone_costs import expand_discard_sacrifice_orders
     if not suppress_source_costs:
+        from ..fixed_payment_groups import FIXED_DISCARD_SACRIFICE_FIELD, WHOLE_DISCARD_SACRIFICE_VERSION
+        from .whole_zone_costs import whole_zone_sacrifice_payable
+
+        if (isinstance(declared_schema, Mapping)
+                and declared_schema.get(FIXED_DISCARD_SACRIFICE_FIELD) == WHOLE_DISCARD_SACRIFICE_VERSION
+                and not whole_zone_sacrifice_payable(host, seat)):
+            return []
         try:
             expanded = expand_discard_sacrifice_orders(expanded, declared_schema)
+            from ..paid_sacrifice_copy import expand_paid_sacrifice_copy_options
+            from .optional_creature_payments import expand_sacrifice_credit_options
+            expanded = expand_paid_sacrifice_copy_options(host, seat, card, expanded, declared_schema)
+            expanded = expand_sacrifice_credit_options(host, seat, card, expanded, declared_schema)
         except ValueError:
             return []
     from ...semantic_runtime.spell_payment_grants import (

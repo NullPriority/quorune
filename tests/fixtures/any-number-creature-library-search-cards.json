@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_any_number_creature_library_search_card_data",
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "5789520c-e4b2-44b2-b756-3f6b468dc55b",
+      "name": "Bilbo, Birthday Celebrant",
+      "mana_cost": "{W}{B}{G}",
+      "type_line": "Legendary Creature — Halfling Rogue",
+      "oracle_text": "If you would gain life, you gain that much life plus 1 instead.\n{2}{W}{B}{G}, {T}, Exile Bilbo: Search your library for any number of creature cards, put them onto the battlefield, then shuffle. Activate only if you have 111 or more life.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "5789520c-e4b2-44b2-b756-3f6b468dc55b",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Bilbo, Birthday Celebrant's first ability to apply, even though it will cause your team's life total to increase."
+    },
+    {
+      "oracle_id": "5789520c-e4b2-44b2-b756-3f6b468dc55b",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Bilbo, Birthday Celebrant's first ability applies just once to each life-gaining event, no matter how much life is gained. If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and the ability of Bilbo, Birthday Celebrant applies only once."
+    },
+    {
+      "oracle_id": "5789520c-e4b2-44b2-b756-3f6b468dc55b",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Bilbo, Birthday Celebrant's first ability will apply to those two events separately. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, and/or planeswalkers at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will apply only once."
+    },
+    {
+      "oracle_id": "5789520c-e4b2-44b2-b756-3f6b468dc55b",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If you somehow control two Bilbo, Birthday Celebrants and you would gain life, you gain that much life plus 2. A third Bilbo, Birthday Celebrant has you gain that much life plus 3, and so on."
+    }
+  ]
+}

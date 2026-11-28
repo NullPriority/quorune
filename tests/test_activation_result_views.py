@@ -548,6 +548,9 @@ class ActivationResultViewTests(unittest.TestCase):
         self.assertIsNone(self.resolve(s))
         self.assertEqual('exile', s.state.cards[selected.object_id].zone)
         self.activate(s, source)
+        stack = s.packet('spectator', full=True)['state']['stack']
+        self.assertTrue(stack[0]['graveyard_interaction'])
+        self.assertNotIn('targets', stack[0])
         s = self.resume(s)
         self.assertIsNone(self.resolve(s))
         for card in others:
@@ -575,6 +578,8 @@ class ActivationResultViewTests(unittest.TestCase):
         self.reject(s, command, seat='D')
         result = s.act('pilot:A', command)
         self.assertTrue(result.ok, result.summary)
+        stack = s.packet('spectator', full=True)['state']['stack']
+        self.assertNotIn('graveyard_interaction', stack[0])
         s = self.resume(s)
         self.assertIsNone(self.resolve(s))
         self.assertEqual('graveyard', s.state.cards[source.object_id].zone)

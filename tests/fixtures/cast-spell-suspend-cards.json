@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Taigam, Master Opportunist and native spell and Suspend witnesses.",
+  "cards": [
+    {
+      "oracle_id": "0596920f-9946-42f4-a03b-24aab67f9f1b",
+      "name": "Blaze",
+      "mana_cost": "{X}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Blaze deals X damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "name": "Counterspell",
+      "mana_cost": "{U}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "name": "Taigam, Master Opportunist",
+      "mana_cost": "{1}{U}",
+      "type_line": "Legendary Creature — Human Monk",
+      "oracle_text": "Flurry — Whenever you cast your second spell each turn, copy it, then exile the spell you cast with four time counters on it. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flurry"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "A resolving copy of a permanent spell becomes a token. That token isn’t “created” and won’t interact with abilities that care about tokens being created."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "As the second triggered ability of suspend resolves, you may cast the card. Timing permissions based on the card’s type are ignored. If you choose not to (or can’t) cast the card, it remains exiled with no time counters on it, and it’s no longer suspended."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If an effect refers to a “suspended card,” that means a card that (1) has suspend, (2) is in exile, and (3) has one or more time counters on it."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the first triggered ability of suspend (the one that removes time counters) is countered, no time counter is removed. The ability will trigger again at the beginning of the card’s owner’s next upkeep."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the second triggered ability is countered, the card can’t be cast. It remains exiled with no time counters on it, and it’s no longer suspended."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If the spell that’s copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If you cast a card “without paying its mana cost,” such as with suspend, you can’t choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those if you want to cast the card."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Spells that were cast before a permanent with flurry count. If that permanent was the first spell you cast that turn, the next spell you cast that turn is your second spell."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Suspend is a keyword that represents three abilities. The first is a static ability that allows you to exile the card from your hand with the specified number of time counters (the number before the dash) on it by paying its suspend cost (listed after the dash). The second is a triggered ability that removes a time counter from the suspended card at the beginning of each of your upkeeps. The third is a triggered ability that gives you the option to cast the card when the last time counter is removed. Note that if a card is exiled and then “gains suspend,” only the two triggered abilities are relevant."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Taigam’s ability and the copy it creates resolve before the spell it’s copying. They resolve even if the original spell is countered before the copy is created. Note that Taigam’s ability exiles the original spell as the ability resolves, which will remove that spell from the stack before it can resolve."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it’s not “cast.” Abilities that trigger when a player casts a spell won’t trigger."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "The copy will have the same targets and modes as the original spell. If the spell divides damage or distributes counters among a number of targets, those choices apply to the copy."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "When the last time counter is removed, the second triggered ability of suspend (the one that lets you cast the card) triggers. It doesn’t matter why the last time counter was removed or what effect removed it."
+    },
+    {
+      "oracle_id": "49f2cbc3-bd03-48e6-b1c4-d7f315b8579d",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You can’t choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too."
+    }
+  ]
+}

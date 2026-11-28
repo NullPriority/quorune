@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Protocol
 
 from .errors import GameRuleError
@@ -9,6 +11,7 @@ from .model import StackItem
 from .replacement.immutable import FrozenMap, thaw_value
 from .spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY, SpellManaSpentCounts
 from .rules.next_cast_counter_protection import announced_cast_is_protected
+from .semantic_runtime.context import SemanticSourceContext
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
 from .zone_trigger_events import ZoneTransitionKind, counter_destination_fields
 from .combat_entry_activations import cleanup_ninjutsu_reveal
@@ -24,6 +27,26 @@ INTRINSIC_COUNTER_PROHIBITION_CAPABILITY = (
 NO_MANA_SPENT_COUNTER_FIELD = "counter_if_no_mana_spent_version"
 ANNOUNCED_X_COUNTER_FIELD = "counter_if_mana_value_equals_announced_x"
 CREATURE_COUNT_COUNTER_FIELD = "counter_if_controller_creature_count_greater_version"
+COUNTERED_ABILITY_SOURCE_LOSS_FIELD = "countered_ability_source_loss_version"
+COUNTERED_ABILITY_ACTIVATION_LOCK_FIELD = "countered_ability_activation_lock_v1"
+
+
+class CounteredAbilityActivationLock(str, Enum):
+    AFTER_SUCCESS = "counter_success"
+    AFTER_ATTEMPT = "counter_attempt"
+
+
+@dataclass(frozen=True, slots=True)
+class CounterActivationProhibition:
+    source: SemanticSourceContext
+    mode: CounteredAbilityActivationLock
+
+    def __post_init__(self) -> None:
+
+        if not isinstance(self.source, SemanticSourceContext) or not isinstance(self.mode, CounteredAbilityActivationLock):
+            raise ValueError("An activation prohibition requires its original resolving spell and typed counter outcome")
+
+
 _CREATURE_COUNT_COUNTER = {
     "op": "counter_stack_target", "stack": "$target.0", CREATURE_COUNT_COUNTER_FIELD: 1,
 }
@@ -240,6 +263,8 @@ def bind_creature_count_counter(host, item, raw_effect, effect):
 
 
 def bind_conditional_stack_counter(host, item, raw_effect, effect):
+    if COUNTERED_ABILITY_SOURCE_LOSS_FIELD in raw_effect and effect.get("stack") is None:
+        return None
     effect = bind_no_mana_spent_counter(host.state, raw_effect, effect)
     if effect is not None:
         effect = bind_announced_x_counter(host, item, raw_effect, effect)
@@ -423,7 +448,10 @@ def counter_stack_item(
         destination, move_options = _prepare_counter_destination(
             host, item, counter_destination, replacement_selections,
         )
+    from .rules.controlled_spell_counter import CONTROLLED_SPELL_COUNTER_EVENT, prepare_successful_spell_counter
     from .rules.event_spell_copy import pin_event_spell_copy_departure
+    from .trigger_discovery import dispatch_semantic_event
+    occurrence = None if as_rule else prepare_successful_spell_counter(host.state.stack, item, countered_by=countered_by)
     pin_event_spell_copy_departure(host,item)
     source_controller = source_controller if source_controller is not None else countered_by
     creature_cast = None if as_rule else _creature_cast_before_counter(host, item, source_controller)
@@ -450,6 +478,8 @@ def counter_stack_item(
             )
             if counter_destination is not None:
                 destination = moved.zone
+    if occurrence is not None:
+        dispatch_semantic_event(host, CONTROLLED_SPELL_COUNTER_EVENT, occurrence.event_context())
     telemetry_seat = (
         countered_by
         if countered_by in host.state.players
@@ -476,6 +506,83 @@ def counter_stack_item(
         importance=2,
     )
     return item
+
+
+def _original_ability_source(state, item):
+    card = state.cards.get(item.source_object_id)
+    if (
+        card is None or card.zone != "battlefield" or card.phased_out
+        or card.logical_object_id != item.context.get("source_logical_object_id")
+    ):
+        return None
+    return card
+
+
+def counter_ability_with_activation_lock(host, ref, *, source, actor, reason, mode):
+    from .continuous_effect_model import ContinuousObjectIdentity
+    from .continuous_effect_state import commit_continuous_effect
+    from .declaration_rule_effects import ResolvedActivationProhibition
+
+    parent = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
+    target = next((item for item in host.state.stack if item.ref == ref), None)
+    if (
+        parent is None or parent.kind != "spell" or parent.controller != actor
+        or not parent.context.get("currently_resolving") or parent.targets != [ref]
+        or target is None or target.kind not in {"activated_ability", "triggered_ability"}
+        or mode is CounteredAbilityActivationLock.AFTER_ATTEMPT and target.kind != "activated_ability"
+    ):
+        raise GameRuleError("Activation prohibition requires the original resolving spell and its chosen ability")
+    counter_stack_item(host, ref, countered_by=actor, reason=reason)
+    if (mode is CounteredAbilityActivationLock.AFTER_SUCCESS
+            and any(item.stack_id == target.stack_id for item in host.state.stack)):
+        return
+    card = _original_ability_source(host.state, target)
+    if card is not None:
+        commit_continuous_effect(host.state, ResolvedActivationProhibition(
+            effect_id=host._next_ref("CE"), source_id=source.object_id or source.stack_ref,
+            timestamp=host._next_zone_timestamp(), subject=ContinuousObjectIdentity(card.object_id, card.logical_object_id),
+        ))
+
+
+def counter_ability_with_source_loss(host, ref, *, source, actor, reason):
+    from .continuous_effect_model import ContinuousEffectDuration, ContinuousOperation, Layer
+    from .continuous_effect_state import (
+        ResolutionContinuousComponent, ResolutionEffectSource, create_resolution_continuous_effect_components,
+    )
+    from .control_effects import prepare_tracked_source_presence_duration
+
+    parent = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
+    target = next((item for item in host.state.stack if item.ref == ref), None)
+    if (
+        parent is None or parent.kind != "triggered_ability" or parent.controller != actor
+        or not parent.context.get("currently_resolving") or parent.targets != [ref]
+        or target is None or target is parent or target.kind not in {"activated_ability", "triggered_ability"}
+    ):
+        raise GameRuleError("Countered ability source loss requires the original resolving trigger and its chosen ability")
+
+    counter_stack_item(host, ref, countered_by=actor, reason=reason)
+    if any(item.stack_id == target.stack_id for item in host.state.stack):
+        return
+
+    card = _original_ability_source(host.state, target)
+    if card is None:
+        return
+    types, _, _ = host._type_parts(host._effective_card_data(card)["type_line"])
+    if not types.intersection({"artifact", "creature", "planeswalker"}):
+        return
+
+    original = ResolutionEffectSource(source.stack_ref, source.object_id, source.logical_object_id, source.card_ref)
+    presence = prepare_tracked_source_presence_duration(
+        host.state, original, source.duration_history, source.duration_resolution_timestamp,
+    )
+    if presence is None:
+        return
+    create_resolution_continuous_effect_components(
+        host, source=original, targets=(card,),
+        components=(ResolutionContinuousComponent(Layer.ABILITY, "6", (ContinuousOperation("remove_all_abilities"),)),),
+        duration=ContinuousEffectDuration.UNTIL_SOURCE_LEAVES,
+        duration_history=presence,
+    )
 
 
 __all__ = [

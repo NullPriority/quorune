@@ -11,10 +11,12 @@ ANNOUNCED_TARGET_SET_CAPABILITY = "target.cardinality.mana_announced_x"
 ANY_NUMBER_TARGET_CAPABILITY = "target.cardinality.any_number"
 SELECTED_PLAYER_RESULT_CAPABILITY = "resolution.target_set.selected_player_results"
 SELECTED_PLAYER_RESULT_MECHANIC = "selected-player-result-set"
+SELECTED_PLAYER_SACRIFICE_MANA_DRAW_LAYOUT = ("lose_life", "choose_cards_apnap", "mana", "draw")
 SELECTED_PLAYER_RESULT_LAYOUTS = frozenset({
     ("mill",), ("life",), ("lose_life",), ("choose_cards_apnap",), ("draw_each_player",),
     ("destroy_all", "mill"), ("mill", "lose_life"), ("discard_whole_hands", "draw_each_player"),
     ("discard_whole_hands", "draw_each_player", "draw"),
+    SELECTED_PLAYER_SACRIFICE_MANA_DRAW_LAYOUT,
 })
 SELECTED_TARGET_COUNT_KIND = "selected_target_count"
 

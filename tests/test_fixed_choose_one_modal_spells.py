@@ -7,6 +7,8 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY,
@@ -437,6 +439,172 @@ class FixedChooseOneModalRuntimeTests(unittest.TestCase):
         self.assertEqual("battlefield", creature.zone)
         self.assertEqual(0, creature.marked_damage)
         self.assertEqual("graveyard", source.zone)
+
+
+class ControllerGraveyardManaTargetTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "controller-graveyard-threshold.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "fixed-choose-one-modal-cards.json", "event-spell-copy-cards.json",
+            "revealed-top-card-mana-value-cards.json", "announced-destruction-controller-tokens-cards.json",
+            "ability-label-composition-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Controller graveyard threshold", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def _mode_targets(self, game, source, mode):
+        self.priority(game, "A")
+        offer = self.action(game, "A", source)
+        schema = offer["target_schema"]
+        return offer["id"], schema["mode_schemas"][mode]["groups"][0]["legal_refs"]
+
+    def _cast_mode(self, game, source, mode, target, *, forbidden=None):
+        action, refs = self._mode_targets(game, source, mode)
+        self.assertIn(target, refs)
+        payload = {"action_id": action, "modes": [mode], "targets": [target], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", payload).ok)
+        self.assertFalse(game.act("pilot:A", {**payload, "modes": ["mode_1", "mode_2"]}).ok)
+        if forbidden is not None:
+            self.assertNotIn(forbidden, refs)
+            self.assertFalse(game.act("pilot:A", {**payload, "targets": [forbidden]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", payload)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([mode], game.state.stack[-1].modes)
+
+    def _drown(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Drown in the Loch", zone="hand")
+        self.assert_closed(game, source)
+        return game, source
+
+    def test_drown_counter_reads_live_stack_x_and_revalidates_after_graveyard_exile(self):
+        for branch in ("valid", "stale", "over_threshold"):
+            with self.subTest(branch=branch):
+                game, source = self._drown(811771 + ("valid", "stale", "over_threshold").index(branch))
+                fired = self.add(game.engine, "Blaze", seat="B", zone="hand")
+                bear = self.add(game.engine, "Grizzly Bears", seat="B")
+                crypt = self.add(game.engine, "Tormod's Crypt", seat="C") if branch == "stale" else None
+                for i in range(3):
+                    self.add(game.engine, "Island", seat="B", zone="graveyard", ref=f"drown-b-grave-{i}")
+                self.prepare(game, actor="B", active="B", mana={"C": 3, "R": 1})
+                game.state.players["A"].mana_pool.update({"U": 1, "B": 1})
+                self.checkpoint(game)
+                self.priority(game, "B")
+                option = self.action(game, "B", fired)
+                result = game.act("pilot:B", {"action_id": option["id"], "x": 3 if branch == "over_threshold" else 2, "targets": ["A"], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                target = game.state.stack[-1].ref
+                if branch == "over_threshold":
+                    self.priority(game, "A")
+                    offer = self.action(game, "A", source)
+                    self.assertEqual(["mode_2"], offer["target_schema"]["legal_modes"])
+                    before = authoritative_state_hash(game.state)
+                    rejected = game.act("pilot:A", {"action_id": offer["id"], "modes": ["mode_1"],
+                                                       "targets": [target], "pay": "auto"})
+                    self.assertFalse(rejected.ok, rejected.summary)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                    self.replay(game, load=True)
+                    continue
+                self._cast_mode(game, source, "mode_1", target, forbidden=bear.ref)
+                if crypt is not None:
+                    self.priority(game, "C")
+                    rows = game.packet("pilot:C", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action, = (row for row in rows if row["id"].startswith(f"activate:{crypt.ref}:"))
+                    result = game.act("pilot:C", {"action_id": action["id"], "targets": ["B"], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    game = self.replay(game, load=True)
+                    self.resolve_top(game)
+                    self.assertEqual([], game.state.players["B"].zones["graveyard"])
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(38 if branch == "stale" else 40, game.state.players["A"].life)
+                self.assertEqual("graveyard", game.state.cards[fired.object_id].zone)
+                self.assertEqual("battlefield", game.state.cards[bear.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_drown_destroy_reads_the_current_controller_before_and_after_control_changes(self):
+        game, source = self._drown(811775)
+        bearer = self.add(game.engine, "Grizzly Bears", seat="C")
+        game.engine.change_control(bearer.object_id, "B", reason="Seed a borrowed creature")
+        self.add(game.engine, "Vedalken Orrery", seat="C")
+        steal = self.add(game.engine, "Act of Treason", seat="C", zone="hand")
+        for i in range(2):
+            self.add(game.engine, "Island", seat="B", zone="graveyard", ref=f"drown-b-bear-threshold-{i}")
+        self.prepare(game, mana={"U": 1, "B": 1})
+        game.state.players["C"].mana_pool.update({"C": 2, "R": 1})
+        self.checkpoint(game)
+        self._cast_mode(game, source, "mode_2", bearer.ref)
+        self.cast(game, "C", steal, [bearer.ref])
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual("C", game.state.cards[bearer.object_id].controller)
+        self.assertEqual(1, len(game.state.players["C"].zones["graveyard"]))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[bearer.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_drown_destroy_uses_off_stack_x_and_reserves_the_cast_source_departure(self):
+        from quorune.rules.controller_graveyard_mana_targets import controller_graveyard_mana_target_matches
+        from quorune.target_source import spell_targeting_source
+
+        game, source = self._drown(811776)
+        hydra = self.add(game.engine, "Feral Hydra", seat="B")
+        hydra.counters.update({"+1/+1": 5})
+        grave = self.add(game.engine, "Island", seat="B", zone="graveyard")
+        reserved = self.add(game.engine, "Drown in the Loch", seat="B", zone="graveyard", ref="drown-departing-source")
+        row = {"controller":"B", "mana_value":2}
+        self.assertTrue(controller_graveyard_mana_target_matches(game.engine, row))
+        proposal = spell_targeting_source(game.engine, reserved, reserve_graveyard_departure=True)
+        self.assertEqual(reserved.object_id, proposal.reserved_graveyard_source_id)
+        self.assertFalse(controller_graveyard_mana_target_matches(
+            game.engine, row, reserved_source_id=proposal.reserved_graveyard_source_id,
+        ))
+        game.engine.move_card(reserved.object_id, "exile", log=False, semantic_events=False)
+        self.prepare(game, mana={"U": 1, "B": 1})
+        self.checkpoint(game)
+        self._cast_mode(game, source, "mode_2", hydra.ref)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[hydra.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[grave.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_drown_compile_and_runtime_keep_the_two_mode_thresholds_independent(self):
+        from dataclasses import replace
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.rules.controller_graveyard_mana_targets import (
+            CONTROLLER_GRAVEYARD_MANA_CAPABILITY, CONTROLLER_GRAVEYARD_MANA_PREDICATE,
+        )
+
+        game, source = self._drown(811777)
+        record = self.db.lookup(source.printed_name, fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertIn(CONTROLLER_GRAVEYARD_MANA_CAPABILITY, node.capability_dependencies)
+            self.assertEqual([CONTROLLER_GRAVEYARD_MANA_PREDICATE] * 2,
+                             [mode["predicate"] for mode in node.target_schema["modes"].values()])
+        witness()
+        with patch("quorune.compiler.controller_graveyard_mana_templates.controller_graveyard_mana_target_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        program, = [p for p in game.engine.semantics.programs_for_oracle(record.oracle_id) if p.event == "resolve"]
+        schema = copy.deepcopy(program.target_schema)
+        del schema["modes"]["mode_2"]["predicate"]
+        changed = replace(program, target_schema=schema)
+        admitted = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(admitted["strict"], admitted)
+
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 """Native entry and departure triggers sharing one original exile batch."""
 
 import json
+from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -65,6 +66,133 @@ class LinkedBatchDepartureReturnTests(InheritedNativeFixture, unittest.TestCase)
     def _assert_zone(self, game, zone, cards):
         for card in cards:
             self.assertEqual(zone, self._current(game, card).zone, card.ref)
+
+    def test_skyclave_complete_pair_keeps_optional_target_and_distinct_departure_result(self):
+        from quorune.rules.linked_exile_owner_tokens import CAPABILITY, TEMPLATE
+
+        card = self.db.lookup("Skyclave Apparition", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        entry, leaving = ir.faces[0].nodes
+        self.assertEqual(("permanent.enter.self", "permanent.leave.self"), (entry.event, leaving.event))
+        self.assertEqual(1, entry.target_schema["up_to"])
+        self.assertEqual(4, entry.target_schema["mana_value_max"])
+        self.assertEqual(entry.effects[0]["binding_id"], leaving.effects[0]["binding_id"])
+        self.assertEqual(TEMPLATE, leaving.template_id)
+        self.assertIn(CAPABILITY, leaving.capability_dependencies)
+        for changed in (
+            card.oracle_text.replace("up to one", "one"),
+            card.oracle_text.replace("exiled card's owner", "you"),
+            card.oracle_text.replace("blue Illusion", "green Illusion"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=changed), **options).status)
+        with patch("quorune.compiler.linked_exile_owner_tokens.linked_ability_exile_node_capabilities", return_value=()):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+
+    def apparition_fixture(self, seed, *, multiplier=False):
+        game = self.session(seed)
+        engine = game.engine
+        source = self.add(engine, "Skyclave Apparition", zone="hand", ref="SKYCLAVE-SOURCE")
+        removal = self.add(engine, self.bounce, seat="B", zone="hand", ref="SKYCLAVE-REMOVAL")
+        target = self.add(engine, self.creature, seat="B", ref="SKYCLAVE-B-OWNED")
+        engine.change_control(target.object_id, "C", reason="C controls the card owned by B")
+        second = None
+        if multiplier:
+            second = self.add(engine, "Generic Bound Body", seat="C", ref="SKYCLAVE-C-OWNED")
+            doubling = self.add(engine, "Panharmonicon")
+            component, = (program for program in engine.semantics.programs_for_oracle(doubling.oracle_id)
+                          if "trigger.multiplier.artifact_or_creature_enters" in program.capability_dependencies)
+            self.assertTrue(engine.semantic_program_is_current_trusted(component))
+        self._prepare_sources(game, source, removal, {"C": 1, "W": 2})
+        return game, source, removal, target, second
+
+    def choose_apparition_targets(self, game, *targets):
+        if game.state.pending_decision.kind == "trigger.order":
+            decision = game.packet("pilot:A", full=True)["decision"]["ctx"]
+            refs = [row["id"] for row in decision["triggers"]]
+            order = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+            self.assertTrue(order.ok, order.summary)
+        for target in targets:
+            self.assertEqual("semantic.target", game.state.pending_decision.kind)
+            result = game.act("pilot:A", {"action_id": "choose", "targets": [target.ref]})
+            self.assertTrue(result.ok, result.summary)
+
+    def assert_apparition_tokens(self, game, owners, size):
+        tokens = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(sorted(owners), sorted(card.owner for card in tokens))
+        for token in tokens:
+            self.assertEqual(token.owner, token.controller)
+            self.assertEqual("Creature — Illusion", game.engine._effective_card_data(token)["type_line"])
+            self.assertEqual(["U"], list(game.engine._effective_card_data(token)["colors"]))
+            self.assertEqual((size, size), tuple(game.engine._numeric_stat(token.object_id, stat)
+                                                for stat in ("power", "toughness")))
+
+    def test_skyclave_departure_creates_for_original_owner_without_returning_exile_and_replays(self):
+        game, source, removal, target, _ = self.apparition_fixture(607_207_051)
+        self.choose_apparition_targets(game, target)
+        self.resolve_top(game)
+        self._assert_zone(game, "exile", (target,))
+        self.cast(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        self._assert_zone(game, "hand", (source,))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assert_apparition_tokens(game, ("B",), 2)
+        self._assert_zone(game, "exile", (target,))
+        self.replay(game, load=True)
+
+    def test_skyclave_leaving_before_entry_resolves_neither_cancels_entry_nor_makes_a_token(self):
+        from quorune.linked_ability_exile_state import card_has_current_exile_link
+
+        game, source, removal, target, _ = self.apparition_fixture(607_207_052)
+        self.choose_apparition_targets(game, target)
+        entry, = game.state.stack
+        pair = game.engine.semantics.get(entry.semantic_key).effects[0]["binding_id"]
+        original = entry.context["source_logical_object_id"]
+        self.cast(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual(2, len(game.state.stack))
+        self.resolve_top(game)
+        self.assertEqual([entry.ref], [item.ref for item in game.state.stack])
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self._assert_zone(game, "battlefield", (target,))
+        self.resolve_top(game)
+        self._assert_zone(game, "exile", (target,))
+        self.assertNotEqual(original, self._current(game, source).logical_object_id)
+        self.assertTrue(card_has_current_exile_link(self._current(game, target), source_incarnation=original,
+                                                    ability_pair=pair))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.replay(game, load=True)
+
+    def test_skyclave_reexiled_incarnation_is_not_a_surviving_link(self):
+        game, source, removal, target, _ = self.apparition_fixture(607_207_053)
+        self.choose_apparition_targets(game, target)
+        self.resolve_top(game)
+        self._assert_zone(game, "exile", (target,))
+        original = self._current(game, target).logical_object_id
+        owner = ZoneTransitionOwner(game.engine)
+        owner.move_card(target.object_id, "graveyard")
+        owner.move_card(target.object_id, "exile")
+        self.assertNotEqual(original, self._current(game, target).logical_object_id)
+        self.checkpoint(game)
+        self.cast(game, "B", removal, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "exile", (target,))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.replay(game, load=True)
+
+    def test_skyclave_multiple_linked_owners_each_receive_the_full_total_and_replay(self):
+        game, source, removal, first, second = self.apparition_fixture(607_207_054, multiplier=True)
+        self.choose_apparition_targets(game, first, second)
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "exile", (first, second))
+        self.cast(game, "B", removal, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assert_apparition_tokens(game, ("B", "C"), 3)
+        self._assert_zone(game, "exile", (first, second))
+        self.replay(game, load=True)
 
     def test_linked_all_lands_return_tapped_to_owners_and_ignore_reentered_exile(self):
         game = self.session(607_207_01)

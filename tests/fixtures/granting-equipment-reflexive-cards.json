@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000603129",
+      "name": "Ember Rig",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has \"Whenever this creature attacks, you may sacrifice Ember Rig. When you do, this creature deals 3 damage to any target.\"\nEquip {1}",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

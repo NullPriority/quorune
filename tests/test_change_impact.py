@@ -29,6 +29,8 @@ class ChangeImpactTests(unittest.TestCase):
         expected = {
             "quorune/rules/activation/proposal.py": {"test_decision_opportunities", "test_library_search_rules"},
             "quorune/continuous_effects.py": {"test_rules_primitives"},
+            "quorune/compiler/kicked_artifact_entry.py": {"test_kicked_entry_triggers", "test_entry_x_graveyard_targets"},
+            "quorune/rules/kicked_artifact_entry.py": {"test_kicked_entry_triggers", "test_fixed_attachment_actions"},
             "quorune/rules/casting/costs.py": {"test_fixed_cleave", "test_fixed_entwine", "test_fixed_overload"},
         }
         for owner, required in expected.items():

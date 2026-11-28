@@ -3,13 +3,14 @@
 from .casting.face_queries import offered_cast_methods
 from .casting.proposal import build_cast_offer
 from .shared_type_library import materialize_shared_type_source, shared_type_library_payload_dependencies
-from .shared_type_library_model import SHARED_TYPE_PLAY_CAPABILITY
+from .shared_type_library_model import SHARED_TYPE_PLAY_CAPABILITY, SHARED_TYPE_REVEAL_CAST_CAPABILITY
 from .shared_type_library_play_model import (
     ResolvingSharedTypeLibraryPlayIntent, revealed_shared_type_card, unissued_shared_type_play,
 )
 from ..discover_model import discover_options_fingerprint
 from ..errors import GameRuleError, StateInvariantError
 from ..replacement.immutable import thaw_value
+from ..shared_creature_type_model import canonical_creature_types
 
 
 def _revealed_card(host, item, actor, effect):
@@ -23,9 +24,12 @@ def _revealed_card(host, item, actor, effect):
                 or not program.effects or SHARED_TYPE_PLAY_CAPABILITY not in program.capability_dependencies):
             raise ValueError("The original Kinship play authority is unavailable")
         original = program.effects[0]
-        if (SHARED_TYPE_PLAY_CAPABILITY not in shared_type_library_payload_dependencies(original)
+        public_reveal = comparison is None
+        required = SHARED_TYPE_REVEAL_CAST_CAPABILITY if public_reveal else SHARED_TYPE_PLAY_CAPABILITY
+        if (required not in program.capability_dependencies
+                or required not in shared_type_library_payload_dependencies(original)
                 or thaw_value(original["result"]) != thaw_value(effect["result"])
-                or materialize_shared_type_source(host, item) != comparison.source):
+                or not public_reveal and materialize_shared_type_source(host, item) != comparison.source):
             raise ValueError("The revealed card lost its original Kinship instruction")
     except (ValueError, TypeError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
@@ -35,15 +39,33 @@ def _revealed_card(host, item, actor, effect):
             or host.state.players[actor].zones["library"][-1:] != [card.object_id]
             or not set(host.seats) <= set(card.revealed_to)):
         raise GameRuleError("The original publicly revealed library card changed")
-    return card
+    return card, public_reveal
+
+
+def _creature_types(host, card):
+    effective = host._effective_card_data(card)
+    types, subtypes, _ = host._type_parts(str(effective.get("type_line") or ""))
+    return set(canonical_creature_types(subtypes)) if "creature" in types else set()
+
+
+def _shares_controlled_creature_type(host, actor, card):
+    candidate = _creature_types(host, card)
+    return bool(candidate) and any(
+        candidate.intersection(_creature_types(host, other))
+        for other in host.state.cards.values()
+        if other.zone == "battlefield" and other.controller == actor and not other.phased_out
+    )
 
 
 def _option_pairs(host, item, actor, effect):
     from .land_play_permissions import resolving_land_play_options
-    card = _revealed_card(host, item, actor, effect)
+    card, public_reveal = _revealed_card(host, item, actor, effect)
+    if public_reveal and not _shares_controlled_creature_type(host, actor, card):
+        return ()
     pairs = []
-    for option in resolving_land_play_options(host, actor, card, origin="library"):
-        pairs.append((option, option, card))
+    if not public_reveal:
+        for option in resolving_land_play_options(host, actor, card, origin="library"):
+            pairs.append((option, option, card))
     for method, face in offered_cast_methods(host, card):
         if method is not None:
             continue
@@ -113,8 +135,10 @@ def execute_shared_type_library_play(host, intent):
     if option["face"] is not None:
         response["face"] = option["face"]
     before = card.logical_object_id
+    _, comparison = revealed_shared_type_card(intent.effect, actor=intent.actor)
+    authorization = "public-shared-creature" if comparison is None else "kinship"
     commit_resolving_cast(host, actor=intent.actor, response=response, origin="library",
-        payment_id=f"{intent.stack_ref}:kinship:{before}",
+        payment_id=f"{intent.stack_ref}:{authorization}:{before}",
         replacement_selections=intent.replacement_selections)
     current = host.state.cards[card.object_id]
     if (current.zone != "stack" or current.logical_object_id == before or current.controller != intent.actor

@@ -1,6 +1,47 @@
 {
   "cards": [
     {
+      "oracle_id": "477374dc-042c-48f7-9ebe-99c15d8ae04f",
+      "name": "All Will Be One",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "oracle_text": "Whenever you put one or more counters on a permanent or player, this enchantment deals that much damage to target opponent, creature an opponent controls, or planeswalker an opponent controls.",
+      "type_line": "Enchantment",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "layout": "normal",
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 3.0,
       "color_identity": [
         "G"
@@ -1277,6 +1318,18 @@
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
+    {
+      "oracle_id": "477374dc-042c-48f7-9ebe-99c15d8ae04f",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "All Will Be One's ability will trigger any time you put one or more counters on a permanent or player. This might be due to a spell or ability resolving, a permanent you control entering the battlefield with counters, or combat damage from a source with toxic, infect, or wither."
+    },
+    {
+      "oracle_id": "477374dc-042c-48f7-9ebe-99c15d8ae04f",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If more than one creature with toxic deals combat damage to a player at the same time, those counters are placed as a single event, and the ability triggers one time."
+    },
     {
       "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with twice that many instead.",
       "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",

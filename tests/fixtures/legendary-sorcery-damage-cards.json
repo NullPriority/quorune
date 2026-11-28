@@ -1,0 +1,74 @@
+{
+  "cards": [
+    {
+      "oracle_id": "f5f0deb0-070a-45b6-9b81-0bc8143f3040",
+      "name": "Jaya's Immolating Inferno",
+      "mana_cost": "{X}{R}{R}",
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nJaya's Immolating Inferno deals X damage to each of up to three targets.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Legendary Sorcery",
+      "cmc": 2.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "f5f0deb0-070a-45b6-9b81-0bc8143f3040",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "You can't cast a legendary sorcery unless you control a legendary creature or a legendary planeswalker. Once you begin to cast a legendary sorcery, losing control of your legendary creatures and planeswalkers won't affect that spell."
+    },
+    {
+      "oracle_id": "f5f0deb0-070a-45b6-9b81-0bc8143f3040",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "You can't target the same target more than once to have Jaya's Immolating Inferno deal more damage to it."
+    },
+    {
+      "oracle_id": "f5f0deb0-070a-45b6-9b81-0bc8143f3040",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Other than the casting restriction, the legendary supertype on a sorcery carries no additional rules. You may cast any number of legendary sorceries in a turn, and your deck may contain any number of legendary cards (but no more than four of any with the same name)."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

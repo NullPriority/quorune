@@ -217,7 +217,7 @@
       "oracle_id": "144bef8b-3583-4e98-9285-a1965e7e17f8",
       "name": "Landscaper Colos",
       "mana_cost": "{5}{W}",
-      "type_line": "Creature — Goat Beast",
+      "type_line": "Creature \u2014 Goat Beast",
       "oracle_text": "When this creature enters, put target card from an opponent's graveyard on the bottom of their library.\nBasic landcycling {1}{W} ({1}{W}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)",
       "power": "4",
       "toughness": "6",
@@ -269,7 +269,7 @@
       "oracle_id": "26d6a089-b867-4b89-be8e-2ad11bff0d64",
       "name": "Meldweb Curator",
       "mana_cost": "{3}{U}",
-      "type_line": "Creature — Phyrexian Wizard",
+      "type_line": "Creature \u2014 Phyrexian Wizard",
       "oracle_text": "When this creature enters, put up to one target instant or sorcery card from your graveyard on top of your library.",
       "power": "3",
       "toughness": "4",
@@ -316,7 +316,7 @@
       "oracle_id": "325b88e1-ec7f-4d22-887c-a7f18a868bb0",
       "name": "Monastery Messenger",
       "mana_cost": "{2/U}{2/R}{2/W}",
-      "type_line": "Creature — Bird Scout",
+      "type_line": "Creature \u2014 Bird Scout",
       "oracle_text": "Flying, vigilance\nWhen this creature enters, put up to one target noncreature, nonland card from your graveyard on top of your library.",
       "power": "2",
       "toughness": "3",
@@ -370,7 +370,7 @@
       "oracle_id": "3dadb654-6191-4ad3-8315-46f5613fbc01",
       "name": "Biblioplex Assistant",
       "mana_cost": "{4}",
-      "type_line": "Artifact Creature — Gargoyle",
+      "type_line": "Artifact Creature \u2014 Gargoyle",
       "oracle_text": "Flying\nWhen this creature enters, put up to one target instant or sorcery card from your graveyard on top of your library.",
       "power": "2",
       "toughness": "1",
@@ -458,7 +458,7 @@
       "oracle_id": "5fc09704-56cf-4e47-bd96-27ac34434941",
       "name": "Hoarding Recluse",
       "mana_cost": "{3}{G}",
-      "type_line": "Creature — Spider",
+      "type_line": "Creature \u2014 Spider",
       "oracle_text": "Reach, deathtouch\nWhen this creature dies, put up to one other target card from a graveyard on the bottom of its owner's library.",
       "power": "2",
       "toughness": "3",
@@ -604,7 +604,7 @@
       "oracle_id": "b7618312-6835-4851-9651-b5402001b3b0",
       "name": "Swiftgear Drake",
       "mana_cost": "{5}",
-      "type_line": "Artifact Creature — Drake",
+      "type_line": "Artifact Creature \u2014 Drake",
       "oracle_text": "Flying, haste\nWhen this creature enters, put up to one target card from a graveyard on the bottom of its owner's library.",
       "power": "2",
       "toughness": "4",
@@ -1021,6 +1021,49 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "75a7fdd4-046a-433b-b16f-a0424a05c904",
+      "name": "Tel-Jilad Stylus",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Put target permanent you own on the bottom of your library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -1209,6 +1252,30 @@
       "published_at": "2004-10-04",
       "source": "wotc",
       "comment": "You have to show which creature cards you put on top of your library, but not the order you put them there."
+    },
+    {
+      "oracle_id": "75a7fdd4-046a-433b-b16f-a0424a05c904",
+      "source": "wotc",
+      "published_at": "2004-12-01",
+      "comment": "Tel-Jilad Stylus's ability may target a permanent you own but do not control."
+    },
+    {
+      "oracle_id": "75a7fdd4-046a-433b-b16f-a0424a05c904",
+      "source": "wotc",
+      "published_at": "2004-12-01",
+      "comment": "You own all cards that started the game in your deck, and all cards that you \"Wished\" into the game (with one of the Judgment Wish cards or Ring of Maruf)."
+    },
+    {
+      "oracle_id": "75a7fdd4-046a-433b-b16f-a0424a05c904",
+      "source": "wotc",
+      "published_at": "2004-12-01",
+      "comment": "Tel-Jilad Stylus's ability can put tokens on the bottom of your library (where they then cease to exist)."
+    },
+    {
+      "oracle_id": "75a7fdd4-046a-433b-b16f-a0424a05c904",
+      "source": "wotc",
+      "published_at": "2009-10-01",
+      "comment": "You own a token if it entered under your control."
     }
   ]
 }

@@ -1813,6 +1813,181 @@ if __name__ == "__main__":
 
 
 
+class FixedBaseSubtypeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        directory = Path(cls.temporary.name)
+        supplement = {"schema_version": 1, "cards": [], "rulings": []}
+        for file, name in ((FIXTURE, "Turn to Frog"),
+                           (ROOT / "tests/fixtures/source-attack-alone-cards.json", "Vedalken Orrery")):
+            data = json.loads(file.read_text(encoding="utf-8"))
+            card, = (row for row in data["cards"] if row["name"] == name)
+            supplement["cards"].append(card)
+            supplement["rulings"].extend(row for row in data["rulings"] if row["oracle_id"] == card["oracle_id"])
+        supplement_path = directory / "base-subtype-support.json"
+        supplement_path.write_text(json.dumps(supplement), encoding="utf-8")
+        database = directory / "base-subtype.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/chosen-creature-type-temporary-modifiers-cards.json",
+            supplement_path,
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Fixed subtype base", [DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+                                   DeckEntry("Generic Bound Plains", 30)], ["Isamaru, Hound of Konda"],
+        )
+
+    def _activate_shepherd(self, session, source):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        accepted = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("activated_ability", session.state.stack[-1].kind)
+        self.assertFalse(session.state.stack[-1].targets)
+
+    def _check_permanent(self, session, permanent, *, stats, subtypes):
+        engine = session.engine
+        current = session.state.cards[permanent.object_id]
+        self.assertEqual(("battlefield", stats), (current.zone,
+            tuple(engine._numeric_stat(current.object_id, key) for key in ("power", "toughness"))))
+        self.assertEqual(set(subtypes), set(engine._effective_type_parts(current)[1]))
+
+    def test_shepherd_samples_each_resolution_and_expires_fixed_base_and_added_subtype(self):
+        session = self.session(849061)
+        engine = session.engine
+        source = self.add(engine, "Allosaurus Shepherd")
+        first = self.add(engine, "Elvish Mystic", ref="SHEPHERD-FIRST")
+        early = self.add(engine, "Llanowar Elves", ref="SHEPHERD-EARLY", zone="hand")
+        late = self.add(engine, "Elvish Mystic", ref="SHEPHERD-LATE", zone="hand")
+        opponent_elf = self.add(engine, "Llanowar Elves", ref="SHEPHERD-OTHER", seat="B")
+        other_type = self.add(engine, "Grizzly Bears")
+        later_layers = self.add(engine, "Turn to Frog", zone="hand")
+        self.add(engine, "Vedalken Orrery")
+        first.counters["+1/+1"] = 1
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 9, "G": 6, "U": 1})
+        self.checkpoint(session)
+
+        self._activate_shepherd(session, source)
+        self.cast(session, "A", early)
+        self.resolve_top(session)
+        self._check_permanent(session, early, stats=(1, 1), subtypes={"elf", "druid"})
+        self.resolve_top(session)
+        self._check_permanent(session, source, stats=(5, 5), subtypes={"dinosaur", "elf", "shaman"})
+        self._check_permanent(session, first, stats=(6, 6), subtypes={"dinosaur", "elf", "druid"})
+        self._check_permanent(session, early, stats=(5, 5), subtypes={"dinosaur", "elf", "druid"})
+        self._check_permanent(session, opponent_elf, stats=(1, 1), subtypes={"elf", "druid"})
+        self._check_permanent(session, other_type, stats=(2, 2), subtypes={"bear"})
+        spectator_data = json.dumps(session.packet("pilot:B", full=True))
+        self.assertNotIn(late.ref, spectator_data)
+        session = self.replay(session, load=True)
+
+        self.cast(session, "A", late)
+        self.resolve_top(session)
+        self._check_permanent(session, late, stats=(1, 1), subtypes={"elf", "druid"})
+        self._activate_shepherd(session, source)
+        self.resolve_top(session)
+        self._check_permanent(session, late, stats=(5, 5), subtypes={"dinosaur", "elf", "druid"})
+
+        self.cast(session, "A", later_layers, [first.ref])
+        self.resolve_top(session)
+        self._check_permanent(session, first, stats=(2, 2), subtypes={"frog"})
+        self._check_permanent(session, late, stats=(5, 5), subtypes={"dinosaur", "elf", "druid"})
+
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > turn)
+        self._check_permanent(session, first, stats=(2, 2), subtypes={"elf", "druid"})
+        self._check_permanent(session, early, stats=(1, 1), subtypes={"elf", "druid"})
+        self._check_permanent(session, late, stats=(1, 1), subtypes={"elf", "druid"})
+        self.replay(session, load=True)
+
+    def test_shepherd_preserves_own_and_controlled_green_spell_counter_rules(self):
+        session = self.session(849062)
+        engine = session.engine
+        source = self.add(engine, "Allosaurus Shepherd", zone="hand")
+        green = self.add(engine, "Llanowar Elves", zone="hand")
+        blue = self.add(engine, "Turn to Frog", zone="hand")
+        counters = [self.add(engine, "Counterspell", ref=f"SHEPHERD-COUNTER-{index}",
+                             seat="B", zone="hand") for index in range(3)]
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "G": 2, "U": 1})
+        session.state.players["B"].mana_pool["U"] = 6
+        self.checkpoint(session)
+
+        for spell, response, surviving in zip((source, green, blue), counters, (True, True, False), strict=True):
+            self.cast(session, "A", spell, [source.ref] if spell is blue else ())
+            item = session.state.stack[-1]
+            self.cast(session, "B", response, [item.ref])
+            self.resolve_top(session)
+            self.assertEqual("stack" if surviving else "graveyard", session.state.cards[spell.object_id].zone)
+            if surviving:
+                self.resolve_top(session)
+                self.assertEqual("battlefield", session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_shepherd_requires_closed_base_and_subtype_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.resolution_characteristic_model import FIXED_SUBTYPE_BASE_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        original = self.db.lookup("Allosaurus Shepherd")
+        ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        node, = (node for node in ir.faces[0].nodes if node.kind == "activated_ability")
+        self.assertIn(FIXED_SUBTYPE_BASE_CAPABILITY, node.capability_dependencies)
+        self.assertIsNone(node.target_schema)
+        effect, = node.effects
+        spec, query = fixed_resolution_characteristic_instruction(effect)
+        self.assertEqual(("Dinosaur", (5, 5), ("elf",)), (spec.subtype, spec.base_power_toughness, query.subtypes_all))
+        layer, stats = spec.layer_operations()
+        self.assertEqual((Layer.TYPE, "4", (ContinuousOperation("add_types", ("Dinosaur",), field="subtypes"),)), layer)
+        self.assertEqual((Layer.POWER_TOUGHNESS, "7b"), stats[:2])
+
+        for changes in (
+            {"predicate": {**effect["predicate"], "controller": "$target.0"}},
+            {"predicate": {**effect["predicate"], "types_all": []}},
+            {"characteristics": {**effect["characteristics"], "base_power_toughness": [True, 5]}},
+            {"characteristics": {**effect["characteristics"], "keywords": ["First Strike"]}},
+        ):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                fixed_resolution_characteristic_instruction({**effect, **changes})
+        for text in (
+            original.oracle_text.replace("each Elf creature you control", "each Elf creature"),
+            original.oracle_text.replace("in addition to its other creature types", "and loses its other creature types"),
+            original.oracle_text.replace("Until end of turn", "Until your next turn"),
+        ):
+            with self.subTest(text=text):
+                mutated = compile_oracle_card(replace(original, oracle_text=text), capability_registry=self.registry,
+                                              capability_profile="commander_review")
+                self.assertNotEqual("exact", mutated.status)
+        session = self.session(849063)
+        source = self.add(session.engine, "Allosaurus Shepherd")
+        self.assert_closed(session, source)
+        program, = (p for p in session.engine.semantics.programs_for_oracle(original.oracle_id) if p.event == "activate")
+        deps = tuple(dep for dep in program.capability_dependencies if dep != FIXED_SUBTYPE_BASE_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(bound["strict"], bound)
+        self.assertIn("capability:undeclared_runtime_dependency:" + FIXED_SUBTYPE_BASE_CAPABILITY, bound["blockers"])
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for dependency in (FIXED_SUBTYPE_BASE_CAPABILITY, "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                           "continuous.resolution.fixed_source_characteristics_until_end_of_turn"):
+            with self.subTest(dependency=dependency):
+                blocked = copy.deepcopy(raw)
+                row = next(item for item in blocked["capabilities"] if item["id"] == dependency)
+                row.update(status="blocked", blockers=["Required fixed subtype or base owner withdrawn"])
+                candidate = compile_oracle_card(original, capability_registry=CapabilityRegistry(blocked),
+                                                capability_profile="commander_review")
+                self.assertNotEqual("exact", candidate.status)
+
+
 class IndefiniteAnimationNativeTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):

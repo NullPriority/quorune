@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_synthetic_rules_cards",
+  "source": "Synthetic witnesses for linked color-cast exiles and opposing spell names",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709851",
+      "name": "Generic Archive Steward, Ledger Keeper",
+      "mana_cost": "{2}{U}{B}",
+      "cmc": 4,
+      "type_line": "Legendary Creature \u2014 Human Wizard",
+      "oracle_text": "Whenever you cast a blue spell, exile the top card of target player's library.\nWhenever you cast a black spell, exile the top card of target player's library.\nYour opponents can't cast spells with the same name as a card exiled with Generic Archive Steward.",
+      "power": "2",
+      "toughness": "3",
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709852",
+      "name": "Generic Archive Notation",
+      "mana_cost": "{U}{B}",
+      "cmc": 2,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709853",
+      "name": "Generic Archive Review",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709854",
+      "name": "Generic Archive Toll",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709855",
+      "name": "Generic Archive Increase // Generic Archive Pause",
+      "mana_cost": "{U} // {B}",
+      "cmc": 2,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Draw a card.\n//\nYou gain 1 life.",
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "keywords": [],
+      "layout": "split",
+      "legalities": {"commander": "legal"},
+      "card_faces": [
+        {
+          "name": "Generic Archive Increase", "mana_cost": "{U}", "type_line": "Instant",
+          "oracle_text": "Draw a card.", "colors": ["U"], "cmc": 1
+        },
+        {
+          "name": "Generic Archive Pause", "mana_cost": "{B}", "type_line": "Instant",
+          "oracle_text": "You gain 1 life.", "colors": ["B"], "cmc": 1
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709856",
+      "name": "Generic Archive Return",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709857",
+      "name": "Generic Archive Recover",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Put target face-up exiled card into its owner's graveyard.",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

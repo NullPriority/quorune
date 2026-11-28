@@ -44,6 +44,7 @@ def fixed_dual_damage_runtime_dependencies(program):
     required.update(per_player_query_damage_program_dependencies(program))
     from .per_player_life_damage import per_player_life_damage_program_dependencies
     required.update(per_player_life_damage_program_dependencies(program))
+    required.update(other_permanent_mana_value_damage_dependencies(program))
     effects = tuple(effect for effect in program.effects if FIXED_DUAL_DAMAGE_FIELD in effect)
     if not effects and FIXED_DUAL_DAMAGE_MECHANIC not in program.coverage:return tuple(sorted(required))
     if not effects:raise ValueError('Fixed target/controller damage lost its represented instruction')
@@ -53,6 +54,38 @@ def fixed_dual_damage_runtime_dependencies(program):
         if not owned:raise ValueError('Fixed target/controller damage requires its complete target and result scope')
         required.update(owned)
     return tuple(sorted(required))
+
+
+def other_permanent_mana_value_damage_effect():
+    from ..object_predicate import ObjectQuerySpec
+    from ..public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    aggregate = PublicCharacteristicAggregateSpec(
+        "mana_value", "sum", "source_controller", ObjectQuerySpec(zones=("battlefield",)), schema_version=3,
+    )
+    amount = ScalarEffectAmountSpec(ScalarAmountOrigin.PUBLIC_AGGREGATE, aggregate=aggregate, schema_version=3)
+    return {"op":"damage_each_opponent", "source":"$source", "amount":amount.to_dict()}
+
+
+def other_permanent_mana_value_damage_dependencies(program):
+    from ..public_characteristic_aggregate_model import OTHER_PERMANENT_MANA_VALUE_SUM_CAPABILITY
+    from ..replacement.immutable import FrozenMap
+    from ..scalar_effect_amount_model import scalar_amount_specs
+
+    selected = any(spec.aggregate is not None and spec.aggregate.schema_version == 3
+                   for spec in scalar_amount_specs((*program.effects, *program.handlers)))
+    if not selected and OTHER_PERMANENT_MANA_VALUE_SUM_CAPABILITY not in program.capability_dependencies:
+        return ()
+    if ((program.event, program.active_zone) != ("saga.chapter.4", "battlefield")
+            or "saga_chapter_dispatch" not in program.coverage or program.handlers
+            or program.cost_schema is not None or program.target_schema is not None
+            or program.event_condition is not None or "cr-120-damage" not in program.coverage
+            or tuple(FrozenMap(effect) for effect in program.effects) !=
+               (FrozenMap(other_permanent_mana_value_damage_effect()),)):
+        raise ValueError("Other permanent mana value requires the original chapter and complete opponent damage")
+    return (OTHER_PERMANENT_MANA_VALUE_SUM_CAPABILITY, "damage.batch.fixed_set",
+            "damage.source.stack_current_or_lki", "damage.result.player_life")
 
 
 def bound_fixed_dual_damage_recipients(value,*,actor,amount):

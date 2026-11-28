@@ -1,5 +1,6 @@
 """One printed combat-removal instruction and its ordered untap."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
@@ -7,6 +8,52 @@ COMBAT_REMOVAL_OPERATION = 'remove_from_combat'
 COMBAT_REMOVAL_CAPABILITY = 'combat.effect.remove_from_combat'
 COMBAT_REMOVAL_MECHANIC = 'fixed-combat-removal'
 BLOCKED_ATTACKER_REFERENCE = '$event.permanent_object'
+OPTIONAL_BLOCKED_ATTACKER_RETURN_VERSION = 5
+CONTROLLED_BLOCKED_ATTACKER = {'field': 'controller', 'op': 'eq', 'value': '$source.controller'}
+
+
+def optional_blocked_attacker_return_effect():
+    return {
+        'op': 'offer_optional_effect', 'player': '$controller',
+        'schema_version': OPTIONAL_BLOCKED_ATTACKER_RETURN_VERSION,
+        'effects': [{'op': 'bounce', 'card': BLOCKED_ATTACKER_REFERENCE}],
+    }
+
+
+def is_optional_blocked_attacker_return(effect):
+    return (isinstance(effect, Mapping) and effect.get('op') == 'offer_optional_effect'
+            and effect.get('schema_version') == OPTIONAL_BLOCKED_ATTACKER_RETURN_VERSION)
+
+
+def blocked_attacker_return_reference(effect, *, actor, resolved=False):
+    children = effect.get('effects')
+    if (not is_optional_blocked_attacker_return(effect)
+            or set(effect) != {'op', 'player', 'schema_version', 'effects'}
+            or type(effect['schema_version']) is not int or effect['player'] != actor
+            or not isinstance(children, (list, tuple)) or len(children) != 1
+            or not isinstance(children[0], Mapping)):
+        raise ValueError('Expected one versioned optional blocked attacker return')
+    bounce = children[0]
+    if set(bounce) != {'op', 'card'} or bounce['op'] != 'bounce':
+        raise ValueError('The blocked attacker return lost its owner-hand instruction')
+    ref = bounce['card']
+    if resolved:
+        if ref is not None and (type(ref) is not str or not ref):
+            raise ValueError('Expected the original blocked attacker reference')
+    elif ref != BLOCKED_ATTACKER_REFERENCE:
+        raise ValueError('The optional return must use the original blocked attacker')
+    return ref
+
+
+def prepare_optional_blocked_attacker_return(host, item, raw_effect, effect):
+    if not is_optional_blocked_attacker_return(raw_effect):
+        return effect
+    blocked_attacker_return_reference(raw_effect, actor='$controller')
+    ref = blocked_attacker_return_reference(effect, actor=item.controller, resolved=True)
+    card = next((row for row in host.state.cards.values() if row.ref == ref), None)
+    if card is None or card.zone != 'battlefield' or card.phased_out:
+        return None
+    return {key: value for key, value in effect.items() if key != 'schema_version'}
 
 
 @dataclass(frozen=True, slots=True)

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Mapping
 
-from ..temporary_cast_rule_model import (CAPABILITY,MECHANIC,OPERATION,TemporaryCastRestrictionSpec,ResolvedCastRestriction)
+from ..temporary_cast_rule_model import (
+    CAPABILITY, MECHANIC, NEXT_TURN_NONHAND_CAPABILITY, OPERATION, TemporaryCastRestrictionSpec, ResolvedCastRestriction,
+)
 from ..continuous_effect_state import commit_continuous_effect
 from ..next_spell_cost_model import MECHANIC as NEXT_COST_MECHANIC, OPERATION as NEXT_COST_OPERATION, next_spell_cost_node_capabilities, validate_next_spell_cost_instruction
 
@@ -12,7 +14,8 @@ from ..next_spell_cost_model import MECHANIC as NEXT_COST_MECHANIC, OPERATION as
 def apply_temporary_cast_restriction(host,*,actor,restriction,target_player,source_id):
     host._require_seat(actor,in_game=True)
     if target_player is not None:host._require_seat(target_player,in_game=True)
-    effect=ResolvedCastRestriction(host._next_ref('CR'),source_id,host._next_zone_timestamp(),actor,restriction,target_player)
+    effect=ResolvedCastRestriction(host._next_ref('CR'),source_id,host._next_zone_timestamp(),actor,restriction,
+                                   target_player,restriction.duration)
     commit_continuous_effect(host.state,effect)
     host._log(actor,'casting.prohibition.created','A temporary casting restriction applies.',
         {'restriction':restriction.to_dict(),'target_player':target_player,'effect_id':effect.effect_id},importance=1)
@@ -26,7 +29,9 @@ def active_temporary_cast_restrictions(host,player):
              or effect.restriction.player_scope=='target' and player==effect.target_player))
 
 
-def restriction_matches_spell(effect,row):
+def restriction_matches_spell(effect,row,*,origin):
+    if effect.restriction.nonhand_until_next_turn:
+        return origin != "hand"
     creature='creature' in row.types
     return effect.restriction.spell_kind=='any' or creature==(effect.restriction.spell_kind=='creature')
 
@@ -39,6 +44,8 @@ def temporary_cast_node_capabilities(*,effects,target_schema,mechanic_ids,**kwar
     if set(effect)!={'op','actor','restriction','player'} or effect['op']!=OPERATION or effect['actor']!='$controller':return ()
     try:spec=TemporaryCastRestrictionSpec.from_dict(effect['restriction'])
     except (TypeError,ValueError):return ()
+    if spec.nonhand_until_next_turn:
+        return (CAPABILITY, NEXT_TURN_NONHAND_CAPABILITY) if target_schema is None and effect['player'] is None else ()
     if spec.player_scope=='target':
         if effect['player'] == '$context.defending_player':
             if (target_schema is None and spec.spell_kind == 'any'

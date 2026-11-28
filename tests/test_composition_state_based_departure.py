@@ -81,6 +81,61 @@ class CompositionBatchOrderModelTests(unittest.TestCase):
         for order in ([],['Droot'],['Droot','Droot'],['Droot','unknown']):
             with self.subTest(order=order),self.assertRaises(ValueError):frame.with_order(order)
 
+    def test_version_two_orders_ordinary_cards_without_including_noncard_arrivals(self):
+        from quorune.composition_batch_order_model import CompositionDepartureBatchRequest, CompositionDepartureSubject
+        from quorune.model import CardInstance
+        from quorune.replacement.immutable import FrozenMap
+
+        subjects = []
+        for ref, is_token, zone in (
+            ("borrowed", False, "graveyard"), ("token", True, "graveyard"),
+            ("owned", False, "graveyard"), ("redirected", False, "exile"),
+        ):
+            card = CardInstance(
+                object_id=ref, ref=ref, oracle_id="test:" + ref, printed_name=ref,
+                owner="A", controller="B" if ref == "borrowed" else "A",
+                zone="battlefield", is_token=is_token,
+            )
+            subjects.append(CompositionDepartureSubject(
+                FrozenMap(card.to_dict()), "graveyard", zone, "A", transition_kind="sacrifice",
+            ))
+        with self.assertRaises(ValueError):
+            CompositionDepartureBatchRequest(tuple(subjects), ("B", "A"))
+        request = CompositionDepartureBatchRequest(tuple(subjects), ("B", "A"), schema_version=2)
+        self.assertEqual(((("A", "graveyard", "top"), ("borrowed", "owned")),), request.choices)
+        self.assertEqual(("owned", "token", "borrowed", "redirected"), request.ordered_ids((("owned", "borrowed"),)))
+        self.assertEqual(request, CompositionDepartureBatchRequest.from_dict(request.to_dict()))
+        with self.assertRaises(ValueError):
+            request.ordered_ids((("token", "borrowed"),))
+
+    def test_ordinary_order_masks_a_borrowed_face_down_card_until_its_owner_can_see_it(self):
+        from types import SimpleNamespace
+        from quorune.composition_batch_order_model import CompositionDepartureBatchRequest, CompositionDepartureSubject
+        from quorune.model import CardInstance
+        from quorune.replacement.immutable import FrozenMap
+        from quorune.semantic_choices.physical_ordering import physical_order_payload
+
+        borrowed = CardInstance(
+            object_id="borrowed", ref="borrowed", oracle_id="test:borrowed", printed_name="Hidden Creature",
+            owner="A", controller="B", zone="battlefield", face_down=True, known_to=["B"],
+        )
+        ordinary = CardInstance(
+            object_id="ordinary", ref="ordinary", oracle_id="test:ordinary", printed_name="Public Creature",
+            owner="A", controller="A", zone="battlefield",
+        )
+        for permitted in (False, True):
+            with self.subTest(permitted=permitted):
+                borrowed.known_to = ["B", "A"] if permitted else ["B"]
+                request = CompositionDepartureBatchRequest(tuple(
+                    CompositionDepartureSubject(FrozenMap(card.to_dict()), "graveyard", "graveyard",
+                                                "A", transition_kind="sacrifice")
+                    for card in (borrowed, ordinary)
+                ), ("A", "B"), schema_version=2)
+                frame = SimpleNamespace(request=request, current_choice=request.choices[0], orders=())
+                rows = {row["id"]: row["name"] for row in physical_order_payload(frame)["cards"]}
+                self.assertEqual("Hidden Creature" if permitted else "Face-down card", rows["borrowed"])
+                self.assertEqual("Public Creature", rows["ordinary"])
+
     def test_physical_order_uses_the_existing_generic_ordered_reference_form(self):
         from quorune.composition_state_based_order import _payload
         from quorune.choice_forms import build_action_form,delegated_choice_fields

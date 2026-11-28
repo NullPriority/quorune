@@ -39,12 +39,19 @@ class SpellManaSpentCounts:
             raise ValueError('Actual mana payment must use concrete mana types')
         return cls(card.object_id,card.logical_object_id,tuple(spent.get(color,0) for color in MANA_TYPES))
 
+    def _require_original_spell(self, card: Any) -> None:
+        if (card.object_id,card.logical_object_id)!=(self.object_id,self.logical_object_id):
+            raise ValueError('Mana payment facts belong to another spell incarnation')
+
     def count_for(self, card: Any, color: str) -> int:
         if color not in MANA_TYPES or len(color)!=1:
             raise ValueError('Mana-unit lookup requires one concrete mana type')
-        if (card.object_id,card.logical_object_id)!=(self.object_id,self.logical_object_id):
-            raise ValueError('Mana payment facts belong to another spell incarnation')
+        self._require_original_spell(card)
         return self.amounts[MANA_TYPES.index(color)]
+
+    def total_for(self, card: Any) -> int:
+        self._require_original_spell(card)
+        return sum(self.amounts)
 
     def to_dict(self) -> dict[str,Any]:
         return {'schema_version':1,'object_id':self.object_id,'logical_object_id':self.logical_object_id,

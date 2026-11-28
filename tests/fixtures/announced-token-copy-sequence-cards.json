@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and ruling subset",
+  "cards": [
+    {
+      "name": "For the Common Good",
+      "oracle_id": "de6e4aa2-23f1-46e5-a061-05522944e0c6",
+      "mana_cost": "{X}{X}{G}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create X tokens that are copies of target token you control. Then tokens you control gain indestructible until your next turn. You gain 1 life for each token you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "de6e4aa2-23f1-46e5-a061-05522944e0c6",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Any “as [this permanent] enters” or “[this permanent] enters with” abilities of the new tokens will work."
+    },
+    {
+      "oracle_id": "de6e4aa2-23f1-46e5-a061-05522944e0c6",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The new tokens copy the characteristics of the original token as stated by the effect that created the original token."
+    },
+    {
+      "oracle_id": "de6e4aa2-23f1-46e5-a061-05522944e0c6",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "The new tokens don’t copy whether the original token is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, color, and so on."
+    }
+  ]
+}

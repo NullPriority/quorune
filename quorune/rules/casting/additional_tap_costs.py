@@ -34,6 +34,16 @@ def _candidates(host,seat,cost,source_object_id):
     return tuple(host.state.cards[row.object_id] for row in sorted(query_objects(rows,predicate),key=lambda r:r.ref))
 
 
+def _option_candidates(host, seat, cost, source, option):
+    from ...harmonize import TAP_PAYMENT, HarmonizeTapPayment
+
+    candidates = _candidates(host, seat, cost, source.object_id)
+    if TAP_PAYMENT not in option:
+        return candidates
+    payment = HarmonizeTapPayment.from_dict(option[TAP_PAYMENT])
+    return tuple(card for card in candidates if payment.matches(card))
+
+
 def _fact(cost,cards):
     return {'schema_version':1,'cost':cost.to_descriptor(),'objects':[asdict(FixedTapCostCandidate(c.object_id,c.ref,c.logical_object_id)) for c in cards]}
 
@@ -53,7 +63,7 @@ def validate_fixed_tap_payment(host,seat,source,option):
         identities.append(FixedTapCostCandidate(**row))
     if (len({v.object_id for v in identities})!=cost.count or len({v.object_ref for v in identities})!=cost.count
             or len({v.logical_object_id for v in identities})!=cost.count):raise ValueError('Fixed tap payment repeats an object')
-    current={c.object_id:c for c in _candidates(host,seat,cost,source.object_id)};result=[]
+    current={c.object_id:c for c in _option_candidates(host,seat,cost,source,option)};result=[]
     for identity in identities:
         card=current.get(identity.object_id)
         if (card is None or card.object_id==source.object_id or card.ref!=identity.object_ref
@@ -105,7 +115,7 @@ def finalize_fixed_tap_option(host,seat,source,option,program,mandatory,mechanic
     except ValueError:return None
     common=dict(hint=hint,spend_context=spend_context,has_x=has_x,cast_type_line=cast_type_line)
     if cost is None:return _finalize_option_payment(host,seat,source,option,program,mandatory,mechanics,response,**common)
-    candidates=_candidates(host,seat,cost,source.object_id)
+    candidates=_option_candidates(host,seat,cost,source,option)
     if len(candidates)<cost.count:return None
     refs=[c.ref for c in candidates]
     choice={'tap_cost_cards':{'type':'object_ref_array','legal_refs':refs,'minimum':cost.count,'maximum':cost.count,

@@ -66,6 +66,17 @@ class PlayerSpeedRuntimeTests(unittest.TestCase):
     resolve=counter_witnesses.CounterPlacementEventRuntimeTests.resolve
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
 
+    def test_missing_start_engines_handler_skips_battlefield_reads(self):
+        from types import SimpleNamespace
+        from quorune.rules.player_speed_state import start_player_speeds
+        from quorune.semantics import SemanticRegistry
+
+        def unexpected_scan(*, zones):
+            self.fail("Initial speed cannot start without a registered Start Your Engines handler")
+
+        host = SimpleNamespace(semantics=SemanticRegistry(), _semantic_event_sources=unexpected_scan)
+        self.assertFalse(start_player_speeds(host))
+
     def test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay(self):
         s=self.session(321001);e=s.engine;starter=self.add(e,'Swiftwing Assailant',zone='hand');shock=self.add(e,'Shock',zone='hand',ref='first-speed-damage');second=self.add(e,'Shock',zone='hand',ref='second-speed-damage')
         action=self.ready(s,starter,{'W':1,'R':6,'C':3});self.checkpoint(s)

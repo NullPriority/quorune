@@ -17,10 +17,10 @@ from .model import (AutoContinue, ObjectChoice, SemanticChoiceCompletion, Semant
     SemanticChoicePreparation, SemanticChoiceRequest)
 
 
-def _manifest_intent(ref, incarnation, actor, reason):
+def _manifest_intent(ref, incarnation, actor, reason, *, cloaked=False):
     return ZoneMoveIntent(actor=actor, object_ref=ref, expected_zones=('library',),
         destination='battlefield', new_controller=actor, reason=reason,
-        expected_zone_change_counter=int(incarnation.rsplit('@', 1)[1]), manifest_entry=True)
+        expected_zone_change_counter=int(incarnation.rsplit('@', 1)[1]), manifest_entry=not cloaked, cloak_entry=cloaked)
 
 
 def _manifest_result_incarnation(row, intent):

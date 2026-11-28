@@ -10,6 +10,7 @@ from .damage_modifier_state import (
     DamagePreventionShield,
     DamageRedirectionEffect,
     DamageSubject,
+    TARGETED_CREATURE_REDIRECTION_DESTINATION,
     PreventionDamageKind,
     PreventionMode,
     PreventionRecipientKind,
@@ -21,6 +22,8 @@ from .replacement import (
     ReplacementClass,
     ReplacementEffect,
 )
+from .replacement.damage_redirection import controller_redirection_conditions
+from .replacement.operations import TRACK_UNPREVENTABLE_AMOUNT_VERSION
 from .util import stable_json
 
 
@@ -71,8 +74,12 @@ def _shield_replacement_effect(
     if shield.chosen_source is not None:
         conditions.update(shield.chosen_source.event_conditions())
     operation: PreventAmount | PreventUsingShield
-    if shield.mode == PreventionMode.ALL:
+    if shield.source_next_instance_batch_version is not None:
+        # The commit plan consumes a marked next-instance shield once after all its matching rows.
         operation = PreventAmount()
+    elif shield.mode == PreventionMode.ALL:
+        operation = (PreventAmount(schema_version=TRACK_UNPREVENTABLE_AMOUNT_VERSION)
+                     if shield.tracks_unpreventable_amount else PreventAmount())
     else:
         operation = PreventUsingShield(
             shield_id=shield.shield_id,
@@ -96,6 +103,11 @@ def _redirection_replacement_effect(
     destination: Any,
 ) -> ReplacementEffect:
     conditions = redirection.subject.event_conditions()
+    scope = redirection.controller_scope is not None
+    if scope:
+        conditions = controller_redirection_conditions(
+            redirection.controller, redirection.controller_scope == TARGETED_CREATURE_REDIRECTION_DESTINATION,
+        )
     if redirection.chosen_source is not None:
         conditions.update(redirection.chosen_source.event_conditions())
     return ReplacementEffect(
@@ -104,8 +116,10 @@ def _redirection_replacement_effect(
         event_kind="damage",
         replacement_class=ReplacementClass.OTHER,
         conditions=conditions,
+        exclusive_damage_scope=redirection.controller if scope else None,
         operations=(
             RedirectDamage(
+                maximum_damage=redirection.maximum_damage,
                 target=destination.ref,
                 target_kind=destination.kind,
                 target_controller=destination.controller,
@@ -127,7 +141,9 @@ def _redirection_replacement_effect(
     )
 
 
-def _subject_is_current(host: DamageModifierHost, subject: DamageSubject) -> bool:
+def _subject_is_current(
+    host: DamageModifierHost, subject: DamageSubject, *, require_phased_in: bool = False,
+) -> bool:
     if subject.kind == "player":
         return subject.ref in host.active_seats
     if subject.kind == "any":
@@ -138,6 +154,7 @@ def _subject_is_current(host: DamageModifierHost, subject: DamageSubject) -> boo
         card is not None
         and card.zone == "battlefield"
         and card.logical_object_id == subject.logical_object_id
+        and (not require_phased_in or not card.phased_out)
     )
 
 
@@ -172,8 +189,15 @@ def collect_damage_modifier_effects(
                 source_powers = _current_battlefield_source_powers(host)
             effects.append(_shield_replacement_effect(shield, source_powers=source_powers))
     for redirection in current.redirections:
-        if not _subject_is_current(host, redirection.subject) or not _subject_is_current(
-            host, redirection.destination
+        scope = redirection.controller_scope
+        require_phased_in = (
+            redirection.maximum_damage is not None or scope is not None
+            or redirection.chosen_source_scope_version is not None
+        )
+        if scope is not None and redirection.controller not in host.active_seats:
+            continue
+        if not _subject_is_current(host, redirection.subject, require_phased_in=require_phased_in) or not _subject_is_current(
+            host, redirection.destination, require_phased_in=require_phased_in,
         ):
             continue
         try:
@@ -184,6 +208,13 @@ def collect_damage_modifier_effects(
             )
         except DamageError:
             # CR 614.9: an invalid destination makes redirection do nothing.
+            continue
+        if scope is not None:
+            from .rules.controller_damage_redirection import DESTINATION_TYPES
+
+            if DESTINATION_TYPES[scope].isdisjoint(destination.types):
+                continue
+        if redirection.creature_destination_only and "creature" not in destination.types:
             continue
         effects.append(_redirection_replacement_effect(redirection, destination))
     ids = [effect.effect_id for effect in effects]

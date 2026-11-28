@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000120611",
+      "name": "Smokecoil Echo",
+      "layout": "normal",
+      "type_line": "Creature — Lizard",
+      "mana_cost": "{2}{R}",
+      "cmc": 3,
+      "oracle_text": "When this creature dies, it deals 3 damage to a creature an opponent controls chosen at random.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000120612",
+      "name": "Copperbreak",
+      "layout": "normal",
+      "type_line": "Sorcery",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "oracle_text": "Destroy target creature.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000120613",
+      "name": "Bramble Sentinel",
+      "layout": "normal",
+      "type_line": "Creature — Treefolk",
+      "mana_cost": "{3}{G}",
+      "cmc": 4,
+      "oracle_text": "Hexproof",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Hexproof"
+      ],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "5"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000120614",
+      "name": "Glintwood Warden",
+      "layout": "normal",
+      "type_line": "Creature — Elf",
+      "mana_cost": "{2}{W}",
+      "cmc": 3,
+      "oracle_text": "Protection from red",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Protection"
+      ],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "5"
+    }
+  ],
+  "rulings": []
+}

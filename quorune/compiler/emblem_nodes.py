@@ -13,6 +13,7 @@ from .runtime_templates import StaticRuntimeTemplate, static_runtime_template
 from .turn_cast_grants import command_graveyard_cast_grant_handler
 from .static_runtime_nodes import runtime_handler_node
 from .fixed_counter_trigger_nodes import fixed_typed_event_effect_trigger_node
+from .ir_model import OracleNode
 
 
 def _emblem_child(body, *, node_id, span, registry, profile, effects, trusted_mechanics):
@@ -35,7 +36,8 @@ def _emblem_child(body, *, node_id, span, registry, profile, effects, trusted_me
             dependency_reason=template.dependency_reason, capability_registry=registry,
             capability_profile=profile, residuals=residuals)
     else:
-        child = fixed_typed_event_effect_trigger_node(node_id=node_id, line=body, material_line=body,
+        child = _artifact_graveyard_emblem_child(body, node_id=node_id, span=span, registry=registry, profile=profile)
+        child = child or fixed_typed_event_effect_trigger_node(node_id=node_id, line=body, material_line=body,
             span=span, card_name='Emblem', effect_template=effects, trusted_mechanics=trusted_mechanics,
             capability_registry=registry, capability_profile=profile, residuals=residuals)
         if child is not None:
@@ -58,6 +60,31 @@ def _emblem_child(body, *, node_id, span, registry, profile, effects, trusted_me
     return replace(child, capability_dependencies=gate.capabilities,
         capability_closure=gate.closure.reachable, capability_profile=gate.closure.profile,
         capability_fingerprint=gate.closure.fingerprint)
+
+
+def _artifact_graveyard_emblem_child(body, *, node_id, span, registry, profile):
+    from ..delayed_object_model import (
+        ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES, ARTIFACT_GRAVEYARD_RETURN_EVENT, DELAYED_OBJECT_MECHANIC,
+        artifact_graveyard_return_condition, artifact_graveyard_return_effect,
+    )
+
+    if " ".join(body.split()).casefold() != (
+        "whenever an artifact is put into your graveyard from the battlefield, "
+        "return that card to the battlefield at the beginning of the next end step."
+    ):
+        return None
+    gate = explicit_capabilities_gate(ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES,
+        capability_registry=registry, capability_profile=profile)
+    if gate.blockers or gate.closure is None:
+        return None
+    return OracleNode(
+        node_id=node_id, kind="triggered_ability", text=body, span=span, active_zone="command",
+        event=ARTIFACT_GRAVEYARD_RETURN_EVENT, event_condition=artifact_graveyard_return_condition(),
+        lowerable=True, exact=True, template_id="emblem-original-artifact-delayed-return-v1",
+        effects=(artifact_graveyard_return_effect(),), mechanics=(DELAYED_OBJECT_MECHANIC,),
+        capability_dependencies=gate.capabilities, capability_closure=gate.closure.reachable,
+        capability_profile=gate.closure.profile, capability_fingerprint=gate.closure.fingerprint,
+    )
 
 
 def compiled_emblem_nodes(*, record, face_id, node_id, line, material_line, span, source_name,

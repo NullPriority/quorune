@@ -8,8 +8,11 @@ from ..attachments import (
     attach_objects,
     attach_to_player,
     attachment_target_ref,
+    current_protection_attachment,
+    detach_object,
 )
 from ..model import CardInstance
+from ..continuous_effect_model import ContinuousObjectIdentity
 from ..protection import (
     ProtectionSource,
     ProtectionVerdict,
@@ -87,12 +90,16 @@ def _protection_allows_attachment(
     target: CardInstance,
     *, controller: str,
 ) -> bool:
+    from ..protection_attachment_exceptions import simultaneous_attachment_protection_sources
+
     aura_data = host._effective_card_data(aura)
     verdict = protection_verdict(
         host._effective_card_data(target),
         ProtectionSource.from_characteristics(aura_data),
         source_player=controller,
         retaining_aura=aura.logical_object_id if aura.zone=='battlefield' and aura.attached_to==target.object_id else None,
+        retaining_attachment=current_protection_attachment(host.state.cards, aura, target),
+        simultaneous_sources=simultaneous_attachment_protection_sources(host.state, aura),
     )
     return verdict is ProtectionVerdict.ALLOWED
 
@@ -107,7 +114,6 @@ def legal_aura_target_refs(
     as_target: bool,
 ) -> tuple[str, ...]:
     group = TargetGroup.from_mapping(spec.target_schema(aura))
-    linked_target_id = spec.linked_target_object_id(aura)
     refs: list[str] = []
     for row in host._target_candidate_rows(controller, group):
         target = row.get("card")
@@ -115,8 +121,8 @@ def legal_aura_target_refs(
             if target.object_id == aura.object_id or target.phased_out:
                 continue
             if (
-                linked_target_id is not None
-                and target.object_id != linked_target_id
+                isinstance(spec, LinkedGraveyardCreatureEnchantSpec)
+                and not spec.linked_target_allows(aura, target)
             ):
                 continue
         elif row.get("category") != "player":
@@ -124,6 +130,8 @@ def legal_aura_target_refs(
         elif not player_protection_allows_attachment(
             host,
             str(row["ref"]),
+            aura=aura,
+            controller=controller,
         ):
             continue
         if not host._target_row_matches(
@@ -134,8 +142,10 @@ def legal_aura_target_refs(
             as_target=as_target,
         ):
             continue
-        if isinstance(target, CardInstance) and not _protection_allows_attachment(
-            host, aura, target, controller=controller,
+        if (
+            isinstance(target, CardInstance)
+            and target.zone == "battlefield"
+            and not _protection_allows_attachment(host, aura, target, controller=controller)
         ):
             continue
         refs.append(str(row["ref"]))
@@ -165,6 +175,100 @@ def simple_aura_attachment_is_legal(
         controller=aura.controller,
         as_target=False,
     )
+
+
+_REANIMATING_AURA_DEPARTURE = "aura.reanimation.source_departure"
+
+
+def reanimate_graveyard_attachment(host, aura, *, actor, reason, effect):
+    """Return the Aura's enchanted card and bind its actual battlefield arrival."""
+    from ..errors import GameRuleError
+
+    spec = host._compiled_enchant_spec(aura)
+    if not isinstance(spec, LinkedGraveyardCreatureEnchantSpec) or spec.link_annotation != effect.get("link_annotation"):
+        raise GameRuleError("Graveyard Aura return requires its linked Enchant descriptor")
+    creature = host.state.cards.get(aura.attached_to)
+    if (
+        creature is None
+        or creature.zone != "graveyard"
+        or aura.object_id not in creature.attachments
+        or creature.ref not in legal_aura_target_refs(host, aura, spec, controller=aura.controller, as_target=False)
+    ):
+        return None
+    return return_linked_graveyard_creature(host, aura, creature, spec, actor=actor, reason=reason, effect=effect)
+
+
+def return_linked_graveyard_creature(host, aura, creature, spec, *, actor, reason, effect):
+    from ..trigger_processing import schedule_delayed_trigger
+
+    previous_incarnation = creature.zone_change_counter
+    returned = host.move_card(
+        creature.object_id,
+        "battlefield",
+        controller=actor,
+        putting_player=actor,
+        reason=reason,
+        semantic_events=True,
+        replacement_selections=tuple(effect.get("_replacement_selections", ())),
+    )
+    arrived = (
+        returned is not None and returned.zone == "battlefield"
+        and returned.object_id == creature.object_id
+        and returned.zone_change_counter == previous_incarnation + 1
+    )
+    link = ContinuousObjectIdentity(returned.object_id, returned.logical_object_id).to_dict() if arrived else None
+    aura.annotations[spec.link_annotation] = link
+    if not arrived:
+        if aura.attached_to is not None:
+            detach_object(host.state.cards, aura, players=host.state.players)
+        return None
+
+    schedule_delayed_trigger(
+        host,
+        controller=actor,
+        label="Sacrifice the creature returned by the Aura",
+        event_kind=_REANIMATING_AURA_DEPARTURE,
+        condition={"source_incarnation": aura.logical_object_id},
+        source_object_id=aura.object_id,
+        source_logical_object_id=aura.logical_object_id,
+        referred_object_ids=(returned.object_id,),
+        stack_template={"context": {"dynamic_effects": [{
+            "op": "sacrifice_if_present",
+            "card": returned.ref,
+            "object_identity": {**link, "object_ref": returned.ref},
+            "current_controller_sacrifices": True,
+            "sacrifice_replacement_resume": True,
+        }]}},
+    )
+    attached = returned.ref in legal_aura_target_refs(host, aura, spec, controller=aura.controller, as_target=False)
+    if attached:
+        attach_objects(
+            host.state.cards, aura, returned,
+            source_timestamp=host._next_zone_timestamp(), players=host.state.players,
+        )
+    host._log(
+        actor, str(effect.get("event_code") or "aura.reanimate"),
+        f"{actor} returned {returned.ref} with {aura.ref}.",
+        {"aura": aura.ref, "creature": returned.ref, "attached": attached},
+        importance=2,
+        changed_objects=[aura.object_id, returned.object_id],
+        changed_players=[actor],
+    )
+    return returned.ref
+
+
+def collect_reanimating_aura_departure(host, occurrence, pending) -> None:
+    """Place the once-only delayed ability for the departed Aura incarnation."""
+    from ..trigger_processing import TriggerProcessingOwner
+
+    if not host.state.delayed_triggers:
+        return
+    owner = TriggerProcessingOwner(host)
+    for trigger in owner.matching_delayed_triggers(
+        _REANIMATING_AURA_DEPARTURE,
+        {"source_incarnation": occurrence.previous_logical_object_id},
+    ):
+        pending.append(owner.materialize_delayed_trigger(trigger))
 
 
 def prepare_aura_entry(

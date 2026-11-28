@@ -32,6 +32,7 @@ FIXTURES = ROOT / "tests" / "fixtures"
 COUNTER = "stack.counter.effect"
 REVALIDATE = "target.revalidate_resolution"
 DRAW = "zone.draw.library_to_hand"
+SIREN = "Siren Stormtamer"
 ORIGINALS = {
     "Avoid Fate": Predicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT,
     "Cerulean Drake": Predicate.CONTROLLER,
@@ -57,7 +58,7 @@ class SpellTargetingCounterTests(InheritedNativeFixture, unittest.TestCase):
         cls.temporary = TemporaryDirectory()
         folder = Path(cls.temporary.name)
         support = {
-            "ability-source-counter-cards.json": {"Shock", "Sol Ring", "Twincast"},
+            "ability-source-counter-cards.json": {"Shock", "Sol Ring", "Twincast", "Rod of Ruin"},
             "activation-restriction-material-cards.json": {"Cloudshift"},
             "additional-conditional-modifier-cards.json": {"Revitalize"},
             "additional-continuous-carriers-cards.json": {"Walking Corpse"},
@@ -69,6 +70,7 @@ class SpellTargetingCounterTests(InheritedNativeFixture, unittest.TestCase):
             "recipient-control-cards.json": {"Arc Trail"},
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
             "spell-targeting-counter-cards.json": set(ORIGINALS),
+            "siren-current-stack-target-cards.json": {SIREN},
         }
         pieces = []
         for filename, names in support.items():
@@ -176,6 +178,96 @@ class SpellTargetingCounterTests(InheritedNativeFixture, unittest.TestCase):
     def _countered(self, game, ref):
         return any(event.code == "stack.counter" and event.details["stack"] == ref
                    for event in game.state.events)
+
+    def test_siren_original_closes_only_its_mixed_current_target_predicate(self):
+        card, program = self.original_counter(SIREN)
+        predicate = Predicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE
+        self.assertEqual(predicate.target_schema(), thaw_value(program.target_schema))
+        self.assertEqual([CURRENT_TARGET_COUNTER], thaw_value(program.effects))
+        self.assertEqual({COUNTER, REVALIDATE}, set(stack_spell_target_counter_runtime_dependencies(program)))
+        broadened = {**thaw_value(program.target_schema), "source_exclusion": False}
+        self.assertFalse(bind_semantic_program_runtime(
+            replace(program, target_schema=broadened), capability_registry=self.registry, profile=PROFILE,
+        )["strict"])
+        self.assertIsNone(spell_targeting_counter_effect_template("Counter target spell or ability that targets a player."))
+        compilers = tuple(template for template in resolution_effect_templates._DIRECT_RESOLUTION_EFFECT_COMPILERS
+                          if template is not spell_targeting_counter_effect_template)
+        with patch.object(resolution_effect_templates, "_DIRECT_RESOLUTION_EFFECT_COMPILERS", compilers):
+            ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+            self.assertNotEqual("exact", ir.status)
+
+    def test_actual_siren_pays_for_the_ability_targeting_its_controller(self):
+        game = self.session(77131030)
+        siren = self.add(game.engine, SIREN)
+        wrong = self.add(game.engine, "Rod of Ruin", seat="B", ref="siren-foreign-target")
+        right = self.add(game.engine, "Rod of Ruin", seat="B", ref="siren-own-target")
+        private = self.add(game.engine, "Walking Corpse", seat="D", zone="hand", ref="siren-unrelated-private")
+        for card in (siren, wrong, right):
+            self.assert_closed(game, card)
+        self.prepare(game, active="B", actor="B", mana={"C": 6})
+        game.state.players["A"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        refs = []
+        for source, target in ((wrong, "C"), (right, "A")):
+            actions = self._actions(game, "B")
+            offered = [row for row in actions if row["id"].startswith(f"activate:{source.ref}:")]
+            self.assertEqual(1, len(offered), (source.ref, [row["id"] for row in actions]))
+            row, = offered
+            result = game.act("pilot:B", {"action_id": row["id"], "targets": [target], "pay": "auto"})
+            self.assertTrue(result.ok, result.summary)
+            item = game.state.stack[-1]
+            self.assertEqual("activated_ability", item.kind)
+            refs.append(item.ref)
+        denied, allowed = refs
+        offer = self._activation(game, siren, allowed)
+        self.assertEqual([allowed], offer["target_schema"]["legal_refs"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        command = {"action_id": offer["id"], "targets": [allowed], "pay": "auto"}
+        self._reject(game, "A", {**command, "targets": [denied]})
+        self._reject(game, "D", command)
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", game.state.cards[siren.object_id].zone)
+        self.assertEqual(0, game.state.players["A"].mana_pool["U"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(self._countered(game, allowed))
+        self.assertFalse(self._countered(game, denied))
+        self.assertEqual([40, 40, 39, 40], [game.state.players[seat].life for seat in "ABCD"])
+        self.replay(game, load=True)
+
+    def test_actual_siren_revalidates_one_matching_subject_of_a_multitarget_spell(self):
+        for response, remains in (("Snakeskin Veil", True), ("Cloudshift", False)):
+            with self.subTest(response=response):
+                game = self.session(77131031 + int(remains))
+                siren = self.add(game.engine, SIREN)
+                body = self.add(game.engine, "Walking Corpse")
+                followup = self.add(game.engine, response, zone="hand")
+                trail = self.add(game.engine, "Arc Trail", seat="B", zone="hand")
+                for card in (siren, body, followup, trail):
+                    self.assert_closed(game, card)
+                original = body.logical_object_id
+                self.prepare(game, active="B", actor="B", mana={"C": 1, "R": 1})
+                game.state.players["A"].mana_pool.update({"G": 1, "U": 1, "W": 1})
+                self.checkpoint(game)
+                self.cast(game, "B", trail, [body.ref, "C"])
+                target = self._spell(game, trail).ref
+                offer = self._activation(game, siren, target)
+                accepted = game.act("pilot:A", {"action_id": offer["id"], "targets": [target], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.cast(game, "A", followup, [body.ref])
+                self.resolve_top(game)
+                current = game.state.cards[body.object_id]
+                self.assertEqual(remains, current.logical_object_id == original)
+                if remains:
+                    self.assertIn("hexproof", game.engine._combat_keywords(current))
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(remains, self._countered(game, target))
+                self.assertEqual(40 if remains else 39, game.state.players["C"].life)
+                self.assertEqual("battlefield", game.state.cards[body.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[siren.object_id].zone)
+                self.replay(game, load=True)
 
     def test_actual_keep_safe_draws_after_an_uncounterable_spell_and_preserves_draw_privacy(self):
         game = self.session(77131001)

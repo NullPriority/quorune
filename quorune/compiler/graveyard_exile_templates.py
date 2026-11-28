@@ -6,7 +6,8 @@ from ..graveyard_exile_model import GraveyardExileSpec,GraveyardExileScope,GRAVE
 
 
 def graveyard_exile_template(text):
-    material=' '.join(text.strip().replace('’',"'").split()).casefold()
+    normalized = " ".join(text.strip().replace("’", "'").split())
+    material = normalized.casefold()
     scopes={
         'if a card or token would be put into a graveyard from anywhere, exile it instead.':GraveyardExileScope.CARD_OR_TOKEN,
         "if a card would be put into an opponent's graveyard from anywhere, exile it instead.":GraveyardExileScope.OPPONENT_CARD,
@@ -15,7 +16,28 @@ def graveyard_exile_template(text):
         'if an instant or sorcery card would be put into a graveyard from anywhere, exile it instead.':GraveyardExileScope.INSTANT_OR_SORCERY_CARD,
         'if a creature an opponent controls would die, exile it instead.':GraveyardExileScope.OPPONENT_CONTROLLED_CREATURE,
     }
-    scope=scopes.get(material)
-    if scope is None:return None
+    beginning, divider, _tail = material.partition(" when you do, ")
+    scope = scopes.get(beginning)
+    if scope is None:
+        return None
+    if divider:
+        return _token_trigger_template(scope, normalized[len(beginning + divider):])
     spec=GraveyardExileSpec(scope)
     return ('qualified-graveyard-exile-v1',spec.descriptor(),GRAVEYARD_EXILE_DEPENDENCIES)
+
+
+def _token_trigger_template(scope, text):
+    from ..reflexive_trigger_model import ReflexiveTriggerProgram
+    from ..rules.zone_replacement_token_trigger import DEPENDENCIES, descriptor
+    from .token_templates import fixed_token_creation_effect_template
+
+    if scope is not GraveyardExileScope.OPPONENT_CONTROLLED_CREATURE:
+        return None
+    creation = fixed_token_creation_effect_template(text)
+    if creation is None:
+        return None
+    try:
+        program = ReflexiveTriggerProgram((creation.effect,), creation.target_schema, creation.mechanics)
+        return "qualified-graveyard-exile-token-trigger-v1", descriptor(GraveyardExileSpec(scope), program), DEPENDENCIES
+    except (TypeError, ValueError):
+        return None

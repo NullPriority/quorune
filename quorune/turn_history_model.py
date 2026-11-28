@@ -10,7 +10,11 @@ from .death_history_name_model import (validate_event_rules_names, decode_event_
 
 TurnHistoryEventKind = Literal[
     "first_venture",
+    "first_equip_activation",
+    "card_drawn",
+    "permanent_exerted",
     "trigger_optional_result_used",
+    "trigger_mode_chosen",
     "ability_resolved",
     "crime_committed",
     "spell_mana_spent",
@@ -34,24 +38,42 @@ TurnHistoryEventKind = Literal[
     "permanent_arrived_graveyard",
     "card_arrived_exile",
     "artifact_subtype_sacrificed",
+    "artifact_subtype_entered",
     "card_arrived_graveyard",
     "card_milled_graveyard",
     "permanent_plus_one_counters_placed",
+    "controlled_creature_plus_one_counters_placed",
+    "creature_counters_placed",
+    "land_played",
+    "permanent_counter_received",
 ]
 
 
+LAND_PLAY_HISTORY_EVENT = "land_played"
+FIRST_EQUIP_ACTIVATION = "first_equip_activation"
+DRAWN_HAND_CARD_EVENT = "card_drawn"
+EXERTED_PERMANENT_EVENT = "permanent_exerted"
 CAST_CREATURE_COUNTERED_EVENT = "cast_creature_spell_countered"
 PLUS_ONE_COUNTERS_PLACED_EVENT = "permanent_plus_one_counters_placed"
+CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT = "controlled_creature_plus_one_counters_placed"
+CREATURE_COUNTER_PLACEMENT_EVENT = "creature_counters_placed"
+TRIGGER_MODE_CHOSEN_EVENT = "trigger_mode_chosen"
+PERMANENT_COUNTER_RECEIVED_EVENT = "permanent_counter_received"
+ARTIFACT_SUBTYPE_ENTRY_EVENT = "artifact_subtype_entered"
 
 
-def _validate_plus_one_placement(event):
-    if event.kind != PLUS_ONE_COUNTERS_PLACED_EVENT:
+def _validate_counter_placement_fact(event):
+    if event.kind not in {
+        PLUS_ONE_COUNTERS_PLACED_EVENT, CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT,
+    }:
         return
     if (any(type(value) is not str or not value for value in (event.actor, event.object_incarnation))
             or type(event.amount) is not int or event.amount <= 0
             or not isinstance(event.types, tuple)
             or any(type(value) is not str or not value or value != value.casefold() for value in event.types)
             or event.types != tuple(sorted(set(event.types)))
+            or (event.kind in {CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT}
+                and "creature" not in event.types)
             or any(value is not None for value in (
                 event.target, event.target_kind, event.target_object_incarnation, event.origin,
             ))):
@@ -68,6 +90,7 @@ def _validate_plus_one_placement_history(version, events):
 COMMITTED_OCCURRENCE_HISTORY_KINDS = frozenset({"spell_warped", "card_left_graveyard"})
 PUBLIC_MOVEMENT_HISTORY_KINDS = frozenset({
     "permanent_arrived_hand", "permanent_arrived_graveyard", "card_arrived_exile", "artifact_subtype_sacrificed",
+    ARTIFACT_SUBTYPE_ENTRY_EVENT,
 })
 
 
@@ -97,7 +120,14 @@ class TurnHistoryEvent:
 
     def __post_init__(self):
         validate_event_rules_names(self.kind, self.rules_names)
-        _validate_plus_one_placement(self)
+        _validate_counter_placement_fact(self)
+        if self.kind == PERMANENT_COUNTER_RECEIVED_EVENT and (
+            type(self.object_incarnation) is not str or not self.object_incarnation
+            or any(value is not None for value in (self.actor, self.target, self.target_kind,
+                                                   self.target_object_incarnation, self.origin))
+            or self.types or type(self.amount) is not int or self.amount != 0
+        ):
+            raise ValueError("A permanent counter receipt requires only the receiving incarnation")
         if self.spell_colors is not None and (
             self.kind != "spell_cast" or type(self.spell_colors) is not tuple
             or self.spell_colors != tuple(color for color in "WUBRG" if color in self.spell_colors)
@@ -121,9 +151,21 @@ class TurnHistoryEvent:
                 ))
                 or type(self.amount) is not int or self.amount != 0):
                 raise ValueError("Permanent death history requires its sealed departure facts")
+        elif self.kind == "permanent_entered" and self.token is not None:
+            if (type(self.token) is not bool or self.creature_subtypes is not None
+                    or any(type(value) is not str or not value for value in (self.actor, self.object_incarnation))
+                    or not isinstance(self.types, tuple)
+                    or self.types != tuple(sorted(set(self.types)))
+                    or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
+                    or any(value is not None for value in (
+                        self.target, self.target_kind, self.target_object_incarnation, self.origin,
+                    )) or type(self.amount) is not int or self.amount != 0):
+                raise ValueError("Permanent entry token history requires its sealed entry facts")
         elif self.creature_subtypes is not None or self.token is not None:
-            raise ValueError("Only permanent deaths carry subtype and token history")
-        if self.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS and (
+            raise ValueError("Only permanent death or entry can carry token history")
+        if self.kind in (COMMITTED_OCCURRENCE_HISTORY_KINDS | {
+            LAND_PLAY_HISTORY_EVENT, DRAWN_HAND_CARD_EVENT, EXERTED_PERMANENT_EVENT, FIRST_EQUIP_ACTIVATION,
+        }) and (
             type(self.actor) is not str or not self.actor
             or type(self.object_incarnation) is not str or not self.object_incarnation
             or any(value is not None for value in (
@@ -161,6 +203,12 @@ class TurnHistoryEvent:
                 or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
                 or self.target_object_incarnation is not None or self.types or self.origin is not None):
             raise ValueError('Crime history requires one completed player action and its exact stack identity')
+        if self.kind == TRIGGER_MODE_CHOSEN_EVENT and (
+            any(type(value) is not str or not value for value in (self.actor, self.object_incarnation, self.target))
+            or self.target_kind != "ability_program" or self.target_object_incarnation is not None
+            or self.types or self.origin is not None or type(self.amount) is not int or self.amount not in (1, 2, 3)
+        ):
+            raise ValueError("Trigger mode usage requires its source incarnation, ability program and mode")
         if self.kind in {"trigger_optional_result_used", "ability_resolved"} and (
             any(type(value) is not str or not value for value in (self.actor, self.object_incarnation, self.target))
             or self.target_kind != 'ability_program' or self.target_object_incarnation is not None
@@ -188,12 +236,14 @@ class TurnHistoryEvent:
                 or self.target_object_incarnation is not None or self.origin is not None
                 or type(self.amount) is not int or self.amount != 0):
             raise ValueError("Public movement history requires a seat and a committed incarnation")
-        if self.kind == "artifact_subtype_sacrificed":
+        if self.kind in {"artifact_subtype_sacrificed", ARTIFACT_SUBTYPE_ENTRY_EVENT}:
             from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
 
             if (self.target_kind != "artifact_subtype" or type(self.target) is not str
-                    or self.target not in ARTIFACT_SUBTYPES or self.types):
-                raise ValueError("Sacrifice history requires one canonical artifact subtype")
+                    or self.target not in ARTIFACT_SUBTYPES or self.types
+                    or (self.kind == ARTIFACT_SUBTYPE_ENTRY_EVENT and self.target != "food")):
+                label = "Sacrifice" if self.kind == "artifact_subtype_sacrificed" else "Food entry"
+                raise ValueError(f"{label} history requires one canonical artifact subtype")
         elif self.target is not None or self.target_kind is not None:
             raise ValueError("Movement history cannot carry a target")
         elif self.kind == "card_arrived_exile":
@@ -213,7 +263,8 @@ class TurnHistoryEvent:
             payload["creature_subtypes"] = list(self.creature_subtypes)
         else:
             payload.pop("creature_subtypes")
-            payload.pop("token")
+            if self.token is None:
+                payload.pop("token")
         if self.origin is None:payload.pop("origin")
         if self.spell_colors is None:
             payload.pop("spell_colors")
@@ -225,11 +276,16 @@ class TurnHistoryEvent:
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistoryEvent":
         payload = dict(data)
         payload["rules_names"] = decode_event_rules_names(payload)
+        if payload.get("kind") == "permanent_entered" and "token" in payload:
+            if type(payload["token"]) is not bool or not isinstance(payload.get("types"), list):
+                raise ValueError("Permanent entry token history requires explicit token and type facts")
         if "spell_colors" in payload:
             if not isinstance(payload["spell_colors"], list):
                 raise ValueError("As-cast spell colors must be a recorded array")
             payload["spell_colors"] = tuple(payload["spell_colors"])
-        if payload.get("kind") == PLUS_ONE_COUNTERS_PLACED_EVENT:
+        if payload.get("kind") in {
+            PLUS_ONE_COUNTERS_PLACED_EVENT, CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT,
+        }:
             if not isinstance(payload.get("types"), (list, tuple)):
                 raise ValueError("Counter placement history requires explicit recipient types")
             payload["types"] = tuple(payload["types"])
@@ -277,7 +333,15 @@ class TurnHistory:
     public_movement_history_version: int | None = None
     first_life_gain_history_version: int | None = None
     venture_history_version: int | None = None
+    draw_identity_history_version: int | None = None
+    exert_occurrence_history_version: int | None = None
+    equip_activation_history_version: int | None = None
     plus_one_counter_placement_history_version: int | None = None
+    controlled_creature_counter_history_version: int | None = None
+    creature_counter_placement_history_version: int | None = None
+    land_play_history_version: int | None = None
+    permanent_counter_receipt_history_version: int | None = None
+    permanent_entry_token_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -293,6 +357,9 @@ class TurnHistory:
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
         for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version,self.crime_history_version):
             if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
+        land_play_version = self.land_play_history_version
+        if land_play_version is not None and (type(land_play_version) is not int or land_play_version != 1):
+            raise ValueError("Unsupported land-play history version")
         occurrence_version = self.committed_occurrence_history_version
         if occurrence_version is not None and (type(occurrence_version) is not int or occurrence_version != 1):
             raise ValueError("Unsupported committed occurrence history version")
@@ -308,6 +375,14 @@ class TurnHistory:
         life_gain_version = self.first_life_gain_history_version
         if life_gain_version is not None and (type(life_gain_version) is not int or life_gain_version != 1):
             raise ValueError('Unsupported first life gain history version')
+        exert_version = self.exert_occurrence_history_version
+        if exert_version is not None and (type(exert_version) is not int or exert_version != 1):
+            raise ValueError("Unsupported Exert occurrence history version")
+        if exert_version is None and any(event.kind == EXERTED_PERMANENT_EVENT for event in self.events):
+            raise ValueError("Exert occurrences require authoritative Exert history")
+        draw_version = self.draw_identity_history_version
+        if draw_version is not None and (type(draw_version) is not int or draw_version != 1):
+            raise ValueError("Unsupported draw identity history version")
         venture_version = self.venture_history_version
         if venture_version is not None and (type(venture_version) is not int or venture_version != 1):
             raise ValueError("Unsupported Venture history version")
@@ -321,18 +396,52 @@ class TurnHistory:
         ):
             raise ValueError("Unsupported as-cast spell-color history version")
         _validate_plus_one_placement_history(self.plus_one_counter_placement_history_version, self.events)
+        token_entry_version = self.permanent_entry_token_history_version
+        if token_entry_version is not None and (type(token_entry_version) is not int or token_entry_version != 1):
+            raise ValueError("Unsupported permanent entry token history version")
+        if token_entry_version is None and any(
+            event.kind == "permanent_entered" and event.token is not None for event in self.events
+        ):
+            raise ValueError("Permanent entry token facts require their explicit history version")
+        version = self.controlled_creature_counter_history_version
+        if version is not None and (type(version) is not int or version != 1):
+            raise ValueError("Unsupported controlled creature counter history version")
+        if version is None and any(event.kind == CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT for event in self.events):
+            raise ValueError("Controlled creature counter events require explicit complete history")
+        creature_placements = self.creature_counter_placement_history_version
+        if creature_placements is not None and (type(creature_placements) is not int or creature_placements != 1):
+            raise ValueError("Unsupported creature counter placement history version")
+        if creature_placements is None and any(event.kind == CREATURE_COUNTER_PLACEMENT_EVENT for event in self.events):
+            raise ValueError("Creature counter placements require complete placing-player history")
+        receipt_version = self.permanent_counter_receipt_history_version
+        if receipt_version is not None and (type(receipt_version) is not int or receipt_version != 1):
+            raise ValueError("Unsupported permanent counter receipt history version")
+        counter_recipients = [event.object_incarnation for event in self.events
+                              if event.kind == PERMANENT_COUNTER_RECEIVED_EVENT]
+        if counter_recipients and (receipt_version is None or len(counter_recipients) != len(set(counter_recipients))):
+            raise ValueError("Counter receipts require complete history and distinct incarnations")
         if self.spell_color_history_version is None and any(event.spell_colors is not None for event in self.events):
             raise ValueError("As-cast color facts require their explicit history mode")
         if self.spell_mana_history_version is None and any(event.kind=='spell_mana_spent' for event in self.events):
             raise ValueError('Spell-mana facts require complete payment history')
         if self.crime_history_version is None and any(event.kind=='crime_committed' for event in self.events):
             raise ValueError('Crime facts require complete initial-action history')
+        if land_play_version is None and any(event.kind == LAND_PLAY_HISTORY_EVENT for event in self.events):
+            raise ValueError("Committed land plays require complete land-play history")
         if occurrence_version is None and any(event.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS for event in self.events):
             raise ValueError("Committed occurrence facts require complete history")
         if death_version is None and any(event.kind == "permanent_died" for event in self.events):
             raise ValueError("Permanent death facts require complete history")
         if movement_version is None and any(event.kind in PUBLIC_MOVEMENT_HISTORY_KINDS for event in self.events):
             raise ValueError("Public movement facts require complete history")
+        if draw_version is None and any(event.kind == DRAWN_HAND_CARD_EVENT for event in self.events):
+            raise ValueError("Drawn card facts require complete draw identity history")
+        equip_version = self.equip_activation_history_version
+        if equip_version is not None and (type(equip_version) is not int or equip_version != 1):
+            raise ValueError("Unsupported Equip activation history version")
+        equip_actors = [event.actor for event in self.events if event.kind == FIRST_EQUIP_ACTIVATION]
+        if equip_actors and (equip_version is None or len(equip_actors) != len(set(equip_actors))):
+            raise ValueError("First Equip activations require versioned history and distinct actors")
         validate_death_name_history(self.death_name_history_version, death_version, self.events)
         first_gainers = [event.target for event in self.events if event.kind == 'first_life_gain']
         if first_gainers and (life_gain_version is None or len(first_gainers) != len(set(first_gainers))):
@@ -387,6 +496,14 @@ class TurnHistory:
             **({"spell_color_history_version": 1} if self.spell_color_history_version is not None else {}),
             **({"plus_one_counter_placement_history_version": 1}
                if self.plus_one_counter_placement_history_version is not None else {}),
+            **({"controlled_creature_counter_history_version": 1}
+               if self.controlled_creature_counter_history_version is not None else {}),
+            **({"creature_counter_placement_history_version": 1}
+               if self.creature_counter_placement_history_version is not None else {}),
+            **({"permanent_counter_receipt_history_version": 1}
+               if self.permanent_counter_receipt_history_version is not None else {}),
+            **({"permanent_entry_token_history_version": 1}
+               if self.permanent_entry_token_history_version is not None else {}),
             **({"creature_spell_counter_history_version": 1}
                if self.creature_spell_counter_history_version is not None else {}),
             **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
@@ -403,6 +520,10 @@ class TurnHistory:
                if self.public_movement_history_version is not None else {}),
             **({'first_life_gain_history_version': 1} if self.first_life_gain_history_version is not None else {}),
             **({"venture_history_version": 1} if self.venture_history_version is not None else {}),
+            **({"land_play_history_version": 1} if self.land_play_history_version is not None else {}),
+            **({"draw_identity_history_version": 1} if self.draw_identity_history_version is not None else {}),
+            **({"exert_occurrence_history_version": 1} if self.exert_occurrence_history_version is not None else {}),
+            **({"equip_activation_history_version": 1} if self.equip_activation_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -423,8 +544,24 @@ class TurnHistory:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistory":
         previous = data.get("previous_turn")
+        if "land_play_history_version" in data and data["land_play_history_version"] is None:
+            raise ValueError("Unsupported land-play history version")
+        if "exert_occurrence_history_version" in data and data["exert_occurrence_history_version"] is None:
+            raise ValueError("Unsupported Exert occurrence history version")
+        if "equip_activation_history_version" in data and data["equip_activation_history_version"] is None:
+            raise ValueError("Unsupported Equip activation history version")
+        if "draw_identity_history_version" in data and data["draw_identity_history_version"] is None:
+            raise ValueError("Unsupported draw identity history version")
         if "plus_one_counter_placement_history_version" in data and data["plus_one_counter_placement_history_version"] is None:
             raise ValueError("Unsupported +1/+1 counter placement history version")
+        if "permanent_entry_token_history_version" in data and data["permanent_entry_token_history_version"] is None:
+            raise ValueError("Unsupported permanent entry token history version")
+        if "controlled_creature_counter_history_version" in data and data["controlled_creature_counter_history_version"] is None:
+            raise ValueError("Unsupported controlled creature counter history version")
+        if "creature_counter_placement_history_version" in data and data["creature_counter_placement_history_version"] is None:
+            raise ValueError("Unsupported creature counter placement history version")
+        if "permanent_counter_receipt_history_version" in data and data["permanent_counter_receipt_history_version"] is None:
+            raise ValueError("Unsupported permanent counter receipt history version")
         if "spell_color_history_version" in data and data["spell_color_history_version"] is None:
             raise ValueError("Unsupported as-cast spell-color history version")
         if "creature_spell_counter_history_version" in data and data["creature_spell_counter_history_version"] is None:
@@ -447,6 +584,10 @@ class TurnHistory:
             spell_origin_history_version=data.get("spell_origin_history_version"),
             spell_color_history_version=data.get("spell_color_history_version"),
             plus_one_counter_placement_history_version=data.get("plus_one_counter_placement_history_version"),
+            controlled_creature_counter_history_version=data.get("controlled_creature_counter_history_version"),
+            creature_counter_placement_history_version=data.get("creature_counter_placement_history_version"),
+            permanent_counter_receipt_history_version=data.get("permanent_counter_receipt_history_version"),
+            permanent_entry_token_history_version=data.get("permanent_entry_token_history_version"),
             creature_spell_counter_history_version=data.get("creature_spell_counter_history_version"),
             graveyard_type_history_version=data.get("graveyard_type_history_version"),
             spell_mana_history_version=data.get("spell_mana_history_version"),
@@ -458,6 +599,10 @@ class TurnHistory:
             public_movement_history_version=data.get("public_movement_history_version"),
             first_life_gain_history_version=data.get('first_life_gain_history_version'),
             venture_history_version=data.get("venture_history_version"),
+            land_play_history_version=data.get("land_play_history_version"),
+            draw_identity_history_version=data.get("draw_identity_history_version"),
+            exert_occurrence_history_version=data.get("exert_occurrence_history_version"),
+            equip_activation_history_version=data.get("equip_activation_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

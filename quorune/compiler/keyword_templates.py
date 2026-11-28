@@ -19,7 +19,7 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|rampage|cycling|crew|saddle|dredge|kicker|toxic|"
-    r"casualty|champion|cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|tribute|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|mutate|awaken|evoke|offspring|squad|flashback|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|miracle|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|recover|ripple|reinforce|scavenge|transmute)"
+    r"casualty|champion|cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|tribute|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|mutate|awaken|evoke|offspring|squad|flashback|harmonize|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|miracle|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|recover|ripple|reinforce|scavenge|transmute)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
@@ -49,6 +49,11 @@ def keyword_mechanics(
     """Recognize a complete Oracle line made only of printed keywords."""
 
     known = {keyword.casefold() for keyword in card_keywords}
+    if "companion" in known:
+        from ..rules.commander_companion_roles import SINGLETON_COMPANION_CLAUSE
+
+        if " ".join(text.split()).casefold() == SINGLETON_COMPANION_CLAUSE:
+            return ("companion",)
     if 'partner' in known:
         pairing_kind = pairing_kind_for_material_line(text.strip())
         if pairing_kind in TAGGED_PARTNER_KINDS:
@@ -57,7 +62,9 @@ def keyword_mechanics(
     if 'recover' in known:
         from .fractional_life_payment_templates import recover_half_life_price_from_line
         if recover_half_life_price_from_line(text.strip()) is not None:return ('recover',)
-    if material.casefold().startswith("equip abilities you activate of other equipment "):
+    if material.casefold().startswith((
+        "equip abilities you activate of other equipment ", "ninjutsu abilities you activate ",
+    )):
         return None
     if "equip" in known and fixed_equip_ability_spec(material) is not None:
         return ("equip",)
@@ -67,6 +74,8 @@ def keyword_mechanics(
         return ('kicker',)
     if "evoke" in known and re.match(r"Evoke\s*[—–-]", material, re.I):
         return ("evoke",)
+    if "echo" in known and re.match(r"Echo\s*[—–-]", material, re.I):
+        return ("echo",)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]

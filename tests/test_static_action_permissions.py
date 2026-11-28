@@ -94,6 +94,40 @@ def _permanent(
     )
 
 
+class StaticActionPermissionDiscoveryTests(unittest.TestCase):
+    def test_current_permission_reads_share_inputs_without_skipping_source_validation(self):
+        from types import SimpleNamespace
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.entry_copy import copiable_oracle_id
+        from quorune.semantics import SemanticRegistry
+
+        semantics = SemanticRegistry(include_builtin_packs=False)
+        one, two = (SimpleNamespace(zone="battlefield", phased_out=False, oracle_id="same-card", annotations={})
+                    for _ in range(2))
+        reads = []
+        host = SimpleNamespace(active_seats=("A",), semantics=semantics,
+                               _semantic_event_sources=lambda **_: (one, two))
+
+        def card_record(source):
+            oracle_id = copiable_oracle_id(source)
+
+            def read():
+                reads.append(oracle_id)
+                return {"oracle_id": oracle_id}
+
+            return memoized_characteristic_read(host, ("record", oracle_id), read)
+
+        host.card_record = card_record
+        with mock.patch("quorune.semantic_runtime.action_permissions.default_action_permission_registry"):
+            self.assertEqual((), controller_action_permissions(host, "A"))
+            self.assertEqual(["same-card"], reads)
+            self.assertEqual((), controller_action_permissions(host, "A"))
+            self.assertEqual(["same-card", "same-card"], reads)
+            two.annotations["copy_overrides"] = {"_copiable_oracle_id": 0}
+            with self.assertRaisesRegex(ValueError, "Copiable program provenance"):
+                controller_action_permissions(host, "A")
+
+
 class StaticActionPermissionCompilerTests(unittest.TestCase):
     def setUp(self):
         self.capabilities = load_default_capability_registry()
@@ -876,10 +910,13 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
             top.ref,
             owner["state"]["players"]["B"]["known_top"][0]["id"],
         )
+        self.assertEqual(top.printed_name, owner["state"]["players"]["B"]["known_top"][0]["n"])
+        self.assertEqual(top.oracle_id[:8], owner["state"]["players"]["B"]["known_top"][0]["cid"])
         self.assertNotIn(
             "known_top",
             opponent["state"]["players"]["B"],
         )
+        self.assertNotIn("known_top", session.packet("spectator", full=True)["state"]["players"]["B"])
         actions = owner["decision"]["ctx"]["legal"]["actions"]
         cast = next(
             action
@@ -910,7 +947,7 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
 
         public_session = self.session(116_313_005)
-        self.add_card(
+        public_source = self.add_card(
             public_session,
             seat="C",
             name="Generic Library Reveal Permission",
@@ -924,12 +961,18 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
             ref="A-public-top",
             zone="library",
         )
-        for principal in ("pilot:A", "pilot:B", "pilot:C", "pilot:D"):
+        principals = ("pilot:A", "pilot:B", "pilot:C", "pilot:D", "spectator")
+        for principal in principals:
             packet = public_session.packet(principal, full=True)
-            self.assertEqual(
-                public_top.ref,
-                packet["state"]["players"]["A"]["known_top"][0]["id"],
-            )
+            shown = packet["state"]["players"]["A"]["known_top"]
+            self.assertEqual(1, len(shown))
+            self.assertEqual(public_top.ref, shown[0]["id"])
+            self.assertEqual(public_top.printed_name, shown[0]["n"])
+            self.assertEqual(public_top.oracle_id[:8], shown[0]["cid"])
+        public_session.engine.move_card(public_source.object_id, "graveyard", log=False)
+        for principal in principals:
+            packet = public_session.packet(principal, full=True)
+            self.assertNotIn("known_top", packet["state"]["players"]["A"])
 
         land_session = self.session(116_313_006)
         self.add_card(

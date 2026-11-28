@@ -21,6 +21,7 @@ class ReplacementEffectError(ValueError):
 
 COUNTER_REPLACEMENT_GENERATED_FIELD = "counter_replacement_generated"
 COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD = "counter_placement_rounded_to_zero"
+COUNTER_INSTRUCTION_ORDER_FIELD = "counter_instruction_order_version"
 
 
 def _validate_shared_replacement_occurrence(effect, operations, decline_operations):
@@ -64,6 +65,23 @@ def _validate_prevention_life_scope(effect, operations, decline_operations):
         }
     ):
         raise ReplacementEffectError("Prevention life gain requires one mandatory noncombat controller prevention")
+
+
+def _validate_combat_prevention_draw_scope(effect, operations, decline_operations):
+    marked = [operation for operation in (*operations, *decline_operations)
+              if isinstance(operation, PreventAmount) and operation.draw_for_combat_players]
+    if not marked:
+        return
+    conditions = thaw_value(effect.conditions)
+    source = conditions.get("source_logical_object_id", {})
+    logical_id = source.get("eq") if isinstance(source, dict) else None
+    if (len(marked) != 1 or len(operations) != 1 or decline_operations or effect.optional
+            or effect.event_kind != "damage" or effect.replacement_class is not ReplacementClass.OTHER
+            or type(logical_id) is not str or not logical_id
+            or not effect.effect_id.startswith("combat-prevention-draw:")
+            or conditions != {"source_logical_object_id": {"eq": logical_id}, "combat": {"eq": True},
+                              "target_kind": {"eq": "player"}, "amount": {"not_in": [0]}}):
+        raise ReplacementEffectError("Prevention draws require the one granted source and a combat player recipient")
 
 
 def _translate_error(exc: Exception) -> ReplacementEffectError:
@@ -476,6 +494,8 @@ class ReplacementEffect:
     application_group_id: str | None = None
     decline_label: str | None = None
     occurrence_id: str | None = None
+    counter_instruction_order_version: int | None = None
+    exclusive_damage_scope: str | None = None
 
     def __post_init__(self) -> None:
         if not self.effect_id or not self.source_id:
@@ -521,10 +541,29 @@ class ReplacementEffect:
             raise ReplacementEffectError(
                 "Replacement effects require operations"
             )
+        if self.counter_instruction_order_version is not None:
+            controller = self.conditions.get("target_controller")
+            if (
+                type(self.counter_instruction_order_version) is not int or self.counter_instruction_order_version != 1
+                or (self.event_kind, self.replacement_class) != ("counter.place", ReplacementClass.OTHER)
+                or self.optional or lowered_decline or self.application_group_id or self.occurrence_id
+                or set(self.conditions) != {"target_kind", "target_controller"}
+                or thaw_value(self.conditions["target_kind"]) != {"in": ["permanent"]}
+                or not isinstance(controller, Mapping) or set(controller) != {"eq"}
+                or type(controller["eq"]) is not str or not controller["eq"]
+                or tuple(operation_to_dict(operation) for operation in lowered)
+                    != ({"op": "add", "field": "amount", "amount": 1},)
+            ):
+                raise ReplacementEffectError("Instruction-wide counter order requires one mandatory controlled-permanent increment")
         from .tribute import validate_tribute_replacement
         validate_tribute_replacement(self,lowered,lowered_decline)
         _validate_shared_replacement_occurrence(self, lowered, lowered_decline)
         _validate_prevention_life_scope(self, lowered, lowered_decline)
+        _validate_combat_prevention_draw_scope(self, lowered, lowered_decline)
+        from .damage_redirection import validate_exclusive_damage_scope, validate_finite_damage_redirection
+
+        validate_finite_damage_redirection(self, lowered, lowered_decline)
+        validate_exclusive_damage_scope(self, lowered, lowered_decline)
         from ..entry_designations import EntryCardNameChoice
         if any(isinstance(operation, EntryCardNameChoice) for operation in (*lowered, *lowered_decline)):
             if (self.event_kind != "zone.change" or self.optional or len(lowered) != 1
@@ -575,6 +614,10 @@ class ReplacementEffect:
         if self.decline_label is not None:
             result["decline_label"] = self.decline_label
         if self.occurrence_id is not None:result["occurrence_id"]=self.occurrence_id
+        if self.counter_instruction_order_version is not None:
+            result[COUNTER_INSTRUCTION_ORDER_FIELD] = self.counter_instruction_order_version
+        if self.exclusive_damage_scope is not None:
+            result["exclusive_damage_scope"] = self.exclusive_damage_scope
         return result
 
     @classmethod
@@ -595,7 +638,7 @@ class ReplacementEffect:
         unknown = sorted(
             actual
             - required
-            - {"application_group_id", "decline_operations", "decline_label", "occurrence_id"}
+            - {"application_group_id", "decline_operations", "decline_label", "occurrence_id", COUNTER_INSTRUCTION_ORDER_FIELD, "exclusive_damage_scope"}
         )
         if missing or unknown:
             details: list[str] = []
@@ -606,6 +649,12 @@ class ReplacementEffect:
             raise ReplacementEffectError(
                 f"Replacement effect fields: {'; '.join(details)}"
             )
+        if COUNTER_INSTRUCTION_ORDER_FIELD in value and (
+            type(value[COUNTER_INSTRUCTION_ORDER_FIELD]) is not int or value[COUNTER_INSTRUCTION_ORDER_FIELD] != 1
+        ):
+            raise ReplacementEffectError("Unsupported counter instruction order version")
+        if "exclusive_damage_scope" in value and type(value["exclusive_damage_scope"]) is not str:
+            raise ReplacementEffectError("A persisted exclusive damage scope must be a string")
         conditions = value["conditions"]
         if not isinstance(conditions, Mapping):
             raise ReplacementEffectError(
@@ -645,6 +694,8 @@ class ReplacementEffect:
             label=str(value["label"] or ""),
             decline_label=value.get("decline_label"),
             occurrence_id=value.get("occurrence_id"),
+            counter_instruction_order_version=value.get(COUNTER_INSTRUCTION_ORDER_FIELD),
+            exclusive_damage_scope=value.get("exclusive_damage_scope"),
             application_group_id=(
                 str(value["application_group_id"])
                 if value.get("application_group_id") is not None
@@ -675,6 +726,7 @@ class ReplacementChoice:
 class ReplacementTreeChoice:
     path: tuple[int, ...]
     choice: ReplacementChoice
+    counter_instruction_members: tuple[tuple[tuple[int, ...], ReplacementChoice], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

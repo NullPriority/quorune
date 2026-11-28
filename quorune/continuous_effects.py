@@ -27,6 +27,7 @@ from .ability_fragments import (
     ability_fragment_from_dict,
     ability_fragment_to_dict,
     canonical_ability_fragments,
+    toxic_specs,
 )
 from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
@@ -115,6 +116,15 @@ class ContinuousEvaluation:
     applied_effects: tuple[str, ...]
     dependency_cycles: tuple[tuple[str, ...], ...]
     inapplicable_effects: tuple[str, ...]
+    base_power: int | None
+
+
+def _live_query_keywords(condition: ObjectQuerySpec, state: CharacteristicState) -> tuple[str, ...]:
+    keywords = tuple(sorted(value.casefold() for value in state.abilities))
+    if "toxic" not in condition.keywords_all and "toxic" not in condition.keywords_none:
+        return keywords
+    ordinary = tuple(value for value in keywords if value != "toxic")
+    return (*ordinary, "toxic") if toxic_specs(state.ability_fragments) else ordinary
 
 
 def _matches(
@@ -137,13 +147,12 @@ def _matches(
             sorted(value.casefold() for value in state.supertypes)
         ),
         colors=tuple(sorted(value.upper() for value in state.colors)),
-        keywords=tuple(
-            sorted(value.casefold() for value in state.abilities)
-        ),
+        keywords=_live_query_keywords(condition, state),
         mana_value=int(state.mana_value),
         token=bool(context.get("token", False)),
         commander=bool(context.get("commander",False)),
         tapped=bool(context.get("tapped", False)),
+        face_down=context.get("face_down") is True,
         phased_out=bool(context.get("phased_out", False)),
         known_to_actor=bool(context.get("known_to_actor", True)),
         counters=context.get("counters", {}),
@@ -440,6 +449,16 @@ def _apply_creature_subtype_change(state, operation, value):
         state.subtypes.update(word.title() for word in CREATURE_SUBTYPES)
 
 
+def _remove_planeswalker_card_type(state: CharacteristicState) -> None:
+    from .type_subtype_vocabulary import PLANESWALKER_SUBTYPES, correlated_subtypes
+
+    state.card_types = {kind for kind in state.card_types if kind.casefold() != "planeswalker"}
+    planeswalker_subtypes = {
+        subtype for subtype in state.subtypes if subtype.casefold() in PLANESWALKER_SUBTYPES
+    }
+    state.subtypes.difference_update(planeswalker_subtypes - correlated_subtypes(planeswalker_subtypes, state.card_types))
+
+
 def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
@@ -456,6 +475,11 @@ def _apply_operation(
         return
     if op == "set_controller":
         state.controller = str(value)
+        return
+    if op == "insert_name_sticker":
+        from .rules.name_stickers import name_with_sticker
+
+        state.name = name_with_sticker(state.name, value["text"], value["position"])
         return
     if op == "replace_text":
         if not isinstance(value, Mapping):
@@ -475,6 +499,9 @@ def _apply_operation(
         # for the pre-change text.
         state.activated_abilities = []
         return
+    if op == "remove_planeswalker_card_type":
+        _remove_planeswalker_card_type(state)
+        return
     if op == "remove_creature_card_type":
         state.card_types.difference_update(
             kind for kind in tuple(state.card_types) if kind.casefold() == "creature"
@@ -493,6 +520,22 @@ def _apply_operation(
         state.abilities=[]
         state.ability_fragments=[]
         state.activated_abilities=[]
+        return
+    if op in {"set_linked_exile_creature_subtypes", "set_linked_exile_creature_stats"}:
+        resolver = context.get("linked_exile_characteristics")
+        if not callable(resolver):
+            raise ContinuousEffectError("Linked exile characteristics require a public-state resolver")
+        statistics = op == "set_linked_exile_creature_stats"
+        values = resolver(value, statistics=statistics)
+        if values is not None and statistics:
+            from .continuous_stat_operations import apply_stat_operation
+
+            apply_stat_operation(state, ContinuousOperation("set_power_toughness", values), context)
+        elif values is not None:
+            _apply_creature_subtype_change(state, "set_creature_subtypes", values)
+        return
+    if op == "add_creature_for_enchantment_threshold":
+        state.card_types.add("Creature")
         return
     if op in {"set_creature_subtype", "set_creature_subtypes", "set_creature_subtype_set"}:
         _apply_creature_subtype_change(state, op, value)
@@ -607,7 +650,12 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         present.append(effect)
-    from .continuous_type_dependencies import bind_type_applicability_dependencies, effects_with_live_type_recipient_scopes
+    from .continuous_type_dependencies import (
+        bind_type_applicability_dependencies, effects_with_live_type_recipient_scopes,
+        retain_active_type_recipient_scopes,
+    )
+    order = type_order if type_order is not None else context.get("type_order")
+    present = list(retain_active_type_recipient_scopes(present, order))
     ordered, cycles = order_continuous_effects(
         bind_type_applicability_dependencies(present, base, context),
         dependency_order_version=context.get(CONTINUOUS_DEPENDENCY_ORDER_FIELD, CONTINUOUS_DEPENDENCY_ORDER_VERSION),
@@ -616,7 +664,8 @@ def evaluate_continuous_effects(
     memberships: dict[str, bool] = {}
     applied: list[str] = []
     intrinsic_ready=False
-    order = type_order if type_order is not None else context.get("type_order")
+    before_power_modifiers = True
+    base_power = None
     for effect in effects_with_live_type_recipient_scopes(ordered, present, base, context, cycles, order):
         if not intrinsic_ready and effect.layer>Layer.TYPE:
             _materialize_intrinsic_mana(base)
@@ -629,6 +678,7 @@ def evaluate_continuous_effects(
             ContinuousEffectRelation.SOURCE_CONTROLLED_AURA_RECIPIENT,
             ContinuousEffectRelation.SOURCE_BLOCK_COUNTERPART_OBJECT,
             ContinuousEffectRelation.SOURCE_COUNTER_PLACEMENT_RECIPIENT,
+            ContinuousEffectRelation.SOURCE_ATTACK_HISTORY_RECIPIENT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(
@@ -657,6 +707,9 @@ def evaluate_continuous_effects(
             if identity not in effect.locked_objects:
                 inapplicable.append(effect.effect_id)
                 continue
+        if before_power_modifiers and effect.sublayer in {"7c", "7d"}:
+            base_power = base.power
+            before_power_modifiers = False
         # Applicability is evaluated against the characteristics produced by
         # earlier layers, not the object's unmodified starting values.
         if not _matches_effect_recipient(effect, base, context, memberships):
@@ -679,4 +732,5 @@ def evaluate_continuous_effects(
         applied_effects=tuple(applied),
         dependency_cycles=tuple(cycles),
         inapplicable_effects=tuple(inapplicable),
+        base_power=base.power if before_power_modifiers else base_power,
     )

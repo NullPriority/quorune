@@ -44,6 +44,8 @@ class AnnouncedConditionalExileTests(InheritedNativeFixture, unittest.TestCase):
             "conditional-exile-cards.json": {"Banishing Light", "Disenchant"},
             "creature-subtype-addition-cards.json": {"Isamaru, Hound of Konda"},
             "permanent-control-exchange-cards.json": {"Avarice Totem"},
+            "qualified-attack-cards.json": {"Unsummon"},
+            "announced-target-cardinality-cards.json": {"Darksteel Citadel"},
             "token-copy-recipe-cards.json": {"Elminster's Simulacrum"},
         }
         parts = [FIXTURES / "announced-conditional-exile-cards.json"]
@@ -127,6 +129,149 @@ class AnnouncedConditionalExileTests(InheritedNativeFixture, unittest.TestCase):
             grammar.fullmatch.return_value = None
             residual, _ = register_card(self.db, self.registry, GRASP)
             self.assertFalse(residual["strict_capability_ready"], residual)
+
+    def test_hostage_requires_closed_cast_access_and_rejects_a_color_only_mutation(self):
+        from types import SimpleNamespace
+
+        from quorune import mana_restrictions, opponent_library_exile
+        from quorune.mana_spending_model import ManaSpendingPolicy
+        from quorune.model import CardInstance
+        from quorune.rules.conditional_exile_cast import CAPABILITY, grant_conditional_exile_cast
+
+        record = self.db.lookup("Hostage Taker", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, record.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        remaining = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        omitted = replace(program, capability_dependencies=remaining,
+                          capability_closure=self.registry.closure(remaining, profile=PROFILE).to_dict())
+        for changed in (omitted, replace(program, event="resolve"),
+                        replace(program, target_schema={**program.target_schema, "source_exclusion": False})):
+            binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(binding["strict"], binding)
+
+        card = CardInstance(object_id="held", ref="HELD", oracle_id=record.oracle_id,
+                            printed_name=record.name, owner="B", controller="B", zone="exile")
+        state = SimpleNamespace(cards={"held": card}, players={"A": SimpleNamespace(in_game=True)})
+        host = SimpleNamespace(state=state, active_seats=("A",))
+        grant_conditional_exile_cast(host, "A", (
+            {"object_id": card.object_id, "ref": card.ref, "logical_object_id": card.logical_object_id},
+        ))
+        original = mana_restrictions.exile_play_mana_spend_context
+
+        def payable_with_white():
+            cast = mana_restrictions.spell_mana_spend_context("Creature")
+            context = opponent_library_exile.opponent_library_exile_spend_context(state, "A", card, cast)
+            mode = mana_restrictions.exile_play_mana_mode(context, "A")
+            self.assertIsNotNone(ManaSpendingPolicy(frozenset({mode})).allocate({"W": 1}, {"C": 1}))
+
+        payable_with_white()
+        with patch.object(mana_restrictions, "exile_play_mana_spend_context",
+                          side_effect=lambda context, seat, **kwargs: original(context, seat, color_only=True)):
+            with self.assertRaises(AssertionError):
+                payable_with_white()
+
+    def _hostage_game(self, seed, *, bounce_actor="A"):
+        game = self.session(seed)
+        source = self.add(game.engine, "Hostage Taker", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat=bounce_actor, zone="hand")
+        for card in (source, bounce):
+            self.assert_closed(game, card)
+        mana = {"C": 2, "B": 1, "U": 2, "W": 5} if bounce_actor == "A" else {"B": 1, "U": 1, "W": 7}
+        self.prepare(game, mana=mana)
+        if bounce_actor != "A":
+            game.state.players[bounce_actor].mana_pool["U"] = 1
+        return game, source, bounce
+
+    def test_hostage_casts_original_exile_for_true_colorless_using_colored_mana(self):
+        from quorune.rules.conditional_exile_cast import current_conditional_exile_cast
+
+        game, source, bounce = self._hostage_game(1953001, bounce_actor="B")
+        walker = self.add(game.engine, "Walker of the Wastes", seat="B")
+        self.assert_closed(game, walker)
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        schema = self._begin_entry_targets(game, source)
+        self.assertIn(walker.ref, schema["legal_refs"])
+        self.assertNotIn(source.ref, schema["legal_refs"])
+        self._refuse_targets(game, (source,))
+        self.target(game, "A", (walker.ref,))
+        self.resolve_top(game)
+        held = game.state.cards[walker.object_id]
+        self.assertFalse(held.face_down)
+        self.assertIsNone(current_conditional_exile_cast(game.state, "B", held))
+        grant = current_conditional_exile_cast(game.state, "A", held)
+        self.assertEqual((True, False, True), (grant["allow_any_mana_type"], grant["allow_land"], grant["allow_spell"]))
+        game = self.replay(game, load=True)
+        self.assertEqual(0, game.state.players["A"].mana_pool.get("C", 0))
+        self.cast(game, "A", walker)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.cast(game, "B", bounce, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("stack", game.state.cards[walker.object_id].zone)
+        self.resolve_top(game)
+        permanent = game.state.cards[walker.object_id]
+        self.assertEqual(("battlefield", "A", "B"), (permanent.zone, permanent.controller, permanent.owner))
+        self.assertIsNone(current_conditional_exile_cast(game.state, "A", permanent))
+        self.replay(game, load=True)
+
+    def test_hostage_artifact_land_returns_and_early_departure_prevents_exile(self):
+        from quorune.rules.conditional_exile_cast import current_conditional_exile_cast
+
+        for early in (True, False):
+            with self.subTest(early=early):
+                game, source, bounce = self._hostage_game(1953010 + early)
+                target = self.add(game.engine, "Darksteel Citadel", seat="B")
+                self.assert_closed(game, target)
+                origin = target.logical_object_id
+                self.checkpoint(game)
+                self.assertIn(target.ref, self._begin_entry_targets(game, source)["legal_refs"])
+                self.target(game, "A", (target.ref,))
+                if early:
+                    self.cast(game, "A", bounce, [source.ref])
+                    self.resolve_top(game)
+                    self.resolve_top(game)
+                else:
+                    self.resolve_top(game)
+                    held = game.state.cards[target.object_id]
+                    self.assertEqual("exile", held.zone)
+                    self.assertFalse(current_conditional_exile_cast(game.state, "A", held)["allow_land"])
+                    self.priority(game, "A")
+                    actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    self.assertFalse(any(row.get("card") == held.ref for row in actions))
+                    self.cast(game, "A", bounce, [source.ref])
+                    self.resolve_top(game)
+                result = game.state.cards[target.object_id]
+                self.assertEqual(("B", "battlefield"), (result.controller, result.zone))
+                self.assertEqual(early, origin == result.logical_object_id)
+                self.assertIsNone(current_conditional_exile_cast(game.state, "A", result))
+                self.replay(game, load=True)
+
+    def test_hostage_commander_owner_can_end_exile_or_keep_original_return(self):
+        from quorune.rules.conditional_exile_cast import current_conditional_exile_cast
+
+        for action in ("command", "remain"):
+            with self.subTest(action=action):
+                game, source, bounce = self._hostage_game(1953021 + (action == "remain"))
+                commander_id, = game.state.players["B"].zones["command"]
+                game.engine.move_card(commander_id, "battlefield", reason="fixture starting commander")
+                commander = game.state.cards[commander_id]
+                self.checkpoint(game)
+                self.assertIn(commander.ref, self._begin_entry_targets(game, source)["legal_refs"])
+                self.target(game, "A", (commander.ref,))
+                self.assertEqual("state.commander_zone", self.resolve(game).kind)
+                self.assertEqual(["B"], game.state.pending_decision.actors)
+                game = self.replay(game, load=True)
+                result = game.act("pilot:B", {"action_id": action})
+                self.assertTrue(result.ok, result.summary)
+                current = game.state.cards[commander_id]
+                self.assertEqual(action == "remain", current_conditional_exile_cast(game.state, "A", current) is not None)
+                self.cast(game, "A", bounce, [source.ref])
+                self.resolve_top(game)
+                current = game.state.cards[commander_id]
+                self.assertEqual("battlefield" if action == "remain" else "command", current.zone)
+                self.assertEqual("B", current.controller)
+                self.replay(game, load=True)
 
     def test_actual_grasp_can_choose_zero_even_with_available_opposing_permanents(self):
         game = self.session(61003061)

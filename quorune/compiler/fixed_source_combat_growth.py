@@ -11,6 +11,7 @@ FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS = frozenset(
     {
         "fixed-source-combat-growth-counter-v1",
         "fixed-source-combat-growth-stats-v1",
+        "fixed-source-current-blocker-growth-v1",
     }
 )
 
@@ -21,6 +22,10 @@ _FIXED_STATS = re.compile(
 )
 _FIXED_COUNTER = re.compile(
     r"put a \+1/\+1 counter on it\.?",
+    re.IGNORECASE,
+)
+_PER_CURRENT_BLOCKER = re.compile(
+    r"(?:it|this creature) gets \+(?P<amount>[12])/\+(?P=amount) until end of turn for each creature blocking it\.",
     re.IGNORECASE,
 )
 _ADMITTED_BINDINGS = frozenset(
@@ -55,6 +60,13 @@ def fixed_source_combat_growth_effect_template(
     if (event, variant) not in _ADMITTED_BINDINGS:
         return None, (), None, ()
     normalized = text.strip()
+    if (event, variant) == ("creature.becomes_blocked", "this_creature_becomes_blocked"):
+        if match := _PER_CURRENT_BLOCKER.fullmatch(normalized):
+            from ..rules.current_combat_blocker_count import current_blocker_bonus_instruction
+
+            return ("fixed-source-current-blocker-growth-v1",
+                    (current_blocker_bonus_instruction(int(match["amount"])),),
+                    None, ("cr-611-continuous-effects",))
     stats = _FIXED_STATS.fullmatch(normalized)
     if stats is not None:
         power = int(stats.group("power"))

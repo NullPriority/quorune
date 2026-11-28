@@ -24,8 +24,8 @@ import test_bound_effect_programs as witnesses
 
 
 ADMITTED = ("Flare of Faith", "Regent's Authority", "Will of the All-Hunter",
-            "Ray of Enfeeblement", "Olivia's Midnight Ambush")
-EXCLUDED = ("Might of Old Krosa", "Joint Assault", "Ram Through", "Bleed Dry", "Divine Smite")
+            "Ray of Enfeeblement", "Olivia's Midnight Ambush", "Might of Old Krosa", "Ram Through")
+EXCLUDED = ("Joint Assault", "Bleed Dry", "Divine Smite")
 
 
 class CurrentTargetReplacementCompilerTests(unittest.TestCase):

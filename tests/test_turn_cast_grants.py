@@ -20,6 +20,44 @@ NAMES=('Zaffai and the Tempests',"Danitha, New Benalia's Light",'Vision, Spectra
     'Gisa and Geralf','Karador, Ghost Chieftain','One with the Multiverse')
 
 
+class OwnedGraveyardTurnCompilerTests(unittest.TestCase):
+    def test_coupled_graveyard_turn_permission_preserves_mandatory_exile_and_rejects_mutants(self):
+        from test_granted_skulk import record
+        from quorune.compiler.owned_graveyard_turn_play import owned_graveyard_turn_play_template
+        from quorune.rules.owned_graveyard_turn_play import CAPABILITY, graveyard_turn_play_runtime_dependencies
+        from quorune.semantics import SemanticProgram
+
+        printed = ("Until end of turn, you may play lands and cast spells from your graveyard.\n"
+                   "If a card would be put into your graveyard from anywhere this turn, exile that card instead.")
+        registry = load_default_capability_registry()
+
+        def compile_text(text):
+            return compile_oracle_card(record(text, "Sorcery"), capability_registry=registry,
+                                       capability_profile="commander_review")
+
+        ir = compile_text(printed)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        for mutated in (printed.replace("lands and cast", "cards and cast"),
+                        printed.replace("a card", "a permanent"),
+                        printed.replace("this turn", "this game"),
+                        printed.replace("your graveyard", "their graveyard")):
+            with self.subTest(mutated=mutated):
+                self.assertNotEqual("exact", compile_text(mutated).status)
+        _, instructions, _, mechanics = owned_graveyard_turn_play_template(printed)
+        program = SemanticProgram(key="graveyard-turn", label="Play", effects=list(instructions),
+                                  coverage=list(mechanics), destination="graveyard")
+        self.assertTrue(graveyard_turn_play_runtime_dependencies(program))
+        for mutated in (
+            replace(program, destination="exile"),
+            replace(program, event="activate", active_zone="battlefield"),
+            replace(program, effects=[{**instructions[0], "player": "$target.0"}]),
+        ):
+            with self.subTest(mutated=mutated), self.assertRaises(ValueError):
+                graveyard_turn_play_runtime_dependencies(mutated)
+
+
 class TurnCastGrantTests(unittest.TestCase):
     register_fixture_cards_on_add=True
     session=controls.OptionalLifeCostTests.session
@@ -61,6 +99,63 @@ class TurnCastGrantTests(unittest.TestCase):
         command={'action_id':'cast:'+card.ref,'cost_option':option['id'],'pay':'manual','payment':payment or {},'targets':list(targets),**choices}
         self.reject(s,command,'pilot:D' if seat!='D' else 'pilot:C')
         accepted=s.act('pilot:'+seat,command);self.assertTrue(accepted.ok,accepted.summary)
+
+    def test_actual_will_allows_ordinary_graveyard_plays_and_redirects_only_owners_cards(self):
+        from quorune.flashback import FLASHBACK_CAST_ANNOTATION
+        from quorune.record import authoritative_state_hash
+        from quorune.rules.owned_graveyard_turn_play import current_graveyard_turn_play_grants
+
+        game = self.session(801191)
+        spell = self.add(game.engine, "Yawgmoth's Will", zone="hand")
+        land = self.add(game.engine, "Generic Bound Plains", zone="graveyard", ref="will-owned-land")
+        second_land = self.add(game.engine, "Generic Bound Plains", zone="graveyard", ref="will-other-land")
+        own = self.add(game.engine, "Lightning Bolt", zone="graveyard", ref="will-own-bolt")
+        other = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand", ref="will-other-bolt")
+        future = self.add(game.engine, "Generic Bound Body", zone="graveyard", ref="will-permanent")
+        self.assertTrue(self.binding(game, spell)["strict_capability_ready"])
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"B": 1, "C": 4, "R": 1})
+        game.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(game)
+        self.assertFalse(self.options(game, own))
+        self.assertFalse(current_graveyard_turn_play_grants(game.engine, "A"))
+        cast = game.act("pilot:A", {"action_id": "cast:" + spell.ref, "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[spell.object_id].zone)
+        self.assertTrue(current_graveyard_turn_play_grants(game.engine, "A"))
+        self.assertFalse(current_graveyard_turn_play_grants(game.engine, "B"))
+        game = self.replay(game, load=True)
+
+        play = {"action_id": "play-land:" + land.ref}
+        played = game.act("pilot:A", play)
+        self.assertTrue(played.ok, played.summary)
+        self.assertEqual("battlefield", game.state.cards[land.object_id].zone)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id":"play-land:" + second_land.ref}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        option, = self.options(game, own)
+        self.assertEqual("normal", option["id"])
+        self.assertEqual(1, option["requirements"]["R"])
+        cast = game.act("pilot:A", {"action_id":"cast:" + own.ref,"cost_option":"normal","targets":["D"],"pay":"auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertNotIn(FLASHBACK_CAST_ANNOTATION, game.state.cards[own.object_id].annotations)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[own.object_id].zone)
+
+        self.priority(game,"B")
+        cast = game.act("pilot:B", {"action_id":"cast:" + other.ref,"targets":["D"],"pay":"auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[other.object_id].zone)
+        self.priority(game,"A")
+        cast = game.act("pilot:A", {"action_id":"cast:" + future.ref,"pay":"auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[future.object_id].zone)
+        self.replay(game, load=True)
 
     def test_six_originals_have_normal_complete_admission_and_independent_runtime_minimum(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime
@@ -336,3 +431,149 @@ class TurnCastGrantTests(unittest.TestCase):
         method='test_actual_zaffai_normal_cast_preserves_quota_then_free_cast_consumes_it'
         with patch.object(owner,'commit_turn_cast_grant_use',return_value=None):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+    def _for_permanent_type(self, options, kind):
+        return [option for option in options if f" for {kind}:" in option.get("label", "")]
+
+    def test_actual_muldrotha_uses_separate_permanent_types_and_new_source_incarnation(self):
+        game = self.session(801150)
+        source = self.add(game.engine, "Muldrotha, the Gravetide")
+        first = self.add(game.engine, "Ornithopter", zone="graveyard", ref="muldrotha-first")
+        second = self.add(game.engine, "Memnite", zone="graveyard", ref="muldrotha-second")
+        third = self.add(game.engine, "Ornithopter", zone="graveyard", ref="muldrotha-third")
+        instant = self.add(game.engine, "Lightning Bolt", zone="graveyard")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        self.prepare(game, mana={"W": 1})
+        self.checkpoint(game)
+
+        first_options = self.grants(game, first)
+        self.assertEqual(2, len(first_options))
+        artifact, = self._for_permanent_type(first_options, "artifact")
+        self.assertEqual(1, len(self._for_permanent_type(first_options, "creature")))
+        self.assertEqual([], self.options(game, instant))
+        self.use(game, first, artifact)
+        self.assertIsNone(self.resolve(game))
+
+        creature, = self.grants(game, second)
+        self.assertIn(" for creature:", creature["label"])
+        self.reject(game, {"action_id": "cast:" + second.ref, "cost_option": artifact["id"], "pay": "auto"})
+        self.use(game, second, creature)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([], self.options(game, third))
+
+        retired = game.state.cards[source.object_id].logical_object_id
+        self.cast(game, "A", blink, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertNotEqual(retired, game.state.cards[source.object_id].logical_object_id)
+        renewed = self.grants(game, third)
+        self.assertEqual(2, len(renewed))
+        self.assertNotIn(artifact["id"], [option["id"] for option in renewed])
+        self.use(game, third, self._for_permanent_type(renewed, "artifact")[0])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[third.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_muldrotha_land_quota_needs_own_turn_and_an_available_land_play(self):
+        from quorune.rules.casting.turn_cast_grants import current_turn_cast_grants
+
+        def land_offers(game, card):
+            self.priority(game, "A")
+            packet = game.packet("pilot:A", full=True)
+            return [action for action in packet["decision"]["ctx"]["legal"]["actions"]
+                    if action["id"].startswith("play-land:" + card.ref)]
+
+        game = self.session(801151)
+        source = self.add(game.engine, "Muldrotha, the Gravetide")
+        forest = self.add(game.engine, "Forest", zone="graveyard")
+        island = self.add(game.engine, "Island", zone="graveyard")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        explore = self.add(game.engine, "Explore", zone="hand")
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        self.prepare(game, mana={"W": 1, "C": 1, "G": 1})
+        self.checkpoint(game)
+        offer, = land_offers(game, forest)
+        self.assertEqual(source.ref, offer["permission_source"])
+        command = {"action_id": offer["id"], "land_play_permission": offer["land_play_permission"]}
+        self.reject(game, command, "pilot:B")
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", game.state.cards[forest.object_id].zone)
+        self.assertEqual((), current_turn_cast_grants(game.engine, "A", island, for_land=True))
+        self.assertEqual([], land_offers(game, island))
+        self.cast(game, "A", blink, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        unused, = current_turn_cast_grants(game.engine, "A", island, for_land=True)
+        self.assertEqual("land", unused["permanent_type"])
+        self.assertEqual([], land_offers(game, island))
+        self.cast(game, "A", explore)
+        self.assertIsNone(self.resolve(game))
+        offer, = land_offers(game, island)
+        result = game.act("pilot:A", {"action_id": offer["id"], "land_play_permission": offer["land_play_permission"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", game.state.cards[island.object_id].zone)
+        self.replay(game, load=True)
+
+        off_turn = self.session(801152)
+        self.add(off_turn.engine, "Muldrotha, the Gravetide")
+        land = self.add(off_turn.engine, "Forest", zone="graveyard")
+        spell = self.add(off_turn.engine, "Ornithopter", zone="graveyard")
+        self.prepare(off_turn, active="B")
+        self.checkpoint(off_turn)
+        self.assertEqual([], land_offers(off_turn, land))
+        self.assertEqual([], self.options(off_turn, spell))
+        self.replay(off_turn, load=True)
+
+    def test_actual_muldrotha_bestow_charges_the_spell_permanent_type(self):
+        game = self.session(801153)
+        self.add(game.engine, "Muldrotha, the Gravetide")
+        target = self.add(game.engine, "Generic Bound Body")
+        creature = self.add(game.engine, "Ornithopter", zone="graveyard")
+        dryad = self.add(game.engine, "Leafcrown Dryad", zone="graveyard")
+        self.prepare(game, mana={"C": 3, "G": 1})
+        self.checkpoint(game)
+        all_dryad_options = self.grants(game, dryad)
+        self.assertEqual(3, len(all_dryad_options))
+        bestow_quote, = [option for option in all_dryad_options if "Bestow" in option["label"]]
+        self.assertIn(" for enchantment:", bestow_quote["label"])
+        creature_use, = self._for_permanent_type(self.grants(game, creature), "creature")
+        self.use(game, creature, creature_use)
+        self.assertIsNone(self.resolve(game))
+        options = self.grants(game, dryad)
+        bestow, = [option for option in options if "Bestow" in option["label"]]
+        self.assertIn(" for enchantment:", bestow["label"])
+        self.assertFalse(self._for_permanent_type(options, "creature"))
+        self.use(game, dryad, bestow, {"C": 3, "G": 1}, targets=[target.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(target.object_id, game.state.cards[dryad.object_id].attached_to)
+        self.replay(game, load=True)
+
+    def test_per_type_graveyard_permission_is_versioned_and_source_spanned(self):
+        from quorune.compiler.turn_cast_grants import turn_cast_grant_handler
+        from quorune.rules.turn_cast_grant_model import (
+            TURN_CAST_PERMANENT_TYPE_CAPABILITY, permanent_type_graveyard_grant,
+        )
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("During each of your turns, you may play a land and cast a permanent spell of each "
+                "permanent type from your graveyard.")
+        descriptor = turn_cast_grant_handler(text)
+        self.assertEqual(permanent_type_graveyard_grant(), TurnCastGrantSpec.from_dict(descriptor[1]["grant"]))
+        self.assertEqual(5, descriptor[1]["grant"]["schema_version"])
+        self.assertIn(TURN_CAST_PERMANENT_TYPE_CAPABILITY, descriptor[2])
+        for alternate in (
+            text.replace("your turns", "turns"),
+            text.replace("your graveyard", "any graveyard"),
+            text.replace("each permanent type", "each nonland card type"),
+            text + " It gains haste.",
+        ):
+            self.assertIsNone(turn_cast_grant_handler(alternate))
+        for patch_fields in ({"allow_land_play": False}, {"without_mana_cost": True},
+                             {"schema_version": 4}, {"origins": ["exile"]}):
+            with self.assertRaises(ValueError):
+                TurnCastGrantSpec.from_dict({**descriptor[1]["grant"], **patch_fields})
+        witness = replace(query_record(text), type_line="Creature — Elemental")
+        self.assertEqual("exact", compile_oracle_card(witness, capability_registry=self.registry).status)
+        with patch("quorune.compiler.turn_cast_grants.turn_cast_grant_handler", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(witness, capability_registry=self.registry).status)

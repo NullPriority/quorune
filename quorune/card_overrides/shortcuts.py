@@ -65,6 +65,10 @@ def execute_shortcut(
         ]
         if sequence != expected:
             raise ValueError("Shortcut sequence does not match the demonstrated legal iteration")
+        from ..semantic_runtime.life_prohibitions import life_payment_prohibited
+
+        if any(life_payment_prohibited(engine, player) for player in (seat, *opponents)):
+            raise ValueError("The demonstrated shortcut requires its ordinary life payments and losses")
         spend_context = "creature_spell"
         if engine._spendable_mana_pool(seat, spend_context)["B"] < 1:
             raise ValueError("The first Gravecrawler cast requires one available black mana")

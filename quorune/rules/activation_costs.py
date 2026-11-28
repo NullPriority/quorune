@@ -58,35 +58,24 @@ class ActivationCostHost(Protocol):
 
 def pay_counted_zone_change_activation_cost(
     host: ActivationCostHost, *, actor: str, source: Any, choice: Any,
-    response: Mapping[str, Any],
+    response: Mapping[str, Any], announced_x: int | None = None,
 ) -> list[str]:
-    """Validate a complete fixed cost, then commit one simultaneous zone batch."""
+    """Validate a complete selected cost, then commit one simultaneous zone batch."""
     cost = choice.fixed_zone_change_cost()
+    if choice.count_parameter is not None and (type(announced_x) is not int or announced_x < 1):
+        raise GameRuleError("The activation lost its positive announced artifact count")
     raw = response.get('cost_cards') or response.get('cost_objects') or []
     return pay_fixed_zone_change_cost(host, actor=actor, cost=cost, refs=raw,
         response=response, reason='activated ability cost',
-        exclude_object_id=source.object_id if choice.another else None)
+        exclude_object_id=source.object_id if choice.another else None,
+        expected_count=announced_x if choice.count_parameter is not None else None)
 
 
 def pay_fixed_zone_change_cost(host, *, actor, cost, refs, response, reason,
-        exclude_object_id=None):
+        exclude_object_id=None, expected_count=None):
     """Revalidate and pay a typed object cost through one canonical zone batch."""
-    raw = refs
-    if (
-        cost is None or cost.count < 1 or not isinstance(raw, (list, tuple))
-        or len(raw) != cost.count or any(type(ref) is not str for ref in raw)
-        or len(set(raw)) != len(raw)
-    ):
-        raise GameRuleError('Activation requires its complete distinct selected cost')
-    legal = fixed_zone_change_cost_candidates(host, actor=actor, cost=cost,
-        exclude_object_id=exclude_object_id)
-    if any(ref not in legal for ref in raw):
-        raise GameRuleError('Activation cost object is stale or ineligible')
-    cards = tuple(host._resolve_object(
-        actor, ref, zones={cost.origin_zone},
-        controlled_only=cost.origin_zone == 'battlefield',
-        owned_only=cost.origin_zone != 'battlefield',
-    ) for ref in raw)
+    cards = prepare_selected_zone_change_cost(host, actor=actor, cost=cost, refs=refs,
+        exclude_object_id=exclude_object_id, required_count=expected_count)
     from .activation_zone_change_costs import counted_activation_replacement_selections
     selections = counted_activation_replacement_selections(response, tuple(card.ref for card in cards))
     host._move_cards_simultaneously(
@@ -95,6 +84,27 @@ def pay_fixed_zone_change_cost(host, *, actor, cost, refs, response, reason,
         transition_kinds={card.object_id: cost_transition_kind(cost.log_kind) for card in cards},
     )
     return [card.object_id for card in cards]
+
+
+def prepare_selected_zone_change_cost(host, *, actor, cost, refs, exclude_object_id=None, required_count=None):
+    """Resolve the exact fixed or already announced count using the shared cost query."""
+    raw = refs
+    count = cost.count if cost is not None and required_count is None else required_count
+    if (
+        cost is None or type(count) is not int or count < 0 or not isinstance(raw, (list, tuple))
+        or len(raw) != count or any(type(ref) is not str for ref in raw)
+        or len(set(raw)) != len(raw)
+    ):
+        raise GameRuleError('Activation requires its complete distinct selected cost')
+    legal = fixed_zone_change_cost_candidates(host, actor=actor, cost=cost,
+        exclude_object_id=exclude_object_id)
+    if any(ref not in legal for ref in raw):
+        raise GameRuleError('Activation cost object is stale or ineligible')
+    return tuple(host._resolve_object(
+        actor, ref, zones={cost.origin_zone},
+        controlled_only=cost.origin_zone == 'battlefield',
+        owned_only=cost.origin_zone != 'battlefield',
+    ) for ref in raw)
 
 
 @dataclass(frozen=True, slots=True)
@@ -482,13 +492,19 @@ def activation_choice_candidates(
     """Return the canonical legal objects for one activation cost choice."""
 
     from .selected_counter_costs import (
-        BLIGHT_ACTIVATION_COST_KIND, SELECTED_COUNTER_COST_CAPABILITIES,
-        blight_activation_cost_candidates, selected_counter_cost_candidates,
+        BLIGHT_ACTIVATION_COST_KIND, SELECTED_COUNTER_COST_CAPABILITIES, SELECTED_MINUS_COUNTER_COST_KIND,
+        blight_activation_cost_candidates, counter_cost_candidates_with_mana, selected_counter_cost_candidates,
     )
     if choice.kind == BLIGHT_ACTIVATION_COST_KIND and ability is not None:
         return blight_activation_cost_candidates(host, actor, source, ability, choice)
+    if choice.kind == SELECTED_MINUS_COUNTER_COST_KIND and ability is not None:
+        return counter_cost_candidates_with_mana(host, actor, source, ability, choice)
     if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES:
         return selected_counter_cost_candidates(host, actor, choice)
+    from .forage import FORAGE_COST_KIND, forage_candidates
+
+    if choice.kind == FORAGE_COST_KIND:
+        return forage_candidates(host, actor)
     typed_cost = choice.fixed_zone_change_cost()
     if typed_cost is not None:
         return fixed_zone_change_cost_candidates(

@@ -10,7 +10,12 @@ from typing import Any, Mapping
 TURN_SKIP_OPERATION = "schedule_turn_skip"
 TURN_SKIP_MECHANIC = "fixed-scheduled-turn-skip"
 TURN_SKIP_CAPABILITY = "turn.boundary.scheduled_skip"
+TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY = "turn.boundary.target_player_untap_skip_and_tap"
+TARGET_PLAYER_UNTAP_SKIP_TAP_MECHANIC = "target-player-untap-skip-and-tap"
+SKIP_TAP_PLAYER = "$target_group.target_0.0"
+SKIP_TAP_PERMANENTS = "$target_group.target_1"
 TURN_BOUNDARY_SKIP_RESUME = "turn_boundary_skip"
+TURN_START_SKIP_RESUME = "turn_start_skip"
 TURN_BOUNDARY_SKIP_EVENT = "turn.boundary.skip"
 MAX_PRINTED_SKIP_COUNT = 10
 
@@ -108,6 +113,32 @@ class ScheduleTurnSkipIntent:
             raise ValueError("Scheduled skip requires an ordered seat set")
         if len(self.players) != len(set(self.players)):
             raise ValueError("Scheduled skip recipients must be distinct")
+
+
+@dataclass(frozen=True, slots=True)
+class TargetPlayerUntapSkipTapSpec:
+    maximum_targets: int
+
+    def __post_init__(self) -> None:
+        if type(self.maximum_targets) is not int or not 1 <= self.maximum_targets <= 6:
+            raise ValueError("Untap skip with tap requires at most six optional permanents")
+
+    def target_schema(self) -> dict[str, Any]:
+        return {
+            "groups": [
+                {"id": "target_0", "zones": ["player"], "categories": ["player"],
+                 "count": 1, "player_relation": "any"},
+                {"id": "target_1", "zones": ["battlefield"], "categories": ["permanent"],
+                 "up_to": self.maximum_targets},
+            ],
+            "same_player_groups": [["target_0", "target_1"]],
+        }
+
+    def effects(self) -> tuple[dict[str, Any], dict[str, Any]]:
+        return (
+            {"op": TURN_SKIP_OPERATION, "player": SKIP_TAP_PLAYER, "spec": TurnSkipSpec(TurnBoundary.UNTAP).to_dict()},
+            {"op": "tap_targets", "cards": SKIP_TAP_PERMANENTS, "maximum_targets": self.maximum_targets},
+        )
 
 
 def decode_scheduled_turn_skips(

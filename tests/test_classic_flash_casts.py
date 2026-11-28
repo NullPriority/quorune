@@ -71,6 +71,79 @@ class ClassicFlashCastTests(unittest.TestCase):
             result=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
         self.fail('Expected the next original spell to resolve')
 
+    def _choose_necromancy_entry_target(self, session, source, creature):
+        choice = self.resolve(session)
+        self.assertEqual(("semantic.target", ["A"]), (choice.kind, choice.actors))
+        setup = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", setup.zone)
+        self.assertEqual("Enchantment", session.engine._effective_card_data(setup)["type_line"])
+        command = {"action_id": "choose", "targets": [creature.ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        selected = session.act("pilot:A", command)
+        self.assertTrue(selected.ok, selected.summary)
+
+    def test_necromancy_targets_only_on_entry_and_replays_all_original_cast_timing_routes(self):
+        for index, mode in enumerate(("main", "intrinsic", "independent")):
+            with self.subTest(mode=mode):
+                session = self.session(751540 + index)
+                source = self.add(session.engine, "Necromancy", zone="hand")
+                creature = self.add(session.engine, "Grizzly Bears", seat="B", zone="graveyard")
+                if mode == "independent":
+                    self.add(session.engine, "Vedalken Orrery")
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                active = "A" if mode == "main" else "B"
+                mana = {"B": 1, "C": 2}
+                self.prepare(session, actor=active, active=active, mana=mana if active == "A" else None)
+                if active != "A":
+                    session.state.players["A"].mana_pool.update(mana)
+                self.checkpoint(session)
+                turn = session.state.turn_sequence
+                choices = {"timing_permission": "intrinsic"} if mode == "intrinsic" else {}
+                self.offered_cast(session, source, {"B": 1, "C": 2}, **choices)
+                self.assertEqual([], session.state.stack[-1].targets)
+                self.assertEqual(int(mode == "intrinsic"), len(session.state.delayed_triggers))
+
+                self._choose_necromancy_entry_target(session, source, creature)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                aura = session.state.cards[source.object_id]
+                returned = session.state.cards[creature.object_id]
+                self.assertEqual("Enchantment — Aura", session.engine._effective_card_data(aura)["type_line"])
+                self.assertEqual(("battlefield", "B", "A"), (returned.zone, returned.owner, returned.controller))
+                self.assertEqual(returned.object_id, aura.attached_to)
+                self.assertIn(aura.object_id, returned.attachments)
+
+                if mode == "intrinsic":
+                    self.next_cleanup_trigger(session, source)
+                    self.assertEqual(turn, session.state.turn_sequence)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                    self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+                else:
+                    self.advance(session, lambda s: s.state.turn_sequence > turn and s.state.phase == "precombat_main")
+                    self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                    self.assertEqual("battlefield", session.state.cards[creature.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_necromancy_intervening_entry_condition_rejects_the_departed_enchantment_and_replays(self):
+        session = self.session(751543)
+        source = self.add(session.engine, "Necromancy", zone="hand")
+        creature = self.add(session.engine, "Grizzly Bears", seat="B", zone="graveyard")
+        response = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+        self.prepare(session, mana={"B": 1, "C": 2})
+        session.state.players["B"].mana_pool.update({"U": 2})
+        self.checkpoint(session)
+        self.offered_cast(session, source, {"B": 1, "C": 2})
+        self._choose_necromancy_entry_target(session, source, creature)
+        self.cast(session, "B", response, [source.ref], {"U": 2})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[creature.object_id].zone)
+        self.assertFalse(session.state.delayed_triggers)
+        self.replay(session, load=True)
+
     def test_actual_lightning_reflexes_off_turn_grants_stats_then_sacrifices_at_next_cleanup(self):
         session=self.session(751500);source=self.add(session.engine,'Lightning Reflexes',zone='hand')
         body=self.add(session.engine,'Grizzly Bears');private=self.add(session.engine,'Generic Bound Growth',seat='C',zone='hand')

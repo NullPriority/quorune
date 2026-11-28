@@ -87,6 +87,61 @@ class ManaValueDestructionModelTests(unittest.TestCase):
                 'Destroy each creature with mana value X plus one.'):
             self.assertIsNone(mana_value_destruction_template(text,source_name='Generic Source',cast_x_available=True),text)
 
+    def test_celestial_kirin_cast_value_filter_rejects_non_exact_shapes(self):
+        from types import SimpleNamespace
+        from quorune.cast_event_amounts import CAST_MANA_VALUE_CAPABILITY, cast_mana_value_runtime_dependencies
+        from quorune.mana_value_filter import CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+        from test_bound_effect_programs import record
+
+        registry = load_default_capability_registry()
+        text = ("Flying\nWhenever you cast a Spirit or Arcane spell, "
+                "destroy all permanents with that spell's mana value.")
+        card = record(text, "Legendary Creature — Kirin Spirit")
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for face in ir.faces for node in face.nodes if node.kind == "triggered_ability")
+        self.assertEqual(text[node.span.start:node.span.end], node.text)
+        self.assertIsNone(node.target_schema)
+        self.assertIn(CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY, node.capability_dependencies)
+        effect, = node.effects
+        self.assertIn(CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY, typed_result_amount_runtime_dependencies(effect))
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in raw["capabilities"]
+                          if row["id"] == CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY)
+        capability.update(status="blocked", blockers=["The committed cast value filter was withheld"])
+        withheld = CapabilityRegistry(raw)
+        withheld.mark_evidence_verified(registry.evidence_fingerprint)
+        refused = compile_oracle_card(card, capability_registry=withheld, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY, str(refused.material_residuals))
+        scope = AffectedPermanentSetSpec.from_dict(effect["set"])
+        self.assertEqual(ObjectQuerySpec(zones=("battlefield",)), scope.query)
+        self.assertEqual(ManaValueComparison.EQUAL, scope.mana_value_filter.comparison)
+        self.assertEqual(ScalarAmountOrigin.CAST_SPELL_MANA_VALUE, scope.mana_value_filter.value.origin)
+        for choice in ({"comparison": ManaValueComparison.AT_MOST},
+                       {"value": replace(scope.mana_value_filter.value, coefficient=2)},
+                       {"value": replace(scope.mana_value_filter.value, binding_id="another-event")}):
+            with self.subTest(choice=choice), self.assertRaises(ValueError):
+                replace(scope.mana_value_filter, **choice)
+        for scope_change in ({"exclude_source": True}, {"query": ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",))}):
+            with self.subTest(scope_change=scope_change), self.assertRaises(ValueError):
+                replace(scope, **scope_change)
+        witness = SimpleNamespace(event="spell.cast", effects=(effect,), coverage=node.mechanics)
+        self.assertIn(CAST_MANA_VALUE_CAPABILITY, cast_mana_value_runtime_dependencies(witness))
+        witness.event = "spell.cast_or_copy"
+        with self.assertRaisesRegex(ValueError, "original|normalized"):
+            cast_mana_value_runtime_dependencies(witness)
+        for changed in (text.replace("all permanents", "all creatures"),
+                        text.replace("you cast a Spirit or Arcane spell", "you draw a card"),
+                        text.replace("mana value", "power")):
+            result = compile_oracle_card(record(changed, "Legendary Creature — Kirin Spirit"),
+                capability_registry=registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", result.status)
+
     def test_withdrawing_filter_authority_keeps_unfiltered_destruction_available(self):
         import json
         from common import ROOT
@@ -196,6 +251,88 @@ class ManaValueDestructionNativeTests(InheritedNativeFixture,unittest.TestCase):
             expected='outside' if destroyed and token else 'graveyard' if destroyed else 'battlefield'
             self.assertEqual(expected,s.state.cards[card.object_id].zone,key)
             if destroyed and not token:self.assertIn(card.object_id,s.state.players[card.owner].zones['graveyard'])
+
+    def kirin_x_scene(self, value, *, verify_replay=True):
+        sources = {}
+        def setup(game, observer, board):
+            sources["nexus"] = self.add(game.engine, "Maskwood Nexus")
+            sources["discount"] = self.add(game.engine, "Foundry Inspector")
+            sources["spell"] = self.add(game.engine, "Stonecoil Serpent", zone="hand")
+            sources["counter"] = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+            citadel = self.add(game.engine, "Darksteel Citadel", seat="D")
+            board["indestructible_land"] = (citadel, 0, {"artifact", "land"}, True, False)
+            game.state.players["B"].mana_pool["U"] = 2
+            for card in (*sources.values(), citadel):
+                self.assert_closed(game, card)
+
+        game, observer, board, private = self.scene("Celestial Kirin", zone="battlefield", amount=value, before=setup)
+        self.priority(game, "A")
+        action = self.action(game, "A", sources["spell"])
+        cast = {"action_id": action["id"], "pay": "auto", "x": value}
+        self.reject(game, "D", cast)
+        self.reject(game, "A", {**cast, "x": True})
+        result = game.act("pilot:A", cast)
+        self.assertTrue(result.ok, result.summary)
+        original, = (item for item in game.state.stack if item.card_object_id == sources["spell"].object_id)
+        trigger, = (item for item in game.state.stack if item.source_object_id == observer.object_id)
+        self.assertEqual(value, original.x_value)
+        self.assertEqual(max(0, value - 1), original.context["mana_spent_total"])
+        self.assertEqual(float(value), trigger.context["mana_value"])
+        self.assertIn("spirit", trigger.context["subtypes"])
+        self.assertEqual([], list(trigger.targets))
+        self.cast(game, "B", sources["counter"], [original.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[sources["spell"].object_id].zone)
+        self.assertTrue(any(item.ref == trigger.ref for item in game.state.stack))
+        if verify_replay:
+            game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assert_board(game, board, bound=value, comparison="equal", domain="artifact,creature,land")
+        for card in (observer, sources["nexus"]):
+            self.assertEqual("graveyard" if value == 4 else "battlefield", game.state.cards[card.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[sources["discount"].object_id].zone)
+        if verify_replay:
+            self.finish(game, private)
+
+    def test_celestial_kirin_uses_announced_x_after_the_spell_is_countered(self):
+        for value in (0, 4):
+            with self.subTest(value=value):
+                self.kirin_x_scene(value)
+
+    def test_celestial_kirin_does_not_use_current_graveyard_mana_value(self):
+        with patch("quorune.semantic_runtime.values.resolve_scalar_effect_amount", return_value=0):
+            with self.assertRaisesRegex(AssertionError, "'(?:battlefield|graveyard)' != '(?:battlefield|graveyard)'"):
+                self.kirin_x_scene(4, verify_replay=False)
+
+    def test_celestial_kirin_recognizes_own_arcane_cast_and_ignores_copy_and_other_casts(self):
+        sources = {}
+        def setup(game, observer, board):
+            sources["own"] = self.add(game.engine, "Reach Through Mists", zone="hand", ref="kirin-own-arcane")
+            sources["foreign"] = self.add(game.engine, "Reach Through Mists", seat="B", zone="hand", ref="kirin-foreign-arcane")
+            sources["ordinary"] = self.add(game.engine, "Grizzly Bears", zone="hand", ref="kirin-own-ordinary")
+            sources["copy"] = self.add(game.engine, "Reverberate", zone="hand")
+            game.state.players["B"].mana_pool["U"] = 1
+            for card in sources.values():
+                self.assert_closed(game, card)
+
+        game, observer, board, private = self.scene("Celestial Kirin", zone="battlefield", before=setup)
+        self.cast(game, "B", sources["foreign"])
+        self.assertEqual(0, self.trigger_count(game, observer))
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "A", sources["ordinary"])
+        self.assertEqual(0, self.trigger_count(game, observer))
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "A", sources["own"])
+        original, = (item for item in game.state.stack if item.card_object_id == sources["own"].object_id)
+        self.assertEqual(1, self.trigger_count(game, observer))
+        self.cast(game, "A", sources["copy"], [original.ref])
+        self.resolve_top(game)
+        self.assertEqual(1, self.trigger_count(game, observer))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[sources["ordinary"].object_id].zone)
+        self.assert_board(game, board, bound=1, comparison="equal", domain="artifact,creature,land")
+        self.finish(game, private)
 
     def fixed_scene(self,*,finish=True):
         s,source,board,private=self.scene('Pest Control')

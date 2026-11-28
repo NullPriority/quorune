@@ -6,9 +6,27 @@ from typing import Any, Mapping
 from .object_predicate import ObjectQuerySpec
 from .object_query import object_matches_query
 from .creature_subtypes import canonical_creature_subtype
+from .mana_value_filter import ManaValueComparison, ManaValueFilter
 
 PERMANENT_TYPES = ('artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker')
 HISTORIC_QUERY_KIND = 'hand_entry_query_union'
+CREATURE_OR_LAND_QUERY_KIND = "hand_entry_creature_or_land"
+DAMAGE_PERMANENT_HAND_KIND = "combat_damage_bounded_hand_permanent"
+
+
+def damage_permanent_hand_query():
+    return {"kind": DAMAGE_PERMANENT_HAND_KIND, "schema_version": 1, "amount": "$context.amount"}
+
+
+def _damage_bounded_hand_query(value, *, resolved):
+    amount = value.get("amount")
+    valid_amount = type(amount) is int and amount > 0
+    if not resolved and amount == "$context.amount":
+        valid_amount = True
+    if (set(value) != {"kind", "schema_version", "amount"} or type(value["schema_version"]) is not int
+            or value["schema_version"] != 1 or not valid_amount):
+        raise ValueError("Combat-damage hand entry requires its represented damage amount")
+    return ObjectQuerySpec(zones=("hand",), types_any=PERMANENT_TYPES)
 
 
 def historic_hand_entry_queries() -> tuple[ObjectQuerySpec, ...]:
@@ -24,6 +42,20 @@ def historic_hand_entry_query_descriptor() -> dict[str, Any]:
         'kind': HISTORIC_QUERY_KIND,
         'schema_version': 1,
         'alternatives': [query.canonical_dict() for query in historic_hand_entry_queries()],
+    }
+
+
+def creature_or_land_hand_entry_queries() -> tuple[ObjectQuerySpec, ...]:
+    return (
+        ObjectQuerySpec(zones=("hand",), types_all=("creature",)),
+        ObjectQuerySpec(zones=("hand",), types_all=("land",)),
+    )
+
+
+def creature_or_land_hand_entry_query_descriptor() -> dict[str, Any]:
+    return {
+        "kind": CREATURE_OR_LAND_QUERY_KIND, "schema_version": 1,
+        "alternatives": [query.canonical_dict() for query in creature_or_land_hand_entry_queries()],
     }
 
 
@@ -48,12 +80,23 @@ def _single_hand_query_is_closed(query: ObjectQuerySpec) -> bool:
     return query.types_any==PERMANENT_TYPES and not query.types_all and query.subtypes_all==('minotaur',) and not query.supertypes_all and not query.colors_any and query.minimum_color_count is None
 
 
-def decode_hand_entry_queries(value: Mapping[str, Any]) -> tuple[ObjectQuerySpec, ...]:
+def decode_hand_entry_queries(value: Mapping[str, Any], *, resolved=False) -> tuple[ObjectQuerySpec, ...]:
     if not isinstance(value, Mapping):
         raise ValueError('Hand entry query must be an object')
+    if value.get("kind") == DAMAGE_PERMANENT_HAND_KIND:
+        return (_damage_bounded_hand_query(value, resolved=resolved),)
     from .rules.permanent_subtype_hand_queries import PERMANENT_SUBTYPE_HAND_KIND, decode_permanent_subtype_hand_query
     if value.get('kind')==PERMANENT_SUBTYPE_HAND_KIND:
         return (decode_permanent_subtype_hand_query(value),)
+    if value.get("kind") == CREATURE_OR_LAND_QUERY_KIND:
+        if (set(value) != {"kind", "schema_version", "alternatives"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1
+                or not isinstance(value["alternatives"], (list, tuple))):
+            raise ValueError("Creature-or-land hand entry requires a closed versioned query")
+        queries = tuple(ObjectQuerySpec.from_dict(raw) for raw in value["alternatives"])
+        if queries != creature_or_land_hand_entry_queries():
+            raise ValueError("Creature-or-land hand entry must keep both exact queries")
+        return queries
     if value.get('kind') == HISTORIC_QUERY_KIND:
         if (
             set(value) != {'kind', 'schema_version', 'alternatives'}
@@ -72,7 +115,11 @@ def decode_hand_entry_queries(value: Mapping[str, Any]) -> tuple[ObjectQuerySpec
     return (query,)
 
 
-def hand_entry_matches(row, queries: tuple[ObjectQuerySpec, ...]) -> bool:
+def hand_entry_matches(row, queries: tuple[ObjectQuerySpec, ...], *, descriptor=None) -> bool:
+    if descriptor is not None and descriptor.get("kind") == DAMAGE_PERMANENT_HAND_KIND:
+        limit = ManaValueFilter(ManaValueComparison.AT_MOST, descriptor["amount"])
+        if not limit.matches(row.mana_value):
+            return False
     return any(object_matches_query(row, query) for query in queries)
 
 
@@ -83,4 +130,8 @@ def hand_entry_query_capabilities(value):
     if isinstance(value,Mapping) and value.get('kind')==PERMANENT_SUBTYPE_HAND_KIND:
         decode_permanent_subtype_hand_query(value)
         return (PERMANENT_SUBTYPE_HAND_CAPABILITY,)
+    if isinstance(value, Mapping) and value.get("kind") == DAMAGE_PERMANENT_HAND_KIND:
+        _damage_bounded_hand_query(value, resolved=False)
+        from .rules.controlled_subtype_damage_batch import COMBAT_CAPABILITY
+        return (COMBAT_CAPABILITY,)
     return ()

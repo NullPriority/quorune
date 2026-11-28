@@ -13,9 +13,10 @@ from ..entry_state_conditions import (
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..rules.source_references import SourceReferenceSpec
+from ..rad_counter_model import ENTRY_RAD_CHOICE_DEPENDENCIES, entry_rad_choice_descriptor
 
 
-EntryStateHandlerTemplate = tuple[str, Mapping[str, Any], str]
+EntryStateHandlerTemplate = tuple[str, Mapping[str, Any], str | tuple[str, ...]]
 
 
 _UNCONDITIONAL = re.compile(
@@ -72,6 +73,10 @@ _OPPONENT_LANDS_UNLESS = re.compile(
     rf"or more lands\.?$",
     re.IGNORECASE,
 )
+_EARLY_CONTROLLER_TURNS = re.compile(
+    r"^This land enters tapped unless it['’]s your first, second, or third turn of the game\.?$",
+    re.IGNORECASE,
+)
 _BASIC_LAND_UNLESS = re.compile(
     r"^This land enters tapped unless you control a basic land\.?$",
     re.IGNORECASE,
@@ -120,6 +125,12 @@ def _fixed_entry_condition(
     *,
     source_name: str,
 ) -> tuple[str, FixedEntryCondition] | None:
+    if _EARLY_CONTROLLER_TURNS.fullmatch(text) is not None:
+        return (
+            "zone-entry-state-self-first-three-turns-v1",
+            FixedEntryCondition(FixedEntryMetric.CONTROLLER_ACTIVE_TURN_NUMBER, 1, 3, False),
+        )
+
     other_lands = _OTHER_LANDS_UNLESS.fullmatch(text)
     if other_lands is not None:
         count = _count(other_lands.group("count"))
@@ -328,6 +339,10 @@ def static_entry_state_handler(
         return qualified
 
     normalized = text.strip()
+    if " ".join(normalized.casefold().split()) == (
+        "you may have this land enter tapped. if you do, you get two rad counters."
+    ):
+        return "zone-entry-optional-tapped-rad-v1", entry_rad_choice_descriptor(), ENTRY_RAD_CHOICE_DEPENDENCIES
     if _unconditional_match(normalized, source_name):
         return (
             "zone-entry-state-self-tapped-v1",

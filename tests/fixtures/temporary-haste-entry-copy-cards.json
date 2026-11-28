@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned public Oracle record and rulings for the timed copy entry witness",
+  "cards": [
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "name": "Cursed Mirror",
+      "mana_cost": "{2}{R}",
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {R}.\nAs this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Cursed Mirror copies the original characteristics of that token as stated by the effect that created the token. Copying a token doesn't make Cursed Mirror a token. Similarly, if Cursed Mirror itself is a token, copying a nontoken permanent doesn't make it stop being a token."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when Cursed Mirror enters the battlefield. Any \"As [this creature] enters the battlefield\" or \"[This creature] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If something else becomes a copy of Cursed Mirror while Cursed Mirror is a copy of a creature, the duration of the effect is not copied. The new copy will still be a creature (with haste) after Cursed Mirror stops being a copy at the end of the turn."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Cursed Mirror copies exactly what was printed on the original creature (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or any Auras or Equipment attached to it, or any non-copy effects that have changed its types, color, power and toughness, and so on."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "While it is copying a creature, Cursed Mirror does not have \"{T}: Add {R}\" (unless the creature it's copying also has that ability)."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then Cursed Mirror enters the battlefield as a copy of whatever that creature is copying."
+    },
+    {
+      "oracle_id": "4d67e2a7-4aa7-44cc-853b-500d7aac046d",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If Cursed Mirror somehow enters the battlefield at the same time as a creature, it can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    }
+  ]
+}

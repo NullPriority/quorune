@@ -59,7 +59,397 @@
       "layout": "class",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "name": "Lae'zel, Vlaakith's Champion",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Gith Warrior",
+      "oracle_text": "If you would put one or more counters on a creature or planeswalker you control or on yourself, put that many plus one of each of those kinds of counters on that permanent or player instead.\nChoose a Background (You can have a Background as a second commander.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Choose a background"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "name": "Innkeeper's Talent",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of combat on your turn, put a +1/+1 counter on target creature you control.\n{G}: Level 2\nPermanents you control with counters on them have ward {1}.\n{3}{G}: Level 3\nIf you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "class",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "name": "Contagion Clasp",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact enters, put a -1/-1 counter on target creature.\n{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Proliferate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "name": "Mind Stone",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": " If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders' combined color identities."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won't usually be a creature anyway)."
+    },
+    {
+      "oracle_id": "c066f921-e349-45d1-8ec3-0955d10bbf19",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders that are the same color or colors."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Each Class has five abilities. The three in the major sections of its text box are class abilities. Class abilities can be static, activated, or triggered abilities. The other two are level abilities, one activated ability to advance the Class to level 2 and another to advance the Class to level 3."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Each Class starts with only the first of its three class abilities. As the first level ability resolves, the Class becomes level 2 and gains the second class ability. As the second level ability resolves, the Class becomes level 3 and gains the third class ability."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Gaining a level is a normal activated ability. It uses the stack and can be responded to."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Gaining a level won't remove abilities that a Class had at a previous level."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If a permanent enters with counters on it, the effect causing the permanent to be given counters may specify which player puts those counters on it. If the effect doesn't specify a player, the object's controller puts those counters on it."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If two or more effects attempt to modify how many counters would be put onto a permanent you control, you choose the order to apply those effects, no matter who controls the sources of those effects."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Once a ward ability of a permanent with a counter on it has triggered, causing that permanent to lose ward by removing Innkeeper's Talent or removing the counters from that permanent won't affect that ability. The appropriate player will still have to pay {1} or have their spell or ability countered."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "There's no restriction on how many Class permanents you can control, whether they're the same or different classes. Each Class permanent tracks its own level separately."
+    },
+    {
+      "oracle_id": "915b75d1-b5e3-4aca-a54c-beaccef0a2e4",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "You can't activate the first level ability of a Class unless that Class is level 1. Similarly, you can't activate the second level ability of a Class unless that Class is level 2."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2011-01-01",
+      "source": "wotc",
+      "comment": "Contagion Clasp's first ability is mandatory. If you're the only player who controls a creature, you must target one of them."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "An ability that triggers \"Whenever you proliferate\" triggers even if you chose no permanents or players while doing so."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If a permanent ever has both +1/+1 counters and -1/-1 counters on it at the same time, they're removed in pairs as a state-based action so that the permanent has only one of those kinds of counters on it."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If a player or permanent has more than one kind of counter on it, and you choose for it to get additional counters, it must get one of each kind of counter it already has. You can't have it get just one kind of counter it already has and not the others."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Players can respond to a spell or ability whose effect includes proliferating. Once that spell or ability starts to resolve, however, and its controller chooses which permanents and players will get new counters, it's too late for anyone to respond."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "To proliferate, you can choose any permanent that has a counter, including ones controlled by opponents. You can choose any player who has a counter, including opponents. You can't choose cards in any zone other than the battlefield, even if they have counters on them."
+    },
+    {
+      "oracle_id": "43f2d81e-aa01-4fa9-9046-6a27a05dbd2d",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "You don't have to choose every permanent or player that has a counter, only the ones you want to add another counter to. Since \"any number\" includes zero, you don't have to choose any permanents at all, and you don't have to choose any players at all."
+    }
+  ]
 }

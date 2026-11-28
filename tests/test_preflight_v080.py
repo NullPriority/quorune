@@ -191,6 +191,33 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         self.assertIn("keyword:ward", row["unresolved"])
         self.assertEqual("unresolved", row["status"])
 
+    def test_transforming_planeswalkers_use_bound_face_local_loyalty_lines(self):
+        from quorune.card_programs.model import _ability_face_id
+
+        capabilities = load_default_capability_registry()
+        for name in (
+            "Ral, Monsoon Mage // Ral, Leyline Prodigy",
+            "Jace, Vryn's Prodigy // Jace, Telepath Unbound",
+        ):
+            with self.subTest(card=name):
+                record = self.db.lookup(name, fuzzy=False)
+                registry = SemanticRegistry()
+                register_current_fixture_programs(
+                    self.db, registry, (record,), capability_registry=capabilities,
+                )
+                report = card_semantic_status(record, registry, db=self.db, capability_registry=capabilities)
+                self.assertEqual("fully_playable", report["status"], report["unresolved"])
+                loyalty_programs = [
+                    program for program in registry.programs_for_oracle(record.oracle_id)
+                    if program.ability_id.startswith("ability:") and _ability_face_id(program) == record.faces[-1]["name"]
+                ]
+                self.assertTrue(loyalty_programs)
+                for program in loyalty_programs:
+                    registry.remove(program.key)
+                report = card_semantic_status(record, registry, db=self.db, capability_registry=capabilities)
+                self.assertNotEqual("fully_playable", report["status"])
+                self.assertTrue(any(reason.startswith("activated_ability:") for reason in report["unresolved"]))
+
     def test_each_nonmana_activated_ability_needs_exact_coverage(self):
         row = card_semantic_status(
             self.db.lookup("Deathrite Shaman"),

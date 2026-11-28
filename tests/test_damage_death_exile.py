@@ -1,5 +1,6 @@
 """Damage, locked incarnations, and ordinary graveyard replacement authority."""
 
+from dataclasses import replace
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -21,6 +22,7 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules import damage_death_exile as owner
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.excess_damage_treasure import EXCESS_TREASURE_CAPABILITY, EXCESS_TREASURE_FIELD
 from scripts.build_test_database import build_fixture_database
 from test_bound_effect_programs import record
 
@@ -101,6 +103,111 @@ class DamageDeathExileNativeTests(InheritedNativeFixture, unittest.TestCase):
                                             'targets': [creature.ref], 'pay': 'auto'})
         self.assertTrue(result.ok, result.summary)
         self.resolve_top(session)
+
+    def _cast_hell_to_pay(self, game, spell, target, amount):
+        action = self.action(game, "A", spell)
+        command = {"action_id": action["id"], "x": amount, "targets": [target.ref], "pay": "auto"}
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _hell_to_pay_tokens(self, game, count):
+        treasures = [card for card in game.state.cards.values()
+                     if card.zone == "battlefield" and card.is_token and card.printed_name == "Treasure Token"]
+        self.assertEqual(count, len(treasures))
+        self.assertTrue(all(card.tapped and card.controller == "A" for card in treasures))
+
+    def test_hell_to_pay_marked_damage_counts_only_committed_damage_across_replacement_replay(self):
+        game = self.session(12010601)
+        spell = self.add(game.engine, "Hell to Pay", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        target.marked_damage = 1
+        first = self.add(game.engine, "Healing Salve", seat="B", zone="hand", ref="first-salve")
+        second = self.add(game.engine, "Healing Salve", seat="B", zone="hand", ref="second-salve")
+        for index in range(2):
+            self.add(game.engine, "Plains", seat="B", ref=f"white-for-salve-{index}")
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 8, "R": 1})
+        self.checkpoint(game)
+        self._cast_hell_to_pay(game, spell, target, 8)
+        self.prevent(game, "B", first, target)
+        self.prevent(game, "B", second, target)
+        pending = self.resolve(game)
+        self.assertEqual("replacement.order", pending.kind)
+        self.assertEqual(["B"], pending.actors)
+        options = game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        self.assertGreaterEqual(len(options), 2)
+        response = {"action_id": "choose", "replacement": options[0]["id"]}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", response).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:B", response)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        event = next(event for event in reversed(game.state.events) if event.code == "effect.damage")
+        self.assertEqual(2, event.details["amount"])
+        self._hell_to_pay_tokens(game, 1)
+        self.assertEqual("graveyard", game.state.cards[target.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_hell_to_pay_deathtouch_exact_lethal_and_zero_x(self):
+        for index, (cast_x, grant_deathtouch, expected) in enumerate(((0, False, 0), (2, False, 0), (2, True, 1))):
+            with self.subTest(x=cast_x, deathtouch=grant_deathtouch):
+                game = self.session(12010607 + index)
+                spell = self.add(game.engine, "Hell to Pay", zone="hand")
+                target = self.add(game.engine, "Grizzly Bears", seat="B")
+                self.prepare(game, mana={"C": cast_x, "R": 1})
+                self.checkpoint(game)
+                self._cast_hell_to_pay(game, spell, target, cast_x)
+                if grant_deathtouch:
+                    game.state.cards[spell.object_id].temporary_keywords.append("Deathtouch")
+                    self.checkpoint(game)
+                self.assertIsNone(self.resolve(game))
+                self._hell_to_pay_tokens(game, expected)
+                self.replay(game, load=True)
+
+    def test_hell_to_pay_does_not_create_treasure_for_a_new_target_incarnation(self):
+        game = self.session(12010611)
+        spell = self.add(game.engine, "Hell to Pay", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        blink = self.add(game.engine, "Flicker of Fate", zone="hand", seat="B")
+        self.add(game.engine, "Plains", seat="B")
+        self.add(game.engine, "Wastes", seat="B")
+        self.prepare(game, mana={"C": 5, "R": 1})
+        self.checkpoint(game)
+        identity = target.logical_object_id
+        self._cast_hell_to_pay(game, spell, target, 5)
+        self.cast_for(game, "B", blink, [target.ref])
+        self.resolve_top(game)
+        renewed = game.state.cards[target.object_id]
+        self.assertNotEqual(identity, renewed.logical_object_id)
+        self.assertIsNone(self.resolve(game))
+        self._hell_to_pay_tokens(game, 0)
+        self.assertEqual(0, game.state.cards[target.object_id].marked_damage)
+        self.replay(game, load=True)
+
+    def test_hell_to_pay_exact_compiler_requires_original_target_and_tapped_treasures(self):
+        card = self.db.lookup("Hell to Pay", fuzzy=False)
+        kwargs = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+
+        def exact():
+            compiled = compile_oracle_card(card, **kwargs)
+            self.assertEqual("exact", compiled.status, compiled.material_residuals)
+            node, = compiled.faces[0].nodes
+            self.assertIn(EXCESS_TREASURE_CAPABILITY, node.capability_dependencies)
+            self.assertIs(node.effects[0][EXCESS_TREASURE_FIELD]["token"]["tapped"], True)
+            self.assertEqual(["creature"], node.target_schema["types_any"])
+
+        exact()
+        for original, changed in (
+            ("target creature", "any target"), ("tapped Treasure", "Treasure"),
+            ("tapped Treasure", "tapped Gold"), ("excess damage", "damage"),
+        ):
+            ir = compile_oracle_card(replace(card, oracle_text=card.oracle_text.replace(original, changed)), **kwargs)
+            self.assertNotEqual("exact", ir.status)
+        with patch("quorune.compiler.damage_templates.excess_damage_tapped_treasure_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                exact()
 
     def test_original_target_and_dealt_scopes_differ_after_prevention_and_expire(self):
         cases = (('Magma Spray', 'same', 'exile'), ('Pillar of Flame', 'same', 'graveyard'),
@@ -231,3 +338,127 @@ class DamageDeathExileNativeTests(InheritedNativeFixture, unittest.TestCase):
                 self.assertIsNone(self.resolve(session))
                 self.assertEqual('exile', session.state.cards[target.object_id].zone)
                 self.replay(session)
+
+    def test_enduring_courage_returns_only_as_an_enchantment_before_entry_and_dies_again(self):
+        session = self.session(603070301)
+        source = self.add(session.engine, "Enduring Courage")
+        session.engine.change_control(source.object_id, "B", reason="Seed original opponent control")
+        authority = self.add(session.engine, "Authority of the Consuls", seat="B")
+        destroy = self.add(session.engine, "Doom Blade", zone="hand")
+        disenchant = self.add(session.engine, "Disenchant", zone="hand")
+        for card in (source, authority, destroy, disenchant):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 2, "B": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", destroy, [source.ref], reserve={"W": 1, "C": 1})
+        self.resolve_top(session)
+        item, = session.state.stack
+        self.assertEqual(("triggered_ability", "B", source.object_id),
+                         (item.kind, item.controller, item.source_object_id))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[source.object_id]
+        self.assertEqual(("battlefield", "A", "A"), (returned.zone, returned.owner, returned.controller))
+        effective = session.engine._effective_card_data(returned)
+        self.assertEqual("Enchantment", effective["type_line"])
+        self.assertFalse(returned.tapped)
+        self.assertEqual(40, session.state.players["B"].life)
+        self.assertNotIn("Dog", effective["type_line"])
+        session = self.replay(session, load=True)
+        self.cast(session, "A", disenchant, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_enduring_courage_pumps_other_controlled_creature_without_targeting(self):
+        session = self.session(603070302)
+        source = self.add(session.engine, "Enduring Courage")
+        entrant = self.add(session.engine, "Grizzly Bears", zone="hand")
+        opposing = self.add(session.engine, "Grizzly Bears", seat="B", ref="enduring-opponent")
+        blink = self.add(session.engine, "Cloudshift", seat="B", zone="hand")
+        self.add(session.engine, "Plains", seat="B", ref="enduring-opponent-mana")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", entrant)
+        self.resolve_top(session)
+        item, = session.state.stack
+        self.assertEqual(("A", []), (item.controller, item.targets))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(4, session.engine._numeric_stat(entrant.object_id, "power"))
+        self.assertIn("haste", session.engine._combat_keywords(session.state.cards[entrant.object_id]))
+        self.cast(session, "B", blink, [opposing.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, session.engine._numeric_stat(opposing.object_id, "power"))
+        self.finish_turn(session)
+        self.assertEqual(2, session.engine._numeric_stat(entrant.object_id, "power"))
+        self.replay(session, load=True)
+
+
+    def test_enduring_courage_replacement_order_reloads_typed_return(self):
+        session = self.session(603070303)
+        source = self.add(session.engine, "Enduring Courage")
+        destroy = self.add(session.engine, "Doom Blade", zone="hand")
+        for seat in "BD":
+            orb = self.add(session.engine, "Orb of Dreams", seat=seat, ref=f"enduring-entry-orb-{seat}")
+            self.assert_closed(session, orb)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "B": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", destroy, [source.ref])
+        pending = self.resolve(session)
+        self.assertEqual("replacement.order", pending.kind)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        session = self.replay(session, load=True)
+        for _ in range(4):
+            if session.state.pending_decision.kind != "replacement.order":
+                break
+            principal = session.pending_principals()[0]
+            option = session.packet(principal, full=True)["decision"]["ctx"]["options"][0]
+            answer = session.act(principal, {"action_id": "choose", "replacement": option["id"]})
+            self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(self.resolve(session))
+        card = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", card.zone)
+        self.assertTrue(card.tapped)
+        self.assertEqual("Enchantment", session.engine._effective_card_data(card)["type_line"])
+        self.replay(session, load=True)
+
+
+class EntryAndDeathCharacteristicCompilerTests(unittest.TestCase):
+    def test_entry_and_enchantment_death_require_closed_separate_printed_branches(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.entry_and_death_characteristics import (
+            creature_entry_pump_effect, death_enchantment_return_effect,
+        )
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Whenever another creature you control enters, it gets +2/+0 and gains haste until end of turn.\n"
+                "When this creature dies, if it was a creature, return it to the battlefield under its owner's control. "
+                "It's an enchantment.")
+
+        def compile_text(text):
+            return compile_oracle_card(replace(query_record(text), type_line="Enchantment Creature — Dog Glimmer"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            pump, death = ir.faces[0].nodes
+            self.assertEqual(("creature.enter", "creature.dies.self"), (pump.event, death.event))
+            self.assertEqual(creature_entry_pump_effect(2), pump.effects[0])
+            self.assertEqual(death_enchantment_return_effect(), death.effects[0])
+
+        witness()
+        with patch("quorune.compiler.event_card_return_templates.self_death_return_binding", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (text.replace("was a creature", "was an artifact"),
+                        text.replace("an enchantment", "an artifact"),
+                        text.replace("another creature you control", "a target creature")):
+            self.assertNotEqual("exact", compile_text(altered).status)

@@ -6,14 +6,24 @@ from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
 
+from ..commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
 from ..entry_counter_model import (
+    COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY,
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
+    INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY,
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterCalculation,
     DynamicEntryCounterValueSource,
     EntryCounterError,
     PAID_COLOR_ENTRY_CAPABILITY,
+    PAID_GREEN_PAIRS_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
+    CAST_REVIVAL_ENTRY_CAPABILITY,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
+    ENTRY_CREATURE_VALUE_CAPABILITY,
+    ENTRY_CREATURE_VALUE_SOURCES,
+    EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,
 )
 from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
 from ..characteristic_fragments import characteristic_quantity_capabilities
@@ -173,7 +183,13 @@ def _dynamic_compiled(
     counter_name: str,
     amount_spec: DynamicEntryCounterAmountSpec,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]]:
+    uses_commander_history = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT
     uses_current_life = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
+    uses_public_maximum = amount_spec.value_source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES
+    uses_creature_values = amount_spec.value_source in ENTRY_CREATURE_VALUE_SOURCES
+    uses_exile = amount_spec.value_source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE
+    uses_cast_loyalty = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS
+    uses_cast_revival = amount_spec.value_source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER
     return (
         DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE,
         {
@@ -183,7 +199,8 @@ def _dynamic_compiled(
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
             **({"requires_complete_card_program": True}
-               if amount_spec.mana_color is not None or uses_current_life else {}),
+               if (amount_spec.mana_color is not None or uses_current_life or uses_public_maximum
+                   or uses_creature_values or uses_exile or uses_commander_history or uses_cast_revival) else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -194,7 +211,17 @@ def _dynamic_compiled(
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
             *characteristic_quantity_capabilities(amount_spec.quantity),
             *((CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,) if uses_current_life else ()),
+            *((COMMANDER_HISTORY_LOYALTY_ENTRY_CAPABILITY, COMMANDER_CAST_COUNT_CAPABILITY)
+              if uses_commander_history else ()),
+            *((PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,) if uses_public_maximum else ()),
+            *((ENTRY_CREATURE_VALUE_CAPABILITY,) if uses_creature_values else ()),
+            *((EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,) if uses_exile else ()),
+            *((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query")
+              if uses_cast_loyalty else ()),
+            *((CAST_REVIVAL_ENTRY_CAPABILITY,) if uses_cast_revival else ()),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
+            *((PAID_GREEN_PAIRS_ENTRY_CAPABILITY,)
+              if amount_spec.calculation is DynamicEntryCounterCalculation.PAID_GREEN_PAIRS else ()),
             *(
                 ("casting.lifecycle.fixed_zone_cast",)
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -259,6 +286,16 @@ def _counted_dynamic_amount_body(
     *,
     source_name: str,
 ) -> tuple[str, DynamicEntryCounterAmountSpec] | None:
+
+    normalized_body = " ".join(body.casefold().replace("’", "'").split())
+    if re.fullmatch(
+        r"a loyalty counter on (?:it|him|her) for each time you've cast a commander from the command zone this game",
+        normalized_body,
+    ):
+        return "loyalty", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CONTROLLER_COMMANDER_CAST_COUNT,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
 
     counted = re.fullmatch(
         rf"(?P<count>a|an|{FIXED_COUNT_PATTERN}) "
@@ -441,11 +478,58 @@ def _conditional_dynamic_amount_body(
     return None
 
 
+_PUBLIC_MAXIMUM_ENTRY_BODIES = {
+    "a number of suspect counters on it equal to the greatest number of creatures a player controls":
+        DynamicEntryCounterValueSource.MAX_PLAYER_CREATURES,
+    "a number of +1/+1 counters on it equal to the greatest number of cards an opponent has drawn this turn":
+        DynamicEntryCounterValueSource.MAX_OPPONENT_DRAWS,
+}
+
+
+_ENTRY_CREATURE_VALUE_BODIES = {
+    "x +1/+1 counters on it, where x is the greatest power among other creatures you control":
+        DynamicEntryCounterValueSource.MAX_OTHER_CONTROLLED_POWER,
+    "x +1/+1 counters on it, where x is the greatest power among creatures you control and creature cards in your graveyard":
+        DynamicEntryCounterValueSource.MAX_CONTROLLED_POWER_AND_GRAVEYARD,
+    "x +1/+1 counters on it, where x is the total toughness of other creatures you control":
+        DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_TOUGHNESS,
+    "a +1/+1 counter on it for each +1/+1 counter among other creatures you control":
+        DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_PLUS_COUNTERS,
+    "a +1/+1 counter on it for each other red creature you control and a +1/+1 counter on it for each other green creature you control":
+        DynamicEntryCounterValueSource.OTHER_CONTROLLED_RED_AND_GREEN_COUNTS,
+}
+
+
 def _dynamic_amount_body(
     body: str,
     *,
     source_name: str,
 ) -> tuple[str, DynamicEntryCounterAmountSpec] | None:
+    if re.fullmatch(
+        r"a number of \+1/\+1 counters on it equal to the (?:greatest|highest) mana value among cards in exile",
+        body, re.IGNORECASE,
+    ):
+        return "+1/+1", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    if body.casefold().replace("’", "'") == (
+        "an additional loyalty counter on him for each instant and sorcery spell you've cast this turn"
+    ):
+        return "loyalty", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    current_creatures = _ENTRY_CREATURE_VALUE_BODIES.get(body.casefold())
+    if current_creatures is not None:
+        return "+1/+1", DynamicEntryCounterAmountSpec(
+            value_source=current_creatures, calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    maximum = _PUBLIC_MAXIMUM_ENTRY_BODIES.get(body.casefold())
+    if maximum is not None:
+        return PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES[maximum], DynamicEntryCounterAmountSpec(
+            value_source=maximum, calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
     for compiler in (
         _x_dynamic_amount_body,
         _counted_dynamic_amount_body,
@@ -468,6 +552,11 @@ def dynamic_self_entry_counter_handler(
     ability_word = _ABILITY_WORD.fullmatch(material)
     if ability_word is not None:
         material = ability_word.group("body")
+    if material.casefold() == "this creature enters with eight revival counters on it if you cast it.":
+        return _dynamic_compiled(counter_name="revival", amount_spec=DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER,
+            calculation=DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST, coefficient=8, minimum=1,
+        ))
     from .paid_color_entry_templates import paid_color_entry_amount
     paid=paid_color_entry_amount(material,source_name=source_name)
     if paid is not None:return _dynamic_compiled(counter_name=paid[0],amount_spec=paid[1])

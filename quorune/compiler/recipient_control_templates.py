@@ -2,11 +2,41 @@
 from . import regex_working_set as re
 from ..recipient_control_model import (RECIPIENT_CONTROL_MECHANIC,recipient_control_effect,
     CHOOSE_CONTROL_RECIPIENT_OPERATION,GIVE_CONTROL_SET_OPERATION)
+from ..replacement.immutable import FrozenMap
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type
 from .direct_target import direct_permanent_target_spec
 
 
+SOURCE_UPKEEP_HANDOFF_TEMPLATE = "opponent-upkeep-source-handoff-v1"
+_SOURCE_UPKEEP_HANDOFF = re.compile(
+    r"You may have that player gain control of (?P<source>[^.]+?) until end of turn\. "
+    r"If you do, untap (?P<untap>[^.]+?), goad it, and it can['’]t be sacrificed this turn\. "
+    r"If you don['’]t, convert it\.",
+    re.I,
+)
+
+
+_SOURCE_CONTROL_REFLEXIVE = re.compile(
+    r"Target opponent gains control of (?P<subject>[^.]+)\. When they do, "
+    r"you draw two cards and put a quest counter on (?P<counter_subject>[^.]+)\.", re.I,
+)
+
+
+def _source_control_reflexive(text, card_name):
+    match = _SOURCE_CONTROL_REFLEXIVE.fullmatch(" ".join(text.split()))
+    source = SourceReferenceSpec(card_name)
+    if match is None or not all(source.matches(phrase) for phrase in match.groups()):
+        return None
+    from ..rules.source_control_reflexive import source_control_reflexive_effect, source_control_reflexive_target
+
+    return ("original-source-control-reflexive-v1", (source_control_reflexive_effect(),),
+            source_control_reflexive_target(),
+            (RECIPIENT_CONTROL_MECHANIC, "cr-115-targets", "cr-611-continuous-effects"))
+
+
 def recipient_control_effect_template(text,*,card_name,source_is_permanent=None):
+    if source_is_permanent is True and (reflexive := _source_control_reflexive(text, card_name)):
+        return reflexive
     handoff=_target_mana_value_handoff(text) or _chosen_other_player_handoff(text)
     if handoff is not None:return handoff
     match=re.fullmatch(r'(?P<recipient>target (?:player|opponent)|an opponent) gains control of (?P<subject>.+?)\.?',text.strip(),re.I)
@@ -74,7 +104,27 @@ def normalized_source_recipient_control_body(body):
     return match['recipient']+' gains control of this permanent.' if match is not None else None
 
 
+def _source_upkeep_handoff_result(binding, body, *, card_name):
+    if (body != binding.body or (binding.event.value, binding.variant, binding.active_zone)
+            != ("step.begin", "each_opponent_upkeep", "battlefield")):
+        return None
+    match = _SOURCE_UPKEEP_HANDOFF.fullmatch(" ".join(body.split()))
+    if match is None:
+        return None
+    source = SourceReferenceSpec(card_name)
+    if not all(source.matches(phrase) or source_self_permanent_type(phrase) for phrase in match.groups()):
+        return None
+    from ..rules.source_upkeep_handoff import source_upkeep_handoff_condition, source_upkeep_handoff_effect
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC
+
+    if FrozenMap(binding.event_condition or {}) != FrozenMap(source_upkeep_handoff_condition()):
+        return None
+    return (SOURCE_UPKEEP_HANDOFF_TEMPLATE, (source_upkeep_handoff_effect(),), None, (FIXED_OPTIONAL_EFFECT_MECHANIC,))
+
+
 def source_bound_recipient_control_result(binding,body,*,card_name):
+    if handoff := _source_upkeep_handoff_result(binding, body, card_name=card_name):
+        return handoff
     if binding.event.value.startswith(('spell.','card.')):return None
     if not (binding.event.value.endswith('.self') or binding.variant in {
             'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_blocks_or_becomes_blocked'}):return None

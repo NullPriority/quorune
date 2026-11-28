@@ -7,8 +7,30 @@ import random
 from ..continuous_effect_model import ContinuousOperation, Layer
 from ..continuous_effect_state import ResolutionEffectSource, create_resolution_continuous_effect
 from ..entry_counter_model import EffectEntryCounter
-from ..library_battlefield_model import LIBRARY_SHUFFLE_REMAINDER
+from ..library_battlefield_model import LIBRARY_SHUFFLE_REMAINDER, validate_random_revealed_creature_entry
 from .library_partition import commit_ordered_library_partition
+from .random_selection import sample_identity_rows
+
+
+def random_revealed_creature_refs(host, *, actor, stack_item, effect):
+    count = validate_random_revealed_creature_entry(effect, player=actor)
+    if (stack_item is None or stack_item.controller != actor
+            or host.state.library_selection_knowledge_version != 1):
+        raise ValueError("Random creature entry requires its resolving controller and current library knowledge")
+    library = host.state.players[actor].zones["library"]
+    candidates = []
+    for object_id in library[-count:]:
+        card = host.state.cards[object_id]
+        if card.zone != "library" or card.owner != actor or not card.is_card_object:
+            raise ValueError("Random creature entry requires the controller's physical library prefix")
+        type_line = host._effective_card_data(card).get("type_line") or ""
+        if "creature" in host._type_parts(type_line)[0]:
+            candidates.append({"object_id": object_id, "ref": card.ref})
+    chosen = sample_identity_rows(
+        candidates, 1, seed=host.state.config.seed, instruction_key=stack_item.ref,
+        namespace="random-revealed-library-creature", seat=actor,
+    )
+    return tuple(row["ref"] for row in chosen)
 
 
 def _grant_entry_hexproof(host, *, actor, source_stack_ref, moved, looked):
@@ -30,7 +52,8 @@ def _grant_entry_hexproof(host, *, actor, source_stack_ref, moved, looked):
 
 def _finish_library_remainder(host, owner, *, actor, player, arrangement, cards, moved, source_stack_ref, reason):
     if arrangement.remainder_destination == LIBRARY_SHUFFLE_REMAINDER:
-        _grant_entry_hexproof(host, actor=actor, source_stack_ref=source_stack_ref, moved=moved, looked=arrangement.looked)
+        if arrangement.entry_followup.counters is not None:
+            _grant_entry_hexproof(host, actor=actor, source_stack_ref=source_stack_ref, moved=moved, looked=arrangement.looked)
         owner.shuffle_library(player, reason=reason, actor=actor)
         return
     bottom = [cards[ref].object_id for ref in arrangement.remainder_refs]
@@ -42,7 +65,7 @@ def _finish_library_remainder(host, owner, *, actor, player, arrangement, cards,
 
 
 def commit_library_battlefield_selection(host,*,actor,player,arrangement,cards,reason,
-        source_stack_ref,looked_are_public,selected_are_public,replacement_selections):
+        source_stack_ref,looked_are_public,selected_are_public,replacement_selections,entry_aura_target_ref=None):
     from ..zone_transitions import ZoneTransitionOwner
     from .library_selection import LibrarySelectionError
     if arrangement.remainder_destination not in ("library_bottom", LIBRARY_SHUFFLE_REMAINDER):
@@ -53,13 +76,15 @@ def commit_library_battlefield_selection(host,*,actor,player,arrangement,cards,r
     changes=tuple((cards[ref].object_id,'battlefield') for ref in arrangement.selected_refs)
     owner = ZoneTransitionOwner(host)
     entry_counters = ({object_id: (EffectEntryCounter("+1/+1", followup.counters, player, source_stack_ref, "122.6a"),)
-                       for object_id, _ in changes} if followup is not None else None)
+                       for object_id, _ in changes} if followup is not None and followup.counters is not None else None)
     moved=owner.move_cards_simultaneously(changes,reason=reason,log=False,
         tapped=arrangement.entry_tapped,
         destination_controllers={object_id:player for object_id,_ in changes},
         putting_players={object_id:actor for object_id,_ in changes},
         effect_entry_counters=entry_counters,
-        replacement_selections=replacement_selections) if changes else ()
+        replacement_selections=replacement_selections,
+        aura_target_refs={changes[0][0]: entry_aura_target_ref} if entry_aura_target_ref is not None else None,
+    ) if changes else ()
     _finish_library_remainder(host, owner, actor=actor, player=player, arrangement=arrangement,
                               cards=cards, moved=moved, source_stack_ref=source_stack_ref, reason=reason)
     public_refs=([identity.ref for identity in arrangement.looked] if looked_are_public else

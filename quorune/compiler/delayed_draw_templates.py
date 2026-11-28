@@ -5,6 +5,37 @@ from __future__ import annotations
 from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
+from ..turn_creature_cast_draw_model import turn_creature_cast_draw_effect
+
+
+def watched_combat_damage_draw_template(text):
+    from ..rules.watched_combat_draw import (
+        WATCHED_COMBAT_DRAW_MECHANIC, WATCHED_COMBAT_DRAW_TARGET, watched_combat_draw_effect,
+    )
+
+    if re.fullmatch(
+        r"Choose target creature you control\. Whenever that creature deals combat damage "
+        r"to a player or planeswalker this turn, draw that many cards\.",
+        " ".join(text.split()), re.I,
+    ) is None:
+        return None
+    return ("watched-combat-damage-draw-this-turn-v1", (watched_combat_draw_effect(),),
+            WATCHED_COMBAT_DRAW_TARGET, (WATCHED_COMBAT_DRAW_MECHANIC,))
+
+
+def controlled_player_damage_token_template(text):
+    from ..rules.controlled_combat_tokens import COMBAT_TOKEN_MECHANIC, COMBAT_TOKEN_TARGET, combat_token_effect
+    from .token_templates import fixed_token_creation_effect_template
+
+    if re.fullmatch(
+        r"Choose target opponent\. Whenever a creature you control deals combat damage "
+        r"to that player this turn, create a tapped Treasure token\.",
+        " ".join(text.split()), re.I,
+    ) is None:
+        return None
+    token = fixed_token_creation_effect_template("Create a tapped Treasure token.").effect
+    return ("controlled-opponent-combat-token-this-turn-v1", (combat_token_effect(token),),
+            COMBAT_TOKEN_TARGET, (COMBAT_TOKEN_MECHANIC, "cr-115-targets"))
 
 
 FIXED_NEXT_TURN_DRAW_MECHANIC = "fixed-next-turn-upkeep-draw"
@@ -15,6 +46,20 @@ _FIXED_NEXT_TURN_DRAW = re.compile(
     r"Draw a card at the beginning of the next turn's upkeep\.?",
     re.IGNORECASE,
 )
+_SAME_TURN_CREATURE_CAST_DRAW = re.compile(
+    r"Whenever you cast a creature spell this turn, draw a card\.", re.IGNORECASE,
+)
+
+
+def turn_creature_cast_draw_template(text):
+    if _SAME_TURN_CREATURE_CAST_DRAW.fullmatch(" ".join(text.split())) is None:
+        return None
+    return (
+        "same-turn-creature-cast-draw-v1",
+        (turn_creature_cast_draw_effect(),),
+        None,
+        ("cr-121-drawing-a-card", "cr-603-handling-triggered-abilities"),
+    )
 
 
 def fixed_next_turn_upkeep_draw_effect() -> dict[str, Any]:

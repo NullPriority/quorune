@@ -1,12 +1,15 @@
 from __future__ import annotations
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
-from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..resolving_cast_budget_model import ResolveBudgetedCastIntent
+from ..semantic_runtime.counter_movement_intent import COUNTER_MOVEMENT_INTENT_TYPES, CounterMovementIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
+from ..rules.discarded_card_cast import DiscardedCardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
 from typing import Any, Mapping, Protocol, Sequence
@@ -141,7 +144,7 @@ def _issue_semantic_intent_replacement_choice(
     response: Mapping[str, Any],
     intent: (
         PlaceCountersOnSetIntent
-        | MoveCountersIntent
+        | CounterMovementIntent
         | LifeChangeIntent
         | PlaceCounterBatchIntent
         | PlaceCountersOnTargetsIntent
@@ -192,26 +195,47 @@ def _source_ref(host: SemanticCounterCoordinationHost, item: Any) -> str | None:
     return source.ref if source is not None else None
 
 
-def _with_committed_quantity_followup(completion, intent, index, result):
+def _with_committed_quantity_followup(completion, intent, index, result, *, effect):
     from dataclasses import replace
+    from ..fixed_counter_movement_model import SOURCE_GIVES_COUNTERS_THEN_DRAW
     from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+    from ..rules.counter_movement import COUNTER_MOVEMENT_DRAW
     from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
     from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
+    from ..semantic_runtime.counter_movement_intent import MoveCounterSetIntent
 
     from ..discard_result_model import (
         DiscardWholeHandsResultIntent, IntentResultPlayerDraws, PlayerDiscardCounts, SelectedLandDiscardCounterDraws,
+        is_ordered_opponents_discard,
     )
 
     if (isinstance(intent, DiscardWholeHandsResultIntent) and intent.graveyard_orders is not None
             and intent.require_graveyard_order):
         if not isinstance(result, PlayerDiscardCounts) or index != len(completion.intents) - 1:
             raise SemanticChoiceError("An ordered discard requires its exact committed result")
+        if is_ordered_opponents_discard(effect):
+            return completion
         binding = SelectedLandDiscardCounterDraws if intent.selected_lands else IntentResultPlayerDraws
         effects = binding(0, "own").resolved_effects(result)
         return replace(completion, prepend_effects=(*effects, *completion.prepend_effects))
+    if isinstance(intent, ProliferateIntent) and intent.choose_phase_out:
+        from ..rules.proliferate_phase_out import counter_phase_choice_receipts
+
+        if (not isinstance(result, CommittedQuantityFollowup) or len(result.effects) > 1
+                or index != len(completion.intents) - 1):
+            raise SemanticChoiceError("A Proliferate choice needs its committed phase-out result")
+        for effect in result.effects:
+            try:
+                counter_phase_choice_receipts(effect)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+        return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
     if not isinstance(result, CommittedQuantityFollowup):
         return completion
-    if not isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent)) or index != len(completion.intents) - 1:
+    allowed_parent = isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent))
+    if isinstance(intent, MoveCounterSetIntent) and intent.mode == SOURCE_GIVES_COUNTERS_THEN_DRAW:
+        allowed_parent = result.effects == (COUNTER_MOVEMENT_DRAW,)
+    if not allowed_parent or index != len(completion.intents) - 1:
         raise SemanticChoiceError("A committed result follow-up needs its exact final typed parent")
     return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
 
@@ -232,12 +256,19 @@ def continue_semantic_completion(
     expected_intent_kind: str | None = None,
     expected_intent: Mapping[str, Any] | None = None,
     committed_completion: bool = False,
+    copy_replacements_applied: bool = False,
 ) -> bool:
     """Execute a completion, suspending supported intents before mutation."""
 
     intents = tuple(completion.intents)
     if type(start_index) is not int or start_index < 0 or start_index > len(intents):
         raise SemanticChoiceError("Semantic completion intent index is invalid")
+    if (not copy_replacements_applied and start_index == 0 and not replacement_selections
+            and expected_counter_intent is None and expected_intent_kind is None and expected_intent is None):
+        from ..selection.prepared_spell_copy_batch import begin_prepared_spell_copy_batch
+
+        if begin_prepared_spell_copy_batch(host, item, continuation, actor, response, completion):
+            return False
     if expected_counter_intent is not None and (
         expected_intent_kind is not None or expected_intent is not None
     ):
@@ -274,7 +305,11 @@ def continue_semantic_completion(
             with defer_conditional_cost_returns() as waiting:
                 result = execute_intent_plan(host,IntentPlan(operation=str(continuation.effect.get('op') or ''),
                     handler_id=continuation.handler_id,intents=(intent,)))
-            completion = _with_committed_quantity_followup(completion, intent, index, result)
+            if continuation.effect.get("op") == "choose_mana":
+                from .resolution_mana import record_optional_target_mana_committed
+
+                record_optional_target_mana_committed(host, item, actor, continuation.effect, intent, result)
+            completion = _with_committed_quantity_followup(completion, intent, index, result, effect=continuation.effect)
             if waiting:
                 from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
                 saved=encode_remaining_completion(continuation,actor,response,completion,index+1)
@@ -302,11 +337,14 @@ def continue_semantic_completion(
                     DiscoverCastIntent,
                     ResolvingExileLandPlayIntent,
                     ResolvingSharedTypeLibraryPlayIntent,
+                    ResolveQualifiedLibraryCastIntent,
                     ResolveCapturedDrawCastIntent,
                     ResolveBoundedHandCastIntent,
+                    ResolveBudgetedCastIntent,
                     GraveyardCastIntent,
+                    DiscardedCardCastIntent,
                     PlaceCountersOnSetIntent,
-                    MoveCountersIntent,
+                    *COUNTER_MOVEMENT_INTENT_TYPES,
                     LifeChangeIntent,
                     LifeGainCostBatchIntent,
                     PlaceCounterBatchIntent,

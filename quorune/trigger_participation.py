@@ -46,6 +46,7 @@ class TriggerMultiplierSpec:
     schema_version: int = 1
     rule: str | None = None
     subtype: str | None = None
+    required_faction: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {1,2}:
@@ -64,6 +65,11 @@ class TriggerMultiplierSpec:
             raise TriggerParticipationError(
                 "Trigger-multiplier exclude_self must be a boolean"
             )
+        if self.required_faction is not None and (
+            self.required_faction != "Mardu" or self.schema_version != 2 or self.rule != "creature_attacks"
+            or self.subtype is not None
+        ):
+            raise TriggerParticipationError("The faction-gated multiplier requires the original Mardu attack rule")
         if self.schema_version==2:
             from .trigger_participation_query_model import trigger_participation_rule
             if self.predicate is not TriggerMultiplierPredicate.TYPED_SOURCE_EVENT or self.exclude_self or self.additional_count!=1:
@@ -115,7 +121,8 @@ class TriggerMultiplierSpec:
 
     def to_dict(self) -> dict[str, Any]:
         if self.schema_version==2:
-            return {'schema_version':2,'predicate':self.predicate.value,'rule':self.rule,'subtype':self.subtype}
+            return {'schema_version':2,'predicate':self.predicate.value,'rule':self.rule,'subtype':self.subtype,
+                    **({'required_faction': self.required_faction} if self.required_faction is not None else {})}
         return {
             "schema_version": self.schema_version,
             "predicate": self.predicate.value,
@@ -131,7 +138,12 @@ class TriggerMultiplierSpec:
             "additional_count",
             "exclude_self",
         }
-        if isinstance(value,Mapping) and value.get('schema_version')==2:expected={'schema_version','predicate','rule','subtype'}
+        if isinstance(value, Mapping) and value.get("schema_version") == 2:
+            expected = {"schema_version", "predicate", "rule", "subtype"}
+            if "required_faction" in value:
+                if value["required_faction"] != "Mardu":
+                    raise TriggerParticipationError("The faction-gated multiplier requires the exact faction")
+                expected.add("required_faction")
         if not isinstance(value, Mapping) or set(value) != expected:
             raise TriggerParticipationError(
                 "Trigger-multiplier fragments have a closed schema"
@@ -147,12 +159,15 @@ class TriggerMultiplierSpec:
             predicate=predicate,
             additional_count=value.get('additional_count',1),
             exclude_self=value.get('exclude_self',False),
-            rule=value.get('rule'),subtype=value.get('subtype'),
+            rule=value.get('rule'),subtype=value.get('subtype'),required_faction=value.get("required_faction"),
         )
 
 
 class WardSacrificeScope(str, Enum):
     CREATURE = "creature"
+    FOOD_ARTIFACT = "food_artifact"
+    TWO_PERMANENTS = "two_permanents"
+    THREE_NONLAND_PERMANENTS = "three_nonland_permanents"
     PERMANENT_WITH_POSITIVE_MANA_VALUE = "permanent_with_positive_mana_value"
 
 
@@ -165,6 +180,7 @@ class WardSpec:
     discard_cards: int = 0
     schema_version: int | None = None
     sacrifice_scope: WardSacrificeScope | None = None
+    blight_amount: int | None = None
 
     def __post_init__(self) -> None:
         kinds = sum(
@@ -173,6 +189,7 @@ class WardSpec:
                 self.life_payment is not None,
                 self.discard_cards != 0,
                 self.sacrifice_scope is not None,
+                self.blight_amount is not None,
             )
         )
         if kinds != 1:
@@ -181,17 +198,23 @@ class WardSpec:
             )
         schema_version = self.schema_version
         if schema_version is None:
-            if self.sacrifice_scope is not None:
+            if self.blight_amount is not None:
+                schema_version = 4
+            elif self.sacrifice_scope is not None:
                 schema_version = 3
             else:
                 schema_version = 1 if self.generic_cost is not None else 2
             object.__setattr__(self, "schema_version", schema_version)
-        if type(schema_version) is not int or schema_version not in {1, 2, 3}:
+        if type(schema_version) is not int or schema_version not in {1, 2, 3, 4}:
             raise TriggerParticipationError("Unsupported Ward schema version")
         if schema_version == 3 and not isinstance(self.sacrifice_scope, WardSacrificeScope):
             raise TriggerParticipationError("Ward schema version 3 requires a typed sacrifice scope")
         if schema_version != 3 and self.sacrifice_scope is not None:
             raise TriggerParticipationError("Ward sacrifice requires schema version 3")
+        if (schema_version == 4) != (self.blight_amount is not None) or (
+            self.blight_amount is not None and (type(self.blight_amount) is not int or self.blight_amount < 1)
+        ):
+            raise TriggerParticipationError("Ward Blight requires a positive count and schema version 4")
         if self.generic_cost is not None and (
             type(self.generic_cost) is not int or self.generic_cost < 0
         ):
@@ -226,6 +249,8 @@ class WardSpec:
 
     @property
     def payment_kind(self) -> str:
+        if self.blight_amount is not None:
+            return "blight"
         if self.sacrifice_scope is not None:
             return "sacrifice"
         if self.generic_cost is not None:
@@ -235,7 +260,21 @@ class WardSpec:
         return "discard"
 
     @property
+    def fixed_query_grant_label(self) -> str | None:
+        if self.generic_cost is not None:
+            return f"Ward {{{self.generic_cost}}}"
+        if self.life_payment is not None:
+            return f"Ward—Pay {self.life_payment} life"
+        return None
+
+    @property
     def capability_id(self) -> str:
+        if self.blight_amount is not None:
+            return "trigger.keyword.ward.fixed_blight"
+        if self.sacrifice_scope is WardSacrificeScope.TWO_PERMANENTS:
+            return "trigger.keyword.ward.two_permanents"
+        if self.sacrifice_scope is WardSacrificeScope.THREE_NONLAND_PERMANENTS:
+            return "trigger.keyword.ward.three_nonland_permanents"
         if self.sacrifice_scope is not None:
             return "trigger.keyword.ward.fixed_sacrifice"
         return (
@@ -249,6 +288,8 @@ class WardSpec:
         return ("603.3", "702.21", "702.21a")
 
     def to_dict(self) -> dict[str, Any]:
+        if self.blight_amount is not None:
+            return {"schema_version": 4, "blight_amount": self.blight_amount}
         if self.sacrifice_scope is not None:
             return {"schema_version": 3, "sacrifice_scope": self.sacrifice_scope.value}
         if self.schema_version == 1:
@@ -295,6 +336,9 @@ class WardSpec:
             except (TypeError, ValueError) as exc:
                 raise TriggerParticipationError("Ward sacrifice scope is unsupported") from exc
             return cls(schema_version=3, sacrifice_scope=scope)
+        if (type(value.get("schema_version")) is int and value["schema_version"] == 4
+                and set(value) == {"schema_version", "blight_amount"}):
+            return cls(schema_version=4, blight_amount=value["blight_amount"])
         raise TriggerParticipationError(
             "Ward fragments have a closed schema"
         )

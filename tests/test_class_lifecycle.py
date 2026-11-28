@@ -470,6 +470,133 @@ class ClassLifecycleRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         return action_id
 
+    def test_printed_counter_replacement_and_class_ward_require_their_current_owners(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        cards = tuple(self.db.lookup(name,fuzzy=False) for name in
+                      ("Lae'zel, Vlaakith's Champion", "Innkeeper's Talent"))
+        options={"capability_registry":self.capabilities,"capability_profile":"commander_review"}
+        for card in cards:
+            exact=compile_oracle_card(card,**options)
+            self.assertEqual("exact",exact.status,exact.material_residuals)
+        raw=json.loads((ROOT/"quorune/rules/capability-registry.json").read_bytes())
+        for capability,expected in (
+            ("counter.placement.quantity_replacement",(False,False)),
+            ("counter.placement.mixed_controlled_recipients_plus_one",(False,True)),
+            ("continuous.ability.fixed_query_keyword_grant",(True,False)),
+        ):
+            with self.subTest(capability=capability):
+                edited={**raw,"capabilities":[
+                    {**row,"status":"blocked","blockers":["Scope owner withdrawn"]}
+                    if row["id"]==capability else row for row in raw["capabilities"]
+                ]}
+                withdrawn=CapabilityRegistry(edited)
+                withdrawn.mark_evidence_verified("0"*64)
+                statuses=tuple(compile_oracle_card(card,capability_registry=withdrawn,
+                    capability_profile="commander_review").status=="exact" for card in cards)
+                self.assertEqual(expected,statuses)
+
+    def _placing_replacement_replay(self, session, *, reload=False):
+        from quorune.session import CommanderSession
+
+        expected=authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary)/"controller-counter-replacements"
+            session.save(directory)
+            proof=replay_record(directory,self.db,verify=True)
+            self.assertTrue(proof["ok"],proof)
+            self.assertEqual(expected,proof["final_state_hash"])
+            if reload:
+                session=CommanderSession.load(self.db,directory)
+                self.assertEqual(expected,authoritative_state_hash(session.state))
+        return session
+
+    def test_actual_innkeeper_levels_gate_ward_and_both_placing_replacements_order_and_replay(self):
+        from quorune.semantic_runtime.counter_replacements import collect_counter_placement_replacement_effects
+        from quorune.trigger_participation import WardSpec
+
+        for plus_first in (False, True):
+            with self.subTest(plus_first=plus_first):
+                session=self.session(71651+int(plus_first),players=4)
+                engine=session.engine
+                talent=self.add_class(session,ref="proof-innkeeper",name="Innkeeper's Talent")
+                laezel=self.add_class(session,ref="proof-laezel",name="Lae'zel, Vlaakith's Champion")
+                own=self.add_class(session,ref="proof-own-creature",name="Grizzly Bears")
+                artifact=self.add_class(session,ref="proof-own-artifact",name="Sol Ring")
+                foreign=self.add_class(session,ref="proof-opposing-creature",name="Grizzly Bears")
+                empty=self.add_class(session,ref="proof-no-counter",name="Mind Stone")
+                clasp=self.add_class(session,ref="proof-proliferate",name="Contagion Clasp")
+                engine.change_control(foreign.object_id,"B",reason="Counter replacement opponent fixture")
+                own.counters["+1/+1"]=1
+                artifact.counters["charge"]=1
+                foreign.counters["+1/+1"]=1
+                session.state.players["A"].poison=1
+                session.state.players["A"].energy=1
+                session.state.players["B"].poison=1
+                self.prepare_priority(session)
+                session.initial_checkpoint=checkpoint_envelope(session.state)
+                session.commands.clear();session.decisions.clear()
+
+                def ward(ref):
+                    return [fragment.generic_cost for fragment in engine._effective_ability_fragments(ref)
+                            if isinstance(fragment,WardSpec)]
+
+                def providers():
+                    return {effect.source_id for effect in collect_counter_placement_replacement_effects(engine)}
+
+                self.assertEqual([],ward(artifact))
+                self.assertIn(laezel.ref,providers())
+                self.assertNotIn(talent.ref,providers())
+                self.activate(session,talent,2)
+                self.pass_until_empty(session)
+                self.assertEqual(2,talent.class_level)
+                self.assertEqual([1],ward(own))
+                self.assertEqual([1],ward(artifact))
+                for exempt in (foreign,empty,talent):
+                    self.assertEqual([],ward(exempt))
+                self.assertNotIn(talent.ref,providers())
+                self.activate(session,talent,3)
+                self.pass_until_empty(session)
+                self.assertEqual(3,talent.class_level)
+                self.assertEqual([1],ward(artifact))
+                self.assertIn(talent.ref,providers())
+                ability,=(choice for choice in engine._activated_abilities(clasp)
+                          if choice.effect_text.casefold().startswith("proliferate"))
+                issued=session.act("pilot:A",{"action_id":f"activate:{clasp.ref}:{ability.ability_id}","pay":"auto"})
+                self.assertTrue(issued.ok,issued.summary)
+                for _ in range(12):
+                    if session.state.pending_decision.kind=="semantic.choice":
+                        break
+                    passed=session.act(session.pending_principals()[0],{"action_id":"pass"})
+                    self.assertTrue(passed.ok,passed.summary)
+                self.assertEqual("semantic.choice",session.state.pending_decision.kind)
+                refs=[own.ref,artifact.ref,foreign.ref,"A","B"]
+                placed=session.act("pilot:A",{"action_id":"choose","objects":refs})
+                self.assertTrue(placed.ok,placed.summary)
+                self.assertEqual("replacement.order",session.state.pending_decision.kind)
+                self.assertEqual(1,own.counters["+1/+1"])
+                self.assertEqual(1,session.state.players["A"].poison)
+                session=self._placing_replacement_replay(session,reload=True)
+                picked=laezel.ref if plus_first else talent.ref
+                for _ in range(8):
+                    decision=session.state.pending_decision
+                    if decision.kind!="replacement.order":break
+                    actor,=decision.actors
+                    self.assertEqual("A",actor)
+                    options=session.packet("pilot:A",full=True)["decision"]["ctx"]["options"]
+                    choice,=(option["id"] for option in options if picked in option["id"])
+                    accepted=session.act("pilot:A",{"action_id":"choose","replacement":choice})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                self.assertNotEqual("replacement.order",session.state.pending_decision.kind)
+                expected=5 if plus_first else 4
+                self.assertEqual(expected,session.state.cards[own.object_id].counters["+1/+1"])
+                self.assertEqual(expected,session.state.players["A"].poison)
+                self.assertEqual(expected,session.state.players["A"].energy)
+                self.assertEqual(3,session.state.cards[artifact.object_id].counters["charge"])
+                self.assertEqual(3,session.state.cards[foreign.object_id].counters["+1/+1"])
+                self.assertEqual(3,session.state.players["B"].poison)
+                self._placing_replacement_replay(session)
+
     def test_class_offer_commit_and_sequential_stack_resolution(self):
         session = self.session(71601)
         source = self.add_class(session)

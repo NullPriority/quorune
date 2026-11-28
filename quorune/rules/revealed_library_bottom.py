@@ -33,7 +33,9 @@ def execute_ripple_bottom(host,intent):
     if item is None or item.controller!=intent.actor or not item.context.get('currently_resolving'):
         raise GameRuleError('Ripple bottom lost its original resolving trigger')
     from .ripple import RIPPLE_CAST_CONTEXT
-    if item.context.get(RIPPLE_CAST_CONTEXT)!=intent.state.source.to_dict():
+    from .revealed_library_cast import MANA_VALUE_CAST_CONTEXT
+    context_field = MANA_VALUE_CAST_CONTEXT if intent.state.casts_once else RIPPLE_CAST_CONTEXT
+    if item.context.get(context_field)!=intent.state.source.to_dict():
         raise GameRuleError('Ripple bottom source facts changed')
     library=host.state.players[intent.actor].zones['library'];cards={}
     for identity in intent.state.looked:
@@ -42,7 +44,16 @@ def execute_ripple_bottom(host,intent):
                 or card.owner!=intent.actor or card.object_id not in library):
             raise GameRuleError('A Ripple bottom card changed incarnation or owned library')
         cards[identity.ref]=card
-    if intent.order:
+    if intent.state.casts_once:
+        from .ripple_casting import _live_item
+        from .library_selection import commit_random_library_bottom_order
+
+        _live_item(host, intent.actor, intent.stack_ref, intent.state)
+        if intent.order != tuple(identity.ref for identity in intent.state.looked):
+            raise GameRuleError("A randomized revealed remainder cannot accept a chosen order")
+        commit_random_library_bottom_order(host, intent.actor, intent.stack_ref,
+                                           tuple(cards.values()), looked_are_public=True)
+    elif intent.order:
         from .library_partition import commit_ordered_library_arrivals
         order=RevealedLibraryBottomOrder(intent.actor,'bottom',tuple(cards[ref].object_id for ref in intent.order))
         commit_ordered_library_arrivals(library,order,tuple(cards.values()))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ..goad_instruction import validate_fixed_goad,GOAD_CAPABILITY,GOAD_MECHANIC
+from ..goad_instruction import validate_fixed_goad, GOAD_CAPABILITY, GOAD_MECHANIC, GOAD_BLOCK_PROHIBITION_VERSION
+from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY
 from ..compiler.direct_target import DirectPermanentTargetSpec
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed,direct_target_predicate_capabilities
 
@@ -12,6 +13,14 @@ def fixed_goad_node_capabilities(*,effects,target_schema,mechanic_ids,**kwargs):
     legacy=set(effect)=={'op','card'} and effect.get('op')=='goad'
     try:query=None if legacy else validate_fixed_goad(effect)
     except (ValueError,TypeError):return ()
+    if effect.get("schema_version") == GOAD_BLOCK_PROHIBITION_VERSION:
+        if (target_schema is not None or query.excluded_controllers != ("$controller",)
+                or not {"cr-611-continuous-effects", "cr-509-declare-blockers-step"} <= set(mechanic_ids)):
+            return ()
+        return (
+            GOAD_CAPABILITY, "combat.declaration.typed_components",
+            "continuous.resolution.declaration_rules_until_end_of_turn", NEXT_TURN_EFFECT_CAPABILITY,
+        )
     if query is not None:
         if query.controller=='$target.0':
             if target_schema!={'zones':['player'],'categories':['player'],'player_relation':'any','count':1}:return ()

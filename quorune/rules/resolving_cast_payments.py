@@ -34,8 +34,8 @@ def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacemen
 
 
 def commit_resolving_cast(host, *, actor, response, payment_id, origin, replacement_selections=(),
-                         force_without_mana_cost=True):
-    if origin not in ("exile", "graveyard", "hand", "library") or origin != "exile" and not force_without_mana_cost:
+                         force_without_mana_cost=True, authorized_hand_incarnation=None):
+    if origin not in ("exile", "graveyard", "hand", "library") or origin not in {"exile", "graveyard"} and not force_without_mana_cost:
         raise GameRuleError("Resolving cast origin and price are unsupported")
     if type(payment_id) is not str or not payment_id:
         raise GameRuleError('A resolving cast payment requires its server identity')
@@ -49,7 +49,9 @@ def commit_resolving_cast(host, *, actor, response, payment_id, origin, replacem
             with host.transaction():
                 host._cast(actor,{**payload,'_mana_replacement_selections':journal},
                     authorized_from_zone=origin,force_without_mana_cost=force_without_mana_cost,
-                    ignore_priority=True,ignore_timing=True,during_resolution=True)
+                    ignore_priority=True,ignore_timing=True,during_resolution=True,
+                    **({"authorized_hand_incarnation": authorized_hand_incarnation}
+                       if authorized_hand_incarnation is not None else {}))
                 if index!=len(selections):
                     raise GameRuleError('The resolving cast contains unused cost replacement choices')
             return

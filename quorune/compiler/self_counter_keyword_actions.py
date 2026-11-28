@@ -82,6 +82,25 @@ def fixed_self_counter_keyword_action_template(
     )
 
 
+def controlled_counter_monstrosity_activation(ability, text, *, public_timing):
+    """Lower the exact live counter-total definition on a nonmana activation."""
+    if (not re.fullmatch(r"Monstrosity X, where X is the number of counters among creatures you control\.?",
+                         text.strip(), re.I)
+            or ability.mana_ability or ability.zones != ("battlefield",)):
+        return None
+    from ..rules.controlled_counter_monstrosity import (
+        CONTROLLED_COUNTER_MONSTROSITY_MECHANIC,
+        controlled_counter_monstrosity_cost_is_closed, controlled_counter_monstrosity_effect,
+    )
+    from .activated_costs import activated_ability_cost
+
+    if not controlled_counter_monstrosity_cost_is_closed(activated_ability_cost(ability, public_timing=public_timing)):
+        return None
+    return ("keyword-action-monstrosity-controlled-creature-counters-v1",
+            (controlled_counter_monstrosity_effect(),), None,
+            ("monstrosity", "cr-122-counters", CONTROLLED_COUNTER_MONSTROSITY_MECHANIC))
+
+
 __all__ = [
     "FixedSelfCounterKeywordActionTemplate",
     "SelfCounterKeywordAction",

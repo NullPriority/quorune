@@ -5,24 +5,38 @@ from ..replacement.immutable import thaw_value
 from ..ripple_model import RippleSpec
 from .ripple import RIPPLE_FIELD,RIPPLE_CAST_CONTEXT,ripple_program_dependencies
 from .ripple_resolution_model import RIPPLE_STATE_FIELD,RippleResolutionState
-from .casting.face_queries import offered_cast_methods
+from .casting.face_queries import current_printed_cast_mana_cost, offered_cast_methods, prospective_cast_card
+from .revealed_library_cast import MANA_VALUE_CAST_CONTEXT, MANA_VALUE_CAST_FIELD
 from .casting.proposal import build_cast_offer
 from .resolving_cast_payments import commit_resolving_cast
 
 
 def _live_item(host,actor,stack_ref,state):
     item=next((i for i in host.state.stack if i.ref==stack_ref),None)
-    if (item is None or actor not in host.active_seats or item.controller!=actor
+    context_field = MANA_VALUE_CAST_CONTEXT if state.casts_once else RIPPLE_CAST_CONTEXT
+    if (item is None or actor not in host.active_seats or item.controller != actor
+            or (state.casts_once and item.kind != "triggered_ability")
             or not item.context.get('currently_resolving')
-            or state.stack_ref!=stack_ref or state.actor!=actor
-            or item.context.get(RIPPLE_CAST_CONTEXT)!=state.source.to_dict()):
-        raise GameRuleError('Ripple lost its original resolving trigger or cast facts')
-    program=host.semantics.get(item.semantic_key)
-    if (program is None or not host.semantic_program_is_current_trusted(program)
-            or not ripple_program_dependencies(program)
-            or RippleSpec.from_dict(program.effects[0][RIPPLE_FIELD])!=state.spec):
-        raise GameRuleError('Ripple permission is no longer current and trusted')
+            or state.stack_ref != stack_ref or state.actor != actor
+            or item.context.get(context_field) != state.source.to_dict()):
+        raise GameRuleError("The revealed-library cast lost its original trigger or cast facts")
+    program = host.semantics.get(item.semantic_key)
+    if program is None or not host.semantic_program_is_current_trusted(program) or not ripple_program_dependencies(program):
+        raise GameRuleError("The revealed-library cast permission is no longer current and trusted")
+    effect, = program.effects
+    correct_scope = (MANA_VALUE_CAST_FIELD in effect if state.casts_once else
+                     RIPPLE_FIELD in effect and RippleSpec.from_dict(effect[RIPPLE_FIELD]) == state.spec)
+    if not correct_scope:
+        raise GameRuleError("The revealed-library cast changed its original instruction")
     return item
+
+
+def _qualifies_mana_value(host, card, record, face, maximum):
+    from ..selection.exile_cast import mana_value_of_cost
+
+    view = prospective_cast_card(host, card, face)
+    cost = current_printed_cast_mana_cost(host, view, record)
+    return mana_value_of_cost(cost, x_value=0) <= maximum
 
 
 def _option_pairs(host,actor,state):
@@ -35,11 +49,19 @@ def _option_pairs(host,actor,state):
             continue
         if card.owner!=actor:raise GameRuleError('Ripple cannot cast another player library card')
         record=host.card_record(card)
-        if record is None or not state.source.matches_names(tuple(sorted(set(
-                public_revealed_library_rules_names(card,record))))):
+        if record is None:
+            continue
+        if state.casts_once:
+            if not card.is_card_object or card.face_down or not set(host.seats) <= set(card.revealed_to):
+                raise GameRuleError("The selected library choice needs the original publicly revealed card")
+        elif not state.source.matches_names(tuple(sorted(set(public_revealed_library_rules_names(card, record))))):
             continue
         for method,face in offered_cast_methods(host,card):
-            if method not in (None,'fuse'):continue
+            if state.casts_once:
+                if method is not None or not _qualifies_mana_value(host, card, record, face, state.reveal_count):
+                    continue
+            elif method not in (None,'fuse'):
+                continue
             offered=build_cast_offer(host,actor,card,cast_method=method,face_name=face,
                 resolving_payment='free',resolving_origin='library')
             if offered.offer is None:continue
@@ -47,7 +69,8 @@ def _option_pairs(host,actor,state):
             for price in offer['cost_options']:
                 canonical={**price,'face':offer.get('face'),'cast_method':method}
                 fingerprint=discover_options_fingerprint(({'logical_object_id':card.logical_object_id,'price':canonical},))
-                public={**canonical,'id':f'ripple:{card.ref}:{fingerprint}','card':card.ref,
+                prefix = "revealed-library-cast" if state.casts_once else "ripple"
+                public={**canonical,'id':f'{prefix}:{card.ref}:{fingerprint}','card':card.ref,
                     'label':f"{card.printed_name} — {price.get('label',offer['label'])}"}
                 pairs.append((public,canonical,card))
     return tuple(pairs)
@@ -80,8 +103,9 @@ def execute_ripple_cast(host,intent):
     response['from']='library'
     for field in ('face','cast_method'):
         if option[field] is not None:response[field]=option[field]
+    prefix = "revealed-library-cast" if intent.state.casts_once else "ripple"
     commit_resolving_cast(host,actor=intent.actor,response=response,origin='library',
-        payment_id=f'{item.ref}:ripple:{original}',replacement_selections=intent.replacement_selections)
+        payment_id=f'{item.ref}:{prefix}:{original}',replacement_selections=intent.replacement_selections)
     current=host.state.cards[card.object_id]
     if (current.zone!='stack' or current.controller!=intent.actor or current.logical_object_id==original
             or not any(i.kind=='spell' and i.card_object_id==current.object_id for i in host.state.stack)):

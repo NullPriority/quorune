@@ -9,6 +9,7 @@ from .declaration_costs import (
 )
 from .declaration_fragments import (
     ComparedStat,
+    DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE,
     DeclarationBattlefieldCondition,
     DeclarationCombatCondition,
     DeclarationCondition,
@@ -83,7 +84,9 @@ _SOURCE_POWER_CONTROLLER_BLOCK = re.compile(
 )
 _CONTROLLER_STAT_UNBLOCKABLE = re.compile(
     r"creatures you control with (?P<stat>power|toughness) "
-    r"(?P<count>\d+) or less can't be blocked\."
+    r"(?P<count>\d+) or less can't be blocked"
+    r"(?: by creatures with (?P<blocker_stat>power|toughness) "
+    r"(?P<blocker_count>\d+) or (?P<blocker_direction>greater|less))?\."
 )
 _OPPONENT_COUNTERED_PROHIBITION = re.compile(
     r"creatures your opponents control with counters on them can't "
@@ -702,6 +705,10 @@ def parse_declaration_restriction_line(
     """
 
     line = normalized_oracle_line(text, card_name=card_name)
+    if line == "your opponents can't block with creatures with even mana values.":
+        from .battlefield_mana_value_query import even_mana_value_blocker_restriction
+
+        return DeclarationRestrictionParse(True, even_mana_value_blocker_restriction())
     ability_word = _ABILITY_WORD_PREFIX.fullmatch(line)
     if ability_word:
         line = ability_word.group("body")
@@ -709,40 +716,9 @@ def parse_declaration_restriction_line(
     if parse_declaration_cost_line(line).recognized:
         return DeclarationRestrictionParse(False)
 
-    legacy_battlefield = _SELF_BATTLEFIELD_CONDITION.fullmatch(line)
-    legacy_conditional_evasion = _SELF_CONDITIONAL_UNBLOCKABLE.fullmatch(line)
-    legacy_public_condition = (
-        legacy_battlefield is not None
-        and _battlefield_condition(
-            (
-                "source_controller"
-                if legacy_battlefield.group("source")
-                else "defending_player"
-            ),
-            legacy_battlefield.group("filter"),
-        )
-        is not None
-    ) or (
-        legacy_conditional_evasion is not None
-        and _battlefield_condition(
-            "defending_player",
-            legacy_conditional_evasion.group("condition"),
-        )
-        is not None
-    ) or any(
-        pattern.fullmatch(line) is not None
-        for pattern in (
-            _SELF_PLAYER_STATE_CONDITION,
-            _SELF_CAST_SPELL_THIS_TURN,
-            _SELF_OPPONENT_DAMAGED_THIS_TURN,
-            _SELF_CONTROLLED_CREATURE_DIED_THIS_TURN,
-            _SELF_ALREADY_ATTACKED_PLAYER_THIS_TURN,
-            _SELF_CONDITIONAL_BLOCKER_FILTER,
-            _SELF_ATTACKING_ALONE_EVASION,
-            _ATTACHED_ATTACKING_ALONE_EVASION,
-            _SELF_NO_OTHER_CREATURE_EVASION,
-        )
-    )
+    from .declaration_condition_precedence import has_legacy_declaration_condition
+
+    legacy_public_condition = has_legacy_declaration_condition(line)
     match = (
         None
         if legacy_public_condition
@@ -955,12 +931,21 @@ def parse_declaration_restriction_line(
 
     match = _CONTROLLER_STAT_UNBLOCKABLE.fullmatch(line)
     if match:
+        blocker = DeclarationObjectPredicate()
+        template_id = "controller-stat-unblockable-v1"
+        if match["blocker_stat"] is not None:
+            blocker = DeclarationObjectPredicate(stat=StatComparison(
+                match["blocker_stat"], "ge" if match["blocker_direction"] == "greater" else "le",
+                "fixed", int(match["blocker_count"]),
+            ))
+            template_id = "controller-stat-vs-blocker-stat-v1"
         return DeclarationRestrictionParse(
             True,
             DeclarationRestrictionTemplate(
-                template_id="controller-stat-unblockable-v1",
+                template_id=template_id,
                 declarations=("block",),
                 scope="global",
+                subject=blocker,
                 opposing=DeclarationObjectPredicate(
                     stat=StatComparison(
                         match.group("stat"),
@@ -1235,45 +1220,33 @@ def parse_declaration_restriction_line(
                 if match.group("player") == "defending player"
                 else "source_controller"
             )
-            state: Literal["monarch", "poisoned"] = (
-                "monarch"
-                if match.group("state") == "the monarch"
-                else "poisoned"
+            condition = DeclarationPlayerStateCondition(
+                player=player,
+                state="monarch" if match.group("state") == "the monarch" else "poisoned",
             )
             return DeclarationRestrictionParse(
                 True,
                 DeclarationRestrictionTemplate(
                     template_id=(
-                        f"intrinsic-{player.replace('_', '-')}-{state}-"
+                        f"intrinsic-{player.replace('_', '-')}-{condition.state}-"
                         f"{'-'.join(declarations)}-unless-v1"
                     ),
                     declarations=declarations,
                     scope="self",
-                    condition=DeclarationPlayerStateCondition(
-                        player=player,
-                        state=state,
-                    ),
+                    condition=condition,
                     applies_when_condition=False,
                 ),
                 declarations=declarations,
                 scope="self",
             )
 
-    if _SELF_MONARCH_BLOCKER_CONDITION.fullmatch(line):
-        return DeclarationRestrictionParse(
-            True,
-            DeclarationRestrictionTemplate(
-                template_id="intrinsic-monarch-controller-evasion-v1",
-                declarations=("block",),
-                scope="source_option",
-                condition=DeclarationPlayerStateCondition(
-                    player="defending_player",
-                    state="monarch",
-                ),
-            ),
-            declarations=("block",),
-            scope="source_option",
-        )
+    rad_defender = line == "this creature can't be blocked as long as defending player has a rad counter."
+    if rad_defender or _SELF_MONARCH_BLOCKER_CONDITION.fullmatch(line):
+        return DeclarationRestrictionParse(True, DeclarationRestrictionTemplate(
+            template_id=DEFENDING_PLAYER_RAD_BLOCK_TEMPLATE if rad_defender else "intrinsic-monarch-controller-evasion-v1",
+            declarations=("block",), scope="source_option",
+            condition=DeclarationPlayerStateCondition("defending_player", "rad_counter" if rad_defender else "monarch"),
+        ), declarations=("block",), scope="source_option")
 
     match = _GLOBAL_MONARCH_SOURCE_CONTROLLER_ATTACK.fullmatch(line)
     if match:

@@ -37,7 +37,7 @@ from quorune.rules.bound_effect_program_shapes import bound_effect_program_node_
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.session import CommanderSession
-from quorune.semantics import SemanticRegistry
+from quorune.semantics import SemanticProgram, SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
 from scripts import work_selection_cohort_measurements as cohort_measurements
@@ -58,6 +58,12 @@ def record(text, type_line="Instant"):
         legalities={"commander":"legal"}, faces=(), raw={},
     )
 
+
+def _binding_probe(*, effects, target_schema, coverage):
+    return SemanticProgram(
+        "fixture:bound-effect-probe", "Bound effect probe",
+        effects=list(effects), target_schema=target_schema, coverage=list(coverage),
+    )
 
 class BoundEffectProgramCompilerTests(unittest.TestCase):
     def test_bound_creature_prevention_pronouns_preserve_closed_scope_shape(self):
@@ -118,7 +124,6 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
                     self.assertTrue(all(n.text == text[n.span.start:n.span.end] for f in ir.faces for n in f.nodes))
 
     def test_target_controller_damage_requires_one_typed_public_antecedent(self):
-        from types import SimpleNamespace
         from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
         from quorune.target_controller_information import (
             TARGET_CONTROLLER_INFORMATION_CAPABILITY, target_controller_reference,
@@ -133,7 +138,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         self.assertEqual(target_controller_reference(), node.effects[1]["target"])
         self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, node.capability_dependencies)
         self.assertIn(CAPABILITY, node.capability_dependencies)
-        probe = SimpleNamespace(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
+        probe = _binding_probe(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
         self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, closed_effect_program_runtime_dependencies(probe))
         first, second = node.effects
         for effects, schema, mechanics in (
@@ -143,7 +148,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
             (node.effects, node.target_schema, tuple(mechanic for mechanic in node.mechanics if mechanic != MECHANIC)),
         ):
             with self.subTest(effects=effects, schema=schema, mechanics=mechanics):
-                forged = SimpleNamespace(target_schema=schema, effects=effects, coverage=mechanics)
+                forged = _binding_probe(target_schema=schema, effects=effects, coverage=mechanics)
                 with self.assertRaisesRegex(ValueError, "preceding closed target instruction"):
                     closed_effect_program_runtime_dependencies(forged)
         for unsupported in (
@@ -165,7 +170,6 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
             self.assertNotEqual("exact", self.compile(text).status)
 
     def test_target_controller_life_and_draw_keep_one_closed_zone_target(self):
-        from types import SimpleNamespace
         from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
         from quorune.target_controller_information import (
             TARGET_CONTROLLER_INFORMATION_CAPABILITY, TARGET_CONTROLLER_INFORMATION_MECHANIC,
@@ -220,15 +224,14 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         ir = self.compile("Exile target creature. Its controller gains life equal to its power.")
         self.assertEqual("exact", ir.status, ir.material_residuals)
         node, = ir.faces[0].nodes
-        probe = SimpleNamespace(effects=node.effects, target_schema=node.target_schema, coverage=node.mechanics)
+        probe = _binding_probe(effects=node.effects, target_schema=node.target_schema, coverage=node.mechanics)
         self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, closed_effect_program_runtime_dependencies(probe))
         prefix, result = node.effects
-        probe.effects = (prefix, {**result, "delta": {**result["delta"], "coefficient": True}})
+        probe.effects = [prefix, {**result, "delta": {**result["delta"], "coefficient": True}}]
         with self.assertRaises(ValueError):
             closed_effect_program_runtime_dependencies(probe)
 
     def test_optional_search_requires_the_controller_of_one_closed_removal_target(self):
-        from types import SimpleNamespace
         from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
         from quorune.target_controller_information import (
             TARGET_CONTROLLER_INFORMATION_CAPABILITY, target_controller_reference,
@@ -247,7 +250,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         self.assertTrue(search["enters_tapped_override"])
         expected = {TARGET_CONTROLLER_INFORMATION_CAPABILITY, "effect.choice.optional_fixed", "library.search.fixed_to_battlefield"}
         self.assertTrue(expected <= set(node.capability_dependencies))
-        program = SimpleNamespace(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
+        program = _binding_probe(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
         self.assertTrue(expected <= set(closed_effect_program_runtime_dependencies(program)))
         for wrapper in (
             {**optional, "player": "$controller"},
@@ -255,7 +258,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
             {**optional, "effects": [{**search, "destination": "hand"}]},
         ):
             with self.subTest(wrapper=wrapper):
-                forged = SimpleNamespace(target_schema=node.target_schema, effects=(first, wrapper, draw), coverage=node.mechanics)
+                forged = _binding_probe(target_schema=node.target_schema, effects=(first, wrapper, draw), coverage=node.mechanics)
                 with self.assertRaisesRegex(ValueError, "preceding closed target instruction"):
                     closed_effect_program_runtime_dependencies(forged)
         for text in (

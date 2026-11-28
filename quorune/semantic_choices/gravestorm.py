@@ -20,8 +20,26 @@ def prepare_gravestorm(effect, context):
             actor=context.actor, trigger_ref=context.stack_ref)
     except (TypeError, ValueError, KeyError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
+    return prepare_cast_occurrence_copies(effect, context, source, count, reason="Create the Gravestorm copies of the original spell")
+
+
+def prepare_prior_cast_copy(effect, context):
+    from ..rules.prior_qualified_cast_copy import decode_materialized_prior_cast_copy
+
+    if context.actor != context.stack_controller or context.actor not in context.query.active_seats:
+        raise SemanticChoiceError("Prior-cast copies require the original resolving controller")
+    try:
+        source, count = decode_materialized_prior_cast_copy(
+            effect, actor=context.actor, trigger_ref=context.stack_ref,
+        )
+    except (TypeError, KeyError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return prepare_cast_occurrence_copies(effect, context, source, count, reason="Copy the original spell for each earlier qualifying cast")
+
+
+def prepare_cast_occurrence_copies(effect, context, source, count, *, reason):
     copy = FrozenMap({'op': 'copy_stack_item', 'player': context.actor,
         'stack': source.item().ref, 'copy_source': source.to_dict()})
     return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
-        auto_continue=AutoContinue(reason='Create the Gravestorm copies of the original spell',
+        auto_continue=AutoContinue(reason=reason,
             prepend_effects=tuple(copy for _ in range(count))))

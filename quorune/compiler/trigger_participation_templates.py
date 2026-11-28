@@ -34,7 +34,9 @@ def static_trigger_multiplier_handler(
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Compile the closed represented CR 603.2d static wording families."""
 
-    normalized = " ".join(str(text).strip().split())
+    normalized = " ".join(str(text).strip().replace("’", "'").split())
+    if re.match(r"^(?:mardu|jeskai) [—-] ", normalized, re.I):
+        return None
     if _PANHARMONICON_PATTERN.fullmatch(normalized):
         spec = TriggerMultiplierSpec(
             predicate=TriggerMultiplierPredicate.ARTIFACT_OR_CREATURE_ENTERS,
@@ -79,6 +81,8 @@ def _typed_participation(text,source_name):
     text=text.rstrip('.')
     fixed={
         "Room abilities of dungeons you own trigger an additional time": OWNED_DUNGEON_ROOM,
+        "If a triggered ability of equipped creature triggers, that ability triggers an additional time": "equipped_creature_source",
+        "If an ability of equipped creature triggers, that ability triggers an additional time": "equipped_creature_source",
         "If a permanent entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a permanent entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'land_enters',
@@ -89,6 +93,11 @@ def _typed_participation(text,source_name):
         "If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'cast_or_copy_instant_sorcery',
         "If a legendary permanent or an artifact entering or leaving the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'legendary_or_artifact_enters_leaves',
         "If a triggered ability of a legendary creature you control triggers, that ability triggers an additional time":'legendary_creature_source',
+        "If a triggered ability of a creature you control with power 2 or less triggers, that ability triggers an additional time":
+            "power_at_most_two_creature_source",
+        "If an ability of a creature you control with power 2 or less triggers, that ability triggers an additional time":
+            "power_at_most_two_creature_source",
+        "If a triggered ability of a permanent you control but don't own triggers, that ability triggers an additional time": "borrowed_permanent_source",
         "If a triggered ability of a Ninja creature you control triggers, that ability triggers an additional time":'ninja_creature_source',
         "If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time":'shaman_or_another_wizard',
         "If a triggered ability of a colorless spell you control or another colorless permanent you control triggers, that ability triggers an additional time":'colorless_spell_or_another_permanent',

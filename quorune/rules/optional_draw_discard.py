@@ -35,6 +35,35 @@ def _controller_discard_dependencies(discard, player, *, requires_fixed_controll
 
 
 SOURCE_SHARED_TYPE_DRAW_DISCARD_VERSION = 2
+ENTRY_EXEMPT_DRAW_DISCARD_VERSION = 8
+
+
+def is_entry_exempt_draw_discard(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == "offer_optional_effect"
+            and effect.get("schema_version") == ENTRY_EXEMPT_DRAW_DISCARD_VERSION)
+
+
+def validate_entry_exempt_draw_discard(effect, *, actor=None):
+    """Check both printed outcomes, or one materialized draw-only outcome."""
+    player = "$controller" if actor is None else actor
+    if (not is_entry_exempt_draw_discard(effect)
+            or set(effect) != {"op", "player", "effects", "schema_version"}
+            or type(effect["schema_version"]) is not int or effect["player"] != player):
+        raise ValueError("Entry-exempt discard requires the exact optional controller choice")
+    effects = effect["effects"]
+    if (not isinstance(effects, (list, tuple)) or len(effects) not in ({2} if actor is None else {1, 2})
+            or any(not isinstance(child, Mapping) for child in effects)):
+        raise ValueError("Entry-exempt discard requires fixed draw and discard instructions")
+    draw = effects[0]
+    if (dict(draw) != {"op": "draw", "player": player, "count": 1, "private": True}
+            or type(draw["count"]) is not int or draw["private"] is not True):
+        raise ValueError("Entry-exempt discard requires one private controller draw")
+    if len(effects) == 2:
+        discard = effects[1]
+        if (type(discard.get("count")) is not int or discard["count"] != 1
+                or not _controller_discard_dependencies(discard, player, requires_fixed_controller=True)):
+            raise ValueError("Entry-exempt discard requires one private controller discard")
+    return effects
 
 
 def is_source_shared_type_draw_discard(value):

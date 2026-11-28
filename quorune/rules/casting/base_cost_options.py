@@ -15,6 +15,34 @@ if TYPE_CHECKING:
     from .costs import CastCostHost
 
 
+def initial_cast_base_authority(host, seat, card, alternative_base, *, force_without_mana_cost,
+                                suppress_source_costs, resolving_exile_authority):
+    from ...opponent_library_exile import opponent_library_exile_cast_mode
+    from ..private_opponent_top_exile import controller_private_top_exile_play_permission
+    from .disturb_costs import disturb_back_cast_permission, with_more_than_meets_the_eye_base
+    from .library_top_life import mana_value_life_price_field
+
+    temporary_permission = host._temporary_play_permission(seat, card)
+    intrinsic_disturb = (disturb_back_cast_permission(host, seat, card)
+                         and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
+    alternative_base = with_more_than_meets_the_eye_base(
+        host, card, alternative_base,
+        suppressed=force_without_mana_cost or suppress_source_costs or intrinsic_disturb,
+    )
+    library_life_base = alternative_base is not None and mana_value_life_price_field(alternative_base) is not None
+    ordinary_private_authority = bool(
+        temporary_permission and temporary_permission.get("without_mana_cost")
+        and controller_private_top_exile_play_permission(host, seat, card) is not None
+    )
+    cast_without_mana, separately_payable = opponent_library_exile_cast_mode(
+        host.state, seat, card, temporary_permission,
+        force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
+        intrinsic_disturb=intrinsic_disturb, resolving_exile_authority=resolving_exile_authority,
+        library_life_base=library_life_base, ordinary_private_authority=ordinary_private_authority,
+    )
+    return temporary_permission, intrinsic_disturb, alternative_base, cast_without_mana, separately_payable
+
+
 def _flashback_base_options(
     host: CastCostHost,
     seat: str,
@@ -24,6 +52,7 @@ def _flashback_base_options(
     cast_without_mana: bool,
     force_without_mana_cost: bool,
     suppress_source_costs: bool,
+    resolving_graveyard_authority: bool,
 ) -> list[dict[str, Any]]:
     """Add only the currently authorized Flashback casting-cost branch."""
 
@@ -35,12 +64,16 @@ def _flashback_base_options(
     )
     if (
         card.zone == "graveyard"
-        and not cast_without_mana
+        and not cast_without_mana and not resolving_graveyard_authority
         and not compiled_ordinary_zone_cast_permission(host, seat, card)
     ):
         result.clear()
     if flashback is not None and not force_without_mana_cost:
         result.append(flashback.cast_cost_option())
+    if card.zone == "graveyard" and not (suppress_source_costs or cast_without_mana or force_without_mana_cost):
+        from .flashback_grants import granted_flashback_base_options
+
+        result.extend(granted_flashback_base_options(host, seat, card, printed))
     return result
 
 
@@ -54,7 +87,7 @@ def _zone_cast_base_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
-    resolving_exile_authority: bool = False,
+    resolving_paid_zone: str | None = None,
 ) -> list[dict[str, Any]]:
     base = _flashback_base_options(
         host,
@@ -64,6 +97,7 @@ def _zone_cast_base_options(
         cast_without_mana=cast_without_mana,
         force_without_mana_cost=force_without_mana_cost,
         suppress_source_costs=suppress_source_costs,
+        resolving_graveyard_authority=resolving_paid_zone == "graveyard",
     )
     from ...preparation import preparation_cast_permission
     from ...adventure import adventure_cast_permission
@@ -74,7 +108,7 @@ def _zone_cast_base_options(
         and not adventure_cast_permission(host,seat,card)
         and not force_without_mana_cost
         and alternative_base is None
-        and not resolving_exile_authority
+        and resolving_paid_zone != "exile"
     ):
         base.clear()
     common = {

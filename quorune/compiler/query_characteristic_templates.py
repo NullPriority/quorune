@@ -10,7 +10,9 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..characteristic_fragments import (
+    CHOSEN_COLOR_DEFINITION_CAPABILITY, CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION, CHOSEN_COLOR_DEFINITION_TEMPLATE,
     CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES, CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE,
+    DISTINCT_LAND_NAMES_QUERY, DISTINCT_PUBLIC_NAMES_CAPABILITY,
     CharacteristicQuantityScope,
     CharacteristicQuantityReduction,
     CharacteristicQuantitySpec,
@@ -20,7 +22,7 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
-from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..object_predicate import FACE_DOWN_CREATURE_QUERY_CAPABILITY, ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
 from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity, named_collection_quantity
@@ -132,6 +134,24 @@ def _canonical_tap_quantity_query(query: ObjectQuerySpec) -> ObjectQuerySpec:
     return query
 
 
+def _battlefield_quantity_descriptor(normalized, *, exclude_source, definition_extensions):
+    from .public_state_queries import fixed_characteristic_battlefield_query_subject
+
+    non_type = re.fullmatch(r'non(?P<kind>artifact|creature|enchantment|land) (?P<body>.+)', normalized)
+    if non_type is not None:
+        nested = _query_quantity_descriptor(
+            non_type['body'], zone="battlefield", definition_extensions=definition_extensions,
+        )
+        if nested is not None and not nested[1] and not nested[0].types_all and not nested[0].types_any:
+            return replace(nested[0], excluded_types=(non_type['kind'],)), exclude_source
+    plural = re.sub(r'\b(artifact|battle|creature|enchantment|land|permanent|planeswalker|token)\b',
+        lambda match: match[1] + 's', normalized, count=1)
+    parsed = fixed_characteristic_battlefield_query_subject(plural, allow_negative_keyword=True)
+    if parsed is not None and parsed[0] == 'any' and not parsed[2]:
+        return _canonical_tap_quantity_query(parsed[1]), exclude_source
+    return None
+
+
 def _query_quantity_descriptor(
     value: str,
     *,
@@ -148,6 +168,11 @@ def _query_quantity_descriptor(
     elif normalized.startswith("another "):
         normalized = normalized[len("another ") :]
         exclude_source = True
+    if zone == "battlefield" and not exclude_source and normalized in {"face-down creature", "face-down creatures"}:
+        return ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(face_down=True),
+        ), False
     from .public_state_queries import _negative_supertype_fields
     negative = _negative_supertype_fields(normalized)
     if negative is not None:
@@ -159,18 +184,10 @@ def _query_quantity_descriptor(
     if normalized in {"", "card"}:
         return (ObjectQuerySpec(**fields), exclude_source)
 
-    if zone == 'battlefield':
-        from .public_state_queries import fixed_characteristic_battlefield_query_subject
-        non_type = re.fullmatch(r'non(?P<kind>artifact|creature|enchantment|land) (?P<body>.+)', normalized)
-        if non_type is not None:
-            nested = _query_quantity_descriptor(non_type['body'], zone=zone, definition_extensions=definition_extensions)
-            if nested is not None and not nested[1] and not nested[0].types_all and not nested[0].types_any:
-                return replace(nested[0], excluded_types=(non_type['kind'],)), exclude_source
-        plural = re.sub(r'\b(artifact|battle|creature|enchantment|land|permanent|planeswalker|token)\b',
-            lambda match: match[1] + 's', normalized, count=1)
-        parsed = fixed_characteristic_battlefield_query_subject(plural, allow_negative_keyword=True)
-        if parsed is not None and parsed[0] == 'any' and not parsed[2]:
-            return _canonical_tap_quantity_query(parsed[1]), exclude_source
+    if zone == "battlefield" and (battlefield := _battlefield_quantity_descriptor(
+        normalized, exclude_source=exclude_source, definition_extensions=definition_extensions,
+    )):
+        return battlefield
 
     type_unions = {
         "artifact and/or creature": ("artifact", "creature"),
@@ -451,6 +468,11 @@ def query_characteristic_value(value: str, *, source_name: str) -> Characteristi
 
 
 def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    if text.casefold() == "the number of differently named lands you control":
+        return CharacteristicQuantitySpec(
+            CharacteristicQuantityScope.CONTROLLER_ZONE, query=DISTINCT_LAND_NAMES_QUERY,
+            schema_version=2, reduction=CharacteristicQuantityReduction.DISTINCT_PUBLIC_NAMES,
+        )
     from .public_zone_quantities import public_zone_quantity
     zone=public_zone_quantity(text)
     if zone is not None:return zone
@@ -571,6 +593,8 @@ def query_power_toughness_definition_handler(
         )
     if linked_definition := _linked_opponent_definition_handler(text, subject=subject):
         return linked_definition
+    if definition := _chosen_color_definition(text, subject=subject):
+        return definition
     if text.casefold().startswith("as long as "):
         quantity = _combat_land_count_definition(text, subject=subject)
         if quantity is None:
@@ -610,10 +634,33 @@ def query_power_toughness_definition_handler(
         schema_version=2 if paired is not None else 1,
         toughness_adjustment=int(paired.group("offset")) if paired is not None else 0,
     )
+    extra = ((DISTINCT_PUBLIC_NAMES_CAPABILITY,)
+             if quantity.reduction is CharacteristicQuantityReduction.DISTINCT_PUBLIC_NAMES else ())
     return (
         "continuous-query-power-toughness-definition-v1",
         _query_definition_descriptor(fragment),
-        ("continuous.characteristics.query_power_toughness_definition",),
+        ("continuous.characteristics.query_power_toughness_definition", *extra),
+    )
+
+
+def _chosen_color_definition(text, *, subject):
+    from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY
+
+    if re.fullmatch(
+        rf"{subject}['’]s power and toughness are each equal to "
+        r"the number of permanents of the chosen color your opponents control\.?$",
+        text, re.I,
+    ) is None:
+        return None
+    quantity = CharacteristicQuantitySpec(
+        CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS,
+        schema_version=CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION,
+    )
+    return (
+        CHOSEN_COLOR_DEFINITION_TEMPLATE,
+        _query_definition_descriptor(QueryPowerToughnessDefinitionSpec(quantity, True, True)),
+        ("continuous.characteristics.query_power_toughness_definition",
+         ENTRY_DESIGNATION_CAPABILITY, CHOSEN_COLOR_DEFINITION_CAPABILITY),
     )
 
 
@@ -840,6 +887,25 @@ def _linked_opponent_hand_modifier(oracle_line: str):
     )
 
 
+def _source_linked_exile_modifier(oracle_line: str):
+    from ..characteristic_fragments import SOURCE_LINKED_EXILE_MODIFIER_TEMPLATE, SOURCE_LINKED_EXILE_QUANTITY_VERSION
+    from ..linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY
+
+    if re.fullmatch(r"This creature gets \+2/\+2 for each card exiled with it\.", oracle_line.strip(), re.I) is None:
+        return None
+    fragment = QueryCharacteristicModifierSpec(
+        quantity=CharacteristicQuantitySpec(CharacteristicQuantityScope.SOURCE_LINKED_EXILE,
+                                            schema_version=SOURCE_LINKED_EXILE_QUANTITY_VERSION),
+        calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT, power=2, toughness=2,
+    )
+    return (
+        SOURCE_LINKED_EXILE_MODIFIER_TEMPLATE,
+        {"handler_id": "ability.static.query-characteristic-modifier.v1", "schema_version": 1,
+         "event": "continuous", "fragment": ability_fragment_to_dict(fragment)},
+        ("continuous.characteristics.query_count_modifier", CONDITIONAL_EXILE_CAPABILITY),
+    )
+
+
 def query_self_characteristics_handler(
     oracle_line: str,
     *,
@@ -847,7 +913,7 @@ def query_self_characteristics_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Compile a closed self modifier over one public typed quantity."""
 
-    if linked := _linked_opponent_hand_modifier(oracle_line):
+    if linked := _linked_opponent_hand_modifier(oracle_line) or _source_linked_exile_modifier(oracle_line):
         return linked
     if _SELF_QUERY_MARKER.search(oracle_line) is None:
         return None
@@ -968,6 +1034,9 @@ def query_self_characteristics_handler(
             ]
         ),
     }
+    query = fragment.quantity.query
+    if query is not None and query.state_predicate is not None and query.state_predicate.face_down is True:
+        capabilities.add(FACE_DOWN_CREATURE_QUERY_CAPABILITY)
     template = "continuous-self-query-characteristics-v1"
     if fragment.quantity.scope is CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS:
         capabilities.update(CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES)

@@ -683,6 +683,11 @@ def _append_accumulated_player_results(
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> None:
     for player, (amount, event_ids) in sorted(state.life_losses.items()):
+        if not gain_permissions.allows_loss(player):
+            # A dealt event still needs its target result root, with no life-loss leaf.
+            _ensure_accumulator(state.accumulators, affected_player=player,
+                                affected_object=None, subject_ref=player)
+            continue
         _append_player_life(
             state.accumulators,
             event_id=f"damage.result:life.loss:{player}",
@@ -1457,8 +1462,8 @@ def commit_damage_result_plan(
             defeated.append(card)
     for battle in defeated:
         host._queue_siege_defeated_trigger(battle)
-    from .counter_placement_events import capture_counter_placement_occurrences
-    counter_occurrences=capture_counter_placement_occurrences(host, plan.counter_placements.prepared.events, reason="damage result")
+    from .counter_placement_events import capture_counter_damage_occurrences
+    counter_occurrences=capture_counter_damage_occurrences(host, plan.counter_placements.prepared.events, reason="damage result")
     return DamageResultCommit(
         records=plan.records,
         changed_players=plan.changed_players,

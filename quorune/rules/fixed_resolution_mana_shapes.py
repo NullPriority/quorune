@@ -3,25 +3,50 @@ from __future__ import annotations
 """Exact declaration shape for fixed resolution mana bundles."""
 
 from ..compiler.fixed_resolution_mana import FIXED_RESOLUTION_MANA_CAPABILITY,FIXED_RESOLUTION_MANA_MECHANIC
-from ..mana_restrictions import valid_mana_spend_restriction
+from ..mana_spend_rules import NONCAST_MANA_PAYMENT_CAPABILITY, NONCAST_MANA_PAYMENT_RESTRICTION
+from ..mana_restriction_model import (
+    ROOM_CAST_UNLOCK_MANA_CAPABILITY, ROOM_CAST_UNLOCK_MANA_RESTRICTION,
+    valid_resolution_mana_spend_restriction,
+)
 
 
 def fixed_resolution_mana_capabilities(*,effects,target_schema,mechanic_ids):
     if FIXED_RESOLUTION_MANA_MECHANIC not in mechanic_ids or target_schema is not None or not effects:return ()
+    from .postcombat_life_loss_mana import REQUIREMENTS, effect_is_closed
+
+    if len(effects) == 1 and effect_is_closed(effects[0]):
+        return REQUIREMENTS
     if len(effects)==1 and effects[0].get('op')=='choose_mana':
         from ..resolution_mana_model import ResolutionManaChoiceSpec,RESOLUTION_MANA_CHOICE_CAPABILITY
         try:ResolutionManaChoiceSpec.from_effect(effects[0])
         except (TypeError,ValueError,KeyError):return ()
         if effects[0]['player']!='$controller' or effects[0]['source']!='$source':return ()
         return (FIXED_RESOLUTION_MANA_CAPABILITY,RESOLUTION_MANA_CHOICE_CAPABILITY)
+    from .turn_retained_resolution_mana import ATTACK_CAPABILITY, CAPABILITY, attack_effects, effect as retained_red_effect
+    from ..replacement.immutable import thaw_value
+
+    if thaw_value(effects) == [retained_red_effect()]:
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, CAPABILITY)
+    if thaw_value(effects) == list(attack_effects()):
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, ATTACK_CAPABILITY)
+    from .attack_declaration_mana import CAPABILITY as PLAYER_ATTACK_CAPABILITY, closed_effect
+
+    if closed_effect(effects):
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, PLAYER_ATTACK_CAPABILITY)
     colors=[];total=0;restrictions=set()
     for effect in effects:
         if (set(effect)-{'spend_restriction'}!={'op','player','color','amount','source'} or effect['op']!='mana' or effect['player']!='$controller' or effect['source']!='$source'
                 or type(effect['color']) is not str or len(effect['color'])!=1 or effect['color'] not in 'WUBRGC' or type(effect['amount']) is not int or effect['amount']<=0):return ()
-        if 'spend_restriction' in effect and not valid_mana_spend_restriction(effect['spend_restriction']):return ()
+        if 'spend_restriction' in effect and not valid_resolution_mana_spend_restriction(effect['spend_restriction']):return ()
         restrictions.add(effect.get('spend_restriction'))
         colors.append(effect['color']);total+=effect['amount']
-    return (FIXED_RESOLUTION_MANA_CAPABILITY,) if 1<=total<=10 and len(colors)==len(set(colors)) and len(restrictions)==1 else ()
+    if not 1 <= total <= 10 or len(colors) != len(set(colors)) or len(restrictions) != 1:
+        return ()
+    if restrictions == {NONCAST_MANA_PAYMENT_RESTRICTION}:
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, NONCAST_MANA_PAYMENT_CAPABILITY)
+    if restrictions == {ROOM_CAST_UNLOCK_MANA_RESTRICTION}:
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, ROOM_CAST_UNLOCK_MANA_CAPABILITY)
+    return (FIXED_RESOLUTION_MANA_CAPABILITY,)
 
 
 def is_closed_fixed_resolution_mana_program(program):
@@ -37,12 +62,29 @@ def fixed_resolution_mana_choice_capabilities(*,effects,target_schema,mechanic_i
 def fixed_resolution_mana_runtime_dependencies(program):
     """Bind canonical fixed mana leaves even inside unannotated wrappers."""
     from collections.abc import Mapping
-    required=set()
+    from .entry_creature_type_mana import entry_shared_type_mana_runtime_dependencies
+    from .turn_retained_resolution_mana import ATTACK_CAPABILITY, program_dependencies
+
+    from .source_power_firebending import source_power_firebending_dependencies
+
+    from .postcombat_life_loss_mana import program_dependencies as postcombat_mana_dependencies
+
+    from .attack_declaration_mana import program_dependencies as declaration_dependencies
+
+    if declaration := declaration_dependencies(program):
+        return declaration
+    required = set(entry_shared_type_mana_runtime_dependencies(program))
+    required.update(postcombat_mana_dependencies(program))
+    required.update(source_power_firebending_dependencies(program))
+    if ATTACK_CAPABILITY in getattr(program, "capability_dependencies", ()):
+        required.update(program_dependencies(program))
     def visit(value):
         if isinstance(value,Mapping):
             if (value.get('op')=='mana' and value.get('player')=='$controller'
                     and value.get('source')=='$source' and not isinstance(value.get('amount'),Mapping)):
-                if 'retain_until' in value:
+                if value.get("retain_until") == "end_of_turn":
+                    owned = program_dependencies(program)
+                elif 'retain_until' in value:
                     from ..compiler.keyword_event_effect_nodes import FixedKeywordEventEffectSpec
                     spec=FixedKeywordEventEffectSpec('firebending',value.get('amount'))
                     if value!=spec.effects[0]:raise ValueError('Retained combat mana leaf is malformed')

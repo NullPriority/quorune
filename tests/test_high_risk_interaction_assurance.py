@@ -207,6 +207,18 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 "capability.zone.change.self_graveyard_owner_shuffle",
                 "capability.zone.change.destination_replacement",
             }),
+            (self.db.lookup("Dauthi Voidwalker", fuzzy=False), {
+                "capability.zone.change.destination_replacement",
+                "capability.zone.permission.opponent_void_counter_card_play",
+            }),
+            (self.db.lookup("Parallel Lives", fuzzy=False), {
+                "capability.token.creation.quantity_replacement",
+            }),
+            (self.db.lookup("Sphinx's Insight", fuzzy=False), {
+                "capability.zone.draw.library_to_hand",
+                "capability.resolution.effect.fixed_public_self_replacement",
+                "capability.resolution.effect.public_condition",
+            }),
         )
         registry = load_default_capability_registry()
         profile = "commander_review"
@@ -571,9 +583,8 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 "residual.replacement.self-replacement-and-prevention-ordering",
             ),
             "Nemata, Primeval Warden": (
-                "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-                "residual.replacement.replacement-applicability",
-                "residual.replacement.self-replacement-and-prevention-ordering",
+                "capability.zone.change.destination_replacement",
+                "capability.zone.change.qualified_exile_token_trigger",
             ),
             "Kytheon, Hero of Akros // Gideon, Battle-Forged": (
                 "capability.permanent.indestructible.ordinary",
@@ -598,9 +609,13 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                         residual.kind == 'dependency_contract' and residual.text.endswith('Untap that creature.')
                         for residual in ir.material_residuals
                     ))
-                self.assertEqual("residual", row["card_program_status"])
                 self.assertIsNone(row["hard_construction_failure"])
                 binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+                if name == "Nemata, Primeval Warden":
+                    self.assertEqual("exact", ir.status, ir.material_residuals)
+                    self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+                    continue
+                self.assertEqual("residual", row["card_program_status"])
                 self.assertFalse(binding["strict_capability_ready"])
                 self.assertFalse(binding["compatible_ready"])
                 self.assertIn("trust_basis:unresolved", binding["blockers"])
@@ -1079,6 +1094,9 @@ class HighRiskPromotionSentinelTests(unittest.TestCase):
                 fixtures / 'graveyard-salvage-cards.json',
                 fixtures / 'public-condition-combat-prevention-replacement-cards.json',
                 fixtures / 'self-graveyard-reveal-and-owner-shuffle-cards.json',
+                fixtures / 'void-counter-play-cards.json',
+                fixtures / 'fixed-main-phase-addendum-results-cards.json',
+                fixtures / 'fixed-basic-land-token-cards.json',
             ],
             path,
         )

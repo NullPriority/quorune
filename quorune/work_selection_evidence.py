@@ -1001,6 +1001,7 @@ def load_work_selection_inputs(
     harvest_outcome_history: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     repository = Path(root)
+    compact_report = repository / "coverage" / "compact-ci-card-dependencies.json.gz"
     return {
         "architecture_audit": _read_json(
             repository / "coverage" / "architecture-audit.json"
@@ -1018,8 +1019,9 @@ def load_work_selection_inputs(
             if harvest_outcome_history is not None
             else _read_json(repository / "coverage" / "harvest-outcome-history.json")
         ),
-        "compact_ci_dependencies": _read_json(
-            repository / "coverage" / "compact-ci-card-dependencies.json"
+        "compact_ci_dependencies": (
+            _read_gzip_json(compact_report) if compact_report.is_file()
+            else _read_json(compact_report.with_suffix(""))
         ),
         "platform_readiness": _read_json(
             repository / "coverage" / "platform-readiness.json"

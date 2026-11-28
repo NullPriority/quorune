@@ -1,0 +1,140 @@
+{
+  "cards": [
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "name": "Gogo, Master of Mimicry",
+      "mana_cost": "{2}{U}",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "oracle_text": "{X}{X}, {T}: Copy target activated or triggered ability you control X times. You may choose new targets for the copies. This ability can't be copied and X can't be 0. (Mana abilities can't be targeted.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Wizard",
+      "cmc": 3.0
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The source of the copy from Gogo's ability is the same as the source of the original ability."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Gogo's ability targets an activated or triggered ability that is on the stack and creates one or more additional instances of that ability on the stack. It doesn't cause any object to gain any abilities."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Any choices made when the ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. Most notably, if a triggered ability asks its controller to pay a cost, you pay that cost for the copy if you wish to have it paid."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If an ability is linked to a second ability, copies of that first ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by the first ability and the copy. For example, if Clive's Hideaway's hideaway ability is copied and two cards are exiled, you may cast both exiled cards without paying their mana costs (assuming you control four or more legendary creatures at that time.)"
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Triggered abilities use the word \"when,\" \"whenever,\" or \"at.\" They're often written as \"[Trigger condition], [effect].\" Some keywords (such as prowess) are triggered abilities and will use \"when,\" \"whenever,\" or \"at\" in their reminder text."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keyword abilities (such as equip) are activated abilities and will have a colon in their reminder text."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "You can't choose to pay any activation costs for the copy. However, effects based on those costs that were paid for the original ability are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the ability it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"activated.\" Creating the copy won't cause abilities that trigger when a player activates an ability to trigger. Abilities that say that a triggered ability triggers additional times won't apply to copying a triggered ability."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the ability that's copied has an X whose value was determined as it was activated, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Gogo's ability can copy any activated or triggered ability on the stack, not just one with targets."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The copy will resolve before the original ability does."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the ability has damage divided as it was put onto the stack, the division can't be changed, although the targets receiving that damage still can. The same is true of abilities that distribute counters."
+    },
+    {
+      "oracle_id": "61586052-7d69-489c-84c4-0359228d131b",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the ability that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

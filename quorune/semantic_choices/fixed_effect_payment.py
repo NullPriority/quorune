@@ -5,11 +5,15 @@ from __future__ import annotations
 from typing import Any, Mapping
 from dataclasses import replace
 
-from ..fixed_effect_payment import RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
+from ..fixed_effect_payment import (
+    EQUIPPED_DEATH_LIFE_PRICE_VERSION, MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION, RETURN_PAYMENT_KIND,
+    FixedEffectPaymentSpec, mandatory_artifact_sacrifice_result_parts,
+)
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.blight_model import blight_decline_branch_is_closed
 from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
+from ..rules.mill_paid_hand_return import MILL_HAND_PAYMENT_FIELD
 from ..rules.targeted_life_decline import is_targeted_life_decline_effect
 from ..rules.scheduled_life_return import is_scheduled_life_return
 from .scheduled_life_return import complete_scheduled_life_return, prepare_scheduled_life_return
@@ -36,8 +40,8 @@ def _object_payment_count(spec):
 
 def _object_matches_payment(row, spec, actor, query):
     return object_matches_query(row, spec.predicate) and (
-        spec.kind != "blight" or blight_creature_can_receive(row, actor, spec.amount, query)
-    )
+        spec.kind != "sacrifice" or not row.sacrifice_prohibited
+    ) and (spec.kind != "blight" or blight_creature_can_receive(row, actor, spec.amount, query))
 
 
 def _object_payment_zones(spec):
@@ -46,7 +50,8 @@ def _object_payment_zones(spec):
 
 def _source_sacrifice_payment_row(spec,actor,query):
     row=query.object(spec.source_ref,zones=('battlefield',)) if spec.source_ref is not None else None
-    return row if row is not None and not row.phased_out and row.controller==actor else None
+    return row if (row is not None and not row.phased_out
+                   and not row.sacrifice_prohibited and row.controller == actor) else None
 
 
 def _validated(
@@ -54,6 +59,11 @@ def _validated(
     *, continuation: bool = False,
 ) -> tuple[FixedEffectPaymentSpec, tuple[FrozenMap, ...]]:
     fields = {'op', 'schema_version', 'player', 'payment', 'effects'}
+    from ..rules.source_entry_discard_exile import FIELD, uses_entry_discard_exile, validate_entry_discard_exile_resolved
+
+    source_discard_exile = uses_entry_discard_exile(effect)
+    if source_discard_exile:
+        fields.add(FIELD)
     cast_payment = effect.get('schema_version') == 6
     if cast_payment:fields.add('source_stack')
     if "declined_effects" in effect:
@@ -84,6 +94,38 @@ def _validated(
             or spec.kind in _CONTROLLED_OBJECT_PAYMENTS and spec.predicate.controller != actor):
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
+    from ..rules.mandatory_sacrifice_reanimation import (
+        MANDATORY_REANIMATION_PAYMENT_VERSIONS, mandatory_sacrifice_reanimation_parts,
+    )
+
+    if spec.schema_version in MANDATORY_REANIMATION_PAYMENT_VERSIONS:
+        try:
+            _, result = mandatory_sacrifice_reanimation_parts({key: effect[key] for key in fields}, resolved=True)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return spec, (FrozenMap(result),)
+    if spec.schema_version == MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION:
+        try:
+            _, result = mandatory_artifact_sacrifice_result_parts(
+                {key: effect[key] for key in fields}, resolved=True,
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        # The artifact is still paid if the ability's original source left.
+        return spec, (FrozenMap(result),) if result["card"] is not None else ()
+    if spec.schema_version == EQUIPPED_DEATH_LIFE_PRICE_VERSION:
+        draw = {"op": "draw", "player": actor, "count": spec.amount, "private": True}
+        expected = [draw] if spec.amount else []
+        if cast_payment or "declined_effects" in effect or thaw_value(effects) != expected:
+            raise SemanticChoiceError("The equipped-death payment must keep its exact private draw")
+        if not spec.amount:
+            return spec, ()
+    if source_discard_exile:
+        try:
+            validate_entry_discard_exile_resolved(effect, spec, actor)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return spec, tuple(FrozenMap(child) for child in effect["declined_effects"])
     if "declined_effects" in effect:
         if not cast_payment and not blight_decline_branch_is_closed(spec.kind, effects, effect["declined_effects"]):
             raise SemanticChoiceError("The declined Blight or mana result is malformed")
@@ -102,11 +144,38 @@ def _validated(
     return spec, tuple(consequences)
 
 
+def _prepare_opponent_event_payment(effect, context):
+    from ..rules.opponent_event_mana_payment import resolved_opponent_event_mana_payment
+
+    try:
+        spec, declined = resolved_opponent_event_mana_payment(effect, context.actor, context.stack_controller)
+    except (ValueError, TypeError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if context.actor not in context.query.active_seats:
+        return SemanticChoicePreparation(
+            request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue("The original payer left the game", prepend_effects=declined),
+        )
+    prepared = prepare_fixed_payment_cost(spec, effect, context)
+    request = replace(prepared.request, public_context=FrozenMap({
+        **prepared.request.public_context, "cost": dict(spec.requirements),
+    }))
+    return replace(prepared, request=request)
+
+
 def prepare_fixed_effect_payment(
     effect: Mapping[str, Any], context: SemanticChoiceContext,
 ) -> SemanticChoicePreparation:
+    if MILL_HAND_PAYMENT_FIELD in effect:
+        from .mill_paid_hand_return import prepare_mill_hand_payment
+
+        return prepare_mill_hand_payment(effect, context)
     from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
 
+    from ..rules.opponent_event_mana_payment import uses_opponent_event_mana_payment
+
+    if uses_opponent_event_mana_payment(effect):
+        return _prepare_opponent_event_payment(effect, context)
     if uses_entry_player_counter_payment(effect):
         try:
             spec, declined = resolved_entry_player_payment(effect, context.actor)
@@ -214,7 +283,11 @@ def prepare_fixed_payment_cost(
             ))
         payable = len(legal) >= required
         if not payable and (spec.mandatory or spec.kind == RETURN_PAYMENT_KIND):
-            reason = "Mandatory discard is unavailable" if spec.mandatory else "No eligible permanent to return"
+            reason = {
+                "discard": "Mandatory discard is unavailable",
+                "sacrifice": f"No eligible {spec.mandatory_sacrifice_type} to sacrifice",
+                RETURN_PAYMENT_KIND: "No eligible permanent to return",
+            }[spec.kind]
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(reason),
@@ -235,11 +308,11 @@ def prepare_fixed_payment_cost(
         choice=ScalarChoice(field_name='pay',legal_values=(True,False) if payable else (False,))
     elif spec.kind == 'resolved_fractional_life':
         from ..rules.fractional_life_payment import resolved_fractional_payment_is_payable
-        payable = resolved_fractional_payment_is_payable(spec, context.query.player_life(actor))
+        payable = resolved_fractional_payment_is_payable(spec, context.query.player_life_for_payment(actor))
         choice = ScalarChoice(field_name='pay', legal_values=(True, False) if payable else (False,))
     else:
         payable = (
-            context.query.player_life(actor) >= spec.amount if spec.kind == 'life'
+            (spec.amount == 0 or context.query.player_life_for_payment(actor) >= spec.amount) if spec.kind == 'life'
             else context.query.player_counter(actor, 'energy') >= spec.amount if spec.kind == 'energy'
             else context.query.cost_is_affordable(actor, spec.requirements)
         )
@@ -249,11 +322,20 @@ def prepare_fixed_payment_cost(
         '_legal_objects': [{'ref': row.ref, 'logical_object_id': row.logical_object_id} for row in legal],
     }
     public = {'stack': context.stack_ref, 'operation': effect['op'], 'payment_kind': spec.kind, 'payable': payable}
+    prompt = "Pay the optional fixed cost or decline."
+    if spec.mandatory:
+        prompt = {
+            "artifact": "Choose an artifact to sacrifice.",
+            "creature": "Choose a creature to sacrifice.",
+        }.get(spec.mandatory_sacrifice_type, "Choose a card to discard.")
     if spec.kind == 'discard':
         public['objects'] = [{'id': row.ref, 'name': row.printed_name} for row in legal]
+    if spec.schema_version == EQUIPPED_DEATH_LIFE_PRICE_VERSION:
+        public["life_payment"] = spec.amount
+        prompt = f"Pay {spec.amount} life to draw {spec.amount} card(s), or decline."
     return SemanticChoicePreparation(
         request=SemanticChoiceRequest(
-            prompt=("Choose a card to discard." if spec.mandatory else "Pay the optional fixed cost or decline."),
+            prompt=prompt,
             choice=choice,
             public_context=FrozenMap(public),
         ),
@@ -266,8 +348,23 @@ def complete_fixed_effect_payment(
     query: SemanticChoiceQuery,
 ) -> SemanticChoiceCompletion:
     effect = continuation.effect
+    if MILL_HAND_PAYMENT_FIELD in effect:
+        from .mill_paid_hand_return import complete_mill_hand_payment
+
+        return complete_mill_hand_payment(continuation, response, query)
     from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
 
+    from ..rules.opponent_event_mana_payment import resolved_opponent_event_mana_payment, uses_opponent_event_mana_payment
+
+    if uses_opponent_event_mana_payment(effect):
+        try:
+            spec, declined = resolved_opponent_event_mana_payment(
+                effect, effect.get("_choice_actor"), continuation.semantic_frame.controller, continuation=True,
+            )
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        completion = complete_fixed_payment_cost(spec, effect, response, query)
+        return completion if completion.intents else SemanticChoiceCompletion(prepend_effects=declined)
     if uses_entry_player_counter_payment(effect):
         try:
             spec, declined = resolved_entry_player_payment(effect, effect.get("_choice_actor"), continuation=True)
@@ -398,11 +495,11 @@ def complete_fixed_payment_cost(
             intent=_source_counter_payment_intent(spec,effect,query)
         elif spec.kind == 'resolved_fractional_life':
             from ..rules.fractional_life_payment import resolved_fractional_payment_is_payable
-            if not resolved_fractional_payment_is_payable(spec, query.player_life(actor)):
+            if not resolved_fractional_payment_is_payable(spec, query.player_life_for_payment(actor)):
                 raise SemanticChoiceError('Resolved fractional life payment is no longer payable')
             intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)
         elif spec.kind == 'life':
-            if query.player_life(actor) < spec.amount:
+            if spec.amount and query.player_life_for_payment(actor) < spec.amount:
                 raise SemanticChoiceError('Fixed life payment is no longer payable')
             intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)
         elif spec.kind == 'energy':

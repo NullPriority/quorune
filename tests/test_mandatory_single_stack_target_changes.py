@@ -39,16 +39,19 @@ class MandatorySingleStackTargetChangeTests(InheritedNativeFixture, unittest.Tes
             "activation-public-state-cards.json": {"Giant Growth"},
             "activation-result-views-cards.json": {"Mountain"},
             "additional-conditional-modifier-cards.json": {"Revitalize"},
-            "bound-effect-program-cards.json": {"Generic Bound Plains"},
+            "announced-x-player-rounds-cards.json": {"Myr Sire"},
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Grizzly Bears", "Murder"},
             "cast-creature-targets.json": {"Common Bond"},
             "counter-replacement-cards.json": {"Ancient Brontodon"},
             "designation-prevention-cards.json": {"Prodigal Sorcerer"},
             "event-spell-copy-cards.json": {"Deflection"},
             "mandatory-single-stack-target-change-cards.json": {
                 "Bolt Bend", "Misdirection", "Redirect Lightning", "Remove Soul",
-                "Shunt", "Swerve", "Tolarian Terror", "Twin Bolt",
+                "Shunt", "Swerve", "Tolarian Terror", "Twin Bolt", "Imp's Mischief",
             },
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
+            "spree-mode-cost-cards.json": {"Return the Favor"},
+            "stack-mana-value-counter-followups-cards.json": {"Blue Sun's Zenith", "Twincast"},
         }
         pieces = []
         for filename, names in support.items():
@@ -139,6 +142,229 @@ class MandatorySingleStackTargetChangeTests(InheritedNativeFixture, unittest.Tes
     def _choose(self, game, actor, target):
         result = game.act("pilot:" + actor, {"action_id": "choose", "targets": [target]})
         self.assertTrue(result.ok, result.summary)
+
+    def _cast_favor(self, game, favor, actor, modes, targets):
+        self.priority(game, actor)
+        command = {"action_id": "cast:" + favor.ref, "modes": modes, "targets": targets, "pay": "auto"}
+        result = game.act("pilot:" + actor, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_actual_favor_copies_then_changes_the_same_original_spell_and_replays(self):
+        game = self.session(70710051)
+        creature = self.add(game.engine, "Grizzly Bears", zone="hand")
+        shock = self.add(game.engine, "Shock", seat="B", zone="hand")
+        favor = self.add(game.engine, "Return the Favor", seat="C", zone="hand")
+        private = self.add(game.engine, "Revitalize", seat="D", zone="hand", ref="favor-private-D")
+        for card in (creature, shock, favor):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"G": 1, "C": 1})
+        game.state.players["B"].mana_pool["R"] = 1
+        game.state.players["C"].mana_pool.update({"R": 2, "C": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", creature)
+        self.cast(game, "B", shock, ["D"])
+        original = self._spell(game, shock).ref
+        self.priority(game, "C")
+        before = authoritative_state_hash(game.state)
+        illegal = game.act("pilot:C", {
+            "action_id": "cast:" + favor.ref, "modes": ["mode_1"],
+            "targets": [self._spell(game, creature).ref], "pay": "auto",
+        })
+        self.assertFalse(illegal.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self._cast_favor(game, favor, "C", ["mode_2", "mode_1"], [original, original])
+        item = self._spell(game, favor)
+        self.assertEqual(["mode_1", "mode_2"], item.modes)
+        self.assertEqual(0, sum(game.state.players["C"].mana_pool.values()))
+
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["C"]), (decision.kind, decision.actors))
+        schema = decision.payload_by_actor["C"]["legal_actions"][0]["choice_schema"]
+        self.assertTrue(schema["optional"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:C", full=True)))
+        for seat in "ABD":
+            self.assertIsNone(game.packet("pilot:" + seat, full=True)["decision"])
+        game = self.replay(game, load=True)
+        self._choose(game, "C", "A")
+
+        self.assertIn("B", self._choice(game, "C"))
+        copy, = [row for row in game.state.stack if row.kind == "spell_copy"]
+        self.assertEqual(("C", ["A"]), (copy.controller, copy.targets))
+        self.assertEqual(("B", ["D"]), (self._item(game, original).controller, self._item(game, original).targets))
+        self._choose(game, "C", "B")
+        self.assertEqual(["B"], self._item(game, original).targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([38, 38, 40, 40], [game.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual(3, len(game.engine._current_turn_history("spell_cast")))
+        self.replay(game, load=True)
+
+    def test_actual_favor_copies_other_controllers_activated_and_triggered_abilities(self):
+        for triggered in (False, True):
+            with self.subTest(triggered=triggered):
+                game = self.session(70710052 + triggered)
+                source = self.add(game.engine, "Myr Sire" if triggered else "Prodigal Sorcerer")
+                favor = self.add(game.engine, "Return the Favor", seat="B", zone="hand")
+                if triggered:
+                    removal = self.add(game.engine, "Murder", seat="C", zone="hand")
+                for card in (source, favor):
+                    self.assert_closed(game, card)
+                self.prepare(game)
+                game.state.players["B"].mana_pool.update({"R": 2, "C": 1})
+                game.state.players["C"].mana_pool.update({"B": 2, "C": 1})
+                self.checkpoint(game)
+                if triggered:
+                    self.cast(game, "C", removal, [source.ref])
+                    self.resolve_top(game)
+                    self.until(game, lambda session: any(row.kind == "triggered_ability" for row in session.state.stack))
+                else:
+                    self.priority(game, "A")
+                    actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action, = [row for row in actions if row["id"].startswith("activate:" + source.ref + ":")]
+                    result = game.act("pilot:A", {"action_id": action["id"], "targets": ["D"], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                original, = [row for row in game.state.stack if row.kind.endswith("_ability")]
+                self.assertEqual("A", original.controller)
+                self._cast_favor(game, favor, "B", ["mode_1"], [original.ref])
+                decision = self.resolve(game)
+                if triggered:
+                    self.assertIsNone(decision)
+                    controllers = [card.controller for card in game.state.cards.values()
+                                   if card.is_token and card.zone == "battlefield"]
+                    self.assertCountEqual(["A", "B"], controllers)
+                else:
+                    self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+                    self._choose(game, "B", "C")
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual((39, 39), (game.state.players["C"].life, game.state.players["D"].life))
+                    self.assertTrue(game.state.cards[source.object_id].tapped)
+                self.assertEqual(0, sum(game.state.players["B"].mana_pool.values()))
+                self.replay(game, load=True)
+
+    def test_actual_favor_skips_its_departed_copy_target_and_resolves_the_other_mode(self):
+        game = self.session(70710054)
+        first = self.add(game.engine, "Shock", zone="hand", ref="favor-first-shock")
+        second = self.add(game.engine, "Shock", seat="B", zone="hand", ref="favor-second-shock")
+        favor = self.add(game.engine, "Return the Favor", seat="C", zone="hand")
+        response = self.add(game.engine, "Counterspell", seat="D", zone="hand")
+        self.assert_closed(game, favor)
+        self.prepare(game, mana={"R": 1})
+        game.state.players["B"].mana_pool["R"] = 1
+        game.state.players["C"].mana_pool.update({"R": 2, "C": 2})
+        game.state.players["D"].mana_pool["U"] = 2
+        self.checkpoint(game)
+        self.cast(game, "A", first, ["D"])
+        self.cast(game, "B", second, ["D"])
+        first_ref, second_ref = (self._spell(game, card).ref for card in (first, second))
+        self._cast_favor(game, favor, "C", ["mode_1", "mode_2"], [first_ref, second_ref])
+        self.cast(game, "D", response, [first_ref])
+        self.resolve_top(game)
+
+        self.assertIn("A", self._choice(game, "C"))
+        self.assertFalse(any(row.kind == "spell_copy" for row in game.state.stack))
+        self._choose(game, "C", "A")
+        self.assertEqual(["A"], self._item(game, second_ref).targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((38, 40), (game.state.players["A"].life, game.state.players["D"].life))
+        self.replay(game, load=True)
+
+    def test_imps_mischief_binds_only_the_exact_stack_target_and_life_loss(self):
+        from quorune.rules.stack_target_change_shapes import STACK_TARGET_CHANGE_MANA_VALUE_LOSS_CAPABILITY
+        from quorune.stack_target_change_model import stack_target_change_with_mana_value_loss_effects
+
+        card, programs = self.original_programs("Imp's Mischief")
+        spell = programs["resolve"]
+        expected = stack_target_change_with_mana_value_loss_effects()
+        self.assertEqual(list(expected), thaw_value(spell.effects))
+        self.assertEqual(SingleStackTargetChangeSpec(False).target_schema, thaw_value(spell.target_schema))
+        self.assertIn(STACK_TARGET_CHANGE_MANA_VALUE_LOSS_CAPABILITY, spell.capability_dependencies)
+        with patch("quorune.compiler.resolution_effect_templates._stack_target_change_mana_value_loss_template",
+                   return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                card, capability_registry=self.registry, capability_profile=PROFILE).status)
+        for actor, stack, version in (("$target.0", "$target.0", 1),
+                                      ("$controller", "$target.1", 1),
+                                      ("$controller", "$target.0", True)):
+            with self.subTest(actor=actor, stack=stack, version=version):
+                loss = {**expected[1], "player": actor, "amount": {**expected[1]["amount"],
+                                                                 "stack": stack, "schema_version": version}}
+                altered = replace(spell, effects=[expected[0], loss])
+                bound = bind_semantic_program_runtime(
+                    altered, capability_registry=self.registry, profile=PROFILE)
+                self.assertFalse(bound["strict"], bound)
+
+    def test_imps_mischief_redirects_a_copied_announced_x_and_replays_deferred_life_loss(self):
+        game = self.session(77115011)
+        original = self.add(game.engine, "Blue Sun's Zenith", seat="B", zone="hand")
+        twincast = self.add(game.engine, "Twincast", zone="hand")
+        redirect = self.add(game.engine, "Imp's Mischief", seat="C", zone="hand")
+        private = self.add(game.engine, "Revitalize", seat="D", zone="hand", ref="mischief-private-D")
+        for card in (original, twincast, redirect):
+            self.assert_closed(game, card)
+        self.prepare(game, actor="A", active="A", mana={"U": 2})
+        game.state.players["B"].mana_pool["U"] = 6
+        game.state.players["C"].mana_pool.update({"C": 1, "B": 1})
+        self.checkpoint(game)
+        self.priority(game, "B")
+        offer = self.action(game, "B", original)
+        result = game.act("pilot:B", {"action_id": offer["id"], "targets": ["B"], "x": 3, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        original_ref = self._spell(game, original).ref
+        self.cast(game, "A", twincast, [original_ref])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self._choose(game, "A", "C")
+        copy = game.state.stack[-1]
+        self.assertEqual(("spell_copy", 3), (copy.kind, copy.x_value))
+
+        life = game.state.players["C"].life
+        self.cast(game, "C", redirect, [copy.ref])
+        self.assertIn("D", self._choice(game, "C"))
+        self.assertEqual(life, game.state.players["C"].life)
+        outsider = game.packet("pilot:D", full=True)
+        self.assertIsNone(outsider["decision"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:C", full=True)))
+        game = self.replay(game, load=True)
+        before = authoritative_state_hash(game.state)
+        for actor, target in (("A", "D"), ("C", "C")):
+            invalid = game.act(f"pilot:{actor}", {"action_id": "choose", "targets": [target]})
+            self.assertFalse(invalid.ok, invalid.summary)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        self._choose(game, "C", "D")
+        self.assertEqual(life - 6, game.state.players["C"].life)
+        self.assertEqual(("A", ["D"]), (self._item(game, copy.ref).controller, self._item(game, copy.ref).targets))
+        self.assertEqual(["B"], self._item(game, original_ref).targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(life - 6, game.state.players["C"].life)
+        self.replay(game, load=True)
+
+    def test_imps_mischief_loses_life_without_an_alternative_and_skips_an_illegal_spell_target(self):
+        for remove_subject in (False, True):
+            with self.subTest(remove_subject=remove_subject):
+                game = self.session(77115012 + int(remove_subject))
+                creature = self.add(game.engine, "Ancient Brontodon", zone="hand")
+                counter = self.add(game.engine, "Remove Soul", seat="B", zone="hand")
+                redirect = self.add(game.engine, "Imp's Mischief", seat="C", zone="hand")
+                response = self.add(game.engine, "Counterspell", seat="D", zone="hand") if remove_subject else None
+                for card in (creature, counter, redirect):
+                    self.assert_closed(game, card)
+                self.prepare(game, mana={"C": 9, "G": 2})
+                game.state.players["B"].mana_pool["U"] = 2
+                game.state.players["C"].mana_pool.update({"C": 1, "B": 1})
+                game.state.players["D"].mana_pool["U"] = 2
+                self.checkpoint(game)
+                self.cast(game, "A", creature)
+                original = self._spell(game, creature).ref
+                self.cast(game, "B", counter, [original])
+                subject = self._spell(game, counter).ref
+                self.cast(game, "C", redirect, [subject])
+                life = game.state.players["C"].life
+                if response is not None:
+                    self.cast(game, "D", response, [subject])
+                    self.resolve_top(game)
+                self.resolve_top(game)
+                self.assertEqual(life if remove_subject else life - 2, game.state.players["C"].life)
+                if not remove_subject:
+                    self.assertEqual([original], self._item(game, subject).targets)
+                self.replay(game, load=True)
 
     def test_actual_deflection_changes_counter_to_the_resolving_spell_and_replays(self):
         game = self.session(77115001)

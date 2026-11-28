@@ -92,6 +92,8 @@ def schedule_created_token_cleanup(host, controller, cards, spec, *, label, sour
 
 
 def apply_fixed_token_cleanup_creation(host, effect, *, actor, reason):
+    from .continuous_effect_state import ResolutionEffectSource
+    from .fixed_token_production import CREATED_TOKEN_HASTE_FIELD
     from .rules.created_token_cleanup_shapes import created_token_cleanup_closure
     from .token_creation import create_tokens
     public = {key: value for key, value in effect.items() if key not in {'_runtime_source', '_replacement_selections'}}
@@ -108,6 +110,14 @@ def apply_fixed_token_cleanup_creation(host, effect, *, actor, reason):
         raise ValueError('Temporary token creation requires its captured source')
     plan = CreatedTokenCleanupPlan(CreatedTokenCleanupSpec.from_dict(public['token_cleanup']),
         SemanticSourceContext(**dict(raw_source)))
+    haste_source = None
+    if CREATED_TOKEN_HASTE_FIELD in public:
+        haste_source = ResolutionEffectSource.from_effect(effect)
+        item = host.state.stack[-1] if host.state.stack else None
+        if (item is None or item.ref != haste_source.stack_ref or item.controller != actor
+                or item.context.get("currently_resolving") is not True):
+            raise ValueError("Haste and delayed sacrifice require their original resolving token instruction")
     return create_tokens(host, actor, name=public['name'], quantity=quantity,
         characteristics=public['characteristics'], tapped=public.get('tapped', False),
-        token_cleanup=plan, reason=reason, replacement_selections=tuple(effect.get('_replacement_selections', ())))
+        token_cleanup=plan, reason=reason, replacement_selections=tuple(effect.get('_replacement_selections', ())),
+        post_entry_haste_source=haste_source)

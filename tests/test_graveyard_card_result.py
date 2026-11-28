@@ -538,4 +538,228 @@ class GraveyardCardCounterLifeNativeTests(InheritedNativeFixture, unittest.TestC
             for name in ('Grizzly Bears', 'Forest'):self.assertTrue(ready(name, registry), (missing, name))
 
 
-if __name__ == '__main__':unittest.main()
+class GraveyardPermanentCardCounterContractTests(unittest.TestCase):
+    instruction = (
+        'Exile target card from a graveyard. If it was a permanent card, '
+        'put a +1/+1 counter on this permanent.'
+    )
+
+    def test_permanent_card_result_uses_exact_closed_grammar_and_no_life_capability(self):
+        from quorune.compiler.graveyard_card_result_templates import parse_graveyard_permanent_card_counter
+        from quorune.compiler.public_zone_move_templates import public_graveyard_card_exile_template
+        from quorune.graveyard_card_result_model import (
+            GRAVEYARD_PERMANENT_CARD_COUNTER_DEPENDENCIES, GraveyardPermanentCardCounterSpec,
+        )
+        from quorune.rules.graveyard_card_results import graveyard_card_counter_life_payload_dependencies
+
+        spec = parse_graveyard_permanent_card_counter(self.instruction)
+        self.assertEqual(GraveyardPermanentCardCounterSpec(), spec)
+        self.assertEqual(spec, GraveyardPermanentCardCounterSpec.from_dict(json.loads(json.dumps(spec.to_dict()))))
+        self.assertEqual(GRAVEYARD_PERMANENT_CARD_COUNTER_DEPENDENCIES,
+            graveyard_card_counter_life_payload_dependencies(spec.effect()))
+        self.assertNotIn('life.change.effect', spec.dependencies)
+        template = public_graveyard_card_exile_template(self.instruction)
+        self.assertEqual(
+            {'zones': ['graveyard'], 'categories': ['card'], 'owner_relation': 'any', 'count': 1},
+            template.target_schema,
+        )
+        for candidate in (
+            self.instruction.replace('target card', 'target permanent card'),
+            self.instruction.replace('If it was', 'If you exiled'),
+            self.instruction.replace('this permanent', 'this creature'),
+            self.instruction.replace('a +1/+1 counter', 'two +1/+1 counters'),
+            self.instruction + ' Draw a card.',
+        ):
+            self.assertIsNone(parse_graveyard_permanent_card_counter(candidate))
+        for invalid in (
+            {'schema_version': True}, {'card_type': 'creature'}, {'life_gain': 0},
+            {'source_counter': {'counter': '+1/+1', 'amount': True}},
+        ):
+            with self.assertRaises(ValueError):
+                GraveyardPermanentCardCounterSpec.from_dict({**spec.to_dict(), **invalid})
+        self.assertEqual(Spec(), parse(TEXT))
+
+
+class GraveyardPermanentCardCounterNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'graveyard-permanent-source-counter.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/graveyard-permanent-source-counter-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            'Targeted permanent card source counter',
+            [DeckEntry('Isamaru, Hound of Konda', 1, 'commander'), DeckEntry('Plains', 30)],
+            ['Isamaru, Hound of Konda'],
+        )
+
+    def prepare_sash(self, seed, *, in_hand=False):
+        game = self.session(seed)
+        sash = self.add(game.engine, 'Lion Sash', zone='hand' if in_hand else 'battlefield')
+        self.assert_closed(game, sash)
+        return game, sash
+
+    def reject(self, game, seat, command):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act('pilot:' + seat, command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def submit(self, game, seat, command):
+        result = game.act('pilot:' + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def action_for(self, game, sash, *, reconfigure=None):
+        self.priority(game, 'A')
+        prefix = 'activate:' + game.state.cards[sash.object_id].ref + ':'
+        rows = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        matching = [
+            row for row in rows if row['id'].startswith(prefix)
+            and (
+                row['id'].endswith('-reconfigure-' + reconfigure) if reconfigure
+                else 'graveyard' in (row.get('target_schema') or {}).get('zones', ())
+            )
+        ]
+        self.assertEqual(1, len(matching), rows)
+        return matching[0]
+
+    def source_status(self, game, sash, target):
+        source = game.state.cards[sash.object_id]
+        data = game.engine._effective_card_data(source)
+        return (
+            'creature' in game.engine._type_parts(data['type_line'])[0],
+            source.attached_to,
+            source.counters.get('+1/+1', 0),
+            tuple(game.engine._numeric_stat(target.object_id, field) for field in ('power', 'toughness')),
+        )
+
+    def test_lion_sash_paid_exile_distinguishes_permanent_cards_and_updates_equipped_stats(self):
+        from quorune.oracle_ir import compile_oracle_card
+
+        game, sash = self.prepare_sash(1104, in_hand=True)
+        receiver = self.add(game.engine, 'Grizzly Bears')
+        land = self.add(game.engine, 'Forest', seat='B', zone='graveyard')
+        instant = self.add(game.engine, 'Counterspell', seat='B', zone='graveyard')
+        artifact = self.add(game.engine, 'Sol Ring', seat='C', zone='graveyard')
+        private = self.add(game.engine, 'Unsummon', seat='C', zone='hand')
+        ir = compile_oracle_card(self.db.lookup('Lion Sash'), capability_registry=self.registry,
+            capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.prepare(game, mana={'C': 5, 'W': 4})
+        self.checkpoint(game)
+        self.cast_for(game, 'A', sash)
+        self.assertIsNone(self.resolve(game))
+
+        attach = self.action_for(game, sash, reconfigure='attach')
+        self.reject(game, 'A', {'action_id': attach['id'], 'targets': [sash.ref], 'pay': 'auto'})
+        self.submit(game, 'A', {
+            'action_id': attach['id'], 'targets': [receiver.ref], 'pay': 'manual', 'payment': {'C': 2},
+        })
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((False, receiver.object_id, 0, (2, 2)), self.source_status(game, sash, receiver))
+
+        for target, counters in ((land, 1), (instant, 1), (artifact, 2)):
+            action = self.action_for(game, sash)
+            before = game.state.players['A'].mana_pool['W']
+            command = {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'}
+            self.reject(game, 'D', command)
+            self.reject(game, 'A', {**command, 'targets': [private.ref]})
+            self.assertNotIn(private.ref, json.dumps(game.packet('pilot:A', full=True)))
+            self.submit(game, 'A', command)
+            self.assertEqual(before - 1, game.state.players['A'].mana_pool['W'])
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual('exile', game.state.cards[target.object_id].zone)
+            received = 2 + counters
+            self.assertEqual((False, receiver.object_id, counters, (received, received)),
+                self.source_status(game, sash, receiver))
+            self.assertEqual((40, 40, 40, 40), tuple(game.state.players[p].life for p in 'ABCD'))
+
+        detach = self.action_for(game, sash, reconfigure='unattach')
+        self.submit(game, 'A', {'action_id': detach['id'], 'pay': 'manual', 'payment': {'C': 2}})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((True, None, 2, (2, 2)), self.source_status(game, sash, receiver))
+        self.assertEqual((3, 3),
+            tuple(game.engine._numeric_stat(sash.object_id, field) for field in ('power', 'toughness')))
+        self.replay(game, load=True)
+
+    def test_lion_sash_only_current_target_and_original_source_receive_the_result(self):
+        game, sash = self.prepare_sash(1105)
+        land = self.add(game.engine, 'Forest', seat='B', zone='graveyard')
+        artifact = self.add(game.engine, 'Sol Ring', seat='C', zone='graveyard')
+        bounce = self.add(game.engine, 'Unsummon', seat='B', zone='hand')
+        self.prepare(game, mana={'W': 3})
+        game.state.players['B'].mana_pool['U'] = 1
+        self.checkpoint(game)
+        for target in (land, land):
+            action = self.action_for(game, sash)
+            self.submit(game, 'A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('exile', game.state.cards[land.object_id].zone)
+        self.assertEqual(1, game.state.cards[sash.object_id].counters.get('+1/+1', 0))
+
+        action = self.action_for(game, sash)
+        self.submit(game, 'A', {'action_id': action['id'], 'targets': [artifact.ref], 'pay': 'auto'})
+        self.cast_for(game, 'B', bounce, [sash.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('exile', game.state.cards[artifact.object_id].zone)
+        self.assertEqual('hand', game.state.cards[sash.object_id].zone)
+        self.assertEqual(0, game.state.cards[sash.object_id].counters.get('+1/+1', 0))
+        self.replay(game, load=True)
+
+    def test_lion_sash_permanent_predicate_mutation_is_killed_by_land_result(self):
+        from types import SimpleNamespace
+
+        def witness():
+            game, sash = self.prepare_sash(1106)
+            land = self.add(game.engine, 'Forest', seat='B', zone='graveyard')
+            self.prepare(game, mana={'W': 1})
+            action = self.action_for(game, sash)
+            self.submit(game, 'A', {'action_id': action['id'], 'targets': [land.ref], 'pay': 'auto'})
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual('exile', game.state.cards[land.object_id].zone)
+            self.assertEqual(1, game.state.cards[sash.object_id].counters.get('+1/+1', 0), 'land result')
+
+        witness()
+        mutant = SimpleNamespace(PERMANENT_CARD=SimpleNamespace(types_any=('creature',)))
+        with patch('quorune.rules.graveyard_card_results.PublicGraveyardCardTargetKind', mutant):
+            with self.assertRaisesRegex(AssertionError, 'land result'):
+                witness()
+
+    def test_lion_sash_untrusted_result_owners_leave_a_material_residual(self):
+        from copy import deepcopy
+        from quorune.graveyard_card_result_model import GRAVEYARD_PERMANENT_CARD_COUNTER_DEPENDENCIES
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        declarations = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
+        known = set(discover_tests(ROOT).values())
+        original = self.db.lookup('Lion Sash', fuzzy=False)
+        control = self.db.lookup('Grizzly Bears', fuzzy=False)
+        profile = 'commander_review'
+        for missing in GRAVEYARD_PERMANENT_CARD_COUNTER_DEPENDENCIES:
+            with self.subTest(capability=missing):
+                changed = deepcopy(raw)
+                row = next(row for row in changed['capabilities'] if row['id'] == missing)
+                row.update(status='blocked', blockers=['Targeted source-counter owner withdrawn'])
+                registry = CapabilityRegistry(changed)
+                evidence = build_index(registry_value=changed, declaration_source=declarations, discovered_test_ids=known)
+                registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+                closure = registry.closure((missing,), profile=profile)
+                self.assertIn('status:' + missing + ':blocked', closure.blockers)
+                self.assertNotEqual('exact', compile_oracle_card(
+                    original, capability_registry=registry, capability_profile=profile,
+                ).status)
+                self.assertEqual('exact', compile_oracle_card(
+                    control, capability_registry=registry, capability_profile=profile,
+                ).status)
+
+
+if __name__ == '__main__':
+    unittest.main()

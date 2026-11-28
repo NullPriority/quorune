@@ -8,6 +8,16 @@ from ..whole_hand_discard_model import WHOLE_HAND_DISCARD_OPERATION,WHOLE_HAND_D
 from .draw_templates import fixed_draw_effect_template
 
 
+def ordered_opponents_whole_hand_discard_template(text):
+    from ..discard_result_model import DISCARD_RESULT_MECHANIC, ordered_opponents_discard_effect
+
+    plain = whole_hand_discard_effect_template(text)
+    if plain is None or plain[2] is not None or plain[1][0].get("players") != "opponents":
+        return None
+    return ("ordered-opponents-whole-hand-discard-v7", (ordered_opponents_discard_effect(),),
+            None, (DISCARD_RESULT_MECHANIC,))
+
+
 def whole_hand_discard_effect_template(text):
     body=' '.join(text.strip().split())
     match=re.fullmatch(r'(?:(?P<subject>Each player|Each opponent|Target player|Target opponent|You) )?'

@@ -60,7 +60,58 @@ def _opponent_exile_draw_template(text: str):
     )
 
 
+def attacking_creature_exile_search_template(text):
+    from ..public_zone_moves import PublicZoneDestination, PublicZoneOrigin, PublicZoneSeatRelation
+    from ..rules.public_exile_result_model import ATTACKING_CREATURE_EXILE_QUERY, ATTACKING_EXILE_SEARCH_MECHANIC
+
+    if " ".join(text.split()).casefold() != (
+        "exile all attacking creatures target player controls. that player may search their library for that many "
+        "basic land cards, put those cards onto the battlefield tapped, then shuffle."
+    ):
+        return None
+    spec = PublicZoneMoveSetSpec(
+        query=ATTACKING_CREATURE_EXILE_QUERY, origin=PublicZoneOrigin.BATTLEFIELD,
+        destination=PublicZoneDestination.EXILE, seat_relation=PublicZoneSeatRelation.TARGET_PLAYER,
+        target_seat="$target.0",
+    )
+    followup = PublicExileFollowup.attacking_creature_search()
+    followup.validate_move(spec)
+    effect = {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict(), "followup": followup.to_dict()}
+    target = {"zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any"}
+    return ("attacking-creature-exile-optional-search-v1", (effect,), target,
+            ("fixed-public-zone-move", "fixed-public-zone-move-set", "cr-115-targets", ATTACKING_EXILE_SEARCH_MECHANIC))
+
+
+def _exile_land_search_compensation(text):
+    from ..public_zone_moves import PublicZoneDestination, PublicZoneOrigin, PublicZoneSeatRelation
+    from ..rules.affected_library_search_batch import (
+        EXILE_LAND_SEARCH_MECHANIC, EXILE_SEARCH_QUERY, exile_land_target_effect, exile_land_target_schema,
+    )
+
+    match = re.fullmatch(
+        r"Exile (target|each) creature you don['’]t control\. For each creature exiled this way, its controller "
+        r"searches their library for a basic land card\. Those players put those cards onto the battlefield tapped, "
+        r"then shuffle(?: their libraries)?\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    if match[1].casefold() == "target":
+        return ("targeted-exile-controller-land-search-v1", (exile_land_target_effect(),), exile_land_target_schema(),
+                ("fixed-homogeneous-target-set", "exile", "cr-115-targets", EXILE_LAND_SEARCH_MECHANIC))
+    spec = PublicZoneMoveSetSpec(query=EXILE_SEARCH_QUERY, origin=PublicZoneOrigin.BATTLEFIELD,
+        destination=PublicZoneDestination.EXILE, seat_relation=PublicZoneSeatRelation.OPPONENTS)
+    effect = {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict(),
+              "followup": PublicExileFollowup.controller_land_search().to_dict()}
+    return ("public-exile-controller-land-search-v1", (effect,), None,
+            ("fixed-public-zone-move", "fixed-public-zone-move-set", EXILE_LAND_SEARCH_MECHANIC))
+
+
 def public_exile_followup_template(text: str, *, compile_literal):
+    if compensation := _exile_land_search_compensation(text):
+        return compensation
+    if attacking_search := attacking_creature_exile_search_template(text):
+        return attacking_search
     if opponent_draw := _opponent_exile_draw_template(text):
         return opponent_draw
     normalized = text.strip()

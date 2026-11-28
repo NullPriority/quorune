@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.compiler.modal_templates import (
     FIXED_NONREPEATING_MODAL_CAPABILITY,
@@ -17,7 +18,7 @@ from quorune.compiler.modal_templates import (
 from quorune.compiler.modal_program_closure import (
     is_closed_fixed_modal_program,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.record import (
     authoritative_state_hash,
@@ -27,6 +28,7 @@ from quorune.record import (
 from quorune.rules.capabilities import (
     CapabilityRegistry,
     capability_dependencies_for_node,
+    load_default_capability_registry,
 )
 from quorune.rules.modal_selection import canonical_modes
 from quorune.targets import mode_effects, target_plan
@@ -687,6 +689,212 @@ class FixedNonrepeatingModalRuntimeTests(unittest.TestCase):
         self.pass_stack(session)
         self.assertEqual("graveyard", enchantment.zone)
         self.assert_replays(session, "fixed-modal-entry-trigger")
+
+
+class MeldFrontModalCompilerTests(unittest.TestCase):
+    def test_meld_front_strict_admission_replaces_only_equivalent_reviewed_views(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.card_programs.modal_catalog_equivalence import shadowed_reviewed_meld_modal_keys
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.semantics import SemanticRegistry
+
+        with tempfile.TemporaryDirectory() as directory, focused_database(directory) as db:
+            card = db.lookup("The Mightstone and Weakstone", fuzzy=False)
+            caps = load_default_capability_registry()
+            profile = "commander_review"
+            semantics = SemanticRegistry()
+            prior = semantics.programs_for_oracle(card.oracle_id)
+            self.assertEqual({"trigger:enter", "spell:front"}, {p.ability_id for p in prior})
+
+            register_generated_programs(db, semantics, [card], capability_registry=caps,
+                capability_profile=profile, promote_exact_runtime_handlers=True,
+                promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+                promote_exact_capability_declarations=True)
+            current = semantics.programs_for_oracle(card.oracle_id)
+            self.assertEqual({"trigger:front:n1", "ability:ab4"}, {p.ability_id for p in current})
+            program = compile_best_available_card_program(db, card, semantic_registry=semantics,
+                capability_registry=caps, capability_profile=profile)
+            result = bind_card_program_runtime(program, capability_registry=caps, profile=profile)
+            self.assertTrue(result["strict_capability_ready"], result)
+            self.assertFalse(result["compatibility_provenance"])
+
+            legacy_trigger = next(p for p in prior if p.event == "permanent.enter.self")
+            legacy_spell = next(p for p in prior if p.event == "resolve")
+
+            def shadowed(prior_views=prior, new_views=current):
+                return shadowed_reviewed_meld_modal_keys(card, new_views, prior_views,
+                    capability_registry=caps, capability_profile=profile)
+
+            self.assertEqual({p.key for p in prior}, shadowed())
+            self.assertFalse(shadowed((legacy_trigger,)))
+            self.assertFalse(shadowed((legacy_trigger, replace(legacy_spell, destination="graveyard"))))
+            self.assertFalse(shadowed((legacy_spell, replace(legacy_trigger,
+                provenance={**legacy_trigger.provenance, "source_rulings_hash": "0" * 64}))))
+            bad_modes = copy.deepcopy(legacy_trigger.target_schema)
+            bad_modes["modes"]["weaken"]["effects"][0]["power"] = -4
+            self.assertFalse(shadowed((legacy_spell, replace(legacy_trigger, target_schema=bad_modes))))
+            typed_trigger = next(p for p in current if p.event == "permanent.enter.self")
+            dependencies = tuple(cap for cap in typed_trigger.capability_dependencies
+                if cap != "continuous.resolution.fixed_characteristics_until_end_of_turn")
+            incomplete = replace(typed_trigger, capability_dependencies=dependencies,
+                capability_closure=caps.closure(dependencies, profile=profile).to_dict())
+            self.assertFalse(shadowed(new_views=tuple(incomplete if p is typed_trigger else p for p in current)))
+
+
+class MeldFrontModalNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "meld-front-modal.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/scryfall-exact-lists.json",
+            ROOT / "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Meld front", [DeckEntry("Sliver Hivelord", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Sliver Hivelord"])
+
+    def choose_mode(self, session, mode, targets=()):
+        command = {"action_id": "choose", "modes": [mode], "targets": list(targets)}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def activate_for(self, session, source, targets=()):
+        self.priority(session, "A")
+        packet = session.packet("pilot:A", full=True)
+        action = next(row for row in packet["decision"]["ctx"]["legal"]["actions"]
+                      if row["id"].startswith(f"activate:{source.ref}:"))
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": list(targets), "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_native_draw_is_the_only_mode_without_creatures_and_remains_private(self):
+        session = self.session(951026)
+        rock = self.add(session.engine, "The Mightstone and Weakstone", zone="hand")
+        self.assert_closed(session, rock)
+        self.prepare(session, mana={"C": 5})
+        self.checkpoint(session)
+        self.cast(session, "A", rock)
+        self.resolve_top(session)
+
+        packet = session.packet("pilot:A", full=True)
+        self.assertEqual("semantic.target", packet["decision"]["kind"])
+        schema = packet["decision"]["ctx"]["target_schema"]
+        self.assertEqual(["mode_1"], schema["legal_modes"])
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        session = self.replay(session, load=True)
+
+        original_hand = set(session.state.players["A"].zones["hand"])
+        self.choose_mode(session, "mode_1")
+        self.assertIsNone(self.resolve(session))
+        drawn = set(session.state.players["A"].zones["hand"]) - original_hand
+        self.assertEqual(2, len(drawn))
+        for card in drawn:
+            ref = session.state.cards[card].ref
+            self.assertIn(ref, json.dumps(session.packet("pilot:A", full=True)))
+            for seat in "BCD":
+                self.assertNotIn(ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.assertEqual("battlefield", session.state.cards[rock.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_native_weaken_ends_at_cleanup_and_invalid_target_never_draws(self):
+        for case in ("expires", "stale", "lethal"):
+            with self.subTest(case=case):
+                session = self.session(951030 + ("expires", "stale", "lethal").index(case))
+                rock = self.add(session.engine, "The Mightstone and Weakstone", zone="hand")
+                target_name = "Prodigal Sorcerer" if case == "lethal" else "Colossal Dreadmaw"
+                victim = self.add(session.engine, target_name, seat="B")
+                sundial = self.add(session.engine, "Sundial of the Infinite")
+                removal = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+                self.add(session.engine, "Island", seat="B")
+                self.assert_closed(session, rock)
+                self.prepare(session, mana={"C": 6})
+                self.checkpoint(session)
+                self.cast_for(session, "A", rock, reserve={"C": 1})
+                self.resolve_top(session)
+
+                schema = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+                self.assertEqual(["mode_1", "mode_2"], schema["legal_modes"])
+                self.assertEqual([victim.ref], schema["mode_schemas"]["mode_2"]["groups"][0]["legal_refs"])
+                before_hand = len(session.state.players["A"].zones["hand"])
+                self.choose_mode(session, "mode_2", [victim.ref])
+                if case == "stale":
+                    self.cast(session, "B", removal, [victim.ref])
+                self.assertIsNone(self.resolve(session))
+                body = session.state.cards[victim.object_id]
+                self.assertEqual(before_hand, len(session.state.players["A"].zones["hand"]))
+                if case == "expires":
+                    self.assertEqual((1, 1), tuple(session.engine._numeric_stat(body.object_id, name)
+                        for name in ("power", "toughness")))
+                    self.activate_for(session, sundial)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual((6, 6), tuple(session.engine._numeric_stat(body.object_id, name)
+                        for name in ("power", "toughness")))
+                else:
+                    self.assertEqual("hand" if case == "stale" else "graveyard", body.zone)
+                self.replay(session, load=True)
+
+    def test_native_warform_copies_the_modal_front_and_restricted_mana(self):
+        session = self.session(951050)
+        self.add(session.engine, "Mishra, Eminent One")
+        rock = self.add(session.engine, "The Mightstone and Weakstone")
+        self.assert_closed(session, rock)
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        self.until(session, lambda game: game.state.pending_decision is not None
+                   and game.state.pending_decision.kind == "semantic.target")
+        target = session.act("pilot:A", {"action_id": "choose", "targets": [rock.ref]})
+        self.assertTrue(target.ok, target.summary)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+
+        token, = (card for card in session.state.cards.values()
+                  if card.is_token and session.engine.display_name(card.object_id) == "Mishra's Warform")
+        schema = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+        self.assertEqual(["mode_1", "mode_2"], schema["legal_modes"])
+        self.assertIn(token.ref, schema["mode_schemas"]["mode_2"]["groups"][0]["legal_refs"])
+        self.choose_mode(session, "mode_1")
+        self.assertIsNone(self.resolve(session))
+        self.activate_for(session, token)
+        self.assertEqual(2, session.state.players["A"].mana_pool["C"])
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_native_two_restricted_units_pay_equip_and_artifact_but_not_nonartifact_cast(self):
+        session = self.session(951040)
+        rock = self.add(session.engine, "The Mightstone and Weakstone", zone="hand")
+        equipment = self.add(session.engine, "Skullclamp")
+        creature = self.add(session.engine, "Colossal Dreadmaw")
+        artifact = self.add(session.engine, "Sol Ring", zone="hand")
+        nonartifact = self.add(session.engine, "Disenchant", zone="hand")
+        self.assert_closed(session, rock)
+        self.prepare(session, mana={"C": 5, "W": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", rock, reserve={"W": 1})
+        self.resolve_top(session)
+        self.choose_mode(session, "mode_1")
+        self.assertIsNone(self.resolve(session))
+
+        self.activate_for(session, rock)
+        self.assertFalse(session.state.stack)
+        self.assertEqual(2, session.state.players["A"].mana_pool["C"])
+        self.priority(session, "A")
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": f"cast:{nonartifact.ref}", "targets": [rock.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        self.activate_for(session, equipment, [creature.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.players["A"].mana_pool["C"])
+        self.cast_for(session, "A", artifact, reserve={"W": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(0, session.state.players["A"].mana_pool["C"])
+        self.assertEqual("battlefield", session.state.cards[artifact.object_id].zone)
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

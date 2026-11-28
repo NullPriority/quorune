@@ -51,9 +51,29 @@ def record_damage_turn_history(
     )
 
 
+def committed_damage_to_player_this_turn(state: Any, recipient: str) -> int | None:
+    """Sum the actual final damage results for one current-turn recipient."""
+    history = state.turn_history
+    if history is None or history.schema_version != 1 or history.turn_sequence != state.turn_sequence:
+        return None
+    return sum(event.amount for event in history.events
+               if event.kind == "player_damaged" and event.target == recipient)
+
+
+def maximum_committed_damage_this_turn(state: Any) -> int | None:
+    """Read the largest single dealt-damage result in the current public journal."""
+    history = state.turn_history
+    if history is None or history.schema_version != 1 or history.turn_sequence != state.turn_sequence:
+        return None
+    return max((event.amount for event in history.events
+                if event.kind in ("player_damaged", "permanent_damaged")), default=0)
+
+
 __all__ = [
     "COMBAT_DAMAGE_HISTORY_MARKER",
+    "committed_damage_to_player_this_turn",
     "COMMANDER_DAMAGE_HISTORY_MARKER",
     "DamageTurnHistoryHost",
+    "maximum_committed_damage_this_turn",
     "record_damage_turn_history",
 ]

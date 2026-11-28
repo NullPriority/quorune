@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .private_opponent_library_cast_model import PrivateLibrarySearchPlaySource
+
 """Object-local state reset for CR 400.7 zone transitions."""
 
 from collections.abc import Mapping
@@ -8,12 +10,14 @@ from typing import Sequence
 from .paid_entry_copy_model import PAID_ENTRY_COPY_FIELD, validate_paid_entry_copy_fact
 from .declared_cast_cost_model import DECLARED_CAST_COSTS_FIELD, DeclaredCastCostFacts
 
-from .model import CardInstance
+from .errors import GameRuleError
+from .model import CardInstance, GameState, StackItem
 from .kicker import KICKER_ANNOTATION
 from .impending_model import PAID_IMPENDING_FIELD
 from .stack_resolution_authority_model import COPIED_SPELL_ENTRY_AUTHORITY_VERSION
 from .multikicker_model import MULTIKICKER_FIELD, validate_multikicker_fact
 from .flashback import FLASHBACK_CAST_ANNOTATION
+from .harmonize import ANNOTATION as HARMONIZE_ANNOTATION
 from .cast_lifecycles import (
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
@@ -92,8 +96,12 @@ def mark_multikicker_paid(card: CardInstance, context) -> None:
 
 
 def stack_entry_cast_facts(card: CardInstance, *, include_multikicker_result=False):
+    from .beheld_exile_state import PAID_BEHELD_EXILE_FIELD, PaidBeheldExile
+
     value = card.annotations.get(PAID_ENTRY_COPY_FIELD)
     return {'cast_option': 'kicked' if card.annotations.get(KICKER_ANNOTATION) is True else None,
+        **({'paid_beheld_exile': PaidBeheldExile.from_dict(card.annotations[PAID_BEHELD_EXILE_FIELD])}
+           if card.zone == 'stack' and PAID_BEHELD_EXILE_FIELD in card.annotations else {}),
         **({MULTIKICKER_FIELD: validate_multikicker_fact(card.annotations[MULTIKICKER_FIELD])}
            if include_multikicker_result and card.zone == 'stack' and MULTIKICKER_FIELD in card.annotations else {}),
         **({'declared_cast_costs': DeclaredCastCostFacts.from_dict(card.annotations[DECLARED_CAST_COSTS_FIELD]).to_dict()}
@@ -172,6 +180,15 @@ def mark_card_flashed_back(card: CardInstance) -> None:
     card.annotations[FLASHBACK_CAST_ANNOTATION] = True
 
 
+def mark_card_harmonized(card: CardInstance) -> None:
+    if (
+        not isinstance(card, CardInstance) or card.zone != "stack" or card.object_kind != "card"
+        or card.annotations.get(HARMONIZE_ANNOTATION) is not None
+    ):
+        raise ZoneObjectStateError("The physical harmonized spell designation is malformed")
+    card.annotations[HARMONIZE_ANNOTATION] = True
+
+
 def mark_card_fixed_cast_lifecycle(
     card: CardInstance,
     spec: FixedCastLifecycleSpec,
@@ -195,6 +212,14 @@ def mark_card_fixed_cast_lifecycle(
     ):
         raise ZoneObjectStateError("Fixed cast-lifecycle stack state is malformed")
     card.annotations[FIXED_CAST_LIFECYCLE_STACK_ANNOTATION] = spec.to_dict()
+
+
+def mark_airbend_exile_permission(card: CardInstance) -> None:
+    from .rules.airbend import AirbendCastPermission, PERMISSION_FIELD
+
+    if card.zone != "exile" or not card.is_card_object or card.face_down or PERMISSION_FIELD in card.annotations:
+        raise ZoneObjectStateError("Airbend cast permission requires one face-up arriving card")
+    card.annotations[PERMISSION_FIELD] = AirbendCastPermission(card.owner, card.logical_object_id).to_dict()
 
 
 def mark_fixed_zone_cast_designation(
@@ -230,6 +255,127 @@ def mark_fixed_zone_cast_designation(
         card.revealed_to = list(viewers)
 
 
+def validate_face_down_library_entry(
+    card: CardInstance, destination: str, manifest_entry: bool, cloak_entry: bool,
+) -> None:
+    """Validate the represented ways a library card can enter face down."""
+    if (
+        type(manifest_entry) is not bool or type(cloak_entry) is not bool
+        or manifest_entry and cloak_entry
+        or (manifest_entry or cloak_entry)
+        and (card.zone != "library" or destination != "battlefield" or card.object_kind != "card")
+    ):
+        raise GameRuleError("Face-down entry requires one library card entering the battlefield")
+
+
+def validate_library_face_down_exile_move(
+    card: CardInstance,
+    *,
+    destination: str,
+    reveal_to: Sequence[str] | None,
+    unviewed_library_exile: bool,
+    private_library_exile_viewer: str | None,
+    private_library_cast_source: str | PrivateLibrarySearchPlaySource | None,
+    active_seats: Sequence[str],
+    stack: Sequence[StackItem],
+    private_replacement_journal: bool = False,
+) -> None:
+    """Validate either the unviewed move or its exact live library-exile grant."""
+    if type(unviewed_library_exile) is not bool or (
+        unviewed_library_exile and private_library_exile_viewer is not None
+    ):
+        raise GameRuleError("Unviewed library exile cannot have a viewer")
+    if unviewed_library_exile or private_library_exile_viewer is not None:
+        if (card.zone != "library" or card.object_kind != "card"
+                or destination != "exile" or reveal_to is not None):
+            raise GameRuleError("Face-down library exile requires one physical library card")
+        if private_library_exile_viewer is not None and (
+            type(private_library_exile_viewer) is not str or (private_library_cast_source is None and private_library_exile_viewer != card.owner)
+            or private_library_exile_viewer not in active_seats
+        ):
+            raise GameRuleError("Viewed library exile requires its actual owner")
+    search_play = isinstance(private_library_cast_source, PrivateLibrarySearchPlaySource)
+    if search_play:
+        if not private_library_cast_source.permits_move(card=card, viewer=private_library_exile_viewer, stack=stack):
+            raise GameRuleError("Private library play requires the selected card and its resolving opponent search")
+    elif private_library_cast_source is not None:
+        from .rules.private_damage_library_cast import damage_library_exile_move_is_bound
+
+        source = next((item for item in stack if item.ref == private_library_cast_source), None)
+        if (type(private_library_cast_source) is not str or not private_library_cast_source
+                or private_library_exile_viewer is None or private_library_exile_viewer == card.owner
+                or source is None or source.kind != "triggered_ability" or source.controller != private_library_exile_viewer
+                or source.context.get("currently_resolving") is not True
+                or tuple(source.targets) != (card.owner,) and not damage_library_exile_move_is_bound(source, card, private_library_exile_viewer)):
+            raise GameRuleError("Private library cast access requires its resolving controller and opponent supplier")
+
+    if type(private_replacement_journal) is not bool or (
+        private_replacement_journal and (
+            private_library_exile_viewer is None or (private_library_cast_source is not None and not search_play)
+        )
+    ):
+        raise GameRuleError("A private replacement journal requires private library exile")
+
+
+def mark_library_card_exiled_face_down(
+    card: CardInstance, *, viewer: str | None, cast_source: str | PrivateLibrarySearchPlaySource | None = None,
+) -> None:
+    """Keep the authorized viewer on the actual face-down exile incarnation."""
+    if card.zone != "exile" or card.object_kind != "card" or cast_source is None and viewer not in (None, card.owner):
+        raise ZoneObjectStateError("Face-down library exile requires its actual card and authorized viewer")
+    if cast_source is not None:
+        from .private_opponent_library_cast_model import private_opponent_library_cast_permission
+
+        normal_play = isinstance(cast_source, PrivateLibrarySearchPlaySource)
+        card.annotations["temporary_play_permission"] = private_opponent_library_cast_permission(
+            card, actor=viewer, source_stack_ref=cast_source.stack_ref if normal_play else cast_source,
+            normal_play=normal_play,
+        )
+    card.face_down = True
+    card.known_to = [viewer] if viewer is not None else []
+    card.revealed_to = []
+
+
+def apply_library_exile_visibility(
+    card: CardInstance, destination: str, *, viewer: str | None, unviewed: bool,
+    cast_source: str | PrivateLibrarySearchPlaySource | None,
+) -> None:
+    if destination == "exile" and (unviewed or viewer is not None):
+        mark_library_card_exiled_face_down(card, viewer=viewer, cast_source=cast_source)
+
+
+def reveal_exiled_card(card: CardInstance, *, viewers: Sequence[str]) -> bool:
+    """Turn the current exiled card face up without creating a new object."""
+    if (card.zone != "exile" or card.object_kind != "card" or not viewers
+            or any(type(viewer) is not str or not viewer for viewer in viewers)
+            or len(set(viewers)) != len(viewers)):
+        raise ZoneObjectStateError("An exile reveal requires its current card and public viewers")
+    if not card.face_down:
+        return False
+    card.face_down = False
+    card.known_to = list(viewers)
+    card.revealed_to = list(viewers)
+    return True
+
+
+def face_down_exile_viewers(state: GameState, card: CardInstance) -> frozenset[str]:
+    """Return only the seats with look permission for this face-down exile."""
+    from .private_opponent_library_cast_model import (
+        has_private_opponent_library_cast_designation,
+        private_opponent_library_exile_viewer,
+    )
+
+    if has_private_opponent_library_cast_designation(card):
+        viewer = private_opponent_library_exile_viewer(state, card)
+        return frozenset((viewer,)) if viewer is not None else frozenset()
+    from .rules.private_opponent_top_exile import has_private_top_exile_designation, private_top_exile_viewer
+
+    if has_private_top_exile_designation(card):
+        viewer = private_top_exile_viewer(state, card)
+        return frozenset((viewer,)) if viewer is not None else frozenset()
+    return frozenset(card.known_to).union(card.revealed_to)
+
+
 def mark_card_face_down_for_morph(
     card: CardInstance,
     *,
@@ -256,13 +402,13 @@ def mark_card_face_down_for_morph(
     card.revealed_to = []
 
 
-def mark_card_manifested(card: CardInstance, *, controller: str) -> None:
-    from .manifest import manifest_characteristics, MANIFEST_MARKER
-    if card.zone != 'battlefield' or card.object_kind != 'card' or not controller:
-        raise ZoneObjectStateError('Manifest state requires one entering physical card')
+def mark_card_manifested(card: CardInstance, *, controller: str, cloaked: bool = False) -> None:
+    from .manifest import library_face_down_annotations
+
+    if card.zone != 'battlefield' or card.object_kind != 'card' or not controller or type(cloaked) is not bool:
+        raise ZoneObjectStateError('Library face-down state requires one entering physical card')
     card.face_down = True
-    card.annotations[MORPH_FACE_DOWN_ANNOTATION] = manifest_characteristics()
-    card.annotations[MANIFEST_MARKER] = {'schema_version': 1}
+    card.annotations.update(library_face_down_annotations(cloaked=cloaked))
     card.known_to = [controller]
     card.revealed_to = []
 
@@ -288,6 +434,7 @@ def turn_card_face_up(
     card.face_down = False
     if timestamp is not None:card.zone_timestamp=timestamp
     card.annotations.pop('manifested_card', None)
+    card.annotations.pop('cloaked_card', None)
     card.annotations.pop(MORPH_FACE_DOWN_ANNOTATION, None)
     card.annotations.pop(MORPH_METHOD_ANNOTATION, None)
     from .morph import EFFECT_FACE_DOWN_ANNOTATION
@@ -309,6 +456,7 @@ def turn_card_face_down(card: CardInstance, *, timestamp: int | None = None) -> 
     if timestamp is not None:
         card.zone_timestamp = timestamp
     card.annotations.pop("manifested_card", None)
+    card.annotations.pop("cloaked_card", None)
     card.annotations.pop(MORPH_METHOD_ANNOTATION, None)
     card.annotations[MORPH_FACE_DOWN_ANNOTATION] = face_down_characteristics("morph")
     card.annotations[EFFECT_FACE_DOWN_ANNOTATION] = {"schema_version": 1}
@@ -377,6 +525,11 @@ def reset_card_after_zone_change(
         "object_characteristics",
         "token_characteristics",
     }
+    from .rules.name_stickers import PLACEMENTS
+    from .zone_transition_model import PUBLIC_ZONES
+
+    if card.zone in PUBLIC_ZONES and destination in PUBLIC_ZONES and PLACEMENTS in card.annotations:
+        retained_annotation_keys.add(PLACEMENTS)
     if card.is_token or card.object_kind in {
         "spell_copy",
         "card_copy",
@@ -396,6 +549,7 @@ def reset_card_after_zone_change(
                 "chosen_creature_type",
                 "chosen_creature_type_adds_subtype",
                 "chosen_name",
+                "last_noted_mana_type",
                 "copy_overrides",
                 "evoked",
                 "pending_aura_target",

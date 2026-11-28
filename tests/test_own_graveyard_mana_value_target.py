@@ -49,6 +49,7 @@ class OwnGraveyardManaValueTests(unittest.TestCase):
             "bound-effect-program-cards.json",
             "fixed-stack-spell-copy-cards.json",
             "own-graveyard-mana-value-target-cards.json",
+            "artifact-graveyard-departure-cards.json",
         )], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -64,6 +65,132 @@ class OwnGraveyardManaValueTests(unittest.TestCase):
     def offer(self, session, spell):
         actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
         return next(row for row in actions if row["id"] == "cast:" + spell.ref)
+
+    def test_artifact_departure_binding_rejects_changed_grammar_and_missing_facts(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+
+        from quorune.rules.artifact_graveyard_departure import (
+            CAPABILITY, EVENT, MECHANIC, bind_departure_artifact_return_target,
+            departure_artifact_return_condition, departure_artifact_return_result,
+            departure_artifact_return_runtime_dependencies,
+        )
+        from test_fixed_extra_turns import turn_record
+
+        clause = self.db.lookup("Scrap Trawler").oracle_text
+        record = turn_record(clause, type_line="Artifact Creature — Construct")
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(EVENT, node.event)
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        self.assertEqual(departure_artifact_return_condition(), node.event_condition)
+        self.assertEqual(departure_artifact_return_result()[2], node.target_schema)
+        for changed in (
+            clause.replace("another artifact you control", "another artifact"),
+            clause.replace("lesser mana value", "equal or lesser mana value"),
+            clause.replace("target artifact card", "target permanent card"),
+        ):
+            with self.subTest(changed=changed):
+                unsupported = compile_oracle_card(replace(record, oracle_text=changed),
+                    capability_registry=self.registry, capability_profile=PROFILE)
+                self.assertTrue(unsupported.material_residuals)
+
+        program = SimpleNamespace(event=node.event, active_zone=node.active_zone,
+            event_condition=node.event_condition, effects=node.effects, target_schema=node.target_schema,
+            handlers=(), cost_schema=None, coverage=node.mechanics, capability_dependencies=node.capability_dependencies)
+        self.assertIn(MECHANIC, program.coverage)
+        facts = {"from": "battlefield", "to": "graveyard", "card_object_identity": "departed@1"}
+        for amount, maximum in ((0, -1), (1, 0), (4.0, 3)):
+            with self.subTest(amount=amount):
+                self.assertEqual(maximum, bind_departure_artifact_return_target(
+                    program, {**facts, "mana_value": amount})["target_schema_override"]["mana_value_max"])
+        for invalid in (None, True, -1, 2.5, float("inf"), "3"):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                bind_departure_artifact_return_target(program, {**facts, "mana_value": invalid})
+        with self.assertRaises(ValueError):
+            bind_departure_artifact_return_target(program, {**facts, "to": "exile", "mana_value": 3})
+        forged = SimpleNamespace(**{**vars(program), "target_schema": {**node.target_schema, "owner_relation": "any"}})
+        with self.assertRaises(ValueError):
+            departure_artifact_return_runtime_dependencies(forged)
+
+    def test_actual_simultaneous_artifact_departures_retain_separate_mana_bounds_and_replay(self):
+        game = self.session(601_412)
+        engine = game.engine
+        trawler = self.add(engine, "Scrap Trawler", ref="departure-source")
+        steel = self.add(engine, "Sculpting Steel", zone="hand", ref="departure-copy")
+        model = self.add(engine, "Thran Dynamo", seat="B", ref="departure-opposing-artifact")
+        borrowed = self.add(engine, "Hedron Archive", seat="B", zone="hand", ref="departure-borrowed")
+        engine.move_card(borrowed.object_id, "battlefield", controller="A")
+        ring = self.add(engine, "Sol Ring", ref="departure-one-mana")
+        ornithopter = self.add(engine, "Ornithopter", ref="departure-zero-mana")
+        bauble = self.add(engine, "Mishra's Bauble", zone="graveyard", ref="departure-return-zero")
+        stone = self.add(engine, "Mind Stone", zone="graveyard", ref="departure-return-two")
+        powerstone = self.add(engine, "Worn Powerstone", zone="graveyard", ref="departure-return-three")
+        destroy = self.add(engine, "Creeping Corrosion", zone="hand", ref="departure-sweep")
+        self.prepare(game, mana={"C": 5, "G": 2})
+        self.checkpoint(game)
+        for source in (trawler, steel, destroy):
+            bound = self.binding(game, source)
+            self.assertTrue(bound["strict_capability_ready"], bound)
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+
+        self.cast(game, "A", steel, payment={"C": 3})
+        self.assertEqual("replacement.order", self.resolve(game).kind)
+        choices = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        copied, = (row for row in choices if model.ref in row["id"] and not row["id"].startswith("decline:"))
+        answer = game.act("pilot:A", {"action_id": "choose", "replacement": copied["id"]})
+        self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(4, game.engine._effective_card_data(game.state.cards[steel.object_id])["mana_value"])
+
+        self.cast(game, "A", destroy, payment={"C": 2, "G": 2})
+        pending = self.resolve(game)
+        self.assertEqual(("trigger.order", ["A"]), (pending.kind, list(pending.actors)))
+        view = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        ordered = game.act("pilot:A", {"action_id": "order", "triggers": [row["id"] for row in view["triggers"]]})
+        self.assertTrue(ordered.ok, ordered.summary)
+        low = {ornithopter.ref, bauble.ref}
+        below_three = low | {ring.ref, stone.ref}
+        below_four = below_three | {trawler.ref, steel.ref, powerstone.ref}
+        expected = {
+            ring.ref: (1, low, bauble),
+            trawler.ref: (3, below_three, stone),
+            steel.ref: (4, below_four, steel),
+            borrowed.ref: (4, below_four, powerstone),
+        }
+        seen = set()
+        for _ in expected:
+            decision = game.packet("pilot:A", full=True)["decision"]
+            self.assertEqual(("semantic.target", "A"), (decision["kind"], decision["actor"]))
+            item, = (part for part in game.state.stack if part.ref == decision["ctx"]["stack"])
+            cause = item.context["card"]
+            value, legal, chosen = expected[cause]
+            self.assertNotIn(cause, seen)
+            self.assertEqual(value, item.context["mana_value"])
+            self.assertEqual(value - 1, item.context["target_schema_override"]["mana_value_max"])
+            self.assertEqual(legal, set(decision["ctx"]["target_schema"]["legal_refs"]))
+            if cause == trawler.ref:
+                before = authoritative_state_hash(game.state)
+                accepted = len(game.commands)
+                for pilot, target in (("pilot:A", powerstone.ref), ("pilot:B", stone.ref)):
+                    rejected = game.act(pilot, {"action_id": "choose", "targets": [target]})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                    self.assertEqual(accepted, len(game.commands))
+            result = game.act("pilot:A", {"action_id": "choose", "targets": [chosen.ref]})
+            self.assertTrue(result.ok, result.summary)
+            seen.add(cause)
+        self.assertEqual(set(expected), seen)
+        self.assertEqual(3, self.db.lookup("Sculpting Steel").mana_value)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        for returned in (bauble, stone, steel, powerstone):
+            self.assertEqual("hand", game.state.cards[returned.object_id].zone)
+        for excluded in (trawler, ring, ornithopter, model, borrowed):
+            self.assertEqual("graveyard", game.state.cards[excluded.object_id].zone)
+        self.replay(game, load=True)
 
     def test_announced_reanimation_quotes_only_owned_creatures_and_replays(self):
         session = self.session(601_401)

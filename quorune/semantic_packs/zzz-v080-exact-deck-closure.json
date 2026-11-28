@@ -17,11 +17,15 @@
             "count": 1,
             "choice_field": "sacrifice_cards",
             "predicate": {
-              "zones": ["battlefield"],
+              "zones": [
+                "battlefield"
+              ],
               "owner": null,
               "controller": "$actor",
               "types_all": [],
-              "types_any": ["creature"],
+              "types_any": [
+                "creature"
+              ],
               "excluded_types": [],
               "subtypes_all": [],
               "supertypes_all": [],
@@ -43,7 +47,10 @@
           "searching_player": "$controller",
           "zone": "library",
           "selector": {},
-          "count": {"minimum": 1, "maximum": 1},
+          "count": {
+            "minimum": 1,
+            "maximum": 1
+          },
           "destination": "hand",
           "reveal": false,
           "shuffle_after": true
@@ -51,8 +58,14 @@
       ],
       "destination": "graveyard",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "additional_cost", "private_library_search"],
-      "tests": ["test_diabolic_intent_requires_and_pays_creature_sacrifice"],
+      "coverage": [
+        "spell_resolution",
+        "additional_cost",
+        "private_library_search"
+      ],
+      "tests": [
+        "test_diabolic_intent_requires_and_pays_creature_sacrifice"
+      ],
       "provenance": {
         "source_oracle_hash": "8b3882e50101d0f0d683f243fc68c4422ca3a2bd030e14975ed53791c2b4d3f9",
         "source_rulings_hash": "62be64537fdc25ef38e6a63051ff798d664d744f0c1acf24876d49a97824e060",
@@ -70,8 +83,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "dynamic_power_toughness"],
-      "tests": ["test_reclaimer_threshold_and_exact_land_search_cost"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "dynamic_power_toughness"
+      ],
+      "tests": [
+        "test_reclaimer_threshold_and_exact_land_search_cost"
+      ],
       "provenance": {
         "source_oracle_hash": "3d29541ab1f7a3983347f43d73d0ba2751a9c57659737aaf83d54736895a630e",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -91,8 +110,15 @@
           "op": "search",
           "searching_player": "$controller",
           "zone": "library",
-          "selector": {"types": ["Land"]},
-          "count": {"minimum": 1, "maximum": 1},
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "count": {
+            "minimum": 1,
+            "maximum": 1
+          },
           "destination": "battlefield",
           "enters_tapped_override": true,
           "reveal": false,
@@ -100,8 +126,14 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "sacrifice_cost", "typed_library_search"],
-      "tests": ["test_reclaimer_threshold_and_exact_land_search_cost"],
+      "coverage": [
+        "activated_ability",
+        "sacrifice_cost",
+        "typed_library_search"
+      ],
+      "tests": [
+        "test_reclaimer_threshold_and_exact_land_search_cost"
+      ],
       "provenance": {
         "source_oracle_hash": "3d29541ab1f7a3983347f43d73d0ba2751a9c57659737aaf83d54736895a630e",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -119,8 +151,15 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "dynamic_power_toughness", "vigilance"],
-      "tests": ["test_wight_counts_graveyard_creatures_and_searches_land"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "dynamic_power_toughness",
+        "vigilance"
+      ],
+      "tests": [
+        "test_wight_counts_graveyard_creatures_and_searches_land"
+      ],
       "provenance": {
         "source_oracle_hash": "594856fbe86a36c0e0924dd599bbabf8c70743a95ed4ecbf945ed8335a81887d",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -140,8 +179,15 @@
           "op": "search",
           "searching_player": "$controller",
           "zone": "library",
-          "selector": {"types": ["Land"]},
-          "count": {"minimum": 1, "maximum": 1},
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "count": {
+            "minimum": 1,
+            "maximum": 1
+          },
           "destination": "battlefield",
           "enters_tapped_override": true,
           "reveal": false,
@@ -149,8 +195,14 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "sacrifice_cost", "typed_library_search"],
-      "tests": ["test_wight_counts_graveyard_creatures_and_searches_land"],
+      "coverage": [
+        "activated_ability",
+        "sacrifice_cost",
+        "typed_library_search"
+      ],
+      "tests": [
+        "test_wight_counts_graveyard_creatures_and_searches_land"
+      ],
       "provenance": {
         "source_oracle_hash": "594856fbe86a36c0e0924dd599bbabf8c70743a95ed4ecbf945ed8335a81887d",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -168,8 +220,16 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "combat_restriction", "zone_permission", "graveyard_cast_permission"],
-      "tests": ["test_gravecrawler_graveyard_cast_requires_controlled_zombie"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "combat_restriction",
+        "zone_permission",
+        "graveyard_cast_permission"
+      ],
+      "tests": [
+        "test_gravecrawler_graveyard_cast_requires_controlled_zombie"
+      ],
       "provenance": {
         "source_oracle_hash": "3d9bbbc6f080b63067335db047bd58f7f523070fc449842eab9839e4d30ff4d4",
         "source_rulings_hash": "9d3976945d4e5a1e0ffd625bf5d9621995cbc2c27c2516927fa04756ae1e779b",
@@ -187,8 +247,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "flash", "flying"],
-      "tests": ["test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"],
+      "coverage": [
+        "permanent_characteristics",
+        "flash",
+        "flying"
+      ],
+      "tests": [
+        "test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"
+      ],
       "provenance": {
         "source_oracle_hash": "9057053fb56b1a7734ce8ae12241f7eb15814d48df0cd2dc3b13e4994333a438",
         "source_rulings_hash": "3711981835ba4cb281afa0d3dbea6ac0e738019c4bcc9dda5c910751b09ec5e3",
@@ -208,10 +274,22 @@
         "op": "ne",
         "value": "$source.controller"
       },
-      "effects": [{"op": "draw", "player": "$controller", "count": 1}],
+      "effects": [
+        {
+          "op": "draw",
+          "player": "$controller",
+          "count": 1
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "opponent_second_draw", "draw"],
-      "tests": ["test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"],
+      "coverage": [
+        "triggered_ability",
+        "opponent_second_draw",
+        "draw"
+      ],
+      "tests": [
+        "test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"
+      ],
       "provenance": {
         "source_oracle_hash": "9057053fb56b1a7734ce8ae12241f7eb15814d48df0cd2dc3b13e4994333a438",
         "source_rulings_hash": "3711981835ba4cb281afa0d3dbea6ac0e738019c4bcc9dda5c910751b09ec5e3",
@@ -226,10 +304,20 @@
       "ability_id": "ability:ab4",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{"op": "draw_each_player", "count": 1}],
+      "effects": [
+        {
+          "op": "draw_each_player",
+          "count": 1
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "multiplayer_draw"],
-      "tests": ["test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"],
+      "coverage": [
+        "activated_ability",
+        "multiplayer_draw"
+      ],
+      "tests": [
+        "test_faerie_mastermind_tracks_opponent_second_draw_and_draws_each_player"
+      ],
       "provenance": {
         "source_oracle_hash": "9057053fb56b1a7734ce8ae12241f7eb15814d48df0cd2dc3b13e4994333a438",
         "source_rulings_hash": "3711981835ba4cb281afa0d3dbea6ac0e738019c4bcc9dda5c910751b09ec5e3",
@@ -247,8 +335,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "opponent_untap"],
-      "tests": ["test_seedborn_muse_untaps_all_permanents_on_opponent_untap"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "opponent_untap"
+      ],
+      "tests": [
+        "test_seedborn_muse_untaps_all_permanents_on_opponent_untap"
+      ],
       "provenance": {
         "source_oracle_hash": "84ce2101743f49d48b84d11795a02ab4961689f77edb2452d93c817aea57153e",
         "source_rulings_hash": "f6635d531a5f104421c8d5518a981a724ceb8d824d2d1e779fb9140463b107c1",
@@ -266,8 +360,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "land_entry_replacement"],
-      "tests": ["test_spelunking_draws_puts_optional_land_and_forces_untapped_entry"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "land_entry_replacement"
+      ],
+      "tests": [
+        "test_spelunking_draws_puts_optional_land_and_forces_untapped_entry"
+      ],
       "provenance": {
         "source_oracle_hash": "c4f54404f07f1db019d6ade726300d0f788c66c8a52fdcca5b7df7aad7cc8d65",
         "source_rulings_hash": "704e9f36e72e8833dee71c41ccbd3db0974548c5fa064ee7de73d1e1a8a46dc7",
@@ -283,7 +383,11 @@
       "active_zone": "battlefield",
       "event": "permanent.enter.self",
       "effects": [
-        {"op": "draw", "player": "$controller", "count": 1},
+        {
+          "op": "draw",
+          "player": "$controller",
+          "count": 1
+        },
         {
           "op": "put_land_from_hand",
           "player": "$controller",
@@ -292,8 +396,17 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "draw", "private_choice", "land_put", "conditional_life"],
-      "tests": ["test_spelunking_draws_puts_optional_land_and_forces_untapped_entry"],
+      "coverage": [
+        "triggered_ability",
+        "enters_trigger",
+        "draw",
+        "private_choice",
+        "land_put",
+        "conditional_life"
+      ],
+      "tests": [
+        "test_spelunking_draws_puts_optional_land_and_forces_untapped_entry"
+      ],
       "provenance": {
         "source_oracle_hash": "c4f54404f07f1db019d6ade726300d0f788c66c8a52fdcca5b7df7aad7cc8d65",
         "source_rulings_hash": "704e9f36e72e8833dee71c41ccbd3db0974548c5fa064ee7de73d1e1a8a46dc7",
@@ -309,11 +422,20 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "next_spell_uncounterable", "player": "$controller"}
+        {
+          "op": "next_spell_uncounterable",
+          "player": "$controller"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "next_spell_effect", "cant_be_countered"],
-      "tests": ["test_mistrise_marks_only_the_next_spell_uncounterable"],
+      "coverage": [
+        "activated_ability",
+        "next_spell_effect",
+        "cant_be_countered"
+      ],
+      "tests": [
+        "test_mistrise_marks_only_the_next_spell_uncounterable"
+      ],
       "provenance": {
         "source_oracle_hash": "045052e7be9c8bb937410c811934ec65f9e11d23e0717bdbfda522d81ca265fa",
         "source_rulings_hash": "6fb83aba185fbc318bb1eb7986935da2c7dcc040ac97456711df301a5fb546ca",
@@ -329,11 +451,21 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "next_spell_improvise", "player": "$controller"}
+        {
+          "op": "next_spell_improvise",
+          "player": "$controller"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "next_spell_effect", "improvise", "cost_reduction"],
-      "tests": ["test_archway_grants_improvise_to_exactly_the_next_spell"],
+      "coverage": [
+        "activated_ability",
+        "next_spell_effect",
+        "improvise",
+        "cost_reduction"
+      ],
+      "tests": [
+        "test_archway_grants_improvise_to_exactly_the_next_spell"
+      ],
       "provenance": {
         "source_oracle_hash": "7ad475ec7a419d53650e8c1126b37223f74d6f991e5bf58ad6d647a60c414fcd",
         "source_rulings_hash": "8a86e433fae7fbf85436b4b0575b8938791948aa432740e1cc102b3be5bb0563",
@@ -351,8 +483,15 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "flash", "flying", "protection_keyword"],
-      "tests": ["test_scryb_ranger_returns_forest_and_enforces_once_each_turn"],
+      "coverage": [
+        "permanent_characteristics",
+        "flash",
+        "flying",
+        "protection_keyword"
+      ],
+      "tests": [
+        "test_scryb_ranger_returns_forest_and_enforces_once_each_turn"
+      ],
       "provenance": {
         "source_oracle_hash": "4944ee151dacf4a1475cb40cef894dc835367a44a462ee389f7be3a6d168db7c",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -368,15 +507,32 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
+        "zones": [
+          "battlefield"
+        ],
+        "categories": [
+          "permanent"
+        ],
         "creature": true,
         "count": 1
       },
-      "effects": [{"op": "untap", "card": "$target.0"}],
+      "effects": [
+        {
+          "op": "untap",
+          "card": "$target.0"
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "return_cost", "target_validation", "untap", "once_each_turn"],
-      "tests": ["test_scryb_ranger_returns_forest_and_enforces_once_each_turn"],
+      "coverage": [
+        "activated_ability",
+        "return_cost",
+        "target_validation",
+        "untap",
+        "once_each_turn"
+      ],
+      "tests": [
+        "test_scryb_ranger_returns_forest_and_enforces_once_each_turn"
+      ],
       "provenance": {
         "source_oracle_hash": "4944ee151dacf4a1475cb40cef894dc835367a44a462ee389f7be3a6d168db7c",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -395,18 +551,31 @@
         {
           "op": "draw_if_opponent_cast_colors_this_turn",
           "player": "$controller",
-          "colors": ["U", "B"]
+          "colors": [
+            "U",
+            "B"
+          ]
         },
         {
           "op": "grant_uncounterable_hexproof_from_colors_until_end",
           "player": "$controller",
-          "colors": ["U", "B"]
+          "colors": [
+            "U",
+            "B"
+          ]
         }
       ],
       "destination": "graveyard",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "conditional_draw", "cant_be_countered", "temporary_hexproof"],
-      "tests": ["test_veil_draws_from_prior_opponent_color_and_protects_targets"],
+      "coverage": [
+        "spell_resolution",
+        "conditional_draw",
+        "cant_be_countered",
+        "temporary_hexproof"
+      ],
+      "tests": [
+        "test_veil_draws_from_prior_opponent_color_and_protects_targets"
+      ],
       "provenance": {
         "source_oracle_hash": "dfc84fd927efe4676722069b1b002726f8697e37837c8f24c91aac708c3ba247",
         "source_rulings_hash": "f3ddfe3abc5713edd248169b200a8f9c71ddd35d4e0a272905147aaf69878bf0",
@@ -422,8 +591,12 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["graveyard"],
-        "categories": ["card"],
+        "zones": [
+          "graveyard"
+        ],
+        "categories": [
+          "card"
+        ],
         "owner_relation": "you",
         "predicate": "permanent_card",
         "count": 1
@@ -436,8 +609,16 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "delirium", "target_validation", "temporary_copy", "keyword:delirium"],
-      "tests": ["test_shifting_woodland_requires_delirium_and_restores_copy"],
+      "coverage": [
+        "activated_ability",
+        "delirium",
+        "target_validation",
+        "temporary_copy",
+        "keyword:delirium"
+      ],
+      "tests": [
+        "test_shifting_woodland_requires_delirium_and_restores_copy"
+      ],
       "provenance": {
         "source_oracle_hash": "4c8d0c5304ad83c5511e88819c6c89453b2537af5d260d9525c414a94058a767",
         "source_rulings_hash": "9987074bef41761358658310bab4b9d300da12f32f6329d481d841730a75b000",
@@ -455,8 +636,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "static_ability", "granted_mana_ability"],
-      "tests": ["test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"],
+      "coverage": [
+        "permanent_characteristics",
+        "static_ability",
+        "granted_mana_ability"
+      ],
+      "tests": [
+        "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"
+      ],
       "provenance": {
         "source_oracle_hash": "66b469bfd33f2bab444f06de7d72683d962aac1a24b8353e0b15e7d99e6d6687",
         "source_rulings_hash": "e01931103debb822831b09d066581d2fc704b248a757cf04eff91c3c87edc3fa",
@@ -480,10 +667,14 @@
           "condition": {
             "target_controller": "source_controller",
             "predicate": {
-              "zones": ["battlefield"],
+              "zones": [
+                "battlefield"
+              ],
               "owner": null,
               "controller": null,
-              "types_all": ["creature"],
+              "types_all": [
+                "creature"
+              ],
               "types_any": [],
               "excluded_types": [],
               "subtypes_all": [],
@@ -514,11 +705,21 @@
                   "sorcery_speed": false,
                   "mana_ability": true,
                   "fixed_mana_outputs": [
-                    {"W": 1},
-                    {"U": 1},
-                    {"B": 1},
-                    {"R": 1},
-                    {"G": 1}
+                    {
+                      "W": 1
+                    },
+                    {
+                      "U": 1
+                    },
+                    {
+                      "B": 1
+                    },
+                    {
+                      "R": 1
+                    },
+                    {
+                      "G": 1
+                    }
                   ]
                 }
               }
@@ -527,8 +728,13 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["static_ability", "granted_mana_ability"],
-      "tests": ["test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"],
+      "coverage": [
+        "static_ability",
+        "granted_mana_ability"
+      ],
+      "tests": [
+        "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"
+      ],
       "provenance": {
         "source_oracle_hash": "66b469bfd33f2bab444f06de7d72683d962aac1a24b8353e0b15e7d99e6d6687",
         "source_rulings_hash": "e01931103debb822831b09d066581d2fc704b248a757cf04eff91c3c87edc3fa",
@@ -553,7 +759,9 @@
           {
             "field": "types",
             "op": "contains_any",
-            "value": ["creature"]
+            "value": [
+              "creature"
+            ]
           }
         ]
       },
@@ -565,7 +773,9 @@
           "quantity": 1,
           "characteristics": {
             "type_line": "Token Creature — Plant",
-            "colors": ["G"],
+            "colors": [
+              "G"
+            ],
             "power": "0",
             "toughness": "1"
           }
@@ -579,8 +789,16 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "graveyard_leave", "one_or_more_event_batch", "token_creation", "counter_distribution"],
-      "tests": ["test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"],
+      "coverage": [
+        "triggered_ability",
+        "graveyard_leave",
+        "one_or_more_event_batch",
+        "token_creation",
+        "counter_distribution"
+      ],
+      "tests": [
+        "test_insidious_roots_batches_graveyard_departures_and_grants_token_mana"
+      ],
       "provenance": {
         "source_oracle_hash": "66b469bfd33f2bab444f06de7d72683d962aac1a24b8353e0b15e7d99e6d6687",
         "source_rulings_hash": "e01931103debb822831b09d066581d2fc704b248a757cf04eff91c3c87edc3fa",
@@ -607,7 +825,9 @@
               "sacrifice_on_entry": true
             },
             "exile_from_hand": {
-              "colors_any": ["G"],
+              "colors_any": [
+                "G"
+              ],
               "exclude_source": true
             }
           }
@@ -616,8 +836,16 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics", "flash", "reach", "evoke", "alternate_cost"],
-      "tests": ["test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"],
+      "coverage": [
+        "permanent_characteristics",
+        "flash",
+        "reach",
+        "evoke",
+        "alternate_cost"
+      ],
+      "tests": [
+        "test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"
+      ],
       "provenance": {
         "source_oracle_hash": "d984d44d84f5a77044e5c399235ef3e0cb16bbb5ffa8b5d1740920089f0e696f",
         "source_rulings_hash": "760b67485de1345b10070157086ebfe66126af0fc3e0384f568e722a770f1b89",
@@ -636,8 +864,12 @@
         "groups": [
           {
             "id": "player",
-            "zones": ["player"],
-            "categories": ["player"],
+            "zones": [
+              "player"
+            ],
+            "categories": [
+              "player"
+            ],
             "min": 0,
             "max": 1
           }
@@ -650,8 +882,15 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "optional_target", "graveyard_bottom_random"],
-      "tests": ["test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"],
+      "coverage": [
+        "triggered_ability",
+        "enters_trigger",
+        "optional_target",
+        "graveyard_bottom_random"
+      ],
+      "tests": [
+        "test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"
+      ],
       "provenance": {
         "source_oracle_hash": "d984d44d84f5a77044e5c399235ef3e0cb16bbb5ffa8b5d1740920089f0e696f",
         "source_rulings_hash": "760b67485de1345b10070157086ebfe66126af0fc3e0384f568e722a770f1b89",
@@ -671,11 +910,21 @@
         "op": "truthy"
       },
       "effects": [
-        {"op": "sacrifice_if_present", "card": "$source"}
+        {
+          "op": "sacrifice_if_present",
+          "card": "$source"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "evoke", "consume_evoked_marker", "sacrifice"],
-      "tests": ["test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"],
+      "coverage": [
+        "triggered_ability",
+        "evoke",
+        "consume_evoked_marker",
+        "sacrifice"
+      ],
+      "tests": [
+        "test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"
+      ],
       "provenance": {
         "source_oracle_hash": "d984d44d84f5a77044e5c399235ef3e0cb16bbb5ffa8b5d1740920089f0e696f",
         "source_rulings_hash": "760b67485de1345b10070157086ebfe66126af0fc3e0384f568e722a770f1b89",
@@ -758,8 +1007,12 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["exile"],
-        "categories": ["card"],
+        "zones": [
+          "exile"
+        ],
+        "categories": [
+          "card"
+        ],
         "owner_relation": "opponent",
         "predicate": "void_counter",
         "count": 1
@@ -821,14 +1074,21 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
+        "zones": [
+          "battlefield"
+        ],
+        "categories": [
+          "permanent"
+        ],
         "creature": true,
         "min": 0,
         "max": 1
       },
       "effects": [
-        {"op": "untap", "card": "$target.0"}
+        {
+          "op": "untap",
+          "card": "$target.0"
+        }
       ],
       "trust_level": "trusted",
       "coverage": [
@@ -855,14 +1115,22 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "mill", "player": "$controller", "count": 3},
+        {
+          "op": "mill",
+          "player": "$controller",
+          "count": 3
+        },
         {
           "op": "choose_objects",
           "player": "$controller",
           "prompt": "You may return a creature card with mana value 2 or less.",
           "selector": {
-            "zones": ["graveyard"],
-            "categories": ["card"],
+            "zones": [
+              "graveyard"
+            ],
+            "categories": [
+              "card"
+            ],
             "owner_relation": "you",
             "creature": true,
             "mana_value_max": 2,
@@ -905,7 +1173,9 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["permanent_characteristics"],
+      "coverage": [
+        "permanent_characteristics"
+      ],
       "tests": [
         "test_sylvan_library_draws_two_and_enforces_life_or_top_choices"
       ],
@@ -930,7 +1200,11 @@
             "op": "eq",
             "value": "$source.controller"
           },
-          {"field": "step", "op": "eq", "value": "draw"}
+          {
+            "field": "step",
+            "op": "eq",
+            "value": "draw"
+          }
         ]
       },
       "effects": [
@@ -939,8 +1213,14 @@
           "player": "$controller",
           "prompt": "Draw two additional cards with Sylvan Library?",
           "options": [
-            {"id": "draw", "label": "Draw two additional cards"},
-            {"id": "decline", "label": "Do not draw"}
+            {
+              "id": "draw",
+              "label": "Draw two additional cards"
+            },
+            {
+              "id": "decline",
+              "label": "Do not draw"
+            }
           ],
           "then_by_choice": {
             "draw": [
@@ -1016,7 +1296,11 @@
             "op": "eq",
             "value": "$source.controller"
           },
-          {"field": "step", "op": "eq", "value": "upkeep"}
+          {
+            "field": "step",
+            "op": "eq",
+            "value": "upkeep"
+          }
         ]
       },
       "effects": [
@@ -1024,7 +1308,9 @@
           "op": "cumulative_upkeep",
           "player": "$controller",
           "source": "$source",
-          "cost_per_counter": {"GENERIC": 1}
+          "cost_per_counter": {
+            "GENERIC": 1
+          }
         }
       ],
       "trust_level": "trusted",
@@ -1062,7 +1348,9 @@
             "not": {
               "field": "types",
               "op": "contains_any",
-              "value": ["creature"]
+              "value": [
+                "creature"
+              ]
             }
           }
         ]
@@ -1072,7 +1360,9 @@
           "op": "remora_tax",
           "player": "$context.controller",
           "beneficiary": "$controller",
-          "cost": {"GENERIC": 4}
+          "cost": {
+            "GENERIC": 4
+          }
         }
       ],
       "trust_level": "trusted",
@@ -1100,8 +1390,12 @@
       "active_zone": "stack",
       "event": "resolve",
       "target_schema": {
-        "zones": ["graveyard"],
-        "categories": ["card"],
+        "zones": [
+          "graveyard"
+        ],
+        "categories": [
+          "card"
+        ],
         "creature": true,
         "count": 1
       },
@@ -1157,6 +1451,7 @@
         {
           "op": "reanimate_attached_creature_aura",
           "aura": "$source",
+          "aura_incarnation": "$context.card_object_identity",
           "link_annotation": "animate_dead_creature",
           "event_code": "animate_dead.reanimate"
         }
@@ -1167,35 +1462,6 @@
         "graveyard_return",
         "control_change",
         "aura_attachment"
-      ],
-      "tests": [
-        "test_animate_dead_reanimates_attaches_modifies_power_and_sacrifices_on_leave"
-      ],
-      "provenance": {
-        "source_oracle_hash": "7829eaf903dad1dd9890b2d0f38d50a2b939e98f2ebc1399549c63d01e0efde0",
-        "source_rulings_hash": "5c5b28a91bc89b64c41cc1dd5f4a0b136af6ce02711dff655630fed0976e47f9",
-        "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "c0d8fef4-65f4-4769-982d-b397d2b7e977:trigger:leave",
-      "label": "Animate Dead leave trigger",
-      "oracle_id": "c0d8fef4-65f4-4769-982d-b397d2b7e977",
-      "ability_id": "trigger:leave",
-      "active_zone": "battlefield",
-      "event": "permanent.leave.self",
-      "effects": [
-        {
-          "op": "sacrifice_if_present",
-          "card": "$context.attached_to"
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": [
-        "triggered_ability",
-        "leaves_trigger",
-        "linked_sacrifice"
       ],
       "tests": [
         "test_animate_dead_reanimates_attaches_modifies_power_and_sacrifices_on_leave"
@@ -1220,11 +1486,18 @@
             "id": "bestow",
             "kind": "alternate",
             "label": "Bestow {1}{G}",
-            "requirements": {"GENERIC": 1, "G": 1},
+            "requirements": {
+              "GENERIC": 1,
+              "G": 1
+            },
             "cast_type_line": "Enchantment — Aura",
             "target_schema": {
-              "zones": ["battlefield"],
-              "categories": ["permanent"],
+              "zones": [
+                "battlefield"
+              ],
+              "categories": [
+                "permanent"
+              ],
               "creature": true,
               "count": 1
             },
@@ -1270,7 +1543,10 @@
           "op": "springheart_landfall",
           "player": "$controller",
           "source": "$source",
-          "cost": {"GENERIC": 1, "G": 1}
+          "cost": {
+            "GENERIC": 1,
+            "G": 1
+          }
         }
       ],
       "trust_level": "trusted",
@@ -1301,8 +1577,13 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "cost_option"],
-      "tests": ["test_emry_mills_and_grants_exact_graveyard_cast_permission"],
+      "coverage": [
+        "spell_resolution",
+        "cost_option"
+      ],
+      "tests": [
+        "test_emry_mills_and_grants_exact_graveyard_cast_permission"
+      ],
       "provenance": {
         "source_oracle_hash": "3f3d61ce469920ddcc07f210e9ad3ed4cf2afd9ed31c45d70f378c78b153c2ba",
         "source_rulings_hash": "f7ae57fa2b243897012078f0ff897302523f30352e1948a9b984ed623c76c323",
@@ -1318,11 +1599,20 @@
       "active_zone": "battlefield",
       "event": "permanent.enter.self",
       "effects": [
-        {"op": "mill", "player": "$controller", "count": 4}
+        {
+          "op": "mill",
+          "player": "$controller",
+          "count": 4
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "self_mill"],
-      "tests": ["test_emry_mills_and_grants_exact_graveyard_cast_permission"],
+      "coverage": [
+        "triggered_ability",
+        "self_mill"
+      ],
+      "tests": [
+        "test_emry_mills_and_grants_exact_graveyard_cast_permission"
+      ],
       "provenance": {
         "source_oracle_hash": "3f3d61ce469920ddcc07f210e9ad3ed4cf2afd9ed31c45d70f378c78b153c2ba",
         "source_rulings_hash": "f7ae57fa2b243897012078f0ff897302523f30352e1948a9b984ed623c76c323",
@@ -1338,8 +1628,12 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["graveyard"],
-        "categories": ["card"],
+        "zones": [
+          "graveyard"
+        ],
+        "categories": [
+          "card"
+        ],
         "owner": "you",
         "artifact": true,
         "count": 1
@@ -1350,13 +1644,21 @@
           "card": "$target.0",
           "zone": "graveyard",
           "owned_only": true,
-          "types_any": ["Artifact"],
+          "types_any": [
+            "Artifact"
+          ],
           "source": "$source"
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "zone_permission", "graveyard_cast_permission"],
-      "tests": ["test_emry_mills_and_grants_exact_graveyard_cast_permission"],
+      "coverage": [
+        "activated_ability",
+        "zone_permission",
+        "graveyard_cast_permission"
+      ],
+      "tests": [
+        "test_emry_mills_and_grants_exact_graveyard_cast_permission"
+      ],
       "provenance": {
         "source_oracle_hash": "3f3d61ce469920ddcc07f210e9ad3ed4cf2afd9ed31c45d70f378c78b153c2ba",
         "source_rulings_hash": "f7ae57fa2b243897012078f0ff897302523f30352e1948a9b984ed623c76c323",
@@ -1374,8 +1676,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_master_transmuter_pays_return_cost_and_puts_artifact"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_master_transmuter_pays_return_cost_and_puts_artifact"
+      ],
       "provenance": {
         "source_oracle_hash": "5d4e5a5cf9f6a5b86a9c19868c5ecf1d3b972b0ddab15afe7b7794686dfe099d",
         "source_rulings_hash": "11d818a2804467fda3ce41694b769f4953b3906df9c149940caf608679ddc548",
@@ -1391,11 +1697,20 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "put_artifact_from_hand", "player": "$controller"}
+        {
+          "op": "put_artifact_from_hand",
+          "player": "$controller"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "return_cost", "put_from_hand"],
-      "tests": ["test_master_transmuter_pays_return_cost_and_puts_artifact"],
+      "coverage": [
+        "activated_ability",
+        "return_cost",
+        "put_from_hand"
+      ],
+      "tests": [
+        "test_master_transmuter_pays_return_cost_and_puts_artifact"
+      ],
       "provenance": {
         "source_oracle_hash": "5d4e5a5cf9f6a5b86a9c19868c5ecf1d3b972b0ddab15afe7b7794686dfe099d",
         "source_rulings_hash": "11d818a2804467fda3ce41694b769f4953b3906df9c149940caf608679ddc548",
@@ -1413,8 +1728,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_shuri_reduces_artifact_spells_and_copies_nonlegendary"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_shuri_reduces_artifact_spells_and_copies_nonlegendary"
+      ],
       "provenance": {
         "source_oracle_hash": "f72b8bc960c4883e53dfc7d2d2a7f542a377f4fa765556a04b17dcfe4f9b5a0c",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1434,16 +1753,24 @@
         "groups": [
           {
             "id": "copying",
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
             "controller": "you",
             "artifact": true,
             "count": 1
           },
           {
             "id": "copied",
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
             "controller": "you",
             "artifact": true,
             "count": 1
@@ -1459,8 +1786,14 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "copy_effect", "duration_effect"],
-      "tests": ["test_shuri_reduces_artifact_spells_and_copies_nonlegendary"],
+      "coverage": [
+        "activated_ability",
+        "copy_effect",
+        "duration_effect"
+      ],
+      "tests": [
+        "test_shuri_reduces_artifact_spells_and_copies_nonlegendary"
+      ],
       "provenance": {
         "source_oracle_hash": "f72b8bc960c4883e53dfc7d2d2a7f542a377f4fa765556a04b17dcfe4f9b5a0c",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1478,8 +1811,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_simulacrum_synthesizer_scry_and_construct_trigger"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_simulacrum_synthesizer_scry_and_construct_trigger"
+      ],
       "provenance": {
         "source_oracle_hash": "5f4ef63c1ac266b942fe09a97b284df7368eb8624172c0c09c895e4400fc3ae9",
         "source_rulings_hash": "9afc50e800435a755311fe050e9ebc1c8bd06cdec076679803cdefbfe29998ba",
@@ -1494,10 +1831,21 @@
       "ability_id": "trigger:enter",
       "active_zone": "battlefield",
       "event": "permanent.enter.self",
-      "effects": [{"op": "scry", "player": "$controller", "count": 2}],
+      "effects": [
+        {
+          "op": "scry",
+          "player": "$controller",
+          "count": 2
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "scry"],
-      "tests": ["test_simulacrum_synthesizer_scry_and_construct_trigger"],
+      "coverage": [
+        "triggered_ability",
+        "scry"
+      ],
+      "tests": [
+        "test_simulacrum_synthesizer_scry_and_construct_trigger"
+      ],
       "provenance": {
         "source_oracle_hash": "5f4ef63c1ac266b942fe09a97b284df7368eb8624172c0c09c895e4400fc3ae9",
         "source_rulings_hash": "9afc50e800435a755311fe050e9ebc1c8bd06cdec076679803cdefbfe29998ba",
@@ -1515,8 +1863,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_stridehangar_adds_thopter_and_applies_anthem"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_stridehangar_adds_thopter_and_applies_anthem"
+      ],
       "provenance": {
         "source_oracle_hash": "59ad59fe37f21e3590dbc0a425607daeb83e89e783ee0a45ea5c3aae39a11272",
         "source_rulings_hash": "1c6f2c3ce17591f7b1816add38df1c1e7259f4fb0be4ccc861fe40dc0e0633f7",
@@ -1539,7 +1891,9 @@
           "event": "characteristics.evaluate",
           "condition": {
             "target_controller": "source_controller",
-            "target_subtypes_all": ["thopter"]
+            "target_subtypes_all": [
+              "thopter"
+            ]
           },
           "modifier": {
             "power": 1,
@@ -1548,8 +1902,18 @@
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["static_ability", "continuous_effect", "power_toughness_modifier", "subtype_anthem"],
-      "tests": ["test_registered_anthem_component_replaces_name_dispatch", "test_multiple_anthem_components_stack_and_respect_control", "test_layer_four_subtype_change_enables_layer_seven_anthem", "test_anthem_component_replays_exactly"],
+      "coverage": [
+        "static_ability",
+        "continuous_effect",
+        "power_toughness_modifier",
+        "subtype_anthem"
+      ],
+      "tests": [
+        "test_registered_anthem_component_replaces_name_dispatch",
+        "test_multiple_anthem_components_stack_and_respect_control",
+        "test_layer_four_subtype_change_enables_layer_seven_anthem",
+        "test_anthem_component_replays_exactly"
+      ],
       "provenance": {
         "source_oracle_hash": "59ad59fe37f21e3590dbc0a425607daeb83e89e783ee0a45ea5c3aae39a11272",
         "source_rulings_hash": "1c6f2c3ce17591f7b1816add38df1c1e7259f4fb0be4ccc861fe40dc0e0633f7",
@@ -1572,7 +1936,9 @@
           "event": "token.create",
           "condition": {
             "event_controller": "source_controller",
-            "created_types_all": ["artifact"],
+            "created_types_all": [
+              "artifact"
+            ],
             "created_subtypes_all": []
           },
           "quantity": 1,
@@ -1582,13 +1948,24 @@
             "colors": [],
             "power": "1",
             "toughness": "1",
-            "keywords": ["Flying"]
+            "keywords": [
+              "Flying"
+            ]
           }
         }
       ],
       "trust_level": "trusted",
-      "coverage": ["replacement_effect", "token_creation", "additional_token_replacement"],
-      "tests": ["test_registered_additional_token_components_replace_without_name_dispatch", "test_multiple_additional_token_components_share_one_creation_timestamp", "test_source_created_by_event_does_not_replace_its_own_creation", "test_additional_token_component_replays_exactly"],
+      "coverage": [
+        "replacement_effect",
+        "token_creation",
+        "additional_token_replacement"
+      ],
+      "tests": [
+        "test_registered_additional_token_components_replace_without_name_dispatch",
+        "test_multiple_additional_token_components_share_one_creation_timestamp",
+        "test_source_created_by_event_does_not_replace_its_own_creation",
+        "test_additional_token_component_replays_exactly"
+      ],
       "provenance": {
         "source_oracle_hash": "59ad59fe37f21e3590dbc0a425607daeb83e89e783ee0a45ea5c3aae39a11272",
         "source_rulings_hash": "1c6f2c3ce17591f7b1816add38df1c1e7259f4fb0be4ccc861fe40dc0e0633f7",
@@ -1606,8 +1983,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_lithoform_engine_copies_abilities_spells_and_permanent_spells"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_lithoform_engine_copies_abilities_spells_and_permanent_spells"
+      ],
       "provenance": {
         "source_oracle_hash": "3b400c26ed4af3dd93e48a4521fa68f78817b25600fcc9cfd2f4aef2c773f1fa",
         "source_rulings_hash": "bca878ec0190fcfb61e9616f4adeac94fba76d51955e65a8af535a49c0ef2bc0",
@@ -1623,17 +2004,30 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["ability"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "ability"
+        ],
         "controller": "you",
         "count": 1
       },
       "effects": [
-        {"op": "copy_stack_item", "stack": "$target.0"}
+        {
+          "op": "copy_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "stack_copy", "target_reassignment"],
-      "tests": ["test_lithoform_engine_copies_abilities_spells_and_permanent_spells"],
+      "coverage": [
+        "activated_ability",
+        "stack_copy",
+        "target_reassignment"
+      ],
+      "tests": [
+        "test_lithoform_engine_copies_abilities_spells_and_permanent_spells"
+      ],
       "provenance": {
         "source_oracle_hash": "3b400c26ed4af3dd93e48a4521fa68f78817b25600fcc9cfd2f4aef2c773f1fa",
         "source_rulings_hash": "bca878ec0190fcfb61e9616f4adeac94fba76d51955e65a8af535a49c0ef2bc0",
@@ -1649,18 +2043,34 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "spell"
+        ],
         "controller": "you",
-        "types_any": ["Instant", "Sorcery"],
+        "types_any": [
+          "Instant",
+          "Sorcery"
+        ],
         "count": 1
       },
       "effects": [
-        {"op": "copy_stack_item", "stack": "$target.0"}
+        {
+          "op": "copy_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "spell_copy", "target_reassignment"],
-      "tests": ["test_lithoform_engine_copies_abilities_spells_and_permanent_spells"],
+      "coverage": [
+        "activated_ability",
+        "spell_copy",
+        "target_reassignment"
+      ],
+      "tests": [
+        "test_lithoform_engine_copies_abilities_spells_and_permanent_spells"
+      ],
       "provenance": {
         "source_oracle_hash": "3b400c26ed4af3dd93e48a4521fa68f78817b25600fcc9cfd2f4aef2c773f1fa",
         "source_rulings_hash": "bca878ec0190fcfb61e9616f4adeac94fba76d51955e65a8af535a49c0ef2bc0",
@@ -1676,18 +2086,31 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "spell"
+        ],
         "controller": "you",
         "predicate": "permanent_card",
         "count": 1
       },
       "effects": [
-        {"op": "copy_stack_item", "stack": "$target.0"}
+        {
+          "op": "copy_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "permanent_spell_copy", "token_creation"],
-      "tests": ["test_lithoform_engine_copies_abilities_spells_and_permanent_spells"],
+      "coverage": [
+        "activated_ability",
+        "permanent_spell_copy",
+        "token_creation"
+      ],
+      "tests": [
+        "test_lithoform_engine_copies_abilities_spells_and_permanent_spells"
+      ],
       "provenance": {
         "source_oracle_hash": "3b400c26ed4af3dd93e48a4521fa68f78817b25600fcc9cfd2f4aef2c773f1fa",
         "source_rulings_hash": "bca878ec0190fcfb61e9616f4adeac94fba76d51955e65a8af535a49c0ef2bc0",
@@ -1705,8 +2128,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_scientist_supreme_copies_artifact_ability_once_on_own_turn"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_scientist_supreme_copies_artifact_ability_once_on_own_turn"
+      ],
       "provenance": {
         "source_oracle_hash": "f81b4899c3192315be25a18f82dcfadd2a2d37a25e69a56ac575fb7493654eb2",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1722,18 +2149,33 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["ability"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "ability"
+        ],
         "controller": "you",
         "predicate": "artifact_source",
         "count": 1
       },
       "effects": [
-        {"op": "copy_stack_item", "stack": "$target.0"}
+        {
+          "op": "copy_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "stack_copy", "artifact_source", "once_each_turn", "activation_timing"],
-      "tests": ["test_scientist_supreme_copies_artifact_ability_once_on_own_turn"],
+      "coverage": [
+        "activated_ability",
+        "stack_copy",
+        "artifact_source",
+        "once_each_turn",
+        "activation_timing"
+      ],
+      "tests": [
+        "test_scientist_supreme_copies_artifact_ability_once_on_own_turn"
+      ],
       "provenance": {
         "source_oracle_hash": "f81b4899c3192315be25a18f82dcfadd2a2d37a25e69a56ac575fb7493654eb2",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1751,8 +2193,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_strionic_resonator_only_copies_controlled_trigger"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_strionic_resonator_only_copies_controlled_trigger"
+      ],
       "provenance": {
         "source_oracle_hash": "e6b70e068fb8bd2f4288d45e5aef2a31efff113876cf4f3c38b5b82367195d9f",
         "source_rulings_hash": "9018d01a40eb235b7fc41acd4d30484408fc0ea91361682b944ffc3f8561602c",
@@ -1768,18 +2214,31 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["ability"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "ability"
+        ],
         "controller": "you",
         "predicate": "triggered_ability",
         "count": 1
       },
       "effects": [
-        {"op": "copy_stack_item", "stack": "$target.0"}
+        {
+          "op": "copy_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "trigger_copy", "target_reassignment"],
-      "tests": ["test_strionic_resonator_only_copies_controlled_trigger"],
+      "coverage": [
+        "activated_ability",
+        "trigger_copy",
+        "target_reassignment"
+      ],
+      "tests": [
+        "test_strionic_resonator_only_copies_controlled_trigger"
+      ],
       "provenance": {
         "source_oracle_hash": "e6b70e068fb8bd2f4288d45e5aef2a31efff113876cf4f3c38b5b82367195d9f",
         "source_rulings_hash": "9018d01a40eb235b7fc41acd4d30484408fc0ea91361682b944ffc3f8561602c",
@@ -1801,26 +2260,46 @@
             "kind": "alternate",
             "label": "Cast without paying its mana cost while you control a commander",
             "requirements": {},
-            "condition": {"control_commander": true}
+            "condition": {
+              "control_commander": true
+            }
           }
         ]
       },
       "target_schema": {
-        "zones": ["stack"],
-        "categories": ["spell", "ability"],
+        "zones": [
+          "stack"
+        ],
+        "categories": [
+          "spell",
+          "ability"
+        ],
         "source_exclusion": true,
         "count": 1
       },
       "effects": [
-        {"op": "retarget_stack_item", "stack": "$target.0"}
+        {
+          "op": "retarget_stack_item",
+          "stack": "$target.0"
+        }
       ],
       "destination": "graveyard",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "commander_dependent_alternate_cost", "stack_target", "target_reassignment"],
-      "tests": ["test_deflecting_swat_free_cost_and_exact_retarget"],
+      "coverage": [
+        "spell_resolution",
+        "commander_dependent_alternate_cost",
+        "stack_target",
+        "target_reassignment"
+      ],
+      "tests": [
+        "test_deflecting_swat_free_cost_and_exact_retarget"
+      ],
       "provenance": {
         "source_oracle_hash": "c6a60ec3035447a23e1aadae058b4c602508264c2013df7ef67cbf2fddb18ce4",
         "source_rulings_hash": "8d0d4b293c931b3b8238985735298900feaca14aec286140a669b3f424996be2",
+        "reviewed_equivalent_rulings_hashes": [
+          "6a932903212235325dcb33c06a042b4513c2e9a09882e36dc906d00e526b58f1"
+        ],
         "authored_by": "v0.8-exact-deck-closure",
         "review_status": "reviewed"
       }
@@ -1833,11 +2312,21 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "fomori_vault"}
+        {
+          "op": "fomori_vault"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "discard_cost", "artifact_count", "private_library_look", "random_bottom_order"],
-      "tests": ["test_fomori_vault_counts_artifacts_and_bottoms_rest_randomly"],
+      "coverage": [
+        "activated_ability",
+        "discard_cost",
+        "artifact_count",
+        "private_library_look",
+        "random_bottom_order"
+      ],
+      "tests": [
+        "test_fomori_vault_counts_artifacts_and_bottoms_rest_randomly"
+      ],
       "provenance": {
         "source_oracle_hash": "c87821555c5c4a15ed81b669c629742479491accef40fe88252b067dfc94474d",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1855,8 +2344,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_mindslaver_routes_controlled_turn_to_controller_pilot"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_mindslaver_routes_controlled_turn_to_controller_pilot"
+      ],
       "provenance": {
         "source_oracle_hash": "49a6e0126876db0a5e9efa487bb522d096d4800df1ffc1383a9e65436240b465",
         "source_rulings_hash": "ecd2eac6dbcad6f44667ac26272a6b6d35b35d99e3bec971c94748d4f2bd89be",
@@ -1867,22 +2360,39 @@
     {
       "key": "a806f4ee-f48a-46c3-8772-5aaabebe4c7e:ability:ab1",
       "label": "Mindslaver activation",
+      "version": 2,
       "oracle_id": "a806f4ee-f48a-46c3-8772-5aaabebe4c7e",
       "ability_id": "ability:ab1",
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "zones": ["player"],
-        "categories": ["player"],
+        "zones": [
+          "player"
+        ],
+        "categories": [
+          "player"
+        ],
         "player_relation": "any",
         "count": 1
       },
       "effects": [
-        {"op": "control_next_turn", "player": "$target.0"}
+        {
+          "op": "control_next_turn",
+          "player": "$target.0",
+          "turn_control_lifetime_version": 1
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "sacrifice_cost", "target_validation", "turn_control", "hidden_information_authorization"],
-      "tests": ["test_mindslaver_routes_controlled_turn_to_controller_pilot"],
+      "coverage": [
+        "activated_ability",
+        "sacrifice_cost",
+        "target_validation",
+        "turn_control",
+        "hidden_information_authorization"
+      ],
+      "tests": [
+        "test_mindslaver_routes_controlled_turn_to_controller_pilot"
+      ],
       "provenance": {
         "source_oracle_hash": "49a6e0126876db0a5e9efa487bb522d096d4800df1ffc1383a9e65436240b465",
         "source_rulings_hash": "ecd2eac6dbcad6f44667ac26272a6b6d35b35d99e3bec971c94748d4f2bd89be",
@@ -1898,12 +2408,24 @@
       "active_zone": "stack",
       "event": "resolve",
       "effects": [
-        {"op": "choose_creature_type", "apply_as_subtype": true}
+        {
+          "op": "choose_creature_type",
+          "apply_as_subtype": true
+        }
       ],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "as_enters_choice", "static_ability", "static_type_addition", "trigger_multiplier", "ward"],
-      "tests": ["test_roaming_throne_type_trigger_multiplier_and_ward"],
+      "coverage": [
+        "spell_resolution",
+        "as_enters_choice",
+        "static_ability",
+        "static_type_addition",
+        "trigger_multiplier",
+        "ward"
+      ],
+      "tests": [
+        "test_roaming_throne_type_trigger_multiplier_and_ward"
+      ],
       "provenance": {
         "source_oracle_hash": "7bc787ba43ceedaa7261e6c4120045eb535825c8e7e7b04416ce7f54487c535c",
         "source_rulings_hash": "3487bdefe4c4ddfd61dbfd8f1b75bc354dcd1873687d4ce1373a6caa04468cb0",
@@ -1921,8 +2443,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_sundial_ends_turn_and_exiles_stack"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_sundial_ends_turn_and_exiles_stack"
+      ],
       "provenance": {
         "source_oracle_hash": "4b16303e967f63fbdf8a6ebea2b1ecf2fcd616b9f7667735ced40bfb1ace4959",
         "source_rulings_hash": "b0e80406d048f14ef5417d27ee038b87f7c29e0f6b57c3420de5ac8ff6a0f186",
@@ -1938,11 +2464,21 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "end_turn"}
+        {
+          "op": "end_turn"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "turn_restriction", "end_turn", "stack_exile", "cleanup"],
-      "tests": ["test_sundial_ends_turn_and_exiles_stack"],
+      "coverage": [
+        "activated_ability",
+        "turn_restriction",
+        "end_turn",
+        "stack_exile",
+        "cleanup"
+      ],
+      "tests": [
+        "test_sundial_ends_turn_and_exiles_stack"
+      ],
       "provenance": {
         "source_oracle_hash": "4b16303e967f63fbdf8a6ebea2b1ecf2fcd616b9f7667735ced40bfb1ace4959",
         "source_rulings_hash": "b0e80406d048f14ef5417d27ee038b87f7c29e0f6b57c3420de5ac8ff6a0f186",
@@ -1960,8 +2496,13 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "restricted_mana"],
-      "tests": ["test_mightstone_modal_enter_and_restricted_powerstone_mana"],
+      "coverage": [
+        "spell_resolution",
+        "restricted_mana"
+      ],
+      "tests": [
+        "test_mightstone_modal_enter_and_restricted_powerstone_mana"
+      ],
       "provenance": {
         "source_oracle_hash": "7f0c009a7216fa3dce253f87d08d3eb36fc92fd2fcd81cc06eb29cc860bddc19",
         "source_rulings_hash": "c0f91a7afd6ec9d3858a2966c85efc4c1a3e803a0a5b857130bbf3d8947f5fe2",
@@ -1983,23 +2524,46 @@
           "draw": {
             "groups": [],
             "effects": [
-              {"op": "draw", "player": "$controller", "count": 2, "private": true}
+              {
+                "op": "draw",
+                "player": "$controller",
+                "count": 2,
+                "private": true
+              }
             ]
           },
           "weaken": {
-            "zones": ["battlefield"],
-            "categories": ["permanent"],
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
             "creature": true,
             "count": 1,
             "effects": [
-              {"op": "modify_stats_until_end_of_turn", "card": "$target.0", "power": -5, "toughness": -5}
+              {
+                "op": "modify_stats_until_end_of_turn",
+                "card": "$target.0",
+                "power": -5,
+                "toughness": -5
+              }
             ]
           }
         }
       },
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "mode_selection", "private_draw", "target_validation", "temporary_power_toughness"],
-      "tests": ["test_mightstone_modal_enter_and_restricted_powerstone_mana"],
+      "coverage": [
+        "triggered_ability",
+        "enters_trigger",
+        "mode_selection",
+        "private_draw",
+        "target_validation",
+        "temporary_power_toughness"
+      ],
+      "tests": [
+        "test_mightstone_modal_enter_and_restricted_powerstone_mana"
+      ],
       "provenance": {
         "source_oracle_hash": "7f0c009a7216fa3dce253f87d08d3eb36fc92fd2fcd81cc06eb29cc860bddc19",
         "source_rulings_hash": "c0f91a7afd6ec9d3858a2966c85efc4c1a3e803a0a5b857130bbf3d8947f5fe2",
@@ -2017,8 +2581,12 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution"],
-      "tests": ["test_stasis_coffin_protection_blocks_targeting_and_damage"],
+      "coverage": [
+        "spell_resolution"
+      ],
+      "tests": [
+        "test_stasis_coffin_protection_blocks_targeting_and_damage"
+      ],
       "provenance": {
         "source_oracle_hash": "45d7187807386be64b9509d1027f03f13cf7cb2ebe28f0bf57adc42e534cb47c",
         "source_rulings_hash": "3a771979ff08bc732ac593c86b71a96abe952761d0a590547051b1dfd219e79c",
@@ -2034,11 +2602,23 @@
       "active_zone": "battlefield",
       "event": "activate",
       "effects": [
-        {"op": "protection_from_everything_until_next_turn", "player": "$controller"}
+        {
+          "op": "protection_from_everything_until_next_turn",
+          "player": "$controller"
+        }
       ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "exile_cost", "protection", "duration_until_next_turn", "target_prevention", "damage_prevention"],
-      "tests": ["test_stasis_coffin_protection_blocks_targeting_and_damage"],
+      "coverage": [
+        "activated_ability",
+        "exile_cost",
+        "protection",
+        "duration_until_next_turn",
+        "target_prevention",
+        "damage_prevention"
+      ],
+      "tests": [
+        "test_stasis_coffin_protection_blocks_targeting_and_damage"
+      ],
       "provenance": {
         "source_oracle_hash": "45d7187807386be64b9509d1027f03f13cf7cb2ebe28f0bf57adc42e534cb47c",
         "source_rulings_hash": "3a771979ff08bc732ac593c86b71a96abe952761d0a590547051b1dfd219e79c",
@@ -2056,8 +2636,15 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "restricted_mana", "legendary_spell_restriction", "mana_based_uncounterable"],
-      "tests": ["test_delighted_halfling_restricted_mana_makes_legendary_spell_uncounterable"],
+      "coverage": [
+        "spell_resolution",
+        "restricted_mana",
+        "legendary_spell_restriction",
+        "mana_based_uncounterable"
+      ],
+      "tests": [
+        "test_delighted_halfling_restricted_mana_makes_legendary_spell_uncounterable"
+      ],
       "provenance": {
         "source_oracle_hash": "a8cbf012f81463a8a742e7c477856a5eab788c616c1c8acae8f38c4b955cb194",
         "source_rulings_hash": "cd7d2827967b56638dc52d5fb8781081402595d221f822acdda3f9657335996d",
@@ -2075,8 +2662,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "static_ability", "commander_eligibility"],
-      "tests": ["test_daretti_loyalty_exchange_and_emblem_return"],
+      "coverage": [
+        "spell_resolution",
+        "static_ability",
+        "commander_eligibility"
+      ],
+      "tests": [
+        "test_daretti_loyalty_exchange_and_emblem_return"
+      ],
       "provenance": {
         "source_oracle_hash": "4c8c466a6a8bc086a492aef46a2f9eb9346851a2722301718658da76613fb2bd",
         "source_rulings_hash": "d46040b62c16491f4b48dda7d8919f60ab32c4d883236281d7176bf5ac6568e9",
@@ -2091,10 +2684,22 @@
       "ability_id": "ability:ab1",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{"op": "discard_draw_up_to", "maximum": 2}],
+      "effects": [
+        {
+          "op": "discard_draw_up_to",
+          "maximum": 2
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "loyalty_cost", "private_discard", "private_draw"],
-      "tests": ["test_daretti_loyalty_exchange_and_emblem_return"],
+      "coverage": [
+        "activated_ability",
+        "loyalty_cost",
+        "private_discard",
+        "private_draw"
+      ],
+      "tests": [
+        "test_daretti_loyalty_exchange_and_emblem_return"
+      ],
       "provenance": {
         "source_oracle_hash": "4c8c466a6a8bc086a492aef46a2f9eb9346851a2722301718658da76613fb2bd",
         "source_rulings_hash": "d46040b62c16491f4b48dda7d8919f60ab32c4d883236281d7176bf5ac6568e9",
@@ -2110,19 +2715,38 @@
       "active_zone": "battlefield",
       "event": "activate",
       "target_schema": {
-        "groups": [{
-          "id": "artifact_card",
-          "zones": ["graveyard"],
-          "categories": ["card"],
-          "owner": "you",
-          "artifact": true,
-          "count": 1
-        }]
+        "groups": [
+          {
+            "id": "artifact_card",
+            "zones": [
+              "graveyard"
+            ],
+            "categories": [
+              "card"
+            ],
+            "owner": "you",
+            "artifact": true,
+            "count": 1
+          }
+        ]
       },
-      "effects": [{"op": "daretti_exchange", "card": "$target.0"}],
+      "effects": [
+        {
+          "op": "daretti_exchange",
+          "card": "$target.0"
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "loyalty_cost", "resolution_sacrifice", "graveyard_target", "reanimation"],
-      "tests": ["test_daretti_loyalty_exchange_and_emblem_return"],
+      "coverage": [
+        "activated_ability",
+        "loyalty_cost",
+        "resolution_sacrifice",
+        "graveyard_target",
+        "reanimation"
+      ],
+      "tests": [
+        "test_daretti_loyalty_exchange_and_emblem_return"
+      ],
       "provenance": {
         "source_oracle_hash": "4c8c466a6a8bc086a492aef46a2f9eb9346851a2722301718658da76613fb2bd",
         "source_rulings_hash": "d46040b62c16491f4b48dda7d8919f60ab32c4d883236281d7176bf5ac6568e9",
@@ -2137,17 +2761,29 @@
       "ability_id": "ability:ab3",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{
-        "op": "create_emblem",
-        "controller": "$controller",
-        "abilities": ["Whenever an artifact is put into your graveyard from the battlefield, return that card to the battlefield at the beginning of the next end step."],
-        "display_label": "Daretti, Scrap Savant emblem",
-        "semantic_key": "builtin:daretti-emblem",
-        "stats_counter": "daretti_emblems"
-      }],
+      "effects": [
+        {
+          "op": "create_emblem",
+          "controller": "$controller",
+          "abilities": [
+            "Whenever an artifact is put into your graveyard from the battlefield, return that card to the battlefield at the beginning of the next end step."
+          ],
+          "display_label": "Daretti, Scrap Savant emblem",
+          "semantic_key": "builtin:daretti-emblem",
+          "stats_counter": "daretti_emblems"
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "loyalty_cost", "emblem", "triggered_ability", "delayed_trigger"],
-      "tests": ["test_daretti_loyalty_exchange_and_emblem_return"],
+      "coverage": [
+        "activated_ability",
+        "loyalty_cost",
+        "emblem",
+        "triggered_ability",
+        "delayed_trigger"
+      ],
+      "tests": [
+        "test_daretti_loyalty_exchange_and_emblem_return"
+      ],
       "provenance": {
         "source_oracle_hash": "4c8c466a6a8bc086a492aef46a2f9eb9346851a2722301718658da76613fb2bd",
         "source_rulings_hash": "d46040b62c16491f4b48dda7d8919f60ab32c4d883236281d7176bf5ac6568e9",
@@ -2165,8 +2801,14 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "affinity", "keyword_ability"],
-      "tests": ["test_demonic_junker_targets_per_player_and_crews"],
+      "coverage": [
+        "spell_resolution",
+        "affinity",
+        "keyword_ability"
+      ],
+      "tests": [
+        "test_demonic_junker_targets_per_player_and_crews"
+      ],
       "provenance": {
         "source_oracle_hash": "907271a8ca15afbe327acb87e04f0aef17bc859a18d591b1d9df59064e0be866",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -2184,22 +2826,80 @@
       "target_schema": {
         "globally_distinct": true,
         "groups": [
-          {"id": "seat_a", "zones": ["battlefield"], "categories": ["permanent"], "creature": true, "controller_seat": "A", "min": 0, "max": 1},
-          {"id": "seat_b", "zones": ["battlefield"], "categories": ["permanent"], "creature": true, "controller_seat": "B", "min": 0, "max": 1},
-          {"id": "seat_c", "zones": ["battlefield"], "categories": ["permanent"], "creature": true, "controller_seat": "C", "min": 0, "max": 1},
-          {"id": "seat_d", "zones": ["battlefield"], "categories": ["permanent"], "creature": true, "controller_seat": "D", "min": 0, "max": 1}
+          {
+            "id": "seat_a",
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
+            "creature": true,
+            "controller_seat": "A",
+            "min": 0,
+            "max": 1
+          },
+          {
+            "id": "seat_b",
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
+            "creature": true,
+            "controller_seat": "B",
+            "min": 0,
+            "max": 1
+          },
+          {
+            "id": "seat_c",
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
+            "creature": true,
+            "controller_seat": "C",
+            "min": 0,
+            "max": 1
+          },
+          {
+            "id": "seat_d",
+            "zones": [
+              "battlefield"
+            ],
+            "categories": [
+              "permanent"
+            ],
+            "creature": true,
+            "controller_seat": "D",
+            "min": 0,
+            "max": 1
+          }
         ]
       },
-      "effects": [{
-        "op": "destroy_selected_and_reward_source",
-        "source": "$source",
-        "cards": "$targets",
-        "counter": "+1/+1",
-        "counter_amount": 2
-      }],
+      "effects": [
+        {
+          "op": "destroy_selected_and_reward_source",
+          "source": "$source",
+          "cards": "$targets",
+          "counter": "+1/+1",
+          "counter_amount": 2
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "per_player_optional_targets", "simultaneous_destroy", "conditional_counters"],
-      "tests": ["test_demonic_junker_targets_per_player_and_crews"],
+      "coverage": [
+        "triggered_ability",
+        "enters_trigger",
+        "per_player_optional_targets",
+        "simultaneous_destroy",
+        "conditional_counters"
+      ],
+      "tests": [
+        "test_demonic_junker_targets_per_player_and_crews"
+      ],
       "provenance": {
         "source_oracle_hash": "907271a8ca15afbe327acb87e04f0aef17bc859a18d591b1d9df59064e0be866",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -2217,8 +2917,15 @@
       "effects": [],
       "destination": "battlefield",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "keyword_ability", "craft", "transform"],
-      "tests": ["test_tithing_blade_apnap_craft_and_back_upkeep"],
+      "coverage": [
+        "spell_resolution",
+        "keyword_ability",
+        "craft",
+        "transform"
+      ],
+      "tests": [
+        "test_tithing_blade_apnap_craft_and_back_upkeep"
+      ],
       "provenance": {
         "source_oracle_hash": "7e66588288ac7d6afbf81fe6b7cb957ca60140f336d4c314bb43125540a3bf16",
         "source_rulings_hash": "56ba94da8ef4eab671c98f76f5516b94383bcad1366e80173ee946d54ed822b5",
@@ -2233,20 +2940,36 @@
       "ability_id": "trigger:front-enter",
       "active_zone": "battlefield",
       "event": "permanent.enter.self",
-      "event_condition": {"field": "source_active_face", "op": "eq", "value": "Tithing Blade"},
-      "effects": [{
-        "op": "choose_cards_apnap",
-        "players": "opponents",
-        "actor": "$controller",
-        "zone": "battlefield",
-        "filter": {"type": "creature", "controlled": true},
-        "count": 1,
-        "then": "sacrifice",
-        "prompt": "Choose a creature to sacrifice."
-      }],
+      "event_condition": {
+        "field": "source_active_face",
+        "op": "eq",
+        "value": "Tithing Blade"
+      },
+      "effects": [
+        {
+          "op": "choose_cards_apnap",
+          "players": "opponents",
+          "actor": "$controller",
+          "zone": "battlefield",
+          "filter": {
+            "type": "creature",
+            "controlled": true
+          },
+          "count": 1,
+          "then": "sacrifice",
+          "prompt": "Choose a creature to sacrifice."
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "enters_trigger", "apnap_choice", "simultaneous_sacrifice"],
-      "tests": ["test_tithing_blade_apnap_craft_and_back_upkeep"],
+      "coverage": [
+        "triggered_ability",
+        "enters_trigger",
+        "apnap_choice",
+        "simultaneous_sacrifice"
+      ],
+      "tests": [
+        "test_tithing_blade_apnap_craft_and_back_upkeep"
+      ],
       "provenance": {
         "source_oracle_hash": "7e66588288ac7d6afbf81fe6b7cb957ca60140f336d4c314bb43125540a3bf16",
         "source_rulings_hash": "56ba94da8ef4eab671c98f76f5516b94383bcad1366e80173ee946d54ed822b5",
@@ -2261,10 +2984,23 @@
       "ability_id": "ability:craft_battlefield",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{"op": "return_transformed", "card": "$source"}],
+      "effects": [
+        {
+          "op": "return_transformed",
+          "card": "$source"
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "craft", "mana_cost", "exile_cost", "transform"],
-      "tests": ["test_tithing_blade_apnap_craft_and_back_upkeep"],
+      "coverage": [
+        "activated_ability",
+        "craft",
+        "mana_cost",
+        "exile_cost",
+        "transform"
+      ],
+      "tests": [
+        "test_tithing_blade_apnap_craft_and_back_upkeep"
+      ],
       "provenance": {
         "source_oracle_hash": "7e66588288ac7d6afbf81fe6b7cb957ca60140f336d4c314bb43125540a3bf16",
         "source_rulings_hash": "56ba94da8ef4eab671c98f76f5516b94383bcad1366e80173ee946d54ed822b5",
@@ -2279,10 +3015,23 @@
       "ability_id": "ability:craft_graveyard",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{"op": "return_transformed", "card": "$source"}],
+      "effects": [
+        {
+          "op": "return_transformed",
+          "card": "$source"
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "craft", "mana_cost", "exile_cost", "transform"],
-      "tests": ["test_tithing_blade_apnap_craft_and_back_upkeep"],
+      "coverage": [
+        "activated_ability",
+        "craft",
+        "mana_cost",
+        "exile_cost",
+        "transform"
+      ],
+      "tests": [
+        "test_tithing_blade_apnap_craft_and_back_upkeep"
+      ],
       "provenance": {
         "source_oracle_hash": "7e66588288ac7d6afbf81fe6b7cb957ca60140f336d4c314bb43125540a3bf16",
         "source_rulings_hash": "56ba94da8ef4eab671c98f76f5516b94383bcad1366e80173ee946d54ed822b5",
@@ -2299,15 +3048,38 @@
       "event": "step.begin",
       "event_condition": {
         "all": [
-          {"field": "source_active_face", "op": "eq", "value": "Consuming Sepulcher"},
-          {"field": "player", "op": "eq", "value": "$source.controller"},
-          {"field": "step", "op": "eq", "value": "upkeep"}
+          {
+            "field": "source_active_face",
+            "op": "eq",
+            "value": "Consuming Sepulcher"
+          },
+          {
+            "field": "player",
+            "op": "eq",
+            "value": "$source.controller"
+          },
+          {
+            "field": "step",
+            "op": "eq",
+            "value": "upkeep"
+          }
         ]
       },
-      "effects": [{"op": "drain_each_opponent", "amount": 1}],
+      "effects": [
+        {
+          "op": "drain_each_opponent",
+          "amount": 1
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["triggered_ability", "upkeep_trigger", "multiplayer_drain"],
-      "tests": ["test_tithing_blade_apnap_craft_and_back_upkeep"],
+      "coverage": [
+        "triggered_ability",
+        "upkeep_trigger",
+        "multiplayer_drain"
+      ],
+      "tests": [
+        "test_tithing_blade_apnap_craft_and_back_upkeep"
+      ],
       "provenance": {
         "source_oracle_hash": "7e66588288ac7d6afbf81fe6b7cb957ca60140f336d4c314bb43125540a3bf16",
         "source_rulings_hash": "56ba94da8ef4eab671c98f76f5516b94383bcad1366e80173ee946d54ed822b5",
@@ -2322,11 +3094,25 @@
       "ability_id": "spell:front",
       "active_zone": "stack",
       "event": "resolve",
-      "effects": [{"op": "transmute_artifact", "stage": "sacrifice"}],
+      "version": 3,
+      "effects": [
+        {
+          "op": "transmute_artifact",
+          "stage": "sacrifice_v3"
+        }
+      ],
       "destination": "graveyard",
       "trust_level": "trusted",
-      "coverage": ["spell_resolution", "resolution_sacrifice", "library_search", "derived_mana_payment", "fail_to_find"],
-      "tests": ["test_transmute_artifact_resolution_payment_and_decline"],
+      "coverage": [
+        "spell_resolution",
+        "resolution_sacrifice",
+        "library_search",
+        "derived_mana_payment",
+        "fail_to_find"
+      ],
+      "tests": [
+        "test_transmute_artifact_resolution_payment_and_decline"
+      ],
       "provenance": {
         "source_oracle_hash": "1df0b1374de7b84b50138f1ff38de29f39913f9985d699e90c2b4b1508a037fd",
         "source_rulings_hash": "d00967f3582e0b6c973376ae55851174e53fefa611284ef758f0756309eebbb5",
@@ -2341,33 +3127,49 @@
       "ability_id": "trigger:chapter-1",
       "active_zone": "battlefield",
       "event": "saga.chapter.1",
-      "effects": [{
-        "op": "grant_ability_fragment",
-        "source": "$source",
-        "fragment": {
-          "kind": "granted_activated",
-          "value": {
-            "schema_version": 1,
-            "ability_id": "saga_mana",
-            "semantic_key": "builtin:mana-fixed",
-            "cost_text": "{T}",
-            "effect_text": "Add {C}.",
-            "mana": {},
-            "tap_source": true,
-            "sorcery_speed": false,
-            "mana_ability": true,
-            "fixed_mana_outputs": [{"C": 1}]
+      "effects": [
+        {
+          "op": "grant_ability_fragment",
+          "source": "$source",
+          "fragment": {
+            "kind": "granted_activated",
+            "value": {
+              "schema_version": 1,
+              "ability_id": "saga_mana",
+              "semantic_key": "builtin:mana-fixed",
+              "cost_text": "{T}",
+              "effect_text": "Add {C}.",
+              "mana": {},
+              "tap_source": true,
+              "sorcery_speed": false,
+              "mana_ability": true,
+              "fixed_mana_outputs": [
+                {
+                  "C": 1
+                }
+              ]
+            }
           }
         }
-      }],
+      ],
       "trust_level": "trusted",
-      "coverage": ["static_ability", "saga_chapter", "lore_counter", "granted_mana_ability"],
-      "tests": ["test_urzas_saga_chapters_construct_search_and_sacrifice"],
+      "coverage": [
+        "static_ability",
+        "saga_chapter",
+        "lore_counter",
+        "granted_mana_ability"
+      ],
+      "tests": [
+        "test_urzas_saga_chapters_construct_search_and_sacrifice"
+      ],
       "provenance": {
         "source_oracle_hash": "bafb55185281b4f6700f864fc0f755a970aa98d52bb40f2e5d7113e427490b9e",
         "source_rulings_hash": "163e11dd783eb41b1457a6d822579f432c99f7a98cd48660423676396017cf70",
         "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
+        "review_status": "reviewed",
+        "reviewed_equivalent_rulings_hashes": [
+          "60f5ce77b06e6a14d702198e83d36744158c9af523c6c5d232d6f2dcaa7e81c4"
+        ]
       }
     },
     {
@@ -2377,33 +3179,47 @@
       "ability_id": "trigger:chapter-2",
       "active_zone": "battlefield",
       "event": "saga.chapter.2",
-      "effects": [{
-        "op": "grant_ability_fragment",
-        "source": "$source",
-        "fragment": {
-          "kind": "granted_activated",
-          "value": {
-            "schema_version": 1,
-            "ability_id": "saga_construct",
-            "semantic_key": "4c6a0c30-b547-4eff-8ff4-0ca25803c076:ability:saga_construct",
-            "cost_text": "{2}, {T}",
-            "effect_text": "Create a 0/0 colorless Construct artifact creature token.",
-            "mana": {"GENERIC": 2},
-            "tap_source": true,
-            "sorcery_speed": false,
-            "mana_ability": false,
-            "fixed_mana_outputs": []
+      "effects": [
+        {
+          "op": "grant_ability_fragment",
+          "source": "$source",
+          "fragment": {
+            "kind": "granted_activated",
+            "value": {
+              "schema_version": 1,
+              "ability_id": "saga_construct",
+              "semantic_key": "4c6a0c30-b547-4eff-8ff4-0ca25803c076:ability:saga_construct",
+              "cost_text": "{2}, {T}",
+              "effect_text": "Create a 0/0 colorless Construct artifact creature token.",
+              "mana": {
+                "GENERIC": 2
+              },
+              "tap_source": true,
+              "sorcery_speed": false,
+              "mana_ability": false,
+              "fixed_mana_outputs": []
+            }
           }
         }
-      }],
+      ],
       "trust_level": "trusted",
-      "coverage": ["static_ability", "saga_chapter", "lore_counter", "granted_activated_ability"],
-      "tests": ["test_urzas_saga_chapters_construct_search_and_sacrifice"],
+      "coverage": [
+        "static_ability",
+        "saga_chapter",
+        "lore_counter",
+        "granted_activated_ability"
+      ],
+      "tests": [
+        "test_urzas_saga_chapters_construct_search_and_sacrifice"
+      ],
       "provenance": {
         "source_oracle_hash": "bafb55185281b4f6700f864fc0f755a970aa98d52bb40f2e5d7113e427490b9e",
         "source_rulings_hash": "163e11dd783eb41b1457a6d822579f432c99f7a98cd48660423676396017cf70",
         "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
+        "review_status": "reviewed",
+        "reviewed_equivalent_rulings_hashes": [
+          "60f5ce77b06e6a14d702198e83d36744158c9af523c6c5d232d6f2dcaa7e81c4"
+        ]
       }
     },
     {
@@ -2413,37 +3229,52 @@
       "ability_id": "ability:saga_construct",
       "active_zone": "battlefield",
       "event": "activate",
-      "effects": [{
-        "op": "create_token",
-        "controller": "$controller",
-        "name": "Construct",
-        "characteristics": {
-          "type_line": "Token Artifact Creature — Construct",
-          "power": "0",
-          "toughness": "0",
-          "colors": [],
-          "oracle_text": "This token gets +1/+1 for each artifact you control.",
-          "ability_fragments": [{
-            "kind": "dynamic_power_toughness",
-            "value": {
-              "schema_version": 1,
-              "count_kind": "controller_battlefield_artifacts",
-              "calculation": "per_matching_object",
-              "power": 1,
-              "toughness": 1,
-              "minimum_count": 0
-            }
-          }]
+      "effects": [
+        {
+          "op": "create_token",
+          "controller": "$controller",
+          "name": "Construct",
+          "characteristics": {
+            "type_line": "Token Artifact Creature — Construct",
+            "power": "0",
+            "toughness": "0",
+            "colors": [],
+            "oracle_text": "This token gets +1/+1 for each artifact you control.",
+            "ability_fragments": [
+              {
+                "kind": "dynamic_power_toughness",
+                "value": {
+                  "schema_version": 1,
+                  "count_kind": "controller_battlefield_artifacts",
+                  "calculation": "per_matching_object",
+                  "power": 1,
+                  "toughness": 1,
+                  "minimum_count": 0
+                }
+              }
+            ]
+          }
         }
-      }],
+      ],
       "trust_level": "trusted",
-      "coverage": ["activated_ability", "mana_cost", "tap_cost", "construct_token", "continuous_power_toughness"],
-      "tests": ["test_urzas_saga_chapters_construct_search_and_sacrifice"],
+      "coverage": [
+        "activated_ability",
+        "mana_cost",
+        "tap_cost",
+        "construct_token",
+        "continuous_power_toughness"
+      ],
+      "tests": [
+        "test_urzas_saga_chapters_construct_search_and_sacrifice"
+      ],
       "provenance": {
         "source_oracle_hash": "bafb55185281b4f6700f864fc0f755a970aa98d52bb40f2e5d7113e427490b9e",
         "source_rulings_hash": "163e11dd783eb41b1457a6d822579f432c99f7a98cd48660423676396017cf70",
         "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
+        "review_status": "reviewed",
+        "reviewed_equivalent_rulings_hashes": [
+          "60f5ce77b06e6a14d702198e83d36744158c9af523c6c5d232d6f2dcaa7e81c4"
+        ]
       }
     },
     {
@@ -2453,24 +3284,45 @@
       "ability_id": "trigger:chapter-3",
       "active_zone": "battlefield",
       "event": "saga.chapter.3",
-      "effects": [{
-        "op": "search",
-        "searching_player": "$controller",
-        "zone": "library",
-        "selector": {"types": ["artifact"], "predicate": "mana_cost_0_or_1"},
-        "count": {"minimum": 1, "maximum": 1},
-        "destination": "battlefield",
-        "reveal": true,
-        "shuffle_after": true
-      }],
+      "effects": [
+        {
+          "op": "search",
+          "searching_player": "$controller",
+          "zone": "library",
+          "selector": {
+            "types": [
+              "artifact"
+            ],
+            "predicate": "mana_cost_0_or_1"
+          },
+          "count": {
+            "minimum": 1,
+            "maximum": 1
+          },
+          "destination": "battlefield",
+          "reveal": true,
+          "shuffle_after": true
+        }
+      ],
       "trust_level": "trusted",
-      "coverage": ["static_ability", "saga_chapter", "saga_final_chapter", "mana_cost_selector", "library_search"],
-      "tests": ["test_urzas_saga_chapters_construct_search_and_sacrifice"],
+      "coverage": [
+        "static_ability",
+        "saga_chapter",
+        "saga_final_chapter",
+        "mana_cost_selector",
+        "library_search"
+      ],
+      "tests": [
+        "test_urzas_saga_chapters_construct_search_and_sacrifice"
+      ],
       "provenance": {
         "source_oracle_hash": "bafb55185281b4f6700f864fc0f755a970aa98d52bb40f2e5d7113e427490b9e",
         "source_rulings_hash": "163e11dd783eb41b1457a6d822579f432c99f7a98cd48660423676396017cf70",
         "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
+        "review_status": "reviewed",
+        "reviewed_equivalent_rulings_hashes": [
+          "60f5ce77b06e6a14d702198e83d36744158c9af523c6c5d232d6f2dcaa7e81c4"
+        ]
       }
     }
   ]

@@ -154,6 +154,24 @@ class GraveyardExileCompilerTests(unittest.TestCase):
             self.assertIn(CAP,node.capability_dependencies);self.assertEqual(HANDLER,node.handlers[0]['handler_id'])
             from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
             self.assertIn(CURRENT_ABILITY_FRAGMENT_COVERAGE,node.runtime_coverage);self.assertEqual(text,node.text)
+    def test_replacement_token_recipe_changing_scope_or_tail_and_withdrawal_fail_closed(self):
+        from quorune.rules.zone_replacement_token_trigger import CAPABILITY, HANDLER, parse_descriptor
+
+        text = TEXTS[5] + " When you do, create a 2/2 green Wolf creature token."
+        recipe = graveyard_exile_template(text)
+        self.assertEqual(HANDLER, recipe[1]["handler_id"])
+        self.assertEqual(Scope.OPPONENT_CONTROLLED_CREATURE, parse_descriptor(recipe[1])[0].scope)
+        self.assertIsNone(graveyard_exile_template(TEXTS[4] + " When you do, create a 2/2 green Wolf creature token."))
+        self.assertIsNone(graveyard_exile_template(TEXTS[5] + " When you do, draw a card."))
+        self.assertIsNone(graveyard_exile_template(TEXTS[5] + " When you do, create two 2/2 green Wolf creature tokens."))
+        fixture = compiler_controls._replacement_fixture(text)
+        before = compile_oracle_card(fixture, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", before.status, before.material_residuals)
+        with patch("quorune.compiler.graveyard_exile_templates._token_trigger_template", return_value=None):
+            after = compile_oracle_card(fixture, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertTrue(after.material_residuals)
+        self.assertIn(CAPABILITY, before.faces[0].nodes[0].capability_dependencies)
+
     def test_withdrawing_new_scope_or_its_producer_does_not_widen_legacy_counter_handler(self):
         with patch('quorune.compiler.graveyard_exile_templates.graveyard_exile_template',return_value=None):
             self.assertNotEqual('exact',compile_oracle_card(compiler_controls._replacement_fixture(TEXTS[0]),capability_registry=self.registry).status)
@@ -415,6 +433,56 @@ class GraveyardExileGameplayTests(unittest.TestCase):
                 self.ready(s);self.cast(s,wipe);self.assertIsNone(self.resolve(s))
                 self.assertTrue(all(s.state.cards[c.object_id].zone=='exile' for c in (source,own,foreign)))
                 self.assertEqual('graveyard',s.state.cards[wipe.object_id].zone);self.replay(s,load=True)
+    def test_applied_replacement_creates_token_after_source_and_victim_leave_together(self):
+        s = self.start(929181)
+        source = self.add(s.engine, "Head of the Hunt")
+        own = self.add(s.engine, "Grizzly Bears", ref="token-replacement-own")
+        victim = self.add(s.engine, "Doomed Traveler", seat="B", ref="token-replacement-opponent")
+        wipe = self.add(s.engine, "Akroma's Vengeance", zone="hand")
+        self.closed(s, source)
+        self.ready(s)
+        self.cast(s, wipe)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(["graveyard", "graveyard", "exile"], [
+            s.state.cards[card.object_id].zone for card in (source, own, victim)
+        ])
+        wolves = [card for card in s.state.cards.values() if card.is_token and card.zone=="battlefield"]
+        self.assertEqual([("Wolf Token", "A")], [(card.printed_name, card.controller) for card in wolves])
+        self.replay(s, load=True)
+
+    def test_competing_replacements_create_token_only_for_the_committed_selected_source(self):
+        from quorune.rules.zone_replacement_token_trigger import HANDLER as token_handler
+
+        for selected in (False, True):
+            with self.subTest(selected=selected):
+                s = self.start(929182+int(selected))
+                source = self.add(s.engine, "Head of the Hunt")
+                other = self.add(s.engine, "Rest in Peace")
+                victim = self.add(s.engine, "Grizzly Bears", seat="B", ref="token-replacement-contested")
+                removal = self.add(s.engine, "Murder", zone="hand")
+                self.closed(s, source)
+                self.closed(s, other)
+                self.ready(s)
+                self.cast(s, removal, [victim.ref])
+                self.assertEqual("replacement.order", self.resolve(s).kind)
+                self.assertEqual(["pilot:B"], s.pending_principals())
+                s = self.replay(s, load=True)
+                rows = s.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                choice = next(row["id"] for row in rows if row["id"].startswith(token_handler) is selected)
+                result = s.act("pilot:B", {"action_id":"choose","replacement":choice})
+                self.assertTrue(result.ok, result.summary)
+                next_decision = self.resolve(s)
+                if next_decision is not None and next_decision.kind=="replacement.order":
+                    proposed = s.packet(s.pending_principals()[0], full=True)["decision"]["ctx"]["options"]
+                    result = s.act(s.pending_principals()[0], {"action_id":"choose","replacement":proposed[0]["id"]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(s))
+                self.assertEqual("exile", s.state.cards[victim.object_id].zone)
+                wolves = [card for card in s.state.cards.values()
+                          if card.is_token and card.zone=="battlefield" and card.controller=="A"]
+                self.assertEqual(int(selected), len(wolves))
+                self.replay(s, load=True)
+
     def test_actual_competing_exile_sources_choose_once_and_modified_sacrifice_is_paid(self):
         s=self.start(929150);rip=self.add(s.engine,'Rest in Peace');leyline=self.add(s.engine,'Leyline of the Void',seat='B')
         self.closed(s,rip);self.closed(s,leyline)

@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from .rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND, validate_announced_subtype_choice
+from .rules.named_sacrifice_cost_model import NAMED_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_NAME_FIELD
+from .rules.announced_hand_discard import ANNOUNCED_HAND_DISCARD_KIND, validate_announced_hand_discard_choice
 from .replacement.immutable import FrozenMap, thaw_value
 
 
@@ -20,11 +23,20 @@ class CostChoice:
     tap_schema_version: int | None = None
     return_schema_version: int | None = None
     sacrifice_schema_version: int | None = None
+    predicate_union: FrozenMap | None = None
+    count_parameter: str | None = None
+    sacrifice_name: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, str) or not self.kind.strip():
             raise ValueError("cost choice kind must be a nonempty string")
-        if type(self.count) is not int or self.count < 1:
+        if self.kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            if type(self.count) is not int:
+                raise ValueError("The announced subtype choice count must be an integer")
+            validate_announced_subtype_choice(self)
+        elif self.kind == ANNOUNCED_HAND_DISCARD_KIND:
+            validate_announced_hand_discard_choice(self)
+        elif type(self.count) is not int or self.count < 1:
             raise ValueError("cost choice count must be a positive integer")
         if not isinstance(self.zone, str) or not self.zone.strip():
             raise ValueError("cost choice zone must be a nonempty string")
@@ -45,12 +57,46 @@ class CostChoice:
                     or self.kind != 'return_one_to_owner_hand' or self.predicate is None
                     or self.card_type is not None or self.another):
                 raise ValueError('New return-cost versions require an explicit subtype return choice')
+        named_sacrifice = self.sacrifice_schema_version == NAMED_SACRIFICE_COST_VERSION
+        if named_sacrifice != (self.sacrifice_name is not None) or named_sacrifice and self.another:
+            raise ValueError("A named sacrifice choice requires a name and allows the ability source")
         if self.sacrifice_schema_version is not None:
             from .keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION
-            if (type(self.sacrifice_schema_version) is not int or self.sacrifice_schema_version!=KEYWORD_SACRIFICE_COST_VERSION
+            if (type(self.sacrifice_schema_version) is not int or self.sacrifice_schema_version not in {KEYWORD_SACRIFICE_COST_VERSION, NAMED_SACRIFICE_COST_VERSION}
                     or self.kind!='sacrifice_one' or self.predicate is None or self.card_type is not None
                     or self.return_schema_version is not None or self.tap_schema_version is not None):
-                raise ValueError('Keyword sacrifice choices require their explicit version and typed predicate')
+                raise ValueError('Qualified sacrifice choices require their explicit version and typed predicate')
+        if self.predicate_union is not None:
+            from .sacrifice_union_model import COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION, SacrificePredicateUnion
+
+            union = SacrificePredicateUnion.from_dict(self.predicate_union)
+            if (union.schema_version != COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION
+                    or self.kind != "sacrifice_one" or self.count != 1 or self.predicate is None
+                    or any(value is not None for value in (self.tap_schema_version, self.return_schema_version,
+                                                           self.sacrifice_schema_version))):
+                raise ValueError("An activation sacrifice union requires its isolated typed creature cost")
+            object.__setattr__(self, "predicate_union", FrozenMap(union.to_dict()))
+        if self.count_parameter is not None:
+            from .rules.announced_artifact_sacrifice_return import announced_artifact_predicate
+
+            if (self.count_parameter != "x" or self.kind != "sacrifice_one" or self.count != 1
+                    or self.zone != "battlefield" or self.card_type is not None or self.another
+                    or thaw_value(self.predicate) != announced_artifact_predicate().to_dict()
+                    or any(value is not None for value in (self.predicate_union, self.counter_amount,
+                        self.tap_schema_version, self.return_schema_version, self.sacrifice_schema_version))):
+                raise ValueError("An announced count requires its closed artifact sacrifice query")
+        if self.kind == "forage" and (
+            self.count != 1 or self.zone != "battlefield" or self.card_type is not None or self.another
+            or any(value is not None for value in (self.predicate, self.tap_schema_version,
+                self.return_schema_version, self.sacrifice_schema_version, self.predicate_union))
+        ):
+            raise ValueError("Forage is one closed selected-cost choice")
+        if self.kind == "sacrifice_up_to_three" and (
+            self.count != 3 or self.zone != "battlefield" or self.card_type is not None or self.another
+            or any(value is not None for value in (self.predicate, self.tap_schema_version,
+                self.return_schema_version, self.sacrifice_schema_version, self.predicate_union))
+        ):
+            raise ValueError("Bounded sacrifice requires the closed up-to-three battlefield choice")
         from .rules.selected_counter_costs import SELECTED_COUNTER_COST_CAPABILITIES, validate_selected_counter_choice
         if self.kind in SELECTED_COUNTER_COST_CAPABILITIES:
             validate_selected_counter_choice(self)
@@ -82,8 +128,10 @@ class CostChoice:
         if self.predicate is None:
             return None
         from .additional_cost_vocabulary import (
+            DISCARD_ONE_COST,
             FIXED_ZONE_CHANGE_COST_CONTRACTS,
             RETURN_ONE_TO_OWNER_HAND_COST,
+            SACRIFICE_ONE_COST,
             ZONE_CHANGE_COST_KIND,
         )
         from .rules.casting_additional_costs import (
@@ -99,24 +147,32 @@ class CostChoice:
             if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
             else self.kind
         )
+        if self.kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            operation = SACRIFICE_ONE_COST
+        if self.kind == ANNOUNCED_HAND_DISCARD_KIND:
+            operation = DISCARD_ONE_COST
         contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
         if contract is None:
             return None
+        version = self.sacrifice_schema_version or self.return_schema_version or 1
+        if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
+            version = 2
+        elif self.predicate_union is not None:
+            version = 5
         descriptor = {
-                "schema_version": (
-                    2
-                    if self.kind
-                    == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
-                    else self.sacrifice_schema_version or self.return_schema_version or 1
-                ),
+                "schema_version": version,
                 "kind": ZONE_CHANGE_COST_KIND,
                 "operation": operation,
-                "count": self.count,
+                "count": 1 if self.kind in (ANNOUNCED_SUBTYPE_SACRIFICE_KIND, ANNOUNCED_HAND_DISCARD_KIND) else self.count,
                 "choice_field": contract[2],
                 "predicate": thaw_value(self.predicate),
             }
         if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
             descriptor["unblocked_attacker"] = True
+        if self.predicate_union is not None:
+            descriptor["predicate_union"] = thaw_value(self.predicate_union)
+        if self.sacrifice_name is not None:
+            descriptor[NAMED_SACRIFICE_NAME_FIELD] = self.sacrifice_name
         return FixedZoneChangeAdditionalCost.from_descriptor(descriptor)
 
     def fixed_tap_cost(self) -> Any | None:
@@ -158,6 +214,12 @@ class CostChoice:
             result['return_schema_version'] = self.return_schema_version
         if self.sacrifice_schema_version is not None:
             result['sacrifice_schema_version'] = self.sacrifice_schema_version
+        if self.predicate_union is not None:
+            result["predicate_union"] = thaw_value(self.predicate_union)
+        if self.count_parameter is not None:
+            result["count_parameter"] = self.count_parameter
+        if self.sacrifice_name is not None:
+            result[NAMED_SACRIFICE_NAME_FIELD] = self.sacrifice_name
         return result
 
     def to_dict(self) -> dict[str, Any]:
@@ -178,6 +240,12 @@ class CostChoice:
             result['return_schema_version'] = self.return_schema_version
         if self.sacrifice_schema_version is not None:
             result['sacrifice_schema_version'] = self.sacrifice_schema_version
+        if self.predicate_union is not None:
+            result["predicate_union"] = thaw_value(self.predicate_union)
+        if self.count_parameter is not None:
+            result["count_parameter"] = self.count_parameter
+        if self.sacrifice_name is not None:
+            result[NAMED_SACRIFICE_NAME_FIELD] = self.sacrifice_name
         return result
 
     @classmethod
@@ -190,6 +258,9 @@ class CostChoice:
             frozenset((*expected, "predicate", "tap_schema_version")),
             frozenset((*expected, 'predicate', 'return_schema_version')),
             frozenset((*expected, 'predicate', 'sacrifice_schema_version')),
+            frozenset((*expected, 'predicate', 'sacrifice_schema_version', NAMED_SACRIFICE_NAME_FIELD)),
+            frozenset((*expected, "predicate", "predicate_union")),
+            frozenset((*expected, "predicate", "count_parameter")),
         }:
             raise ValueError("cost choices use a closed schema")
         if "counter_amount" in value and value["counter_amount"] is None:
@@ -200,6 +271,12 @@ class CostChoice:
             raise ValueError('Explicit return-cost versions must be nonnull')
         if 'sacrifice_schema_version' in value and value['sacrifice_schema_version'] is None:
             raise ValueError('Explicit sacrifice-cost versions must be nonnull')
+        if "count_parameter" in value and value["count_parameter"] != "x":
+            raise ValueError("An announced artifact quantity must be X")
+        if NAMED_SACRIFICE_NAME_FIELD in value and value[NAMED_SACRIFICE_NAME_FIELD] is None:
+            raise ValueError("An explicit sacrifice name must be nonnull")
+        if "predicate_union" in value and value["predicate_union"] is None:
+            raise ValueError("A sacrifice predicate union must be nonnull")
         if "predicate" in value and value["predicate"] is None:
             raise ValueError(
                 "typed cost choice predicates must be nonnull objects"
@@ -214,6 +291,9 @@ class CostChoice:
             tap_schema_version=value.get("tap_schema_version"),
             return_schema_version=value.get('return_schema_version'),
             sacrifice_schema_version=value.get('sacrifice_schema_version'),
+            sacrifice_name=value.get(NAMED_SACRIFICE_NAME_FIELD),
+            predicate_union=value.get("predicate_union"),
+            count_parameter=value.get("count_parameter"),
             predicate=(
                 FrozenMap(value["predicate"])
                 if "predicate" in value

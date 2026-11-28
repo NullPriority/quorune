@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "optional_draw_attack_restriction_card_data",
+  "source": "Pinned Scryfall Doctor data and constructed native test cards",
+  "cards": [
+    {"oracle_id":"6874be51-623d-4eaf-a67a-2fcbb9a8ceca","name":"Tempt with Bunnies","mana_cost":"{2}{W}","type_line":"Sorcery","oracle_text":"Tempting Offer — Draw a card and create a 1/1 white Rabbit creature token. Then each opponent may draw a card and create a 1/1 white Rabbit creature token. For each opponent who does, you draw a card and you create a 1/1 white Rabbit creature token.","power":null,"toughness":null,"colors":["W"],"color_identity":["W"],"keywords":["Tempting offer"],"layout":"normal","released_at":"2024-08-02","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"cmc":3.0},
+    {
+      "oracle_id": "7798a4d9-1c1d-48e6-b9a2-ecd6aec1efa7",
+      "name": "Palantír of Orthanc",
+      "mana_cost": "{3}",
+      "type_line": "Legendary Artifact",
+      "cmc": 3.0,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Mill",
+        "Scry"
+      ],
+      "oracle_text": "At the beginning of your end step, put an influence counter on Palantír of Orthanc and scry 2. Then target opponent may have you draw a card. If that player doesn't, you mill X cards, where X is the number of influence counters on Palantír of Orthanc, and that player loses life equal to the total mana value of those cards.",
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
+      "name": "The Second Doctor",
+      "mana_cost": "{2}{W}{U}",
+      "type_line": "Legendary Creature — Time Lord Doctor",
+      "oracle_text": "Players have no maximum hand size.\nHow Civil of You — At the beginning of your end step, each player may draw a card. Each opponent who does can't attack you or permanents you control during their next turn.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "How Civil of You"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "2883436d-0000-4000-8000-000000000001",
+      "name": "Generic Protected Walker",
+      "type_line": "Legendary Planeswalker — Witness",
+      "loyalty": "4",
+      "defense": null
+    },
+    {
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "2883436d-0000-4000-8000-000000000002",
+      "name": "Generic Protected Battle",
+      "type_line": "Battle — Siege",
+      "loyalty": null,
+      "defense": "4"
+    },
+    {
+      "oracle_id": "2883436d-0000-4000-8000-000000000003",
+      "name": "Generic Raw Resolution Witness",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Count the imagined stars and record a private omen.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "7798a4d9-1c1d-48e6-b9a2-ecd6aec1efa7",
+      "source": "wotc",
+      "published_at": "2023-06-16",
+      "comment": "You choose a target for Palantír of Orthanc's ability when it goes on the stack. If that target is illegal as the ability tries to resolve, the ability is removed from the stack. You won't put an influence counter on Palantír of Orthanc, and you won't scry, draw, or mill."
+    },
+    {
+      "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Neither \"Time\" nor \"Lord\" are creature types. Some older cards were printed with the subtype \"Lord,\" but all of those cards have updated Oracle card text that removed that type."
+    },
+    {
+      "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Unlike other creature types in Magic that are each only one word, the two words \"Time Lord\" represent a single creature subtype. Time Lord is the only two-word creature type."
+    },
+    {
+      "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a creature type, you may choose Time Lord."
+    }
+  ]
+}

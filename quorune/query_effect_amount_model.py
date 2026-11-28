@@ -11,6 +11,9 @@ from .characteristic_fragments import (
 )
 from .object_predicate import ObjectQueryError, ObjectQuerySpec, PermanentStatePredicateSpec
 from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_BATTLEFIELD_QUANTITY_KIND
+from .shared_type_doors import (
+    RoomDoorQuantity, ROOM_DOOR_AMOUNT_KIND, ROOM_DOOR_AMOUNT_CAPABILITY, ROOM_UNLOCKED_COUNT_CAPABILITY,
+)
 
 
 PUBLIC_QUERY_AMOUNT_KIND = "public_query_effect_amount"
@@ -18,6 +21,7 @@ PUBLIC_QUERY_AMOUNT_CAPABILITY = "quantity_expression.public_query_effect_amount
 SOURCE_RELATIVE_EFFECT_COUNT_CAPABILITY = "quantity_expression.source_relative_effect_count"
 CAST_X_AMOUNT_KIND = "cast_x_effect_amount"
 DECLARED_AMOUNT_CAPABILITY = "quantity_expression.declared_effect_amount"
+SCALED_ANNOUNCED_TARGET_DAMAGE_CAPABILITY = "damage.batch.scaled_announced_x_each_target"
 OPPONENT_HAND_MILL_KIND = "mill_opponent_current_hand_count"
 OPPONENT_HAND_MILL_CAPABILITY = "zone.mill.opponent_hand_count"
 OPPONENT_HAND_MILL_MECHANIC = "opponent-hand-count-mill"
@@ -60,6 +64,12 @@ _ALLOWED_ZONES = frozenset({"battlefield", "graveyard", "hand"})
 def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     """Keep effect quantities on the existing cycle-safe layer-5 boundary."""
 
+    if query.state_predicate is not None:
+        return query == ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(attacking=True),
+        )
+
     if (
         len(query.zones) != 1
         or query.zones[0] not in _ALLOWED_ZONES
@@ -73,7 +83,6 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
         or query.include_phased_out
         or query.known_to_actor is not None
         or query.exclude_ref is not None
-        or query.state_predicate is not None
     ):
         return False
     if query.zones == ("hand",):
@@ -81,7 +90,11 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     return True
 
 
-def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec) -> bool:
+def _quantity_is_public_amount_closed(
+    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec | RoomDoorQuantity,
+) -> bool:
+    if isinstance(quantity, RoomDoorQuantity):
+        return True
     if isinstance(quantity,CharacteristicQuantitySpec) and quantity.schema_version==5:return True
     if isinstance(quantity, LiveBattlefieldQuantitySpec):
         return True
@@ -99,6 +112,8 @@ ATTACK_SHARED_TYPE_AMOUNT_VERSION = 4
 ATTACK_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.attack_shared_creature_type_count"
 SOURCE_SHARED_TYPE_AMOUNT_VERSION = 5
 SOURCE_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.controlled_source_shared_creature_type_count"
+ENTRY_SHARED_TYPE_AMOUNT_VERSION = 6
+ENTRY_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.controlled_entrant_shared_creature_type_count"
 
 _ATTACK_SHARED_TYPE_QUANTITY = LiveBattlefieldQuantitySpec(
     controller_relation="any", exclude_source=True,
@@ -112,12 +127,14 @@ _SOURCE_SHARED_TYPE_QUANTITY = LiveBattlefieldQuantitySpec(
     query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
 )
 
+_ENTRY_SHARED_TYPE_QUANTITY = replace(_SOURCE_SHARED_TYPE_QUANTITY, exclude_source=False)
+
 
 @dataclass(frozen=True, slots=True)
 class PublicQueryAmountSpec:
     """One signed coefficient over a current public object-query count."""
 
-    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec
+    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec | RoomDoorQuantity
     coefficient: int = 1
     schema_version: int = 1
     binding_id: str | None = None
@@ -125,6 +142,7 @@ class PublicQueryAmountSpec:
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
             1, 2, 3, ATTACK_SHARED_TYPE_AMOUNT_VERSION, SOURCE_SHARED_TYPE_AMOUNT_VERSION,
+            ENTRY_SHARED_TYPE_AMOUNT_VERSION,
         }:
             raise PublicQueryAmountError(
                 "Unsupported public query effect amount schema version"
@@ -141,7 +159,7 @@ class PublicQueryAmountSpec:
             )
         if self.schema_version == 2 and self.coefficient not in {-1, 1}:
             raise PublicQueryAmountError("Declared result coefficients are exactly one or minus one")
-        if not isinstance(self.quantity, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec)):
+        if not isinstance(self.quantity, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec, RoomDoorQuantity)):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a typed quantity"
             )
@@ -158,6 +176,9 @@ class PublicQueryAmountSpec:
         elif self.schema_version == SOURCE_SHARED_TYPE_AMOUNT_VERSION:
             if self.quantity != _SOURCE_SHARED_TYPE_QUANTITY or self.coefficient != 1:
                 raise PublicQueryAmountError("Shared source type amounts require one controlled other-creature count")
+        elif self.schema_version == ENTRY_SHARED_TYPE_AMOUNT_VERSION:
+            if self.quantity != _ENTRY_SHARED_TYPE_QUANTITY or self.coefficient != 1:
+                raise PublicQueryAmountError("Shared entrant type amounts require one controlled creature count")
         elif not _quantity_is_public_amount_closed(self.quantity):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a cycle-safe public zone query"
@@ -201,9 +222,13 @@ class PublicQueryAmountSpec:
             )
         try:
             raw = value['quantity']
-            quantity = (LiveBattlefieldQuantitySpec.from_dict(raw)
-                if isinstance(raw, Mapping) and raw.get('kind') == LIVE_BATTLEFIELD_QUANTITY_KIND
-                else CharacteristicQuantitySpec.from_dict(raw))
+            kind = raw.get('kind') if isinstance(raw, Mapping) else None
+            if kind == LIVE_BATTLEFIELD_QUANTITY_KIND:
+                quantity = LiveBattlefieldQuantitySpec.from_dict(raw)
+            elif kind == ROOM_DOOR_AMOUNT_KIND:
+                quantity = RoomDoorQuantity.from_dict(raw)
+            else:
+                quantity = CharacteristicQuantitySpec.from_dict(raw)
         except (CharacteristicFragmentError, ObjectQueryError, TypeError, ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
         return cls(
@@ -230,8 +255,16 @@ def source_shared_type_amount_spec() -> PublicQueryAmountSpec:
     return PublicQueryAmountSpec(_SOURCE_SHARED_TYPE_QUANTITY, schema_version=SOURCE_SHARED_TYPE_AMOUNT_VERSION)
 
 
+def entry_shared_type_amount_spec() -> PublicQueryAmountSpec:
+    return PublicQueryAmountSpec(_ENTRY_SHARED_TYPE_QUANTITY, schema_version=ENTRY_SHARED_TYPE_AMOUNT_VERSION)
+
+
 def public_query_amount_runtime_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     spec = PublicQueryAmountSpec.from_dict(value)
+    if isinstance(spec.quantity, RoomDoorQuantity):
+        declaration = (DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ()
+        return (PUBLIC_QUERY_AMOUNT_CAPABILITY, ROOM_DOOR_AMOUNT_CAPABILITY,
+                ROOM_UNLOCKED_COUNT_CAPABILITY, *declaration)
     if spec.schema_version == 2:
         return (PUBLIC_QUERY_AMOUNT_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
     if spec.schema_version == ATTACK_SHARED_TYPE_AMOUNT_VERSION:
@@ -243,6 +276,10 @@ def public_query_amount_runtime_dependencies(value: Mapping[str, Any]) -> tuple[
 
         return (PUBLIC_QUERY_AMOUNT_CAPABILITY, SOURCE_SHARED_TYPE_AMOUNT_CAPABILITY,
                 SHARED_CREATURE_TYPE_QUERY_CAPABILITY, "target.ability_source.current_or_lki")
+    if spec.schema_version == ENTRY_SHARED_TYPE_AMOUNT_VERSION:
+        from .shared_creature_type_model import SHARED_CREATURE_TYPE_QUERY_CAPABILITY
+
+        return (PUBLIC_QUERY_AMOUNT_CAPABILITY, ENTRY_SHARED_TYPE_AMOUNT_CAPABILITY, SHARED_CREATURE_TYPE_QUERY_CAPABILITY)
     return (PUBLIC_QUERY_AMOUNT_CAPABILITY,)
 
 
@@ -255,9 +292,9 @@ class CastXAmountSpec:
     bonus: int = 0
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise PublicQueryAmountError("Unsupported cast-X amount version")
-        allowed = {1: {-1, 1}, 2: {-3, -2, 2, 3}, 3: {1}}
+        allowed = {1: {-1, 1}, 2: {-3, -2, 2, 3}, 3: {1}, 4: {5}}
         if type(self.coefficient) is not int or self.coefficient not in allowed[self.schema_version]:
             raise PublicQueryAmountError("Cast-X result coefficient does not match its version")
         expected_bonus = 2 if self.schema_version == 3 else 0
@@ -284,8 +321,9 @@ def cast_x_runtime_dependencies(value: Any) -> tuple[str,...]:
     """Require the typed amount owner wherever a persisted X read appears."""
     if isinstance(value,Mapping):
         if value.get('kind')==CAST_X_AMOUNT_KIND:
-            CastXAmountSpec.from_dict(value)
-            return (DECLARED_AMOUNT_CAPABILITY,)
+            spec = CastXAmountSpec.from_dict(value)
+            return (DECLARED_AMOUNT_CAPABILITY, SCALED_ANNOUNCED_TARGET_DAMAGE_CAPABILITY
+                    ) if spec.schema_version == 4 else (DECLARED_AMOUNT_CAPABILITY,)
         return tuple(sorted({cap for child in value.values() for cap in cast_x_runtime_dependencies(child)}))
     if isinstance(value,(list,tuple)):
         return tuple(sorted({cap for child in value for cap in cast_x_runtime_dependencies(child)}))
@@ -329,3 +367,71 @@ __all__ = [
     "PublicQueryAmountSpec",
     "scope_declared_amount_bindings",
 ]
+
+
+def controlled_creature_power_search_amount():
+    """One closed maximum-power profile for tapped basic-land arrival."""
+    from .public_characteristic_aggregate_model import (
+        CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
+    )
+    from .scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    return ScalarEffectAmountSpec(
+        ScalarAmountOrigin.PUBLIC_AGGREGATE,
+        schema_version=3,
+        aggregate=PublicCharacteristicAggregateSpec(
+            'power', 'maximum', 'source_controller', CONTROLLED_CREATURES_POWER_QUERY,
+        ),
+    )
+
+
+def query_bound_search_amount_from_dict(value):
+    from .scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarEffectAmountSpec
+
+    if isinstance(value, Mapping) and value.get('kind') == SCALAR_AMOUNT_KIND:
+        return ScalarEffectAmountSpec.from_dict(value)
+    return PublicQueryAmountSpec.from_dict(value)
+
+
+def validate_query_bound_search_amount(amount, *, tapped_battlefield):
+    if tapped_battlefield and amount == controlled_creature_power_search_amount():
+        return
+    if (not isinstance(amount, PublicQueryAmountSpec) or amount.schema_version != 1
+            or amount.coefficient != 1 or amount.binding_id is not None):
+        raise ValueError('Query-bounded search requires one unbound positive public quantity')
+    allowed = (
+        CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=('battlefield',), types_all=('land',))),
+        CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), tapped=True)),
+        CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=('battlefield',), types_all=('enchantment',), subtypes_all=('shrine',))),
+        CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=('battlefield',)), schema_version=2,
+            reduction=CharacteristicQuantityReduction.DISTINCT_COLORS),
+    )
+    quantity = amount.quantity
+    if quantity not in allowed and not (isinstance(quantity, LiveBattlefieldQuantitySpec) and quantity.schema_version == 3):
+        raise ValueError('Query-bounded search maximum is outside the closed public profiles')
+
+
+def freeze_query_bound_search_amount(amount, binding_id):
+    if isinstance(amount, PublicQueryAmountSpec):
+        return replace(amount, schema_version=2, binding_id=binding_id)
+    return replace(amount, binding_id=binding_id)
+
+
+def matches_frozen_query_bound_search_amount(amount, frozen):
+    binding_id = getattr(frozen, 'binding_id', None)
+    return (isinstance(binding_id, str) and binding_id.startswith('query-search:')
+            and binding_id.removeprefix('query-search:').isdigit()
+            and frozen == freeze_query_bound_search_amount(amount, binding_id))
+
+
+def query_bound_search_amount_capabilities(amount):
+    from .characteristic_fragments import characteristic_quantity_capabilities
+    from .scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, ScalarEffectAmountSpec
+
+    if isinstance(amount, ScalarEffectAmountSpec):
+        return (SCALAR_AMOUNT_CAPABILITY, *amount.referenced_quantity_capabilities)
+    return (PUBLIC_QUERY_AMOUNT_CAPABILITY, *characteristic_quantity_capabilities(amount.to_dict()))

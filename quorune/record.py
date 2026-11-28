@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import copy
 import gzip
-import hashlib
 import json
 from collections import Counter
 from datetime import datetime, timezone
@@ -13,10 +12,21 @@ from .carddb import CardDatabase
 from .engine import CommanderEngine
 from .model import Event, GameState
 from . import record_state_provenance
+from .record_checkpoint import (
+    RECORD_SCHEMA_VERSION,
+    _atomic_checkpoint,
+    _encode_record_checkpoint,
+    authoritative_state_hash,
+    capability_id,
+    checkpoint_envelope,
+    checkpoint_state,
+)
 from .record_decks import deck_fingerprints, deck_list_fingerprints
+from .record_privacy import hidden_information_audit
 from .record_trust import (
-    capture_stack_resolution_inputs,
-    card_program_trust_provenance,
+    _canonical_hash,
+    record_semantics_provenance,
+    semantics_fingerprint,
     implicit_semantic_execution_provenance,
     rebase_command_semantics_provenance,
     runtime_trust_provenance,
@@ -25,14 +35,13 @@ from .record_trust import (
     validate_programs_used_provenance,
     validate_resolution_provenance,
     validate_command_card_programs_used,
-    submit_with_resolution_capture,
+    submit_recorded_command,
 )
 from .semantics import SemanticRegistry
 from .rules.evidence import _capability_validation_snapshot
 from .util import stable_json
 from .version import __version__
 
-RECORD_SCHEMA_VERSION = 3
 ENGINE_VERSION = __version__
 TRACE_LEVELS = {"minimal", "standard", "debug"}
 RUN_STATES = {
@@ -67,70 +76,6 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def capability_id(token: str) -> str:
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
-
-
-def _canonical_hash(value: Any) -> str:
-    compact = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return hashlib.sha256(compact.encode("utf-8")).hexdigest()
-
-
-def checkpoint_state(state: GameState) -> dict[str, Any]:
-    """Return authoritative state without logs or transport credentials."""
-    return copy.deepcopy(state.to_dict(include_ephemeral=False))
-
-
-def _hash_checkpoint_payload(payload: dict[str, Any]) -> str:
-    """Normalize a caller-owned top level for replay hashing."""
-    payload["events"] = []
-    payload["capabilities"] = {}
-    # Preserve command-hash compatibility with pre-monarch additive v3
-    # checkpoints. Absence and the rules-defined initial ``None`` state are
-    # equivalent; an actual designation remains authoritative and hashed.
-    if payload.get("monarch") is None:
-        payload.pop("monarch", None)
-    return _canonical_hash(payload)
-
-
-def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
-    payload = checkpoint_state(state) if isinstance(state, GameState) else copy.deepcopy(dict(state))
-    return _hash_checkpoint_payload(payload)
-
-
-def checkpoint_envelope(state: GameState) -> dict[str, Any]:
-    active_caps = []
-    decision = state.pending_decision
-    if decision:
-        for cap in state.capabilities.values():
-            if cap.decision_id == decision.decision_id and not cap.consumed:
-                active_caps.append(
-                    {
-                        "id": capability_id(cap.token),
-                        "decision_id": cap.decision_id,
-                        "principal": cap.principal,
-                        "actor": cap.actor,
-                    }
-                )
-    payload = checkpoint_state(state)
-    return {
-        "schema_version": RECORD_SCHEMA_VERSION,
-        "kind": "authoritative-checkpoint",
-        "state_hash": _hash_checkpoint_payload(dict(payload)),
-        "active_capabilities": sorted(active_caps, key=lambda item: (item["principal"], item["id"])),
-        "state": payload,
-    }
-
-
-def semantics_fingerprint(registry: SemanticRegistry) -> str:
-    programs = {
-        key: registry.get(key).to_dict()
-        for key in registry.keys()
-        if registry.get(key) is not None
-    }
-    return _canonical_hash({"schema_version": 1, "programs": programs})
-
-
 def database_fingerprint(card_db: CardDatabase) -> dict[str, Any]:
     metadata = card_db.metadata()
     stable_metadata = {
@@ -145,7 +90,9 @@ def database_fingerprint(card_db: CardDatabase) -> dict[str, Any]:
     }
 
 
-def event_for_trace(event: Event, trace_level: str) -> dict[str, Any] | None:
+def event_for_trace(
+    event: Event, trace_level: str, *, copy_values: bool = True,
+) -> dict[str, Any] | None:
     if trace_level not in TRACE_LEVELS:
         raise ValueError(f"Unknown trace level {trace_level!r}")
     if trace_level == "standard" and event.code in _STANDARD_OMIT:
@@ -164,11 +111,11 @@ def event_for_trace(event: Event, trace_level: str) -> dict[str, Any] | None:
         "step": event.step,
         "actor": event.actor,
         "code": event.code,
-        "details": copy.deepcopy(event.details),
-        "visibility": list(event.visibility),
+        "details": copy.deepcopy(event.details) if copy_values else event.details,
+        "visibility": list(event.visibility) if copy_values else event.visibility,
         "importance": event.importance,
-        "changed_objects": list(event.changed_objects),
-        "changed_players": list(event.changed_players),
+        "changed_objects": list(event.changed_objects) if copy_values else event.changed_objects,
+        "changed_players": list(event.changed_players) if copy_values else event.changed_players,
     }
     if trace_level == "debug" or not event.details:
         payload["summary"] = event.summary
@@ -204,10 +151,8 @@ def _atomic_json(path: Path, payload: Any) -> None:
 def _atomic_jsonl(path: Path, rows: Iterable[Mapping[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    text = "".join(
-        json.dumps(row, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"
-        for row in rows
-    )
+    encode = json.JSONEncoder(sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode
+    text = "".join(encode(row) + "\n" for row in rows)
     temporary.write_text(text, encoding="utf-8")
     temporary.replace(path)
 
@@ -282,99 +227,6 @@ def provider_telemetry(
             row.get("execution") == "planned_automatic"
             for row in commands
         ),
-    }
-
-
-def hidden_information_audit(
-    decisions: Sequence[Mapping[str, Any]],
-) -> dict[str, Any]:
-    """Audit durable pilot inputs for direct cross-seat private-zone exposure."""
-
-    findings: list[dict[str, Any]] = []
-    forbidden_keys = {
-        "authoritative_state",
-        "checkpoint",
-        "initial_checkpoint",
-        "library_order",
-        "analyst",
-    }
-
-    def inspect(
-        value: Any,
-        *,
-        seat: str,
-        decision_id: str,
-        path: tuple[str, ...] = (),
-    ) -> None:
-        if isinstance(value, Mapping):
-            for key, child in value.items():
-                key_text = str(key)
-                child_path = (*path, key_text)
-                if key_text.lower() in forbidden_keys:
-                    findings.append(
-                        {
-                            "decision_id": decision_id,
-                            "seat": seat,
-                            "path": ".".join(child_path),
-                            "reason": "forbidden authoritative or analyst field",
-                        }
-                    )
-                inspect(
-                    child,
-                    seat=seat,
-                    decision_id=decision_id,
-                    path=child_path,
-                )
-            return
-        if isinstance(value, list):
-            for index, child in enumerate(value):
-                inspect(
-                    child,
-                    seat=seat,
-                    decision_id=decision_id,
-                    path=(*path, str(index)),
-                )
-            return
-        if (
-            isinstance(value, str)
-            and path
-            and path[-1] == "id"
-            and any(
-                private_key in path
-                for private_key in ("hand", "search_cards", "candidates")
-            )
-            and value
-            and not value.startswith(seat)
-        ):
-            findings.append(
-                {
-                    "decision_id": decision_id,
-                    "seat": seat,
-                    "path": ".".join(path),
-                    "reason": f"private candidate belongs to another seat: {value}",
-                }
-            )
-
-    audited = 0
-    for row in decisions:
-        if row.get("role") != "pilot":
-            continue
-        seat = str(row.get("seat") or "")
-        context = row.get("decision_context")
-        if not seat or not isinstance(context, Mapping):
-            continue
-        audited += 1
-        inspect(
-            context,
-            seat=seat,
-            decision_id=str(row.get("decision_id") or ""),
-        )
-    return {
-        "schema_version": 1,
-        "source": "durable_pilot_decision_contexts",
-        "pilot_rows_audited": audited,
-        "seat_projection_verified": not findings,
-        "findings": findings,
     }
 
 
@@ -689,6 +541,10 @@ def build_manifest(
     status: str | None = None,
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
+    _state_hash: str | None = None,
+    saved_semantics: Mapping[str, Any] | None = None,
+    saved_semantics_provenance: tuple[str, dict[str, dict[str, Any]]] | None = None,
+    runtime_trust_snapshot: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     effective_status = (
         "complete"
@@ -711,6 +567,10 @@ def build_manifest(
         if any(value is not None for value in match_values)
         else "unavailable"
     )
+    registry_hash, program_trust = (
+        saved_semantics_provenance or record_semantics_provenance(semantics, saved_semantics)
+    )
+    program_fingerprints = {key: entry["fingerprint"] for key, entry in program_trust.items()}
     return {
         "schema_version": RECORD_SCHEMA_VERSION,
         "record_schema_version": RECORD_SCHEMA_VERSION,
@@ -749,17 +609,20 @@ def build_manifest(
         "profile_fingerprint_match": overall_profile_match,
         "seed": state.config.seed,
         "trace_level": state.config.trace_level,
-        "semantics_fingerprint": semantics_fingerprint(semantics),
+        "semantics_fingerprint": registry_hash,
         "semantics_registry": {
             "schema_version": 1,
-            "hash": semantics_fingerprint(semantics),
+            "hash": registry_hash,
         },
         "card_programs": {
             "schema_version": 2,
-            "fingerprints": semantics.card_program_fingerprints(),
-            "trust": card_program_trust_provenance(semantics),
+            "fingerprints": program_fingerprints,
+            "trust": program_trust,
         },
-        "runtime_trust": runtime_trust_provenance(),
+        "runtime_trust": (
+            copy.deepcopy(dict(runtime_trust_snapshot))
+            if runtime_trust_snapshot is not None else runtime_trust_provenance()
+        ),
         "scryfall": database_fingerprint(card_db),
         "created_at": created_at,
         "started_at": created_at,
@@ -782,15 +645,13 @@ def build_manifest(
         ),
         "winner": state.winner,
         "draw": state.draw,
-        "final_state_hash": authoritative_state_hash(state),
+        "final_state_hash": _state_hash if _state_hash is not None else authoritative_state_hash(state),
         "replay": {
             "mode": replay_mode,
             "verification": "not_run",
             "engine_version": ENGINE_VERSION,
-            "semantics_fingerprint": semantics_fingerprint(semantics),
-            "card_program_fingerprints": (
-                semantics.card_program_fingerprints()
-            ),
+            "semantics_fingerprint": registry_hash,
+            "card_program_fingerprints": dict(program_fingerprints),
         },
         "review": {
             "classification": "unreviewed",
@@ -810,6 +671,10 @@ def build_manifest(
     }
 
 
+def write_record_privacy_audit(directory: Path, decisions: Sequence[Mapping[str, Any]]) -> None:
+    _atomic_json(directory / "hidden-information-audit.json", hidden_information_audit(decisions))
+
+
 def write_record(
     directory: str | Path,
     *,
@@ -827,6 +692,10 @@ def write_record(
     status: str | None = None,
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
+    saved_semantics: Mapping[str, Any] | None = None,
+    saved_semantics_provenance: tuple[str, dict[str, dict[str, Any]]] | None = None,
+    runtime_trust_snapshot: Mapping[str, Any] | None = None,
+    include_privacy_audit: bool = True,
 ) -> dict[str, Any]:
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -852,6 +721,8 @@ def write_record(
     metrics["persistent_threads_reused"] = derived_arena[
         "persistent_threads_reused"
     ]
+    # The serialized writer owns the game until every component is committed.
+    state_hash, checkpoint_parts = _encode_record_checkpoint(state)
     manifest = build_manifest(
         state=state,
         card_db=card_db,
@@ -866,6 +737,10 @@ def write_record(
         status=status,
         pause_reason=pause_reason,
         migrated_from=migrated_from,
+        _state_hash=state_hash,
+        saved_semantics=saved_semantics,
+        saved_semantics_provenance=saved_semantics_provenance,
+        runtime_trust_snapshot=runtime_trust_snapshot,
     )
     if prior_manifest:
         if not migrated_from and prior_manifest.get("migrated_from"):
@@ -890,14 +765,16 @@ def write_record(
                     manifest["replay"][field] = copy.deepcopy(
                         prior_replay[field]
                     )
-    _atomic_json(directory / "checkpoint.json", checkpoint_envelope(state))
+    _atomic_checkpoint(directory / "checkpoint.json", checkpoint_parts)
+    del checkpoint_parts
     _atomic_jsonl(directory / "commands.jsonl", commands)
+    # Encode each trace row before advancing the iterator while the writer owns the state.
     _atomic_jsonl(
         directory / "events.jsonl",
         (
             row
             for event in state.events
-            if (row := event_for_trace(event, state.config.trace_level)) is not None
+            if (row := event_for_trace(event, state.config.trace_level, copy_values=False)) is not None
         ),
     )
     _atomic_jsonl(directory / "decisions.jsonl", decisions)
@@ -935,10 +812,8 @@ def write_record(
             "decision_optimization": optimization,
         },
     )
-    _atomic_json(
-        directory / "hidden-information-audit.json",
-        hidden_information_audit(decisions),
-    )
+    if include_privacy_audit:
+        write_record_privacy_audit(directory, decisions)
     initial_path = directory / "initial-checkpoint.json.gz"
     if not initial_path.exists():
         write_initial_checkpoint(initial_path, initial_checkpoint)
@@ -1068,12 +943,7 @@ def _apply_replay_commands(
         if capability is None:
             raise ValueError(f"No replay capability for {principal} at command {command.get('sequence')}")
         before_events = engine.state.event_sequence
-        result, resolution_inputs = submit_with_resolution_capture(engine, capture_stack_resolution_inputs(engine.state),
-            token=capability.token,
-            principal=principal,
-            action=str(command["action"]),
-            payload=copy.deepcopy(dict(command.get("payload") or {})),
-        )
+        result, resolution_inputs = submit_recorded_command(engine, command, principal, capability.token)
         if not result.ok:
             raise ValueError(f"Replay command {command.get('sequence')} rejected: {result.summary}")
         if verify and require_runtime_provenance:

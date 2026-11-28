@@ -1,4 +1,5 @@
 """CR 608.2h: target controller, immutable owner and spell controller differ."""
+from contextlib import nullcontext
 from copy import deepcopy
 from dataclasses import replace
 import json
@@ -117,6 +118,31 @@ class TargetRecipientModelCompilerTests(unittest.TestCase):
             changed=deepcopy(raw);next(row for row in changed['capabilities'] if row['id']==missing).update(status='blocked',blockers=['Owner withdrawn'])
             self.assertNotEqual('exact',self.compile('Destroy target creature. Its owner gains 4 life.',registry=CapabilityRegistry(changed)).status)
 
+    def test_target_controller_manifest_requires_exact_creature_exile_and_top_result(self):
+        from quorune.target_controller_reference import target_controller_reference
+
+        text = "Exile target creature. Its controller manifests the top card of their library."
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((
+            {"op": "exile_permanent", "card": "$target.0"},
+            {"op": "manifest_card", "player": target_controller_reference(), "mode": "top"},
+        ), node.effects)
+        expected = {CAP, "resolution.target_controller_information", "keyword_action.manifest.card"}
+        self.assertLessEqual(expected, set(node.capability_dependencies))
+        for variant in (
+            text.replace("Exile", "Destroy"),
+            text.replace("target creature", "target artifact"),
+            text.replace("controller", "owner"),
+            text.replace("the top card", "the top two cards"),
+            text + " Draw a card.",
+        ):
+            with self.subTest(variant=variant):
+                self.assertNotEqual("exact", self.compile(variant).status)
+        with patch("quorune.compiler.target_recipient_results.target_recipient_result_template", return_value=None):
+            self.assertNotEqual("exact", self.compile(text).status)
+
     def test_recipient_compiler_omission_cannot_satisfy_the_original_positive_contract(self):
         with patch('quorune.compiler.target_recipient_results.target_recipient_result_template',return_value=None):
             self.assertNotEqual('exact',self.compile('Destroy target creature. Its owner gains 4 life.').status)
@@ -165,6 +191,85 @@ class TargetRecipientNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.add(session.engine,'Mountain',seat='B')
         for index in range(3):self.add(session.engine,'Wastes',seat='B',ref='recipient-response-payer-'+str(index))
         return response
+
+    def test_actual_reality_shift_manifests_for_departure_controller_after_exile_or_redirect(self):
+        from quorune.manifest import is_manifested
+        from quorune.replacement.model import ReplacementClass, ReplacementEffect
+        from quorune.replacement.operations import SetField
+        from quorune.semantic_runtime import zone_replacements
+
+        collect = zone_replacements.collect_zone_change_replacement_effects
+        redirect = ReplacementEffect(
+            effect_id="fixture:reality-shift-redirect", source_id="fixture:redirect-source",
+            event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+            conditions={"destination": {"eq": "exile"}},
+            operations=(SetField("destination", "graveyard"),),
+        )
+
+        def collect_with_redirect(host, **kwargs):
+            return (*collect(host, **kwargs), redirect)
+
+        for redirected in (False, True):
+            with self.subTest(replaced_exile=redirected):
+                scope = patch.object(zone_replacements, "collect_zone_change_replacement_effects",
+                                     side_effect=collect_with_redirect) if redirected else nullcontext()
+                with scope:
+                    session = self.session(999061 + redirected)
+                    engine = session.engine
+                    spell = self.add(engine, "Reality Shift", zone="hand")
+                    target = self.add(engine, "Grizzly Bears", seat="C")
+                    target.owner = "D"
+                    top = self.add(engine, "Counterspell", seat="B", zone="library")
+                    backup = self.add(engine, "Wind Drake", seat="C", zone="library")
+                    response = self.control_response(session, target)
+                    self.assert_closed(session, spell)
+                    self.prepare(session, mana={"C": 1, "U": 1})
+                    self.checkpoint(session)
+                    self.cast(session, "A", spell, targets=[target.ref])
+                    self.cast(session, "B", response, targets=[target.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("B", session.state.cards[target.object_id].controller)
+                    session = self.replay(session, load=True)
+                    self.assertIsNone(self.resolve(session))
+
+                    moved = session.state.cards[target.object_id]
+                    self.assertEqual("graveyard" if redirected else "exile", moved.zone)
+                    self.assertEqual("D", moved.owner)
+                    card = session.state.cards[top.object_id]
+                    self.assertEqual(("battlefield", "B", "B"), (card.zone, card.controller, card.owner))
+                    self.assertTrue(is_manifested(card))
+                    self.assertEqual(2, session.engine._numeric_stat(card.object_id, "power"))
+                    self.assertEqual(2, session.engine._numeric_stat(card.object_id, "toughness"))
+                    self.assertEqual("library", session.state.cards[backup.object_id].zone)
+                    for viewer in "ABCD":
+                        packet = packet_without_decision_capability(session.packet("pilot:" + viewer, full=True))
+                        if viewer == "B":
+                            self.assertIn("Counterspell", json.dumps(packet))
+                        else:
+                            self.assertNotIn("Counterspell", json.dumps(packet))
+                    self.replay(session, load=True)
+
+    def test_actual_reality_shift_fizzles_when_the_only_target_leaves_before_resolution(self):
+        session = self.session(999064)
+        engine = session.engine
+        spell = self.add(engine, "Reality Shift", zone="hand")
+        target = self.add(engine, "Grizzly Bears", seat="B")
+        top = self.add(engine, "Counterspell", seat="B", zone="library")
+        response = self.add(engine, "Unsummon", seat="B", zone="hand")
+        self.add(engine, "Island", seat="B")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 1, "U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", spell, targets=[target.ref])
+        self.cast(session, "B", response, targets=[target.ref])
+        self.resolve_top(session)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[target.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual(top.object_id, session.state.players["B"].zones["library"][-1])
+        self.assertFalse(session.state.cards[top.object_id].face_down)
+        self.replay(session, load=True)
 
     def test_actual_gift_uses_departure_controller_after_a_real_control_change_and_replacement(self):
         session=self.session(999001);source=self.add(session.engine,'Generous Gift',zone='hand')

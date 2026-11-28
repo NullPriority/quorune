@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..rules.announced_mana_value_target import has_activation_mana_value_target
+
 """Closed Oracle-IR lowering for fixed-output activated mana abilities."""
 
 from dataclasses import replace
@@ -22,6 +24,8 @@ from ..color_set_mana_abilities import (
 )
 from ..fixed_mana_abilities import (
     FIXED_MANA_HANDLER_CAPABILITIES,
+    HAND_EXILE_MANA_CAPABILITY,
+    LUCK_COUNTER_MANA_CAPABILITY,
     compile_fixed_activated_mana_ability,
     fixed_mana_handler_descriptor,
 )
@@ -39,6 +43,7 @@ from ..intrinsic_basic_land_mana import (
     expected_intrinsic_basic_land_mana_reminder,
 )
 from ..rules.capabilities import CapabilityRegistry
+from ..target_cardinality import SELECTED_PLAYER_RESULT_MECHANIC
 from ..self_zone_move import (
     compile_self_zone_move,
     self_zone_move_handler_descriptor,
@@ -58,6 +63,7 @@ from .dependency_gate import (
     dependency_gate,
     explicit_capabilities_gate,
 )
+from .whole_hand_discard_templates import ordered_opponents_whole_hand_discard_template
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
@@ -100,22 +106,38 @@ def fixed_activated_mana_node(
         else compile_fixed_activated_mana_ability(ability,source_name=source_name)
     )
     if spec is None:
+        from .land_mana_potential_nodes import land_potential_mana_node
+
+        if not reminder_only:
+            land_potential = land_potential_mana_node(
+                ability, node_id, line, span, capability_registry, capability_profile, residuals,
+            )
+            if land_potential is not None:
+                return ability, land_potential
         return public_quantity_activated_mana_node(
             ability, node_id, line, span, capability_registry,
             capability_profile, residuals, source_name=source_name,
         )
+    from ..fixed_mana_results import DISCARD_HAND_MANA_SOURCE, EXERT_MANA_SOURCE
+
+    if spec.result is not None and spec.result.kind in {DISCARD_HAND_MANA_SOURCE, EXERT_MANA_SOURCE}:
+        ability = spec.to_activated_ability()
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
+    if spec.exile_source_from_hand:
+        capabilities.append(HAND_EXILE_MANA_CAPABILITY)
+    if spec.luck_counter_color_choice:
+        capabilities.append(LUCK_COUNTER_MANA_CAPABILITY)
     spend_rule = decode_mana_spend_rule(spec.spend_restriction)
     if spend_rule is not None:
         capabilities.extend(spend_rule.capability_dependencies)
-    if spec.choices:capabilities.extend(('activation.selected_zone_change.fixed','activation.selected_tap.fixed'))
+    from ..rules.forage_mana import CAPABILITY as FORAGE_MANA_CAPABILITY, has_forage_mana_choice
+
+    if has_forage_mana_choice(spec):
+        capabilities.append(FORAGE_MANA_CAPABILITY)
+    elif spec.choices:
+        capabilities.extend(('activation.selected_zone_change.fixed','activation.selected_tap.fixed'))
     if spec.result is not None:
-        from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
-        capabilities.append(FIXED_MANA_RESULT_CAPABILITY)
-        if spec.result.kind=='skip_actor_untap':capabilities.append('untap.step.exert_player')
-        if spec.result.schema_version == 2:
-            from ..fixed_mana_results import COUNTER_DEPLETION_RESULT_CAPABILITY
-            capabilities.append(COUNTER_DEPLETION_RESULT_CAPABILITY)
+        capabilities.extend(spec.result.capability_dependencies)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -147,11 +169,13 @@ def fixed_activated_mana_node(
         kind="mana_ability",
         text=line,
         span=span,
-        active_zone="battlefield",
+        active_zone=ability.zones[0],
         event="activate",
         lowerable=True,
         exact=not gate.blockers,
         template_id=(
+            "activated-mana-hand-exile-source-v6" if spec.exile_source_from_hand else
+            'activated-mana-luck-counter-color-v5' if spec.luck_counter_color_choice else
             'activated-mana-fixed-result-v2' if spec.result is not None else (
             "activated-mana-restricted-fixed-output-v1"
             if spec.spend_restriction is not None
@@ -193,6 +217,14 @@ def color_set_activated_mana_node(
     capabilities = ["mana.activated.color_set"]
     if spec.uses_commander_identity:
         capabilities.append(COMMANDER_IDENTITY_MANA_CAPABILITY)
+    if spec.commander_type_scry:
+        from ..mana_spend_rules import COMMANDER_TYPE_SCRY_CAPABILITY
+
+        capabilities.append(COMMANDER_TYPE_SCRY_CAPABILITY)
+    elif spec.commander_entry_counters:
+        from ..mana_spend_rules import COMMANDER_ENTRY_COUNTER_MANA_CAPABILITY
+
+        capabilities.append(COMMANDER_ENTRY_COUNTER_MANA_CAPABILITY)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -336,10 +368,14 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "earthbend_land",
+    "move_fixed_counter",
     "choose_target_player_graveyard_exile",
+    "schedule_controller_next_draw_replacement",
     "exile_public_graveyard_card_result",
     GRAVEYARD_EXILE_TOKEN_OPERATION,
     "remove_chosen_counter",
+    "place_chosen_counter",
     "choose_target_basic_land_type",
     "choose_creature_type",
     COMBAT_REMOVAL_OPERATION,
@@ -380,7 +416,8 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "counter_stack_target",
     "counter_unless_pay",
     "create_damage_prevention_shield",
-    "create_token",
+        "create_token",
+        "create_distributed_tokens",
     "create_compiled_emblem",
     CREATURE_POWER_DAMAGE_OPERATION,
     "choose_damage_source",
@@ -404,6 +441,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "exile_public_graveyard_card",
     "exile_public_graveyard_targets",
     "extra_turn",
+    "control_next_turn",
     "explore",
     "connive",
     "goad",
@@ -412,6 +450,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "grant_keyword_until_end_of_turn",
     "grant_next_spell_payment",
     "grant_cast_permission",
+    "variable_library_selection",
     "grant_cast_cascade",
     "next_spell_uncounterable",
     "grant_declaration_restriction_until_end_of_turn",
@@ -439,6 +478,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "fixed_bolster",
     "fixed_impulse_access",
     "fixed_library_selection",
+    "reveal_controller_library_top_for_placement",
     "life",
     "set_life_total",
     "exchange_life_and_source_characteristic",
@@ -468,26 +508,72 @@ _PREVENTION_EFFECT_OPERATIONS = frozenset({
 })
 
 
-def _activated_effect_dependency_gate(
-    *,
-    effects: tuple[Mapping[str, Any], ...],
-    target_schema: Mapping[str, Any] | None,
-    mechanics: tuple[str, ...],
-    trusted_mechanics: frozenset[str],
-    capability_registry: CapabilityRegistry | None,
-    capability_profile: str,
-    active_zone: str,
-    cost_schema: Mapping[str, Any],
-) -> DependencyGate:
-    from ..colored_hand_reveal_model import COLORED_REVEAL_MECHANIC, COLORED_REVEAL_OPERATION
-    from ..paid_sacrifice_conditions import is_activation_paid_creature_reference
-    from ..delayed_object_model import is_forced_block_status_effect
+def _selected_graveyard_mill_activation_capabilities(effects, cost_schema):
+    if len(effects) != 1 or cost_schema.get("activation_limit") != ActivationLimit.EXHAUST_ONCE.value:
+        return ()
+    from ..selected_graveyard_mill_count import SELECTED_GRAVEYARD_MILL_KIND
+
+    effect, = effects
+    count = effect.get("count")
+    if (effect.get("op") == "mill" and effect.get("players") == "$targets"
+            and isinstance(count, Mapping) and count.get("kind") == SELECTED_GRAVEYARD_MILL_KIND):
+        return ("activation.exhaust.once_per_object",)
+    return ()
+
+
+def _targeted_activation_result_gate(
+    *, effects, target_schema, mechanics, active_zone, cost_schema, capability_registry, capability_profile,
+):
+    from ..rules.loyalty_attachment import (
+        LOYALTY_ATTACHMENT_CAPABILITY, LOYALTY_ATTACHMENT_MECHANIC, loyalty_attachment_dependencies,
+    )
+
+    if LOYALTY_ATTACHMENT_MECHANIC in mechanics:
+        required = loyalty_attachment_dependencies(
+            effects=effects, target_schema=target_schema, active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{LOYALTY_ATTACHMENT_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
     from ..rules.source_directed_redirect_shapes import source_directed_redirect_node_capabilities
     from ..rules.source_directed_redirect_model import SOURCE_DIRECTED_REDIRECT_CAPABILITY, is_source_directed_redirect
 
+
     from ..linked_exile_return_model import LINKED_FADING_EXILE_CAPABILITY
     from ..rules.linked_exile_return_shapes import linked_fading_activation_capabilities, uses_linked_fading_exile
+    from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_CAPABILITY, TEMPORARY_ESCAPE_OPERATION, targeted_escape_requirements
+    from ..resolution_characteristic_model import NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY
+    from ..rules.resolution_characteristic_shapes import (
+        is_next_turn_target_land_animation, next_turn_land_animation_activation_capabilities,
+    )
 
+    if any(is_next_turn_target_land_animation(effect) for effect in effects):
+        required = next_turn_land_animation_activation_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
+    if effects and effects[0].get("op") == TEMPORARY_ESCAPE_OPERATION:
+        required = targeted_escape_requirements(effects, target_schema, mechanics)
+        if not required or active_zone != "battlefield":
+            return DependencyGate(blockers=(f"capability:{TEMPORARY_ESCAPE_CAPABILITY}",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
+    from ..rules.linked_creature_settlement import CAPABILITY as LINKED_CREATURE_CAPABILITY, FIELD, activation_capabilities
+
+    if any(FIELD in effect for effect in effects):
+        required = activation_capabilities(effects=effects, target_schema=target_schema,
+                                           active_zone=active_zone, cost_schema=cost_schema)
+        if not required:
+            return DependencyGate(blockers=(f"capability:{LINKED_CREATURE_CAPABILITY}",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
     if any(uses_linked_fading_exile(effect) for effect in effects):
         required = linked_fading_activation_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
@@ -508,19 +594,11 @@ def _activated_effect_dependency_gate(
         return explicit_capabilities_gate(
             required, capability_registry=capability_registry, capability_profile=capability_profile,
         )
+    return None
 
-    if any(effect.get("op") == COLORED_REVEAL_OPERATION for effect in effects):
-        from ..rules.colored_hand_reveals import colored_hand_reveal_activation_capabilities
 
-        required = colored_hand_reveal_activation_capabilities(
-            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
-            active_zone=active_zone, cost_schema=cost_schema,
-        )
-        if not required:
-            return DependencyGate(blockers=(f"mechanic:{COLORED_REVEAL_MECHANIC}",))
-        return explicit_capabilities_gate(required, capability_registry=capability_registry,
-            capability_profile=capability_profile)
-
+def _battlefield_activation_result_gate(effects, active_zone):
+    """Reject these closed result families outside battlefield activations."""
     from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_OPERATION
     from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_OPERATION
     if active_zone != "battlefield":
@@ -535,6 +613,66 @@ def _activated_effect_dependency_gate(
         return DependencyGate(blockers=("characteristic exchange requires a battlefield source",))
     if active_zone != "battlefield" and any(is_versioned_self_copy(effect) for effect in effects):
         return DependencyGate(blockers=("temporary self-copy requires a battlefield source",))
+    return None
+
+
+def _activated_effect_dependency_gate(
+    *,
+    effects: tuple[Mapping[str, Any], ...],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: tuple[str, ...],
+    trusted_mechanics: frozenset[str],
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
+    active_zone: str,
+    cost_schema: Mapping[str, Any],
+) -> DependencyGate:
+    from ..hideaway_model import HIDEAWAY_PLAY_CAPABILITY, HIDEAWAY_PLAY_MECHANIC
+    from ..rules.hideaway_play import hideaway_play_activation_capabilities
+
+    if HIDEAWAY_PLAY_MECHANIC in mechanics:
+        required = hideaway_play_activation_capabilities(
+            effects=effects, target_schema=target_schema, active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{HIDEAWAY_PLAY_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
+    from ..colored_hand_reveal_model import COLORED_REVEAL_MECHANIC, COLORED_REVEAL_OPERATION
+    from ..paid_sacrifice_conditions import is_activation_paid_creature_reference
+    from ..delayed_object_model import is_forced_block_status_effect
+    from ..rules.qualified_library_cast import OPERATION, qualified_library_cast_node_capabilities
+
+    if any(effect.get("op") == OPERATION for effect in effects):
+        required = qualified_library_cast_node_capabilities(effects, target_schema)
+        if active_zone != "battlefield" or not required:
+            return DependencyGate(blockers=("qualified library cast requires one closed battlefield activation",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
+
+    targeted = _targeted_activation_result_gate(
+        effects=effects, target_schema=target_schema, mechanics=mechanics, active_zone=active_zone,
+        cost_schema=cost_schema, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if targeted is not None:
+        return targeted
+
+    if any(effect.get("op") == COLORED_REVEAL_OPERATION for effect in effects):
+        from ..rules.colored_hand_reveals import colored_hand_reveal_activation_capabilities
+
+        required = colored_hand_reveal_activation_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"mechanic:{COLORED_REVEAL_MECHANIC}",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+            capability_profile=capability_profile)
+
+    battlefield_gate = _battlefield_activation_result_gate(effects, active_zone)
+    if battlefield_gate is not None:
+        return battlefield_gate
 
     capability_shaped_effect = (
         len(effects) == 1
@@ -561,10 +699,12 @@ def _activated_effect_dependency_gate(
                 "fixed-target-player-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
                 "shared-target-set-result-sequence",
+                SELECTED_PLAYER_RESULT_MECHANIC,
                 "fixed-resolution-control",
                 "fixed-token-mill-subtype-repeat",
                 "fixed-effect-clause-sequence",
                 "fixed-extra-turn-after-current",
+                "fixed-end-turn-exile-and-cleanup",
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
@@ -600,9 +740,11 @@ def _activated_effect_dependency_gate(
         )
     )
     if (
-        capability_shaped_effect
+        capability_shaped_effect or has_activation_mana_value_target(target_schema)
         or closed_prevention_effect
         or closed_target_sequence
+        or (target_schema is None and type(cost_schema.get("loyalty_delta")) is int
+            and "fixed-resolution-mana" in mechanics)
         or (active_zone == "battlefield" and any(uses_source_graveyard_recycling(effect) for effect in effects))
         or FIXED_NONREPEATING_MODAL_MECHANIC in mechanics
     ) and capability_registry is not None:
@@ -613,9 +755,10 @@ def _activated_effect_dependency_gate(
             trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
-            cost_schema=cost_schema if any(
+            cost_schema=cost_schema if has_activation_mana_value_target(target_schema) or any(
                 is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in effects
             ) else None,
+            explicit_capabilities=_selected_graveyard_mill_activation_capabilities(effects, cost_schema),
         )
     return DependencyGate(
         blockers=tuple(
@@ -775,9 +918,14 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
     from .activation_x_costs import announced_x_activation_cost
-    from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
-    ability = announced_x_activation_cost(ability)
-    ability = fixed_any_source_counter_activation(ability)
+    from .activated_counter_costs import (
+        fixed_selected_counter_activation, fixed_any_source_counter_activation,
+        fixed_blight_activation, fixed_source_counter_placement_activation,
+    )
+    from .activated_mill_costs import fixed_mill_activation_cost
+
+    ability = fixed_mill_activation_cost(announced_x_activation_cost(ability))
+    ability = fixed_source_counter_placement_activation(fixed_any_source_counter_activation(ability))
     ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
     return fixed_blight_activation(fixed_selected_counter_activation(
         fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
@@ -793,9 +941,47 @@ def _compiled_activated_effect(
     from .token_mill_repeat_templates import fixed_token_mill_repeat_template
     from .library_bottom_result_templates import library_bottom_creature_result_template
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
+    from .finite_damage_redirection_nodes import finite_damage_redirection_template
+    from ..rules.chosen_damage_redirection import (
+        MECHANIC as CHOSEN_REDIRECTION_MECHANIC, TEMPLATE as CHOSEN_REDIRECTION_TEMPLATE,
+        chosen_damage_redirection_instruction, chosen_damage_redirection_target,
+    )
+    from .library_search_templates import (
+        dragon_graveyard_copy_search_template, qualified_instant_library_cast_template,
+        target_player_basic_land_search_template,
+    )
+    from .equipped_planeswalker_nodes import loyalty_attachment_template
 
     from .temporary_self_copy_templates import temporary_self_copy_template
+    from .fixed_effect_clause_sequences import fixed_proliferate_sequence_template
+    from .directional_control import directional_control_template
 
+    if rotation := directional_control_template(text, source_name=card_name):
+        return rotation
+    if dragon_search := dragon_graveyard_copy_search_template(text, source_name=card_name):
+        return dragon_search
+    if attachment := loyalty_attachment_template(text, source_name=card_name):
+        return attachment
+    from .hideaway_nodes import hideaway_play_template
+
+    if hideaway := hideaway_play_template(text):
+        return hideaway
+    if player_search := target_player_basic_land_search_template(text):
+        return player_search
+    if qualified_cast := qualified_instant_library_cast_template(text):
+        return qualified_cast
+    if proliferate := fixed_proliferate_sequence_template(text):
+        return proliferate
+    if redirection := finite_damage_redirection_template(text):
+        return redirection
+    if text.strip().removesuffix(".").casefold() == (
+        "the next time a source of your choice would deal damage to target creature this turn, "
+        "that damage is dealt to this creature instead"
+    ):
+        return (
+            CHOSEN_REDIRECTION_TEMPLATE, (chosen_damage_redirection_instruction(),),
+            chosen_damage_redirection_target(), (CHOSEN_REDIRECTION_MECHANIC,),
+        )
     if copy := temporary_self_copy_template(text, source_name=card_name):
         return copy
     bottom = library_bottom_creature_result_template(text, card_name=card_name)
@@ -841,12 +1027,17 @@ def _compiled_activated_effect(
             card_name=card_name,
         )
     )
+    from .extra_turn_templates import fixed_next_turn_control_effect_template
+
+    turn_control = fixed_next_turn_control_effect_template(text)
+    if turn_control is not None:
+        return turn_control
     damage = activated_source_damage_effect_template(text)
     compiled = declaration or creature_power or damage
     return (
         compiled.compiled()
         if compiled is not None
-        else effect_template(
+        else ordered_opponents_whole_hand_discard_template(text) or effect_template(
             re.sub(r'^It deals (?=damage equal to )', 'This permanent deals ', text, flags=re.I),
             card_name=card_name,
         )
@@ -914,12 +1105,12 @@ def activated_oracle_node(
     if color_set_mana is not None:
         return color_set_mana
     effect_material = _activated_effect_material(ability,source_name=card_name)
-    self_zone_move = compile_self_zone_move(ability)
+    self_zone_move = compile_self_zone_move(ability, source_is_land="land" in type_line.casefold().partition("—")[0].split())
     handlers: tuple[Mapping[str, Any], ...] = ()
     if self_zone_move is not None:
         ability = self_zone_move.ability
-        from ..self_zone_move_followups import compiled_self_entry
-        template, effects, mechanics = compiled_self_entry(self_zone_move)
+        from .revealed_hand_land_entry import compiled_activated_self_zone_move
+        template, effects, mechanics = compiled_activated_self_zone_move(self_zone_move)
         target_schema = None
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
@@ -943,15 +1134,19 @@ def activated_oracle_node(
         template is not None or ability.mana_ability
     )
     cost = activated_ability_cost(ability, public_timing=public_timing)
-    gate = _activated_effect_dependency_gate(
+    from .revealed_hand_land_entry import activated_result_dependency_gate
+
+    effect_scope = dict(
         effects=effects,
         active_zone=ability.zones[0],
         cost_schema=cost,
         target_schema=target_schema,
         mechanics=mechanics if template is not None else (),
-        trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+    )
+    gate = activated_result_dependency_gate(**effect_scope) or _activated_effect_dependency_gate(
+        **effect_scope, trusted_mechanics=trusted_mechanics,
     )
     gate = _activated_cost_dependency_gate(
         ability,
@@ -975,7 +1170,7 @@ def activated_oracle_node(
         )
     closure, profile, fingerprint = _dependency_metadata(gate)
     return OracleNode(
-        node_id=node_id,
+        node_id=f"{node_id}:loot-transform" if template == "loot-graveyard-owner-transform-v1" else node_id,
         kind=(
             "mana_ability" if ability.mana_ability else "activated_ability"
         ),

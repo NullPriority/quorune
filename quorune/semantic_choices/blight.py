@@ -3,7 +3,7 @@ from __future__ import annotations
 """One public creature selection through the existing counter placement transaction."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from ..replacement.immutable import FrozenMap
 from ..rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_COUNTER, BLIGHT_FIELDS, BLIGHT_OPERATION, fixed_blight_amount
@@ -30,6 +30,35 @@ def blight_placement_intent(actor, ref, amount, reason, *, effect_generated):
         actor=actor, object_refs=(ref,), counter_name=BLIGHT_COUNTER, amount=amount,
         reason=reason, effect_generated=effect_generated,
     )
+
+
+
+def commit_opponent_blight_batch(host, intent):
+    from ..counter_placement import CounterPlacementError, CounterPlacementRequest, place_counters
+    from ..errors import GameRuleError
+    from ..rules.opponent_blight import OPPONENT_BLIGHT_REASON
+
+    order = [seat for seat in host.apnap_order() if seat != intent.actor]
+    selected = [row.placing_player for row in intent.selections]
+    if intent.actor not in host.active_seats or selected != [seat for seat in order if seat in selected]:
+        raise GameRuleError("Opposing-player Blight lost its APNAP authority")
+    requests = []
+    for choice in intent.selections:
+        query = host._semantic_choice_query(choice.placing_player)
+        row = query.object(choice.ref, zones=("battlefield",))
+        if (not blight_creature_can_receive(row, choice.placing_player, 1, query)
+                or row.logical_object_id != choice.logical_object_id):
+            raise GameRuleError("A chosen creature is no longer eligible to receive Blight counters")
+        requests.append(CounterPlacementRequest(
+            subject_kind="permanent", subject_id=row.object_id, counter_name=BLIGHT_COUNTER,
+            amount=1, placing_player=choice.placing_player, source_ref=intent.source_ref,
+        ))
+    try:
+        results = place_counters(host, tuple(requests), selections=intent.replacement_selections,
+                                 reason=OPPONENT_BLIGHT_REASON)
+    except CounterPlacementError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return tuple(host.state.cards[result.object_id].ref for result in results)
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,3 +133,31 @@ class FixedBlightChoiceHandler:
         return SemanticChoiceCompletion(intents=(blight_placement_intent(
             actor, ref, amount, label, effect_generated=True,
         ),))
+
+
+def _ward_blight_cost(payer, amount):
+    from ..fixed_effect_payment import FixedEffectPaymentSpec
+    from ..rules.blight_model import BLIGHT_PAYMENT_VERSION, blight_creature_predicate
+
+    return FixedEffectPaymentSpec(
+        "blight", amount=amount, predicate=blight_creature_predicate(payer),
+        schema_version=BLIGHT_PAYMENT_VERSION,
+    )
+
+
+def prepare_ward_blight(effect, context, amount):
+    from .fixed_effect_payment import prepare_fixed_payment_cost
+
+    prepared = prepare_fixed_payment_cost(_ward_blight_cost(context.actor, amount), effect, context)
+    request = prepared.request
+    return replace(prepared, request=replace(
+        request,
+        prompt=f"Choose a creature you control to receive {amount} -1/-1 counters, or decline Ward.",
+        public_context=FrozenMap({**dict(request.public_context), "target_stack": effect["stack"]}),
+    ))
+
+
+def complete_ward_blight(effect, response, query, amount, *, payer):
+    from .fixed_effect_payment import complete_fixed_payment_cost
+
+    return complete_fixed_payment_cost(_ward_blight_cost(payer, amount), effect, response, query)

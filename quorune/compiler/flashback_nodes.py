@@ -4,6 +4,9 @@ from typing import Any
 
 from ..flashback import (
     compile_fixed_mana_flashback,
+    compile_fixed_sacrifice_flashback,
+    FixedSacrificeFlashbackSpec,
+    SACRIFICE_FLASHBACK_CAPABILITY_ID,
     flashback_handler_descriptor,
     FLASHBACK_CAPABILITY_ID,
     FLASHBACK_MECHANIC_ID,
@@ -39,6 +42,10 @@ def ordinary_fixed_mana_flashback_keyword_node(
         line_index=span.line - 1,
     )
     if spec is None:
+        spec = compile_fixed_sacrifice_flashback(
+            material_line=material_line, oracle_line=line, line_index=span.line - 1,
+        )
+    if spec is None:
         residual_id = append_residual(
             residuals,
             kind="keyword_grammar",
@@ -46,7 +53,7 @@ def ordinary_fixed_mana_flashback_keyword_node(
             span=span,
             reason="Flashback cost is outside the fixed grammar",
             blockers=(
-                "fixed ordinary-mana or fixed-mana-plus-life Flashback",
+                "fixed ordinary-mana, fixed-mana-plus-life, or three-creature Flashback",
                 "variable, hybrid, Phyrexian, snow, wider nonmana, and modified Flashback costs",
             ),
         )
@@ -63,11 +70,19 @@ def ordinary_fixed_mana_flashback_keyword_node(
             mechanics=mechanics,
             residual_ids=(residual_id,),
         )
+    if isinstance(spec, FixedSacrificeFlashbackSpec):
+        capabilities = (SACRIFICE_FLASHBACK_CAPABILITY_ID,)
+        template_id = "fixed-creature-sacrifice-flashback-v1"
+        cost_coverage = ("fixed_creature_sacrifice_alternate_cost",)
+    else:
+        capabilities = (FLASHBACK_CAPABILITY_ID,)
+        template_id = FLASHBACK_TEMPLATE_ID
+        cost_coverage = ("fixed_mana_alternate_cost",)
+        if spec.life_payment is not None:
+            capabilities += ("casting.additional_cost.fixed_life_payment",)
+            cost_coverage += ("fixed_life_payment",)
     gate = explicit_capabilities_gate(
-        (
-            FLASHBACK_CAPABILITY_ID,
-            *(("casting.additional_cost.fixed_life_payment",) if spec.life_payment is not None else ()),
-        ),
+        capabilities,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -94,12 +109,11 @@ def ordinary_fixed_mana_flashback_keyword_node(
         event=FLASHBACK_RUNTIME_EVENT,
         lowerable=True,
         exact=not residual_ids,
-        template_id=FLASHBACK_TEMPLATE_ID,
+        template_id=template_id,
         handlers=(flashback_handler_descriptor(spec),),
         runtime_coverage=(
             "owner_graveyard_cast_permission",
-            "fixed_mana_alternate_cost",
-            *(('fixed_life_payment',) if spec.life_payment is not None else ()),
+            *cost_coverage,
             "flashback_stack_leave_replacement",
         ),
         mechanics=mechanics,

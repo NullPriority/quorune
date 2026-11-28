@@ -1,0 +1,175 @@
+{
+  "cards": [
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "name": "Mystic Confluence",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Counter target spell unless its controller pays {3}.\n• Return target creature to its owner's hand.\n• Draw a card.",
+      "type_line": "Instant",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "layout": "normal",
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Season of the Burrow",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "oracle_text": "Choose up to five {P} worth of modes. You may choose the same mode more than once.\n{P} — Create a 1/1 white Rabbit creature token.\n{P}{P} — Exile target nonland permanent. Its controller draws a card.\n{P}{P}{P} — Return target permanent card with mana value 3 or less from your graveyard to the battlefield with an indestructible counter on it.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-08-02",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Mystic Confluence is copied, the effect that creates the copy will usually allow you to choose new targets, but you can't choose new modes."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the middle mode is chosen more than once, you choose the relative order to return the target creatures."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you choose the first and/or second modes but all of the targets become illegal before Mystic Confluence resolves, the spell won't resolve. If you also chose the last mode once or twice, you won't draw any cards. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "No matter which combination of modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until Mystic Confluence is done resolving."
+    },
+    {
+      "comment": "If a Season is copied, the effect that creates the copy will usually allow you to choose new targets, but you can't choose new modes.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a mode requires a target, you can select that mode only if there's a legal target available. Ignore the targeting requirements for modes you don't choose. Each time you select that mode, you can choose a different target, or you can choose the same target.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If all targets for the chosen modes become illegal before the Season resolves, the spell won't resolve and none of its effects will happen. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "No matter which combination of modes you choose, you always follow the instructions of a Season in the order they are written. If the same mode is chosen more than once, you choose their relative order as you cast the spell.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "The pawprint symbol does not represent a cost, mana, counters, or any kind of persistent resource. You can't \"save up\" pawprint symbols from one Season spell to use on a future one, mostly because there isn't anything concrete to save up. They're just pawprints.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose the modes as you cast the spell. Once modes are chosen, they can't be changed.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't have to choose modes that add up to exactly five pawprints. For example, you could choose the two pawprint mode twice and leave it at that. You could even choose no modes at all. You probably shouldn't, but you could.",
+      "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -95,6 +95,7 @@ from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.card_programs.binding import bind_card_program_runtime
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantics import SemanticRegistry
 
@@ -253,3 +254,166 @@ class FixedPublicSacrificePredicateNativeTests(InheritedNativeFixture, unittest.
             return original(row, replace(spec, colors_any=())) if spec.colors_any else original(row, spec)
         with patch.object(owner, 'object_matches_query', side_effect=omit):
             with self.assertRaises(AssertionError):getattr(witness, method)()
+
+
+ALL_COLORED_SACRIFICE = "Each player sacrifices all permanents they control that are one or more colors."
+
+
+class AllColoredPermanentSacrificeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "all-colored-permanent-sacrifice.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "fixed-public-sacrifice-predicates-cards.json",
+            "linked-hand-mana-cards.json", "temporary-target-interaction-cards.json",
+            "graveyard-exile-replacement-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Colored sacrifice witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 25),
+        ], ["Generic Bound Commander"])
+
+    def cast_dust(self, game):
+        source = self.add(game.engine, "All Is Dust", zone="hand", ref="dust-spell")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 7})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+
+    def order(self, game, owner, cards, *, private_ref=None):
+        self.assertEqual("permanent.composition_order", game.state.pending_decision.kind)
+        self.assertEqual(["pilot:" + owner], game.pending_principals())
+        packet = game.packet("pilot:" + owner, full=True)["decision"]
+        refs = [card.ref for card in cards]
+        self.assertEqual(set(refs), {row["id"] for row in packet["ctx"]["cards"]})
+        if private_ref is not None:
+            self.assertNotIn(private_ref, str(packet))
+        before = authoritative_state_hash(game.state)
+        command = {"action_id": "order", "cards": refs}
+        self.assertFalse(game.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertFalse(game.act("pilot:" + owner, {**command, "cards": [refs[0]] * len(refs)}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:" + owner, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_all_is_dust_uses_live_colors_and_each_actual_owner_order(self):
+        game = self.session(7012101)
+        engine = game.engine
+        permanent_a = self.add(engine, "Generic Bound Body", ref="dust-a-creature")
+        enamel = self.add(engine, "Generic Bound Counter Doubler", ref="dust-a-enchantment")
+        borrowed = self.add(engine, "Dryad Arbor", seat="B", ref="dust-borrowed-land")
+        engine.change_control(borrowed.object_id, "A", reason="borrowed land fixture")
+        permanent_b = self.add(engine, "Generic Bound Body", seat="B", ref="dust-b-creature")
+        washed = self.add(engine, "Generic Bound Body", ref="dust-now-colorless")
+        moonlace = self.add(engine, "Moonlace", seat="B", zone="hand", ref="dust-live-color-change")
+        self.assert_closed(game, moonlace)
+        game.state.players["B"].mana_pool["U"] = 1
+        plain = self.add(engine, "Generic Bound Plains", seat="C", ref="dust-identity-only")
+        devoid = self.add(engine, "Benthic Infiltrator", seat="C", ref="dust-devoid")
+        phased = self.add(engine, "Generic Bound Body", seat="C", ref="dust-phased")
+        phased.phased_out = True
+        private = self.add(engine, "Counterspell", seat="C", zone="hand", ref="dust-private")
+        token_ref, = engine.create_token("D", name="Colored shield token", characteristics={
+            "type_line": "Creature", "colors": ["W", "U"], "power": "1", "toughness": "1",
+            "keywords": ["Indestructible"],
+        })
+        token = engine._resolve_object("D", token_ref, zones={"battlefield"})
+        self.assertIn("indestructible", {keyword.casefold() for keyword in engine._combat_keywords(token)})
+        self.cast_dust(game)
+        self.cast(game, "B", moonlace, [washed.ref])
+        self.resolve_top(game)
+        pending = self.resolve(game)
+        self.assertIsNotNone(pending)
+        self.assertEqual("permanent.composition_order", pending.kind)
+        held = (permanent_a, enamel, permanent_b, borrowed, token)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in held))
+        self.assertFalse(game.engine._effective_card_data(game.state.cards[washed.object_id])["colors"])
+        game = self.replay(game, load=True)
+        self.order(game, "A", (enamel, permanent_a), private_ref=private.ref)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in held))
+        self.order(game, "B", (permanent_b, borrowed), private_ref=private.ref)
+        self.assertIsNone(self.resolve(game))
+        for owner, cards in (("A", (enamel, permanent_a)), ("B", (permanent_b, borrowed))):
+            expected = [card.object_id for card in cards]
+            ordered = [oid for oid in game.state.players[owner].zones["graveyard"] if oid in expected]
+            self.assertEqual(expected, ordered)
+        for card in (washed, plain, devoid, phased):
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+        self.assertNotIn(token.object_id, game.state.players["D"].zones["battlefield"])
+        for seat in "ABD":
+            self.assertNotIn(private.ref, str(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_all_is_dust_orders_only_actual_graveyard_arrivals_after_replacement(self):
+        game = self.session(7012103)
+        engine = game.engine
+        replacement = self.add(engine, "Dauthi Voidwalker", seat="B", ref="dust-destination")
+        self.assert_closed(game, replacement)
+        arrived = self.add(engine, "Generic Bound Body", seat="B", ref="dust-normal")
+        redirected = tuple(self.add(engine, "Generic Bound Body", ref=f"dust-redirection-{index}") for index in range(2))
+        self.cast_dust(game)
+        pending = self.resolve(game)
+        self.assertIsNotNone(pending)
+        self.assertEqual("permanent.composition_order", pending.kind)
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in redirected))
+        game = self.replay(game, load=True)
+        self.order(game, "B", (arrived, replacement))
+        self.assertIsNone(self.resolve(game))
+        for card in redirected:
+            current = game.state.cards[card.object_id]
+            self.assertEqual(("exile", 1), (current.zone, current.counters["void"]))
+        self.assertEqual([arrived.object_id, replacement.object_id], game.state.players["B"].zones["graveyard"])
+        self.replay(game, load=True)
+
+    def test_all_is_dust_empty_color_set_finishes_without_a_choice(self):
+        game = self.session(7012106)
+        neutral = self.add(game.engine, "Ornithopter", ref="dust-uncolored-permanent")
+        land = self.add(game.engine, "Generic Bound Plains", seat="B", ref="dust-uncolored-land")
+        self.cast_dust(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in (neutral, land)))
+        self.replay(game, load=True)
+
+    def test_all_is_dust_closed_shape_and_runtime_dependency_withdrawal(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.colored_permanent_sacrifice import CAPABILITY
+        from test_fixed_affected_player_sacrifices import synthetic_record
+
+        original = synthetic_record(
+            ALL_COLORED_SACRIFICE, name="All colored permanent fixture", type_line="Kindred Sorcery — Eldrazi",
+            oracle_id_suffix=7012108,
+        )
+        ir = compile_oracle_card(original, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(ALL_COLORED_SACRIFICE)), (node.span.start, node.span.end))
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        effect, = node.effects
+        for patch_values in ({"all_colored_permanent_sacrifice": True}, {"players": "opponents"},
+                             {"predicate": {**effect["predicate"], "colors_any": ["R"]}}, {"then": "destroy"}):
+            self.assertEqual((), fixed_affected_player_sacrifice_node_capabilities(
+                effects=({**effect, **patch_values},), mechanic_ids=node.mechanics, target_schema=None,
+            ))
+        for text in (
+            ALL_COLORED_SACRIFICE.replace("Each player", "Each opponent"),
+            ALL_COLORED_SACRIFICE.replace("one or more colors", "exactly one color"),
+            ALL_COLORED_SACRIFICE.replace("sacrifices", "destroys"),
+        ):
+            modified = compile_oracle_card(replace(original, oracle_text=text), capability_registry=self.registry)
+            self.assertNotIn(CAPABILITY, {cap for face in modified.faces for row in face.nodes for cap in row.capability_dependencies})
+        with patch("quorune.compiler.affected_player_sacrifice_templates.AllColoredPermanentSacrificeTemplate", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=self.registry).status)
+        game = self.session(7012108)
+        spell = self.add(game.engine, "All Is Dust", zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(spell.oracle_id)
+        self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])

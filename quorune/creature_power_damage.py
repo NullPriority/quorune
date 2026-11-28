@@ -23,7 +23,8 @@ from .creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_OPERATION,
     OCCURRENCE_POWER_DAMAGE_CONTEXT,
     OCCURRENCE_POWER_DAMAGE_VERSION,
-    is_creature_self_damage_set,
+    is_creature_self_damage_set, is_creature_controller_damage_set,
+    validate_creature_controller_damage_set,
     occurrence_power_damage_in,
     validate_creature_self_damage_set,
 )
@@ -306,6 +307,7 @@ def _instruction(
         'schema_version',
         'power_multiplier',
         'recipient_is_original_source',
+        "fight_excess_red_version",
     }
     required = {
         "op",
@@ -349,23 +351,26 @@ _BATTLEFIELD_CREATURES = AffectedPermanentSetSpec(
 )
 
 
-def _creature_self_damage_proposals(host, effect, *, actor, reason):
+def _creature_set_damage_proposals(host, effect, *, actor, reason):
+    to_controller = is_creature_controller_damage_set(effect)
+    validate = validate_creature_controller_damage_set if to_controller else validate_creature_self_damage_set
     try:
-        validate_creature_self_damage_set(effect, resolved=True)
+        validate(effect, resolved=True)
         creatures = select_affected_permanents(
             host.affected_permanent_object_rows(actor), _BATTLEFIELD_CREATURES, actor=actor,
             active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
         )
-        return _self_damage_for_creatures(host, creatures, actor=actor, reason=reason)
+        return _damage_for_creature_set(host, creatures, actor=actor, reason=reason, to_controller=to_controller)
     except (DamageError, TypeError, ValueError) as exc:
         raise CreaturePowerDamageError(str(exc)) from exc
 
 
-def _self_damage_for_creatures(host, creatures, *, actor, reason):
+def _damage_for_creature_set(host, creatures, *, actor, reason, to_controller=False):
     proposals = []
-    batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:self-set"
+    batch_kind = "controller-set" if to_controller else "self-set"
+    batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:{batch_kind}"
     for row in creatures:
-        power = row.effective_power
+        power = 1 if to_controller else row.effective_power
         if type(power) is not int:
             raise CreaturePowerDamageError("A selected creature has no exact current power")
         if power <= 0:
@@ -378,10 +383,101 @@ def _self_damage_for_creatures(host, creatures, *, actor, reason):
             source = replace(source, oracle_id=None)
         proposals.append(damage_proposal(
             host, proposal_id=f"{batch_id}:{len(proposals)}", actor=actor,
-            source_ref=row.ref, target=row.ref, amount=power, combat=False,
+            source_ref=row.ref, target=row.controller if to_controller else row.ref, amount=power, combat=False,
             reason=reason, source_override=source,
         ))
     return proposals
+
+
+def _source_power_opponent_proposals(host, effect, *, actor, reason):
+    from .creature_power_damage_model import validate_source_power_opponent_damage
+
+    try:
+        validate_source_power_opponent_damage(effect, resolved=True)
+    except (TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
+    source = _source_value(host, ref=effect["source"], lki=effect["source_lki"], public_only=True)
+    if source is None or source[0] <= 0:
+        return ()
+    amount, damage_source = source
+    proposal_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:opponent"
+    return tuple(
+        damage_proposal(
+            host, proposal_id=f"{proposal_id}:{seat}", actor=actor, source_ref=damage_source.ref,
+            target=seat, amount=amount, combat=False, reason=reason, source_override=damage_source,
+        )
+        for seat in host.active_seats if seat != actor
+    )
+
+
+def _target_power_damage_cohort_proposals(host, effect, *, actor, reason):
+    from .creature_power_damage_model import validate_target_power_damage_cohort
+
+    try:
+        validate_target_power_damage_cohort(effect, resolved=True)
+        current = _current_creature(host, effect["source"])
+        if current is None or current[0].controller != actor or current[1] <= 0:
+            return ()
+        card, power = current
+        source = source_snapshot(host, card.ref, controller=card.controller, source_card=card)
+        if card.face_down:
+            source = replace(source, oracle_id=None)
+        creatures = select_affected_permanents(
+            host.affected_permanent_object_rows(actor), _BATTLEFIELD_CREATURES, actor=actor,
+            active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
+        )
+        recipients = (
+            *(row.ref for row in creatures if row.logical_object_id != card.logical_object_id),
+            *(seat for seat in host.active_seats if seat != actor),
+        )
+        batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:target-cohort"
+        return tuple(
+            damage_proposal(
+                host, proposal_id=f"{batch_id}:{index}", actor=actor, source_ref=source.ref,
+                target=recipient, amount=power, combat=False, reason=reason, source_override=source,
+            )
+            for index, recipient in enumerate(recipients)
+        )
+    except (DamageError, TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
+
+
+def _trample_bite_proposals(host, effect, *, actor, reason):
+    from .creature_power_damage_model import split_trample_bite_damage, validate_trample_bite
+    from .deathtouch import source_has_deathtouch
+
+    try:
+        validate_trample_bite(effect, resolved=True)
+        source_ref, target_ref = effect["source"], effect["target"]
+        if source_ref is None or target_ref is None or source_ref == target_ref:
+            return ()
+        source_value = _source_value(host, ref=source_ref, lki=None, public_only=True)
+        target = _card_by_ref(host, target_ref)
+        if (source_value is None or source_value[0] <= 0 or target is None
+                or target.zone != "battlefield" or target.phased_out):
+            return ()
+        power, source = source_value
+        if source.controller != actor or target.controller == actor:
+            return ()
+        effective = host._effective_card_data(target)
+        types = host._type_parts(str(effective.get("type_line") or ""))[0]
+        if "creature" not in types:
+            return ()
+        kept, excess = power, 0
+        if {"trample", "trample over planeswalkers"}.intersection(source.keywords):
+            kept, excess = split_trample_bite_damage(
+                power, toughness=exact_numeric_characteristic(target, effective, "toughness"),
+                marked=target.marked_damage, deathtouch=source_has_deathtouch(source),
+                loyalty=target.counters.get("loyalty", 0) if "planeswalker" in types else None,
+                defense=target.counters.get("defense", 0) if "battle" in types else None,
+            )
+        base_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:trample"
+        return tuple(damage_proposal(
+            host, proposal_id=f"{base_id}:{index}", actor=actor, source_ref=source.ref,
+            target=recipient, amount=amount, combat=False, reason=reason, source_override=source,
+        ) for index, (recipient, amount) in enumerate(((target.ref, kept), (target.controller, excess))) if amount)
+    except (DamageError, TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
 
 
 def resolve_creature_power_damage(
@@ -390,11 +486,25 @@ def resolve_creature_power_damage(
     *,
     actor: str,
     reason: str,
-) -> tuple[int, ...]:
+    collect_excess: bool = False,
+):
     """Resolve one creature-power instruction through the canonical damage batch."""
+    from .creature_power_damage_model import (
+        uses_source_power_opponent_damage,
+        uses_target_power_damage_cohort,
+        uses_trample_bite,
+    )
 
-    if is_creature_self_damage_set(effect):
-        proposals = _creature_self_damage_proposals(host, effect, actor=actor, reason=reason)
+    if uses_target_power_damage_cohort(effect):
+        proposals = _target_power_damage_cohort_proposals(host, effect, actor=actor, reason=reason)
+        return _resolve_power_damage_batch(host, effect, proposals)
+    if uses_trample_bite(effect):
+        return _resolve_power_damage_batch(host, effect, _trample_bite_proposals(host, effect, actor=actor, reason=reason))
+    if uses_source_power_opponent_damage(effect):
+        proposals = _source_power_opponent_proposals(host, effect, actor=actor, reason=reason)
+        return _resolve_power_damage_batch(host, effect, proposals)
+    if is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect):
+        proposals = _creature_set_damage_proposals(host, effect, actor=actor, reason=reason)
         return _resolve_power_damage_batch(host, effect, proposals)
     kind, source_ref, target_ref, must_be_creature, multiplier = _instruction(effect)
     if source_ref is None or target_ref is None:
@@ -442,47 +552,11 @@ def resolve_creature_power_damage(
         if target_value is None:
             return ()
         target_card, target_power = target_value
-        if source_ref == target_ref:
-            if source_power > 0:
-                proposals.append(
-                    damage_proposal(
-                        host,
-                        proposal_id=f"{proposal_base}:fight:self",
-                        actor=actor,
-                        source_ref=source_ref,
-                        target=target_ref,
-                        amount=max(0, source_power) * 2,
-                        combat=False,
-                        reason=reason,
-                        source_override=source_damage,
-                    )
-                )
-        else:
-            target_damage = source_snapshot(
-                host,
-                target_card.ref,
-                controller=target_card.controller,
-            )
-            for index, (damage_source, recipient, amount) in enumerate(
-                (
-                    (source_damage, target_ref, source_power),
-                    (target_damage, source_ref, target_power),
-                )
-            ):
-                if amount > 0:
-                    proposals.append(
-                        damage_proposal(
-                            host,
-                            proposal_id=f"{proposal_base}:fight:{index}",
-                            actor=actor,
-                            source_ref=damage_source.ref,
-                            target=recipient,
-                            amount=amount,
-                            combat=False,
-                            reason=reason,
-                            source_override=damage_source,
-                        )
-                    )
+        proposals = _fight_proposals(
+            host, source_damage=source_damage, source_power=source_power,
+            target_card=target_card, target_power=target_power, actor=actor, reason=reason,
+            proposal_base=proposal_base,
+        )
     else:
         target_card = _card_by_ref(host, target_ref)
         if target_card is not None and (
@@ -505,10 +579,50 @@ def resolve_creature_power_damage(
                     source_override=source_damage,
                 )
             )
+    excess_target = None
+    if "fight_excess_red_version" in effect:
+        from .rules.fight_excess_damage import prepare_fight_excess_target
+
+        excess_target = prepare_fight_excess_target(host, effect, actor, target_card if kind == "fight" else None)
+    return _resolve_power_damage_batch(host, effect, proposals, excess_target=excess_target, actor=actor, collect_excess=collect_excess)
+
+def _fight_proposals(host, *, source_damage, source_power, target_card, target_power, actor, reason, proposal_base):
+    if source_damage.ref == target_card.ref:
+        packets = (("self", source_damage, target_card.ref, max(0, source_power) * 2),)
+    else:
+        target_damage = source_snapshot(host, target_card.ref, controller=target_card.controller)
+        packets = (
+            (0, source_damage, target_card.ref, source_power),
+            (1, target_damage, source_damage.ref, target_power),
+        )
+    return tuple(
+        damage_proposal(
+            host, proposal_id=f"{proposal_base}:fight:{index}", actor=actor, source_ref=source.ref,
+            target=recipient, amount=amount, combat=False, reason=reason, source_override=source,
+        )
+        for index, source, recipient, amount in packets if amount > 0
+    )
+
+
+def resolve_simultaneous_fights(host, pairs, *, actor, reason, batch_ref, effect):
+    proposals = []
+    for index, (first, second) in enumerate(pairs):
+        source = _current_creature(host, first)
+        target = _current_creature(host, second)
+        if source is None or target is None:
+            continue
+        source_card, source_power = source
+        target_card, target_power = target
+        source_damage = source_snapshot(host, source_card.ref, controller=source_card.controller)
+        proposals.extend(_fight_proposals(
+            host, source_damage=source_damage, source_power=source_power, target_card=target_card,
+            target_power=target_power, actor=actor, reason=reason,
+            proposal_base=f"damage.created-fight:{batch_ref}:{index}",
+        ))
     return _resolve_power_damage_batch(host, effect, proposals)
 
 
-def _resolve_power_damage_batch(host, effect, proposals):
+def _resolve_power_damage_batch(host, effect, proposals, *, excess_target=None, actor=None, collect_excess=False):
     if not proposals:
         return ()
     replacement_ids = effect.get("_replacement_event_ids", ())
@@ -529,10 +643,16 @@ def _resolve_power_damage_batch(host, effect, proposals):
             host,
             tuple(proposals),
             replacement_selections=tuple(selections),
+            collect_excess=collect_excess,
         )
     except DamageError as exc:
         raise CreaturePowerDamageError(str(exc)) from exc
-    return tuple(event.dealt_amount for event in result.events)
+    if excess_target is not None:
+        from .rules.fight_excess_damage import settle_fight_excess_red
+
+        settle_fight_excess_red(host, result.events, excess_target, actor)
+    amounts = tuple(event.dealt_amount for event in result.events)
+    return (amounts, result.excess) if collect_excess else amounts
 
 
 __all__ = [

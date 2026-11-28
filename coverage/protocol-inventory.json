@@ -46,6 +46,17 @@
       "summary": "Public Game Events"
     },
     {
+      "method": "PUT",
+      "operation_id": "update_priority_holds_api_v1_games__game_id__priority_holds_put",
+      "path": "/api/v1/games/{game_id}/priority-holds",
+      "request_schema": "#/components/schemas/PriorityWindowRequest",
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Update Priority Holds"
+    },
+    {
       "method": "GET",
       "operation_id": "game_progress_api_v1_games__game_id__progress_get",
       "path": "/api/v1/games/{game_id}/progress",
@@ -55,6 +66,17 @@
         "422"
       ],
       "summary": "Game Progress"
+    },
+    {
+      "method": "POST",
+      "operation_id": "rematch_api_v1_games__game_id__rematch_post",
+      "path": "/api/v1/games/{game_id}/rematch",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Rematch"
     },
     {
       "method": "POST",
@@ -119,6 +141,48 @@
         "200"
       ],
       "summary": "Me"
+    },
+    {
+      "method": "GET",
+      "operation_id": "deck_editor_printings_api_v1_me_deck_editor_printings_get",
+      "path": "/api/v1/me/deck-editor/printings",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Deck Editor Printings"
+    },
+    {
+      "method": "GET",
+      "operation_id": "saved_decks_api_v1_me_decks_get",
+      "path": "/api/v1/me/decks",
+      "request_schema": null,
+      "response_statuses": [
+        "200"
+      ],
+      "summary": "Saved Decks"
+    },
+    {
+      "method": "GET",
+      "operation_id": "saved_deck_api_v1_me_decks__deck_id__get",
+      "path": "/api/v1/me/decks/{deck_id}",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Saved Deck"
+    },
+    {
+      "method": "GET",
+      "operation_id": "recent_games_api_v1_me_games_get",
+      "path": "/api/v1/me/games",
+      "request_schema": null,
+      "response_statuses": [
+        "200"
+      ],
+      "summary": "Recent Games"
     },
     {
       "method": "POST",
@@ -234,7 +298,7 @@
       "method": "POST",
       "operation_id": "start_game_api_v1_rooms__room_id__start_post",
       "path": "/api/v1/rooms/{room_id}/start",
-      "request_schema": null,
+      "request_schema": "#/components/schemas/RoomStartRequest",
       "response_statuses": [
         "200",
         "422"
@@ -405,6 +469,7 @@
         "normalized_payload",
         "payload",
         "principal",
+        "priority_window_holds",
         "rng",
         "selected_costs",
         "selected_object_refs",
@@ -898,7 +963,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "b7564c251423aa90674ac88b930900bde6dade056b2787e717986b62d69fceff",
+  "source_fingerprint": "ad2b2abb275ecb9a8c60cb132eea9269e1d020c7f0b64c64bd849c3d0cf2c7a3",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

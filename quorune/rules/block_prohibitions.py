@@ -11,6 +11,8 @@ def block_prohibition_verdict(host, attacker, blocker):
     by_ref = {card.ref: card for card in host.state.cards.values()}
     for participant in current_declaration_restrictions(host, error_type=GameRuleError):
         source = participant.source
+        if participant.block_opponents_of is not None and blocker.controller == participant.block_opponents_of:
+            continue
         for template in (participant.template,):
             if 'block' not in template.declarations or template.mode != 'prohibit':
                 continue

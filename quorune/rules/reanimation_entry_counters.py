@@ -10,7 +10,8 @@ from .reanimation_followup import REANIMATION_FOLLOWUP_MECHANIC, REANIMATION_FOL
 from ..compiler.reanimation_templates import relative_reanimation_scope
 from .reanimation_capability_shapes import (
     FIXED_TARGET_REANIMATION_MECHANIC, RELATIVE_TARGET_REANIMATION_MECHANIC,
-    fixed_target_reanimation_node_capabilities, relative_target_reanimation_node_capabilities,
+    fixed_target_reanimation_node_capabilities, ordered_graveyard_reanimation_runtime_dependencies,
+    relative_target_reanimation_node_capabilities,
 )
 
 
@@ -49,7 +50,9 @@ def is_closed_reanimation_entry_counter_program(program):
 
 
 def reanimation_entry_counter_runtime_dependencies(program):
-    required=set()
+    from .ordered_graveyard_reanimation import is_ordered_graveyard_reanimation
+
+    required = set(ordered_graveyard_reanimation_runtime_dependencies(program))
     def visit(value):
         if isinstance(value,Mapping):
             if value.get('op')=='reanimate' and (value.get('schema_version') in REANIMATION_ENTRY_COUNTER_VERSIONS
@@ -64,7 +67,7 @@ def reanimation_entry_counter_runtime_dependencies(program):
                 )
                 if not owned:raise ValueError('Entry-counter reanimation lacks its closed target and counter shape')
                 required.update(owned)
-            elif value.get('op') == 'reanimate' and (
+            elif value.get('op') == 'reanimate' and not is_ordered_graveyard_reanimation(value) and (
                 value.get('schema_version') in REANIMATION_FOLLOWUP_VERSIONS or 'followup' in value
             ):
                 owned = fixed_target_reanimation_node_capabilities(effects=(value,), target_schema=program.target_schema,

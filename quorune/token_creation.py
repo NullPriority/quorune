@@ -56,6 +56,8 @@ from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 
 
 if TYPE_CHECKING:
+    from .ability_fragments import GrantedTriggeredAbilitySpec
+    from .continuous_effect_state import ResolutionEffectSource
     from .copied_token_aura_entry import CopiedAuraTokenSelection
 
 
@@ -414,6 +416,51 @@ def _detach_creation_groups(
     return tuple(cleaned), tuple(groups)
 
 
+def _creation_type_line(
+    host, controller, *, name, copy_of, characteristics, copy_source_zone, copy_snapshot,
+    honor_copy_type_override=False,
+):
+    if copy_of:
+        if honor_copy_type_override and characteristics:
+            if type_line := str(characteristics.get("type_line") or ""):
+                return type_line
+        if copy_snapshot is not None:
+            return str(dict(copy_snapshot.get("characteristics") or {}).get("type_line") or "")
+        source = host._resolve_object(controller, str(copy_of), zones={copy_source_zone})
+        return str(host._copyable_characteristics(source).get("type_line") or "")
+    if type_line := str(dict(characteristics or {}).get("type_line") or ""):
+        return type_line
+    try:
+        return host.card_db.lookup(name).type_line
+    except KeyError:
+        return ""
+
+
+def _seal_creation_type_lines(host, controller, token_specs, effects, created_types, created_subtypes):
+    from .creature_token_definition_replacement import CREATION_TYPE_LINE
+    from .replacement.operations import ReplaceCreatureTokenDefinition, ReplacePredefinedArtifactTokenSet
+
+    operations = tuple(operation for effect in effects for operation in effect.operations)
+    predefined_set = any(isinstance(operation, ReplacePredefinedArtifactTokenSet) for operation in operations)
+    if not predefined_set and not any(isinstance(operation, ReplaceCreatureTokenDefinition) for operation in operations):
+        return token_specs, created_types, created_subtypes
+    sealed = tuple({**spec, CREATION_TYPE_LINE: _creation_type_line(
+        host, controller, name=spec.get("name"), copy_of=spec.get("copy_of"),
+        characteristics=spec.get("characteristics"), copy_source_zone=spec.get("copy_source_zone", "battlefield"),
+        copy_snapshot=spec.get("copy_snapshot"), honor_copy_type_override=predefined_set,
+    )} for spec in token_specs)
+    if not predefined_set:
+        return sealed, created_types, created_subtypes
+    # Keep historical copy precedence for events with only retained replacement families.
+    types: set[str] = set()
+    subtypes: set[str] = set()
+    for spec in sealed:
+        member_types, member_subtypes, _ = host._type_parts(spec[CREATION_TYPE_LINE])
+        types.update(member_types)
+        subtypes.update(member_subtypes)
+    return sealed, types, subtypes
+
+
 def _creation_subject(
     host: TokenCreationHost,
     controller: str,
@@ -425,34 +472,11 @@ def _creation_subject(
     copy_source_zone: str = "battlefield",
     copy_snapshot: Mapping[str, Any] | None = None,
 ) -> tuple[set[str], set[str], list[Any]]:
-    if copy_of:
-        copied_source = (
-            None
-            if copy_snapshot is not None
-            else host._resolve_object(
-                controller,
-                str(copy_of),
-                zones={copy_source_zone},
-            )
-        )
-        copied_data = (
-            dict(copy_snapshot.get("characteristics") or {})
-            if copy_snapshot is not None
-            else host._copyable_characteristics(copied_source)
-        )
-        created_types, created_subtypes, _ = host._type_parts(
-            str(copied_data.get("type_line") or "")
-        )
-    else:
-        type_line = str(
-            dict(characteristics or {}).get("type_line") or ""
-        )
-        if not type_line:
-            try:
-                type_line = host.card_db.lookup(name).type_line
-            except KeyError:
-                type_line = ""
-        created_types, created_subtypes, _ = host._type_parts(type_line)
+    type_line = _creation_type_line(
+        host, controller, name=name, copy_of=copy_of, characteristics=characteristics,
+        copy_source_zone=copy_source_zone, copy_snapshot=copy_snapshot,
+    )
+    created_types, created_subtypes, _ = host._type_parts(type_line)
     sources = (
         [
             host.state.cards[object_id]
@@ -529,6 +553,9 @@ def _resolved_token_specs(
     ],
 ) -> ResolvedTokenSpecs:
     if quantity > 0 and replacement_effects:
+        token_specs, created_types, created_subtypes = _seal_creation_type_lines(
+            host, controller, token_specs, replacement_effects, created_types, created_subtypes,
+        )
         resolution = resolve_token_creation_replacements(
             event_id=(
                 f"token.create:{host.state.revision}:"
@@ -839,7 +866,7 @@ def _prepare_token_entry_counters(
     )
     if any(
         entry.destination != "battlefield"
-        or entry.entry_life_payment
+        or (entry.entry_life_payment and entry.entry_chosen_basic_land_type is None)
         or entry.keyword_grants
         or entry.read_ahead_chapter is not None
         for entry in prepared.values()
@@ -901,7 +928,8 @@ def _commit_token_specs(
             from .entry_results import commit_prepared_entry_identity_results
             commit_prepared_entry_identity_results(entry,host.state.cards[object_id],error_type=TokenCreationError,host=host)
             commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color,
-                                      creature_type=entry.entry_chosen_creature_type, card_name=entry.entry_chosen_card_name)
+                                      creature_type=entry.entry_chosen_creature_type, card_name=entry.entry_chosen_card_name,
+                                      basic_land_type=entry.entry_chosen_basic_land_type)
         if plan.aura_target_ref is not None:
             token = host.state.cards[object_id]
             data = host._effective_card_data(token)
@@ -972,7 +1000,10 @@ def _create_token_specs(
         str | None | Mapping[str, Any]
     ],
     copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
+    token_cleanup: CreatedTokenCleanupPlan | None = None,
 ) -> list[str]:
+    if token_cleanup is not None:
+        token_cleanup = capture_created_token_cleanup(host, token_cleanup, controller=controller)
     replacement_effects = _token_replacement_effects(
         host,
         controller,
@@ -997,7 +1028,7 @@ def _create_token_specs(
         base_name=base_name,
         base_quantity=base_quantity,
         reason=reason,
-        copied_aura_selections=copied_aura_selections,
+        copied_aura_selections=copied_aura_selections, token_cleanup=token_cleanup,
     )
 
 
@@ -1018,7 +1049,14 @@ def _commit_prepared_token_entries(
     )
 
     from .counter_removal import commit_entry_counter_transfer
+    from .life_state import LifeStateError, pay_life_cost
 
+    for entry in prepared_entries.values():
+        if entry.entry_life_payment:
+            try:
+                pay_life_cost(host, entry.destination_controller, entry.entry_life_payment)
+            except LifeStateError as exc:
+                raise TokenCreationError(str(exc)) from exc
     devour = prepare_token_devour_sacrifices(host, prepared_entries, reason=reason)
     commit_entry_counter_transfer(host, prepared_entries.values())
     sacrifices = commit_token_devour_sacrifices(devour, timestamp=creation_timestamp, reason=reason)
@@ -1034,6 +1072,33 @@ def _commit_prepared_token_entries(
     return result
 
 
+def grant_haste_to_created_tokens(
+    host, source, targets, *, triggered_grant: GrantedTriggeredAbilitySpec | None = None,
+    zone_object: bool = False, keywords: tuple[str, ...] = ("Haste",),
+):
+    from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
+    from .continuous_effect_state import create_resolution_continuous_effect
+
+    if (keywords not in (("Haste",), ("Haste", "Lifelink"))
+            or keywords != ("Haste",) and (zone_object or triggered_grant is not None)):
+        raise ValueError("A multiple-keyword token grant requires its current-turn duration")
+    if not targets:
+        return
+    operations = tuple(ContinuousOperation("add_ability", keyword) for keyword in keywords)
+    duration = (ContinuousEffectDuration.ZONE_OBJECT if zone_object or triggered_grant is not None
+                else ContinuousEffectDuration.UNTIL_END_OF_TURN)
+    if triggered_grant is not None:
+        from .ability_fragments import ability_fragment_to_dict
+
+        operations += (ContinuousOperation("add_ability_fragment", ability_fragment_to_dict(triggered_grant)),)
+    grant = create_resolution_continuous_effect(
+        host, source=source, targets=targets, layer=Layer.ABILITY, sublayer="6",
+        operations=operations, duration=duration,
+    )
+    if grant is None:
+        raise ValueError("Created-token haste requires the resolution continuous-effect owner")
+
+
 def _commit_resolved_token_specs(
     host: TokenCreationHost,
     controller: str,
@@ -1043,8 +1108,12 @@ def _commit_resolved_token_specs(
     base_quantity: int,
     reason: str,
     role_timestamp_order: Sequence[int] | None = None,
+    mixed_role_timestamps: bool = False,
     token_cleanup: CreatedTokenCleanupPlan | None = None,
     copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
+    post_entry_haste_source: "ResolutionEffectSource | None" = None,
+    post_entry_triggered_grant: GrantedTriggeredAbilitySpec | None = None,
+    post_entry_haste_zone_object: bool = False,
 ) -> list[str]:
     resolved_specs = _preflight_aura_token_specs(
         host, controller, resolved.specs, copied_aura_selections=copied_aura_selections,
@@ -1060,7 +1129,7 @@ def _commit_resolved_token_specs(
     )
     if role_timestamp_order is not None:
         from .role_token_creation import ordered_role_plans
-        plans = ordered_role_plans(plans, role_timestamp_order, creation_timestamp)
+        plans = ordered_role_plans(plans, role_timestamp_order, creation_timestamp, mixed=mixed_role_timestamps)
     try:
         plans, prepared_counters, prepared_entries = _prepare_token_entry_counters(
             host, controller, plans, resolved.remaining_selections,
@@ -1087,7 +1156,11 @@ def _commit_resolved_token_specs(
     # A separate subsequent grant is not an entry modification. Discovery
     # remains deferred; this does not introduce priority or an SBA checkpoint.
     finish_copy_aftercare(host, controller, created)
-    if token_cleanup is not None:
+    if post_entry_haste_source is not None:
+        grant_haste_to_created_tokens(host, post_entry_haste_source,
+            tuple(host.state.cards[oid] for oid in created), triggered_grant=post_entry_triggered_grant,
+            zone_object=post_entry_haste_zone_object)
+    if token_cleanup is not None and (created or not post_entry_haste_zone_object):
         schedule_created_token_cleanup(host, controller, (host.state.cards[oid] for oid in created), token_cleanup.spec,
             label='Token cleanup', source=token_cleanup.source, source_binding=token_cleanup.source_binding)
     return [host.state.cards[object_id].ref for object_id in created]
@@ -1116,6 +1189,9 @@ def create_tokens(
     effect_entry_counters: Sequence[EffectEntryCounter] = (),
     token_cleanup: CreatedTokenCleanupPlan | None = None,
     copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
+    post_entry_haste_source: "ResolutionEffectSource | None" = None,
+    post_entry_triggered_grant: GrantedTriggeredAbilitySpec | None = None,
+    post_entry_haste_zone_object: bool = False,
 ) -> list[str]:
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
@@ -1123,6 +1199,14 @@ def create_tokens(
             not isinstance(value,EffectEntryCounter) for value in effect_entry_counters):
         raise TokenCreationError('Token entry counters require typed effect instructions')
     host._require_seat(controller, in_game=True)
+    if post_entry_haste_zone_object and (post_entry_haste_source is None or token_cleanup is None):
+        raise TokenCreationError("A persistent haste grant requires the resolving source and its cleanup plan")
+    if post_entry_triggered_grant is not None:
+        from .ability_fragments import GrantedTriggeredAbilitySpec
+
+        if (post_entry_haste_source is None or token_cleanup is None
+                or not isinstance(post_entry_triggered_grant, GrantedTriggeredAbilitySpec)):
+            raise TokenCreationError("A created-token trigger requires its typed post-entry grant and cleanup")
     if token_cleanup is not None:
         try:token_cleanup = capture_created_token_cleanup(host, token_cleanup, controller=controller)
         except (ValueError,TypeError) as exc:raise TokenCreationError(str(exc)) from exc
@@ -1202,6 +1286,9 @@ def create_tokens(
         reason=reason,
         token_cleanup=token_cleanup,
         copied_aura_selections=copied_aura_selections,
+        post_entry_haste_source=post_entry_haste_source,
+        post_entry_triggered_grant=post_entry_triggered_grant,
+        post_entry_haste_zone_object=post_entry_haste_zone_object,
     )
 
 
@@ -1330,11 +1417,13 @@ def create_distributed_tokens(
             battle_protector=None, copy_of=None, copy_source_zone="battlefield",
             copy_snapshot=None, temporary_keywords=(), aura_target_ref=None,
         )
+        creator_effects = _token_replacement_effects(host, creator, types, subtypes, sources)
+        specs, types, subtypes = _seal_creation_type_lines(host, creator, specs, creator_effects, types, subtypes)
         events.append(token_creation_replacement_event(
             event_id=f"token.create:distributed:{stack_ref}:{creator}",
             controller=creator, tokens=specs, created_types=types, created_subtypes=subtypes,
         ))
-        for effect in _token_replacement_effects(host, creator, types, subtypes, sources):
+        for effect in creator_effects:
             if effects.setdefault(effect.effect_id, effect) != effect:
                 raise TokenCreationError("Distributed token replacement authority disagrees")
     available_effects = tuple(effects.values())

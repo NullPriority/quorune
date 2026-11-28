@@ -49,7 +49,7 @@ tamiyo tasha teferi teyo tezzeret tibalt tyvar ugin urza venser vivien vraska vr
 will windgrace wrenn xenagos yanggu yanling zariel
 '''.split())
 LIBRARY_SELECTION_SUBTYPES = (CREATURE_SUBTYPES | DIRECT_NONCREATURE_SUBTYPES
-    | _PLANESWALKER_SUBTYPES | {'adventure', 'arcane', 'lesson', 'omen', 'trap', 'siege'})
+    | _PLANESWALKER_SUBTYPES | {'adventure', 'arcane', 'lesson', 'omen', 'saga', 'trap', 'siege'})
 
 _START = re.compile(
     rf"(?P<verb>look at|reveal) the top "
@@ -414,12 +414,117 @@ class ChosenTypeTopSelectionEffectTemplate:
                 None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
 
 
+@dataclass(frozen=True, slots=True)
+class PrivateFixedTopTakeOrGraveyardEffectTemplate:
+    quality: str
+
+    def compiled(self):
+        from ..rules.library_selection_capability_shapes import private_fixed_top_take_or_graveyard_effect
+
+        return (
+            "private-fixed-top-take-or-graveyard-v1",
+            (private_fixed_top_take_or_graveyard_effect(self.quality),),
+            None,
+            (FIXED_LIBRARY_SELECTION_MECHANIC,),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateTopLandEntryEffectTemplate:
+    may_put_on_bottom: bool = False
+
+    def compiled(self):
+        from ..library_battlefield_model import private_top_land_entry_effect
+
+        template = "private-top-land-entry-optional-bottom-v1" if self.may_put_on_bottom else "private-top-land-entry-v1"
+        return (template, (private_top_land_entry_effect(may_put_on_bottom=self.may_put_on_bottom),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateTopLandOrHandEffectTemplate:
+    def compiled(self):
+        from ..library_battlefield_model import private_top_land_or_hand_effect
+
+        return ("private-top-land-or-hand-v1", (private_top_land_or_hand_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateTopLandOrGoblinEffectTemplate:
+    def compiled(self):
+        from ..library_battlefield_model import private_top_land_or_goblin_effect
+
+        return ("private-top-land-or-goblin-v1", (private_top_land_or_goblin_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC, "cr-111-tokens"))
+
+
+@dataclass(frozen=True, slots=True)
+class RevealedTopHandLifeEffectTemplate:
+    repeat: bool = False
+
+    def compiled(self):
+        from ..rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_MECHANIC, repeat_top_hand_life_effect
+
+        if self.repeat:
+            return ("repeat-revealed-top-hand-life-v1", (repeat_top_hand_life_effect(),), None,
+                    (FIXED_LIBRARY_SELECTION_MECHANIC, REPEAT_TOP_HAND_LIFE_MECHANIC))
+        from ..rules.library_selection_capability_shapes import revealed_top_hand_life_effect
+
+        return ("revealed-top-hand-life-v1", (revealed_top_hand_life_effect(),), None,
+                (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateHandBottomExileEffectTemplate:
+    def compiled(self):
+        from ..rules.library_play_partition import private_hand_bottom_exile_effect
+
+        return ("private-hand-bottom-exile-play-v1", (private_hand_bottom_exile_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+class FixedTargetPairLibrarySearchTemplate:
+    def compiled(self):
+        from ..rules.targeted_search_round import MECHANIC, target_pair_search_effect, target_pair_search_schema
+
+        return (
+            "target-pair-private-library-search-v1", (target_pair_search_effect(),),
+            target_pair_search_schema(), (MECHANIC, "cr-115-targets"),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class RevealedLegendaryTreasureTemplate:
+    def compiled(self):
+        from ..rules.revealed_legendary_graveyard_treasure import revealed_legendary_treasure_effect
+
+        return ("revealed-legendary-graveyard-treasure-v1", (revealed_legendary_treasure_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
 def fixed_library_selection_effect_template(
     text: str,
-) -> FixedLibrarySelectionEffectTemplate | ChosenTypeLibrarySelectionEffectTemplate | ChosenTypeTopSelectionEffectTemplate | None:
+) -> (FixedLibrarySelectionEffectTemplate | ChosenTypeLibrarySelectionEffectTemplate
+      | ChosenTypeTopSelectionEffectTemplate | PrivateTopLandEntryEffectTemplate | PrivateTopLandOrHandEffectTemplate
+      | PrivateTopLandOrGoblinEffectTemplate | RevealedTopHandLifeEffectTemplate
+      | PrivateFixedTopTakeOrGraveyardEffectTemplate | PrivateHandBottomExileEffectTemplate | RevealedLegendaryTreasureTemplate | None):
     """Lower one complete fixed self-library hand/remainder instruction."""
 
+    if " ".join(text.split()).casefold() == (
+        "reveal the top four cards of your library. put any number of legendary cards from among them "
+        "into your hand and the rest into your graveyard. create a treasure token for each card "
+        "put into your graveyard this way."
+    ):
+        return RevealedLegendaryTreasureTemplate()
+
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == (
+        "look at the top three cards of your library. put one of them into your hand, "
+        "put one of them on the bottom of your library, and exile one of them. "
+        "you may play the exiled card this turn."
+    ):
+        return PrivateHandBottomExileEffectTemplate()
     if normalized.casefold() == (
         "look at the top three cards of your library. "
         "you may reveal a creature card of the chosen type from among them and put it into your hand. "
@@ -427,6 +532,39 @@ def fixed_library_selection_effect_template(
     ):
         return ChosenTypeLibrarySelectionEffectTemplate()
     top = normalized.casefold()
+    top_land = "look at the top card of your library. if it's a land card, you may put it onto the battlefield tapped."
+    normalized_top = top.replace("’", "'")
+    optional_fixed_top = re.fullmatch(
+        r"look at the top card of your library\. if it's a (?P<quality>land|creature|zombie) card, "
+        r"you may reveal it and put it into your hand\. "
+        r"if you don't put the card into your hand, you may put it into your graveyard\.",
+        normalized_top,
+    )
+    if optional_fixed_top is not None:
+        return PrivateFixedTopTakeOrGraveyardEffectTemplate(optional_fixed_top["quality"])
+    hand_reveal = "reveal the top card of your library and put that card into your hand. "
+    if normalized_top == hand_reveal + (
+        "you lose life equal to its mana value. you may repeat this process any number of times."
+    ):
+        return RevealedTopHandLifeEffectTemplate(repeat=True)
+    if normalized_top in (
+        hand_reveal + "you lose life equal to its mana value.",
+        hand_reveal + "you lose life equal to that card's mana value.",
+    ):
+        return RevealedTopHandLifeEffectTemplate()
+    if normalized_top == top_land:
+        return PrivateTopLandEntryEffectTemplate()
+    if normalized_top in (
+        top_land + " if you don't put the card onto the battlefield, put it into your hand.",
+        top_land + " otherwise, put it into your hand.",
+    ):
+        return PrivateTopLandOrHandEffectTemplate()
+    if normalized_top == (
+        top_land + " if you didn't put a card onto the battlefield this way, create a 1/1 red goblin creature token."
+    ):
+        return PrivateTopLandOrGoblinEffectTemplate()
+    if normalized_top == top_land + " if you don't put the card onto the battlefield, you may put it on the bottom of your library.":
+        return PrivateTopLandEntryEffectTemplate(may_put_on_bottom=True)
     if top == (
         "look at the top card of your library. if it's a creature card of the chosen type, "
         "you may reveal it and put it into your hand."
@@ -438,6 +576,11 @@ def fixed_library_selection_effect_template(
         "if you don't put the card into your hand, you may put it into your graveyard."
     ):
         return ChosenTypeTopSelectionEffectTemplate(may_put_in_graveyard=True)
+    if normalized.casefold() == (
+        "choose two target players. each of them searches their library for a card, "
+        "then shuffles and puts that card on top."
+    ):
+        return FixedTargetPairLibrarySearchTemplate()
     from .targeted_library_exile_templates import targeted_library_exile_template
     exile_search = targeted_library_exile_template(normalized)
     if exile_search is not None:return exile_search

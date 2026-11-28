@@ -2,11 +2,13 @@
 
 from collections.abc import Mapping
 
+from ..errors import GameRuleError
 from ..event_counter_reference import event_object_identity
 from ..public_history_query_model import (
     PUBLIC_HISTORY_QUERY_CAPABILITY, PublicHistoryQuerySpec, matching_public_history_events,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
+from .optional_draw_discard import is_entry_exempt_draw_discard, validate_entry_exempt_draw_discard
 
 
 COMBAT_DAMAGE_ENTRY_FIELD = "combat_damage_dealer_entered_this_turn"
@@ -51,6 +53,8 @@ def _uses_combat_damage_entry_condition(condition):
 
 
 def combat_damage_entry_runtime_dependencies(program):
+    if any(is_entry_exempt_draw_discard(effect) for effect in program.effects):
+        return _entry_exempt_draw_discard_program_dependencies(program)
     marked = COMBAT_DAMAGE_ENTRY_COVERAGE in program.coverage
     if not marked and not _uses_combat_damage_entry_condition(program.event_condition):
         return ()
@@ -108,3 +112,59 @@ def recheck_combat_damage_entry(state, context):
             or context.get("source_identity_key") != identity["logical_object_id"] + "|battlefield"):
         raise ValueError("The combat dealer entry condition lost its sealed damage incarnation")
     return _entered_this_turn(state, context, identity["logical_object_id"])
+
+
+_SELF_COMBAT_DAMAGE = FrozenMap({"all": [
+    {"field": "target_kind", "op": "eq", "value": "player"},
+    {"field": "combat", "op": "truthy", "value": True},
+    {"field": "source_logical_object_id", "op": "eq", "value": "$source.logical_object_id"},
+]})
+
+
+def _entry_exempt_draw_discard_program_dependencies(program):
+    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities
+
+    if ((program.event, program.active_zone) != ("damage.dealt.self", "battlefield")
+            or not isinstance(program.event_condition, Mapping)
+            or FrozenMap(program.event_condition) != _SELF_COMBAT_DAMAGE
+            or program.event_condition["all"][1]["value"] is not True
+            or program.target_schema is not None or program.cost_schema is not None
+            or len(program.effects) != 1 or program.handlers):
+        raise ValueError("Entry-exempt discard requires the original creature's combat damage to a player")
+    validate_entry_exempt_draw_discard(program.effects[0])
+    capabilities = fixed_optional_effect_node_capabilities(
+        effects=program.effects, target_schema=None, mechanic_ids=program.coverage,
+    )
+    if PUBLIC_HISTORY_QUERY_CAPABILITY not in capabilities:
+        raise ValueError("Entry-exempt discard lacks its public history and private effect authorities")
+    return (*capabilities, "trigger.event.normalized_damage", "trigger.placement.apnap")
+
+
+def bind_entry_exempt_draw_discard(host, item, effect, *, resuming_actor=None):
+    """Resolve the entry exception for the actual damage incarnation."""
+    if not is_entry_exempt_draw_discard(effect):
+        return effect
+    try:
+        program = host.semantics.get(item.semantic_key)
+        if (program is None or not host.semantic_program_is_current_trusted(program)
+                or item.kind != "triggered_ability" or not item.context.get("currently_resolving")):
+            raise ValueError("Entry-exempt discard requires its trusted resolving ability")
+        _entry_exempt_draw_discard_program_dependencies(program)
+        context = item.context
+        identity = _damage_dealer_identity(context)["logical_object_id"]
+        if (context.get("event") != "damage.dealt" or context.get("source_zone") != "battlefield"
+                or context.get("source_identity_key") != identity + "|battlefield"
+                or not item.source_object_id or context.get("source_object_id") != item.source_object_id
+                or context.get("source_controller") != item.controller):
+            raise ValueError("Entry-exempt discard lost its original damage incarnation or controller")
+        expected = thaw_value(FrozenMap(host._semantic_value(program.effects[0], item)))
+        supplied = thaw_value(FrozenMap(effect))
+        if resuming_actor is None and supplied != expected:
+            raise ValueError("Entry-exempt discard changed its original instructions")
+        if _entered_this_turn(host.state, context, identity):
+            expected["effects"] = expected["effects"][:1]
+        if resuming_actor is not None and (resuming_actor != item.controller or supplied != expected):
+            raise ValueError("Entry-exempt discard changed its recorded chooser or entry exception")
+        return expected
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc

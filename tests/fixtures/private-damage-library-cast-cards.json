@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "name": "Thief of Sanity",
+      "mana_cost": "{1}{U}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Specter",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, look at the top three cards of that player's library, exile one of them face down, then put the rest into their graveyard. You may cast that card for as long as it remains exiled, and mana of any type can be spent to cast that spell.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Casting an exiled card causes it to leave exile. You can't cast it multiple times."
+    },
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "You can still cast the exiled card if Thief of Sanity leaves the battlefield or leaves your control. If another player gains control of Thief of Sanity, that player can't cast the exiled card."
+    },
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "An effect that instructs you to \"cast\" a card doesn't allow you to play lands."
+    },
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Thief of Sanity's effect doesn't change when you can cast the exiled card. For example, if you exile a sorcery card, you can cast it only during your main phase when the stack is empty."
+    },
+    {
+      "oracle_id": "68b51d58-7566-4a26-8c31-8da32799bea7",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any spells or permanents you control from Thief of Sanity's effect are exiled, and any of the face-down exiled cards remain face down indefinitely. No player may look at them."
+    }
+  ]
+}

@@ -12,6 +12,8 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..attachments import attached_player_seat, attached_object_identity
 from ..card_program_faces import program_matches_face
 from ..cast_timing import CastTimingPermission
+from ..characteristic_read_frames import memoized_characteristic_read
+from ..errors import GameRuleError
 from ..enchant_spec import (
     AuraRuleError,
     EnchantSpec,
@@ -22,9 +24,11 @@ from ..object_query import ObjectQueryResult, object_matches_query, object_query
 from ..rules.capabilities import load_default_capability_registry
 from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
 from .battlefield_cascade_grants import BattlefieldCascadeGrantHandler, BattlefieldCascadeGrantSpec
+from .battlefield_ripple_grants import BattlefieldRippleGrantHandler, BattlefieldRippleGrantSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
+from .linked_exile_name_cast import LinkedExileNameCast, LinkedExileNameCastHandler
 
 
 STATIC_CAST_RULE_EVENT = "cast.static.rule"
@@ -34,6 +38,13 @@ STATIC_CAST_LIMIT_HANDLER_ID = "rule.cast.limit.once-per-turn.v1"
 STATIC_UNCOUNTERABLE_HANDLER_ID = "rule.stack.uncounterable.fixed-query.v1"
 SPLIT_SECOND_HANDLER_ID = "rule.stack.split-second.v1"
 SPLIT_SECOND_CAPABILITY = "priority.stack.split_second"
+OPPONENT_EVEN_MANA_VALUE_CAPABILITY = "casting.prohibition.opponent_even_mana_value"
+OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES = ("casting.prohibition.fixed_public", OPPONENT_EVEN_MANA_VALUE_CAPABILITY)
+SPLIT_SECOND_GRANT_HANDLER_ID = "rule.stack.controller-spell-split-second.v1"
+SPLIT_SECOND_GRANT_CAPABILITY = "priority.stack.controller_spell_split_second_grant"
+SPLIT_SECOND_GRANT_QUERY = ObjectQuerySpec(types_any=("instant", "sorcery"), excluded_types=("land",))
+OPPONENT_SORCERY_TIMING_CAPABILITY = "casting.prohibition.opponents_sorcery_timing"
+OPPONENT_SORCERY_TIMING_DEPENDENCIES = ("casting.prohibition.fixed_public", OPPONENT_SORCERY_TIMING_CAPABILITY)
 
 
 class StaticCastRuleKind(StrEnum):
@@ -59,9 +70,11 @@ class StaticCastCondition(StrEnum):
     OPPONENT_CAST_SPELL_THIS_TURN = "opponent_cast_spell_this_turn"
     PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN = "player_attacked_with_creature_this_turn"
     OPPONENT_END_STEP = "opponent_end_step"
+    OUTSIDE_SORCERY_TIMING = "outside_sorcery_timing"
     CASTER_LAND_MANA_VALUE_LIMIT = "caster_land_mana_value_limit"
     NONCREATURE_MANA_VALUE_AT_LEAST_FOUR = "noncreature_mana_value_at_least_four"
     NONCREATURE_MANA_COST_HAS_X = "noncreature_mana_cost_has_x"
+    EVEN_MANA_VALUE = "even_mana_value"
 
 
 _MANA_VALUE_CAST_CONDITIONS = frozenset({
@@ -80,6 +93,7 @@ class StaticCastRuleSourceContext:
     chosen_name: str
     attached_player: str | None
     source_attached_creature: bool = False
+    source_object_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,6 +115,7 @@ class StaticCastRule:
     source_attached_player: str | None
     player_restriction: StaticPlayerRestrictionSpec | None = None
     source_attached_creature: bool = False
+    linked_exile_names: LinkedExileNameCast | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,11 +211,13 @@ class StaticCastRuleHandler:
             raise SemanticNodeError("Only cast prohibitions use a chosen name")
         if descriptor["affects_abilities"] and kind is not StaticCastRuleKind.UNCOUNTERABLE:
             raise SemanticNodeError("Only uncounterable rules may affect abilities")
-        if condition is StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN and (
+        if condition in {StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN,
+                         StaticCastCondition.OUTSIDE_SORCERY_TIMING} and (
             kind is not StaticCastRuleKind.CAST_PROHIBITION or scope is not StaticCastPlayerScope.SOURCE_OPPONENTS
             or queries != (ObjectQuerySpec(excluded_types=('land',)),) or zones or descriptor['chosen_name']
         ):
-            raise SemanticNodeError('Attack history requires an all-spell prohibition for the source opponents')
+            family = "Sorcery timing" if condition is StaticCastCondition.OUTSIDE_SORCERY_TIMING else "Attack history"
+            raise SemanticNodeError(f"{family} requires an all-spell prohibition for the source opponents")
         if restriction is not None:
             expected_kind = (StaticCastRuleKind.CAST_LIMIT if restriction.kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
                 else StaticCastRuleKind.CAST_PROHIBITION)
@@ -224,6 +241,11 @@ class StaticCastRuleHandler:
                 raise SemanticNodeError(
                     "Only static timing permissions use an Enchant restriction"
                 )
+        if kind is StaticCastRuleKind.SPLIT_SECOND and (
+            scope is not StaticCastPlayerScope.SOURCE_CONTROLLER or condition is not StaticCastCondition.ALWAYS
+            or queries != (SPLIT_SECOND_GRANT_QUERY,) or required_enchant_spec is not None or restriction is not None
+        ):
+            raise SemanticNodeError("A battlefield split-second grant requires the controller's instant and sorcery spells")
         if condition in _MANA_VALUE_CAST_CONDITIONS:
             expected_scope = (
                 StaticCastPlayerScope.SOURCE_OPPONENTS
@@ -236,6 +258,13 @@ class StaticCastRuleHandler:
                 or zones or descriptor["chosen_name"] or required_enchant_spec is not None or restriction is not None
             ):
                 raise SemanticNodeError("Mana-value cast conditions require their exact noncreature prohibitions")
+        if condition is StaticCastCondition.EVEN_MANA_VALUE and (
+            kind is not StaticCastRuleKind.CAST_PROHIBITION or scope is not StaticCastPlayerScope.SOURCE_OPPONENTS
+            or queries != (ObjectQuerySpec(excluded_types=("land",)),)
+            or zones or descriptor["chosen_name"] or descriptor["affects_abilities"]
+            or required_enchant_spec is not None or restriction is not None
+        ):
+            raise SemanticNodeError("Even mana-value casting prohibition requires its exact opponent spell scope")
         return {
             "kind": kind,
             "scope": scope,
@@ -298,7 +327,7 @@ class SplitSecondHandler:
 
 
 class StaticCastRuleRegistry(
-    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule | BattlefieldCascadeGrantSpec]
+    RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule | BattlefieldCascadeGrantSpec | BattlefieldRippleGrantSpec]
 ):
     pass
 
@@ -308,7 +337,15 @@ def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
     registry = StaticCastRuleRegistry(
         (
             SplitSecondHandler(),
+            StaticCastRuleHandler(
+                SPLIT_SECOND_GRANT_HANDLER_ID,
+                StaticCastRuleKind.SPLIT_SECOND,
+                (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY),
+                rule_references=("611.3b", "613.1f", "702.61a", "702.61b", "702.61c"),
+            ),
             BattlefieldCascadeGrantHandler(),
+            BattlefieldRippleGrantHandler(),
+            LinkedExileNameCastHandler(),
             StaticCastRuleHandler(
                 STATIC_CAST_TIMING_HANDLER_ID,
                 StaticCastRuleKind.TIMING_PERMISSION,
@@ -352,6 +389,8 @@ class StaticCastRuleHost(Protocol):
 
     def _current_turn_history(self, kind: str) -> Sequence[Any]: ...
 
+    def _sorcery_timing(self, player: str) -> None: ...
+
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
@@ -365,11 +404,13 @@ class StaticCastRuleHost(Protocol):
 
 
 def split_second_is_active(host: StaticCastRuleHost) -> bool:
-    """Read only trusted stack-local static declarations on current spells."""
+    """Read intrinsic and currently granted split second on actual stack spells."""
+    spells = []
     for item in host.state.stack:
         if item.kind not in {'spell','spell_copy'}:continue
         card=host.state.cards.get(item.card_object_id or '')
         if card is None or card.zone!='stack':continue
+        spells.append((item.controller, card))
         source=host.state.cards.get(item.source_object_id or '') if item.kind=='spell_copy' else card
         source=source or card
         record=host.card_record(source)
@@ -380,7 +421,29 @@ def split_second_is_active(host: StaticCastRuleHost) -> bool:
                 if descriptor.get('handler_id')==SPLIT_SECOND_HANDLER_ID:
                     SplitSecondHandler().validate(descriptor)
                     return True
-    return False
+    if not spells:
+        return False
+    grants = tuple(rule for rule in active_static_cast_rules(host, handler_id=SPLIT_SECOND_GRANT_HANDLER_ID)
+                   if rule.kind is StaticCastRuleKind.SPLIT_SECOND)
+    if not grants:
+        return False
+    return any(
+        _rule_matches_spell(rule, row, spell_name=row.printed_name)
+        for player, card in spells
+        for rule in grants
+        if _scope_applies(rule, player)
+        for row in (spell_query_result(host, card),)
+    )
+
+
+def controller_spell_split_second_dependencies(program):
+    if not any(row.get("handler_id") == SPLIT_SECOND_GRANT_HANDLER_ID for row in program.handlers):
+        return ()
+    if ((program.event, program.active_zone) != (STATIC_CAST_RULE_EVENT, "battlefield")
+            or len(program.handlers) != 1 or program.effects or program.cost_schema is not None
+            or program.target_schema is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError("The grant requires the current battlefield source and its exact static ability")
+    return (SPLIT_SECOND_CAPABILITY, SPLIT_SECOND_GRANT_CAPABILITY)
 
 
 def source_is_attached_to_creature(host: StaticCastRuleHost, source: Any) -> bool:
@@ -393,7 +456,17 @@ def source_is_attached_to_creature(host: StaticCastRuleHost, source: Any) -> boo
     return 'creature' in type_parts(str(host._effective_card_data(target,maximum_layer=Layer.TYPE).get('type_line') or ''))[0]
 
 
-def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
+def active_static_cast_rules(host: StaticCastRuleHost, *, handler_id: str | None = None) -> tuple[StaticCastRule, ...]:
+    """Read the same battlefield cast rules throughout one pure catalog."""
+    return memoized_characteristic_read(
+        host, ("active-static-cast-rules", handler_id),
+        lambda: _collect_static_cast_rules(host, handler_id=handler_id),
+    )
+
+
+def _collect_static_cast_rules(
+    host: StaticCastRuleHost, *, handler_id: str | None = None,
+) -> tuple[StaticCastRule, ...]:
     registry = default_static_cast_rule_registry()
     rules: list[StaticCastRule] = []
     for source in host._semantic_event_sources(zones={"battlefield"}):
@@ -408,7 +481,8 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
             event=STATIC_CAST_RULE_EVENT,
         ):
             if (
-                not host.semantic_program_is_current_trusted(program)
+                (handler_id is not None and not any(row.get("handler_id") == handler_id for row in program.handlers))
+                or not host.semantic_program_is_current_trusted(program)
                 or not program_matches_face(record, program, source)
                 or (
                     CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
@@ -427,9 +501,12 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
                 chosen_name=str(source.annotations.get("chosen_name") or ""),
                 attached_player=attached_player_seat(source),
                 source_attached_creature=source_is_attached_to_creature(host,source),
+                source_object_id=source.object_id,
             )
             for descriptor in program.handlers:
-                if descriptor.get('handler_id')!=SPLIT_SECOND_HANDLER_ID and registry.describe(str(descriptor.get("handler_id") or "")):
+                component_id = descriptor.get("handler_id")
+                if ((handler_id is None or component_id == handler_id)
+                        and component_id != SPLIT_SECOND_HANDLER_ID and registry.describe(str(component_id or ""))):
                     rules.extend(registry.lower(descriptor, context))
     return tuple(
         sorted(
@@ -453,8 +530,42 @@ def _scope_applies(rule: StaticCastRule, player: str) -> bool:
     return player != rule.source_controller
 
 
+def static_cast_descriptor_variant_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    condition = value.get("condition")
+    dependencies = {
+        StaticCastCondition.OUTSIDE_SORCERY_TIMING: OPPONENT_SORCERY_TIMING_DEPENDENCIES,
+        StaticCastCondition.EVEN_MANA_VALUE: OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES,
+    }.get(condition)
+    if dependencies is None:
+        return ()
+    handler = StaticCastRuleHandler(
+        STATIC_CAST_PROHIBITION_HANDLER_ID,
+        StaticCastRuleKind.CAST_PROHIBITION,
+        dependencies,
+    )
+    from ..replacement.immutable import FrozenMap, thaw_value
+
+    try:
+        handler.validate(thaw_value(FrozenMap(value)))
+    except SemanticNodeError as exc:
+        raise ValueError(str(exc)) from exc
+    return dependencies
+
+
+def _has_sorcery_timing(host: StaticCastRuleHost, player: str) -> bool:
+    if host.state.priority_player != player:
+        return False
+    try:
+        host._sorcery_timing(player)
+    except GameRuleError:
+        return False
+    return True
+
+
 def _condition_applies(host: StaticCastRuleHost, rule: StaticCastRule, *, player: str | None = None) -> bool:
-    if rule.condition in _MANA_VALUE_CAST_CONDITIONS:
+    if rule.condition is StaticCastCondition.OUTSIDE_SORCERY_TIMING:
+        return player is not None and not _has_sorcery_timing(host, player)
+    if rule.condition in _MANA_VALUE_CAST_CONDITIONS or rule.condition is StaticCastCondition.EVEN_MANA_VALUE:
         # These conditions use the selected spell mana cost.
         return False
     if rule.condition is StaticCastCondition.ALWAYS:
@@ -616,6 +727,24 @@ def static_cast_maximum_x(host, player, card, *, face=None):
     return _static_cast_maximum_x(host, active_static_cast_rules(host), player, card, face)
 
 
+def opponent_cast_x_permissions(host, player, card, *, face=None, active_rules=None, face_down=False):
+    """Return which even and odd X values still produce a legal spell mana value."""
+    rules = active_static_cast_rules(host) if active_rules is None else active_rules
+    if not any(rule.condition is StaticCastCondition.EVEN_MANA_VALUE and _scope_applies(rule, player) for rule in rules):
+        return None
+    from ..battlefield_mana_value_query import is_even_mana_value
+    from ..rules.casting.face_queries import current_printed_cast_mana_cost
+    from ..selection.exile_cast import mana_value_of_cost
+
+    if face_down:
+        return False, False
+    record = host.card_record(card)
+    if record is None:
+        return False, False
+    cost = face["mana_cost"] if face is not None and "mana_cost" in face else current_printed_cast_mana_cost(host, card, record)
+    return tuple(not is_even_mana_value(mana_value_of_cost(cost, x_value=value)) for value in (0, 1))
+
+
 def static_cast_prohibition_reason(
     host: StaticCastRuleHost,
     player: str,
@@ -623,9 +752,23 @@ def static_cast_prohibition_reason(
     *,
     face: Mapping[str, Any] | None = None,
     x_value: int | None = None,
+    x_unannounced: bool = False,
+    face_down: bool = False,
 ) -> str | None:
     if split_second_is_active(host):return 'split_second'
+    from ..rules.legendary_sorcery import VERSION_FIELD, missing_legendary_enabler, validate_version
+
+    row = None
+    if validate_version(getattr(host.state, VERSION_FIELD, None)) is not None:
+        row = spell_query_result(host, card, face=face, casting_player=player)
+        if missing_legendary_enabler(host, player, row):
+            return "legendary_sorcery_missing_enabler"
     active_rules = active_static_cast_rules(host)
+    x_permissions = opponent_cast_x_permissions(host, player, card, face=face, active_rules=active_rules, face_down=face_down)
+    if x_permissions is not None and not (
+        any(x_permissions) if x_unannounced else x_permissions[int(x_value or 0) % 2]
+    ):
+        return "static_cast_prohibition"
     maximum_x = _static_cast_maximum_x(host, active_rules, player, card, face)
     if maximum_x is not None and int(x_value or 0) > maximum_x:
         return "static_cast_prohibition"
@@ -643,8 +786,9 @@ def static_cast_prohibition_reason(
     )
     if not rules and not temporary:
         return None
-    row = spell_query_result(host, card, face=face, casting_player=player)
-    if any(restriction_matches_spell(effect,row) for effect in temporary):return 'temporary_cast_prohibition'
+    if row is None:
+        row = spell_query_result(host, card, face=face, casting_player=player)
+    if any(restriction_matches_spell(effect,row,origin=card.zone) for effect in temporary):return 'temporary_cast_prohibition'
     name = str((face or {}).get("name") or row.printed_name)
     for rule in rules:
         restriction = rule.player_restriction
@@ -656,6 +800,13 @@ def static_cast_prohibition_reason(
                 continue
         if not _rule_matches_spell(rule, row, spell_name=name):
             continue
+        if rule.linked_exile_names is not None:
+            from ..carddb_characteristics import cast_spell_rules_names
+
+            selected_name = face.get("name", name) if face is not None else name
+            names = frozenset(cast_spell_rules_names(selected_name, host.card_record(card)))
+            if not rule.linked_exile_names.matches(host, names):
+                continue
         if rule.origin_zones and card.zone not in rule.origin_zones:
             continue
         if rule.kind is StaticCastRuleKind.CAST_LIMIT:

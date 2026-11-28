@@ -45,6 +45,7 @@ class CounterTarget(str, Enum):
     RED_OR_GREEN_SPELL = "red or green spell"
     NONBLUE_SPELL = "nonblue spell"
     COLORLESS_SPELL = "colorless spell"
+    MULTICOLORED_SPELL = "multicolored spell"
     ACTIVATED_ABILITY = "activated ability"
     TRIGGERED_ABILITY = "triggered ability"
     ACTIVATED_OR_TRIGGERED_ABILITY = "activated or triggered ability"
@@ -215,6 +216,8 @@ class TargetedCounterEffectTemplate:
         elif self.target is CounterTarget.TRIGGERED_ABILITY:
             options["predicate"] = "triggered_ability"
         schema = dict(stack_target_schema(categories=categories, **options))
+        if self.target is CounterTarget.MULTICOLORED_SPELL:
+            schema["color_count_min"] = 2
         if self.mana_value_predicate is not None:
             field, value = self.mana_value_predicate
             schema[field] = value
@@ -287,7 +290,7 @@ def targeted_counter_effect_template(
         r"artifact spell|creature or enchantment spell|"
         r"artifact or creature spell|artifact, creature, or planeswalker spell|"
         r"enchantment, instant, or sorcery spell|blue spell|red spell|green spell|"
-        r"red or green spell|nonblue spell|colorless spell|"
+        r"red or green spell|nonblue spell|colorless spell|multicolored spell|"
         r"activated ability|triggered ability|"
         r"activated or triggered ability|"
         r"spell, activated ability, or triggered ability|"
@@ -343,10 +346,14 @@ class SpellTargetingCounterTemplate:
 
 def spell_targeting_counter_effect_template(text: str) -> SpellTargetingCounterTemplate | None:
     match = re.fullmatch(
-        r"Counter target (?P<kind>spell|instant or Aura spell) that targets (?P<subject>[^.\n]+)\.?",
+        r"Counter target (?P<kind>spell|spell or ability|instant or Aura spell) that targets (?P<subject>[^.\n]+)\.?",
         text.strip(), re.I,
     )
     if match is None:
+        return None
+    if match["kind"].casefold() == "spell or ability":
+        if match["subject"].casefold() == "you or a creature you control":
+            return SpellTargetingCounterTemplate(StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE)
         return None
     subject = _SPELL_TARGET_SUBJECTS.get(match["subject"].casefold())
     if match["kind"].casefold() == "instant or aura spell":

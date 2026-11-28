@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 from collections.abc import Awaitable, Callable, Iterable
 from datetime import datetime, timedelta, timezone
 import mimetypes
 from pathlib import Path
 import json
+import re
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -19,11 +22,13 @@ from quorune.bulk import (
     refresh_scryfall_database,
 )
 from quorune.carddb import CardDatabase
+from quorune.card_printing import CardPrinting
 from quorune.record import database_fingerprint
 
 
 SCRYFALL_IMAGE_HOSTS = frozenset({"cards.scryfall.io"})
 IMAGE_SIZES = frozenset({"small", "normal", "large", "png", "art_crop"})
+SHARED_ART_LAYOUTS = frozenset({"adventure", "flip", "prepare", "split"})
 
 
 def _utc_now() -> datetime:
@@ -320,13 +325,57 @@ class CardImageCache:
         self.root = root
         self._databases = databases
         self._locks: dict[str, asyncio.Lock] = {}
+        self._printing_lock = asyncio.Lock()
+        self._next_printing_lookup = 0.0
+        self._printing_options: dict[tuple[str, int], tuple[float, dict[str, Any]]] = {}
         self._downloaded = sum(1 for path in root.rglob("*") if path.is_file()) if root.exists() else 0
 
     @property
     def downloaded(self) -> int:
         return self._downloaded
 
-    def _source(self, oracle_prefix: str, face: int, size: str) -> tuple[str, str]:
+    @staticmethod
+    def _printing_path(printing: CardPrinting) -> str:
+        if printing.scryfall_id:
+            return printing.scryfall_id
+        if printing.set_code and printing.collector_number:
+            language = printing.language or "en"
+            if (not re.fullmatch(r"[a-zA-Z0-9]+", printing.set_code)
+                    or not re.fullmatch(r"[a-zA-Z0-9]+", language)
+                    or not re.fullmatch(r"[\w][\w.+*★-]*", printing.collector_number)):
+                raise KeyError("The imported set or language is unavailable")
+            return "/".join(urllib.parse.quote(value, safe="") for value in (
+                printing.set_code, printing.collector_number, language,
+            ))
+        raise KeyError("The imported printing has no Scryfall identity")
+
+    @staticmethod
+    def _printing_image(path: str, oracle_prefix: str, face: int, size: str) -> str:
+        request = urllib.request.Request(
+            f"https://api.scryfall.com/cards/{path}",
+            headers={"Accept": "application/json", "User-Agent": SCRYFALL_USER_AGENT},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=10) as response:
+                card = json.loads(response.read(1024 * 1024))
+        except (urllib.error.URLError, json.JSONDecodeError) as exc:
+            raise KeyError("The imported printing image is unavailable") from exc
+        oracle_id = card.get("oracle_id")
+        if not isinstance(oracle_id, str) or not oracle_id.casefold().startswith(oracle_prefix.casefold()):
+            raise KeyError("The imported printing does not match this Oracle card")
+        faces = card.get("card_faces") or []
+        if not 0 <= face < max(1, len(faces)):
+            raise KeyError("No image is available for this printing and face")
+        face_images = faces[face].get("image_uris") if faces else None
+        source = (face_images or card.get("image_uris") or {}).get(size)
+        if not isinstance(source, str):
+            raise KeyError("No image is available for this printing and face")
+        parsed = urllib.parse.urlparse(source)
+        if parsed.scheme.casefold() != "https" or (parsed.hostname or "").casefold() not in SCRYFALL_IMAGE_HOSTS:
+            raise ValueError("Image URL is not on the approved Scryfall CDN")
+        return source
+
+    def _source(self, oracle_prefix: str, face: int, size: str) -> tuple[str, int, str]:
         if size not in IMAGE_SIZES:
             raise ValueError("Unsupported image size")
         databases = tuple(self._databases())
@@ -335,16 +384,66 @@ class CardImageCache:
         row = None
         for database in databases:
             rows = database.image_uris(oracle_prefix)
-            row = next((candidate for candidate in rows if candidate["face_index"] == face), None)
+            row = next((candidate for candidate in rows if candidate["face_index"] == face and candidate.get(size)), None)
+            if row is None and face > 0 and len(rows) == 1 and rows[0]["face_index"] == 0 and rows[0].get(size):
+                card = database.by_oracle_id(rows[0]["oracle_id"])
+                if card.layout in SHARED_ART_LAYOUTS and face < len(card.faces):
+                    row = rows[0]
             if row is not None:
                 break
-        if row is None or not row.get(size):
+        if row is None:
             raise KeyError("No image is available for this card face")
         source = str(row[size])
         parsed = urllib.parse.urlparse(source)
         if parsed.scheme.casefold() != "https" or (parsed.hostname or "").casefold() not in SCRYFALL_IMAGE_HOSTS:
             raise ValueError("Image URL is not on the approved Scryfall CDN")
-        return str(row["oracle_id"]), source
+        return str(row["oracle_id"]), int(row["face_index"]), source
+
+    @staticmethod
+    def _printing_page(oracle_id: str, page: int) -> dict[str, Any]:
+        if not re.fullmatch(r"[0-9a-f-]{36}", oracle_id):
+            raise ValueError("Invalid Oracle identity")
+        query = urllib.parse.urlencode({
+            "q": f"oracleid:{oracle_id}", "unique": "prints", "order": "released",
+            "include_multilingual": "true", "page": page,
+        })
+        request = urllib.request.Request(
+            f"https://api.scryfall.com/cards/search?{query}",
+            headers={"Accept": "application/json", "User-Agent": SCRYFALL_USER_AGENT},
+        )
+        with urllib.request.urlopen(request, timeout=12) as response:
+            payload = json.loads(response.read(8 * 1024 * 1024))
+        rows = []
+        for raw in payload.get("data", ()):
+            if raw.get("oracle_id") != oracle_id:
+                continue
+            printing = CardPrinting.from_dict({
+                "scryfall_id": raw.get("id"), "set_code": raw.get("set"),
+                "collector_number": raw.get("collector_number"), "language": raw.get("lang"),
+            })
+            if printing is None or printing.scryfall_id is None:
+                continue
+            rows.append({
+                "printing": printing.to_dict(),
+                "set_name": str(raw.get("set_name") or printing.set_code or ""),
+                "finishes": [finish for finish in raw.get("finishes", ()) if finish in {"nonfoil", "foil", "etched"}],
+            })
+        return {"printings": rows, "has_more": payload.get("has_more") is True}
+
+    async def printing_options(self, oracle_id: str, page: int) -> dict[str, Any]:
+        key = oracle_id, page
+        async with self._printing_lock:
+            now = time.monotonic()
+            cached = self._printing_options.get(key)
+            if cached is not None and cached[0] > now:
+                return cached[1]
+            await asyncio.sleep(max(0, self._next_printing_lookup - now))
+            self._next_printing_lookup = time.monotonic() + 0.12
+            result = await asyncio.to_thread(self._printing_page, oracle_id, page)
+            if len(self._printing_options) >= 32:
+                self._printing_options.pop(next(iter(self._printing_options)))
+            self._printing_options[key] = (time.monotonic() + 3600, result)
+            return result
 
     @staticmethod
     def _download(source: str, destination: Path) -> str:
@@ -374,9 +473,18 @@ class CardImageCache:
                 temporary.unlink()
             raise
 
-    async def get(self, oracle_prefix: str, *, face: int = 0, size: str = "normal") -> tuple[Path, str]:
-        oracle_id, source = self._source(oracle_prefix, face, size)
-        suffix = Path(urllib.parse.urlparse(source).path).suffix.casefold()
+    async def get(
+        self, oracle_prefix: str, *, face: int = 0, size: str = "normal",
+        printing: CardPrinting | None = None,
+    ) -> tuple[Path, str]:
+        if printing is None:
+            oracle_id, face, source = self._source(oracle_prefix, face, size)
+            printing_path = None
+            suffix = Path(urllib.parse.urlparse(source).path).suffix.casefold()
+        else:
+            printing_path = self._printing_path(printing)
+            fingerprint = hashlib.sha256(f"{oracle_prefix}:{printing_path}".encode()).hexdigest()[:28]
+            oracle_id, source, suffix = f"printing-{fingerprint}", "", ""
         if suffix not in {".jpg", ".jpeg", ".png", ".webp"}:
             suffix = ".png" if size == "png" else ".jpg"
         destination = self.root / oracle_id / f"{face}-{size}{suffix}"
@@ -387,6 +495,11 @@ class CardImageCache:
         async with lock:
             if destination.is_file() and destination.stat().st_size > 0:
                 return destination, mimetypes.guess_type(destination.name)[0] or "image/jpeg"
+            if printing_path:
+                async with self._printing_lock:
+                    await asyncio.sleep(max(0, self._next_printing_lookup - time.monotonic()))
+                    self._next_printing_lookup = time.monotonic() + 0.12
+                    source = await asyncio.to_thread(self._printing_image, printing_path, oracle_prefix, face, size)
             content_type = await asyncio.to_thread(self._download, source, destination)
             self._downloaded += 1
             return destination, content_type

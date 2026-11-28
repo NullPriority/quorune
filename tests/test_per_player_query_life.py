@@ -61,6 +61,48 @@ class PerPlayerQueryLifeRuntimeTests(unittest.TestCase):
             self.assertEqual(raw,resolve_per_player_query_life(host,raw,item));item.controller='B'
             with self.assertRaises(ValueError):resolve_per_player_query_life(host,raw,item)
 
+    def test_independent_current_life_loss_journal_rejects_missing_facts_and_kills_global_sum(self):
+        from quorune.model import TurnHistory, TurnHistoryEvent
+        from quorune.per_player_query_life_model import OPPONENT_ACTUAL_TURN_LOSS_VERSION, TurnLifeLossHistory
+
+        spec = Spec(TurnLifeLossHistory.ACTUAL_CURRENT_TURN_LOSS, Relation.OPPONENTS,
+                    OPPONENT_ACTUAL_TURN_LOSS_VERSION)
+        history = TurnHistory(turn_sequence=17, events=[
+            TurnHistoryEvent('player_lost_life', target='A', amount=3),
+            TurnHistoryEvent('player_lost_life', target='B', amount=4),
+            TurnHistoryEvent('player_gained_life', target='B', amount=6),
+            TurnHistoryEvent('player_lost_life', target='C', amount=2),
+            TurnHistoryEvent('player_lost_life', target='left-game', amount=8),
+        ])
+        host = Row(active_seats=tuple('ABCD'), apnap_order=lambda:tuple('BCDA'),
+                   state=Row(turn_history=history, turn_sequence=17))
+        item = Row(controller='A')
+        def read(value=spec.to_dict()):
+            return Bound.from_dict(resolve_per_player_query_life(host, value, item)).changes
+
+        before = tuple(history.events)
+        expected = (LifeChange('B',-4), LifeChange('C',-2))
+        self.assertEqual(expected, read())
+        self.assertEqual(before, tuple(history.events))
+        with patch('quorune.semantic_runtime.per_player_query_life.current_turn_life_loss_by_player',
+                   return_value={seat:14 for seat in 'ABCD'}):
+            self.assertNotEqual(expected, read())
+        sealed = resolve_per_player_query_life(host, spec.to_dict(), item)
+        history.events.append(TurnHistoryEvent('player_lost_life', target='B', amount=4))
+        self.assertEqual((LifeChange('B',-8), LifeChange('C',-2)), read())
+        self.assertEqual(expected, read(sealed))
+        for event in (TurnHistoryEvent('player_lost_life', target='B', amount=True),
+                      TurnHistoryEvent('player_lost_life', target=None, amount=1)):
+            history.events.append(event)
+            with self.assertRaises(ValueError):
+                read()
+            history.events.pop()
+        host.state.turn_sequence = 18
+        with self.assertRaises(ValueError):
+            read()
+        host.state.turn_history = TurnHistory(turn_sequence=18)
+        self.assertEqual((), read())
+
     def test_life_owner_prepares_one_heterogeneous_canonical_batch_and_zero_prepares_none(self):
         from unittest.mock import Mock
         import quorune.effect_runtime.life_effects as owner
@@ -142,6 +184,69 @@ class PerPlayerQueryLifeCompilerTests(unittest.TestCase):
                 {'handlers':({'amount':compiled[1][0]['amount']},)},
                 {'effects':(*compiled[1],{'op':'draw','count':1,'player':'$controller'})}):
             with self.assertRaises(ValueError):per_player_query_life_program_dependencies(Row(**{**base,**change}))
+
+    def test_turn_life_loss_pronouns_close_only_the_untargeted_each_end_step(self):
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.per_player_query_life_model import OPPONENT_ACTUAL_TURN_LOSS_VERSION, TurnLifeLossHistory
+        from quorune.rules.per_player_query_life import (
+            OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY, is_closed_per_player_query_life_program,
+            per_player_query_life_program_dependencies,
+        )
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        text = ('At the beginning of each end step, each opponent loses life equal to the life they lost this turn. '
+                '(Damage causes loss of life.)')
+        def compile_text(oracle):
+            card = replace(query_record(oracle), type_line='Enchantment', power=None, toughness=None)
+            return compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+        first = compile_text(text)
+        second = compile_text(text.replace('they lost', 'that player lost'))
+        self.assertEqual(('exact', 'exact'), (first.status, second.status), first.material_residuals)
+        node, = first.faces[0].nodes
+        other, = second.faces[0].nodes
+        self.assertEqual(node.effects, other.effects)
+        self.assertIsNone(node.target_schema)
+        effect, = node.effects
+        expected = Spec(TurnLifeLossHistory.ACTUAL_CURRENT_TURN_LOSS, Relation.OPPONENTS,
+                        OPPONENT_ACTUAL_TURN_LOSS_VERSION)
+        self.assertEqual(expected, Spec.from_dict(effect['amount']))
+        self.assertEqual(expected.to_dict(), effect['amount'])
+        self.assertEqual('lose_life_each_opponent', effect['op'])
+        for oracle in (
+            text.replace('each end step', 'your end step'), text.replace('this turn', 'last turn'),
+            text.replace('each opponent', 'each player'), text.replace('they lost', 'you lost'),
+            text.replace('each opponent', 'target opponent'), text.replace('each opponent', 'if you control a creature, each opponent'),
+            text.replace(' (Damage causes loss of life.)', ' You draw a card.'),
+        ):
+            with self.subTest(oracle=oracle):
+                self.assertNotEqual('exact', compile_text(oracle).status)
+        base = dict(event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+                    ability_id='trigger:front:n1', effects=node.effects, target_schema=None, cost_schema=None,
+                    handlers=(), coverage=())
+        cap = OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY
+        raw = Row(**base)
+        required = per_player_query_life_program_dependencies(raw)
+        self.assertIn(cap, required)
+        self.assertIn('trigger.placement.apnap', required)
+        self.assertIn(cap, typed_result_amount_runtime_dependencies(node.effects))
+        raw.capability_dependencies = required
+        self.assertTrue(is_closed_per_player_query_life_program(raw))
+        raw.capability_dependencies = tuple(item for item in required if item != cap)
+        self.assertFalse(is_closed_per_player_query_life_program(raw))
+        for change in (
+            {'event':'permanent.enter.self'}, {'active_zone':'graveyard'},
+            {'event_condition':None}, {'event_condition':{'field':'step','op':'eq','value':'upkeep'}},
+            {'target_schema':{'count':1}}, {'cost_schema':{'discard':1}},
+        ):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                per_player_query_life_program_dependencies(Row(**{**base, **change}))
+        for change in (
+            {'schema_version':True}, {'schema_version':1}, {'relation':'all_active_players'},
+            {'amount':'net_current_turn_loss'}, {'amount':{}}, {'previous_turn':True},
+        ):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                Spec.from_dict({**effect['amount'], **change})
 
     def test_fresh_caster_count_mutant_is_killed_after_positive_independent_count_witness(self):
         import quorune.semantic_runtime.per_player_query_life as owner
@@ -373,3 +478,141 @@ class PerPlayerQueryLifeNativeTests(InheritedNativeFixture,unittest.TestCase):
             self.assertEqual('exact',compile_oracle_card(record('Draw a card.'),capability_registry=registry,capability_profile='commander_review').status)
             if cap!='life.change.effect':
                 self.assertEqual('exact',compile_oracle_card(record('Each player loses 1 life.'),capability_registry=registry,capability_profile='commander_review').status)
+
+
+class EndStepOpponentLifeLossNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'end-step-opponent-life-loss.sqlite3'
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE,
+            ROOT / 'tests/fixtures/life-gain-prohibition-cards.json',
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        name = 'Generic Bound Commander'
+        cls.deck = DeckDefinition('Current turn life loss', [
+            DeckEntry(name, 1, 'commander'), DeckEntry('Generic Bound Plains', 30),
+        ], [name])
+
+    def save_witness(self, game, case, *, load=False):
+        import os
+        from quorune.record import authoritative_state_hash, replay_record
+        from quorune.session import CommanderSession
+
+        record_parent = os.environ.get('QUORUNE_WOUND_RECORD_PARENT')
+        parent = Path(record_parent or self.temporary.name)
+        if record_parent:
+            fixture = parent / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = parent / ('end-step-loss-' + case)
+        game.save(path)
+        manifest = json.loads((path / 'manifest.json').read_bytes())
+        result = replay_record(path, self.db, verify=True)
+        self.assertEqual(3, manifest['schema_version'])
+        self.assertTrue(manifest['runtime_trust'])
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        expected = authoritative_state_hash(game.state)
+        self.assertEqual(expected, result['final_state_hash'])
+        if record_parent:
+            (parent / (path.name + '.verification.json')).write_text(
+                json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            restored = CommanderSession.load(self.db, path)
+            self.assertEqual(expected, authoritative_state_hash(restored.state))
+            return restored
+
+    def queued_end_step(self, game, seat, *sources):
+        self.until(game, lambda s: s.state.step == 'end_step' and s.state.active_player == seat
+                   and s.state.pending_decision is not None)
+        if len(sources) > 1:
+            from quorune.record import authoritative_state_hash
+            self.assertEqual('trigger.order', game.state.pending_decision.kind)
+            order = {item.source_object_id:item.ref for batch in game.state.pending_trigger_batches
+                     for item in batch.items}
+            self.assertEqual({card.object_id for card in sources}, set(order))
+            cmd = {'action_id':'order', 'triggers':[order[card.object_id] for card in sources]}
+            before = authoritative_state_hash(game.state)
+            self.assertFalse(game.act('pilot:' + seat, cmd).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+            result = game.act('pilot:A', cmd)
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual({card.object_id for card in sources}, {item.source_object_id for item in game.state.stack})
+        self.assertEqual(len(sources), len(game.state.stack))
+        for item in game.state.stack:
+            self.assertEqual(('triggered_ability', 'A', []), (item.kind, item.controller, item.targets))
+
+    def life_totals(self, game):
+        return tuple(game.state.players[seat].life for seat in 'ABCD')
+
+    def test_actual_reflections_on_opponent_end_step_recount_each_earlier_loss(self):
+        game = self.session(1991001)
+        hand = game.state.players['B'].zones['hand']
+        while len(hand) > 4:
+            game.engine.move_card(hand[-1], 'library', log=False)
+        name = 'Wound Reflection'
+        copies = [self.add(game.engine, name, zone='hand', ref='wound-reflection-' + str(i)) for i in range(2)]
+        self.add(game.engine, 'Vedalken Orrery')
+        self.add(game.engine, 'Mountain', seat='B')
+        shocks = [self.add(game.engine, 'Shock', seat='B', zone='hand', ref='wound-shock-' + str(i)) for i in range(4)]
+        heals = [self.add(game.engine, 'Revitalize', seat='B', zone='hand', ref='wound-heal-' + str(i)) for i in range(2)]
+        bolt = self.add(game.engine, 'Lightning Bolt', seat='B', zone='hand', ref='wound-bolt')
+        private = self.add(game.engine, 'Generic Bound Growth', seat='D', zone='hand', ref='wound-private')
+        for card in (*copies, shocks[0], heals[0], bolt):
+            self.assert_closed(game, card)
+        self.prepare(game, active='B', actor='B', mana={'C':2, 'W':2, 'R':4})
+        game.state.players['A'].mana_pool.update({'C':10,'B':2})
+        self.checkpoint(game)
+        for spell, target in ((shocks[0],'B'), (shocks[1],'B'), (shocks[2],'C'), (bolt,'A')):
+            self.cast(game, 'B', spell, [target])
+            self.assertIsNone(self.resolve(game))
+        for heal in heals:
+            self.cast(game, 'B', heal)
+            self.assertIsNone(self.resolve(game))
+        self.assertEqual((37,42,38,40), self.life_totals(game))
+        for source in copies:
+            self.cast(game, 'A', source)
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual('battlefield', game.state.cards[source.object_id].zone)
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, json.dumps(game.packet('pilot:' + seat, full=True)))
+        self.queued_end_step(game, 'B', *copies)
+        game = self.save_witness(game, 'opponent-turn-queued', load=True)
+        self.resolve_top(game)
+        self.assertEqual((37,38,36,40), self.life_totals(game))
+        self.assertEqual(1, len(game.state.stack))
+        game = self.save_witness(game, 'first-copy-resolved', load=True)
+        self.resolve_top(game)
+        self.assertEqual((37,30,32,40), self.life_totals(game))
+        self.cast(game, 'B', shocks[3], ['B'])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((37,28,32,40), self.life_totals(game))
+        self.assertFalse(game.state.stack)
+        self.queued_end_step(game, 'C', *copies)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((37,28,32,40), self.life_totals(game))
+        self.save_witness(game, 'late-loss-and-next-turn-zero')
+
+    def test_actual_archfiend_retains_its_separate_gain_prohibition_and_end_step_loss(self):
+        game = self.session(1991002)
+        archfiend = self.add(game.engine, 'Archfiend of Despair')
+        bolt = self.add(game.engine, 'Lightning Bolt', seat='B', zone='hand')
+        heal = self.add(game.engine, 'Revitalize', seat='B', zone='hand')
+        self.assert_closed(game, archfiend)
+        self.assertIn('flying', game.engine._combat_keywords(archfiend))
+        self.prepare(game, active='B', actor='B', mana={'R':1,'C':1,'W':1})
+        self.checkpoint(game)
+        self.cast(game, 'B', bolt, ['B'])
+        self.assertIsNone(self.resolve(game))
+        before_draw = len(game.state.players['B'].zones['hand'])
+        self.cast(game, 'B', heal)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before_draw, len(game.state.players['B'].zones['hand']))
+        self.assertEqual((40,37,40,40), self.life_totals(game))
+        self.queued_end_step(game, 'B', archfiend)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((40,34,40,40), self.life_totals(game))
+        self.save_witness(game, 'archfiend-retained-gain-denial')

@@ -203,6 +203,34 @@ def _unsupported_dynamic_child(
     )
 
 
+_SCOPED_CLASS_TEMPLATES = {
+    "class-controlled-countered-permanent-ward-v1": 0,
+    "class-controller-counter-doubling-v1": 1,
+}
+
+
+def _unsupported_class_scoped_child(node: OracleNode, residuals: list[OracleResidual]) -> OracleNode:
+    replacement = node.event == "counter.place"
+    return replace(
+        node,
+        exact=False,
+        handlers=(),
+        runtime_coverage=(),
+        residual_ids=(
+            *node.residual_ids,
+            append_residual(
+                residuals,
+                kind="replacement_effect" if replacement else "static_ability",
+                text=node.text,
+                span=node.span,
+                reason="This Class ability requires its exact printed level scope",
+                blockers=(("replacement applicability", "affected-player ordering", "self-replacement and prevention ordering")
+                          if replacement else ("Class-level Ward",)),
+            ),
+        ),
+    )
+
+
 def _with_class_dependency(
     node: OracleNode,
     *,
@@ -485,7 +513,8 @@ def apply_class_context(
     """Attach level membership and materialize one ordinary Class lifecycle."""
 
     if context is None:
-        return tuple(nodes)
+        return tuple(_unsupported_class_scoped_child(node,residuals)
+                     if node.template_id in _SCOPED_CLASS_TEMPLATES else node for node in nodes)
     annotated: list[OracleNode] = []
     child_keys: list[list[str]] = [[], []]
     child_keywords: list[list[str]] = [[], []]
@@ -498,6 +527,9 @@ def apply_class_context(
             ),
             None,
         )
+        if node.template_id in _SCOPED_CLASS_TEMPLATES and _SCOPED_CLASS_TEMPLATES[node.template_id] != level_index:
+            annotated.append(_unsupported_class_scoped_child(node, residuals))
+            continue
         if level_index is not None and _uses_cycle_sensitive_fragment(node):
             annotated.append(_unsupported_dynamic_child(node, residuals))
             continue

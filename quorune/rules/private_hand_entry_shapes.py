@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..object_predicate import object_query_capabilities
 from ..private_hand_entry_model import (
     PRIVATE_HAND_COLLECTION_CAPABILITY, PRIVATE_HAND_COLLECTION_MECHANICS,
+    PRIVATE_HAND_TYPE_SLOTS_CAPABILITY,
     decode_private_hand_collection,
 )
 
@@ -19,4 +20,5 @@ def private_hand_collection_node_capabilities(*, effects, target_schema, mechani
         return ()
     return (PRIVATE_HAND_COLLECTION_CAPABILITY, "zone.move.fixed_private_hand_choice",
             "zone.change.destination_replacement", "attachment.aura.typed_restriction",
-            *object_query_capabilities(spec.query))
+            *object_query_capabilities(spec.query),
+            *((PRIVATE_HAND_TYPE_SLOTS_CAPABILITY,) if spec.one_of_each else ()))

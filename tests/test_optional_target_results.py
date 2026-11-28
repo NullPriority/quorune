@@ -199,7 +199,11 @@ class OptionalTargetResultRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / 'optional-results.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE], path)
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/nonbasic-land-source-untap-cards.json',
+            FIXTURE,
+        ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Optional target result', [DeckEntry('Generic Bound Commander', 1, 'commander'),
@@ -209,6 +213,141 @@ class OptionalTargetResultRuntimeTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
         cls.temporary.cleanup()
+
+    def test_white_orchid_phantom_exact_trigger_and_guard(self):
+        from quorune.optional_target_result_model import (
+            OPTIONAL_LAND_CONTROLLER_SEARCH_CAPABILITY, OPTIONAL_LAND_CONTROLLER_SEARCH_TEMPLATE,
+        )
+        from quorune.semantic_runtime.executor import prepare_stack_resolution_effect
+
+        record = self.db.lookup("White Orchid Phantom", fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for face in ir.faces for node in face.nodes
+                 if node.template_id == OPTIONAL_LAND_CONTROLLER_SEARCH_TEMPLATE)
+        self.assertEqual(record.oracle_text[node.span.start:node.span.end], node.text)
+        self.assertEqual(1, node.target_schema["up_to"])
+        self.assertEqual(["basic"], node.target_schema["supertypes_none"])
+        self.assertIn(OPTIONAL_LAND_CONTROLLER_SEARCH_CAPABILITY, node.capability_dependencies)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in raw["capabilities"]
+                          if row["id"] == OPTIONAL_LAND_CONTROLLER_SEARCH_CAPABILITY)
+        capability.update(status="blocked", blockers=["The optional land search authority was withheld"])
+        registry = CapabilityRegistry(raw)
+        registry.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(OPTIONAL_LAND_CONTROLLER_SEARCH_CAPABILITY, str(refused.material_residuals))
+
+        prefix, optional = node.effects
+        search, = optional["effects"]
+        for forged in (
+            {**optional, "player": "$controller"},
+            {**optional, "effects": [{**search, "searching_player": "$controller"}]},
+            {**optional, "effects": [{**search, "count": {"minimum": True, "maximum": 1}}]},
+            {**optional, "effects": [{**search, "enters_tapped_override": 1}]},
+            {key: value for key, value in optional.items() if key != FIELD},
+        ):
+            with self.subTest(forged=forged):
+                self.assertFalse(optional_target_result_node_capabilities(
+                    effects=(prefix, forged), target_schema=node.target_schema, mechanic_ids=node.mechanics))
+        self.assertFalse(optional_target_result_node_capabilities(
+            effects=(prefix, optional), target_schema={**node.target_schema, "supertypes_none": []},
+            mechanic_ids=node.mechanics))
+        body = record.oracle_text.split("enters, ", 1)[1]
+        self.assertIsNone(lower(body.replace("nonbasic land", "creature"))[0])
+        host = SimpleNamespace(_semantic_value=lambda *_: self.fail("Absent land was queried"))
+        item = SimpleNamespace(targets=[])
+        self.assertIsNone(prepare_stack_resolution_effect(host, item, optional))
+        with patch("quorune.rules.optional_target_results.bind_optional_target_result",
+                   side_effect=lambda effect, targets: effect):
+            with self.assertRaises((AssertionError, AttributeError)):
+                prepare_stack_resolution_effect(host, item, optional)
+
+    def start_white_orchid(self, seed, *, target_name="Command Tower", response=False):
+        session = self.session(seed)
+        source = self.add(session.engine, "White Orchid Phantom", zone="hand")
+        target = self.add(session.engine, target_name, seat="B", ref="orchid-nonbasic")
+        session.engine.change_control(target.object_id, "C", reason="Nonbasic land test control")
+        basic = self.add(session.engine, "Generic Bound Plains", seat="C", ref="orchid-legal-basic")
+        chosen = self.add(session.engine, "Generic Bound Plains", seat="C", zone="library",
+                          ref="orchid-library-basic")
+        other = self.add(session.engine, "Generic Bound Body", seat="C", zone="library",
+                         ref="orchid-library-ineligible")
+        bounce = self.add(session.engine, "Boomerang", zone="hand") if response else None
+        self.prepare(session, source, {"W": 2, "U": 2})
+        self.checkpoint(session)
+        self.cast_offered(session, source)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        ctx = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertIn(target.ref, str(ctx))
+        self.assertNotIn(basic.ref, str(ctx))
+        self.reject(session, {"action_id": "choose", "targets": [basic.ref]})
+        self.reject(session, {"action_id": "choose", "targets": [target.ref, target.ref]})
+        self.assertTrue({"flying", "first strike"} <=
+                        session.engine._combat_keywords(session.state.cards[source.object_id]))
+        return session, target, chosen, other, bounce
+
+    def test_white_orchid_phantom_zero_and_illegal_targets_skip_search(self):
+        for offset, stale in enumerate((False, True)):
+            with self.subTest(stale=stale):
+                session, target, chosen, _, bounce = self.start_white_orchid(493100 + offset, response=stale)
+                before = session.state.players["C"].stats.get("shuffle_count", 0)
+                self.announce(session, (target.ref,) if stale else ())
+                if stale:
+                    self.cast_offered(session, bounce, targets=(target.ref,))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("hand" if stale else "battlefield", session.state.cards[target.object_id].zone)
+                self.assertEqual("library", session.state.cards[chosen.object_id].zone)
+                self.assertEqual(before, session.state.players["C"].stats.get("shuffle_count", 0))
+                self.replay(session, load=True)
+
+    def test_white_orchid_phantom_search_uses_each_legal_targets_controller(self):
+        cases = (("Command Tower", "graveyard", "apply"),
+                 ("Darksteel Citadel", "battlefield", "apply"),
+                 ("Darksteel Citadel", "battlefield", "decline"))
+        for offset, (name, zone, option) in enumerate(cases):
+            with self.subTest(name=name, option=option):
+                session, target, chosen, other, _ = self.start_white_orchid(493110 + offset, target_name=name)
+                shuffles = {seat: session.state.players[seat].stats.get("shuffle_count", 0) for seat in "ABCD"}
+                self.announce(session, (target.ref,))
+                self.assertIsNotNone(self.resolve(session))
+                self.assertEqual("offer_optional_effect", session.packet("pilot:C", full=True)["decision"]["ctx"]["operation"])
+                self.assertEqual(["pilot:C"], list(session.pending_principals()))
+                self.assertEqual("B", session.state.cards[target.object_id].owner)
+                self.assertEqual(zone, session.state.cards[target.object_id].zone)
+                answer = {"action_id": "choose", "choice": option}
+                for seat in "ABD":
+                    self.reject(session, answer, seat=seat)
+                result = session.act("pilot:C", answer)
+                self.assertTrue(result.ok, result.summary)
+                if option == "apply":
+                    self.assertEqual("semantic.search", self.resolve(session).kind)
+                    self.assertEqual(["pilot:C"], list(session.pending_principals()))
+                    schema = session.packet("pilot:C", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+                    self.assertIn(chosen.ref, schema["legal_refs"])
+                    self.assertNotIn(other.ref, schema["legal_refs"])
+                    self.assertTrue(schema["rules_may_fail_to_find"])
+                    for seat in "ABD":
+                        projected = str(session.packet("pilot:" + seat, full=True))
+                        self.assertNotIn(chosen.ref, projected)
+                        self.assertNotIn(other.ref, projected)
+                    session = self.replay(session, load=True)
+                    self.reject(session, {"action_id": "choose", "search_cards": [other.ref]}, seat="C")
+                    result = session.act("pilot:C", {"action_id": "choose", "search_cards": [chosen.ref]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("battlefield", session.state.cards[chosen.object_id].zone)
+                    self.assertEqual("C", session.state.cards[chosen.object_id].controller)
+                    self.assertTrue(session.state.cards[chosen.object_id].tapped)
+                    shuffles["C"] += 1
+                else:
+                    self.assertEqual("library", session.state.cards[chosen.object_id].zone)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(shuffles, {seat: session.state.players[seat].stats.get("shuffle_count", 0)
+                                            for seat in "ABCD"})
+                self.replay(session, load=True)
 
     def start(self, seed, *, target=True, evoke=False, extra=(), controlled=False, permanents=()):
         session = self.session(seed)

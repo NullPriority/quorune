@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Imprint"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}",
+      "name": "Duplicant",
+      "oracle_id": "ea86abfa-6cab-4ef0-8463-34136fc25b59",
+      "oracle_text": "Imprint \u2014 When this creature enters, you may exile target nontoken creature.\nAs long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "4",
+      "type_line": "Artifact Creature \u2014 Shapeshifter"
+    },
+    {
+      "oracle_id": "30997b43-fc13-41d3-8064-1ccc2cb6fd2b",
+      "name": "Raging Goblin",
+      "mana_cost": "{R}",
+      "type_line": "Creature \u2014 Goblin Berserker",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-07-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Pull from Eternity",
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "oracle_text": "Put target face-up exiled card into its owner's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ea86abfa-6cab-4ef0-8463-34136fc25b59",
+      "source": "wotc",
+      "published_at": "2020-08-07",
+      "comment": "Duplicant's base power and toughness change to the imprinted card's power and toughness. Counters and other effects that modify Duplicant's power and toughness still apply."
+    },
+    {
+      "oracle_id": "ea86abfa-6cab-4ef0-8463-34136fc25b59",
+      "source": "wotc",
+      "published_at": "2020-08-07",
+      "comment": "If a melded permanent or a merged permanent is exiled by Duplicant's triggered ability, that ability's controller chooses the relative timestamp of the exiled cards. Duplicant looks at the information of the one with the latest timestamp."
+    },
+    {
+      "oracle_id": "ea86abfa-6cab-4ef0-8463-34136fc25b59",
+      "source": "wotc",
+      "published_at": "2020-08-07",
+      "comment": "Abilities that define a * in a creature's power and toughness apply while that card is in exile, but abilities that add or subtract power and toughness don't. For example, the ability of Crusader of Odric applies to determine Duplicant's power and toughness, but the ability of Death's Shadow doesn't."
+    },
+    {
+      "oracle_id": "ea86abfa-6cab-4ef0-8463-34136fc25b59",
+      "source": "wotc",
+      "published_at": "2020-08-07",
+      "comment": "Duplicant's power and toughness are constantly updated if the exiled card's power and/or toughness change."
+    },
+    {
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "source": "wotc",
+      "published_at": "2006-09-25",
+      "comment": "If Pull from Eternity affects a suspended card, the card loses its time counters and is no longer suspended. (This doesn\u2019t trigger the last ability of suspend.)"
+    },
+    {
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "source": "wotc",
+      "published_at": "2006-09-25",
+      "comment": "Pull from Eternity targets a card in the exile zone. A card is only face down in the exile zone if the effect that put it there specifically says so."
+    },
+    {
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "source": "wotc",
+      "published_at": "2006-09-25",
+      "comment": "If Pull from Eternity affects a card that\u2019s haunting a creature, the haunt effect ends."
+    }
+  ],
+  "source": "Pinned public linked exile characteristics and removal witnesses"
+}

@@ -9,7 +9,7 @@ kernel can therefore expose Channel and other zone-specific abilities without
 letting a pilot invent a cheaper cost or mutate state directly.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from .power_up_model import PowerUpSpec, POWER_UP_UNCOMPILED
 from .fixed_mana_results import FixedManaResultSpec
 from enum import Enum
@@ -21,6 +21,8 @@ from .ability_line_normalization import strip_inline_reminder_and_granted_text a
 from .waterbend import FixedWaterbendCost
 from .activation_usage import ActivationLimit
 from .activation_cost_choice import CostChoice
+from .rules.announced_hand_discard import announced_hand_discard_choice, validate_announced_hand_discard_ability
+from .rules.announced_subtype_sacrifice import announced_subtype_sacrifice_choice, validate_announced_subtype_ability
 from .activation_mana_cost import ActivationManaCostOption
 from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .activation_condition_model import (
@@ -29,7 +31,13 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .activation_restriction_composition import activation_restriction_from_effect
-from .activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD, validate_activated_ability_descriptor
+from .activated_ability_descriptor import (
+    ABILITY_LOCAL_MANA_REDUCTION_FIELD, SOURCE_COUNTER_PLACEMENT_COST,
+    SOURCE_COUNTER_PLACEMENT_FIELD, SOURCE_COUNTER_PLACEMENT_OFFER_FIELD,
+    SOURCE_LIBRARY_BOTTOM_FIELD, SOURCE_LIBRARY_BOTTOM_OFFER,
+    decode_source_counter_placement_cost, source_library_bottom_mana_price, validate_activated_ability_descriptor,
+)
+from .cumulative_counter_upkeep import CounterPlacementCostSpec
 from .activation_cost_modifiers import (
     AbilityLocalManaReduction, ability_local_mana_reduction_from_dict, ability_local_reduction_origin_is_supported,
     validate_ability_local_mana_reduction,
@@ -46,10 +54,7 @@ from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
 from .fixed_mana_abilities import FixedManaMode, supports_hybrid_filter_price
-from .mana_restrictions import (
-    canonical_mana_spend_restriction,
-    legacy_mana_spend_restriction_for_tail,
-)
+from .activation_mana_restriction_text import _mana_spend_restriction
 from .mana_restriction_model import valid_mana_ability_spend_restriction
 from .rules.attachment_actions import fixed_equip_ability_spec
 from .rules.source_references import (
@@ -69,7 +74,7 @@ _PAY_ENERGY = re.compile(
 )
 _REMOVE_SOURCE_COUNTER = re.compile(
     r"^remove\s+(?P<count>a|an|one|two|three|four|five|six|seven|eight|"
-    r"nine|ten|[1-9][0-9]*)\s+(?P<counter>[A-Za-z0-9+/-]+)\s+"
+    r"nine|ten|fifty|[1-9][0-9]*)\s+(?P<counter>[A-Za-z0-9+/-]+)\s+"
     r"counters?\s+from\s+(?P<source>.+)$",
     re.IGNORECASE,
 )
@@ -122,6 +127,7 @@ _NUMBER_WORDS.update(
         "eight": 8,
         "nine": 9,
         "ten": 10,
+        "fifty": 50,
     }
 )
 
@@ -169,6 +175,7 @@ class ActivatedAbility:
     power_up: PowerUpSpec | None = None
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
+    announced_x_minimum: int = 0
     boast: bool = False
     reconfigure: bool = False
     forecast: bool = False
@@ -176,14 +183,34 @@ class ActivatedAbility:
     saddle_threshold: int | None = None
     ability_local_mana_reduction: AbilityLocalManaReduction | None = None
     variable_colored_reveal_price: VariableColoredRevealPrice | None = None
+    mill_library_cost: int = 0
+    source_library_bottom: bool = False
+    source_counter_placement_cost: CounterPlacementCostSpec | None = None
+    loyalty_x: bool = False
+    announced_energy_reanimation: bool = False
+    activation_grantor: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
             raise ValueError('Reconfigure marker must be boolean')
+        if self.activation_grantor is not None and (
+            type(self.activation_grantor) is not str or not self.activation_grantor.strip()
+            or self.activation_grantor.startswith("$") or not self.builtin_semantic_key
+            or self.zones != ("battlefield",) or self.mana_ability
+        ):
+            raise ValueError("An activation grantor requires one bound battlefield ability")
         if self.granting_attachment_payment is not None:
             validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
+        validate_announced_subtype_ability(self)
+        from .rules.announced_energy_reanimation import validate_energy_reanimation_ability
+        validate_energy_reanimation_ability(self)
+        from .rules.announced_artifact_sacrifice_return import validate_announced_artifact_sacrifice_ability
+        validate_announced_artifact_sacrifice_ability(self)
+        validate_announced_hand_discard_ability(self)
+        from .rules.linked_loyalty_exile_model import validate_loyalty_x_ability
+        validate_loyalty_x_ability(self)
         price = self.variable_colored_reveal_price
         if price is not None and (
             not isinstance(price, VariableColoredRevealPrice) or not price.matches_mana(self.mana)
@@ -199,6 +226,28 @@ class ActivatedAbility:
             raise ValueError('Fixed mana result must be typed')
         _validate_ability_identity_and_cost(self)
         _validate_ability_sequences_and_scalars(self)
+        if type(self.source_library_bottom) is not bool or self.source_library_bottom and (
+            self.zones != ("battlefield",) or self.tap_source is not True
+            or source_library_bottom_mana_price(self.cost_text) != dict(self.mana) or not any(self.mana.values())
+            or self.mana_ability or self.loyalty_delta is not None or self.announced_x_symbols is not None
+            or any((self.discard_source, self.sacrifice_source, self.exile_source, self.untap_source,
+                    self.complex_symbols, self.choices, self.uncompiled_costs, self.mana_cost_options,
+                    self.life_payment, self.energy_payment, self.random_discard_payment, self.waterbend,
+                    self.mill_library_cost, self.source_counter_placement_cost, self.source_counter_removal_cost,
+                    self.granting_attachment_payment, self.ability_local_mana_reduction,
+                    self.generic_reduction_per_legendary_creature))
+        ):
+            raise ValueError("Owner-library-bottom cost requires an ordinary source mana-and-tap activation")
+        if (type(self.mill_library_cost) is not int or self.mill_library_cost not in {0, 1}
+                or self.mill_library_cost and (
+                    self.zones != ("battlefield",) or not self.tap_source or self.mana_ability
+                    or self.target_schema is not None or any(self.mana.values()) or self.loyalty_delta is not None
+                    or self.source_counter_removal_cost is not None
+                    or any((self.untap_source, self.discard_source, self.sacrifice_source, self.exile_source,
+                            self.choices, self.uncompiled_costs, self.complex_symbols, self.life_payment,
+                            self.energy_payment, self.mana_cost_options, self.random_discard_payment, self.waterbend))
+                )):
+            raise ValueError("A library Mill price requires one card and its ordinary battlefield tap activation")
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
         if self.ability_local_mana_reduction is not None:
@@ -217,7 +266,10 @@ class ActivatedAbility:
 
     @property
     def chooses_activation_x(self) -> bool:
-        return self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
+        return (self.loyalty_x or self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
+                or self.announced_energy_reanimation or announced_subtype_sacrifice_choice(self) is not None
+                or announced_hand_discard_choice(self) is not None
+                or any(choice.count_parameter is not None for choice in self.choices))
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -284,9 +336,20 @@ class ActivatedAbility:
         if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
+        if self.source_library_bottom:
+            result[SOURCE_LIBRARY_BOTTOM_FIELD] = True
+        if self.mill_library_cost:
+            result['mill_library_cost'] = self.mill_library_cost
+        if self.source_counter_placement_cost is not None:
+            result[SOURCE_COUNTER_PLACEMENT_FIELD] = self.source_counter_placement_cost.to_dict()
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.announced_x_minimum:result['announced_x_minimum']=self.announced_x_minimum
         if self.variable_colored_reveal_price is not None:
             result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = self.variable_colored_reveal_price.to_dict()
+        if self.loyalty_x:
+            result["loyalty_x"] = True
+        if self.announced_energy_reanimation:
+            result["announced_energy_reanimation"] = True
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
@@ -296,18 +359,23 @@ class ActivatedAbility:
             result["saddle_threshold"] = self.saddle_threshold
         if self.ability_local_mana_reduction is not None:
             result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = self.ability_local_mana_reduction.to_dict()
+        if self.activation_grantor is not None:
+            result["activation_grantor"] = self.activation_grantor
         return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ActivatedAbility":
         value = validate_activated_ability_descriptor(value)
         return cls(
+            activation_grantor=value.get("activation_grantor"),
             ability_id=value["ability_id"],
             ability_local_mana_reduction=(
                 ability_local_mana_reduction_from_dict(value[ABILITY_LOCAL_MANA_REDUCTION_FIELD])
                 if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
             ),
             announced_x_symbols=value.get('announced_x_symbols'),
+            announced_x_minimum=value.get('announced_x_minimum', 0),
+            announced_energy_reanimation=value.get("announced_energy_reanimation", False),
             variable_colored_reveal_price=(
                 VariableColoredRevealPrice.from_dict(value[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
                 if VARIABLE_COLORED_REVEAL_PRICE_FIELD in value else None
@@ -339,7 +407,14 @@ class ActivatedAbility:
             energy_payment=value["energy_payment"],
             random_discard_payment=value.get('random_discard_payment',0),
             waterbend=FixedWaterbendCost.from_dict(value['waterbend']) if 'waterbend' in value else None,
+            mill_library_cost=value.get('mill_library_cost', 0),
+            source_library_bottom=value.get(SOURCE_LIBRARY_BOTTOM_FIELD, False),
+            source_counter_placement_cost=(
+                decode_source_counter_placement_cost(value[SOURCE_COUNTER_PLACEMENT_FIELD])
+                if SOURCE_COUNTER_PLACEMENT_FIELD in value else None
+            ),
             loyalty_delta=value["loyalty_delta"],
+            loyalty_x=value.get("loyalty_x", False),
             source_counter_removal_cost=(
                 None
                 if value.get("source_counter_removal_cost") is None
@@ -409,6 +484,7 @@ class ActivatedAbility:
         }
         mana = {key: value for key, value in self.mana.items() if value}
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.announced_x_minimum:result['announced_x_minimum']=self.announced_x_minimum
         if mana:
             result["m"] = mana
         if self.mana_cost_options:
@@ -427,10 +503,20 @@ class ActivatedAbility:
             result["life"] = self.life_payment
         if self.energy_payment:
             result["energy"] = self.energy_payment
+        if self.announced_energy_reanimation:
+            result["announced_energy_reanimation"] = True
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:
             result['random_discard']=self.random_discard_payment
-        if self.loyalty_delta is not None:
+        if self.source_library_bottom:
+            result[SOURCE_LIBRARY_BOTTOM_OFFER] = 1
+        if self.mill_library_cost:
+            result['mill_library'] = self.mill_library_cost
+        if self.source_counter_placement_cost is not None:
+            result[SOURCE_COUNTER_PLACEMENT_OFFER_FIELD] = self.source_counter_placement_cost.to_dict()
+        if self.loyalty_x:
+            result["loyalty_x"] = True
+        elif self.loyalty_delta is not None:
             result["loyalty"] = self.loyalty_delta
         if self.source_counter_removal_cost is not None:
             result["remove_source_counter"] = (
@@ -622,6 +708,25 @@ def _normalize_and_validate_ability_descriptors(
 
 
 def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
+    cost = ability.source_counter_placement_cost
+    if cost is not None and (
+        cost != SOURCE_COUNTER_PLACEMENT_COST
+        or ability.zones != ("battlefield",)
+        or ability.target_schema is not None
+        or ability.loyalty_delta is not None
+        or any(ability.mana.values())
+        or any((ability.mana_ability, ability.complex_symbols, ability.mana_cost_options,
+                ability.tap_source, ability.untap_source, ability.discard_source,
+                ability.sacrifice_source, ability.exile_source, ability.life_payment,
+                ability.energy_payment, ability.random_discard_payment, ability.waterbend,
+                ability.source_counter_removal_cost, ability.choices, ability.uncompiled_costs,
+                ability.announced_x_symbols, ability.announced_x_minimum, ability.mill_library_cost, ability.granting_attachment_payment,
+                ability.source_library_bottom,
+                ability.crew_threshold is not None, ability.saddle_threshold is not None,
+                ability.activation_conditions, ability.activation_limit is not None,
+                ability.sorcery_speed, ability.power_up, ability.boast, ability.forecast, ability.reconfigure))
+    ):
+        raise ValueError("The source counter placement requires the closed ordinary nonmana activation")
     if ability.builtin_semantic_key is not None and (
         not isinstance(ability.builtin_semantic_key, str)
         or not ability.builtin_semantic_key.strip()
@@ -682,6 +787,10 @@ def _ability_zones(
     if prefix in {"cycling", "forecast"}:
         return ("hand",)
     if "discard this card" in lower_cost and (prefix or "channel" in keyword_set):
+        return ("hand",)
+    from .fixed_mana_abilities import HAND_EXILE_MANA_COSTS
+
+    if lower_cost in HAND_EXILE_MANA_COSTS:
         return ("hand",)
     if "exile this card from your graveyard" in lower_cost:
         return ("graveyard",)
@@ -785,13 +894,14 @@ def _fixed_equip_keyword_ability(
     if spec is None:
         return None
     cost = _parse_cost(spec.cost_text, card_name)
+    target = "planeswalker" if spec.planeswalker else "creature"
     return ActivatedAbility(
         ability_id=f"ab{line_index + 1}",
         line_index=line_index,
         oracle_line=raw_line.strip(),
         cost_text=spec.cost_text,
         effect_text=(
-            "Attach this Equipment to target creature you control. "
+            f"Attach this Equipment to target {target} you control. "
             "Activate only as a sorcery."
         ) + (' ' + spec.local_cost_text if spec.local_cost_text else ''),
         zones=("battlefield",),
@@ -810,7 +920,7 @@ def _fixed_equip_keyword_ability(
         choices=cost.choices,
         uncompiled_costs=cost.uncompiled,
         sorcery_speed=True,
-        builtin_semantic_key="builtin:equip",
+        builtin_semantic_key=spec.semantic_key,
         target_schema=FrozenMap(spec.target_schema),
         source_counter_removal_cost=cost.source_counter_removal_cost,
         activation_limit=(
@@ -889,6 +999,7 @@ class _ParsedCost:
     uncompiled: tuple[str, ...]
     random_discard_payment: int = 0
     waterbend: FixedWaterbendCost | None = None
+    loyalty_x: bool = False
 
 
 def _fixed_activation_energy_payment(clause: str) -> int | None:
@@ -919,8 +1030,11 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     life_payment = 0
     energy_payment = 0
     random_discard_payment = 0
+    from .rules.linked_loyalty_exile_model import is_loyalty_x_cost
+
     waterbend = None
-    loyalty_delta: int | None = None
+    loyalty_x = is_loyalty_x_cost(actual_cost)
+    loyalty_delta = 0 if loyalty_x else None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     loyalty_clauses = 0
     choices: list[CostChoice] = []
@@ -965,6 +1079,8 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             continue
         residue = re.sub(r"\{[^{}]+\}", "", clause).strip()
         if not residue:
+            continue
+        if loyalty_x:
             continue
         lower = residue.casefold().strip(" .")
         loyalty_match = re.fullmatch(r"(?:(?P<sign>[+\-\u2212])(?P<amount>\d+)|0)", residue)
@@ -1029,6 +1145,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         random_discard_payment=random_discard_payment,
         waterbend=waterbend,
         loyalty_delta=loyalty_delta,
+        loyalty_x=loyalty_x,
         source_counter_removal_cost=source_counter_removal_cost,
         choices=tuple(choices),
         uncompiled=tuple(uncompiled),
@@ -1164,171 +1281,6 @@ def _dynamic_mana_output(effect_text: str) -> str | None:
     return None
 
 
-def _mana_spend_restriction(effect_text: str) -> str | None:
-    lower = " ".join(effect_text.casefold().split())
-    marker = "spend this mana only to "
-    prohibited_marker = "this mana can't be spent to "
-    if prohibited_marker in lower:
-        if lower.count(prohibited_marker) != 1 or marker in lower:
-            return None
-        body = lower.rsplit(prohibited_marker, 1)[1].rstrip(".")
-        return legacy_mana_spend_restriction_for_tail(
-            prohibited_marker,
-            body,
-        )
-    if marker not in lower or lower.count(marker) != 1:
-        return None
-    body = lower.rsplit(marker, 1)[1].rstrip(".")
-    legacy = legacy_mana_spend_restriction_for_tail(marker, body)
-    if legacy is not None:
-        return legacy
-    if any(
-        unsupported in body
-        for unsupported in (
-            " from ",
-            " you don't own",
-            " with devoid",
-            " with flashback",
-            " with mana value",
-            "face-down",
-            "foretell",
-            "kicked",
-            "pay a ",
-            "pay cumulative",
-            "turn ",
-            "unlock ",
-            "{c}",
-            "{x}",
-        )
-    ):
-        return None
-    clauses: list[tuple[str, str, tuple[str, ...]]] = []
-    paired = re.fullmatch(
-        r"cast (?P<spell>.+?) spells? or (?:to )?activate (?P<ability>.+)",
-        body,
-    )
-    reversed_pair = re.fullmatch(
-        r"activate (?P<ability>.+?) or cast (?P<spell>.+?) spells?",
-        body,
-    )
-    if paired is not None or reversed_pair is not None:
-        match = paired or reversed_pair
-        assert match is not None
-        spell = _mana_restriction_quality("spell", match.group("spell"))
-        ability = _mana_ability_restriction_quality(match.group("ability"))
-        if spell is None or ability is None:
-            return None
-        clauses.extend((spell, ability))
-    else:
-        spell_only = re.fullmatch(r"cast (?P<spell>.+?) spells?", body)
-        ability_only = re.fullmatch(r"activate (?P<ability>.+)", body)
-        if spell_only is not None:
-            clause = _mana_restriction_quality(
-                "spell", spell_only.group("spell")
-            )
-        elif ability_only is not None:
-            clause = _mana_ability_restriction_quality(
-                ability_only.group("ability")
-            )
-        else:
-            return None
-        if clause is None:
-            return None
-        clauses.append(clause)
-    try:
-        return canonical_mana_spend_restriction(tuple(clauses))
-    except ValueError:
-        return None
-
-
-_MANA_RESTRICTION_CARD_TYPES = frozenset(
-    {
-        "artifact",
-        "battle",
-        "creature",
-        "enchantment",
-        "instant",
-        "kindred",
-        "land",
-        "planeswalker",
-        "sorcery",
-    }
-)
-_MANA_RESTRICTION_NONCREATURE_SUBTYPES = frozenset(
-    {"arcane", "aura", "equipment", "lesson", "omen", "shrine", "vehicle"}
-)
-
-
-def _mana_restriction_terms(value: str) -> tuple[str, ...]:
-    normalized = re.sub(r"^(?:a|an)\s+", "", value.strip())
-    return tuple(
-        part.strip()
-        for part in re.split(
-            r"\s+and/or\s+|\s+or\s+|,\s*(?:and/or\s+|or\s+)?",
-            normalized,
-        )
-        if part.strip()
-    )
-
-
-def _mana_restriction_quality(
-    kind: str,
-    value: str,
-) -> tuple[str, str, tuple[str, ...]] | None:
-    if kind == 'spell' and value.strip() == 'instant and sorcery':
-        return 'spell', 'types_any', ('instant', 'sorcery')
-    terms = _mana_restriction_terms(value)
-    if not terms:
-        return None
-    singular_types = {
-        "artifacts": "artifact",
-        "battles": "battle",
-        "creatures": "creature",
-        "enchantments": "enchantment",
-        "instants": "instant",
-        "lands": "land",
-        "planeswalkers": "planeswalker",
-        "sorceries": "sorcery",
-    }
-    normalized_types = tuple(
-        singular_types.get(term, term) for term in terms
-    )
-    if len(normalized_types) == 1 and normalized_types[0] == "legendary":
-        return kind, "supertypes_any", ("legendary",)
-    if len(normalized_types) == 1 and normalized_types[0] == "noncreature":
-        return kind, "types_none", ("creature",)
-    if all(term in _MANA_RESTRICTION_CARD_TYPES for term in normalized_types):
-        return kind, "types_any", normalized_types
-    subtype_values: list[str] = []
-    irregular = {"heroes": "hero"}
-    for term in normalized_types:
-        candidate = irregular.get(term, term)
-        subtype = canonical_creature_subtype(candidate)
-        if subtype is None and candidate.endswith("s"):
-            subtype = canonical_creature_subtype(candidate[:-1])
-        if subtype is None and candidate in _MANA_RESTRICTION_NONCREATURE_SUBTYPES:
-            subtype = candidate
-        if subtype is None:
-            return None
-        subtype_values.append(subtype)
-    return kind, "subtypes_any", tuple(subtype_values)
-
-
-def _mana_ability_restriction_quality(
-    value: str,
-) -> tuple[str, str, tuple[str, ...]] | None:
-    normalized = " ".join(value.split())
-    if normalized in {"an ability", "abilities"}:
-        return "ability", "any", ()
-    match = re.fullmatch(
-        r"(?:an ability|abilities) of (?:a |an )?(?P<quality>.+?)(?: sources?)?",
-        normalized,
-    )
-    if match is None:
-        return None
-    return _mana_restriction_quality("ability", match.group("quality"))
-
-
 def _may_move_card_to_or_from_library(
     cost_text: str,
     effect_text: str,
@@ -1381,6 +1333,11 @@ def _parse_activated_line(
     prefix = (keyword_override or keyword_prefix or "").casefold()
     parsed_cost, forecast = forecast_cost_without_source_reveal(prefix, actual_cost)
     cost = _parse_cost(parsed_cost, card_name)
+    from .fixed_mana_abilities import is_hand_exile_mana_text
+    from .fixed_mana_results import double_unspent_mana_text
+
+    if not prefix and is_hand_exile_mana_text(actual_cost, effect_text):
+        cost = replace(cost, exile_source=True, uncompiled=())
     if prefix == "exhaust":
         effect_text = re.sub(
             r"\s*\(activate each exhaust ability only once\.\)\s*$",
@@ -1389,11 +1346,17 @@ def _parse_activated_line(
             flags=re.IGNORECASE,
         ).strip()
     effect_lower = effect_text.casefold()
+    from .next_cast_library_model import printed_next_cast_library_mana
+
     mana_ability = bool(
         cost.loyalty_delta is None
         and "target" not in effect_lower
-        and (effect_lower.startswith("add ") or "add one mana" in effect_lower)
-        and not _may_move_card_to_or_from_library(actual_cost, effect_text)
+        and (effect_lower.startswith("add ") or "add one mana" in effect_lower
+             or not prefix and double_unspent_mana_text(actual_cost, effect_text))
+        and (
+            not _may_move_card_to_or_from_library(actual_cost, effect_text)
+            or printed_next_cast_library_mana(actual_cost, effect_text)
+        )
     )
     builtin_semantic_key, target_schema = _builtin_effect_descriptor(effect_text)
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
@@ -1426,6 +1389,7 @@ def _parse_activated_line(
             random_discard_payment=cost.random_discard_payment,
             waterbend=cost.waterbend,
             loyalty_delta=cost.loyalty_delta,
+            loyalty_x=cost.loyalty_x,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
             uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ()), *((FORECAST_UNCOMPILED,) if prefix == 'forecast' and not forecast else ())),

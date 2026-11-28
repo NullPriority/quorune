@@ -117,3 +117,40 @@ def next_cast_copy_trigger_spec(trigger):
             or not isinstance(trigger.source_logical_object_id, str) or not trigger.source_logical_object_id):
         raise ValueError("Next-cast copy trigger requires its original source and same-turn one-shot window")
     return NextCastCopySpec.from_dict(trigger.condition[NEXT_CAST_COPY_FIELD])
+
+
+SAME_TURN_CAST_KEYWORD_FIELD = "same_turn_noncreature_keyword"
+SAME_TURN_CAST_KEYWORD_CAPABILITY = "trigger.delayed.same_turn_noncreature_keyword"
+SAME_TURN_CAST_KEYWORD_MECHANIC = "same-turn-noncreature-keyword"
+SAME_TURN_CAST_KEYWORD_REQUIRED = (
+    SAME_TURN_CAST_KEYWORD_CAPABILITY,
+    "trigger.event.normalized_spell_cast",
+    "trigger.placement.apnap",
+    "target.revalidate_resolution",
+    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+    "combat.damage.participation.strike_steps",
+)
+
+
+def same_turn_cast_keyword_effect():
+    return {"op": "delayed_trigger", "controller": "$controller", SAME_TURN_CAST_KEYWORD_FIELD: 1}
+
+
+def validate_same_turn_cast_keyword_effect(effect, *, actor="$controller"):
+    expected = {**same_turn_cast_keyword_effect(), "controller": actor}
+    if (not isinstance(effect, Mapping)
+            or type(effect.get(SAME_TURN_CAST_KEYWORD_FIELD)) is not int
+            or (dict(effect) if actor == "$controller" else {
+                key: value for key, value in effect.items() if key != "_runtime_source"
+            }) != expected
+            or actor != "$controller" and "_runtime_source" not in effect):
+        raise ValueError("Same-turn cast keyword requires its closed, versioned instruction")
+
+
+def same_turn_cast_keyword_target_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+            "types_any": ["creature"], "controller_relation": "you"}
+
+
+def same_turn_cast_keyword_result():
+    return {"op": "grant_keyword_until_end_of_turn", "card": "$target.0", "keyword": "Double Strike"}

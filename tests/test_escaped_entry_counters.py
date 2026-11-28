@@ -126,6 +126,104 @@ class EscapedEntryCounterRuntimeTests(unittest.TestCase):
         cls.db.close()
         cls.temp.cleanup()
 
+    def test_actual_nonhand_cast_receipt_pumps_its_arrival_and_replays(self):
+        from inherited_composition_fixture import InheritedNativeFixture
+
+        game = self.session(60304007)
+        observer = self.add(game.engine, "Alex Wilder, Runaway", zone="graveyard")
+        later = self.add(game.engine, "Voracious Typhon", zone="hand")
+        phoenix = self.add(game.engine, "Phoenix of Ash", zone="graveyard")
+        fodder = [self.add(game.engine, "Generic Bound Plains", zone="graveyard",
+                           ref=f"recorded-cast-entry-{index}") for index in range(7)]
+        private = self.add(game.engine, "Generic Bound Growth", seat="C", zone="hand", ref="nonhand-entry-private")
+        self.assert_closed(game, observer)
+        self.prepare(game, mana={"C": 9, "R": 3, "G": 2})
+        self.checkpoint(game)
+        action = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row.get("card") == observer.ref)
+        accepted = game.act("pilot:A", {"action_id": action["id"], "cost_option": "escape",
+                            "exile_cards": [card.ref for card in fodder[:3]], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        InheritedNativeFixture.resolve_top(self, game)
+        arrived = game.state.cards[observer.object_id]
+        self.assertEqual("battlefield", arrived.zone)
+        trigger, = game.state.stack
+        self.assertEqual("triggered_ability", trigger.kind)
+        self.assertEqual("graveyard", trigger.context["source_entry_cast_information"]["cast"]["origin"])
+        base_power = int(self.db.lookup("Alex Wilder, Runaway").power)
+        self.assertEqual(base_power, game.engine._numeric_stat(arrived.object_id, "power"))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(base_power + 2, game.engine._numeric_stat(arrived.object_id, "power"))
+        self.assertIn("haste", [word.casefold() for word in game.engine._effective_card_data(
+            game.state.cards[arrived.object_id]).get("keywords", ())])
+
+        self.cast(game, "A", later)
+        InheritedNativeFixture.resolve_top(self, game)
+        self.assertFalse(game.state.stack)
+        self.assertEqual("battlefield", game.state.cards[later.object_id].zone)
+        self.assertEqual(int(self.db.lookup("Voracious Typhon").power), game.engine._numeric_stat(later.object_id, "power"))
+
+        action = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row.get("card") == phoenix.ref)
+        accepted = game.act("pilot:A", {"action_id": action["id"], "cost_option": "escape",
+                            "exile_cards": [card.ref for card in fodder[3:6]], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        InheritedNativeFixture.resolve_top(self, game)
+        self.assertEqual({"+1/+1": 1}, game.state.cards[phoenix.object_id].counters)
+        base_phoenix = int(self.db.lookup("Phoenix of Ash").power)
+        self.assertEqual(base_phoenix + 1, game.engine._numeric_stat(phoenix.object_id, "power"))
+        trigger, = game.state.stack
+        self.assertEqual(observer.object_id, trigger.source_object_id)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(base_phoenix + 3, game.engine._numeric_stat(phoenix.object_id, "power"))
+        self.assertEqual(base_power + 2, game.engine._numeric_stat(arrived.object_id, "power"))
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_omitting_the_nonhand_origin_guard_is_killed(self):
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        from quorune.rules import entry_cast_information as owner
+        from quorune.source_entry_cast_information import CastSpellReceipt, EntryCastInformation
+
+        source = SimpleNamespace(controller="A")
+        host = SimpleNamespace(state=SimpleNamespace(players={"A": object(), "B": object()}))
+        field = "entrant_cast_by_controller_from_nonhand"
+        condition = {"field": field, "op": "eq", "value": True}
+        identity = ContinuousObjectIdentity("enter", "enter@2")
+        cast = CastSpellReceipt("A", "hand", "A", "s1", "enter@1")
+        context = {"from": "stack", "card_object_identity": "enter@2",
+                   "source_entry_cast_information": EntryCastInformation(identity, cast).to_dict()}
+
+        def witness():
+            self.assertFalse(owner.entry_condition_actual(host, field, condition, source=source, context=context))
+
+        witness()
+        borrowed = {**context, "source_entry_cast_information": EntryCastInformation(
+            identity, replace(cast, origin_owner="B")).to_dict()}
+        self.assertTrue(owner.entry_condition_actual(host, field, condition, source=source, context=borrowed))
+
+        def without_origin(_host, original, *, controller):
+            info = EntryCastInformation.from_dict(original["source_entry_cast_information"])
+            return info.cast is not None and info.cast.caster == controller
+
+        with mock.patch.object(owner, "nonhand_entrant_was_cast_by", side_effect=without_origin):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def test_nonhand_entry_requires_source_bound_authority(self):
+        record = self.db.lookup("Alex Wilder, Runaway")
+        good = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", good.status, good.material_residuals)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        row = next(item for item in raw["capabilities"] if item["id"] == "trigger.condition.cast_from_nonhand_entry")
+        row.update(status="blocked", blockers=["Actual nonhand entry authority withheld"])
+        registry = CapabilityRegistry(raw)
+        registry.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn("trigger.condition.cast_from_nonhand_entry", str(refused.material_residuals))
+
     def test_actual_typhon_escape_pays_costs_and_enters_with_three_counters(self):
         session = self.session(70213831)
         engine = session.engine
