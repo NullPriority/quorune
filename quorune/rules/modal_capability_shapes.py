@@ -9,7 +9,7 @@ from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
     FIXED_NONREPEATING_MODAL_MECHANIC,
 )
-from ..pawprint_modes import PAWPRINT_MECHANIC
+from ..pawprint_modes import PAWPRINT_MECHANIC, REPEATABLE_MODE_MECHANIC
 from ..targets import target_plan
 from .modal_selection import (
     COMMANDER_CAST_MODE_LIMIT_FIELD, conditional_cast_mode_capability, wizard_cast_mode_limit_matches,
@@ -27,8 +27,10 @@ class FixedModalBranch:
 FIXED_MODAL_WRAPPER_MECHANICS = frozenset(
     {
         'fixed-spree-mode-costs',
+        'fixed-tiered-mode-costs',
         'fixed-entwine-mode-costs',
         PAWPRINT_MECHANIC,
+        REPEATABLE_MODE_MECHANIC,
         "cr-603-handling-triggered-abilities",
         "exhaust",
         "fixed-typed-event-effect-trigger",
@@ -100,6 +102,13 @@ def fixed_choose_one_modal_branches(
     if tuple(definitions) != expected_ids:
         return None
 
+    from .announced_x_modal import uses_announced_x_modal, validate_announced_x_modal_schema
+    announced_x = uses_announced_x_modal(target_schema)
+    if announced_x:
+        try:
+            validate_announced_x_modal_schema(target_schema)
+        except (TypeError, ValueError, KeyError):
+            return None
     branches: list[FixedModalBranch] = []
     represented = {FIXED_CHOOSE_ONE_MODAL_MECHANIC}
     for definition in definitions.values():
@@ -128,7 +137,7 @@ def fixed_choose_one_modal_branches(
             for key, value in definition.items()
             if key not in {"effects", "mechanics"}
         }
-        valid, target = _choose_one_target_schema(child_schema)
+        valid, target = (True, child_schema) if announced_x else _choose_one_target_schema(child_schema)
         if not valid:
             return None
         branch_mechanics = tuple(raw_mechanics)
@@ -264,7 +273,9 @@ def fixed_nonrepeating_modal_branches(
         )
     outer = set(mechanics) - represented
     wrappers = FIXED_MODAL_WRAPPER_MECHANICS
-    if minimum_modes == 0:
+    from .combat_damage_library_access import uses_combat_damage_recipient_modes
+
+    if minimum_modes == 0 or uses_combat_damage_recipient_modes(target_schema):
         wrappers = wrappers | {"trigger-event-normalized-damage"}
     if (
         not outer.issubset(wrappers)

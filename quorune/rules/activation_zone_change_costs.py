@@ -30,6 +30,52 @@ def announced_subtype_replay_cost_refs(choice, response):
             or not isinstance(legal, (list, tuple)) or any(ref not in legal for ref in refs)):
         return None
     return refs
+from .announced_energy_reanimation import FIELD as ENERGY_REANIMATION_FIELD, energy_reanimation_sacrifice_choice
+from ..replacement.immutable import thaw_value
+from ..util import stable_json
+
+
+def _energy_reanimation_cost_refs(response: Mapping[str, Any]) -> tuple[str, str] | None:
+    summary = response.get("cost_summary")
+    if (not isinstance(summary, Mapping) or summary.get(ENERGY_REANIMATION_FIELD) is not True
+            or set(summary) - {ENERGY_REANIMATION_FIELD, "choose_cost", "m"}
+            or response.get("from") != "battlefield"
+            or type(response.get("x")) is not int or response["x"] < 0
+            or response.get("_counted_cost_replacement_sequence")):
+        return None
+    source = response.get("source")
+    choices = summary.get("choose_cost")
+    cards = response.get("cost_cards")
+    objects = response.get("cost_objects")
+    refs = objects or cards
+    if (type(source) is not str or not source or not isinstance(refs, (list, tuple))
+            or len(refs) != 1 or type(refs[0]) is not str or not refs[0] or refs[0] == source
+            or (objects and cards and objects != cards)
+            or not isinstance(choices, (list, tuple)) or len(choices) != 1 or not isinstance(choices[0], Mapping)):
+        return None
+    choice = dict(thaw_value(choices[0]))
+    legal = choice.pop("legal_refs", None)
+    if not isinstance(legal, list) or refs[0] not in legal:
+        return None
+    if stable_json(choice) != stable_json(energy_reanimation_sacrifice_choice().compact()):
+        return None
+    return source, refs[0]
+
+
+def energy_reanimation_replacement_entries(response, entries):
+    refs = _energy_reanimation_cost_refs(response)
+    if refs is None:
+        raise ReplacementEffectError("Energy reanimation replacement requires its two exact cost objects")
+    by_ref = {}
+    for event_id, values in entries:
+        if type(event_id) is not str or not event_id.startswith("zone.change:"):
+            raise ReplacementEffectError("Energy reanimation replacement requires a zone-cost event")
+        matches = tuple(ref for ref in refs if event_id.endswith(f":{ref}"))
+        if (len(matches) != 1 or matches[0] in by_ref or not isinstance(values, (list, tuple))
+                or any(type(value) is not str or not value for value in values)):
+            raise ReplacementEffectError("Energy reanimation replacement journal does not match its costs")
+        by_ref[matches[0]] = (event_id, values)
+    return refs, by_ref
 
 
 def activation_zone_change_cost_reference(
@@ -53,6 +99,12 @@ def activation_zone_change_cost_reference(
     cost_summary = response.get("cost_summary")
     if not isinstance(cost_summary, Mapping):
         return None
+    if ENERGY_REANIMATION_FIELD in cost_summary:
+        refs = _energy_reanimation_cost_refs(response)
+        if refs is None or origin != "battlefield":
+            return None
+        source, creature = refs
+        return object_ref if ((destination, object_ref) in {("hand", source), ("graveyard", creature)}) else None
     if 'random_discard' in cost_summary and any(field in cost_summary for field in ('choose_cost','discard_self','exile_self','sac_self')):
         return None
     source_ref = response.get("source")
@@ -136,9 +188,29 @@ def activation_zone_change_cost_reference(
     if choice.get("k") == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
         refs = announced_subtype_replay_cost_refs(choice, response)
         return object_ref if (origin, destination) == ("battlefield", "graveyard") and refs and object_ref in refs else None
-    contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(
-        str(choice.get("k") or "")
-    )
+    cost_kind = choice.get("k")
+    from ..combat_entry_activations import FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+
+    if cost_kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
+        from ..cast_lifecycles import combat_return_cost_descriptor
+
+        alternate_refs = response.get("cost_cards")
+        if (
+            response.get("from") not in ("hand", "command")
+            or object_ref == source_ref
+            or set(choice) != {"k", "n", "z", "q", "legal_refs"}
+            or choice["n"] != 1
+            or (alternate_refs and (
+                not isinstance(alternate_refs, (list, tuple))
+                or tuple(alternate_refs) != tuple(raw_refs)
+            ))
+        ):
+            return None
+        combat_return = combat_return_cost_descriptor(unblocked_attacker=True)
+        if stable_json(thaw_value(choice["q"])) != stable_json(combat_return["predicate"]):
+            return None
+        cost_kind = combat_return["operation"]
+    contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(cost_kind or ""))
     legal_refs = choice.get("legal_refs")
     if (
         contract is None
@@ -158,6 +230,18 @@ def activation_zone_change_cost_reference(
 
 def counted_activation_replacement_selections(response: Mapping[str, Any], object_refs: tuple[str, ...]) -> tuple[Any, ...]:
     """Read one chronological, server-authored counted-cost choice sequence."""
+    summary = response.get("cost_summary")
+    if isinstance(summary, Mapping) and ENERGY_REANIMATION_FIELD in summary:
+        journal = response.get("_mana_replacement_selections", {})
+        if not isinstance(journal, Mapping):
+            raise ReplacementEffectError("Energy reanimation replacement journal is malformed")
+        refs, scoped = energy_reanimation_replacement_entries(response, (
+            (event_id, values) for event_id, values in journal.items()
+            if type(event_id) is str and event_id.startswith("zone.change:")
+        ))
+        if object_refs != (refs[1],):
+            raise ReplacementEffectError("Energy reanimation selects exactly one creature to sacrifice")
+        return tuple(scoped.get(refs[1], ("", ()))[1])
     sequence = response.get('_counted_cost_replacement_sequence', ())
     if not isinstance(sequence, (list, tuple)):
         raise ReplacementEffectError('Counted activation replacement sequence is malformed')

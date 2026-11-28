@@ -103,6 +103,53 @@
       "released_at": "2025-01-24",
       "toughness": null,
       "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Treasure Nabber",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "oracle_text": "Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "2",
+      "type_line": "Creature — Goblin Rogue"
     }
   ],
   "rulings": [
@@ -128,6 +175,48 @@
       "comment": "If a creature has multiple mana abilities with a cost of {T}, such as if you control two Cryptolith Rites, you can only activate one of them at a time. Tapping the creature doesn’t produce multiple mana.",
       "oracle_id": "043f869d-b11c-4c0d-9591-2bf0df7bde55",
       "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple players each control Treasure Nabbers, an artifact tapped for mana will make quite a journey. For example, if player A taps an artifact for mana during their turn, and players B and C are the next players in turn order who control Treasure Nabbers, C's ability resolves before B and C gains control of the artifact. Then B gains control of the artifact. B keeps it during their turn, and then C regains control of the artifact once B's effect expires, then A will have it back after C's expires. However, if B or C taps the artifact for mana, one of them will take it from the other. You may need to pay very careful attention to which effects are still in effect, which have expired, and who owns what.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control multiple Treasure Nabbers, their effects all expire at the same time. You won't keep an artifact for any longer.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If that player controls any nabbed treasures, the effect giving that player control of those artifacts ends.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "An artifact is \"tapped for mana\" when a player activates a mana ability of an artifact that includes {T} (the tap symbol). Notably, tapping an artifact to pay for a spell with the improvise keyword is not tapping that artifact for mana.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the artifact leaves the battlefield, Treasure Nabber doesn't nab it from the zone it moved to.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The artifact remains tapped when you gain control of it.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent taps an artifact for mana during your turn, you'll gain control of it and keep control of it until the end of your next turn.",
+      "oracle_id": "20a6d576-a5b2-43b4-8be9-75be001e567d",
+      "published_at": "2018-07-13",
       "source": "wotc"
     }
   ],

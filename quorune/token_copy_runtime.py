@@ -16,7 +16,7 @@ from .token_copy_references import copy_reference_snapshot
 COPY_AFTERCARE = "token_copy_aftercare_v1"
 
 
-def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reason: str) -> list[str]:
+def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reason: str, bound_reference=None) -> list[str]:
     recipe = TokenCopyRecipeSpec.from_dict(effect["copy_spec"])
     source = effect.get("_runtime_source")
     stack_ref = source.get("stack_ref") if isinstance(source, Mapping) else None
@@ -31,6 +31,12 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
         recipient = resolved_occurrence_copy_recipient(host, effect, item)
         if recipient not in host.active_seats:
             return []
+    elif "cast_entry_source_copy_recipient" in effect:
+        from .rules.named_artifact_echo import resolved_entry_copy_recipient
+
+        recipient = resolved_entry_copy_recipient(host, item, effect)
+        if recipient is None:
+            return []
     elif 'copy_recipient_binding' in effect:
         from .rules.token_copy_recipients import resolved_copy_recipient
         recipient = resolved_copy_recipient(effect, item)
@@ -44,8 +50,16 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     if target is not None and item.targets[target['index']] is None:return []
     from .rules.attached_copy_payment import FALLBACK_FIELD
 
-    reference = copy_reference_snapshot(host, item, recipe, target_index=None if target is None else target['index'],
-                                        use_phased_lki=occurrence_copy, paid_attachment=FALLBACK_FIELD in effect)
+    from .rules.trigger_limits import uses_enchantment_entry_copy_limit
+
+    reference = bound_reference
+    if reference is None:
+        program = host.semantics.get(item.semantic_key) if item is not None and item.semantic_key else None
+        phased_lki = occurrence_copy or (program is not None and uses_enchantment_entry_copy_limit(program))
+        reference = copy_reference_snapshot(
+            host, item, recipe, target_index=None if target is None else target['index'],
+            use_phased_lki=phased_lki, paid_attachment=FALLBACK_FIELD in effect,
+        )
     if reference is None:
         return []
     snapshot = deepcopy(dict(reference["snapshot"]))
@@ -95,6 +109,33 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     return created
 
 
+def enchantment_copy_available(host, item, actor, effect):
+    """An Aura that cannot enter attached is not a legal optional creation."""
+    from .aura import AuraEntryChoiceRequired, is_aura_type_line
+    from .replacement import ReplacementChoiceRequired
+    from .token_creation import (
+        _preflight_aura_token_specs, _resolved_token_specs, _token_replacement_effects, _token_specification_inputs,
+    )
+
+    recipe = TokenCopyRecipeSpec.from_dict(effect["copy_spec"])
+    reference = copy_reference_snapshot(host, item, recipe, use_phased_lki=True)
+    snapshot = deepcopy(dict(reference["snapshot"]))
+    if not is_aura_type_line(snapshot["characteristics"]["type_line"]):
+        return True
+    specs, types, subtypes, sources = _token_specification_inputs(
+        host, actor, name="", quantity=1, tapped=False, attacking=None, attacking_groups=(),
+        battle_protector=None, copy_of=reference["ref"], copy_source_zone=reference["zone"],
+        copy_snapshot=snapshot, characteristics=None, temporary_keywords=(), aura_target_ref=None,
+    )
+    replacements = _token_replacement_effects(host, actor, types, subtypes, sources)
+    try:
+        result = _resolved_token_specs(host, actor, quantity=1, token_specs=specs,
+            created_types=types, created_subtypes=subtypes, replacement_effects=replacements, replacement_selections=())
+        return bool(_preflight_aura_token_specs(host, actor, result.specs, copied_aura_selections=()))
+    except (AuraEntryChoiceRequired, ReplacementChoiceRequired):
+        return True
+
+
 def apply_copy_batch(host: Any, effect: Mapping[str, Any], *, actor: str, reason: str) -> list[str]:
     from .continuous_effect_state import matching_battlefield_objects
     from .copied_token_aura_entry import copied_aura_token_selections, clear_copied_aura_token_selections
@@ -120,7 +161,21 @@ def apply_copy_batch(host: Any, effect: Mapping[str, Any], *, actor: str, reason
             if item.targets:
                 raise TokenCopyRecipeError("Controller's model set requires an untargeted instruction")
             player = actor
-        models = matching_battlefield_objects(host, spec.model_query(player))
+        chosen = None
+        if spec.uses_chosen_entry_models:
+            from .designation_prevention import source_entry_designation_value
+            from .entry_designations import EntryDesignationKind
+            from .rules.token_creation_capability_shapes import chosen_entry_token_copy_program_dependencies
+
+            program = host.semantics.get(item.semantic_key)
+            if (program is None or not host.semantic_program_is_current_trusted(program)
+                    or not chosen_entry_token_copy_program_dependencies(program)
+                    or item.kind != "triggered_ability"):
+                raise TokenCopyRecipeError("Chosen-type copy batch requires its original end-step trigger")
+            chosen = source_entry_designation_value(item, EntryDesignationKind.CREATURE_TYPE)
+            if chosen is None:
+                return []
+        models = matching_battlefield_objects(host, spec.model_query(player, chosen_type=chosen))
     if not models:
         return []
     cleanup = None

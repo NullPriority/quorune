@@ -95,6 +95,7 @@ def coordinate_untap_step(
     from .phasing import commit_untap_phasing, plan_untap_phasing
     from .phasing_model import phasing_lifecycle_version
 
+    waiting = list(held_triggers)
     if phasing_lifecycle_version(getattr(host.state, "phasing_lifecycle_version", None)) is None:
         phasing_source = unsupported_phasing_source(host, active_player)
     elif phasing_complete:
@@ -103,14 +104,17 @@ def coordinate_untap_step(
         phasing = plan_untap_phasing(host, active_player)
         phasing_source = host.state.cards[phasing.unsupported] if phasing.unsupported is not None else None
         if phasing_source is None:
-            commit_untap_phasing(host, phasing)
+            from .rules.phase_occurrence_events import collect_phase_in_triggers
+
+            incoming = commit_untap_phasing(host, phasing)
+            waiting.extend(collect_phase_in_triggers(host, incoming))
     if phasing_source is not None:
         host._pause_for_unsupported_semantic(
             event="untap.phasing",
             source=phasing_source,
         )
         return
-    day_night_triggers = list(held_triggers)
+    day_night_triggers = waiting
     from .transform_order_model import TransformTimestampOrderRequired
     try:apply_untap_day_night_transition(host,trigger_batch=day_night_triggers)
     except TransformTimestampOrderRequired as needed:

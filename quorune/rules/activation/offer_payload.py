@@ -8,7 +8,7 @@ from .pricing import payable_activation_mana_options
 from .commander_identity_life import current_commander_identity_life, uses_commander_identity_life
 
 
-def activation_offer_cost_hint(host, seat, source, ability):
+def activation_offer_cost_hint(host, seat, source, ability, *, selected=None):
     hint = ability.compact(source_ref=source.ref, zone=source.zone)
     if uses_commander_identity_life(ability):
         hint["life"] = current_commander_identity_life(host, seat, ability)
@@ -23,14 +23,51 @@ def activation_offer_cost_hint(host, seat, source, ability):
         equipment = payable_granting_attachment(host, seat, source, payment)
         if equipment is None:
             return None
-        hint['granting_attachment'] = {'kind': payment.kind.value, 'card': equipment.ref}
+        from ...granted_activation_model import GrantingAttachmentPaymentKind
+        kind = ("unattach" if payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE else payment.kind.value)
+        hint['granting_attachment'] = {'kind': kind, 'card': equipment.ref}
         name = host.display_name(equipment.object_id)
-        attachment_label = f' — {payment.kind.value.capitalize()} {name} ({equipment.ref})'
+        attachment_label = f' — {kind.capitalize()} {name} ({equipment.ref})'
     if ability.mana_cost_options:
         hint['mana_options'] = [
             option.compact()
             for option in payable_activation_mana_options(host, seat, source, ability)
         ]
+    from ...crew import activation_power_tap_hint
+    from ...station import station_candidates, station_cost_choice
+    from ..activation_costs import activation_choice_candidates
+
+    selected = ability if selected is None else selected
+    from ...paid_activation_card_types import has_bounded_sacrifice
+    if ability.choices and not has_bounded_sacrifice(ability):
+        hint["choose_cost"] = [
+            {
+                **choice.compact(),
+                "legal_refs": list(
+                    activation_choice_candidates(host, seat, source, choice, ability=selected)
+                ),
+            }
+            for choice in ability.choices
+        ]
+    power_tap = activation_power_tap_hint(host, seat, source, selected)
+    if power_tap is not None:
+        hint["choose_cost"] = [power_tap]
+    if station_cost_choice(selected) is not None:
+        hint["choose_cost"] = [
+            {
+                "k": "station",
+                "z": "battlefield",
+                "minimum": 1,
+                "maximum": 1,
+                "legal_refs": [
+                    candidate.ref
+                    for candidate in station_candidates(host, seat, source)
+                ],
+            }
+        ]
+    fetch_types = selected.library_search_types
+    if fetch_types:
+        hint["search_types"] = list(fetch_types)
     return hint, attachment_label
 
 
@@ -53,6 +90,7 @@ def activation_offer_payload(source,selected,hint):
                 "tap",
                 "life",
                 "energy",
+                "announced_energy_reanimation",
                 "random_discard",
                 "mill_library",
                 "loyalty",

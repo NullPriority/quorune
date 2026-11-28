@@ -76,7 +76,32 @@ def event_counter_threshold_result(binding, body, *, effect_template, card_name)
             (*compiled[3], EVENT_COUNTER_THRESHOLD_MECHANIC)), current
 
 
+def recipient_counter_damage_result(binding, body, *, card_name):
+    from ..recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
+    from ..rules.recipient_counter_damage import (
+        RECIPIENT_COUNTER_DAMAGE_MECHANIC, RECIPIENT_COUNTER_VARIANT,
+        recipient_counter_damage_condition, recipient_counter_damage_effect, recipient_counter_damage_target_schema,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            != (RECIPIENT_COUNTER_EVENT, "battlefield", RECIPIENT_COUNTER_VARIANT)
+            or binding.event_condition != recipient_counter_damage_condition()):
+        return None
+    match = re.fullmatch(
+        r"(?P<source>.+?) deals that much damage to target opponent, creature an opponent controls, "
+        r"or planeswalker an opponent controls\.", " ".join(body.split()), re.I,
+    )
+    if match is None or (match["source"].casefold() != "this enchantment"
+            and not (card_name and SourceReferenceSpec(card_name).matches(match["source"]))):
+        return None
+    return (("fixed-recipient-counter-damage-v1", (recipient_counter_damage_effect(),),
+             recipient_counter_damage_target_schema(), (RECIPIENT_COUNTER_DAMAGE_MECHANIC, "cr-115-targets")), True)
+
+
 def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
+    if damage := recipient_counter_damage_result(binding, body, card_name=card_name):
+        return damage
     if controller_result := counter_recipient_control_result(binding, body):
         return controller_result
     if blocking := counter_placement_blocking_result(binding, body):

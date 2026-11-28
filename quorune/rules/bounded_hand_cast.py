@@ -7,6 +7,7 @@ from ..bounded_hand_cast_model import (
     BOUNDED_HAND_CAST_MECHANIC, BoundedHandCastSpec, LEGENDARY_WIZARD_HAND_CAST_CONDITION,
     LEGENDARY_WIZARD_HAND_CAST_VERSION, bounded_hand_cast_payload_dependencies, is_legendary_wizard_hand_cast_effect,
     DAMAGED_PLAYER_HAND_CAST_VERSION, SOURCE_COMBAT_DAMAGE_PLAYER_CONDITION, is_damaged_player_hand_cast_effect,
+    ANNOUNCED_X_HAND_CAST_VERSION,
 )
 from ..characteristic_evaluation import type_parts
 from ..discover_model import discover_options_fingerprint
@@ -108,9 +109,23 @@ def _permits_proposed_spell(spec, effective):
     return spec.mana_value_limit.permits(public_mana_value(effective))
 
 
+def _require_announced_x_cast(host, item, spec):
+    from .announced_x_damage_hand_cast import is_closed_announced_x_damage_hand_cast_program
+
+    program = host.semantics.get(item.semantic_key) if item is not None else None
+    if (item is None or item.kind not in {"spell", "spell_copy"} or len(item.targets) != 1
+            or item.x_value is not None and type(item.x_value) is not int
+            or spec.mana_value_limit.maximum != (item.x_value or 0)
+            or program is None or not host.semantic_program_is_current_trusted(program)
+            or not is_closed_announced_x_damage_hand_cast_program(program)):
+        raise GameRuleError("The hand cast must retain the original resolving spell and its announced X")
+
+
 def _option_pairs(host, actor, spec, *, item=None):
     pairs = []
     owner = actor
+    if spec.schema_version == ANNOUNCED_X_HAND_CAST_VERSION:
+        _require_announced_x_cast(host, item, spec)
     if spec.schema_version == DAMAGED_PLAYER_HAND_CAST_VERSION:
         owner = _require_damage_recipient_hand(host, item, spec)
         if owner not in host.active_seats:

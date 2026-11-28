@@ -8,7 +8,10 @@ import unittest
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
-from quorune.declaration_fragments import DeclarationRequirementTemplate
+from quorune.declaration_costs import parse_declaration_cost_line
+from quorune.declaration_fragments import DeclarationCostTemplate, DeclarationRequirementTemplate
+from quorune.phasing import phase_out_permanents
+from quorune.continuous_effect_model import ContinuousObjectIdentity
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
@@ -129,8 +132,102 @@ class TemporaryAttackRequiredPlayerTests(InheritedNativeFixture, unittest.TestCa
         self.assertEqual("A", game.state.combat.attackers[bear.object_id])
         self.replay(game, load=True)
 
+    def test_actual_sphere_prices_each_selected_attacker_and_replays(self):
+        game = self.session(50811947)
+        engine = game.engine
+        primary = self.add(engine, "Sphere of Safety", ref="sphere-a")
+        other = self.add(engine, "Sphere of Safety", seat="C", ref="sphere-c")
+        fixed = self.add(engine, "Propaganda")
+        donated = self.add(engine, "Fervor", seat="D", ref="fervor-now-a")
+        engine.change_control(donated.object_id, "A")
+        phased = self.add(engine, "Fervor", ref="phased-fervor")
+        phase_out_permanents(
+            engine, (ContinuousObjectIdentity(phased.object_id, phased.logical_object_id),),
+            actor="A", reason="fixture",
+        )
+        walker = self.add(engine, "Jace Beleren")
+        walker.counters["loyalty"] = 3
+        battle = engine.create_token(
+            "C", name="Protected Siege", battle_protector="A",
+            characteristics={"type_line": "Token Battle — Siege", "defense": "3"},
+        )[0]
+        first = self.add(engine, "Grizzly Bears", seat="B", ref="attacker-one")
+        second = self.add(engine, "Grizzly Bears", seat="B", ref="attacker-two")
+        for attacker in (first, second):
+            attacker.acquired_control_turn_count = -1
+        lands = [
+            self.add(engine, "Plains", seat="B", ref=f"sphere-payment-{index}")
+            for index in range(4)
+        ]
+        for source in (primary, other, fixed):
+            self.assert_closed(game, source)
+        self.prepare(game, actor="B", active="B")
+        self.checkpoint(game)
+        self.ready_attackers(game)
+
+        payload = game.state.pending_decision.payload_by_actor["B"]
+        costs = {
+            (row["variable"], row["option"], row["source"]): row["mana"]
+            for row in payload["declaration_costs"]
+        }
+        for attacker in (first, second):
+            self.assertEqual({"GENERIC": 3}, costs[attacker.ref, "A", primary.ref])
+            self.assertEqual({"GENERIC": 3}, costs[attacker.ref, walker.ref, primary.ref])
+            self.assertEqual({"GENERIC": 2}, costs[attacker.ref, "A", fixed.ref])
+            self.assertEqual({"GENERIC": 1}, costs[attacker.ref, "C", other.ref])
+        self.assertIn(battle, payload["defenders"])
+        self.assertFalse(any(option == battle for _, option, _ in costs))
+
+        rejected = {"a": "attack", "atk": {first.ref: "A"}, "pay": "auto"}
+        baseline = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", rejected).ok)
+        self.assertEqual(baseline, authoritative_state_hash(game.state))
+
+        accepted = game.act("pilot:B", {
+            "a": "attack", "atk": {first.ref: walker.ref, second.ref: "C"}, "pay": "auto",
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        state = game.state
+        self.assertEqual(walker.ref, state.combat.attackers[first.object_id])
+        self.assertEqual("C", state.combat.attackers[second.object_id])
+        self.assertTrue(all(state.cards[land.object_id].tapped for land in lands))
+        event = next(event for event in reversed(state.events) if event.code == "combat.attack")
+        self.assertEqual({"GENERIC": 4}, event.details["requirements"])
+        self.replay(game, load=True)
+
+    def test_sphere_formula_is_closed_and_fixed_cost_keeps_its_wire_shape(self):
+        card = self.db.lookup("Sphere of Safety", fuzzy=False)
+        parsed = parse_declaration_cost_line(card.oracle_text)
+        self.assertTrue(parsed.exact)
+        encoded = parsed.template.to_dict()
+        self.assertEqual("source_controller_enchantment_count", encoded["mana_calculation"])
+        self.assertEqual(parsed.template, DeclarationCostTemplate.from_dict(encoded))
+        for forbidden in (
+            {**encoded, "mana": {"GENERIC": 2}},
+            {**encoded, "mana_calculation": None},
+            {**encoded, "mana_calculation": "all_enchantments"},
+            {**encoded, "includes_planeswalkers": False},
+        ):
+            with self.subTest(forbidden=forbidden), self.assertRaises(ValueError):
+                DeclarationCostTemplate.from_dict(forbidden)
+        propaganda = self.db.lookup("Propaganda", fuzzy=False)
+        fixed = parse_declaration_cost_line(propaganda.oracle_text).template.to_dict()
+        self.assertNotIn("mana_calculation", fixed)
+        self.assertEqual(fixed, DeclarationCostTemplate.from_dict(fixed).to_dict())
+        for mutated in (
+            card.oracle_text.replace("enchantments", "lands"),
+            card.oracle_text.replace("enchantments you control", "enchantments they control"),
+            card.oracle_text.replace("planeswalkers you control", "battles you protect"),
+            card.oracle_text + " Draw a card.",
+        ):
+            with self.subTest(mutated=mutated):
+                changed = compile_oracle_card(
+                    replace(card, oracle_text=mutated), capability_registry=self.registry,
+                )
+                self.assertNotEqual("exact", changed.status)
+
     def test_actual_tax_and_new_target_incarnation_leave_ordinary_declarations_available(self):
-        for mode in ("tax", "blink"):
+        for mode in ("tax", "sphere", "blink"):
             with self.subTest(mode=mode):
                 game = self.session(50811920 + len(mode))
                 siren = self.add(game.engine, ORIGINAL)
@@ -139,8 +236,8 @@ class TemporaryAttackRequiredPlayerTests(InheritedNativeFixture, unittest.TestCa
                 bear.acquired_control_turn_count = -1
                 self.assert_closed(game, siren)
                 response = None
-                if mode == "tax":
-                    tax = self.add(game.engine, "Propaganda")
+                if mode in {"tax", "sphere"}:
+                    tax = self.add(game.engine, "Propaganda" if mode == "tax" else "Sphere of Safety")
                     self.assert_closed(game, tax)
                     for index in range(2):
                         self.add(game.engine, "Plains", seat="B", ref=f"siren-tax-funding-{index}")
@@ -160,8 +257,8 @@ class TemporaryAttackRequiredPlayerTests(InheritedNativeFixture, unittest.TestCa
                     self.resolve_top(game)
                     self.assertNotEqual(original, game.state.cards[bear.object_id].logical_object_id)
                 self.ready_attackers(game)
-                attackers = {} if mode == "tax" else {bear.ref: "C"}
+                attackers = {} if mode in {"tax", "sphere"} else {bear.ref: "C"}
                 result = game.act("pilot:B", {"action_id": "attack", "attackers": attackers})
                 self.assertTrue(result.ok, result.summary)
-                self.assertEqual(None if mode == "tax" else "C", game.state.combat.attackers.get(bear.object_id))
+                self.assertEqual(None if mode in {"tax", "sphere"} else "C", game.state.combat.attackers.get(bear.object_id))
                 self.replay(game, load=True)

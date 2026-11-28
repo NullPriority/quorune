@@ -162,10 +162,13 @@ def complete_ordinary_priority_step_entry(
     active = host.state.active_player
     if active is None:
         raise StateInvariantError("A turn has no active player")
+    from .extra_combat_model import later_main_phase_context
+
     context = {
         "phase": host.state.phase,
         "step": host.state.step,
         "player": active,
+        **later_main_phase_context(host.state, host.state.phase, host.state.step),
     }
     waiting = collect_trigger_items(
         host,

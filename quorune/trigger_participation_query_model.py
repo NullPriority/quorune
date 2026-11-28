@@ -37,6 +37,33 @@ class TriggerParticipationRule:
 def _q(**values):return ObjectQuerySpec(**values)
 
 
+_ENTERING_EVENTS = ("permanent.enter", "artifact.enter", "creature.enter", "land.enter", "enchantment.enter")
+_LEAVING_EVENTS = ("permanent.leave", "creature.dies", "artifact.graveyard", "permanent.graveyard")
+_PERMANENT_SOURCE = _q(types_any=("artifact", "battle", "creature", "enchantment", "land", "planeswalker"))
+_CREATURE = _q(types_any=("creature",))
+_PROHIBITION_RULES = {
+    "prevent_creature_enters": TriggerParticipationRule(
+        _ENTERING_EVENTS, event_queries=(_CREATURE,), source_relation="any", outcome="prevent",
+    ),
+    "prevent_artifact_creature_enters": TriggerParticipationRule(
+        _ENTERING_EVENTS, event_queries=(_q(types_any=("artifact", "creature")),),
+        source_relation="any", outcome="prevent",
+    ),
+    "prevent_creature_enters_dies": TriggerParticipationRule(
+        (*_ENTERING_EVENTS, *_LEAVING_EVENTS), event_queries=(_CREATURE,),
+        source_relation="any", outcome="prevent",
+    ),
+    "prevent_opponent_permanent_enters": TriggerParticipationRule(
+        _ENTERING_EVENTS, (_PERMANENT_SOURCE,), source_relation="opponent", outcome="prevent",
+    ),
+}
+
+
+def trigger_prohibition_can_observe(event: str) -> bool:
+    event = event.removesuffix(".self")
+    return any(not rule.events or event in rule.events for rule in _PROHIBITION_RULES.values())
+
+
 def trigger_participation_rule(name,subtype=None):
     if type(name) is not str:raise ValueError('Trigger participation rule must be represented')
     subtype_rules={'source_subtype','another_source_subtype','entering_subtype','controlled_entering_land_or_subtype'}
@@ -49,10 +76,8 @@ def trigger_participation_rule(name,subtype=None):
             events=(DUNGEON_ROOM_EVENT,), source_relation="owned",
             source_zones=("command",), source_kind="dungeon",
         )
-    entering=('permanent.enter','artifact.enter','creature.enter','land.enter','enchantment.enter')
-    leaving=('permanent.leave','creature.dies','artifact.graveyard','permanent.graveyard')
-    permanent=_q(types_any=('artifact','battle','creature','enchantment','land','planeswalker'))
-    creature=_q(types_any=('creature',))
+    entering, leaving = _ENTERING_EVENTS, _LEAVING_EVENTS
+    permanent, creature = _PERMANENT_SOURCE, _CREATURE
     if name=='permanent_enters':return TriggerParticipationRule(entering,(permanent,))
     if name=='land_enters':return TriggerParticipationRule(entering,(permanent,),(_q(types_any=('land',)),))
     if name=='entering_subtype':return TriggerParticipationRule(entering,(permanent,),(_q(types_any=('creature',),subtypes_any=(subtype,)),),event_relation='you')
@@ -67,14 +92,21 @@ def trigger_participation_rule(name,subtype=None):
     if name=='another_source_subtype':return TriggerParticipationRule(source_queries=(_q(subtypes_any=(subtype,)),),exclusion='modifier')
     if name=='ninja_creature_source':return TriggerParticipationRule(source_queries=(_q(types_all=('creature',),subtypes_any=('ninja',)),))
     if name=='legendary_creature_source':return TriggerParticipationRule(source_queries=(_q(types_all=('creature',),supertypes_all=('legendary',)),))
+    if name == "power_at_most_two_creature_source":
+        from .target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
+
+        return TriggerParticipationRule(source_queries=(_q(
+            zones=("battlefield",), types_all=("creature",),
+            numeric_characteristic=TargetNumericCharacteristicSpec(
+                TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_MOST, 2,
+            ),
+        ),))
     if name=='shaman_or_another_wizard':return TriggerParticipationRule(source_queries=(_q(subtypes_any=('shaman',)),_q(subtypes_any=('wizard',))),exclusion='wizard_only')
     if name=='colorless_spell_or_another_permanent':return TriggerParticipationRule(source_queries=(_q(colorless=True),),exclusion='permanent_modifier',source_zones=('battlefield','stack'))
     if name == "equipped_creature_source":
         return TriggerParticipationRule(source_queries=(creature,), source_relation="any",
                                         modifier_condition="equipment_on_source")
     if name=='equipped_source_or_attached_equipment':return TriggerParticipationRule(modifier_condition='equipped',exclusion='attached_source')
-    if name=='prevent_creature_enters':return TriggerParticipationRule(entering,event_queries=(creature,),source_relation='any',outcome='prevent')
-    if name=='prevent_artifact_creature_enters':return TriggerParticipationRule(entering,event_queries=(_q(types_any=('artifact','creature')),),source_relation='any',outcome='prevent')
-    if name=='prevent_creature_enters_dies':return TriggerParticipationRule((*entering,*leaving),event_queries=(creature,),source_relation='any',outcome='prevent')
-    if name=='prevent_opponent_permanent_enters':return TriggerParticipationRule(entering,(permanent,),source_relation='opponent',outcome='prevent')
+    if name in _PROHIBITION_RULES:
+        return _PROHIBITION_RULES[name]
     raise ValueError('Trigger participation rule is not represented')

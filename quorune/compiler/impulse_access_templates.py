@@ -25,9 +25,12 @@ _FIXED_IMPULSE_ACCESS = re.compile(
 class FixedImpulseAccessTemplate:
     count: int
     duration: str
+    spawn_settlement: bool = False
 
     @property
     def template_id(self) -> str:
+        if self.spawn_settlement:
+            return "fixed-impulse-spawn-settlement-v13"
         suffix = {ImpulseAccessDuration.END_OF_NEXT_TURN.value: "next-turn",
                   ImpulseAccessDuration.NEXT_END_STEP.value: "next-end-step"}.get(self.duration, "turn")
         return f"fixed-impulse-access-{suffix}-v1"
@@ -40,6 +43,10 @@ class FixedImpulseAccessTemplate:
         None,
         tuple[str, ...],
     ]:
+        if self.spawn_settlement:
+            from ..impulse_access_model import spawn_settlement_impulse_effect
+
+            return self.template_id, (spawn_settlement_impulse_effect(),), None, (IMPULSE_ACCESS_MECHANIC_ID,)
         return (
             self.template_id,
             (
@@ -60,7 +67,15 @@ def fixed_impulse_access_effect_template(
 ) -> FixedImpulseAccessTemplate | None:
     """Lower only fixed own-library exile with unrestricted play access."""
 
-    match = _FIXED_IMPULSE_ACCESS.fullmatch(" ".join(text.strip().split()))
+    material = " ".join(text.strip().split())
+    if material.casefold() == (
+        "exile the top three cards of your library. you may play those cards this turn. "
+        "at the beginning of the next end step, if any of those cards remain exiled, put them into your graveyard, "
+        "then create a 0/1 colorless eldrazi spawn creature token for each card put into your graveyard this way. "
+        'those tokens have "sacrifice this token: add {c}."'
+    ):
+        return FixedImpulseAccessTemplate(3, ImpulseAccessDuration.END_OF_TURN.value, spawn_settlement=True)
+    match = _FIXED_IMPULSE_ACCESS.fullmatch(material)
     if match is None:
         return None
     count = 1 if match.group("single") else fixed_number(match.group("count"))

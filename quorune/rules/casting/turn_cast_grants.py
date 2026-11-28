@@ -13,7 +13,8 @@ from ...object_query import object_matches_query, object_query_result
 from ...util import stable_json
 from ..turn_cast_grant_model import (
     COMMAND_GRAVEYARD_CAST_HANDLER, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_FIELD,
-    TURN_CAST_GRANT_HANDLERS, TurnCastGrantScope, TurnCastGrantSpec, validate_turn_cast_grant_use,
+    GRAVEYARD_SPELL_PERMANENT_TYPES, TURN_CAST_GRANT_HANDLERS, TurnCastGrantScope, TurnCastGrantSpec,
+    cast_grant_usage_key, validate_turn_cast_grant_use,
 )
 
 
@@ -68,6 +69,20 @@ def _command_graveyard_cast_sources(host, seat):
     return tuple(candidates)
 
 
+def _available_grant_uses(host, source, program, spec, *, row, for_land):
+    base = {
+        "source": source.object_id, "logical": source.logical_object_id, "program": program.key,
+        "source_ref": source.ref, "source_label": source.printed_name, "turn": host.state.turn_sequence,
+        "grant": spec.to_dict(), "original_cost_id": "normal",
+    }
+    if not spec.per_permanent_type:
+        return (base,)
+    types = ("land",) if for_land else tuple(kind for kind in GRAVEYARD_SPELL_PERMANENT_TYPES if kind in row.types)
+    return tuple({**base, "permanent_type": kind} for kind in types
+                 if cast_grant_usage_available(source, ability_id=cast_grant_usage_key(program.key, kind),
+                                               turn_sequence=host.state.turn_sequence))
+
+
 def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=False):
     if card.owner != seat or card.object_kind != 'card':
         return ()
@@ -109,16 +124,29 @@ def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=
                 else:
                     eligible_origin = card.zone in spec.origins
                 if eligible_origin and (for_land or any(object_matches_query(row, predicate) for predicate in spec.predicates_any)):
-                    result.append({
-                        'source': source.object_id, 'logical': source.logical_object_id, 'program': program.key,
-                        'source_ref': source.ref, 'source_label': source.printed_name, 'turn': host.state.turn_sequence,
-                        'grant': spec.to_dict(), 'original_cost_id': 'normal',
-                    })
+                    result.extend(_available_grant_uses(host, source, program, spec, row=row, for_land=for_land))
     return tuple(sorted(result, key=lambda r: (r['source'], r['program'])))
 
 
+def _per_type_use(use):
+    return "permanent_type" in use
+
+
+def _bestow_graveyard_grant_permission(host, seat, card):
+    if card.zone != "graveyard":
+        return False
+    from ...compiled_bestow import compiled_fixed_mana_bestow_spec
+
+    bestow = compiled_fixed_mana_bestow_spec(host, card)
+    return bestow is not None and any(_per_type_use(use) for use in current_turn_cast_grants(
+        host, seat, card, cast_type_line=bestow.cast_cost_option()["cast_type_line"],
+    ))
+
+
 def normal_turn_grant_permission(host, seat, card):
-    return any(not TurnCastGrantSpec.from_dict(use['grant']).without_mana_cost for use in current_turn_cast_grants(host, seat, card))
+    return (any(not TurnCastGrantSpec.from_dict(use['grant']).without_mana_cost
+                for use in current_turn_cast_grants(host, seat, card))
+            or _bestow_graveyard_grant_permission(host, seat, card))
 
 
 def free_turn_grant_base_options(host, seat, card, *, cast_type_line, enabled, has_mana_x, x_value, commander_tax):
@@ -133,22 +161,41 @@ def free_turn_grant_base_options(host, seat, card, *, cast_type_line, enabled, h
     return result
 
 
+def _per_type_option_providers(host, seat, card, options):
+    if card.zone != "graveyard":
+        return {}
+    from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+    lines = dict.fromkeys(str(option["cast_type_line"]) for option in options if option.get("cast_type_line"))
+    projected = {}
+    for line in lines:
+        prospective = prospective_cross_zone_spell_type_line(host, card, seat, line) or line
+        projected[line] = tuple(use for use in current_turn_cast_grants(
+            host, seat, card, cast_type_line=prospective,
+        ) if _per_type_use(use))
+    return projected
+
+
 def with_turn_cast_grant_choices(host, seat, card, options, *, cast_type_line, force_without_mana_cost=False):
     if force_without_mana_cost:
         return [option for option in options if TURN_CAST_GRANT_FIELD not in option]
     providers = current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line)
+    per_type_by_line = _per_type_option_providers(host, seat, card, options)
     from ..zone_action_permissions import compiled_zone_cast_permission
     from ...preparation import preparation_cast_permission
     from .disturb_costs import disturb_back_cast_permission
     independent = (force_without_mana_cost or card.zone in {'hand', 'command'}
         or compiled_zone_cast_permission(host, seat, card, include_source_grants=False,include_qualified_death=False)
         or preparation_cast_permission(host,seat,card) or disturb_back_cast_permission(host,seat,card))
-    if not providers:
+    if not providers and not any(per_type_by_line.values()):
+        if not independent and _bestow_graveyard_grant_permission(host, seat, card):
+            return [option for option in options if _has_own_graveyard_cast_method(option, card.zone)]
         printed = current_turn_cast_grants(host, seat, card) if cast_type_line is not None else ()
         if independent or not printed:
             return [option for option in options if TURN_CAST_GRANT_FIELD not in option]
         return []
-    normal = [use for use in providers if not TurnCastGrantSpec.from_dict(use['grant']).without_mana_cost]
+    normal = tuple(use for use in providers if not TurnCastGrantSpec.from_dict(use['grant']).without_mana_cost)
+    legacy = tuple(use for use in normal if not _per_type_use(use))
     result = []
     for option in options:
         selected = option.get(TURN_CAST_GRANT_FIELD)
@@ -161,7 +208,9 @@ def with_turn_cast_grant_choices(host, seat, card, options, *, cast_type_line, f
             result.append(option)
         if own_zone_method:
             continue
-        for use in normal:
+        line = option.get("cast_type_line")
+        methods = (*legacy, *per_type_by_line[str(line)]) if line and str(line) in per_type_by_line else normal
+        for use in methods:
             result.append({**deepcopy(option), TURN_CAST_GRANT_FIELD: deepcopy(use)})
     return result
 
@@ -201,6 +250,8 @@ def finalize_turn_cast_grant_option(option):
         life['base_option'] = option['id']
         option['id'] += '+life-reduction:' + hashlib.sha256(stable_json(life).encode('utf-8')).hexdigest()[:24]
     usage = ' once' if spec.source_scope is TurnCastGrantScope.ONCE_ON_OWN_TURN else ''
+    if spec.per_permanent_type:
+        usage = f" for {use['permanent_type']}"
     option['label'] = f"Use {use['source_label']}{usage}: {option.get('label') or 'Cast'}"
     option['permission_source'] = use['source_ref']
 
@@ -235,9 +286,12 @@ def commit_turn_cast_grant_use(host, option, *, spell=None, caster=None):
     if use['turn'] != host.state.turn_sequence:
         raise ValueError('Turn casting permission epoch changed')
     source = host.state.cards.get(use['source'])
-    if (spec.source_scope is TurnCastGrantScope.ONCE_ON_OWN_TURN
-        and source is not None and source.logical_object_id == use['logical']):
-        commit_cast_grant_usage(source, ability_id=use['program'], turn_sequence=use['turn'])
+    if spec.source_scope is not TurnCastGrantScope.COMMAND_UNLIMITED and (
+        source is not None and source.logical_object_id == use['logical']
+    ):
+        commit_cast_grant_usage(
+            source, ability_id=cast_grant_usage_key(use['program'], use.get("permanent_type")), turn_sequence=use['turn'],
+        )
     if spec.cast_rider != 'none':
         from ...zone_object_state import mark_cast_grant_rider
         from ..cast_grant_riders import CastGrantRiderBinding

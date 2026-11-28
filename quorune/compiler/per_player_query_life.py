@@ -9,7 +9,7 @@ from ..query_effect_amount_model import PublicQueryAmountSpec
 from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec, PlayerLifeLossRelation, PER_PLAYER_QUERY_LIFE_MECHANIC,
     OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION, OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
-    PoisonCounterThresholdLifeLoss,
+    PoisonCounterThresholdLifeLoss, OPPONENT_ACTUAL_TURN_LOSS_VERSION, TurnLifeLossHistory,
 )
 
 
@@ -64,6 +64,26 @@ def source_tap_opponent_poison_threshold_life_result(binding, body):
     )
     effect = {'op': 'lose_life_each_opponent', 'amount': spec.to_dict()}
     return ('per-opponent-poison-threshold-life-loss-v1', (effect,), None,
+            (PER_PLAYER_QUERY_LIFE_MECHANIC, 'cr-119-life', 'cr-101-the-magic-golden-rules'))
+
+
+_OPPONENT_ACTUAL_TURN_LOSS = re.compile(
+    r"Each opponent loses life equal to the life (?:they|that player) lost this turn\."
+    r"(?: \(Damage causes loss of life\.\))?", re.I,
+)
+
+
+def each_end_step_opponent_turn_life_loss_result(binding, body):
+    if (binding.variant != 'each end step' or binding.event.value != 'step.begin'
+            or binding.active_zone != 'battlefield' or binding.public_state_condition is not None
+            or body != binding.body or _OPPONENT_ACTUAL_TURN_LOSS.fullmatch(body.strip()) is None):
+        return None
+    spec = PerPlayerQueryLifeLossSpec(
+        TurnLifeLossHistory.ACTUAL_CURRENT_TURN_LOSS, PlayerLifeLossRelation.OPPONENTS,
+        schema_version=OPPONENT_ACTUAL_TURN_LOSS_VERSION,
+    )
+    effect = {'op': 'lose_life_each_opponent', 'amount': spec.to_dict()}
+    return ('each-end-step-opponent-actual-life-loss-v1', (effect,), None,
             (PER_PLAYER_QUERY_LIFE_MECHANIC, 'cr-119-life', 'cr-101-the-magic-golden-rules'))
 
 

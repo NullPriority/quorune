@@ -13,6 +13,10 @@ import hashlib
 from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
+from .rules.different_name_graveyard_return import (
+    CHOSEN_MOVE_VERSION as PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION, PERMANENT_QUERY,
+    chosen_permanents_have_different_names, graveyard_front_faces,
+)
 from .object_query import ObjectQueryResult, query_objects
 from .target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .rules.committed_quantity_followups import CommittedQuantityFollowup
@@ -186,6 +190,7 @@ MIXED_ZONE_EXILE_CAPABILITY = "zone.exile.fixed_mixed_sets"
 
 class MixedZoneExileScope(str, Enum):
     HANDS_AND_GRAVEYARDS = "hands_and_graveyards"
+    CONTROLLER_HAND_DRAW_AND_PLAY = "controller_hand_draw_and_play"
     ARTIFACTS_CREATURES_LANDS_HANDS_AND_GRAVEYARDS = "artifacts_creatures_lands_hands_and_graveyards"
 
 
@@ -198,18 +203,21 @@ class FixedMixedZoneExileSpec:
             raise PublicZoneMoveError("Mixed-zone exile requires one closed affected set")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": 1, MIXED_ZONE_EXILE_FIELD: self.scope.value}
+        version = 2 if self.scope is MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY else 1
+        return {"schema_version": version, MIXED_ZONE_EXILE_FIELD: self.scope.value}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> FixedMixedZoneExileSpec:
         if (not isinstance(value, Mapping) or set(value) != {"schema_version", MIXED_ZONE_EXILE_FIELD}
-                or type(value["schema_version"]) is not int or value["schema_version"] != 1
-                or type(value[MIXED_ZONE_EXILE_FIELD]) is not str):
+                or type(value["schema_version"]) is not int or type(value[MIXED_ZONE_EXILE_FIELD]) is not str):
             raise PublicZoneMoveError("Mixed-zone exile uses a closed versioned scope")
         try:
-            return cls(MixedZoneExileScope(value[MIXED_ZONE_EXILE_FIELD]))
+            spec = cls(MixedZoneExileScope(value[MIXED_ZONE_EXILE_FIELD]))
         except ValueError as exc:
             raise PublicZoneMoveError("Mixed-zone exile scope is unsupported") from exc
+        if spec.to_dict() != dict(value):
+            raise PublicZoneMoveError("Mixed-zone exile scope requires its original descriptor version")
+        return spec
 
     def effect(self) -> dict[str, Any]:
         return {"op": "move_public_zone_set", "source": "$source", "set": self.to_dict()}
@@ -253,8 +261,11 @@ SAME_TURN_GRAVEYARD_RETURN_VERSION = 7
 TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION = 8
 PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION = 9
 PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION = 10
+PUBLIC_EACH_GRAVEYARD_CHOSEN_RETURN_VERSION = 11
 PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS = (
     PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION, PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION,
+    PUBLIC_EACH_GRAVEYARD_CHOSEN_RETURN_VERSION,
+    PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION,
 )
 SAME_TURN_GRAVEYARD_RETURN_VERSIONS = (SAME_TURN_GRAVEYARD_RETURN_VERSION, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION)
 PUBLIC_AURA_ENTRY_VERSIONS = (
@@ -265,8 +276,16 @@ ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY = "zone.move.announced_owned_graveyard_ret
 ANNOUNCED_MANA_VALUE_MAX_FIELD = "announced_mana_value_max"
 PUBLIC_GRAVEYARD_POWER_RETURN_VERSION = 4
 PUBLIC_SAME_NAME_MOVE_VERSION = 6
+PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION = 12
+NONHISTORIC_NONLAND_RETURN_CAPABILITY = "zone.move.nonhistoric_nonland_to_owner_hand"
 PUBLIC_SAME_NAME_MOVE_TARGET_FIELD = "same_name_target"
 PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY = "zone.return.own_graveyard_creature_power_set"
+
+
+NONHISTORIC_NONLAND_QUERY = ObjectQuerySpec(
+    zones=("battlefield",), excluded_types=("artifact", "land"),
+    excluded_subtypes=("saga",), excluded_supertypes=("legendary",),
+)
 
 
 _GRAVEYARD_CREATURE_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
@@ -379,6 +398,7 @@ class PublicZoneMoveSetSpec:
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
             1, 2, *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION, PUBLIC_SAME_NAME_MOVE_VERSION,
+            PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION,
         }:
             raise PublicZoneMoveError(
                 "Unsupported public zone-move set schema version"
@@ -479,6 +499,12 @@ class PublicZoneMoveSetSpec:
                 "Only target-player sets accept a target seat"
             )
 
+        if self.schema_version == PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION:
+            if (self.query != NONHISTORIC_NONLAND_QUERY or self.origin is not PublicZoneOrigin.BATTLEFIELD
+                    or self.destination is not PublicZoneDestination.OWNER_HAND
+                    or self.relation_axis is not PublicZoneRelationAxis.CONTROLLER
+                    or self.seat_relation is not PublicZoneSeatRelation.ANY or self.exclude_source):
+                raise PublicZoneMoveError("Nonhistoric return requires the complete untargeted nonland battlefield set")
         self._validate_same_name_target()
         if self.schema_version in SAME_TURN_GRAVEYARD_RETURN_VERSIONS:
             self._validate_same_turn_graveyard_return()
@@ -491,6 +517,23 @@ class PublicZoneMoveSetSpec:
 
     def _validate_chosen_graveyard_return(self):
         cards = self.chosen_cards
+        if self.schema_version == PUBLIC_EACH_GRAVEYARD_CHOSEN_RETURN_VERSION:
+            if (
+                self.origin is not PublicZoneOrigin.GRAVEYARD or self.destination is not PublicZoneDestination.BATTLEFIELD
+                or self.relation_axis is not PublicZoneRelationAxis.OWNER or self.seat_relation is not PublicZoneSeatRelation.ANY
+                or self.battlefield_controller is not PublicBattlefieldController.ACTOR or self.battlefield_tapped
+                or self.query != ObjectQuerySpec(zones=("graveyard",), types_any=("creature", "planeswalker"), token=False)
+                or not isinstance(cards, (tuple, list)) or not cards
+                or any(not isinstance(card, PublicZoneMoveObject) for card in cards)
+                or len({card.object_id for card in cards}) != len(cards)
+                or len({card.owner for card in cards}) != len(cards)
+            ):
+                raise PublicZoneMoveError("Choose one creature or planeswalker card per represented graveyard")
+            object.__setattr__(self, "chosen_cards", tuple(cards))
+            return
+        if self.schema_version == PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION:
+            self._validate_different_name_graveyard_return(cards)
+            return
         tapped_land = self.schema_version == PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION
         query = _CHOSEN_LAND_CARD_QUERY if tapped_land else _CHOSEN_CREATURE_CARD_QUERY
         relation = PublicZoneSeatRelation.ACTOR if tapped_land else PublicZoneSeatRelation.ANY
@@ -507,6 +550,21 @@ class PublicZoneMoveSetSpec:
             message = ("Chosen land return requires one exact original land card in the actor's graveyard"
                        if tapped_land else "Chosen creature return requires one exact original card per graveyard owner")
             raise PublicZoneMoveError(message)
+        object.__setattr__(self, "chosen_cards", tuple(cards))
+
+    def _validate_different_name_graveyard_return(self, cards):
+        if (self.query != PERMANENT_QUERY
+                or self.origin is not PublicZoneOrigin.GRAVEYARD
+                or self.destination is not PublicZoneDestination.BATTLEFIELD
+                or self.relation_axis is not PublicZoneRelationAxis.OWNER
+                or self.seat_relation is not PublicZoneSeatRelation.ACTOR
+                or self.battlefield_controller is not PublicBattlefieldController.OWNER
+                or self.battlefield_tapped or self.exclude_source
+                or not isinstance(cards, (tuple, list)) or not cards
+                or any(not isinstance(card, PublicZoneMoveObject) for card in cards)
+                or len({card.object_id for card in cards}) != len(cards)
+                or len({card.owner for card in cards}) != 1):
+            raise PublicZoneMoveError("Different-name return requires a sealed actor-owned permanent card set")
         object.__setattr__(self, "chosen_cards", tuple(cards))
 
     def _validate_same_turn_graveyard_return(self) -> None:
@@ -627,6 +685,9 @@ class PublicZoneMoveSetSpec:
         ) or (
             (frozenset(value) == _SET_FIELDS_CHOSEN_RETURN)
             != (value["schema_version"] in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS)
+        ) or (
+            value["schema_version"] == PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
+            and frozenset(value) != _SET_FIELDS_V1
         ):
             raise PublicZoneMoveError(
                 "Public zone-move set fields are incomplete or unknown"
@@ -918,6 +979,11 @@ def snapshot_public_zone_move_set(
         apnap_order=query.public_zone_move_apnap_order(),
         source_ref=source_ref,
     )
+    if spec.schema_version == PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION and (
+            len(selected) != len(spec.chosen_cards) or any(not row.physical_card for row in selected)
+            or not chosen_permanents_have_different_names(tuple(
+                (row.ref, query.public_zone_move_rules_names(row)) for row in selected))):
+        raise PublicZoneMoveError("The sealed group lost a graveyard incarnation or shares a rules name")
     if spec.same_name_target is not None:
         from .rules.same_name_zone_moves import select_same_name_zone_rows
 
@@ -943,7 +1009,7 @@ def _exile_followup_rows(host, actor, spec, followup):
     if not isinstance(followup, PublicExileFollowup):
         raise PublicZoneMoveError("Graveyard exile follow-up requires the current public face view")
     followup.validate_move(spec)
-    if followup.schema_version == 2:
+    if followup.schema_version in {2, 3}:
         return tuple(row for row in host.public_zone_move_object_rows(actor) if row.zone == "battlefield")
     if getattr(host.state, "characteristic_query_boundary_version", None) != PUBLIC_ZONE_FRONT_FACE_VERSION:
         raise PublicZoneMoveError("Graveyard exile follow-up requires the current public face view")
@@ -984,8 +1050,12 @@ def _same_turn_graveyard_return_rows(host, actor, spec):
     )
 
 
-def resolve_fixed_mixed_zone_exile(host, *, actor, spec, reason, replacement_selections=()) -> int:
+def resolve_fixed_mixed_zone_exile(host, *, actor, spec, reason, replacement_selections=()):
     """Select the entire fixed hidden and public batch inside the authoritative owner."""
+    if spec.scope is MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY:
+        from .rules.controller_hand_exile import resolve_controller_hand_exile
+
+        return resolve_controller_hand_exile(host, actor, reason, replacement_selections)
     from .zone_transitions import ZoneTransitionOwner
 
     public_types = frozenset({"artifact", "creature", "land"})
@@ -1083,6 +1153,8 @@ def resolve_public_zone_move_set(
             if spec.destination is PublicZoneDestination.BATTLEFIELD
             else None
         )
+        front_faces = (graveyard_front_faces(host, snapshot.objects)
+                       if spec.schema_version == PUBLIC_CHOSEN_DIFFERENT_NAME_RETURN_VERSION else {})
         moved = ZoneTransitionOwner(host).move_cards_simultaneously(
             tuple(
                 (value.object_id, spec.destination.value)
@@ -1098,6 +1170,7 @@ def resolve_public_zone_move_set(
             destination_controllers=controllers,
             putting_players={object_id: actor for object_id in controllers} if controllers is not None else None,
             **({"aura_target_refs": aura_target_refs} if aura_target_refs is not None else {}),
+            **({"entry_faces": front_faces} if front_faces else {}),
             replacement_selections=replacement_selections,
         )
     host._log(
@@ -1118,6 +1191,14 @@ def resolve_public_zone_move_set(
         ),
     )
     if followup is not None:
+        if followup.schema_version == 3:
+            from .rules.affected_library_search_batch import committed_exile_land_search
+
+            original = {obj.object_id: obj for obj in snapshot.objects}
+            committed = tuple(card.object_id for card in moved
+                              if card.zone == "exile" and card.object_id in original
+                              and card.logical_object_id != original[card.object_id].logical_object_id)
+            return committed_exile_land_search(host, actor, (original[oid].controller for oid in committed))
         return followup.from_committed_count(
             _committed_exile_count(snapshot, rows, moved, followup), target_player=spec.target_seat,
         )

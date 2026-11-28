@@ -10,7 +10,7 @@ SELF_TRANSFORM_MECHANIC = "fixed-activated-source-transform"
 
 
 def fixed_self_transform_effect_template(text, *, card_name, triggered=False):
-    subjects = "this creature|this artifact|this permanent"
+    subjects = "this creature|this artifact|this permanent|this land"
     if triggered:
         subjects += "|this enchantment"
     reference = SourceReferenceSpec(card_name).regex_pattern

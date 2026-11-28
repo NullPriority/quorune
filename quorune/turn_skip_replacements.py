@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from .errors import GameRuleError
-from .model import StackItem
+from .model import StackItem, TurnEntry
 from .replacement.immutable import thaw_value
 from .replacement_effects import (
     ReplaceableEvent,
@@ -16,8 +16,8 @@ from .replacement_effects import (
     advance_replacement_batch,
     replacement_choice_payload,
 )
-from .semantic_runtime.untap_steps import active_step_skip_sources, current_step_is_skipped
-from .turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TurnBoundary
+from .semantic_runtime.untap_steps import EXTRA_TURN_SKIP_STEP, active_step_skip_sources, current_step_is_skipped
+from .turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TURN_START_SKIP_RESUME, TurnBoundary
 
 
 _STEP_BOUNDARIES = {
@@ -116,6 +116,79 @@ def apply_step_skip_replacement(host, active, step, held_triggers, *, selection=
         {"boundary": boundary, "effect": effect_id}, importance=2, changed_players=[active],
     )
     return True
+
+
+def _turn_start_plan(host, entry):
+    if not entry.extra or entry.player not in host.active_seats:
+        return None
+    sources = tuple(active_step_skip_sources(host, entry.player, EXTRA_TURN_SKIP_STEP))
+    if not sources:
+        return None
+    grants = {
+        grant.grant_id: grant for grant in host.state.scheduled_turn_skips
+        if grant.applies(entry.player, TurnBoundary.TURN, host.state.turn_sequence)
+    }
+    effects = [
+        _replacement(grant_id, grant_id, "Scheduled next-turn skip")
+        for grant_id in grants
+    ]
+    effects.extend(
+        _replacement(f"static-skip:{source.logical_object_id}:{key}:{index}", source.ref,
+                     f"{source.ref} — static extra-turn skip")
+        for source, key, index in sources
+    )
+    identity = f"turn-start:{entry.turn_id}"
+    event = ReplaceableEvent(
+        identity, TURN_BOUNDARY_SKIP_EVENT, entry.player,
+        {"skipped": False, "boundary": "turn", "turn_id": entry.turn_id},
+    )
+    return ReplacementEventBatch(identity, (event,), tuple(host.apnap_order())), tuple(effects), grants
+
+
+def apply_turn_start_skip_replacement(host, entry, *, selection=None) -> bool | None:
+    """Apply one live skip before an extra turn begins, pausing for CR 616 when needed."""
+    plan = _turn_start_plan(host, entry)
+    if plan is None:
+        if selection is not None:
+            raise GameRuleError("Extra-turn replacement is no longer applicable")
+        return False
+    batch, effects, grants = plan
+    progress = advance_replacement_batch(batch, effects, selections=() if selection is None else (selection,))
+    if progress.pending is not None:
+        chooser = progress.pending.choice.chooser
+        host.permissions.issue(
+            kind="replacement.order", role="pilot", actors=[chooser], allowed_actions=["choose"],
+            payload_by_actor={chooser: replacement_choice_payload(progress.pending, effects)},
+            continuation={
+                "replacement_resume_kind": TURN_START_SKIP_RESUME,
+                "turn_action_actor": entry.player,
+                "turn_action_frame": _frame(host),
+                "held_turn_entry": entry.to_dict(),
+                "replacement_batch": batch.to_dict(),
+                "replacement_effects": [effect.to_dict() for effect in effects],
+            },
+        )
+        return None
+    event, = progress.batch.events
+    effect_id, = event.applied_effects
+    if grant := grants.get(effect_id):
+        host.turn_steps.consume_skip(grant)
+    host._log(
+        entry.player, "turn.skip.applied", f"{entry.player} skipped an extra turn.",
+        {"effect": effect_id, "turn": entry.turn_id, "extra": True},
+        importance=2, changed_players=[entry.player],
+    )
+    return True
+
+
+def resume_turn_start_skip(host, restored, selection, *, error_type):
+    if type(selection) is not str or thaw_value(restored.turn_action_frame) != _frame(host):
+        raise error_type("Extra-turn replacement continuation is stale or malformed")
+    entry = TurnEntry.from_dict(thaw_value(restored.held_turn_entry))
+    plan = _turn_start_plan(host, entry)
+    if plan is None or plan[:2] != (restored.batch, restored.effects):
+        raise error_type("Extra-turn replacement offers no longer match the live boundary")
+    host.turn_steps.begin_turn(entry, boundary_replacement=selection)
 
 
 def resume_turn_boundary_skip(host, restored, selection, *, error_type):

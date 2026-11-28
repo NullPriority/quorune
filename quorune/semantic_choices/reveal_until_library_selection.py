@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 from ..replacement.immutable import FrozenMap
 from ..reveal_until_library_selection_model import (
-    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_CAPABILITY,REVEAL_UNTIL_REFLEXIVE_VERSION,reveal_until_partition,
+    CHOSEN_NAME_REVEAL_VERSION, REVEAL_UNTIL_OPERATION, REVEAL_UNTIL_CAPABILITY,
+    REVEAL_UNTIL_REFLEXIVE_VERSION, reveal_until_partition,
 )
 from .model import AutoContinue,SemanticChoicePreparation,SemanticChoiceError
 
@@ -57,6 +58,10 @@ class RevealUntilLibrarySelectionHandler:
         if (effect.get('player')!=context.actor or context.stack_controller!=context.actor
                 or context.actor not in context.query.active_seats):
             raise SemanticChoiceError('Reveal-until requires the resolving live controller')
+        if effect.get("schema_version") == CHOSEN_NAME_REVEAL_VERSION:
+            from .chosen_name_reveal import prepare_chosen_name_reveal
+
+            return prepare_chosen_name_reveal(effect, context)
         try:fixed, revealed = reveal_until_partition(effect,context.query)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if revealed is not None and effect['schema_version'] == REVEAL_UNTIL_REFLEXIVE_VERSION:
@@ -68,4 +73,8 @@ class RevealUntilLibrarySelectionHandler:
                 prepend_effects=(FrozenMap(fixed),) if fixed is not None and not all_revealed else ()))
 
     def complete(self,continuation,response,query):
+        if continuation is not None and continuation.effect.get("schema_version") == CHOSEN_NAME_REVEAL_VERSION:
+            from .chosen_name_reveal import complete_chosen_name
+
+            return complete_chosen_name(continuation, response, query)
         raise SemanticChoiceError('The reveal-until prefix is not a player-selected count')

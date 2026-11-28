@@ -26,6 +26,7 @@ class StandardTokenAbilityProfile(str, Enum):
     TWO_TRANSFORM_SOURCE = INCUBATOR_TRANSFORM_PROFILE
     TAP_SAC_ANY_COLOR_MANA = "tap_sac_any_color_mana_v1"
     SAC_ANY_COLOR_MANA = GOLD_TOKEN_MANA_PROFILE
+    SAC_COLORLESS_MANA = "sac_colorless_mana_v1"
     TAP_SAC_MANA_LIFE = TOKEN_MANA_LIFE_PROFILE
     TWO_TAP_SAC_GAIN_THREE_LIFE = "two_tap_sac_gain_three_life_v1"
     TWO_SAC_DRAW_CARD = "two_sac_draw_card_v1"
@@ -67,6 +68,15 @@ def _any_color_mana(*, tap_source: bool = True) -> ActivatedAbility:
         fixed_mana_outputs=tuple(
             FixedManaMode.from_bundle({color: 1}) for color in "WUBRG"
         ),
+    )
+
+
+def _sacrifice_colorless() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0, oracle_line="Sacrifice this token: Add {C}.",
+        cost_text="Sacrifice this token", effect_text="Add {C}.", zones=("battlefield",),
+        mana=normalize_mana_bundle(None), sacrifice_source=True, mana_ability=True,
+        fixed_mana_outputs=(FixedManaMode.from_bundle({"C": 1}),),
     )
 
 
@@ -226,6 +236,7 @@ _STANDARD_TOKEN_ABILITIES = {
         _any_color_mana(),
     ),
     StandardTokenAbilityProfile.SAC_ANY_COLOR_MANA: (_any_color_mana(tap_source=False),),
+    StandardTokenAbilityProfile.SAC_COLORLESS_MANA: (_sacrifice_colorless(),),
     StandardTokenAbilityProfile.TAP_SAC_MANA_LIFE: (_mana_life(),),
     StandardTokenAbilityProfile.TWO_TAP_SAC_GAIN_THREE_LIFE: (
         _gain_three_life(),

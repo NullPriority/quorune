@@ -1,0 +1,115 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Delney, Streetwise Lookout",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "oracle_text": "Creatures you control with power 2 or less can't be blocked by creatures with power 3 or greater.\nIf a triggered ability of a creature you control with power 2 or less triggers, that ability triggers an additional time.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Human Scout"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If you somehow control two Delney, Streetwise Lookouts, abilities of creatures you control with power 2 or less trigger three times. A third Delney causes such abilities to trigger four times, a fourth causes such abilities to trigger five times, and so on.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature you control has become blocked, reducing its power to 2 or less and/or increasing the power of the creature blocking it to 3 or greater won't cause it to become unblocked.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a triggered ability is linked to a second ability, additional instances of that triggered ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by instances of the triggered ability.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Replacement effects are unaffected by Delney, Streetwise Lookout's last ability. For example, a 1/1 creature that enters the battlefield under your control with one +1/+1 counter on it won't receive an additional +1/+1 counter.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Delney, Streetwise Lookout's last ability doesn't copy the triggered ability; it just causes the ability to trigger an additional time. Any choices made as you put the ability onto the stack, such as modes and targets, are made separately for each instance of the ability. Any choices made on resolution, such as whether to put counters on a permanent, are also made individually.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Triggered abilities use the word \"when,\" \"whenever,\" or \"at.\" They're often written as \"[Trigger condition], [effect].\" Some keyword abilities are triggered abilities and will have \"when,\" \"whenever,\" or \"at the beginning of\" in their reminder text.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that apply \"as [this creature] enters the battlefield\" or \"as [this creature] is turned face up\" are also unaffected.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some cases involving linked abilities, an ability requires information about \"the exiled card.\" When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. For example, if Elite Arcanist's enters-the-battlefield ability triggers twice, two cards are exiled. The value of X in the activation cost of Elite Arcanist's other ability is the sum of the two cards' mana values. As the ability resolves, you create copies of both cards and can cast none, one, or both of the copies in any order.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that apply \"when [this creature] is turned face up\" will trigger an additional time only if that creature's power is 2 or less once it has been turned face up.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once an ability of a creature you control has triggered, reducing its power to 2 or less won't cause that ability to trigger an additional time. Similarly, once an ability of a creature you control with power 2 or less has triggered an additional time due to Delney, Streetwise Lookout's last ability, increasing its power to 3 or greater won't remove that additional triggered ability from the stack.",
+      "oracle_id": "245d0ccf-87b6-460a-8b99-9e2079f2d375",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

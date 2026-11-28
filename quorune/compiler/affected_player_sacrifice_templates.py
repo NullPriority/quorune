@@ -10,7 +10,9 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
-from ..apnap_object_payment import OTHER_PLAYER_SACRIFICE_SCOPE, OTHER_PLAYER_SACRIFICE_TYPES
+from ..apnap_object_payment import (
+    ORDER_GRAVEYARD_ARRIVALS, OTHER_PLAYER_SACRIFICE_SCOPE, OTHER_PLAYER_SACRIFICE_TYPES,
+)
 from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GreatestPowerSacrificeSpec,
     attack_sacrifice_stat_effect, entry_sacrifice_power_life_draw_effect,
@@ -35,7 +37,7 @@ _SACRIFICE_MECHANIC = "sacrifice"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
     r"^(?:(?P<subject>target player|target opponent|each other player|each player|each opponent|you) )?"
-    rf"(?P<verb>sacrifices?) (?P<count>another|an|{FIXED_COUNT_PATTERN}) (?P<object>.+?)\.?$",
+    rf"(?P<verb>sacrifices?) (?P<count>another|an|thirteen|{FIXED_COUNT_PATTERN}) (?P<object>.+?)\.?$",
     re.IGNORECASE,
 )
 
@@ -239,8 +241,15 @@ class FixedAffectedPlayerSacrificeTemplate:
     predicate: ObjectQuerySpec
     exclude_source: bool = False
     greatest_power: GreatestPowerSacrificeSpec | None = None
+    order_graveyard_arrivals: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.order_graveyard_arrivals) is not bool or self.order_graveyard_arrivals and (
+            self.subject is not AffectedPlayerSacrificeSubject.EACH_PLAYER
+            or self.count != 13 or self.exclude_source or self.greatest_power is not None
+            or self.predicate != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        ):
+            raise ValueError("The ordered sacrifice requires the closed fixed creature choice")
         if not isinstance(self.subject, AffectedPlayerSacrificeSubject):
             raise ValueError("Affected-player sacrifice subject is malformed")
         if type(self.count) is not int or self.count < 1:
@@ -312,6 +321,8 @@ class FixedAffectedPlayerSacrificeTemplate:
         }
         if self.subject.targeted:
             effect["target"] = "$target.0"
+        if self.order_graveyard_arrivals:
+            effect[ORDER_GRAVEYARD_ARRIVALS] = True
         if self.exclude_source:
             effect['exclude_ref'] = '$source.zone_object'
         return (deepcopy(effect),)
@@ -441,6 +452,14 @@ def any_number_sacrifice_template(text):
     if material == life_text:
         domain = "permanents"
         followup = {"op": "life", "player": "$controller", "delta": 2}
+    elif material == (
+        "sacrifice any number of lands. search your library for up to that many land cards, "
+        "put them onto the battlefield tapped, then shuffle."
+    ):
+        from ..rules.committed_land_sacrifice_search import land_sacrifice_search_recipe
+
+        domain = "lands"
+        followup = land_sacrifice_search_recipe()
     elif material == "sacrifice any number of lands, then add that much {c}.":
         domain = "lands"
         followup = {"op": "mana", "player": "$controller", "color": "C", "amount": 1}
@@ -564,12 +583,32 @@ def ordered_type_sacrifice_template(text):
             ("fixed-affected-player-sacrifice", "sacrifice"))
 
 
+@dataclass(frozen=True, slots=True)
+class AllColoredPermanentSacrificeTemplate:
+    def compiled(self):
+        from ..rules.colored_permanent_sacrifice import all_colored_sacrifice_effect
+
+        return ("all-colored-permanent-sacrifice-v1", (all_colored_sacrifice_effect(),), None,
+                (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, _SACRIFICE_MECHANIC))
+
+
+def ordered_opponent_creature_sacrifice_template(text):
+    if " ".join(text.split()).casefold() != "each opponent sacrifices three creatures of their choice.":
+        return None
+    from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_effect
+
+    return ("ordered-opponent-creature-sacrifice-v1", (ordered_opponent_sacrifice_effect(),), None,
+            (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, _SACRIFICE_MECHANIC))
+
+
 def fixed_affected_player_sacrifice_effect_template(
     text: str,
-) -> FixedAffectedPlayerSacrificeTemplate | None:
+) -> FixedAffectedPlayerSacrificeTemplate | AllColoredPermanentSacrificeTemplate | None:
     """Lower one mandatory fixed affected-player sacrifice instruction."""
 
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == "each player sacrifices all permanents they control that are one or more colors.":
+        return AllColoredPermanentSacrificeTemplate()
     targeted = _targeted_greatest_power_sacrifice_life_template(normalized)
     if targeted is not None:
         return targeted
@@ -611,6 +650,10 @@ def fixed_affected_player_sacrifice_effect_template(
             count=count,
             predicate=predicate,
             exclude_source=exclude_source,
+            order_graveyard_arrivals=(
+                subject == "each player" and count == 13
+                and phrase.casefold() == "creatures of their choice"
+            ),
         )
     except ValueError:
         return None

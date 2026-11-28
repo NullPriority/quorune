@@ -86,7 +86,7 @@ class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
         expected = authoritative_state_hash(state)
         with patch.object(type(state), "to_dict", autospec=True, side_effect=type(state).to_dict) as serialize:
             envelope = checkpoint_envelope(state)
-        serialize.assert_called_once_with(state, include_ephemeral=False)
+        serialize.assert_called_once_with(state, include_ephemeral=False, copy_journal_context=False)
         self.assertEqual(expected, envelope["state_hash"])
         self.assertEqual(expected, authoritative_state_hash(envelope["state"]))
         envelope["state"]["annotations"]["nested"]["values"].append(9)
@@ -104,6 +104,31 @@ class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
                 expected.update(events=[], capabilities={})
                 self.assertEqual(expected, checkpoint_state(state))
                 self.assertEqual(authoritative_state_hash(expected), authoritative_state_hash(state))
+
+    def test_durable_checkpoint_encoding_matches_canonical_wire_and_hash(self):
+        from quorune.record import _encode_record_checkpoint, checkpoint_envelope
+        from quorune.util import stable_json
+
+        state = self.state()
+        state.pending_decision = SimpleNamespace(
+            decision_id="d-1", to_dict=lambda: {"decision_id": "d-1"},
+        )
+        state.capabilities = {
+            "raw-credential": SimpleNamespace(
+                token="raw-credential", decision_id="d-1", principal="pilot:A",
+                actor="A", consumed=False,
+            ),
+        }
+        state.action_opportunities = [{"monarch": None, "label": "Épée\n☂"}]
+        for monarch in (None, "A"):
+            with self.subTest(monarch=monarch):
+                state.monarch = monarch
+                expected = checkpoint_envelope(state)
+                state_hash, parts = _encode_record_checkpoint(state)
+                encoded = b"".join(parts)
+                self.assertEqual(expected["state_hash"], state_hash)
+                self.assertEqual(stable_json(expected).encode("utf-8"), encoded)
+                self.assertNotIn(b"raw-credential", encoded)
 
 
     def test_replay_hashes_adjacent_boundaries_once_and_checks_each_recorded_value(self):

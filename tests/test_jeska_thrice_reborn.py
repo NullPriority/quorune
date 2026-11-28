@@ -256,3 +256,141 @@ class JeskaThriceRebornTests(InheritedNativeFixture, TestCase):
         self.next_main(game, "A")
         self.assertFalse(self.multipliers(game))
         self.replay(game, load=True)
+
+
+
+class LegendarySorceryAnnouncedDamageTests(InheritedNativeFixture, TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "legendary-sorcery-announced-damage.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+            ROOT / "tests/fixtures/ashiok-nightmare-weaver-cards.json",
+            ROOT / "tests/fixtures/legendary-sorcery-damage-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Legendary sorcery", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def actions(self, game, seat="A"):
+        self.priority(game, seat)
+        return game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+
+    def act(self, game, seat, command):
+        result = game.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def inferno(self, game):
+        source = self.add(game.engine, "Jaya's Immolating Inferno", zone="hand")
+        self.assert_closed(game, source)
+        return source
+
+    def test_legendary_enabler_is_required_only_at_cast_and_remaining_targets_each_take_x(self):
+        game = self.session(2050401)
+        source = self.inferno(game)
+        legend = self.add(game.engine, "Rograkh, Son of Rohgahh", zone="hand")
+        foe_legend = self.add(game.engine, "Rograkh, Son of Rohgahh", seat="C", ref="jaya-foreign-legend")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        first = self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="jaya-saved-creature")
+        second = self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="jaya-remove-enabler")
+        self.add(game.engine, "Island", seat="B", ref="jaya-bounce-island-1")
+        self.add(game.engine, "Island", seat="B", ref="jaya-bounce-island-2")
+        self.prepare(game, mana={"W": 1, "R": 4})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        cast = {"action_id": "cast:" + source.ref, "x": 2, "targets": [target.ref, "C", "D"], "pay": "auto"}
+        self.assertNotIn(cast["action_id"], {row["id"] for row in self.actions(game)})
+        self.reject(game, "A", cast)
+        self.cast(game, "A", legend)
+        self.resolve_top(game)
+        self.assertIn(cast["action_id"], {row["id"] for row in self.actions(game)})
+        for refs in (["B", "B"], ["A", "B", "C", "D"]):
+            self.reject(game, "A", {**cast, "targets": refs})
+        self.act(game, "A", cast)
+        self.assertEqual(2, game.state.stack[-1].x_value)
+        self.cast(game, "B", first, [target.ref])
+        self.resolve_top(game)
+        self.cast(game, "B", second, [legend.ref])
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[foe_legend.object_id].zone)
+        self.assertEqual("hand", game.state.cards[legend.object_id].zone)
+        self.assertEqual("hand", game.state.cards[target.object_id].zone)
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual([40, 40, 38, 38], [game.state.players[seat].life for seat in "ABCD"])
+        self.replay(game, load=True)
+
+    def test_legendary_planeswalker_enables_zero_choices_and_zero_announced_amount(self):
+        for index, (targets, x) in enumerate((([], 2), (["C"], 0))):
+            with self.subTest(targets=targets, x=x):
+                game = self.session(2050402 + index)
+                source = self.inferno(game)
+                walker = self.add(game.engine, "Ashiok, Nightmare Weaver")
+                walker.counters["loyalty"] = 5
+                walker.annotations["loyalty_initialized"] = True
+                self.prepare(game, mana={"R": 2 + x})
+                game.state.config.semantic_policy = "trusted_only"
+                self.checkpoint(game)
+                action = "cast:" + source.ref
+                self.assertIn(action, {row["id"] for row in self.actions(game)})
+                self.act(game, "A", {"action_id": action, "x": x, "targets": targets, "pay": "auto"})
+                self.resolve_top(game)
+                self.assertEqual([40]*4, [game.state.players[seat].life for seat in "ABCD"])
+                self.replay(game, load=True)
+
+    def test_copy_resolves_without_casting_or_controlling_a_legendary_permanent(self):
+        game = self.session(2050404)
+        source = self.inferno(game)
+        self.add(game.engine, "Rograkh, Son of Rohgahh")
+        copier = self.add(game.engine, "Reverberate", seat="B", zone="hand")
+        self.prepare(game, mana={"R": 4})
+        game.state.players["B"].mana_pool["R"] = 2
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.act(game, "A", {"action_id": "cast:" + source.ref, "x": 2, "targets": ["C", "D"], "pay": "auto"})
+        original = game.state.stack[-1]
+        self.cast(game, "B", copier, [original.ref])
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+        self.act(game, "B", {"action_id": "choose"})
+        copy = game.state.stack[-1]
+        self.assertEqual(("spell_copy", 2, "B"), (copy.kind, copy.x_value, copy.controller))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40, 40, 36, 36], [game.state.players[seat].life for seat in "ABCD"])
+        self.replay(game, load=True)
+
+    def test_legendary_rule_marker_and_damage_authority_are_closed(self):
+        from quorune.rules.announced_three_target_damage import CAPABILITY, FIELD
+        from quorune.rules.legendary_sorcery import VERSION_FIELD, validate_version
+        from quorune.model import GameState
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from test_controller_creature_keyword_absence import register_card
+
+        value, registry = register_card(self.db, self.registry, "Jaya's Immolating Inferno")
+        self.assertTrue(value["strict_capability_ready"], value["blockers"])
+        source = self.db.lookup("Jaya's Immolating Inferno")
+        (p,) = [program for program in registry.programs_for_oracle(source.oracle_id) if CAPABILITY in program.capability_dependencies]
+        deps = tuple(cap for cap in p.capability_dependencies if cap != CAPABILITY)
+        for changed in (
+            replace(p, effects=[{**p.effects[0], FIELD: True}]),
+            replace(p, capability_dependencies=deps, capability_closure=self.registry.closure(deps, profile="commander_review").to_dict()),
+        ):
+            report = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(report["strict"])
+        for bad in (True, 2, "1"):
+            with self.assertRaises(ValueError):
+                validate_version(bad)
+        old = self.session(2050405).state.to_dict()
+        self.assertEqual(1, old.pop(VERSION_FIELD))
+        self.assertEqual(old, GameState.from_dict(old).to_dict())

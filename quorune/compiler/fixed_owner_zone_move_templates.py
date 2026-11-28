@@ -28,6 +28,7 @@ from .fixed_entry_return_requirements import FixedEntryReturnRequirementSpec
 from ..rules.opponent_spell_or_permanent_return import (
     ENTRY_SUBJECT, SUBJECT as OPPONENT_RETURN_SUBJECT, effect as opponent_return_effect,
     entry_effect, entry_target_schema, target_schema as opponent_return_target_schema,
+    SPELL_SUBJECT, spell_return_effect, spell_return_target_schema,
 )
 from .direct_target import direct_permanent_target_spec
 from .return_to_hand_templates import _own_graveyard_characteristic_target
@@ -149,6 +150,8 @@ class FixedOwnerZoneMoveTemplate:
             return (entry_effect(),)
         if self.subject_id == OPPONENT_RETURN_SUBJECT:
             return (opponent_return_effect(),)
+        if self.subject_id == SPELL_SUBJECT:
+            return (spell_return_effect(),)
         if self.reference is FixedOwnerZoneMoveReference.PUBLIC_CHOICE:
             assert self.choice_query is not None
             choice = deepcopy(
@@ -520,6 +523,11 @@ def _targeted_owner_hand_move(
     *,
     source_is_permanent: bool | None,
 ) -> FixedOwnerZoneMoveTemplate | None:
+    if source_is_permanent is False and re.fullmatch(
+        r"Return target spell to its owner['’]s hand\.?", text.strip(), re.I,
+    ):
+        return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET,
+            destination="hand", subject_id=SPELL_SUBJECT, target_schema=spell_return_target_schema())
     if source_is_permanent is True and re.fullmatch(
         r"Return target spell or permanent to its owner['’]s hand\.?", text.strip(), re.I,
     ):

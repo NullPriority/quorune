@@ -4,7 +4,9 @@ from dataclasses import replace
 from collections.abc import Mapping
 
 from ..event_spell_copy_model import (EventSpellCopySource,EVENT_SPELL_COPY_CONTEXT,EVENT_SPELL_COPY_MECHANIC,EVENT_SPELL_COPY_CAPABILITY,event_spell_copy_effect)
-from .nonmana_activation_copy_model import ACTIVATION_COPY_CONTEXT, ActivationCopySource, COPY_SOURCE_VERSION
+from .nonmana_activation_copy_model import (
+    ACTIVATION_COPY_CONTEXT, ActivationCopySource, COPY_SOURCE_VERSION, TRIGGER_COPY_SOURCE_VERSION,
+)
 from ..replacement.immutable import thaw_value
 
 
@@ -44,6 +46,10 @@ def event_spell_copy_trigger_context(host,program,event,context):
     source=capture_event_spell_copy_source(host,target)
     if source.logical_object_id!=context.get('logical_object_id'):raise ValueError('Event spell-copy cast incarnation disagrees')
     receipt = {EVENT_SPELL_COPY_CONTEXT:source.to_dict()}
+    from .prior_qualified_cast_copy import PRIOR_CAST_COPY_CAPABILITY, prior_cast_copy_count_context
+
+    if PRIOR_CAST_COPY_CAPABILITY in dependencies:
+        receipt.update(prior_cast_copy_count_context(host, context, source))
     from .token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
     if CAST_PERMANENT_TOKEN_COPY_CAPABILITY in dependencies:
         from ..entry_copy import COPIABLE_ORACLE_FIELD
@@ -63,11 +69,9 @@ def event_spell_copy_trigger_context(host,program,event,context):
 def resolve_event_spell_copy_source(host,effect):
     if 'copy_source' not in effect:return None
     raw=effect.get('copy_source')
-    ability = isinstance(raw, Mapping) and raw.get('schema_version') == COPY_SOURCE_VERSION
-    if ability:
-        from .nonmana_activation_copy import capture_activation_copy_source
-
-        decode, capture, field = ActivationCopySource.from_dict, capture_activation_copy_source, ACTIVATION_COPY_CONTEXT
+    version = raw.get("schema_version") if isinstance(raw, Mapping) else None
+    if version in (COPY_SOURCE_VERSION, TRIGGER_COPY_SOURCE_VERSION):
+        decode, capture, field = _ability_copy_reader(version)
     else:
         decode, capture, field = decode_event_spell_copy_source, capture_event_spell_copy_source, EVENT_SPELL_COPY_CONTEXT
     source=decode(raw);item=source.item()
@@ -86,11 +90,20 @@ def resolve_event_spell_copy_source(host,effect):
     raise ValueError('Referenced spell departure information is unavailable')
 
 
-def pin_event_spell_copy_departure(host,target):
-    if target.kind == 'activated_ability':
-        from .nonmana_activation_copy import capture_activation_copy_source
+def _ability_copy_reader(version):
+    from functools import partial
+    from .nonmana_activation_copy import capture_activation_copy_source
+    from .attack_trigger_copy import COPY_CONTEXT
 
-        decode, capture, field = ActivationCopySource.from_dict, capture_activation_copy_source, ACTIVATION_COPY_CONTEXT
+    field = COPY_CONTEXT if version == TRIGGER_COPY_SOURCE_VERSION else ACTIVATION_COPY_CONTEXT
+    return ActivationCopySource.from_dict, partial(capture_activation_copy_source, schema_version=version), field
+
+
+def pin_event_spell_copy_departure(host,target):
+    if target.kind == "triggered_ability":
+        decode, capture, field = _ability_copy_reader(TRIGGER_COPY_SOURCE_VERSION)
+    elif target.kind == "activated_ability":
+        decode, capture, field = _ability_copy_reader(COPY_SOURCE_VERSION)
     else:
         decode, capture, field = decode_event_spell_copy_source, capture_event_spell_copy_source, EVENT_SPELL_COPY_CONTEXT
     selected=[]
@@ -131,9 +144,10 @@ def cast_copy_runtime_dependencies(program):
     from .cast_target_copy import cast_target_copy_runtime_dependencies
 
     from .targeted_discard_spell_copy import targeted_discard_copy_runtime_dependencies
+    from .targeted_return_spell_copy import targeted_return_copy_runtime_dependencies
 
     return (*event_spell_copy_runtime_dependencies(program), *cast_target_copy_runtime_dependencies(program),
-            *targeted_discard_copy_runtime_dependencies(program))
+            *targeted_discard_copy_runtime_dependencies(program), *targeted_return_copy_runtime_dependencies(program))
 
 
 def event_spell_copy_runtime_dependencies(program):
@@ -141,6 +155,10 @@ def event_spell_copy_runtime_dependencies(program):
 
     if (suspended_copy := cast_spell_suspend_runtime_dependencies(program)) is not None:
         return suspended_copy
+    from .prior_qualified_cast_copy import prior_cast_copy_program_dependencies
+
+    if prior_copy := prior_cast_copy_program_dependencies(program):
+        return prior_copy
     from ..event_spell_copy_model import cast_spell_token_condition
     from ..replacement.immutable import FrozenMap
     from .other_spell_history_shapes import other_spell_self_cast_runtime_dependencies

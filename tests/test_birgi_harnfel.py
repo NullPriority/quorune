@@ -128,6 +128,22 @@ class BirgiHarnfelTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual((42, 38), (game.state.players["A"].life, game.state.players["C"].life))
         self.replay(game, load=True)
 
+    def test_whole_deck_preflight_matches_the_exact_back_face_activation(self):
+        from quorune.preflight import semantic_preflight
+
+        commander = self.deck.commanders[0]
+        entries = [
+            DeckEntry(commander, 1, "commander"),
+            DeckEntry("Plains", 98),
+            DeckEntry(ORIGINAL, 1),
+        ]
+        deck = DeckDefinition("Birgi and Harnfel readiness", entries, [commander])
+        result = semantic_preflight(self.db, deck, collect_source_diagnostics=True)
+        row, = (card for card in result["cards"] if card["name"] == ORIGINAL)
+        self.assertEqual("fully_playable", row["status"], row["unresolved"])
+        self.assertTrue(row["card_program_strict_capability_ready"])
+        self.assertTrue(result["card_rules_ready"], result["strict_binding_blockers"])
+
     def test_actual_harnfel_discard_and_legal_land_choice_remain_private_then_public(self):
         game = self.session(70214203)
         source = self.add(game.engine, ORIGINAL, zone="hand")

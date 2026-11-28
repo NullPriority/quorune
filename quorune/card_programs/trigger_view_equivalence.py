@@ -9,6 +9,7 @@ from ..fixed_token_production import historical_unnamed_token_view
 from ..targets import target_plan
 from .trigger_result_equivalence import (
     fixed_trigger_results_equal, fixed_graveyard_exile_views_equal, fixed_graveyard_self_entry_views_equal,
+    ordered_sacrifice_or_entry_subtype_supersedes_reviewed,
 )
 
 
@@ -218,7 +219,7 @@ def _same_trigger_view(record, current, old):
              or _random_graveyard_bottom_supersedes_reviewed(current, old)
              or _controlled_destruction_reward_supersedes_reviewed(current, old))
         and _targets_equal(current, old)
-    ) or _named_additive_copy_supersedes_reviewed(current, old)
+    ) or _named_additive_copy_supersedes_reviewed(current, old) or ordered_sacrifice_or_entry_subtype_supersedes_reviewed(current, old)
 
 
 def _targets_equal(current,old):

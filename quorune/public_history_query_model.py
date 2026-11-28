@@ -7,7 +7,8 @@ from typing import Any
 from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS
 from .turn_history_model import (
-    CAST_CREATURE_COUNTERED_EVENT, PERMANENT_COUNTER_RECEIVED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
+    CAST_CREATURE_COUNTERED_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT, DRAWN_HAND_CARD_EVENT, PERMANENT_COUNTER_RECEIVED_EVENT,
+    PLUS_ONE_COUNTERS_PLACED_EVENT,
 )
 
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
@@ -16,6 +17,12 @@ COUNTER_PLACEMENT_HISTORY_QUERY_VERSION = 7
 SOURCE_COUNTER_RECEIPT_CAPABILITY = "condition.history.source_counter_receipt"
 SOURCE_COUNTER_RECEIPT_QUERY_VERSION = 8
 NONTOKEN_CREATURE_ENTRY_QUERY_VERSION = 9
+OPPONENT_EVENT_THRESHOLD_QUERY_VERSION = 10
+OPPONENT_EVENT_THRESHOLD_CAPABILITY = "condition.history.opponent_event_threshold"
+_OPPONENT_THRESHOLD_REDUCTION = "count_players_at_least_two"
+# Version 10 uses the event to distinguish these existing wire shapes.
+CREATURE_COUNTER_PLACEMENT_QUERY_VERSION = 10
+CREATURE_COUNTER_PLACEMENT_HISTORY_CAPABILITY = "condition.history.creature_counter_placement"
 NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY = "condition.history.nontoken_creature_entries"
 OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY = "condition.history.opponent_life_loss_including_departed"
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
@@ -26,8 +33,8 @@ PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
 PUBLIC_MOVEMENT_HISTORY_CAPABILITY = "condition.history.public_movement"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
-    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
-    PERMANENT_COUNTER_RECEIVED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
+    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT, DRAWN_HAND_CARD_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
+    PERMANENT_COUNTER_RECEIVED_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -52,19 +59,32 @@ class PublicHistoryQuerySpec:
     def __post_init__(self):
         if type(self.schema_version) is not int or self.schema_version not in {
             1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
-            NONTOKEN_CREATURE_ENTRY_QUERY_VERSION,
+            NONTOKEN_CREATURE_ENTRY_QUERY_VERSION, OPPONENT_EVENT_THRESHOLD_QUERY_VERSION,
+            CREATURE_COUNTER_PLACEMENT_QUERY_VERSION,
         }:
             raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
-        if self.reduction not in {'count','sum_amount','max_player_amount'}:raise ValueError('Unknown history reduction')
+        threshold_query = self.is_opponent_threshold_query
+        if self.reduction not in {'count', 'sum_amount', 'max_player_amount', _OPPONENT_THRESHOLD_REDUCTION}:
+            raise ValueError('Unknown history reduction')
+        if (threshold_query != (self.reduction == _OPPONENT_THRESHOLD_REDUCTION)
+                or self.event == DRAWN_HAND_CARD_EVENT and not threshold_query):
+            raise ValueError("An opponent threshold requires its explicit history query version")
         life=self.event in {'player_gained_life','player_lost_life'}
-        if life!=(self.reduction!='count'):raise ValueError('Only life history carries amount reductions')
+        if life != (self.reduction in {'sum_amount', 'max_player_amount'}):raise ValueError('Only life history carries amount reductions')
         if self.reduction=='max_player_amount' and self.relation=='controller':raise ValueError('Per-player maximum requires a player set')
         for field in ('types_all','types_any','excluded_types'):
             values=getattr(self,field)
             if not isinstance(values,(tuple,list)) or any(type(v) is not str or v not in _TYPES for v in values) or len(values)!=len(set(values)):
                 raise ValueError('History type predicates require distinct canonical card types')
             object.__setattr__(self,field,tuple(sorted(values)))
+        if threshold_query and (
+            self.relation != "opponents" or self.types_any or self.excluded_types
+            or (self.event, self.types_all) not in {
+                (DRAWN_HAND_CARD_EVENT, ()), ("permanent_entered", ("land",)),
+            }
+        ):
+            raise ValueError("Opponent thresholds require committed draws or land entries")
         if self.event == "player_damaged" and (
             self.schema_version != 1 or self.relation != "controller"
             or self.types_all != ("creature",) or self.types_any or self.excluded_types
@@ -129,6 +149,13 @@ class PublicHistoryQuerySpec:
             raise ValueError("Source exclusion requires version-four history")
         placement_query = self.event == PLUS_ONE_COUNTERS_PLACED_EVENT
         receipt_query = self.event == PERMANENT_COUNTER_RECEIVED_EVENT
+        creature_placement = self.event == CREATURE_COUNTER_PLACEMENT_EVENT
+        if creature_placement and self.schema_version != CREATURE_COUNTER_PLACEMENT_QUERY_VERSION:
+            raise ValueError("Creature counter placements require their explicit query version")
+        if creature_placement and (
+            self.relation != "controller" or self.types_all != ("creature",) or self.types_any or self.excluded_types
+        ):
+            raise ValueError("Creature counter placement history requires its placing controller and creature scope")
         if (self.schema_version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION) != placement_query:
             raise ValueError("Counter placement history requires its explicit query version")
         if (self.schema_version == SOURCE_COUNTER_RECEIPT_QUERY_VERSION) != receipt_query:
@@ -181,11 +208,18 @@ class PublicHistoryQuerySpec:
         return cls(**dict(value))
 
     @property
+    def is_opponent_threshold_query(self) -> bool:
+        return (self.schema_version == OPPONENT_EVENT_THRESHOLD_QUERY_VERSION
+                and self.event != CREATURE_COUNTER_PLACEMENT_EVENT)
+
+    @property
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
+            *((OPPONENT_EVENT_THRESHOLD_CAPABILITY,) if self.is_opponent_threshold_query else ()),
             *((NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY,) if self.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION else ()),
             *((COUNTER_PLACEMENT_HISTORY_CAPABILITY,) if self.event == PLUS_ONE_COUNTERS_PLACED_EVENT else ()),
             *((SOURCE_COUNTER_RECEIPT_CAPABILITY,) if self.event == PERMANENT_COUNTER_RECEIVED_EVENT else ()),
+            *((CREATURE_COUNTER_PLACEMENT_HISTORY_CAPABILITY,) if self.event == CREATURE_COUNTER_PLACEMENT_EVENT else ()),
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
             *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
             *(('condition.history.qualified_death_exclusion',) if self.schema_version==5 else ()),
@@ -217,6 +251,16 @@ def _entry_token_history_is_complete(history):
             and len(entries) == len({event.object_incarnation for event in entries}))
 
 
+def opponent_event_threshold_query(*, land_entries: bool) -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec(
+        "permanent_entered" if land_entries else DRAWN_HAND_CARD_EVENT,
+        relation="opponents",
+        types_all=("land",) if land_entries else (),
+        reduction=_OPPONENT_THRESHOLD_REDUCTION,
+        schema_version=OPPONENT_EVENT_THRESHOLD_QUERY_VERSION,
+    )
+
+
 def current_plus_one_counter_placement_query(
     *, source_only: bool = False, was_creature: bool = False,
 ) -> PublicHistoryQuerySpec:
@@ -226,6 +270,11 @@ def current_plus_one_counter_placement_query(
         schema_version=COUNTER_PLACEMENT_HISTORY_QUERY_VERSION,
         source_only=source_only,
     )
+
+
+def current_creature_counter_placement_query():
+    return PublicHistoryQuerySpec(event=CREATURE_COUNTER_PLACEMENT_EVENT, types_all=("creature",),
+                                  schema_version=CREATURE_COUNTER_PLACEMENT_QUERY_VERSION)
 
 
 def current_source_counter_receipt_query() -> PublicHistoryQuerySpec:
@@ -246,6 +295,8 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
+    if spec.event == DRAWN_HAND_CARD_EVENT and history.draw_identity_history_version != 1:
+        return None
     if spec.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION and not _entry_token_history_is_complete(history):
         return None
     if spec.event == PERMANENT_COUNTER_RECEIVED_EVENT:
@@ -256,6 +307,9 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
                      and event.object_incarnation == source_incarnation)
     if (spec.event == PLUS_ONE_COUNTERS_PLACED_EVENT
             and history.plus_one_counter_placement_history_version != 1):
+        return None
+    if (spec.event == CREATURE_COUNTER_PLACEMENT_EVENT
+            and history.creature_counter_placement_history_version != 1):
         return None
     if spec.event in COMMITTED_OCCURRENCE_HISTORY_KINDS and history.committed_occurrence_history_version != 1:
         return None
@@ -336,6 +390,11 @@ def current_opponent_spell_colors(state, controller, *, include_departed: bool) 
 def public_history_query_value(state,controller,spec,*,source_incarnation=None):
     events=matching_public_history_events(state,controller,spec,source_incarnation=source_incarnation)
     if events is None:return None
+    if spec.reduction == _OPPONENT_THRESHOLD_REDUCTION:
+        counts = {}
+        for event in events:
+            counts[event.actor] = counts.get(event.actor, 0) + 1
+        return sum(count >= 2 for count in counts.values())
     if spec.reduction=='count':return len(events)
     if spec.reduction=='sum_amount':return sum(event.amount for event in events)
     totals={}

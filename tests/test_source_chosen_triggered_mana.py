@@ -1,6 +1,7 @@
 """A source's linked entry color funds immediate mana for the actual land controller."""
 
 from dataclasses import replace
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -167,3 +168,191 @@ class SourceChosenTriggeredManaTests(InheritedNativeFixture, unittest.TestCase):
             self.assertNotEqual("exact", compile_oracle_card(
                 card, capability_registry=self.registry, capability_profile=PROFILE,
             ).status)
+
+
+class TurnLandManaTriggerTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests/fixtures"
+        parts = [fixtures / "source-chosen-tap-mana-cards.json"]
+        donor_cards = {
+            "source-self-entry-fixed-counter-cards.json": {"Underground Sea"},
+            "fixed-triggered-mana-cards.json": {"Snow-Covered Island"},
+            "ability-source-counter-cards.json": {"Counterspell", "Sol Ring"},
+            "activation-restriction-material-cards.json": {"Lightning Bolt"},
+            "activation-paid-result-slot-cards.json": {"Swamp"},
+            "tap-for-mana-production-multipliers-cards.json": {"Mana Reflection"},
+        }
+        for filename, names in donor_cards.items():
+            document = json.loads((fixtures / filename).read_bytes())
+            document["cards"] = [row for row in document["cards"] if row["name"] in names]
+            assert {row["name"] for row in document["cards"]} == names
+            ids = {row["oracle_id"] for row in document["cards"]}
+            document["rulings"] = [row for row in document.get("rulings", ()) if row["oracle_id"] in ids]
+            filtered = folder / filename
+            filtered.write_text(json.dumps(document), encoding="utf-8")
+            parts.append(filtered)
+        path = folder / "turn-land-mana.sqlite3"
+        build_fixture_database(parts, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Turn land mana", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def land_action(self, game, seat, card, *, ability=None):
+        self.priority(game, seat)
+        actions = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row for row in actions if row.get("source") == card.ref and row.get("mana_ability")
+                    and (ability is None or row["ability"] == ability))
+
+    def tap_for_mana(self, game, seat, card, bundle, *, ability=None):
+        action = self.land_action(game, seat, card, ability=ability)
+        command = {"action_id": action["id"], "mana_output": bundle}
+        outcome = game.act("pilot:" + seat, command)
+        self.assertTrue(outcome.ok, outcome.summary)
+
+    def test_high_tide_accumulates_with_replacement_and_expires_after_cleanup(self):
+        from quorune.all_player_turn_rule_model import ResolvedTurnLandManaTrigger
+
+        game = self.session(60544001)
+        game.state.config.semantic_policy = "trusted_only"
+        first = self.add(game.engine, "High Tide", zone="hand", ref="turn-tide-first")
+        second = self.add(game.engine, "High Tide", zone="hand", ref="turn-tide-second")
+        reflection = self.add(game.engine, "Mana Reflection")
+        sea = self.add(game.engine, "Underground Sea", seat="B")
+        snow = self.add(game.engine, "Snow-Covered Island")
+        late = self.add(game.engine, "Island", zone="hand", ref="turn-tide-late")
+        next_turn = self.add(game.engine, "Island", seat="B", ref="turn-tide-next-turn")
+        forest = self.add(game.engine, "Forest", seat="C")
+        ring = self.add(game.engine, "Sol Ring")
+        private = self.add(game.engine, "Counterspell", seat="D", zone="hand", ref="turn-tide-private")
+        for card in (first, reflection, sea):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"U": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", first)
+        self.assertFalse(any(isinstance(effect, ResolvedTurnLandManaTrigger)
+                             for effect in game.state.continuous_effects))
+        self.assertIsNone(self.resolve(game))
+        self.cast_for(game, "A", second)
+        self.assertIsNone(self.resolve(game))
+        effects = tuple(effect for effect in game.state.continuous_effects
+                        if isinstance(effect, ResolvedTurnLandManaTrigger))
+        self.assertEqual(2, len({effect.effect_id for effect in effects}))
+        self.assertTrue(all(not effect.snow for effect in effects))
+        game = self.replay(game, load=True)
+
+        self.tap_for_mana(game, "B", sea, {"B": 1}, ability="intrinsic_swamp")
+        self.assertEqual((1, 2), tuple(game.state.players["B"].mana_pool[symbol] for symbol in "BU"))
+        self.assertEqual(0, game.state.players["A"].mana_pool["U"])
+        self.tap_for_mana(game, "A", snow, {"U": 1})
+        self.assertEqual(4, game.state.players["A"].mana_pool["U"])
+        self.assertEqual(2, game.engine._snow_mana_pool("A", None)["U"])
+        play = game.act("pilot:A", {"action_id": "play-land:" + late.ref})
+        self.assertTrue(play.ok, play.summary)
+        self.tap_for_mana(game, "A", late, {"U": 1})
+        self.assertEqual(8, game.state.players["A"].mana_pool["U"])
+        self.tap_for_mana(game, "A", ring, {"C": 2})
+        self.assertEqual(4, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(8, game.state.players["A"].mana_pool["U"])
+        self.tap_for_mana(game, "C", forest, {"G": 1})
+        self.assertEqual((1, 0), tuple(game.state.players["C"].mana_pool[symbol] for symbol in "GU"))
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.assertFalse(game.state.stack)
+        before = game.state.turn_sequence
+        self.until(game, lambda current: current.state.turn_sequence > before)
+        self.assertFalse(any(isinstance(effect, ResolvedTurnLandManaTrigger)
+                             for effect in game.state.continuous_effects))
+        self.tap_for_mana(game, "B", next_turn, {"U": 1})
+        self.assertEqual(1, game.state.players["B"].mana_pool["U"])
+        self.replay(game, load=True)
+
+    def test_high_tide_auto_payment_consumes_its_immediate_bonus_from_one_island(self):
+        game = self.session(60544002)
+        game.state.config.semantic_policy = "trusted_only"
+        tide = self.add(game.engine, "High Tide", zone="hand")
+        counter = self.add(game.engine, "Counterspell", zone="hand")
+        island = self.add(game.engine, "Island")
+        bolt = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand")
+        self.prepare(game, mana={"U": 1})
+        game.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", tide)
+        self.assertIsNone(self.resolve(game))
+        self.cast_for(game, "B", bolt, ["C"])
+        stack = game.state.stack[-1]
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row.get("card") == counter.ref)
+        command = {"action_id": offer["id"], "targets": [stack.ref], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(game.state.cards[island.object_id].tapped)
+        self.assertEqual(0, game.state.players["A"].mana_pool["U"])
+        triggered, = (event for event in game.state.events if event.code == "mana.triggered")
+        self.assertEqual((island.ref, {"U": 1}), (triggered.details["producer"], triggered.details["bundle"]))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(40, game.state.players["C"].life)
+        self.replay(game, load=True)
+
+    def test_bubbling_muck_reuses_the_live_subtype_and_fixed_output_branch(self):
+        game = self.session(60544003)
+        game.state.config.semantic_policy = "trusted_only"
+        muck = self.add(game.engine, "Bubbling Muck", zone="hand")
+        swamp = self.add(game.engine, "Swamp", seat="B")
+        island = self.add(game.engine, "Island", seat="B")
+        self.assert_closed(game, muck)
+        self.prepare(game, mana={"B": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", muck)
+        self.assertIsNone(self.resolve(game))
+        self.tap_for_mana(game, "B", swamp, {"B": 1})
+        self.tap_for_mana(game, "B", island, {"U": 1})
+        self.assertEqual((2, 1), tuple(game.state.players["B"].mana_pool[symbol] for symbol in "BU"))
+        self.replay(game, load=True)
+
+    def test_turn_land_mana_grammar_binding_and_journal_decode_fail_closed(self):
+        from test_fixed_public_alternative_costs import card_record
+        from quorune.all_player_turn_rule_model import (
+            TURN_LAND_MANA_TRIGGER_CAPABILITY, ResolvedTurnLandManaTrigger, TurnLandManaTriggerSpec,
+        )
+
+        oracle = "Until end of turn, whenever a player taps an Island for mana, that player adds an additional {U}."
+        record = card_record(oracle, type_line="Instant")
+        options = {"capability_registry": self.registry, "capability_profile": PROFILE}
+        self.assertEqual("exact", compile_oracle_card(record, **options).status)
+        for text in (oracle.replace("Until end of turn", "Until your next turn"),
+                     oracle.replace("a player taps", "an opponent taps"),
+                     oracle.replace("{U}", "{U}{U}"), oracle.replace("Island", "Gate")):
+            self.assertNotEqual("exact", compile_oracle_card(replace(record, oracle_text=text), **options).status)
+        with patch("quorune.compiler.all_player_turn_rules._TURN_LAND_MANA") as matcher:
+            matcher.fullmatch.return_value = None
+            self.assertNotEqual("exact", compile_oracle_card(record, **options).status)
+        report, semantics = register_card(self.db, self.registry, "High Tide")
+        self.assertTrue(report["strict_capability_ready"], report)
+        program, = semantics.programs_for_oracle(self.db.lookup("High Tide").oracle_id)
+        effect, = program.effects
+        reject = bind_semantic_program_runtime(replace(program, effects=[{**effect, "schema_version": True}]),
+                                               capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(reject["strict"], reject)
+        caps = tuple(cap for cap in program.capability_dependencies if cap != TURN_LAND_MANA_TRIGGER_CAPABILITY)
+        changed = replace(program, capability_dependencies=caps,
+                          capability_closure=self.registry.closure(caps, profile=PROFILE).to_dict() if caps else None)
+        reject = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=PROFILE)
+        self.assertIn("capability:undeclared_runtime_dependency:" + TURN_LAND_MANA_TRIGGER_CAPABILITY,
+                      reject["blockers"])
+        journal = ResolvedTurnLandManaTrigger("effect", "stack", 1, TurnLandManaTriggerSpec("island", "U"))
+        raw = journal.to_dict()
+        self.assertEqual(journal, ResolvedTurnLandManaTrigger.from_dict(raw))
+        for broken in ({**raw, "snow": 1}, {**raw, "schema_version": True},
+                       {**raw, "spec": {"land_subtype": "gate", "symbol": "U"}}):
+            with self.subTest(broken=broken), self.assertRaises(ValueError):
+                ResolvedTurnLandManaTrigger.from_dict(broken)

@@ -1164,6 +1164,7 @@ class WardSacrificeAbilityFragmentHandler(WardNonmanaAbilityFragmentHandler):
     rule_references: tuple[str, ...] = ("118.4", "118.5", "603.3", "701.21a", "702.21a")
     capability_dependencies: tuple[str, ...] = (
         "trigger.keyword.ward.fixed_sacrifice", "trigger.keyword.ward.two_permanents",
+        "trigger.keyword.ward.three_nonland_permanents",
     )
 
     def validate(self, descriptor: Mapping[str, Any]) -> WardSpec:

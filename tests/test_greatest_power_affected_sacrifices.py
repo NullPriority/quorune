@@ -268,6 +268,61 @@ class GreatestPowerAffectedSacrificeTests(InheritedNativeFixture, unittest.TestC
         self.assertEqual("battlefield", self._zone(game, wrong_color))
         self.replay(game, load=True)
 
+    def test_commander_choices_after_sacrifice_resume_priority_in_the_same_combat(self):
+        game = self.session(77134013)
+        engine = game.engine
+        game.state.config.trace_level = "debug"
+        commanders = {seat: game.state.cards[game.state.players[seat].zones["command"][0]] for seat in "AB"}
+        for seat, commander in commanders.items():
+            engine.move_card(commander.object_id, "battlefield", controller=seat, log=False)
+        sacrifice_c = self.add(engine, "Walking Corpse", seat="C")
+        spell = self.add(engine, self.mana_value_spell, seat="D", zone="hand")
+        price = self.add(engine, self.payment_creature, seat="D")
+        attacker_ref, spare_ref = engine.create_token(
+            "A", name="Surviving Construct", quantity=2,
+            characteristics={
+                "type_line": "Token Creature — Construct",
+                "power": "4", "toughness": "4", "colors": [], "keywords": ["Haste"],
+            },
+        )
+        attacker = engine._resolve_object("A", attacker_ref, zones={"battlefield"})
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, [(attacker, "B")])
+        self.until(game, lambda session: session.state.priority_player == "D")
+        offer = self.action(game, "D", spell)
+        option, = (row for row in offer["cost_options"] if row["id"] == "plain-alternative-ab1")
+        accepted = game.act("pilot:D", {
+            "action_id": offer["id"], "cost_option": option["id"],
+            "pay": "auto", "sacrifice_cards": [price.ref],
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        for seat, card in (*commanders.items(), ("C", sacrifice_c)):
+            self.assertEqual([card.ref], self._options(game, seat)["options"])
+            self._choose(game, seat, card)
+
+        self.assertEqual("A", game.state.post_resolution_priority_seat)
+        game = self.replay(game, load=True)
+        for seat in "AB":
+            decision = game.state.pending_decision
+            self.assertEqual(("state.commander_zone", [seat]), (decision.kind, decision.actors))
+            accepted = game.act("pilot:" + seat, {"action_id": "command"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        decision = game.state.pending_decision
+        self.assertEqual(("priority", ["A"]), (decision.kind, decision.actors))
+        self.assertEqual("declare_attackers", game.state.step)
+        self.assertIsNone(game.state.post_resolution_priority_seat)
+        self.assertEqual({attacker.object_id: "B"}, game.state.combat.attackers)
+        spare = game.engine._resolve_object("A", spare_ref, zones={"battlefield"})
+        self.assertIsNone(game.engine._attack_declaration_error(spare, "A"))
+        entries = [event for event in game.state.events
+                   if event.code == "step.begin" and event.step == "declare_attackers"]
+        self.assertEqual(1, len(entries))
+        self.until(game, lambda session: session.state.step == "declare_blockers")
+        self.assertEqual({attacker.object_id: "B"}, game.state.combat.attackers)
+        self.replay(game, load=True)
+
     def test_actual_doom_uses_current_power_per_seat_and_commits_after_ordered_public_choices(self):
         game = self.session(77134001)
         doom = self.add(game.engine, DOOM, zone="hand")

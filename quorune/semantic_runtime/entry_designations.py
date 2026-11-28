@@ -7,7 +7,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from ..entry_designations import (
-    ENTRY_CARD_NAME_FIELD, ENTRY_CARD_NAME_HANDLER_ID, EntryCardNameChoice,
+    BASIC_LAND_ENTRY_HANDLER_ID, ENTRY_CARD_NAME_FIELD, ENTRY_CARD_NAME_HANDLER_ID, EntryCardNameChoice,
     COUNTED_CREATURE_TYPE_ENTRY_CAPABILITY,
     COUNTED_CREATURE_TYPE_ENTRY_HANDLER_ID,
     COUNTED_ENTRY_OPPONENT_DEPENDENCIES,
@@ -30,7 +30,7 @@ from ..keyword_counters import keyword_counter_mechanic
 from ..linked_card_type import (
     CAPABILITY as LINKED_CARD_TYPE_CAPABILITY, ENTRY_FIELD as LINKED_CARD_TYPE_ENTRY_FIELD,
     ENTRY_HANDLER as LINKED_CARD_TYPE_ENTRY_HANDLER, OPTIONS as LINKED_CARD_TYPE_OPTIONS,
-    LinkedCardTypeChoice,
+    PROTECTION_CAPABILITY, PROTECTION_ENTRY_HANDLER, LinkedCardTypeChoice,
 )
 from ..replacement.counted_entry_counters import CreateCountedEntryCounters
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
@@ -70,9 +70,12 @@ class EntryDesignationHandler:
         ):
             raise SemanticNodeError("Entry designation handler identity changed")
         try:
-            return EntryDesignationKind(descriptor["designation"])
+            kind = EntryDesignationKind(descriptor["designation"])
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError("Entry designation vocabulary is unsupported") from exc
+        if kind is EntryDesignationKind.BASIC_LAND_TYPE and self.handler_id != BASIC_LAND_ENTRY_HANDLER_ID:
+            raise SemanticNodeError("Basic land entry requires its linked designation handler")
+        return kind
 
     def lower(
         self,
@@ -114,13 +117,14 @@ class EntryDesignationHandler:
                 kind.event_field: {"eq": None},
             },
             operations=(SetField(kind.event_field, value), *followups),
-            label=f"{subject.object_ref}: choose {kind.value.replace('_', ' ')} {value}",
+            label=f"{subject.object_ref}: choose {kind.annotation.removeprefix('chosen_').replace('_', ' ')} {value}",
         )
 
 
 @dataclass(frozen=True, slots=True)
 class LinkedCardTypeEntryHandler(EntryDesignationHandler):
     handler_id: str = LINKED_CARD_TYPE_ENTRY_HANDLER
+    all_types: bool = False
     rule_references: tuple[str, ...] = ("205.2a", "400.7", "607.2d", "614.12", "614.12a", "616.1", "707.6")
     capability_dependencies: tuple[str, ...] = (ENTRY_DESIGNATION_CAPABILITY, LINKED_CARD_TYPE_CAPABILITY)
 
@@ -134,8 +138,11 @@ class LinkedCardTypeEntryHandler(EntryDesignationHandler):
         self.validate(descriptor)
         if subject.destination_controller is None:
             raise SemanticNodeError("Linked card-type entry requires a destination controller")
-        choices = (LinkedCardTypeChoice(card_type, component_id, subject.logical_object_id)
-                   for card_type in LINKED_CARD_TYPE_OPTIONS)
+        from ..type_subtype_vocabulary import CARD_TYPES
+
+        options = CARD_TYPES if self.all_types else LINKED_CARD_TYPE_OPTIONS
+        choices = (LinkedCardTypeChoice(card_type, component_id, subject.logical_object_id, self.all_types)
+                   for card_type in options)
         return tuple(ReplacementEffect(
             effect_id=choice.effect_id(subject.object_ref),
             source_id=subject.object_ref,
@@ -149,6 +156,13 @@ class LinkedCardTypeEntryHandler(EntryDesignationHandler):
             operations=(SetField(LINKED_CARD_TYPE_ENTRY_FIELD, choice.to_dict()),),
             label=f"{subject.object_ref}: choose card type {choice.card_type}",
         ) for choice in choices)
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedProtectionCardTypeEntryHandler(LinkedCardTypeEntryHandler):
+    handler_id: str = PROTECTION_ENTRY_HANDLER
+    all_types: bool = True
+    capability_dependencies: tuple[str, ...] = (ENTRY_DESIGNATION_CAPABILITY, PROTECTION_CAPABILITY)
 
 
 @dataclass(frozen=True, slots=True)

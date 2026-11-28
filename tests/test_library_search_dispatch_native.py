@@ -439,3 +439,221 @@ class LibrarySearchDispatchNativeTests(InheritedNativeFixture,unittest.TestCase)
                 if decline:self.assertEqual(library,tuple(s.state.players['A'].zones['library']))
                 self.assertTrue(all(s.state.cards[c.object_id].zone=='library' for c in cards.values()))
                 self.replay(s,load=True)
+
+
+DISCOVERY_INSTRUCTION = (
+    "Tempting offer — Search your library for a land card and put it onto the battlefield. "
+    "Each opponent may search their library for a land card and put it onto the battlefield. "
+    "For each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. "
+    "Then each player who searched a library this way shuffles."
+)
+
+
+class OpponentLandSearchNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "opponent-land-search.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "library-search-rules-cards.json", "bargain-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Coordinated land searches", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 22),
+        ], ["Generic Bound Commander"])
+
+    def prepare_discovery(self, seed, *, objects=()):
+        game = self.session(seed)
+        engine = game.engine
+        source = self.add(engine, "Tempt with Discovery", zone="hand", ref="discovery")
+        self.assert_closed(game, source)
+        chosen = {}
+        for seat, name, zone, ref in objects:
+            card = self.add(engine, name, seat=seat, zone=zone, ref=ref)
+            if zone == "library":
+                card.known_to = []
+                card.revealed_to = []
+            chosen[ref] = card
+        self.prepare(game, mana={"C": 3, "G": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        return game, chosen
+
+    def choose(self, game, seat, **selection):
+        result = game.act("pilot:" + seat, {"action_id": "choose", **selection})
+        self.assertTrue(result.ok, result.summary)
+
+    def outcome(self, game, seat, kind):
+        decision = self.resolve(game)
+        self.assertIsNotNone(decision)
+        self.assertEqual(kind, decision.kind)
+        self.assertEqual([seat], list(decision.actors))
+        return decision
+
+    def context(self, game, seat):
+        return game.packet("pilot:" + seat, full=True)["decision"]["ctx"]
+
+    def shuffle_counts(self, game):
+        return {seat: game.state.players[seat].stats.get("shuffle_count", 0) for seat in "ABCD"}
+
+    def reject(self, game, seat, **selection):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, {"action_id": "choose", **selection})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_discovery_stages_opponent_finds_and_counts_accepted_failure(self):
+        game, objects = self.prepare_discovery(7012301, objects=(
+            *[(seat, "Generic Bound Plains", "library", f"discovery-land-{seat}") for seat in "ABCD"],
+            ("A", "Generic Bound Plains", "library", "discovery-bonus-A"),
+        ))
+        counts = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        self.reject(game, "B", search_cards=["discovery-land-A"])
+        self.choose(game, "A", search_cards=["discovery-land-A"])
+        self.outcome(game, "B", "choice.apnap")
+        self.assertEqual("battlefield", game.state.cards[objects["discovery-land-A"].object_id].zone)
+        for index, seat in enumerate("BCD"):
+            self.outcome(game, seat, "choice.apnap")
+            history = self.context(game, seat)["prior_search_choices"]
+            self.assertEqual([{"player": name, "search": True} for name in "BCD"[:index]], history)
+            if seat == "B":
+                self.reject(game, "C", choice="search")
+                game = self.replay(game, load=True)
+            self.choose(game, seat, choice="search")
+        self.outcome(game, "B", "semantic.search")
+        self.assertIn("discovery-land-B", json.dumps(self.context(game, "B")))
+        self.reject(game, "B", search_cards=["discovery-land-C"])
+        self.choose(game, "B", search_cards=["discovery-land-B"])
+        self.outcome(game, "C", "semantic.search")
+        self.assertNotIn("discovery-land-B", json.dumps(game.packet("pilot:C", full=True)))
+        self.assertIn("discovery-land-C", json.dumps(self.context(game, "C")))
+        self.choose(game, "C", search_cards=[])
+        self.outcome(game, "D", "semantic.search")
+        self.assertEqual("library", game.state.cards[objects["discovery-land-B"].object_id].zone)
+        self.assertEqual(counts, self.shuffle_counts(game))
+        game = self.replay(game, load=True)
+        self.choose(game, "D", search_cards=["discovery-land-D"])
+        for seat in "BD":
+            self.assertEqual("battlefield", game.state.cards[objects[f"discovery-land-{seat}"].object_id].zone)
+        self.assertEqual("library", game.state.cards[objects["discovery-land-C"].object_id].zone)
+        for index in range(3):
+            self.outcome(game, "A", "semantic.search")
+            self.assertEqual(counts, self.shuffle_counts(game))
+            self.choose(game, "A", search_cards=["discovery-bonus-A"] if index == 0 else [])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + 1 for seat, count in counts.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_reuses_the_original_restricted_view_for_bonus_selection(self):
+        game, objects = self.prepare_discovery(7012303, objects=(
+            ("B", "Aven Mindcensor", "battlefield", "discovery-restrictor"),
+            *[("A", "Generic Bound Plains", "library", f"discovery-top-{index}") for index in range(5)],
+        ))
+        initial = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        context = self.context(game, "A")
+        self.assertEqual({f"discovery-top-{i}" for i in range(1, 5)}, {row["id"] for row in context["search_window"]})
+        self.choose(game, "A", search_cards=["discovery-top-4"])
+        for seat, choice in (("B", "search"), ("C", "decline"), ("D", "decline")):
+            self.outcome(game, seat, "choice.apnap")
+            self.choose(game, seat, choice=choice)
+        self.outcome(game, "B", "semantic.search")
+        self.choose(game, "B", search_cards=[])
+        self.outcome(game, "A", "semantic.search")
+        context = self.context(game, "A")
+        self.assertEqual({f"discovery-top-{i}" for i in range(1, 4)}, {row["id"] for row in context["search_window"]})
+        self.assertEqual(initial, self.shuffle_counts(game))
+        self.reject(game, "A", search_cards=["discovery-top-0"])
+        self.choose(game, "A", search_cards=["discovery-top-3"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + int(seat in "AB") for seat, count in initial.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_controlled_opponent_find_exiles_and_counts_privately(self):
+        game, objects = self.prepare_discovery(7012305, objects=(
+            ("C", "Opposition Agent", "battlefield", "discovery-control"),
+            ("B", "Generic Bound Plains", "library", "discovery-controlled-find"),
+            ("D", "Generic Bound Plains", "library", "discovery-other-controlled-find"),
+        ))
+        initial = self.shuffle_counts(game)
+        self.outcome(game, "A", "semantic.search")
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        self.choose(game, "C", search_cards=[])
+        for seat, choice in (("B", "search"), ("C", "decline"), ("D", "search")):
+            self.outcome(game, seat, "choice.apnap")
+            self.choose(game, seat, choice=choice)
+        self.outcome(game, "B", "semantic.search")
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        private_ref = "discovery-controlled-find"
+        related_ref = "discovery-other-controlled-find"
+        parallel = self.context(game, "C")["parallel_search_views"]
+        self.assertEqual({"B", "D"}, set(parallel))
+        self.assertIn(private_ref, {row["id"] for row in parallel["B"]})
+        self.assertIn(related_ref, {row["id"] for row in parallel["D"]})
+        for seat in "ABD":
+            packet = json.dumps(game.packet("pilot:" + seat, full=True))
+            self.assertNotIn(private_ref, packet)
+            self.assertNotIn(related_ref, packet)
+        self.reject(game, "B", search_cards=[private_ref])
+        game = self.replay(game, load=True)
+        self.choose(game, "C", search_cards=[private_ref])
+        self.outcome(game, "D", "semantic.search")
+        self.assertEqual("library", game.state.cards[objects[private_ref].object_id].zone)
+        self.choose(game, "C", search_cards=[])
+        found = game.state.cards[objects[private_ref].object_id]
+        self.assertEqual("exile", found.zone)
+        self.assertEqual(("C", found.logical_object_id), tuple(found.annotations["opponent_library_exile_incarnation_play"]))
+        for _ in range(2):
+            self.outcome(game, "A", "semantic.search")
+            self.choose(game, "C", search_cards=[])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: count + int(seat in "ABD") for seat, count in initial.items()}, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_search_prohibition_skips_participation_and_shuffle(self):
+        game, _ = self.prepare_discovery(7012310, objects=(("B", "Mindlock Orb", "battlefield", "discovery-prohibition"),))
+        initial = self.shuffle_counts(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.stack)
+        self.assertEqual(initial, self.shuffle_counts(game))
+        self.replay(game, load=True)
+
+    def test_discovery_strict_shape_and_dependency_withdrawal(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.fixed_opponent_land_search import CAPABILITY, opponent_land_search_node_capabilities
+        from test_fixed_library_searches import card_record
+
+        record = card_record(DISCOVERY_INSTRUCTION)
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        self.assertEqual((0, len(DISCOVERY_INSTRUCTION)), (node.span.start, node.span.end))
+        original, = node.effects
+        for field, value in (("fixed_opponent_land_search", True), ("players", "all"), ("bonus", 1)):
+            effect = {**original, field: value}
+            self.assertEqual((), opponent_land_search_node_capabilities((effect,), None, None, node.mechanics))
+        for text in (
+            DISCOVERY_INSTRUCTION.replace("who searches a library", "who finds a land"),
+            DISCOVERY_INSTRUCTION.replace("onto the battlefield", "into their hand", 1),
+            DISCOVERY_INSTRUCTION.replace("Then each player", "First each player"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(card_record(text), capability_registry=self.registry).status)
+        with patch("quorune.compiler.library_search_templates.FixedOpponentLandSearchTemplate", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+        game = self.session(7012311)
+        source = self.add(game.engine, "Tempt with Discovery", zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])

@@ -14,11 +14,19 @@ from ..trigger_participation import WardSacrificeScope
 from .fixed_effect_payment import complete_fixed_payment_cost, prepare_fixed_payment_cost
 
 
+_MULTI_COSTS = {
+    WardSacrificeScope.TWO_PERMANENTS: (2, "two permanents"),
+    WardSacrificeScope.THREE_NONLAND_PERMANENTS: (3, "three nonland permanents"),
+}
+
+
 def _cost(payer, scope):
-    predicate = ObjectQuerySpec(zones=("battlefield",), controller=payer)
-    if scope is WardSacrificeScope.TWO_PERMANENTS:
+    excluded = ("land",) if scope is WardSacrificeScope.THREE_NONLAND_PERMANENTS else ()
+    predicate = ObjectQuerySpec(zones=("battlefield",), controller=payer, excluded_types=excluded)
+    if scope in _MULTI_COSTS:
+        amount, _label = _MULTI_COSTS[scope]
         return FixedEffectPaymentSpec(
-            "sacrifice", amount=2, predicate=predicate, schema_version=REPEATED_OBJECT_PAYMENT_VERSION,
+            "sacrifice", amount=amount, predicate=predicate, schema_version=REPEATED_OBJECT_PAYMENT_VERSION,
         )
     return FixedEffectPaymentSpec("sacrifice", predicate=predicate)
 
@@ -27,11 +35,10 @@ def prepare_ward_sacrifice(effect, context, scope):
     requirement = partial(ward_sacrifice_is_eligible, scope, payer=context.actor)
     prepared = prepare_fixed_payment_cost(_cost(context.actor, scope), effect, context, object_filter=requirement)
     request = prepared.request
+    _amount, label = _MULTI_COSTS.get(scope, (1, "one eligible permanent"))
     return replace(prepared, request=replace(
         request,
-        prompt=("Sacrifice two permanents to pay Ward, or choose none to decline."
-                if scope is WardSacrificeScope.TWO_PERMANENTS else
-                "Sacrifice one eligible permanent to pay Ward, or choose none to decline."),
+        prompt=f"Sacrifice {label} to pay Ward, or choose none to decline.",
         public_context=FrozenMap({**dict(request.public_context), "target_stack": effect["stack"]}),
     ))
 

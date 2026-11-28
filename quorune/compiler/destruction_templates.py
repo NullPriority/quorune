@@ -410,8 +410,12 @@ def mass_destruction_effect_template(
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"),
-        singular=match['quantifier'].casefold() == 'each')
+    from .qualified_destruction_queries import fixed_creature_subtype_destruction_query
+
+    subject = match.group("subject")
+    singular = match["quantifier"].casefold() == "each"
+    subtype_query = None if singular else fixed_creature_subtype_destruction_query(subject)
+    parsed = (subtype_query, False) if subtype_query is not None else fixed_affected_permanent_query(subject, singular=singular)
     if parsed is None:
         return None
     query, exclude_source = parsed

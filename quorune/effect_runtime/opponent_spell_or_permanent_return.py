@@ -3,20 +3,28 @@
 from ..continuous_effect_state import ContinuousEffectStateError, ResolutionEffectSource
 from ..errors import GameRuleError
 from ..rules.opponent_spell_or_permanent_return import (
-    ENTRY_FIELD, FIELD, opponent_spell_or_permanent_return_runtime_dependencies,
+    COPY_RETURN_FIELD,
+    ENTRY_FIELD,
+    FIELD,
+    SPELL_FIELD,
+    opponent_spell_or_permanent_return_runtime_dependencies,
 )
 from ..zone_transition_model import ZoneTransitionKind
 from .linked_zone_movement import commit_resolved_zone_movement
 
 
-def _target_card(host, ref, actor, *, opponent_only):
+def _target_card(host, ref, actor, *, opponent_only, spell_only=False, stack_only=False):
     target_item = next((item for item in host.state.stack if item.ref == ref), None)
     if target_item is not None:
         card = host.state.cards.get(target_item.card_object_id)
         if (target_item.kind not in {"spell", "spell_copy"} or opponent_only and target_item.controller == actor
                 or card is None or card.zone != "stack"):
-            raise GameRuleError("Owner-hand stack movement needs its current opposing spell card")
+            raise GameRuleError("Owner-hand stack movement needs its current legal spell card")
         return card
+    if spell_only:
+        raise GameRuleError("Owner-hand stack movement requires its revalidated spell")
+    if stack_only:
+        raise GameRuleError("Copy and return needs the original live stack object")
     card = host._resolve_object(actor, ref, zones={"battlefield"})
     types, _, _ = host._type_parts(host._effective_card_data(card).get("type_line", ""))
     if card.ref != ref or card.phased_out or opponent_only and (card.controller == actor or "land" in types):
@@ -26,7 +34,8 @@ def _target_card(host, ref, actor, *, opponent_only):
 
 def apply_opponent_spell_or_permanent_return(host, effect, *, actor, reason):
     from_entry = ENTRY_FIELD in effect
-    field = ENTRY_FIELD if from_entry else FIELD
+    after_copy = COPY_RETURN_FIELD in effect
+    field = SPELL_FIELD if SPELL_FIELD in effect else ENTRY_FIELD if from_entry else COPY_RETURN_FIELD if after_copy else FIELD
     fields = {"op", "card", "destination", field}
     if (set(effect) - {"reason", "_runtime_source", "_replacement_selections"} != fields
             or type(effect[field]) is not int or effect[field] != 1 or effect["destination"] != "hand"):
@@ -50,6 +59,6 @@ def apply_opponent_spell_or_permanent_return(host, effect, *, actor, reason):
             raise ValueError("Opponent spell-or-permanent return lost its original program")
     except (ValueError, TypeError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
-    card = _target_card(host, ref, actor, opponent_only=not from_entry)
+    card = _target_card(host, ref, actor, opponent_only=field == FIELD, spell_only=field == SPELL_FIELD, stack_only=after_copy)
     return commit_resolved_zone_movement(host, card, effect, destination="hand", reason=reason,
                                         transition_kind=ZoneTransitionKind.ORDINARY)

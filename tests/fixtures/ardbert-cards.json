@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "a9243760-b9b1-4d43-8550-3528b5571dae",
+      "name": "Ardbert, Warrior of Darkness",
+      "mana_cost": "{1}{W}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Spirit Warrior",
+      "oracle_text": "Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you control. They gain vigilance until end of turn.\nWhenever you cast a black spell, put a +1/+1 counter on each legendary creature you control. They gain menace until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "877bfa3f-6e30-4cb3-831e-d56849b01334",
+      "name": "Orzhov Guildmage",
+      "mana_cost": "{W/B}{W/B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "{2}{W}: Target player gains 1 life.\n{2}{B}: Each player loses 1 life.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "a9243760-b9b1-4d43-8550-3528b5571dae",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Each of Ardbert's abilities resolves before the spell that caused it to trigger. It resolves even if that spell is countered or otherwise leaves the stack."
+    }
+  ]
+}

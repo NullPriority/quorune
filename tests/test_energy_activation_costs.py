@@ -72,6 +72,49 @@ class EnergyActivationCompilerTests(unittest.TestCase):
             payload=json.loads(json.dumps(ability.to_dict()))
             self.assertEqual(payload,ActivatedAbility.from_dict(payload).to_dict())
 
+    def test_energy_x_reanimation_descriptor_rejects_combined_modes_and_open_targets(self):
+        from dataclasses import replace
+
+        from quorune.semantics import SemanticProgram
+
+        from quorune.rules.announced_energy_reanimation import CAPABILITY, COST_TEXT, EFFECT_TEXT
+        from quorune.card_programs.binding import _semantic_program_requirements
+        from quorune.compiler.activated_costs import activated_ability_cost
+
+        material = record(COST_TEXT + ": " + EFFECT_TEXT + " Activate only as a sorcery.", "Enchantment")
+        ir = compile_oracle_card(material, capability_registry=load_default_capability_registry(),
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        ability, = compile_activated_ability_catalog(material)["front"]
+        encoded = ability.to_dict()
+        self.assertTrue(ability.choices[0].another)
+        self.assertEqual(1, ability.choices[0].count)
+        self.assertEqual(ability, ActivatedAbility.from_dict(json.loads(json.dumps(encoded))))
+        raw_target = dict(encoded["target_schema"])
+        for changes in (
+            {"announced_x_symbols": 1}, {"loyalty_x": True}, {"energy_payment": 1},
+            {"sorcery_speed": False}, {"choices": [{**encoded["choices"][0], "count_parameter": "x"}]},
+            {"target_schema": {**raw_target, "owner_relation": "any"}},
+            {"announced_energy_reanimation": 1},
+        ):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                ActivatedAbility.from_dict({**encoded, **changes})
+        program = SemanticProgram(
+            key=f"{material.oracle_id}:{ability.ability_id}",
+            label=material.name,
+            oracle_id=material.oracle_id,
+            ability_id=ability.ability_id,
+            active_zone="battlefield",
+            event="activate",
+            cost_schema=activated_ability_cost(ability),
+            target_schema=encoded["target_schema"],
+        )
+        required, blockers = _semantic_program_requirements(replace(program, target_schema=None))
+        self.assertIn(CAPABILITY, required)
+        self.assertTrue(any(value.startswith("runtime_announced_energy_reanimation:invalid:") for value in blockers))
+
 
 class EnergyActivationRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
@@ -237,6 +280,142 @@ class EnergyActivationRuntimeTests(unittest.TestCase):
                 self.assertEqual(40 if counter else 38,session.state.players['C'].life)
                 self.assertEqual((0,True),(session.state.players['A'].energy,session.state.cards[source.object_id].tapped))
                 self.replay(session,load=True)
+
+    def test_actual_nightmare_announces_energy_x_and_rolls_back_late_payment_failure(self):
+        from unittest.mock import patch
+
+        from quorune.errors import GameRuleError
+
+        session = self.session(406060)
+        engine = session.engine
+        source = self.add(engine, "Chthonian Nightmare", zone="hand")
+        creature = self.add(engine, "Generic Bound Body", ref="nightmare-sacrifice")
+        opponent_creature = self.add(engine, "Generic Bound Body", seat="B", ref="nightmare-foreign-cost")
+        other = self.add(engine, "Generic Bound Body", seat="B", ref="nightmare-bounce")
+        target = self.add(engine, "Grizzly Bears", zone="graveyard", ref="nightmare-two")
+        free_target = self.add(engine, "Ornithopter", zone="graveyard", ref="nightmare-zero")
+        unaffordable = self.add(engine, "Hill Giant", zone="graveyard", ref="nightmare-four")
+        foreign_target = self.add(engine, "Grizzly Bears", seat="B", zone="graveyard", ref="nightmare-foreign-target")
+        pending = self.add(engine, "Unsummon", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"B": 4, "U": 3, "C": 4})
+        session.state.players["B"].energy = 9
+        self.checkpoint(session)
+
+        self.cast(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(3, session.state.players["A"].energy)
+        source = session.state.cards[source.object_id]
+        offered = self.energy_action(session, source, 0)
+        from quorune.rules.activation_zone_change_costs import (
+            activation_zone_change_cost_reference, counted_activation_replacement_selections,
+            energy_reanimation_replacement_entries,
+        )
+
+        cost_summary = offered["cost_summary"]
+        self.assertTrue(cost_summary["announced_energy_reanimation"])
+        receipts = {
+            f"zone.change:fixture:{source.ref}": ["return-replacement-receipt"],
+            f"zone.change:fixture:{creature.ref}": ["sacrifice-replacement-receipt"],
+        }
+        continuation = {"source": source.ref, "from": "battlefield", "x": 2,
+                        "cost_cards": [creature.ref], "cost_summary": cost_summary,
+                        "_mana_replacement_selections": receipts}
+        self.assertEqual(source.ref, activation_zone_change_cost_reference(
+            continuation, origin="battlefield", destination="hand", object_ref=source.ref,
+        ))
+        self.assertIn(creature.ref, cost_summary["choose_cost"][0]["legal_refs"])
+        self.assertIsNone(activation_zone_change_cost_reference(
+            continuation, origin="battlefield", destination="hand", object_ref=creature.ref,
+        ))
+        self.assertIsNone(activation_zone_change_cost_reference(
+            {**continuation, "x": True}, origin="battlefield", destination="hand", object_ref=source.ref,
+        ))
+        self.assertEqual(("sacrifice-replacement-receipt",), counted_activation_replacement_selections(
+            continuation, (creature.ref,),
+        ))
+        refs, scoped = energy_reanimation_replacement_entries(continuation, receipts.items())
+        self.assertEqual((source.ref, creature.ref), refs)
+        self.assertEqual(["return-replacement-receipt"], scoped[source.ref][1])
+        bounds = offered["target_schema"]["x_bounds_by_ref"]
+        self.assertEqual({target.ref: {"minimum": 2, "maximum": 2},
+                          free_target.ref: {"minimum": 0, "maximum": 0}}, bounds)
+        valid = {"action_id": offered["id"], "targets": [target.ref], "cost_cards": [creature.ref],
+                 "pay": "auto", "x": 2}
+
+        self.cast(session, "A", pending, [other.ref])
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        self.assertIsNone(self.energy_action(session, source, 0, required=False))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", valid).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertIsNone(self.resolve(session))
+
+        for changes in (
+            {"targets": []}, {"targets": [free_target.ref]}, {"targets": [foreign_target.ref]},
+            {"targets": [unaffordable.ref], "x": 4}, {"cost_cards": [opponent_creature.ref]},
+            {"cost_cards": []}, {"x": True},
+        ):
+            with self.subTest(changes=changes):
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {**valid, **changes}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+        committed_move = engine.move_card
+        attempted_return = []
+
+        def reject_source_return(object_id, destination, **kwargs):
+            if object_id == source.object_id and destination == "hand":
+                self.assertEqual(1, engine.state.players["A"].energy)
+                self.assertEqual("graveyard", engine.state.cards[creature.object_id].zone)
+                attempted_return.append(True)
+                raise GameRuleError("Fixture rejects the source return after selected cost commits")
+            return committed_move(object_id, destination, **kwargs)
+
+        before = authoritative_state_hash(session.state)
+        with patch.object(engine, "move_card", side_effect=reject_source_return):
+            self.assertFalse(session.act("pilot:A", valid).ok)
+        self.assertEqual([True], attempted_return)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        result = session.act("pilot:A", valid)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 9), tuple(session.state.players[seat].energy for seat in "AB"))
+        self.assertIn(source.object_id, session.state.players["A"].zones["hand"])
+        self.assertIn(creature.object_id, session.state.players["A"].zones["graveyard"])
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual("A", session.state.cards[target.object_id].controller)
+        self.replay(session)
+
+    def test_actual_nightmare_x_zero_returns_stolen_source_to_its_owner(self):
+        session = self.session(406061)
+        engine = session.engine
+        source = self.add(engine, "Chthonian Nightmare", seat="B", ref="nightmare-stolen")
+        creature = self.add(engine, "Generic Bound Body", seat="B", ref="nightmare-controlled-cost")
+        target = self.add(engine, "Ornithopter", zone="graveyard", ref="nightmare-actual-zero")
+        for card in (source, creature):
+            engine.change_control(card.object_id, "A", reason="Fixture separates owner and controller")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={})
+        self.assertEqual(0, session.state.players["A"].energy)
+        self.checkpoint(session)
+        offered = self.energy_action(session, source, 0)
+        self.assertEqual({target.ref: {"minimum": 0, "maximum": 0}},
+                         offered["target_schema"]["x_bounds_by_ref"])
+        result = session.act("pilot:A", {"action_id": offered["id"], "targets": [target.ref],
+                                        "cost_cards": [creature.ref], "x": 0, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, session.state.players["A"].energy)
+        self.assertIn(source.object_id, session.state.players["B"].zones["hand"])
+        self.assertIn(creature.object_id, session.state.players["B"].zones["graveyard"])
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.replay(session)
 
 
 if __name__=='__main__':unittest.main()

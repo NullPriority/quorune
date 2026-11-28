@@ -6,6 +6,23 @@ from typing import Any
 TOP_ORDER_OPERATION = 'order_library_top'
 TOP_ORDER_CAPABILITY = 'library.order.fixed_controller'
 TOP_ORDER_MECHANIC = 'fixed-controller-top-order'
+PAID_PRIVATE_TOP_CYCLE = "paid_private_top_cycle"
+
+
+def paid_private_top_cycle_effect(player="$controller"):
+    return {"op": TOP_ORDER_OPERATION, "player": player, "count": 5, PAID_PRIVATE_TOP_CYCLE: 1}
+
+
+def uses_paid_private_top_cycle(effect):
+    return isinstance(effect, Mapping) and effect.get("op") == TOP_ORDER_OPERATION and PAID_PRIVATE_TOP_CYCLE in effect
+
+
+def validate_paid_private_top_cycle(effect, *, actor=None):
+    player = "$controller" if actor is None else actor
+    if (not isinstance(effect, Mapping) or type(effect.get(PAID_PRIVATE_TOP_CYCLE)) is not int
+            or type(effect.get("count")) is not int or effect != paid_private_top_cycle_effect(player)):
+        raise ValueError("The private top-card cycle requires its exact controller, five-card look and version")
+    return player
 HAND_TOP_ORDER_OPERATION = "put_hand_cards_on_library_top"
 HAND_TOP_ORDER_CAPABILITY = "library.order.fixed_hand_to_top"
 HAND_TOP_ORDER_MECHANIC = "fixed-hand-to-library-top"

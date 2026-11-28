@@ -1140,6 +1140,140 @@ class SourcePowerReanimationNativeTests(InheritedNativeFixture, unittest.TestCas
             DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
         ], ["Generic Bound Commander"])
 
+    def start_smile_at_death(self, seed, *, respond=False, scales=False):
+        from test_qualified_public_history import QualifiedPublicHistoryNativeTests
+
+        session = self.session(seed)
+        smile = self.add(session.engine, "Smile at Death")
+        warp = self.add(session.engine, "Time Warp", zone="hand")
+        observer = self.add(session.engine, "Elemental Bond")
+        first = self.add(session.engine, "Grizzly Bears", zone="graveyard", ref="smile-return-bears")
+        second = self.add(session.engine, "Llanowar Elves", zone="graveyard", ref="smile-return-elves")
+        large = self.add(session.engine, "Centaur Courser", zone="graveyard", ref="smile-too-large")
+        noncreature = self.add(session.engine, "Sol Ring", zone="graveyard", ref="smile-noncreature")
+        foreign = self.add(session.engine, "Grizzly Bears", seat="B", zone="graveyard", ref="smile-foreign")
+        live = self.add(session.engine, "Generic Bound Body", ref="smile-not-returned")
+        private = self.add(session.engine, "Murder", seat="D", zone="hand", ref="smile-private")
+        controls = []
+        if scales:
+            controls.append(self.add(session.engine, "Hardened Scales"))
+        exile = None
+        if respond:
+            self.add(session.engine, "Swamp", seat="B")
+            exile = self.add(session.engine, "Cremate", seat="B", zone="hand")
+            controls.append(exile)
+        for card in (smile, observer, warp, *controls):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "U": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", warp, ["A"])
+        self.assertIsNone(self.resolve(session))
+        QualifiedPublicHistoryNativeTests.until(
+            self, session, lambda game: game.state.active_player == "A" and game.state.step == "upkeep"
+            and game.state.current_turn.extra and game.state.pending_decision is not None
+            and game.state.pending_decision.kind == "semantic.target",
+        )
+        schema = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+        group, = schema["groups"]
+        self.assertEqual((0, 2), (group["min"], group["max"]))
+        self.assertEqual({first.ref, second.ref}, set(group["legal_refs"]))
+        for candidates in ([large.ref], [noncreature.ref], [foreign.ref], [first.ref, first.ref],
+                           [first.ref, second.ref, foreign.ref]):
+            self.reject_smile_choice(session, candidates)
+        self.assertNotIn(private.ref, str(session.packet("pilot:A", full=True)))
+        return session, first, second, live, exile, private
+
+    def reject_smile_choice(self, session, targets, *, principal="pilot:A"):
+        before = authoritative_state_hash(session.state)
+        result = session.act(principal, {"action_id": "choose", "targets": targets})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_smile_at_death_places_both_counters_after_the_actual_entries(self):
+        session, first, second, live, _, private = self.start_smile_at_death(60708201, scales=True)
+        originals = {card.object_id: card.logical_object_id for card in (first, second)}
+        draws = len(session.state.players["A"].draw_history)
+        self.reject_smile_choice(session, [first.ref, second.ref], principal="pilot:B")
+        session = self.replay(session, load=True)
+        self.target(session, "A", [first.ref, second.ref])
+        self.assertIsNone(self.resolve(session))
+        for card in (first, second):
+            current = session.state.cards[card.object_id]
+            self.assertEqual(("battlefield", "A", False), (current.zone, current.controller, current.tapped))
+            self.assertNotEqual(originals[card.object_id], current.logical_object_id)
+            self.assertEqual({"+1/+1": 2}, current.counters)
+        self.assertEqual(draws, len(session.state.players["A"].draw_history))
+        self.assertFalse(session.state.cards[live.object_id].counters)
+        self.assertNotIn(private.ref, str(session.packet("pilot:A", full=True)))
+        self.replay(session, load=True)
+
+    def test_smile_at_death_partial_and_zero_targets_replay(self):
+        for offset, stale in enumerate((True, False)):
+            with self.subTest(stale=stale):
+                session, first, second, live, exile, _ = self.start_smile_at_death(60708210 + offset, respond=stale)
+                self.target(session, "A", [first.ref, second.ref] if stale else [])
+                if stale:
+                    self.cast(session, "B", exile, [first.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("exile", session.state.cards[first.object_id].zone)
+                    session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertFalse(session.state.cards[first.object_id].counters)
+                self.assertFalse(session.state.cards[live.object_id].counters)
+                current = session.state.cards[second.object_id]
+                self.assertEqual("battlefield" if stale else "graveyard", current.zone)
+                self.assertEqual({"+1/+1": 1} if stale else {}, current.counters)
+                self.replay(session, load=True)
+
+    def test_smile_at_death_payload_rejects_stale_and_uncommitted_counter_subjects(self):
+        from types import SimpleNamespace
+        from quorune.rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
+        from quorune.rules.reanimation_followup import (
+            RETURNED_CREATURE_COUNTER_CAPABILITY, RETURNED_CREATURE_COUNTER_SUBJECTS,
+            bind_returned_creature_counter_subjects, returned_creature_counter_followup,
+        )
+        from quorune.replacement.immutable import thaw_value
+
+        record = self.db.lookup("Smile at Death", fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        raw = json.loads(REGISTRY_PATH.read_bytes())
+        capability = next(row for row in raw["capabilities"]
+                          if row["id"] == RETURNED_CREATURE_COUNTER_CAPABILITY)
+        capability.update(status="blocked", blockers=["The committed returned creature counters were withheld"])
+        withheld = CapabilityRegistry(raw)
+        withheld.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(record, capability_registry=withheld, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(RETURNED_CREATURE_COUNTER_CAPABILITY, str(refused.material_residuals))
+
+        node, = ir.faces[0].nodes
+        self.assertEqual(record.oracle_text[node.span.start:node.span.end], node.text)
+        program = SimpleNamespace(effects=node.effects, target_schema=node.target_schema, coverage=())
+        self.assertIn(RETURNED_CREATURE_COUNTER_CAPABILITY, announced_target_runtime_dependencies(program))
+        schema = {**node.target_schema, "owner_relation": "any"}
+        with self.assertRaisesRegex(ValueError, "original target-set reanimation"):
+            announced_target_runtime_dependencies(SimpleNamespace(effects=node.effects, target_schema=schema, coverage=()))
+
+        arrived = CardInstance("arrived", "arrived-ref", "fixture:arrival", "Arrival", "A", "A",
+                               "battlefield", zone_change_counter=2)
+        redirected = CardInstance("redirected", "redirected-ref", "fixture:redirect", "Redirect", "A", "A",
+                                  "exile", zone_change_counter=2)
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards={card.object_id: card for card in (arrived, redirected)}),
+            _effective_card_data=lambda _card: {"type_line": "Creature"},
+        )
+        result = returned_creature_counter_followup(host, (arrived, redirected),
+            {"arrived": "arrived@1", "redirected": "redirected@1"}, source_ref="smile")
+        frozen, = result.effects
+        effect = thaw_value(frozen)
+        self.assertEqual(["arrived-ref"], bind_returned_creature_counter_subjects(host, effect)["cards"])
+        self.assertEqual(1, len(effect[RETURNED_CREATURE_COUNTER_SUBJECTS]))
+        with self.assertRaises(ValueError):
+            bind_returned_creature_counter_subjects(host, {**effect, "cards": ["redirected-ref"]})
+        arrived.zone_change_counter += 1
+        self.assertIsNone(bind_returned_creature_counter_subjects(host, effect))
+
     def _target_offer(self, session, source, expected, *, minimum=1):
         packet = session.packet("pilot:A", full=True)["decision"]
         self.assertEqual("semantic.target", packet["kind"])

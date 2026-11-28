@@ -13,6 +13,69 @@ TARGET_SOURCE_NEXT_DAMAGE_CAPABILITY = "damage.prevention.target_source_next_ins
 TARGET_COMBAT_MANA_VALUE_TEMPLATE = "target-combat-prevention-mana-value-toughness-v1"
 TARGET_FULL_COUNTER_TEMPLATE = "target-full-damage-counter-aftermath-v2"
 TARGET_FULL_COUNTER_CAPABILITY = "damage.prevention.target_full_counter_aftermath"
+COMBAT_TOKEN_AFTERMATH_TEMPLATE = "controller-combat-prevention-token-aftermath-v1"
+COMBAT_TOKEN_AFTERMATH_CAPABILITY = "damage.prevention.aftermath.token_creation"
+
+
+def decode_combat_token_aftermath(value):
+    """Normalize a token recipe at the prevention rule boundary."""
+    from ..damage_modifier_state import CreateTokensPreventionAftermath
+    from ..standard_token_abilities import standard_token_characteristics
+
+    if not isinstance(value, Mapping) or not isinstance(value.get("characteristics"), Mapping):
+        raise ValueError("Token aftermath requires a fixed creature definition")
+    return CreateTokensPreventionAftermath.from_dict({
+        **value, "characteristics": standard_token_characteristics(thaw_value(value["characteristics"])),
+    })
+
+
+def combat_token_aftermath_effect(recipe):
+    return {
+        "op": "create_damage_prevention_shield", "source": "$source", "subject": "$controller",
+        "mode": "all", "duration": "until_end_of_turn", "damage_kind": "combat",
+        "aftermath": [recipe.to_dict()],
+    }
+
+
+def _combat_token_aftermath_capabilities(effects, target_schema):
+    from ..util import stable_json
+    from .token_creation_capability_shapes import _fixed_token_effect_closure
+
+    if target_schema is not None or len(effects) != 1:
+        return ()
+    try:
+        raw, = effects[0]["aftermath"]
+        recipe = decode_combat_token_aftermath(raw)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    if stable_json(thaw_value(effects[0])) != stable_json(combat_token_aftermath_effect(recipe)):
+        return ()
+    token_effect = {"op": "create_token", "controller": "$controller", "quantity": 1,
+                    "name": recipe.name, "characteristics": thaw_value(recipe.characteristics)}
+    closure = _fixed_token_effect_closure(token_effect)
+    if closure is None:
+        return ()
+    return (COMBAT_TOKEN_AFTERMATH_CAPABILITY, "damage.prevention.persistent_amount", *closure[0])
+
+
+def _has_combat_token_aftermath(effect):
+    values = effect.get("aftermath") if isinstance(effect, Mapping) else None
+    return isinstance(values, (list, tuple)) and any(
+        isinstance(row, Mapping) and row.get("kind") == "create_tokens" for row in values
+    )
+
+
+def combat_token_aftermath_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    marked = any(_has_combat_token_aftermath(effect) for effect in nested_effects(program.effects))
+    if not marked and COMBAT_TOKEN_AFTERMATH_TEMPLATE not in str(program.provenance.get("template_id") or ""):
+        return ()
+    required = _combat_token_aftermath_capabilities(program.effects, program.target_schema)
+    if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.cost_schema is not None):
+        raise ValueError("Combat prevention tokens require their complete original spell")
+    return required
 
 
 def target_full_counter_aftermath_effect():
@@ -100,6 +163,8 @@ def targeted_prevention_result_node_capabilities(*, effects, target_schema, cost
 
 
 def targeted_prevention_result_runtime_dependencies(program):
+    if required := combat_token_aftermath_runtime_dependencies(program):
+        return required
     if program.provenance.get("template_id") != TARGET_COMBAT_MANA_VALUE_TEMPLATE:
         return (_target_full_counter_aftermath_runtime_dependencies(program)
                 or target_source_next_damage_runtime_dependencies(program))
@@ -211,6 +276,8 @@ def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids
             except (TypeError,ValueError):return ()
     if len(effects)!=1:return ()
     effect=effects[0]
+    if _has_combat_token_aftermath(effect):
+        return _combat_token_aftermath_capabilities(effects, target_schema)
     if isinstance(effect,Mapping) and {'source_controller_target_version','source_controller_target'}.intersection(effect):
         from .target_controller_prevention import targeted_controller_prevention_capabilities
         return targeted_controller_prevention_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

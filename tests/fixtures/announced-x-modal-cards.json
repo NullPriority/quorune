@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Heliod's Intervention",
+      "oracle_id": "e7564d66-767c-4cd9-a5f0-0f2488a4a74b",
+      "mana_cost": "{X}{W}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Destroy X target artifacts and/or enchantments.\n• Target player gains twice X life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Bident of Thassa",
+      "oracle_id": "e1afaef7-9fa3-4662-a95f-adfb0da9fd11",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Enchantment Artifact",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, you may draw a card.\n{1}{U}, {T}: Creatures your opponents control attack this turn if able.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e7564d66-767c-4cd9-a5f0-0f2488a4a74b",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The second mode of Heliod's Intervention causes the player to gain one amount of life equal to twice X. It doesn't cause the player to gain X life then gain X life again."
+    },
+    {
+      "oracle_id": "e1afaef7-9fa3-4662-a95f-adfb0da9fd11",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a creature can't attack for any reason (such as being tapped or having come under that player's control that turn), then it doesn't attack. If there's a cost associated with having a creature attack, the player isn't forced to pay that cost, so it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "e1afaef7-9fa3-4662-a95f-adfb0da9fd11",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "The controller of each attacking creature still chooses which player or planeswalker that creature attacks."
+    }
+  ]
+}

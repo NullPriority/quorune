@@ -166,7 +166,9 @@ def _available_entry_counter_transfers(batch, effects):
 
 
 def _available_batch_effects(batch, effects):
-    eligible = _available_entry_counter_transfers(batch, effects)
+    from .chosen_basic_land_entry import available_basic_land_payments
+
+    eligible = available_basic_land_payments(batch, _available_entry_counter_transfers(batch, effects))
     if not batch.journal:
         return eligible
     used = {selection.effect_id for selection in batch.journal}
@@ -180,6 +182,7 @@ def next_batch_replacement_choice(
     batch: ReplacementEventBatch,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementBatchChoice | None:
+    from .chosen_basic_land_entry import pending_basic_land_payment
     from .tribute import pending_tribute_entry_choice
     all_effects = canonical_effects(effects)
     available_effects = _available_batch_effects(batch, all_effects)
@@ -202,7 +205,8 @@ def next_batch_replacement_choice(
     chooser_index, event_id, event_index, pending = min(
         candidates,
         key=lambda value: (
-            not pending_tribute_entry_choice(value[3].choice.event),
+            not (pending_tribute_entry_choice(value[3].choice.event)
+                 or pending_basic_land_payment(value[3].choice.event)),
             value[0],
             value[1],
             value[3].path,
@@ -246,6 +250,9 @@ def next_batch_replacement_choice(
     )
     if shared_entry_order:
         event_order_options = tuple(sorted({value[1] for value in same_chooser}))
+    if pending_basic_land_payment(pending.choice.event):
+        shared_entry_order = False
+        event_order_options = ()
     result = _batch_choice_for_event(
         batch,
         all_effects=all_effects,

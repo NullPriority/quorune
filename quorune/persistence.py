@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from copy import deepcopy
 import json
 import os
 from pathlib import Path
@@ -352,6 +353,10 @@ class DirectoryGamePersistence:
             session = CommanderSession.load(card_db, directory, verify_rules=verify_rules)
         if session.state.game_id != game_id:
             raise ValueError("Persisted game id does not match its directory")
+        if session._verified_runtime_trust is not None:
+            with self._trust_lock:
+                if self._runtime_trust is None:
+                    self._runtime_trust = deepcopy(session._verified_runtime_trust)
         return GameService(session, idempotency=idempotency)
 
     def game_ids(self) -> tuple[str, ...]:

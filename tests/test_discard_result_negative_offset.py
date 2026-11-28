@@ -239,3 +239,106 @@ class ReducedDiscardResultNativeTests(InheritedNativeFixture,unittest.TestCase):
             with self.assertRaises(AssertionError):
                 self.test_actual_dark_deal_discards_all_before_clamped_own_draws_in_apnap_order()
         self.assertEqual([(('A',3),('B',0),('C',1),('D',5))],observed)
+
+    def test_syphon_mind_counts_only_committed_opponents_with_empty_and_redirected_hands(self):
+        from quorune.record import authoritative_state_hash
+
+        for redirect in (False, True):
+            with self.subTest(redirect=redirect):
+                game = self.session(715110 + int(redirect))
+                self.hands(game, {"A": 1, "B": 2, "C": 0, "D": 1})
+                source = self.add(game.engine, "Syphon Mind", zone="hand")
+                if redirect:
+                    for seat in "BD":
+                        self.assert_closed(game, self.add(game.engine, "Rest in Peace", seat=seat,
+                                                         ref=f"syphon-redirect-{seat}"))
+                self.assert_closed(game, source)
+                incoming = {seat: [game.state.cards[oid]
+                                   for oid in game.state.players[seat].zones["hand"] if oid != source.object_id]
+                            for seat in "ABCD"}
+                self.prepare(game, mana={"C": 3, "B": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", source)
+                self.assertEqual("choice.apnap", self.resolve(game).kind)
+                self.assertEqual(["pilot:B"], game.pending_principals())
+                self.assertIsNone(game.packet("pilot:A", full=True)["decision"])
+                before = authoritative_state_hash(game.state)
+                for actor, card in (("B", incoming["D"][0]), ("C", incoming["B"][1])):
+                    rejected = game.act("pilot:" + actor, {"action_id": "choose", "cards": [card.ref]})
+                    self.assertFalse(rejected.ok, rejected.summary)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                game = self.replay(game, load=True)
+                picked = game.act("pilot:B", {"action_id": "choose", "cards": [incoming["B"][1].ref]})
+                self.assertTrue(picked.ok, picked.summary)
+                self.assertEqual(["pilot:D"], game.pending_principals())
+                self.assertEqual("hand", game.state.cards[incoming["B"][1].object_id].zone)
+                self.assertNotIn(incoming["B"][1].ref, json.dumps(game.packet("pilot:D", full=True)))
+                game = self.replay(game, load=True)
+                picked = game.act("pilot:D", {"action_id": "choose", "cards": [incoming["D"][0].ref]})
+                self.assertTrue(picked.ok, picked.summary)
+                if redirect:
+                    self.assertEqual("replacement.order", game.state.pending_decision.kind)
+                    self.assertEqual(1, len(game.state.players["A"].zones["hand"]))
+                    game = self.replay(game, load=True)
+                    for _ in range(4):
+                        if game.state.pending_decision.kind != "replacement.order":
+                            break
+                        principal = game.pending_principals()[0]
+                        option = game.packet(principal, full=True)["decision"]["ctx"]["options"][0]
+                        answer = game.act(principal, {"action_id": "choose", "replacement": option["id"]})
+                        self.assertTrue(answer.ok, answer.summary)
+                self.assertIsNone(self.resolve(game))
+                destination = "exile" if redirect else "graveyard"
+                self.assertEqual(destination, game.state.cards[incoming["B"][1].object_id].zone)
+                self.assertEqual(destination, game.state.cards[incoming["D"][0].object_id].zone)
+                self.assertEqual("hand", game.state.cards[incoming["B"][0].object_id].zone)
+                self.assertEqual([3, 1, 0, 0], [len(game.state.players[seat].zones["hand"]) for seat in "ABCD"])
+                self.private_replay(game)
+
+    def test_syphon_mind_with_all_empty_opponent_hands_draws_zero(self):
+        game = self.session(715117)
+        self.hands(game, {"A": 1})
+        source = self.add(game.engine, "Syphon Mind", zone="hand")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 3, "B": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([1, 0, 0, 0], [len(game.state.players[seat].zones["hand"]) for seat in "ABCD"])
+        self.assertFalse(tuple(game.engine._current_turn_history("card_discarded")))
+        self.replay(game, load=True)
+
+
+class SelectedOpponentDiscardDrawCompilerTests(unittest.TestCase):
+    def test_selected_discard_draw_requires_the_complete_printed_pair(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.selected_discard_draw import selected_discard_draw_choice
+        from test_qualified_zone_event_queries import query_record
+
+        text = "Each other player discards a card. You draw a card for each card discarded this way."
+
+        def compile_text(text):
+            return compile_oracle_card(replace(query_record(text), type_line="Sorcery"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertEqual(selected_discard_draw_choice(), node.effects[0])
+            self.assertIsNone(node.target_schema)
+            self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+
+        witness()
+        with patch("quorune.compiler.discard_result_templates.selected_opponent_discard_draw_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for invalid in (
+            text.replace("Each other player", "Each player"),
+            text.replace("discards a card", "may discard a card"),
+            text.replace("discards a card", "discards two cards"),
+            text.replace("each card discarded this way", "each opponent"),
+            text + " Gain 1 life.",
+        ):
+            self.assertNotEqual("exact", compile_text(invalid).status)

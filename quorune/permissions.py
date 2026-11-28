@@ -196,6 +196,10 @@ class CapabilityManager:
             )
         if "action" in payload and payload["action"] != action:
             raise PermissionDenied("Payload action does not match the authorized action")
+        from .rules.secret_number_choices import is_secret_number_decision, parse_secret_number_response
+
+        if is_secret_number_decision(decision):
+            parse_secret_number_response(payload)
         capability.consumed = True
         return AuthorizedCommand(capability, decision, action, payload)
 

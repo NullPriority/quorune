@@ -127,6 +127,14 @@ def apply_opponent_library_exile_play(host, effect, *, actor, operation, reason)
     return len(public)
 
 
+def grant_chosen_bounded_opponent_play(host, card, actor):
+    card.annotations[PLAY_PERMISSIONS_FIELD] = {
+        **_existing_permissions(card),
+        actor: {"schema_version": 2, "logical_object_id": card.logical_object_id,
+                "expires_at_turns_begun": host.state.players[actor].turns_begun + 1},
+    }
+
+
 def _current_bounded_exile_play_permission(state, seat, card):
     """Return the next-turn permission for this original face-up object."""
     if card.zone != "exile" or card.face_down or not card.is_card_object or seat not in state.players:
@@ -136,13 +144,14 @@ def _current_bounded_exile_play_permission(state, seat, card):
         "schema_version", "logical_object_id", "expires_at_turns_begun",
     }:
         return None
-    if (type(stored["schema_version"]) is not int or stored["schema_version"] != 1
+    if (type(stored["schema_version"]) is not int or stored["schema_version"] not in {1, 2}
             or stored["logical_object_id"] != card.logical_object_id):
         return None
     permission = {
         "player": seat, "zone": "exile", "without_mana_cost": False,
         "allow_land": True, "allow_spell": True, "duration": ImpulseAccessDuration.END_OF_NEXT_TURN.value,
         "expires_at_turns_begun": stored["expires_at_turns_begun"],
+        **({"color_only": True} if stored["schema_version"] == 2 else {}),
     }
     return permission if temporary_play_permission_is_current(state, seat, card, permission) else None
 
@@ -152,7 +161,12 @@ def current_opponent_library_exile_play_permission(state, seat, card):
     bounded = _current_bounded_exile_play_permission(state, seat, card)
     if bounded is not None:
         return bounded
+    from .rules.conditional_exile_cast import current_conditional_exile_cast
     from .rules.private_opponent_top_exile import current_private_top_exile_permission
+
+    conditional = current_conditional_exile_cast(state, seat, card)
+    if conditional is not None:
+        return conditional
 
     private = current_private_top_exile_permission(state, seat, card)
     if private is not None:
@@ -175,7 +189,16 @@ def current_opponent_library_exile_play_permission(state, seat, card):
 
 def opponent_library_exile_spend_context(state, seat, card, spend_context):
     permission = current_opponent_library_exile_play_permission(state, seat, card)
+    from .combat_damage_library_exile import COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD
+    from .impulse_access import current_temporary_play_permission
     from .rules.private_opponent_top_exile import DURATION
+
+    if permission is None and card.zone == "exile":
+        temporary = current_temporary_play_permission(state, seat, card)
+        if temporary is not None and COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD in temporary:
+            from .mana_restrictions import exile_play_mana_spend_context
+
+            return exile_play_mana_spend_context(spend_context, seat, color_only=True)
 
     if permission is None or (permission["duration"] == DURATION and not permission.get("allow_any_mana_type")):
         return spend_context
@@ -183,7 +206,9 @@ def opponent_library_exile_spend_context(state, seat, card, spend_context):
 
     if exiled_spell_any_type_payer(spend_context) == seat:
         return spend_context
-    return exile_play_mana_spend_context(spend_context, seat, color_only=permission["duration"] == "while_exiled")
+    return exile_play_mana_spend_context(
+        spend_context, seat, color_only=permission["duration"] == "while_exiled" or permission.get("color_only") is True,
+    )
 
 
 def opponent_library_exile_cast_mode(

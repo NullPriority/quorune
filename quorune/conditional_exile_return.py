@@ -119,9 +119,13 @@ def conditional_exile_source(effect: Mapping[str,Any]) -> ContinuousObjectIdenti
 def retain_or_return_conditional_exile(
     host: Any, item: Any, binding_id: str, objects: Sequence[Any], effect: Mapping[str, Any], *, selected_scope=None,
 ):
-    from .linked_exile_return_model import ExiledObjectIdentity, SelectedConditionalExileScope
+    from .linked_exile_return_model import ExiledObjectIdentity, SelectedConditionalExileScope, CONDITIONAL_EXILE_CAST_VERSION
     if not objects:return []
     source=conditional_exile_source(effect)
+    if effect["spec"]["schema_version"] == CONDITIONAL_EXILE_CAST_VERSION:
+        from .rules.conditional_exile_cast import grant_conditional_exile_cast
+
+        grant_conditional_exile_cast(host, item.controller, objects)
     linked = selected_scope is SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES
     binding=ConditionalExileBinding(item.ref+':'+binding_id,source,
         tuple(ExiledObjectIdentity.from_dict(value) for value in objects),
@@ -379,11 +383,14 @@ class ConditionalReturnAuraChoiceRequired(AuraEntryChoiceRequired):
 
 def return_from_departure_snapshots(host: Any, snapshots: Sequence[tuple[Any, Any]]) -> tuple[Any, ...]:
     """Use captured instructions after all members of one zone event commit."""
+    from .phasing import return_held_phasing_after_departures
+
+    departures = tuple(ContinuousObjectIdentity(card.object_id, departure.logical_object_id)
+        for card, departure in snapshots if departure.origin == 'battlefield')
+    return_held_phasing_after_departures(host, departures)
     bindings = tuple(binding for _card, departure in snapshots for binding in departure.conditional_returns)
     if not bindings:
         return ()
-    departures = tuple(ContinuousObjectIdentity(card.object_id, departure.logical_object_id)
-        for card, departure in snapshots if departure.origin == 'battlefield')
     waiting = _DEFERRED_RETURNS.get()
     if waiting is not None:
         waiting.append((bindings,departures))

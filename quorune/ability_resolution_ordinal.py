@@ -17,6 +17,7 @@ SECOND_ABILITY_DRAW_CONDITION = {"kind": "ability_resolution_ordinal", "schema_v
 THIRD_ABILITY_RESULT_VERSION = 21
 THIRD_ABILITY_RESULT_CONDITION = {"kind": "ability_resolution_ordinal", "schema_version": 1, "ordinal": 3}
 SECOND_ABILITY_REVEAL_VERSION = 31
+SECOND_ABILITY_SCRY_REPLACEMENT_VERSION = 42
 SECOND_LAND_ENTRY_REVEAL_CAPABILITY = "resolution.effect.second_land_entry_reveal_until_subtype"
 _FIELDS = frozenset({
     "op", "schema_version", "player", "condition", "resolution_ordinal",
@@ -45,8 +46,15 @@ def is_second_ability_reveal(effect):
     )
 
 
-def _validate_triggered_ordinal_frame(effect, *, expected, condition_spec, ordinal_name, result, bound):
-    if (not expected or set(effect) != _FIELDS or type(effect["schema_version"]) is not int):
+def is_second_ability_scry_replacement(effect) -> bool:
+    return (
+        isinstance(effect, Mapping) and effect.get("op") == "apply_if_public_condition"
+        and effect.get("schema_version") == SECOND_ABILITY_SCRY_REPLACEMENT_VERSION
+    )
+
+
+def _validate_triggered_ordinal_frame(effect, *, expected, condition_spec, ordinal_name, result, bound, fields=_FIELDS):
+    if (not expected or set(effect) != fields or type(effect["schema_version"]) is not int):
         raise ValueError(f"The ability-resolution {result} requires its exact instruction version")
     condition = effect["condition"]
     if (not isinstance(condition, Mapping)
@@ -106,6 +114,38 @@ def validate_second_ability_draw(effect, *, bound=False):
             raise ValueError("The ability-resolution draw requires its complete fixed component mechanics")
     return tuple(results)
 
+def second_ability_scry_replacement():
+    return {
+        "op": "apply_if_public_condition", "schema_version": SECOND_ABILITY_SCRY_REPLACEMENT_VERSION,
+        "player": "$controller", "condition": dict(SECOND_ABILITY_DRAW_CONDITION), "resolution_ordinal": None,
+        "effects": [{"op": "draw", "player": "$controller", "count": 1, "private": True}],
+        "otherwise_effects": [{"op": "scry", "player": "$controller", "count": 1}],
+        "mechanic_ids": ["cr-121-drawing-a-card"], "otherwise_mechanic_ids": ["scry"], "prefix_mechanic_ids": [],
+    }
+
+
+def validate_second_ability_scry_replacement(effect, *, bound=False):
+    alternate_fields = _FIELDS | {"otherwise_effects", "otherwise_mechanic_ids"}
+    actor = _validate_triggered_ordinal_frame(
+        effect, expected=is_second_ability_scry_replacement(effect), condition_spec=SECOND_ABILITY_DRAW_CONDITION,
+        ordinal_name="second", result="scry replacement", bound=bound, fields=alternate_fields,
+    )
+    expected = second_ability_scry_replacement()
+    for field in ("mechanic_ids", "otherwise_mechanic_ids", "prefix_mechanic_ids"):
+        mechanics = effect[field]
+        if not isinstance(mechanics, (tuple, list)) or tuple(mechanics) != tuple(expected[field]):
+            raise ValueError("The second-resolution scry replacement requires both exact single-card instructions")
+    for field in ("effects", "otherwise_effects"):
+        children = effect[field]
+        child = {**expected[field][0], "player": actor}
+        if (not isinstance(children, (tuple, list)) or len(children) != 1 or not isinstance(children[0], Mapping)
+                or dict(children[0]) != child or type(children[0]["count"]) is not int):
+            raise ValueError("The second-resolution scry replacement requires both exact single-card instructions")
+    if effect["effects"][0]["private"] is not True:
+        raise ValueError("The second-resolution draw is private")
+    return tuple(effect["effects"])
+
+
 def validate_second_ability_reveal(effect, *, bound=False):
     actor = _validate_triggered_ordinal_frame(
         effect, expected=is_second_ability_reveal(effect), condition_spec=SECOND_ABILITY_DRAW_CONDITION,
@@ -141,7 +181,10 @@ def is_third_ability_result(effect) -> bool:
 
 
 def is_triggered_ability_resolution_ordinal(effect) -> bool:
-    return is_first_ability_counter(effect) or is_second_ability_draw(effect) or is_second_ability_reveal(effect)
+    return (
+        is_first_ability_counter(effect) or is_second_ability_draw(effect) or is_second_ability_reveal(effect)
+        or is_second_ability_scry_replacement(effect)
+    )
 
 
 def is_ability_resolution_ordinal(effect) -> bool:
@@ -224,4 +267,6 @@ def validate_ability_resolution_ordinal(effect, *, bound=False):
         return validate_second_ability_draw(effect, bound=bound)
     if is_second_ability_reveal(effect):
         return validate_second_ability_reveal(effect, bound=bound)
+    if is_second_ability_scry_replacement(effect):
+        return validate_second_ability_scry_replacement(effect, bound=bound)
     return validate_third_ability_result(effect, bound=bound)

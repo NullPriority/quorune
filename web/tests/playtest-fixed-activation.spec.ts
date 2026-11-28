@@ -46,6 +46,16 @@ test("@browser-rules a single land play is direct and its fixed activation requi
     await clickMove(host, draft.getByRole("button", { name: "Pay cost and activate", exact: true }));
     await expect(life).toHaveAttribute("aria-label", "39 life");
     await expect(battlefieldVista).toHaveCount(0);
+
+    const choices = host.getByRole("group", { name: "Search results" });
+    await driveTo(pages, choices, info, "Resolve the land search");
+    const forest = choices.getByRole("button", { name: /^Forest(?:,|$)/ }).first();
+    await expect(forest.locator(".card-tile")).toBeVisible();
+    await forest.click();
+    await expect(host.getByRole("button", { name: /Pay 2 life/ })).toHaveCount(0);
+    await clickMove(host, host.getByTestId("submit-choice"));
+    await expect(life).toHaveAttribute("aria-label", "39 life");
+    await expect(boardCard(host, "Forest")).toBeVisible();
   } finally {
     await Promise.all(contexts.map(context => context.close()));
   }

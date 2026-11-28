@@ -347,10 +347,49 @@ def _mentions_declared_attack_counter_group(value):
     return type(value) is str and value == DECLARED_ATTACK_COUNTER_REFERENCE
 
 
+def _optional_attack_batch_strike_dependencies(program):
+    from ..attack_batch_model import OPTIONAL_ATTACK_BATCH_STRIKE_CAPABILITY, OPTIONAL_ATTACK_BATCH_STRIKE_COVERAGE
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities
+
+    if (OPTIONAL_ATTACK_BATCH_STRIKE_CAPABILITY not in program.capability_dependencies
+            and OPTIONAL_ATTACK_BATCH_STRIKE_COVERAGE not in program.coverage):
+        return ()
+    effect = {
+        "op": "offer_optional_effect", "player": "$controller",
+        "effects": [{"op": "grant_keyword_until_end_of_turn", "card": "$target.0", "keyword": "Double Strike"}],
+    }
+    target = {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"],
+              "combat_state": "attacking", "count": 1}
+    if (program.event != "creature.attacks" or program.active_zone != "battlefield"
+            or program.event_condition is not None or program.cost_schema is not None
+            or program.handlers or program.trigger_limit is not None or len(program.effects) != 1
+            or FrozenMap(program.effects[0]) != FrozenMap(effect) or program.target_schema is None
+            or type(program.target_schema.get("count")) is not int or FrozenMap(program.target_schema) != FrozenMap(target)
+            or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, "one_or_more_event_batch",
+                    OPTIONAL_ATTACK_BATCH_STRIKE_COVERAGE}.issubset(program.coverage)):
+        raise ValueError("The optional attacking creature result needs its original coalesced declaration and current target")
+    required = fixed_optional_effect_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+        mechanic_ids=("fixed-optional-effect-choice", "cr-611-continuous-effects", "cr-115-targets", "double-strike"),
+    )
+    if not required:
+        raise ValueError("The optional result lost its typed target and double strike authority")
+    return (OPTIONAL_ATTACK_BATCH_STRIKE_CAPABILITY, *required)
+
+
 def qualified_attack_batch_runtime_dependencies(program):
-    from .event_subscriptions import EVENT_SUBSCRIPTIONS_FIELD, FixedEventSubscriptionSet
+    from .source_counter_attacking_tokens import source_counter_attacking_tokens_program_dependencies
+
+    if required := source_counter_attacking_tokens_program_dependencies(program):
+        return required
+    from .event_subscriptions import (
+        EVENT_SUBSCRIPTIONS_FIELD, FixedEventSubscriptionSet, opponent_attack_draw_cast_runtime_dependencies,
+    )
     from .effect_shape_walkers import contains_nested_key
 
+    if optional_strike := _optional_attack_batch_strike_dependencies(program):
+        return optional_strike
     condition = program.event_condition
     effects = getattr(program, "effects", ())
     target = getattr(program, "target_schema", None)
@@ -369,7 +408,9 @@ def qualified_attack_batch_runtime_dependencies(program):
         if subscriptions is not None and any(
             child.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT for child in subscriptions.subscriptions
         ):
-            raise ValueError("Direct player attack requires a single event subscription")
+            if required := opponent_attack_draw_cast_runtime_dependencies(program, subscriptions):
+                return required
+            raise ValueError("Direct player attack requires one closed event subscription")
     if program.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT:
         from .faction_trigger_model import faction_condition
         from .faction_trigger_shapes import faction_branch_for_program

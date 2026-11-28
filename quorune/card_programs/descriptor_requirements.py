@@ -10,6 +10,7 @@ from ..resolution_characteristic_model import (
 )
 
 def _movement_result_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..rules.airbend import airbend_effect_payload_dependencies
     from ..rules.graveyard_exile_branches import graveyard_exile_branch_payload_dependencies
     from ..opponent_discard_entry_model import OPPONENT_DISCARD_ENTRY_HANDLER, OpponentDiscardEntrySpec
 
@@ -21,14 +22,17 @@ def _movement_result_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..rules.graveyard_card_results import graveyard_card_counter_life_payload_dependencies
     from ..rules.targeted_exile_token_results import targeted_exile_token_payload_dependencies
     from ..rules.opponent_exile_draw_results import opponent_exile_draw_payload_dependencies
+    from ..rules.affected_library_search_batch import exile_land_payload_dependencies
 
-    return (graveyard_exile_branch_payload_dependencies(value)
+    return (airbend_effect_payload_dependencies(value)
+        or graveyard_exile_branch_payload_dependencies(value)
         or graveyard_exile_token_payload_dependencies(value)
         or graveyard_exile_type_outcome_payload_dependencies(value)
         or targeted_graveyard_outcome_payload_dependencies(value)
         or graveyard_card_counter_life_payload_dependencies(value)
         or targeted_exile_token_payload_dependencies(value)
-        or opponent_exile_draw_payload_dependencies(value))
+        or opponent_exile_draw_payload_dependencies(value)
+        or exile_land_payload_dependencies(value))
 
 
 def _temporary_play_permission_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
@@ -187,11 +191,13 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..rules.manifest_shapes import manifest_result_payload_dependencies
     from ..rules.cloak_shapes import cloak_payload_dependencies
     from ..rules.event_counter_threshold import event_counter_threshold_payload_dependencies
+    from ..rules.qualified_library_cast import qualified_library_cast_payload_dependencies
     if owned_choice := (bounded_hand_cast_payload_dependencies(value)
                         or distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
                         or venture_payload_dependencies(value) or initiative_payload_dependencies(value)
                         or manifest_result_payload_dependencies(value) or cloak_payload_dependencies(value)
-                        or event_counter_threshold_payload_dependencies(value)):
+                        or event_counter_threshold_payload_dependencies(value)
+                        or qualified_library_cast_payload_dependencies(value)):
         return owned_choice
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
@@ -304,13 +310,28 @@ def _damage_payload_dependencies(value, mechanics):
 
 
 def _zone_choice_payload_dependencies(value):
-    from ..rules.repeated_apnap_payment import MECHANIC, is_payment_round, payment_round_node_capabilities
+    from ..rules.fixed_opponent_land_search import opponent_land_search_node_capabilities
+
+    if (search := opponent_land_search_node_capabilities((value,), None, None, ())) is not None:
+        if not search:
+            raise ValueError("Malformed opponent land search descriptor")
+        return search
+    from ..rules.colored_permanent_sacrifice import all_colored_sacrifice_payload_dependencies
+
+    if colored := all_colored_sacrifice_payload_dependencies(value):
+        return colored
+    from ..rules.created_token_fights import created_token_fight_payload_dependencies
+
+    if fights := created_token_fight_payload_dependencies(value):
+        return fights
+    from ..rules.apnap_library_reveals import library_reveal_round_payload_dependencies
+
+    if library_reveal := library_reveal_round_payload_dependencies(value):
+        return library_reveal
+    from ..rules.repeated_apnap_payment import is_payment_round, payment_round_payload_dependencies
 
     if is_payment_round(value):
-        required = payment_round_node_capabilities((value,), None, None, (MECHANIC,))
-        if not required:
-            raise ValueError("Malformed repeated APNAP payment descriptor")
-        return required
+        return payment_round_payload_dependencies(value)
     from ..apnap_object_payment import APNAP_OBJECT_PAYMENT_CAPABILITY, apnap_object_payment_dependencies
     from ..rules.opponent_caster_discard_payment import (
         CASTER_DISCARD_PAYMENT_CAPABILITY, uses_caster_discard_payment, validate_caster_discard_payment,
@@ -437,7 +458,9 @@ def _player_query_amount_runtime_dependencies(value):
 
 def _fixed_alternative_price_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     from ..public_alternative_costs import (
+        battlefield_creature_price_payload_dependencies,
         creature_damage_price_payload_dependencies,
+        life_and_blue_hand_exile_price_payload_dependencies,
         live_attacking_price_payload_dependencies, opponent_history_price_payload_dependencies,
     )
     from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
@@ -446,13 +469,18 @@ def _fixed_alternative_price_dependencies(value: Mapping[str, Any]) -> tuple[str
         *conditional_free_cast_capabilities(value),
         *opponent_history_price_payload_dependencies(value),
         *live_attacking_price_payload_dependencies(value),
+        *battlefield_creature_price_payload_dependencies(value),
         *creature_damage_price_payload_dependencies(value),
+        *life_and_blue_hand_exile_price_payload_dependencies(value),
     )
 
 
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     if isinstance(value, Mapping):
+        from ..rules.announced_x_draw_replacement import announced_x_draw_replacement_payload_dependencies
+        if announced_draw := announced_x_draw_replacement_payload_dependencies(value):
+            return announced_draw
         from ..rules.optional_draw_discard import source_shared_type_draw_discard_dependencies
         if shared_source := source_shared_type_draw_discard_dependencies(value):
             return shared_source
@@ -575,6 +603,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..untap_step import conditional_untap_scope_dependencies
         own = (*own, *conditional_untap_scope_dependencies(value))
         own = (*own, *_fixed_alternative_price_dependencies(value))
+        from ..semantic_runtime.quantified_anthems import recipient_attack_anthem_dependencies
+
+        own = (*own, *recipient_attack_anthem_dependencies(value))
         from ..land_entry_condition_model import land_entry_condition_capabilities
         own = (*own, *land_entry_condition_capabilities(value))
         from ..nonmana_kicker import NONMANA_KICKER_HANDLER,FixedNonmanaKickerSpec,nonmana_kicker_dependencies

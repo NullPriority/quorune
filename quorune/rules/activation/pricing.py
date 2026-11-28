@@ -20,6 +20,11 @@ _ORDER_CHOICES = {LOWEST_COST: 'minimum_first', MINIMUM_COST: 'unrestricted_firs
 
 def _ordinary_prices(host, seat, source, ability, modifiers, response=None):
     value = ability.announced_x_minimum if response is None else chosen_activation_x(ability, response)
+    if ability.announced_energy_reanimation and value > host.state.players[seat].energy:
+        raise ActivationProposalError(
+            "The activating player cannot pay the announced energy",
+            status="unpayable", reason="energy_x_unpayable",
+        )
     if ability.loyalty_x and value > source.counters.get("loyalty", 0):
         raise ActivationProposalError(
             "The source has fewer loyalty counters than the announced cost",
@@ -163,12 +168,14 @@ def activation_target_price_preview(host, seat, source, ability, public_schema):
 def activation_priced_offer_payload(host, seat, source, ability, hint, public_schema, *, program=None):
     from .offer_payload import activation_offer_payload
     from .graveyard_copy import has_exact_announced_activation_target
+    from .equip_permissions import ZeroEquipPrice
 
     if has_exact_announced_activation_target(program):
         return activation_offer_payload(source, ability, hint), public_schema
     projection = activation_target_price_preview(host, seat, source, ability, public_schema)
     if projection is None:
-        if not ability.mana_cost_options and (hint.get("chosen_payment_color") is not None
+        if not ability.mana_cost_options and (isinstance(ability, ZeroEquipPrice)
+                or hint.get("chosen_payment_color") is not None
                 or getattr(ability, 'ability_local_mana_reduction', None) is not None
                 or any(getattr(value, 'schema_version', None) == 3
                        for value in current_activation_cost_modifiers(host, seat, source, ability))):

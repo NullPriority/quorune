@@ -15,6 +15,20 @@ EXERT_MANA_SOURCE = "exert_mana_source"
 EXERT_MANA_CAPABILITY = "mana.activated.exert_source"
 DISCARD_HAND_MANA_SOURCE = "whole_hand_mana_cost"
 WHOLE_HAND_MANA_CAPABILITY = "mana.activated.whole_hand_sacrifice"
+DOUBLE_UNSPENT_MANA = "double_unspent_mana"
+DOUBLE_UNSPENT_MANA_CAPABILITY = "mana.activated.double_unspent_mana"
+_DOUBLE_UNSPENT_TEXT = "double the amount of each type of unspent mana you have."
+
+
+def double_unspent_mana_text(cost_text, effect_text):
+    return (" ".join(cost_text.split()).casefold() == "{3}, {t}"
+            and " ".join(effect_text.split()).casefold() == _DOUBLE_UNSPENT_TEXT)
+
+
+def doubles_unspent_mana(ability):
+    result = ability.fixed_mana_result
+    return result is not None and result.kind == DOUBLE_UNSPENT_MANA
+
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,8 +39,12 @@ class FixedManaResultSpec:
     counter_name: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7}:
             raise ValueError('Fixed mana result schema version is unsupported')
+        if self.schema_version == 7:
+            if self.kind != DOUBLE_UNSPENT_MANA or type(self.amount) is not int or self.amount or self.counter_name is not None:
+                raise ValueError("Mana doubling requires its exact production marker")
+            return
         if self.schema_version == 6:
             if self.kind != DISCARD_HAND_MANA_SOURCE or type(self.amount) is not int or self.amount or self.counter_name is not None:
                 raise ValueError("Whole-hand mana cost requires its exact marker")
@@ -61,6 +79,8 @@ class FixedManaResultSpec:
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == 7:
+            return (FIXED_MANA_RESULT_CAPABILITY, DOUBLE_UNSPENT_MANA_CAPABILITY)
         if self.schema_version == 6:
             return (WHOLE_HAND_MANA_CAPABILITY, "zone.discard.whole_hand", "zone.change.destination_replacement")
         if self.schema_version == 5:
@@ -88,6 +108,8 @@ class FixedManaResultSpec:
         return cls(**value)
 
     def mode_effect(self):
+        if self.schema_version == 7:
+            raise ValueError("Doubling is a postpayment mana output")
         if self.schema_version == 6:
             raise ValueError("Whole-hand mana costs are committed before producing mana")
         if self.schema_version == 5:

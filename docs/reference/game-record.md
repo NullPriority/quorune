@@ -14,6 +14,10 @@ The checkpoint state and its hash come from one captured state payload.
 The hash normalizes top-level log and capability fields and preserves
 historical omissions. The stored checkpoint owns an independent copy
 of its mutable values.
+The durable writer shares each state's canonical JSON member bytes between
+the checkpoint and its hash. The wire state retains fields that are omitted
+or normalized for hashing, and the complete checkpoint replaces the previous
+file atomically.
 
 A physical card can carry imported printing details in the optional
 `printing` field. Oracle identity still selects the card's rules program.
@@ -41,6 +45,14 @@ state. It records how many phases remain queued, whether an added phase is
 active, and how many actual draws have completed during its draw step.
 Each added phase follows the normal untap, upkeep and draw sequence in the
 current turn. Checkpoints omit the field when no queued or active phase exists.
+
+The optional `main_phase_extra_combats` queue records a version-one main
+phase anchor, current turn, and newest-first phase grants. A combat grant
+carries the original landfall stack reference. Beginning that combat passes
+the reference to the ordinary delayed trigger, which enters priority before
+attackers declare. Returning to the normal turn or ending it clears the
+queue. Combat-origin grants retain the existing `extra_combat_phases`
+integer and the record omits the main-phase queue when it is unused.
 
 The optional paid Impending choice carries the fixed price and time-counter
 count on the stack. A copied spell carries the same choice. When the spell
@@ -395,6 +407,11 @@ and previously collected group permutations. Each issued order belongs to the
 current destination's principal, and no component moves before all groups are
 ordered. Earlier request schemas retain their codecs.
 
+Schema-five physical ordering requests bind a resolving sacrifice batch to
+the version-two departure plan and retain completed owner permutations. The
+choice belongs to the receiving owner and is collected before that instruction
+moves any object. Replay resumes the same resolving instruction.
+
 Cipher records retain a version-one typed `cipher_encoding` link on the
 physical exiled card, including both original incarnations. A committed encoded
 object departure ends the link for future grants. Existing pending triggers
@@ -540,7 +557,7 @@ before consuming a grant or advancing the scheduler.
 | `pilot-seat-memory/` | Optional bounded memory isolated by seat |
 | `plans.json` | Remaining validated ordered actions for safe fixed-seat resume |
 | `review.json`, `review.md` | Derived diagnostics and fidelity review; rebuildable and nonauthoritative |
-| `hidden-information-audit.json` | Derived projection and reference-leak audit |
+| `hidden-information-audit.json` | Derived projection and reference-leak audit generated with the postgame or paused review |
 | `call-benchmark.json` | Derived observed provider/opportunity metrics with provenance |
 
 Raw capability tokens, guest tokens, invite codes, provider credentials, and
@@ -619,6 +636,12 @@ semantic program identities, and records revealed hand incarnations with any
 earlier disclosure. The final opening action ends that reveal duration before
 starting the first turn. Pending records retain already created delayed
 triggers; loading does not reveal again or recreate the scheduled result.
+
+A fixed alternative price can use an inner version-three descriptor for one
+life and one blue card from the caster's hand. The existing casting command
+records the selected alternative and the ordinary typed payment leaves.
+Replay revalidates those payments through the same casting transaction.
+Earlier single-payment and announced-X descriptors retain their encodings.
 
 A spell with a paid hand-reveal cost records a version-one
 `casting_hand_reveals` context containing selected physical/logical identities,
@@ -947,6 +970,11 @@ Receiver-bound attack characteristic results reuse the sealed
 incarnation is skipped at resolution; the observer's identity remains the
 effect's source. Public quantity evaluation retains the trigger controller.
 
+A resolution-created turn land mana trigger has a version-one journal record
+with its own effect identity, resolving stack source, fixed land subtype,
+mana symbol, Snow provenance, and cleanup duration. Save/load and command
+replay use that record for both funding and immediate mana production.
+
 Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
 Each original cast stores an optional version-one `mana_spent_counts` stack
 fact with its physical/logical incarnation and exact concrete WUBRGC amounts.
@@ -1217,11 +1245,25 @@ The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
 
+The supported Gift spells record a version-one optional recipient in
+stack context. Copies carry the original recipient choice. The tapped Fish
+variant rebinds its exact target domain from that retained choice. The resolved
+player hexproof grant uses version two of the player turn-rule journal entry
+with a fixed player identity. All-player grants retain their version-one
+encoding. The private card draw uses the existing draw continuation and
+visibility rules.
+
 A resolved Defender permission uses declaration-rule schema five and a
 typed `permission` field. It carries either one locked battlefield
 incarnation or a live public creature query with an empty locked list.
 Its duration expires at end of turn. Older rule schemas and temporary
 Defender instruction schema three retain their replay encodings.
+
+The first-main-phase paid Mill stores its fixed price and its committed
+public card identities in the existing optional payment frame. It passes
+the same identities into the following selection frame only after payment.
+Public destinations, zone changes, and the decoding of both stages survive
+save and load.
 
 Version-five linked reanimation adds the `exile_on_leave` rider. The
 `resolution_linked_departure_exile` journal record retains the source and one
@@ -1400,6 +1442,12 @@ the active player's precombat main phase. Historical records omit the marker
 and keep passive rad counters through replay. A present null, boolean,
 unknown version, or disagreement between the two locations rejects the record.
 
+The controlled-creature Addendum uses the existing main-phase cast fact and
+seals public creature references and their zone incarnations at resolution.
+A counter replacement choice retains the later vigilance instruction with
+the original cohort. The existing continuous-effect journal tracks the
+resulting protection through cleanup.
+
 Fresh games record the version-one `counter_quantity_provenance_version` field.
 Counter replacement continuations preserve whether a positive quantity
 replacement has changed the placement's origin for effect-only matching.
@@ -1467,6 +1515,11 @@ An accepted command may carry `priority_window_holds`, the server's snapshot
 of the pilots' priority hold settings for that command. Replay restores those
 settings when scheduling priority windows. Older commands with no settings
 use their recorded game's original advancement behavior.
+
+New checkpoints pin `priority_special_actions_version` in their game config.
+An otherwise empty priority window stays open when the action catalog offers a
+special action such as suspend or turning a face-down permanent face up. Older
+checkpoints without that field replay with their original empty-window rule.
 
 The record writer replaces the checkpoint and journals before publishing the
 manifest. The server retains the previous files in a private recovery directory

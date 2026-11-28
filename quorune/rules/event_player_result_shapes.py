@@ -154,6 +154,10 @@ def _closed_draw_damage_has_recipient(item, effect):
 
 
 def bind_event_player_count_effect(state, item, effect):
+    from .artifact_mana_tap_control import bind_artifact_mana_tap_control, uses_artifact_mana_tap_control
+
+    if uses_artifact_mana_tap_control(effect):
+        return bind_artifact_mana_tap_control(state, item, effect)
     from .opposing_owner_entry_life import bind_opposing_owner_entry_life, uses_opposing_owner_entry_life
 
     if uses_opposing_owner_entry_life(effect):
@@ -398,9 +402,12 @@ def _equipped_combat_hand_count_runtime_dependencies(program):
 
 
 def event_player_damage_runtime_dependencies(program):
+    from .artifact_mana_tap_control import artifact_mana_tap_control_program_dependencies
     from ..land_entry_condition_model import OTHER_LAND_ARRIVAL_COVERAGE, uses_other_land_arrival_condition
     from ..triggered_mana_model import LAND_MANA_TAP_EVENT, SOURCE_MANA_TAP_DAMAGE_MECHANIC, SOURCE_MANA_TAP_EVENT
 
+    if artifact_control := artifact_mana_tap_control_program_dependencies(program):
+        return artifact_control
     if program.event == SOURCE_MANA_TAP_EVENT or SOURCE_MANA_TAP_DAMAGE_MECHANIC in program.coverage:
         return _source_mana_tap_damage_dependencies(program)
     if OTHER_LAND_ARRIVAL_COVERAGE in program.coverage or uses_other_land_arrival_condition(program.event_condition):

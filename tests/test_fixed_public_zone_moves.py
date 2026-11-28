@@ -4,6 +4,7 @@ import copy
 from copy import deepcopy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -3637,3 +3638,254 @@ class EventLibraryDepartureNativeTests(InheritedNativeFixture, unittest.TestCase
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NonhistoricNonlandReturnTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "nonhistoric-return.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / "bound-effect-program-cards.json",
+                                fixtures / "fixed-public-zone-move-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Nonhistoric return", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def save_replay(self, game, name):
+        from hashlib import file_digest
+        from quorune.record import authoritative_state_hash, replay_record
+
+        parent = os.environ.get("QUORUNE_NONHISTORIC_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        destination = Path(parent) / name
+        game.save(destination)
+        result = replay_record(destination, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, result["final_state_hash"])
+        with (destination / "manifest.json").open("rb") as handle:
+            manifest_hash = file_digest(handle, "sha256").hexdigest()
+        destination.with_suffix(".receipt.json").write_text(
+            json.dumps({"manifest_sha256": manifest_hash, "final_state_sha256": state_hash,
+                        "commands": len(game.commands)}, indent=2) + "\n", encoding="utf-8",
+        )
+
+    def test_actual_desynchronization_reads_live_independent_exclusions_and_returns_to_actual_owners(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(700616161)
+        engine = game.engine
+        spell = self.add(engine, "Desynchronization", zone="hand")
+        borrow = self.add(engine, "Act of Treason", zone="hand")
+        borrowed = self.add(engine, "Grizzly Bears", seat="B", ref="borrowed-nonhistoric")
+        untouched = self.add(engine, "Grizzly Bears", seat="D", ref="other-nonhistoric")
+        coated = self.add(engine, "Birds of Paradise", seat="C")
+        coating = self.add(engine, "Liquimetal Coating", seat="B")
+        keep = [self.add(engine, name, seat=seat) for name, seat in (
+            ("Forest", "A"), ("Sol Ring", "B"), ("Isamaru, Hound of Konda", "C"),
+            ("The Birth of Meletis", "D"), ("The One Ring", "A"), ("Darksteel Citadel", "B"),
+        )]
+        for card in (spell, borrow, coating):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 4, "R": 1, "U": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", borrow, [borrowed.ref], reserve={"C": 2, "U": 2})
+        self.resolve_top(game)
+        self.assertEqual(("B", "A"), (game.state.cards[borrowed.object_id].owner,
+                                     game.state.cards[borrowed.object_id].controller))
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = (row for row in actions if row["id"].startswith(f"cast:{spell.ref}"))
+        self.assertFalse(offer.get("target_schema"))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": offer["id"], "pay": "auto"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast_for(game, "A", spell)
+        self.assertFalse(game.state.stack[-1].targets)
+        self.priority(game, "B")
+        actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activation, = (row for row in actions if row["id"].startswith(f"activate:{coating.ref}:"))
+        result = game.act("pilot:B", {"action_id": activation["id"], "targets": [coated.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(game)
+        live = engine._effective_card_data(game.state.cards[coated.object_id])
+        self.assertIn("artifact", engine._type_parts(live["type_line"])[0])
+        self.save_replay(game, "desynchronization-pending-game-record")
+        observe = ZoneTransitionOwner._publish_simultaneous_zone_batch
+        batches = []
+        expected = {borrowed.object_id, untouched.object_id}
+
+        def record_batch(owner, snapshots, *args, **kwargs):
+            members = {card.object_id for card, _ in snapshots}
+            if expected.intersection(members):
+                batches.append(members)
+            return observe(owner, snapshots, *args, **kwargs)
+
+        with patch.object(ZoneTransitionOwner, "_publish_simultaneous_zone_batch", record_batch):
+            self.assertIsNone(self.resolve(game))
+        self.assertEqual([expected], batches)
+        for card in (*keep, coating, coated):
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+        for card, seat in ((borrowed, "B"), (untouched, "D")):
+            current = game.state.cards[card.object_id]
+            self.assertEqual((seat, "hand"), (current.owner, current.zone))
+            self.assertIn(card.object_id, game.state.players[seat].zones["hand"])
+            self.assertNotIn(card.object_id, game.state.players["A"].zones["hand"])
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.save_replay(game, "desynchronization-batch-game-record")
+
+    def test_actual_desynchronization_empty_set_resolves_without_a_choice(self):
+        game = self.session(700616162)
+        spell = self.add(game.engine, "Desynchronization", zone="hand")
+        land = self.add(game.engine, "Forest", seat="B")
+        artifact = self.add(game.engine, "Sol Ring", seat="C")
+        self.prepare(game, mana={"C": 2, "U": 2})
+        self.assert_closed(game, spell)
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(["battlefield", "battlefield", "graveyard"],
+                         [game.state.cards[card.object_id].zone for card in (land, artifact, spell)])
+        self.save_replay(game, "desynchronization-empty-game-record")
+
+    def test_nonhistoric_return_admission_rejects_each_omitted_exclusion(self):
+        from dataclasses import replace
+        from test_controller_creature_keyword_absence import register_card
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.public_zone_moves import NONHISTORIC_NONLAND_RETURN_CAPABILITY
+        from quorune.replacement.immutable import thaw_value
+
+        profile = "commander_review"
+        record = self.db.lookup("Desynchronization", fuzzy=False)
+        binding, semantics = register_card(self.db, self.registry, record.name)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        self.assertIsNone(program.target_schema)
+        for key, omitted in (("excluded_types", "land"), ("excluded_types", "artifact"),
+                             ("excluded_subtypes", "saga"), ("excluded_supertypes", "legendary")):
+            effects = deepcopy(thaw_value(program.effects))
+            effects[0]["set"]["query"][key].remove(omitted)
+            changed = replace(program, effects=effects)
+            self.assertFalse(bind_semantic_program_runtime(
+                changed, capability_registry=self.registry, profile=profile,
+            )["strict"], omitted)
+        deps = tuple(value for value in program.capability_dependencies if value != NONHISTORIC_NONLAND_RETURN_CAPABILITY)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile=profile).to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=profile)
+        self.assertFalse(result["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{NONHISTORIC_NONLAND_RETURN_CAPABILITY}", result["blockers"])
+        for text in (record.oracle_text.replace("each nonland permanent", "target nonland permanent"),
+                     record.oracle_text.replace("not historic", "historic or tapped"),
+                     record.oracle_text.replace("owner's hand", "owner's library")):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(record, oracle_text=text), capability_registry=self.registry, capability_profile=profile,
+            ).status)
+
+
+class LegendarySpellExileNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "legendary-spell-exile.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "fixed-public-zone-move-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Legendary spell", [
+                DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+                DeckEntry("Generic Bound Plains", 30),
+            ], ["Isamaru, Hound of Konda"],
+        )
+
+    def test_legendary_spell_reminder_requires_its_matching_type_line(self):
+        oracle = (
+            "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\n"
+            "Exile all nonland permanents that aren't legendary."
+        )
+        record = card_record(oracle, type_line="Legendary Sorcery")
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIsNone(node.target_schema)
+        spec = PublicZoneMoveSetSpec.from_dict(node.effects[0]["set"])
+        self.assertEqual(("land",), spec.query.excluded_types)
+        self.assertEqual(("legendary",), spec.query.excluded_supertypes)
+        for mutation in (
+            replace(record, type_line="Sorcery"),
+            replace(record, oracle_text=oracle.replace("planeswalker", "artifact")),
+        ):
+            with self.subTest(mutation=mutation):
+                changed = compile_oracle_card(mutation, capability_registry=self.registry)
+                self.assertNotEqual("exact", changed.status)
+
+    def test_actual_blast_denies_only_legendary_artifact_and_exiles_untargeted_batch(self):
+        from quorune.rules.casting.model import CastProposalError, CastProposalRequest
+        from quorune.rules.casting.proposal import build_cast_offer, build_cast_proposal
+
+        session = self.session(1631001)
+        engine = session.engine
+        source = self.add(engine, "Urza's Ruinous Blast", zone="hand")
+        artifact = self.add(engine, "The One Ring")
+        land = self.add(engine, "Great Furnace")
+        opponent_legend = self.add(engine, "Isamaru, Hound of Konda", seat="B")
+        first = self.add(engine, "Sol Ring", seat="B")
+        second = self.add(engine, "Sol Ring", seat="C", ref="blast-second-ring")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4, "W": 1})
+        blocked = build_cast_offer(engine, "A", source)
+        self.assertEqual("legendary_spell_cast_restriction", blocked.reason)
+        before = authoritative_state_hash(session.state)
+        with self.assertRaises(CastProposalError) as rejected:
+            build_cast_proposal(engine, CastProposalRequest("A", source.ref, ("hand",)))
+        self.assertEqual(blocked.reason, rejected.exception.reason)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        walker = self.add(engine, "Karn, Scion of Urza")
+        self.prepare(session)
+        self.assertEqual("payable", build_cast_offer(engine, "A", source).status)
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.assertFalse(session.state.stack[-1].targets)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        for permanent in (artifact, land, opponent_legend, walker):
+            self.assertEqual("battlefield", session.state.cards[permanent.object_id].zone)
+        for permanent in (first, second):
+            self.assertEqual("exile", session.state.cards[permanent.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.replay(session)
+
+    def test_actual_blast_resolves_after_only_creature_qualifier_leaves(self):
+        session = self.session(1631002)
+        source = self.add(session.engine, "Urza's Ruinous Blast", zone="hand")
+        qualifier = self.add(session.engine, "Isamaru, Hound of Konda")
+        other = self.add(session.engine, "Sol Ring", seat="C")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        self.prepare(session, mana={"C": 4, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.cast_for(session, "B", bounce, (qualifier.ref,))
+        self.resolve_top(session)
+        self.assertEqual("hand", session.state.cards[qualifier.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[other.object_id].zone)
+        self.replay(session)

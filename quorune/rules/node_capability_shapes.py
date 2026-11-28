@@ -39,7 +39,6 @@ from .temporary_declaration_restrictions import (
     single_target_schema_from_declaration_group,
     temporary_declaration_restriction,
 )
-from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
 from .amass_capability_shapes import fixed_amass_node_capabilities
 from .cumulative_upkeep_capability_shapes import (
     fixed_life_cumulative_upkeep_node_capabilities,
@@ -51,6 +50,7 @@ from .destruction_regeneration_capability_shapes import (
     targeted_destruction_node_capabilities as _targeted_destruction_capabilities,
 )
 from .damage_capability_shapes import fixed_damage_node_capabilities
+from .fixed_target_sequence_shapes import fixed_target_effect_sequence_node_capabilities
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -176,12 +176,8 @@ _TARGETED_EXPLORE_SCHEMA = {
     "controller_relation": "you",
     "count": 1,
 }
-_FIXED_TARGET_SEQUENCE_MECHANIC = "fixed-target-effect-sequence"
 _FIXED_TARGET_SEQUENCE_KEYWORDS = frozenset(
     value.title() for value in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
-)
-_FIXED_TARGET_ZONE_OBJECT_KEYWORDS = frozenset(
-    value.title() for value in ZONE_OBJECT_KEYWORDS
 )
 _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     _COUNTER_STACK_BASE,
@@ -835,131 +831,6 @@ def fixed_counter_placement_batch_node_capabilities(
             "target.revalidate_resolution",
         )
     return ()
-
-
-def fixed_target_effect_sequence_node_capabilities(
-    *,
-    effects: Sequence[Mapping[str, Any]],
-    target_schema: Mapping[str, Any] | None,
-    mechanic_ids: Iterable[str],
-) -> tuple[str, ...]:
-    """Return ownership for one closed target-threaded counter sequence."""
-
-    mechanics = {str(value).casefold() for value in mechanic_ids}
-    if any(
-        effect.get("op") == "grant_zone_object_keyword"
-        for effect in effects
-    ):
-        if not {
-            _FIXED_TARGET_SEQUENCE_MECHANIC,
-            "cr-115-targets",
-            "cr-122-counters",
-            "cr-611-continuous-effects",
-        }.issubset(mechanics) or len(effects) != 2:
-            return ()
-        counter, grant = effects
-        if (
-            set(counter) != {"op", "card", "counter", "amount", "source"}
-            or counter.get("op") != "place_counters"
-            or counter.get("card") != "$target.0"
-            or type(counter.get("counter")) is not str
-            or not counter.get("counter")
-            or type(counter.get("amount")) is not int
-            or counter.get("amount", 0) <= 0
-            or counter.get("source") != "$source"
-            or not fixed_counter_target_schema_is_closed(target_schema)
-        ):
-            return ()
-        keyword = grant.get("keyword")
-        keyword_mechanic = keyword_counter_mechanic(keyword)
-        if (
-            set(grant) != {"op", "card", "keyword"}
-            or grant.get("op") != "grant_zone_object_keyword"
-            or grant.get("card") != "$target.0"
-            or keyword not in _FIXED_TARGET_ZONE_OBJECT_KEYWORDS
-            or keyword_mechanic is None
-            or keyword_mechanic not in mechanics
-        ):
-            return ()
-        counter_mechanic = keyword_counter_mechanic(counter.get("counter"))
-        if counter_mechanic is not None and counter_mechanic not in mechanics:
-            return ()
-        return (
-            "continuous.resolution.fixed_keyword_zone_object",
-            *(("counter.characteristic.keyword",) if counter_mechanic else ()),
-            "counter.producer.fixed_effect",
-            "resolution.effect_sequence.fixed_target",
-            *direct_target_predicate_capabilities(target_schema),
-            "target.revalidate_resolution",
-        )
-    if not {
-        _FIXED_TARGET_SEQUENCE_MECHANIC,
-        "cr-115-targets",
-        "cr-122-counters",
-        "cr-611-continuous-effects",
-    }.issubset(mechanics) or not 2 <= len(effects) <= 4:
-        return ()
-    if not fixed_counter_target_schema_is_closed(target_schema):
-        return ()
-    assert target_schema is not None
-    counter_count = 0
-    keyword_counter = False
-    characteristic_count = 0
-    granted_keywords: set[str] = set()
-    for effect in effects:
-        operation = effect.get("op")
-        if operation == "place_counters":
-            if (
-                set(effect) != {"op", "card", "counter", "amount", "source"}
-                or effect.get("card") != "$target.0"
-                or type(effect.get("counter")) is not str
-                or not effect.get("counter")
-                or type(effect.get("amount")) is not int
-                or effect.get("amount", 0) <= 0
-                or effect.get("source") != "$source"
-            ):
-                return ()
-            counter_mechanic = keyword_counter_mechanic(effect.get("counter"))
-            if counter_mechanic is not None:
-                if counter_mechanic not in mechanics:
-                    return ()
-                keyword_counter = True
-            counter_count += 1
-            continue
-        if operation == "modify_stats_until_end_of_turn":
-            if (
-                set(effect) != {"op", "card", "power", "toughness"}
-                or effect.get("card") != "$target.0"
-                or type(effect.get("power")) is not int
-                or type(effect.get("toughness")) is not int
-                or (effect.get("power") == 0 and effect.get("toughness") == 0)
-            ):
-                return ()
-            characteristic_count += 1
-            continue
-        if operation == "grant_keyword_until_end_of_turn":
-            keyword = effect.get("keyword")
-            if (
-                set(effect) != {"op", "card", "keyword"}
-                or effect.get("card") != "$target.0"
-                or keyword not in _FIXED_TARGET_SEQUENCE_KEYWORDS
-                or keyword in granted_keywords
-            ):
-                return ()
-            granted_keywords.add(keyword)
-            characteristic_count += 1
-            continue
-        return ()
-    if counter_count != 1 or characteristic_count < 1:
-        return ()
-    return (
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
-        *(("counter.characteristic.keyword",) if keyword_counter else ()),
-        "counter.producer.fixed_effect",
-        "resolution.effect_sequence.fixed_target",
-        *direct_target_predicate_capabilities(target_schema),
-        "target.revalidate_resolution",
-    )
 
 
 def fixed_source_effect_sequence_node_capabilities(

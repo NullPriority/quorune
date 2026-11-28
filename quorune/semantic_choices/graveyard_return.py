@@ -6,8 +6,10 @@ import re
 from ..public_characteristic_aggregates import reduce_public_characteristic_values
 from ..replacement.immutable import FrozenMap
 from ..public_zone_moves import PublicZoneMoveObject
+from ..rules.different_name_graveyard_return import different_name_limits
 from ..rules.graveyard_return_choices import (
-    OPERATION, CAPABILITY, RETURN_PAIR_FIELD, chosen_tapped_land_move, paired_graveyard_return_move, validate_return_choice,
+    OPERATION, CAPABILITY, RETURN_PAIR_FIELD, chosen_different_name_permanent_move,
+    chosen_tapped_land_move, paired_graveyard_return_move, validate_return_choice,
 )
 from ..semantic_runtime.intents import RecordChoiceIntent, ReturnGraveyardCardToOwnerHandIntent
 from .model import (AutoContinue, ObjectChoice, SemanticChoicePreparation, SemanticChoiceRequest,
@@ -30,6 +32,8 @@ def _eligible_return_rows(query, actor, selection):
     if (len(refs) != len(set(refs)) or any(row is None or row.owner != actor
             or row.token or not row.logical_object_id or not selection.matches(row) for row in rows)):
         raise SemanticChoiceError('Graveyard return candidates do not match their owned public query')
+    if selection.different_name_permanents and any(not row.physical_card for row in rows):
+        raise SemanticChoiceError("The return choices must be current permanent cards")
     if not selection.greatest_power or not rows:
         return rows
     powers = tuple(0 if row.effective_power is None else row.effective_power for row in rows)
@@ -78,6 +82,8 @@ class GraveyardReturnChoiceHandler:
             _return_identity(row)
         refs = tuple(row.ref for row in rows)
         optional = not selection.required
+        if selection.different_name_permanents:
+            return _prepare_different_name_return(effect, context, rows)
         if selection.returns_tapped_land:
             prompt = 'You may return a land card from your graveyard to the battlefield tapped.'
         elif selection.returns_to_battlefield:
@@ -113,6 +119,8 @@ class GraveyardReturnChoiceHandler:
                 or any(type(value) is not str or not value for value in identities.values())
                 or type(label) is not str or not label):
             raise SemanticChoiceError('Graveyard return continuation identities are malformed')
+        if selection.different_name_permanents:
+            return _complete_different_name_return(response, query, actor, selection, identities)
         selected = response.get('card')
         if selection.greatest_power:
             current = _eligible_return_rows(query, actor, selection)
@@ -136,6 +144,50 @@ class GraveyardReturnChoiceHandler:
             effect = chosen_tapped_land_move(card) if selection.returns_tapped_land else paired_graveyard_return_move((card,))
             return SemanticChoiceCompletion(prepend_effects=(FrozenMap(effect),))
         return SemanticChoiceCompletion(intents=(_return_intent(row, actor=actor, reason=label),))
+
+
+def _prepare_different_name_return(effect, context, rows):
+    refs = tuple(row.ref for row in rows)
+    bounds = different_name_limits(tuple((row.ref, row.public_rules_names) for row in rows))
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Choose any number of differently named permanent cards to return to the battlefield.",
+            choice=ObjectChoice(
+                field_name="cards", legal_refs=refs, zones=("graveyard",), minimum=0,
+                maximum=len(refs), optional=True, owner_relation="actor",
+                schema_extras=FrozenMap({"subset_maxima": bounds}) if bounds else FrozenMap(),
+            ),
+            public_context=FrozenMap({
+                "stack": context.stack_ref, "operation": OPERATION,
+                "objects": [{"id": row.ref, "name": " // ".join(row.public_rules_names) or row.printed_name} for row in rows],
+            }),
+        ),
+        continuation_effect=FrozenMap({
+            **dict(effect), "_choice_actor": context.actor, "_legal_refs": refs,
+            "_legal_logical_ids": {row.ref: row.logical_object_id for row in rows}, "_stack_label": context.stack_label,
+        }),
+    )
+
+
+def _complete_different_name_return(response, query, actor, selection, identities):
+    selected = response.get("cards", ())
+    if (not isinstance(selected, (tuple, list)) or any(type(ref) is not str or not ref for ref in selected)
+            or len(selected) != len(set(selected))):
+        raise SemanticChoiceError("Choose an array of unique graveyard card references")
+    if not selected:
+        return SemanticChoiceCompletion()
+    eligible = set(query.choice_candidate_refs())
+    rows = []
+    for ref in selected:
+        row = query.object(ref, zones=("graveyard",))
+        if (ref not in eligible or row is None or row.owner != actor or not row.physical_card
+                or row.logical_object_id != identities.get(ref) or not selection.matches(row)):
+            raise SemanticChoiceError("A chosen permanent card no longer matches its graveyard incarnation")
+        rows.append(row)
+    if different_name_limits(tuple((row.ref, row.public_rules_names) for row in rows)):
+        raise SemanticChoiceError("Choose permanent cards with different names")
+    effect = chosen_different_name_permanent_move(tuple(PublicZoneMoveObject.from_row(row) for row in rows))
+    return SemanticChoiceCompletion(prepend_effects=(FrozenMap(effect),))
 
 
 _PAIR_FIELDS = {"schema_version", "step", "controller", "opponent", "opponent_card", "own_card"}
@@ -294,3 +346,74 @@ def complete_paired_graveyard_return(continuation, response, query):
                   if (card := _current_pair_card(query, state[key])) is not None)
     effects = (FrozenMap(paired_graveyard_return_move(cards)),) if selected == "return" and cards else ()
     return SemanticChoiceCompletion(intents=(record,), prepend_effects=effects)
+
+
+def _each_graveyard_rows(query):
+    from ..object_query import object_matches_query
+    from ..rules.graveyard_return_choices import EACH_GRAVEYARD_RETURN_QUERY
+
+    refs = frozenset(query.choice_candidate_refs())
+    return tuple(PublicZoneMoveObject.from_row(row) for row in sorted(
+        (row for row in query.objects(zones=("graveyard",)) if row.ref in refs
+         and row.owner in query.active_seats and object_matches_query(row, EACH_GRAVEYARD_RETURN_QUERY)),
+        key=lambda row: (row.owner, row.ref),
+    ))
+
+
+def prepare_each_graveyard_return(effect, context):
+    from ..rules.graveyard_return_choices import EACH_GRAVEYARD_RETURN_FIELD, each_graveyard_return_effect
+
+    if (context.actor != context.stack_controller
+            or effect != {**each_graveyard_return_effect(), "player": context.actor}
+            or type(effect[EACH_GRAVEYARD_RETURN_FIELD]) is not int):
+        raise SemanticChoiceError("Each graveyard choice requires the spell's resolving controller")
+    rows = _each_graveyard_rows(context.query)
+    if not rows:
+        return SemanticChoicePreparation(
+            request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue("No eligible cards in the current graveyards"),
+        )
+    owners = tuple(dict.fromkeys(row.owner for row in rows))
+    groups = {owner: [row.ref for row in rows if row.owner == owner] for owner in owners}
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Choose one creature or planeswalker card from each graveyard with an eligible card.",
+            choice=ObjectChoice("cards", tuple(row.ref for row in rows), ("graveyard",),
+                                minimum=len(owners), maximum=len(owners)),
+            public_context=FrozenMap({"stack": context.stack_ref, "operation": "choose_option",
+                "objects": [{"id": row.ref, "owner": row.owner,
+                             "name": context.query.object(row.ref, zones=("graveyard",)).printed_name}
+                            for row in rows], "graveyard_groups": groups}),
+        ),
+        continuation_effect=FrozenMap({**effect, "_each_graveyard_rows": [row.to_dict() for row in rows]}),
+    )
+
+
+def complete_each_graveyard_return(continuation, response, query):
+    from ..rules.graveyard_return_choices import EACH_GRAVEYARD_RETURN_FIELD, each_graveyard_return_effect, each_graveyard_return_move
+
+    effect = dict(continuation.effect)
+    actor = continuation.semantic_frame.controller
+    snapshot = effect.pop("_each_graveyard_rows", None)
+    if (effect != {**each_graveyard_return_effect(), "player": actor}
+            or type(effect[EACH_GRAVEYARD_RETURN_FIELD]) is not int
+            or actor not in query.active_seats or not isinstance(snapshot, (tuple, list))):
+        raise SemanticChoiceError("Each graveyard choice lost its resolving controller")
+    rows = _each_graveyard_rows(query)
+    retained = tuple(PublicZoneMoveObject.from_dict(row) for row in snapshot)
+    if rows != retained:
+        raise SemanticChoiceError("The public graveyard candidates changed")
+    refs = response.get("cards")
+    by_ref = {row.ref: row for row in rows}
+    if (set(response) - {"cards", "action_id", "action", "choice_schema", "label"}
+            or not isinstance(refs, (tuple, list))
+            or any(type(ref) is not str or ref not in by_ref for ref in refs)):
+        raise SemanticChoiceError("Choose one offered card per graveyard")
+    owners = {row.owner for row in rows}
+    selected = tuple(by_ref[ref] for ref in refs)
+    if len(selected) != len(owners) or {row.owner for row in selected} != owners:
+        raise SemanticChoiceError("Choose exactly one eligible card per graveyard")
+    move = each_graveyard_return_move(
+        tuple(sorted(selected, key=lambda row: row.owner)), stack_ref=continuation.stack_ref,
+    )
+    return SemanticChoiceCompletion(prepend_effects=(FrozenMap(move),))

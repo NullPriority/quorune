@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
-import { castOffer, clickMove, evidence, startPlaytestPod, submitSingleCleanupDiscard } from "./support/playtest";
+import { boardCard, castOffer, clickMove, evidence, projectedState, startPlaytestPod, submitSingleCleanupDiscard } from "./support/playtest";
 import { driveUntil } from "./support/progress";
 import { completeCastGesture } from "./support/startup";
 
@@ -50,19 +50,6 @@ async function ready(pages: Page[], target: Locator, testInfo: TestInfo, label: 
     label,
     advance: () => submitSingleCleanupDiscard(pages),
   });
-}
-
-async function projectedState(page: Page) {
-  const game = await page.locator(".game-shell").getAttribute("data-game-id");
-  return page.evaluate(async (id) => {
-    const tab = sessionStorage.getItem("commander-browser-tab");
-    if (!tab) throw new Error("Missing a browser tab identity");
-    const response = await fetch(`/api/v1/games/${id}/state?full=true`, {
-      headers: { "X-Commander-Tab": tab }, credentials: "same-origin",
-    });
-    if (!response.ok) throw new Error(`Game state request returned ${response.status}`);
-    return (await response.json()).packet.state;
-  }, game);
 }
 
 async function expectTableAspect(page: Page) {
@@ -213,7 +200,7 @@ test("@browser-rules visible zone piles distinguish a face-down exile and a priv
     await clickMove(host, land);
     await ready(pages, chip, info, "Cast The Reality Chip");
     await completeCastGesture(host, () => chip.click());
-    const chipOnBoard = host.getByTestId("own-battlefield").getByText("The Reality Chip", { exact: true });
+    const chipOnBoard = boardCard(host, "The Reality Chip");
     await ready(pages, chipOnBoard, info, "Resolve The Reality Chip");
     const top = (await projectedState(host)).players.A.known_top[0];
     expect(top.n).toBeTruthy();
@@ -269,7 +256,7 @@ test("@browser-rules a public library reveal shows the same projected face to bo
       await ready(pages, cast, info, `Cast ${name}`);
       await completeCastGesture(host, () => cast.click());
     }
-    const permanent = host.getByTestId("own-battlefield").getByText("Lantern of Insight", { exact: true });
+    const permanent = boardCard(host, "Lantern of Insight");
     await ready(pages, permanent, info, "Resolve the reveal permission");
     await expectLandPrinting(landOnBoard(host), true, printedIsland.cid);
     await expectLandPrinting(landOnBoard(opponent), true, printedIsland.cid);

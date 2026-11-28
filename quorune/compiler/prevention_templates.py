@@ -962,6 +962,35 @@ def _attached_recipient_prevention(normalized, source_attachment_relation):
     return ('damage-prevention-bound-attachment-v1',(effect,),None,_rules(None))
 
 
+def _combat_token_aftermath(normalized):
+    match = re.fullmatch(
+        r"Prevent all combat damage that would be dealt to you this turn\. "
+        r"For each 1 damage prevented this way, (?P<token>create .+ token(?: with [^.]+)?\.)",
+        normalized, re.I,
+    )
+    if match is None:
+        return None
+    from .token_templates import fixed_token_creation_effect_template
+    from ..fixed_token_production import fixed_token_effect_shape_is_closed
+    from ..rules.prevention_component_shapes import (
+        COMBAT_TOKEN_AFTERMATH_TEMPLATE, combat_token_aftermath_effect, decode_combat_token_aftermath,
+    )
+
+    token = fixed_token_creation_effect_template(match["token"])
+    if (token is None or token.target_schema is not None or not fixed_token_effect_shape_is_closed(token.effect)
+            or token.effect["quantity"] != 1 or "tapped" in token.effect):
+        return None
+    try:
+        recipe = decode_combat_token_aftermath({
+            "kind": "create_tokens", "schema_version": 1, "name": token.effect["name"],
+            "characteristics": token.effect["characteristics"],
+        })
+    except (TypeError, ValueError):
+        return None
+    return (COMBAT_TOKEN_AFTERMATH_TEMPLATE, (combat_token_aftermath_effect(recipe),),
+            None, _rules(None, *token.mechanics))
+
+
 def fixed_prevention_effect_template(
     text: str,
     *,
@@ -971,6 +1000,8 @@ def fixed_prevention_effect_template(
     """Lower one closed finite CR 615 sentence through ordered productions."""
 
     normalized = " ".join(text.strip().split())
+    if token_aftermath := _combat_token_aftermath(normalized):
+        return token_aftermath
     targeted_source=_targeted_damage_source_prevention(normalized)
     if targeted_source is not None:return targeted_source
     attached=_attached_recipient_prevention(normalized,source_attachment_relation)

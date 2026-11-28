@@ -296,11 +296,25 @@ class ContinuousEffectComponentTests(unittest.TestCase):
             WardSpec(generic_cost=2),
             ability_fragment_from_dict(effect.operations[1].value),
         )
-        self.assertIsNone(
-            fixed_query_keyword_grant_handler(
-                'Other creatures you control have "Ward—Pay 2 life."'
-            )
-        )
+        quoted = fixed_query_keyword_grant_handler('Other creatures you control have "Ward—Pay 2 life."')
+        self.assertIsNotNone(quoted)
+        _, descriptor, capabilities = quoted
+        self.assertIn("trigger.keyword.ward.fixed_nonmana", capabilities)
+        handler = FixedQueryKeywordGrantHandler()
+        node = handler.validate(descriptor)
+        self.assertEqual(("Ward—Pay 2 life",), tuple(node.abilities))
+        self.assertEqual((WardSpec(life_payment=2),), tuple(node.fragments))
+        self.assertTrue(node.exclude_source)
+        for text in (
+            'Other creatures you control have "Ward—Pay X life."',
+            'Other creatures you control have "Ward—Discard a card."',
+            'Creatures your opponents control have "Ward—Pay 2 life."',
+        ):
+            self.assertIsNone(fixed_query_keyword_grant_handler(text))
+        for condition in ({**descriptor["condition"], "exclude_source": False},
+                          {**descriptor["condition"], "target_controller": "source_opponents"}):
+            with self.assertRaisesRegex(SemanticNodeError, "Quoted life Ward"):
+                handler.validate({**descriptor, "condition": condition})
 
     def test_fixed_query_ability_grant_rejects_malformed_descriptors(self):
         handler = FixedQueryAbilityGrantHandler()

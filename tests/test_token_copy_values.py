@@ -808,3 +808,160 @@ class TokenCopyBatchNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertFalse(rejected["strict_capability_ready"], rejected)
         retained, _ = register_card(self.db, registry, "Extravagant Replication")
         self.assertTrue(retained["strict_capability_ready"], retained["blockers"])
+
+
+RENEWED = "Renewed Solidarity"
+
+
+class ChosenEntryTokenCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        directory = ROOT / "tests/fixtures"
+        build_fixture_database([
+            directory / name for name in ("token-copy-recipe-cards.json",
+                "bound-effect-program-cards.json", "activation-paid-creature-subtype-cards.json",
+                "life-gain-counted-result-cards.json", "additional-token-definition-cards.json",
+                "cast-creature-targets.json")
+        ], folder / "chosen-entry-token-copy.sqlite3")
+        cls.db = CardDatabase(folder / "chosen-entry-token-copy.sqlite3")
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Chosen-type token copies", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def test_renewed_exact_same_face_entry_end_step_and_batch(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.token_copy_recipes import (
+            CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY, TokenCopyBatchSpec, uses_chosen_entry_token_copy,
+        )
+        from test_controller_creature_keyword_absence import register_card
+
+        record = self.db.lookup(RENEWED, fuzzy=False)
+        kw = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(record, **kw)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = [node for node in ir.faces[0].nodes
+                 if any(uses_chosen_entry_token_copy(effect) for effect in node.effects)]
+        self.assertIsNone(node.target_schema)
+        self.assertIn(CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY, node.capability_dependencies)
+        spec = TokenCopyBatchSpec.from_effect(node.effects[0])
+        query = spec.model_query("B", chosen_type="soldier")
+        self.assertEqual(("B", True, ("soldier",), ()), (query.controller, query.token, query.subtypes_all, query.types_all))
+        self.assertTrue(query.state_predicate.entered_this_turn)
+        closure, _ = register_card(self.db, self.registry, RENEWED)
+        self.assertTrue(closure["strict_capability_ready"], closure["blockers"])
+        for oracle in (
+            "\n".join(record.oracle_text.splitlines()[1:]),
+            record.oracle_text.replace("your end step", "each end step"),
+            record.oracle_text.replace("that entered this turn", "that attacked this turn"),
+            record.oracle_text.replace("token you control of the chosen type", "creature you control of the chosen type"),
+        ):
+            changed = compile_oracle_card(replace(record, oracle_text=oracle), **kw)
+            self.assertTrue(changed.material_residuals, oracle)
+            self.assertFalse(any(node.exact and any(uses_chosen_entry_token_copy(effect) for effect in node.effects)
+                                 for node in changed.faces[0].nodes), oracle)
+        with patch("quorune.compiler.token_copy_templates.chosen_entry_token_copy_trigger_template", return_value=None):
+            omitted = compile_oracle_card(record, **kw)
+        self.assertTrue(omitted.material_residuals)
+
+    def tokens(self, game, seat="A"):
+        return {card.object_id: card for card in game.state.cards.values()
+                if card.zone == "battlefield" and card.controller == seat and card.is_token}
+
+    def test_renewed_copies_current_eligible_models_after_source_leaves(self):
+        from collections import Counter
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(70704001)
+        source = self.add(game.engine, RENEWED, zone="hand")
+        elite = self.add(game.engine, "Elite Vanguard")
+        harvest = self.add(game.engine, "Second Harvest", zone="hand")
+        growth = self.add(game.engine, "Giant Growth", zone="hand")
+        exit_source = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        exit_token = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        for card in (source, elite, harvest, growth, exit_source, exit_token):
+            self.assert_closed(game, card)
+
+        game.engine.create_token("A", name="", copy_of=elite.ref)
+        for name, subtype in (("Old Soldier", "Soldier"), ("Second Old Soldier", "Soldier"), ("Old Goblin", "Goblin")):
+            game.engine.create_token("A", name=name, characteristics={
+                "type_line": "Token Creature \u2014 " + subtype, "power": "1", "toughness": "1",
+            })
+        old_ids = set(self.tokens(game))
+        self.assertEqual(4, len(old_ids))
+        from quorune.turn_history import reset_turn_history
+
+        game.state.turn_sequence += 1
+        game.state.turn_history = reset_turn_history(game.state.turn_history, game.state.turn_sequence)
+        self.prepare(game, mana={"W": 4, "C": 20, "G": 8})
+        for index, name in enumerate(("Plains", "Plains", "Island")):
+            self.add(game.engine, name, seat="B", ref=f"renewed-opponent-mana-{index}")
+        game.engine.create_token("B", name="Foreign Soldier", quantity=2, characteristics={
+            "type_line": "Token Creature — Soldier", "power": "1", "toughness": "1",
+        })
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        pending = self.resolve(game)
+        self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
+        game = self.replay(game, load=True)
+        options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        option, = [row["id"] for row in options if row["id"].endswith(":soldier")]
+        command = {"action_id": "choose", "replacement": option}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("soldier", game.state.cards[source.object_id].annotations["chosen_creature_type"])
+
+        self.cast(game, "A", harvest)
+        self.resolve_top(game)
+        new_models = {game.engine.display_name(object_id): card for object_id, card in self.tokens(game).items()
+                      if object_id not in old_ids}
+        self.assertEqual({"Elite Vanguard", "Old Soldier", "Second Old Soldier", "Old Goblin"}, set(new_models))
+        copied_elite = new_models["Elite Vanguard"]
+        dropped = new_models["Old Soldier"]
+        self.assertEqual(3, game.engine._numeric_stat(copied_elite.object_id, "power"))
+        self.cast(game, "A", growth, [copied_elite.ref])
+        self.resolve_top(game)
+        self.assertEqual(6, game.engine._numeric_stat(copied_elite.object_id, "power"))
+
+        self.until(game, lambda s: self.trigger_count(s, source) == 1)
+        self.assertEqual("end_step", game.state.step)
+        self.assertEqual(2, len(self.tokens(game, "B")))
+        self.cast_for(game, "B", exit_token, [dropped.ref])
+        self.resolve_top(game)
+        self.assertNotIn(dropped.object_id, self.tokens(game))
+        self.cast_for(game, "B", exit_source, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual(5, game.engine._numeric_stat(copied_elite.object_id, "power"))
+        self.assertEqual(1, self.trigger_count(game, source))
+
+        game = self.replay(game, load=True)
+        previous = set(self.tokens(game))
+        cursor = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        created = {object_id: card for object_id, card in self.tokens(game).items() if object_id not in previous}
+        self.assertEqual(Counter({"Elite Vanguard": 1, "Second Old Soldier": 1}),
+                         Counter(game.engine.display_name(object_id) for object_id in created))
+        powers = {game.engine.display_name(object_id): game.engine._numeric_stat(object_id, "power")
+                  for object_id in created}
+        self.assertEqual({"Elite Vanguard": 2, "Second Old Soldier": 1}, powers)
+        event, = [row for row in game.state.events[cursor:] if row.code == "token.create"]
+        self.assertEqual(2, event.details["base_quantity"])
+        self.assertCountEqual([card.ref for card in created.values()], event.details["objects"])
+        self.assertEqual(2, len(self.tokens(game, "B")))
+        self.replay(game, load=True)

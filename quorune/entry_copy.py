@@ -6,6 +6,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from .creature_subtypes import canonical_creature_subtype
+from .copiable_program_source import COPIABLE_ORACLE_FIELD
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .token_copy_recipes import RETAINED_LEGEND_PARTNER_VERSION, TokenCopyExceptionSpec
@@ -57,7 +58,6 @@ TEMPORARY_HASTE_COPY_CAPABILITIES = (
 )
 TEMPORARY_HASTE_COPY_QUERY = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
 TEMPORARY_HASTE_COPY_EXCEPTION = TokenCopyExceptionSpec(add_keywords=('Haste',))
-COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
 

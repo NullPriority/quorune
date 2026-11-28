@@ -5,9 +5,12 @@ from __future__ import annotations
 from dataclasses import replace
 
 from ..permissions import current_turn_controller
-from ..public_library_piles_model import PublicLibraryPileState
+from ..public_library_piles_model import (
+    PUBLIC_SEARCH_SPLIT_CAPTURE, SEARCHED_PILE_VERSIONS, PublicLibraryPileState, SearchedLibraryPileState,
+    searched_pile_effect,
+)
 from .model import SemanticChoiceCompletion, SemanticChoiceError
-from .public_library_piles import PublicLibraryPilesHandler, _STATE, _effect, _spec
+from .public_library_piles import PublicLibraryPilesHandler, _STATE, _effect, _searched_state, _spec
 
 
 def _departing_opponent_state(host, continuation, actor):
@@ -17,6 +20,18 @@ def _departing_opponent_state(host, continuation, actor):
     if player is None or not player.in_game or current_turn_controller(host.state, actor) is not None:
         return None
     try:
+        if continuation.effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+            state = _searched_state(continuation.effect)
+            item = next((row for row in host.state.stack if row.ref == continuation.stack_ref), None)
+            if item is None or item.context.get("currently_resolving") is not True:
+                return None
+            captured = SearchedLibraryPileState.from_dict(item.context[PUBLIC_SEARCH_SPLIT_CAPTURE])
+            if (state.stage != "choose_card" or state.chooser != actor
+                    or state.controller != continuation.semantic_frame.controller or state.stack_ref != item.ref
+                    or state.looked != captured.looked or state.target != captured.target
+                    or state.schema_version != captured.schema_version):
+                return None
+            return state, None
         state = PublicLibraryPileState.from_dict(continuation.effect[_STATE])
         spec = _spec(continuation.effect)
         eligible = (
@@ -50,8 +65,12 @@ def concede_during_pile_choice(host, *, item, continuation, actor, response):
     commit_confirmed_concession(host, actor, response)
     if host.state.game_over:
         return
-    next_state = replace(state, stage="choose_opponent", opponent=None)
-    completion = SemanticChoiceCompletion(repeat_effect=_effect(continuation.effect, spec, next_state))
+    if isinstance(state, SearchedLibraryPileState):
+        repeated = searched_pile_effect(replace(state, stage="choose_opponent", chooser=None))
+    else:
+        next_state = replace(state, stage="choose_opponent", opponent=None)
+        repeated = _effect(continuation.effect, spec, next_state)
+    completion = SemanticChoiceCompletion(repeat_effect=repeated)
     continue_semantic_completion(
         host, item=item, continuation=continuation, actor=actor, response=response, completion=completion,
     )

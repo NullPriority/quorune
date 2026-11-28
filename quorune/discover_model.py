@@ -17,6 +17,9 @@ from .util import stable_json
 
 DISCOVER_CAPABILITY='library.discover.controller'
 DISCOVER_OPERATION='discover'
+DISCOVER_TREASURE_DIFFERENCE_VERSION = 2
+DISCOVER_RECORDED_RESULT_PROGRESS_VERSION = 8
+DISCOVER_TREASURE_DIFFERENCE_CAPABILITY = 'library.discover.tapped_treasure_difference'
 DISCOVER_STEP_OPERATION='discover_step'
 DISCOVER_CAST_OPERATION='discover_cast_choice'
 DISCOVER_FINISH_OPERATION='discover_finish'
@@ -63,6 +66,25 @@ def discover_card_qualifies(amount,*,types,mana_value):
     return 'land' not in types and discover_spell_qualifies(amount,mana_value=mana_value)
 
 
+@dataclass(frozen=True, slots=True)
+class RecordedDiscoverCard:
+    """Mana value of the last card actually exiled, before its fate changes."""
+
+    mana_value: int | None = None
+
+    def __post_init__(self):
+        if self.mana_value is not None and (type(self.mana_value) is not int or self.mana_value < 0):
+            raise ValueError('Discover requires an exact nonnegative recorded mana value')
+
+    @classmethod
+    def from_public_value(cls, value):
+        if type(value) is float and value.is_integer():
+            value = int(value)
+        if type(value) is not int:
+            raise ValueError('Discover requires a whole mana value from the current exile card')
+        return cls(value)
+
+
 @dataclass(frozen=True,slots=True)
 class ExileCastProgress:
     amount: int | None
@@ -73,6 +95,7 @@ class ExileCastProgress:
     copy_parent_ref: str | None = None
     private_search_parent: str | None = None
     name_scan: StackSpellNameScan | None = None
+    recorded_card: RecordedDiscoverCard | None = None
 
     def __post_init__(self):
         if self.name_scan is not None and (
@@ -113,12 +136,26 @@ class ExileCastProgress:
                     type(self.candidate_ref) is not str or not exiled
                     or self.candidate_ref!=exiled[-1].ref)):
             raise ValueError('An exile scan requires distinct exile incarnations and its final candidate')
+        if self.recorded_card is not None and (
+            not isinstance(self.recorded_card, RecordedDiscoverCard) or not self.amount
+            or self.private_search_parent is not None or self.supplier is not None
+            or bool(exiled) is not (self.recorded_card.mana_value is not None)
+            or (self.candidate_ref is not None and self.recorded_card.mana_value > self.amount)
+        ):
+            raise ValueError('The Discover result must retain the mana value of its last actual exile')
         for card in exiled:discover_zone_counter(card)
         object.__setattr__(self,'exiled',exiled)
 
     @property
     def candidate(self):
         return self.exiled[-1] if self.candidate_ref is not None else None
+
+    @property
+    def discovered_card(self):
+        if self.recorded_card is None:
+            return self.candidate
+        value = self.recorded_card.mana_value
+        return self.exiled[-1] if value is not None and value <= self.amount else None
 
     @property
     def cleanup_cards(self):
@@ -174,6 +211,9 @@ class ExileCastProgress:
                       "private_search_parent": self.private_search_parent}
         if self.name_scan is not None:
             search = {"schema_version": 7, "name_scan": self.name_scan.to_dict()}
+        if self.recorded_card is not None:
+            search = {'schema_version': DISCOVER_RECORDED_RESULT_PROGRESS_VERSION, 'amount': self.amount,
+                      'last_exile_mana_value': self.recorded_card.mana_value}
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -186,6 +226,7 @@ class ExileCastProgress:
         copy_parent_ref = None
         private_search_parent = None
         name_scan = None
+        recorded_card = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
@@ -210,12 +251,17 @@ class ExileCastProgress:
                 raise ValueError("A private search requires its enclosing resolution")
         elif value["schema_version"] == 7 and set(value) == common | {"name_scan"}:
             amount, name_scan = None, StackSpellNameScan.from_dict(value["name_scan"])
+        elif (value['schema_version'] == DISCOVER_RECORDED_RESULT_PROGRESS_VERSION
+                and set(value) == common | {'amount', 'last_exile_mana_value'}):
+            amount = value['amount']
+            recorded_card = RecordedDiscoverCard(value['last_exile_mana_value'])
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
-                   value['candidate_ref'], supplier, payment, copy_parent_ref, private_search_parent, name_scan)
+                   value['candidate_ref'], supplier, payment, copy_parent_ref, private_search_parent, name_scan,
+                   recorded_card)
 
 
 DiscoverProgress = ExileCastProgress
@@ -233,10 +279,13 @@ def require_current_discover_cards(progress,query,*,actor,include_candidate=True
 def validate_discover_effect(effect,*,resolved=False):
     if (not isinstance(effect,Mapping) or set(effect)!={'op','schema_version','player','amount'}
             or effect['op']!=DISCOVER_OPERATION or type(effect['schema_version']) is not int
-            or effect['schema_version']!=1 or (effect['player']!='$controller' and not resolved)
+            or effect['schema_version'] not in {1, DISCOVER_TREASURE_DIFFERENCE_VERSION}
+            or (effect['player']!='$controller' and not resolved)
             or type(effect['player']) is not str or not effect['player']):
         raise ValueError('Discover requires one controller-bound amount')
     amount=effect['amount']
+    if effect['schema_version'] == DISCOVER_TREASURE_DIFFERENCE_VERSION and (type(amount) is not int or amount <= 0):
+        raise ValueError('Discover with a Treasure difference requires the printed fixed amount')
     if type(amount) is int:
         ManaValueLimitSpec(amount)
     elif not resolved and isinstance(amount,Mapping):
@@ -258,6 +307,8 @@ def discover_payload_dependencies(value):
         return fixed_top_exile_dependencies(value)
     if value.get('op') == DISCOVER_OPERATION:
         validate_discover_effect(value)
+        if value['schema_version'] == DISCOVER_TREASURE_DIFFERENCE_VERSION:
+            return (DISCOVER_CAPABILITY, DISCOVER_TREASURE_DIFFERENCE_CAPABILITY)
         return (DISCOVER_CAPABILITY,)
     if value.get('op') == NONLAND_SCAN_OPERATION:
         validate_nonland_scan_effect(value)

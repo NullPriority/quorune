@@ -408,6 +408,178 @@ class TriggeredTransformRuntimeTests(InheritedNativeFixture, unittest.TestCase):
         result = session.act("pilot:" + seat, command)
         self.assertTrue(result.ok, result.summary)
 
+    def faithful_choice(self, session, choice, *, operation, principal="pilot:A"):
+        decision = self.resolve(session)
+        self.assertIsNotNone(decision)
+        ctx = session.packet(principal, full=True)["decision"]["ctx"]
+        self.assertEqual(operation, ctx["operation"])
+        before = authoritative_state_hash(session.state)
+        command = {"action_id": "choose", "choice": choice}
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act(principal, command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+    def faithful_activations(self, session, card, *, seat="A"):
+        self.priority(session, seat)
+        return [row for row in session.packet("pilot:" + seat, full=True)["decision"]["legal_actions"]
+                if row["id"].startswith(f"activate:{card.ref}:")]
+
+    def test_faithful_squire_cast_counters_flip_and_kaiso_prevention_replay(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import OPTIONAL_COUNTER_PLACEMENT_OPERATION
+        from quorune.rules.copied_flip_faces import FLIPPED_STATUS, capture_copied_flip_faces
+
+        session = self.session(71040501)
+        source = self.add(session.engine, "Faithful Squire // Kaiso, Memory of Loyalty")
+        target = self.add(session.engine, "Generic Bound Body")
+        own = self.add(session.engine, "Reach Through Mists", zone="hand", ref="faithful-arcane-own")
+        declined = self.add(session.engine, "Reach Through Mists", zone="hand", ref="faithful-arcane-declined")
+        other = self.add(session.engine, "Reach Through Mists", seat="B", zone="hand", ref="faithful-arcane-foreign")
+        spirit = self.add(session.engine, "Universal Automaton", zone="hand")
+        damage = self.add(session.engine, "Lightning Bolt", seat="B", zone="hand")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        private = self.add(session.engine, "Unsummon", seat="D", zone="hand", ref="faithful-private")
+        for card in (source, own, other, spirit, damage, bounce):
+            self.assert_closed(session, card)
+        self.add(session.engine, "Island", seat="B")
+        self.add(session.engine, "Mountain", seat="B")
+        self.prepare(session, mana={"U": 2, "C": 1})
+        session.state.players["B"].mana_pool.update({"U": 2, "R": 1})
+        self.checkpoint(session)
+        original = (source.logical_object_id, source.zone_timestamp, source.transform_count)
+        self.assertEqual("Faithful Squire", session.engine._effective_card_data(source)["name"])
+        self.assertNotIn("flying", session.engine._combat_keywords(source))
+        self.assertFalse(self.faithful_activations(session, source))
+
+        self.cast(session, "B", other)
+        self.assertEqual(0, self.trigger_count(session, source))
+        self.assertIsNone(self.resolve(session))
+        for spell, choice, expected in ((own, "put", 1), (declined, "decline", 1), (spirit, "put", 2)):
+            self.cast(session, "A", spell)
+            self.assertEqual(1, self.trigger_count(session, source))
+            self.faithful_choice(session, choice, operation=OPTIONAL_COUNTER_PLACEMENT_OPERATION)
+            current = session.state.cards[source.object_id]
+            self.assertEqual(expected, current.counters.get("ki", 0))
+        self.assertFalse(self.faithful_activations(session, source))
+        self.until(session, lambda game: game.state.step == "end_step" and self.trigger_count(game, source) == 1)
+        session = self.replay(session, load=True)
+        self.faithful_choice(session, "apply", operation="offer_optional_effect")
+
+        current = session.state.cards[source.object_id]
+        values = session.engine._effective_card_data(current)
+        self.assertTrue(current.annotations[FLIPPED_STATUS])
+        self.assertEqual(("Kaiso, Memory of Loyalty", "{1}{W}{W}", 3.0, ["W"]),
+                         (values["name"], values["mana_cost"], values["mana_value"], values["colors"]))
+        self.assertEqual(original, (current.logical_object_id, current.zone_timestamp, current.transform_count))
+        self.assertEqual(2, current.counters["ki"])
+        self.assertIn("flying", session.engine._combat_keywords(current))
+        self.assertFalse(any(event.code == "permanent.transform" for event in session.state.events))
+        faces = capture_copied_flip_faces(session.engine, current)
+        self.assertEqual(("Faithful Squire", "Kaiso, Memory of Loyalty"),
+                         (faces.normal["name"], faces.alternative["name"]))
+
+        action, = self.faithful_activations(session, current)
+        command = {"action_id": action["id"], "targets": [target.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, session.state.cards[source.object_id].counters["ki"])
+        self.assertIsNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        self.cast(session, "B", damage, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(0, session.state.cards[target.object_id].marked_damage)
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+
+        self.cast(session, "B", bounce, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[source.object_id]
+        self.assertEqual("hand", returned.zone)
+        self.assertNotEqual(original[0], returned.logical_object_id)
+        self.assertNotIn(FLIPPED_STATUS, returned.annotations)
+        self.assertFalse(returned.counters)
+        self.assertEqual("Faithful Squire", session.engine._effective_card_data(returned)["name"])
+        self.assertNotIn(private.ref, str(session.packet("pilot:A", full=True)))
+        self.replay(session, load=True)
+
+    def test_faithful_squire_rechecks_its_own_ki_at_trigger_and_resolution(self):
+        for offset in range(2):
+            with self.subTest(ki=offset + 1):
+                session = self.session(71040515 + offset)
+                source = self.add(session.engine, "Faithful Squire // Kaiso, Memory of Loyalty")
+                source.counters.update({"ki": offset + 1, "charge": 4})
+                hexmage = self.add(session.engine, "Vampire Hexmage", seat="B")
+                self.assert_closed(session, source)
+                self.assert_closed(session, hexmage)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.until(session, lambda game: game.state.step == "end_step")
+                self.assertEqual(offset, self.trigger_count(session, source))
+                if offset:
+                    action, = self.faithful_activations(session, hexmage, seat="B")
+                    result = session.act("pilot:B", {"action_id": action["id"], "targets": [source.ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    self.resolve_top(session)
+                    self.assertFalse(session.state.cards[source.object_id].counters)
+                    self.assertEqual(1, self.trigger_count(session, source))
+                    session = self.replay(session, load=True)
+                    self.assertIsNone(self.resolve(session))
+                current = session.state.cards[source.object_id]
+                self.assertEqual("Faithful Squire", session.engine._effective_card_data(current)["name"])
+                self.assertFalse(self.faithful_activations(session, current))
+                self.replay(session, load=True)
+
+    def test_faithful_squire_native_flip_shape_and_handler_reject_another_source(self):
+        from types import SimpleNamespace
+        from quorune.permanent_transform import FlipSourceHandler
+        from quorune.rules.copied_flip_faces import FLIP_SOURCE_CAPABILITY, FLIP_SOURCE_OPERATION
+        from quorune.rules.transform_capability_shapes import triggered_source_transform_runtime_dependencies
+        from quorune.semantic_runtime.context import ReadOnlyHandlerContext, SemanticNodeError, SemanticSourceContext
+
+        record = self.db.lookup("Faithful Squire // Kaiso, Memory of Loyalty", fuzzy=False)
+        result = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", result.status, result.material_residuals)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in raw["capabilities"] if row["id"] == FLIP_SOURCE_CAPABILITY)
+        capability.update(status="blocked", blockers=["The original source flip authority was withheld"])
+        withheld = CapabilityRegistry(raw)
+        withheld.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(record, capability_registry=withheld, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(FLIP_SOURCE_CAPABILITY, str(refused.material_residuals))
+
+        front, alternate = result.faces
+        self.assertEqual(("Faithful Squire", "Kaiso, Memory of Loyalty"), (front.face_id, alternate.face_id))
+        node, = (node for node in front.nodes if FLIP_SOURCE_CAPABILITY in node.capability_dependencies)
+        self.assertEqual(front.oracle_text[node.span.start:node.span.end], node.text)
+        self.assertEqual("step.begin", node.event)
+        self.assertTrue(any("activation.source_counter_removal.fixed" in node.capability_dependencies
+                            for node in alternate.nodes))
+        source = SemanticSourceContext("stack-item", "object", "object@2", "source-card")
+        context = ReadOnlyHandlerContext.from_sequences(
+            actor="A", default_reason="flip", seats=("A", "B"), active_seats=("A", "B"),
+            apnap_order=("A", "B"), source=source,
+        )
+        operation = FlipSourceHandler()
+        effect = {"op": FLIP_SOURCE_OPERATION, "card": "source-card"}
+        plan = operation.lower(effect, context)
+        intent, = plan.intents
+        self.assertEqual("object@2", intent.incarnation)
+        with self.assertRaises(SemanticNodeError):
+            operation.lower({**effect, "card": "other-card"}, context)
+
+        program = SimpleNamespace(event=node.event, active_zone=node.active_zone, handlers=(),
+                                  cost_schema=None, target_schema=None, effects=node.effects,
+                                  coverage=(*node.mechanics, *node.runtime_coverage),
+                                  event_condition=node.event_condition)
+        self.assertIn(FLIP_SOURCE_CAPABILITY, triggered_source_transform_runtime_dependencies(program))
+        program.event_condition = node.event_condition["all"][0]
+        with self.assertRaisesRegex(ValueError, "end-step counter condition"):
+            triggered_source_transform_runtime_dependencies(program)
+
     def test_actual_cult_counts_only_controlled_nonhuman_post_transform(self):
         session = self.session(70127046)
         engine = session.engine

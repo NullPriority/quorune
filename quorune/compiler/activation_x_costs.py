@@ -51,6 +51,9 @@ def announced_x_activation_cost(ability):
         from .activated_zone_change_costs import fixed_activated_zone_change_cost
 
         ability = fixed_activated_zone_change_cost(ability)
+    if ability.cost_text.startswith("Pay X {E},"):
+        from .announced_energy_reanimation import specialize_energy_reanimation_price
+        return specialize_energy_reanimation_price(ability)
     symbols = activation_x_symbols(ability.cost_text, allow_source_sacrifice=True, allow_fixed_discard=True,
         allow_source_discard=ability.discard_source is True,
         allow_controlled_land_return=has_controlled_land_return_x_price(ability))

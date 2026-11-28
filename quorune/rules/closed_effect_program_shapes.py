@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from ..compiler.closed_effect_programs import has_one_closed_target_slot, CLOSED_EFFECT_PROGRAM_TEMPLATE_ID
 from .fixed_effect_clause_shapes import (
+    _contains_target_reference,
     closed_effect_component_capabilities,
 )
 from ..fractional_quantity_model import HALF_QUANTITY_KIND
@@ -21,16 +22,6 @@ CLOSED_EFFECT_PROGRAM_MECHANIC = "closed-effect-program"
 CLOSED_EFFECT_PROGRAM_CAPABILITY = (
     "resolution.effect_program.closed_components"
 )
-
-
-def _contains_target_reference(value: Any) -> bool:
-    if isinstance(value, str):
-        return value in {"$target", "$targets"} or value.startswith("$target.")
-    if isinstance(value, Mapping):
-        return any(_contains_target_reference(child) for child in value.values())
-    if isinstance(value, (list, tuple)):
-        return any(_contains_target_reference(child) for child in value)
-    return False
 
 
 def _linked_exile_then_life_dependencies(effects, target_schema, mechanics):
@@ -198,6 +189,7 @@ def _ordered_body_runtime_dependencies(program, schema):
 
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
+    from .graveyard_exchange_model import graveyard_exchange_program_dependencies
     from .death_counter_shuffle import death_counter_shuffle_dependencies
     from .bound_effect_program_shapes import source_target_counter_batch_program_dependencies
     from .qualified_token_creators import qualified_token_creator_program_dependencies
@@ -207,6 +199,8 @@ def closed_effect_program_runtime_dependencies(program):
 
     from .linked_exile_activations import linked_exile_activation_runtime_dependencies
 
+    if exchange := graveyard_exchange_program_dependencies(program):
+        return exchange
     if departure := death_counter_shuffle_dependencies(program):
         return departure
     if linked_activation := linked_exile_activation_runtime_dependencies(program):
@@ -267,8 +261,9 @@ def closed_effect_program_runtime_dependencies(program):
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
     from ..public_zone_moves import OWNER_LIBRARY_POSITION_OPERATION
+    from .targeted_return_spell_copy import LAND_PAYMENT_FIELD
 
-    if any(effect.get("op") != OWNER_LIBRARY_POSITION_OPERATION
+    if any(effect.get("op") != OWNER_LIBRARY_POSITION_OPERATION and LAND_PAYMENT_FIELD not in effect
            and has_target_controller_recipient(effect) for effect in program.effects):
         from .optional_source_damage import OPTIONAL_SOURCE_DAMAGE_FIELD, optional_source_damage_runtime_dependencies
 

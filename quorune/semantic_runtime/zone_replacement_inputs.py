@@ -69,7 +69,10 @@ def prospective_destination_controller(
 
 def zone_change_subject_characteristics(host, card, destination, entry_characteristics, destination_controllers):
     """Prepare one immutable prospective subject before replacement discovery."""
-    characteristics = dict(entry_characteristics.get(card.object_id, host._effective_card_data(card)))
+    if card.object_id in entry_characteristics:
+        characteristics = dict(entry_characteristics[card.object_id])
+    else:
+        characteristics = dict(host._effective_card_data(card))
     controller = prospective_destination_controller(card, destination_controllers)
     if destination == 'battlefield':
         from .fixed_characteristic_settings import prospective_creature_type_characteristics
@@ -273,7 +276,11 @@ def zone_change_snapshot_event(
     subject: ZoneChangeSubjectSnapshot,
 ) -> ReplaceableEvent:
     from ..replacement.entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_SCOPE
+    from ..rules.linked_graveyard_play import PRIOR_CONTROL_FIELD, REPLACEMENT_HANDLER
 
+    has_linked_graveyard_exile = any(
+        effect.effect_id.startswith(REPLACEMENT_HANDLER + ":") for effect in snapshot.effects
+    )
     return ReplaceableEvent(
         event_id=_zone_change_snapshot_event_id(snapshot, subject),
         kind="zone.change",
@@ -299,6 +306,7 @@ def zone_change_snapshot_event(
             "origin": subject.origin,
             "destination": subject.destination,
             "destination_controller": subject.destination_controller,
+            **({PRIOR_CONTROL_FIELD: subject.controller} if has_linked_graveyard_exile else {}),
             "object_kind": "card" if subject.is_card_object else "noncard",
             "object_ref": subject.object_ref,
             "object_types": list(subject.object_types),
@@ -353,6 +361,23 @@ def zone_change_snapshot_events(snapshot: ZoneChangeReplacementSnapshot) -> tupl
     return tuple(replace(event, entry_scope=scope) for event in events)
 
 
+def source_zone_replacement_context(host, source, descriptor):
+    from ..continuous_effect_model import ContinuousObjectIdentity
+    from ..qualified_entry_state_model import EntryStateSourceSnapshot, QUALIFIED_ENTRY_STATE_HANDLER
+    from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER_IDS
+    from ..rules.external_entry_counters import snapshot_external_entry_counter_source
+    from ..rules.linked_graveyard_play import REPLACEMENT_HANDLER
+
+    handler = descriptor.get("handler_id")
+    if handler in EXTERNAL_ENTRY_COUNTER_HANDLER_IDS:
+        return snapshot_external_entry_counter_source(host, source, descriptor)
+    if handler == QUALIFIED_ENTRY_STATE_HANDLER:
+        return EntryStateSourceSnapshot(source.ref, source.controller, source.tapped)
+    if handler == REPLACEMENT_HANDLER:
+        return ContinuousObjectIdentity(source.object_id, source.logical_object_id)
+    return None
+
+
 def source_local_zone_replacement_effects(host, registry, record, card, subject, programs):
     """Collect only the current affected card's independently owned replacements."""
     from ..card_program_faces import program_matches_face
@@ -379,12 +404,14 @@ def intrinsic_subject_replacement_effects(
     handler, descriptor, *, subject, component_id, host, simultaneous_departures, fallback,
 ) -> tuple[ReplacementEffect, ...]:
     """Bind an intrinsic replacement against its immutable subject information."""
+    from .chosen_basic_land_entry import ChosenBasicLandEntryHandler
     from .day_night_entry import DayNightEntryHandler
     from .linked_graveyard_entry import LinkedGraveyardEntryHandler
     from .self_entry_counters import EntryCounterTransferHandler
 
     if isinstance(handler, (CountedCreatureTypeEntryDesignationHandler, EntryOpponentDesignationHandler,
-                            LinkedGraveyardEntryHandler, EntryCounterTransferHandler, DayNightEntryHandler)):
+                            LinkedGraveyardEntryHandler, EntryCounterTransferHandler, DayNightEntryHandler,
+                            ChosenBasicLandEntryHandler)):
         return handler.subject_replacement_effects(
             descriptor, subject=subject, component_id=component_id, host=host,
             simultaneous_departures=simultaneous_departures,

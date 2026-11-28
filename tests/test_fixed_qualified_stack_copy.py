@@ -40,7 +40,7 @@ class QualifiedStackCopyModelTests(unittest.TestCase):
         self.assertEqual(old, FixedStackSpellCopySpec.from_dict(old.to_dict()))
         for spec in qualified_stack_copy_specs():
             self.assertEqual(spec, FixedQualifiedStackCopySpec.from_dict(spec.to_dict()))
-            self.assertEqual('you', spec.target_schema['controller_relation'])
+            self.assertEqual(None if spec.schema_version == 3 else "you", spec.target_schema.get("controller_relation"))
             self.assertTrue(spec.target_schema['source_exclusion'])
             self.assertEqual(spec.target_kind == 'permanent_spell', bool(spec.effects[0].get('retain_targets_only')))
             for changes in ({'schema_version': True}, {'schema_version': 2}, {'target_kind': 'spell'},
@@ -62,6 +62,33 @@ class QualifiedStackCopyModelTests(unittest.TestCase):
         for line in ('Copy target activated or triggered ability.', 'Copy target triggered ability you control from an artifact source. You may choose new targets for the copy.',
                 'Copy target permanent spell you control. You may choose new targets for the copy.'):
             self.assertIsNone(fixed_stack_spell_copy_template(line))
+
+    def test_mixed_stack_copy_scope_distinguishes_spells_and_stack_abilities(self):
+        from quorune.stack_spell_copy_model import mixed_stack_copy_spec
+
+        spec = mixed_stack_copy_spec()
+        self.assertEqual(spec, FixedQualifiedStackCopySpec.from_dict(spec.to_dict()))
+        self.assertEqual((), fixed_stack_spell_copy_node_capabilities(
+            effects=spec.effects, target_schema={**spec.target_schema, "count": True},
+            mechanic_ids=spec.mechanics,
+        ))
+        group, = target_plan(spec.target_schema).groups
+        cases = (
+            ("spell", "spell", {"instant"}, True),
+            ("spell_copy", "spell", {"sorcery"}, True),
+            ("spell", "spell", {"creature"}, False),
+            ("spell_copy", "spell", {"artifact"}, False),
+            ("activated_ability", "ability", {"creature"}, True),
+            ("triggered_ability", "ability", set(), True),
+            ("spell", "ability", {"instant"}, False),
+        )
+        for kind, category, types, expected in cases:
+            with self.subTest(kind=kind, types=types):
+                item = StackItem(stack_id="subject", ref="S1", kind=kind, controller="B", label="Subject")
+                row = {"ref": "S1", "zone": "stack", "category": category, "stack_item": item}
+                self.assertIs(expected, target_predicate_matches(
+                    SimpleNamespace(), group, row, types=types, supertypes=set(), colors=set(), derived={},
+                ))
 
     def test_source_filters_have_closed_controlled_schema_and_fine_information_dependency(self):
         for source in ('artifact', 'colorless'):

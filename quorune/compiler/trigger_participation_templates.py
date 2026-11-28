@@ -35,6 +35,8 @@ def static_trigger_multiplier_handler(
     """Compile the closed represented CR 603.2d static wording families."""
 
     normalized = " ".join(str(text).strip().split())
+    if re.match(r"^(?:mardu|jeskai) [—-] ", normalized, re.I):
+        return None
     if _PANHARMONICON_PATTERN.fullmatch(normalized):
         spec = TriggerMultiplierSpec(
             predicate=TriggerMultiplierPredicate.ARTIFACT_OR_CREATURE_ENTERS,
@@ -91,6 +93,10 @@ def _typed_participation(text,source_name):
         "If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'cast_or_copy_instant_sorcery',
         "If a legendary permanent or an artifact entering or leaving the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'legendary_or_artifact_enters_leaves',
         "If a triggered ability of a legendary creature you control triggers, that ability triggers an additional time":'legendary_creature_source',
+        "If a triggered ability of a creature you control with power 2 or less triggers, that ability triggers an additional time":
+            "power_at_most_two_creature_source",
+        "If an ability of a creature you control with power 2 or less triggers, that ability triggers an additional time":
+            "power_at_most_two_creature_source",
         "If a triggered ability of a Ninja creature you control triggers, that ability triggers an additional time":'ninja_creature_source',
         "If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time":'shaman_or_another_wizard',
         "If a triggered ability of a colorless spell you control or another colorless permanent you control triggers, that ability triggers an additional time":'colorless_spell_or_another_permanent',

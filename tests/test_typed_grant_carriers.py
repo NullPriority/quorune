@@ -5,16 +5,18 @@ from __future__ import annotations
 import copy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
 
+from inherited_composition_fixture import InheritedNativeFixture
 from common import ROOT, keep_all, make_session, pass_current
 from quorune.carddb import CardDatabase
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
@@ -836,3 +838,205 @@ class TypedGrantCarrierTests(unittest.TestCase):
         self.assertEqual("B", changed.owner)
         self.assertEqual("A", changed.controller)
         self.assert_replay(session)
+
+
+class ControlledFirebendingGrantTests(InheritedNativeFixture, unittest.TestCase):
+    name = "Sozin's Comet"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        native_primary = ROOT / "tests/fixtures/bound-effect-program-cards.json"
+        primary_ids = {row["oracle_id"] for row in json.loads(native_primary.read_bytes())["cards"]}
+        data = json.loads(FIXTURE.read_bytes())
+        selected = {"Grizzly Bears", "Island", "Mountain", "Unsummon", "Iroh, Dragon of the West", cls.name}
+        data["cards"] = [row for row in data["cards"] if row["name"] in selected and row["oracle_id"] not in primary_ids]
+        ids = {row["oracle_id"] for row in data["cards"]}
+        data["rulings"] = [row for row in data["rulings"] if row["oracle_id"] in ids]
+        native = folder / "comet-fixture.json"
+        native.write_text(json.dumps(data), encoding="utf-8")
+        db_path = folder / "comet.sqlite3"
+        build_fixture_database([native_primary, native], db_path)
+        cls.db = CardDatabase(db_path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Fixed controller resolution grant", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def save_replay(self, game, name):
+        import hashlib
+
+        parent = os.environ.get("QUORUNE_COMET_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        destination = Path(parent) / name
+        game.save(destination)
+        replay = replay_record(destination, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, replay["final_state_hash"])
+        digest = hashlib.sha256((destination / "manifest.json").read_bytes()).hexdigest()
+        destination.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": digest, "final_state_sha256": state_hash, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def firebending_recipients(self, game):
+        return {
+            card.object_id for card in game.state.cards.values() if card.zone == "battlefield"
+            if any(fragment["kind"] == "granted_triggered" and fragment["value"]["event"] == "creature.attacks"
+                   for fragment in game.engine._effective_card_data(card).get("ability_fragments", []))
+        }
+
+    def send(self, game, actor, command, *, accepted=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def advance_through_cleanup(self, game, reached):
+        self.until(game, lambda current: reached(current) or current.state.pending_decision.kind == "cleanup.discard")
+        while not reached(game):
+            seat = game.state.active_player
+            context = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]
+            self.send(game, seat, {"a": "discard", "cards": [card["id"] for card in context["hand"][:context["count"]]]})
+            self.until(game, lambda current: reached(current) or current.state.pending_decision.kind == "cleanup.discard")
+
+    def test_iroh_current_countered_creatures_get_their_own_combat_grant(self):
+        game = self.session(60306016)
+        source = self.add(game.engine, "Iroh, Dragon of the West")
+        eligible = self.add(game.engine, "Grizzly Bears", ref="iroh-charge-bear")
+        eligible.counters["charge"] = 1
+        departed = self.add(game.engine, "Grizzly Bears", ref="iroh-departed-bear")
+        departed.counters["+1/+1"] = 1
+        plain = self.add(game.engine, "Grizzly Bears", ref="iroh-unmarked-bear")
+        foreign = self.add(game.engine, "Grizzly Bears", seat="B", ref="iroh-opponent-bear")
+        foreign.counters["charge"] = 1
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(game, source)
+        for card in (eligible, departed, plain):
+            card.acquired_control_turn_count = -1
+        self.prepare(game)
+        self.add(game.engine, "Island", seat="B", ref="iroh-opponent-island")
+        self.checkpoint(game)
+        self.until(game, lambda current: any(
+            item.kind == "triggered_ability" and item.source_object_id == source.object_id
+            for item in current.state.stack))
+        self.assertEqual("beginning_combat", game.state.step)
+        self.assertFalse(self.firebending_recipients(game))
+        self.cast_for(game, "B", bounce, [departed.ref])
+        self.resolve_top(game)
+        self.save_replay(game, "iroh-before-grant")
+        self.settle(game)
+        self.assertEqual({eligible.object_id}, self.firebending_recipients(game))
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self.send(game, "A", {"action_id": "attack", "attackers": {eligible.ref: "C", plain.ref: "C"}})
+        self.settle(game)
+        self.assertEqual(2, game.state.players["A"].mana_pool["R"])
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        self.assertEqual(0, game.state.players["A"].mana_pool.get("R", 0))
+        self.advance_through_cleanup(game, lambda current: current.state.active_player == "B")
+        self.assertFalse(self.firebending_recipients(game))
+        self.save_replay(game, "iroh-after-grant")
+
+    def test_hand_cast_locks_the_actual_resolution_set_through_cleanup(self):
+        game = self.session(702189671)
+        spell = self.add(game.engine, self.name, zone="hand")
+        bears = [self.add(game.engine, "Grizzly Bears", ref=f"comet-own-bear-{index}") for index in range(2)]
+        departed = self.add(game.engine, "Grizzly Bears", ref="comet-departing")
+        self.add(game.engine, "Grizzly Bears", seat="B", ref="comet-opponent")
+        later = self.add(game.engine, "Grizzly Bears", zone="hand", ref="comet-future")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 3, "R": 2, "G": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        offer = self.action(game, "A", spell)
+        self.assertIsNone(offer.get("target_schema"))
+        self.cast_for(game, "A", spell, reserve={"G": 2})
+        self.cast_for(game, "B", bounce, [departed.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[departed.object_id].zone)
+        self.save_replay(game, "comet-hand-cast-pending-game-record")
+        self.settle(game)
+        self.assertEqual({card.object_id for card in bears}, self.firebending_recipients(game))
+        self.cast_for(game, "A", later)
+        self.settle(game)
+        self.assertEqual("battlefield", game.state.cards[later.object_id].zone)
+        self.assertEqual({card.object_id for card in bears}, self.firebending_recipients(game))
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self.send(game, "A", {"action_id": "attack", "attackers": {bear.ref: "C" for bear in bears}})
+        self.save_replay(game, "comet-two-independent-attacks-pending-game-record")
+        if game.state.pending_decision.kind == "trigger.order":
+            rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+            self.assertEqual(2, len(rows))
+            self.send(game, "A", {"action_id": "order", "triggers": [row["id"] for row in rows]})
+        self.settle(game)
+        self.assertEqual(10, game.state.players["A"].mana_pool["R"])
+        self.until(game, lambda current: current.state.step == "end_combat")
+        self.assertEqual(10, game.state.players["A"].mana_pool["R"])
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        self.assertEqual(0, game.state.players["A"].mana_pool.get("R", 0))
+        self.assertEqual({card.object_id for card in bears}, self.firebending_recipients(game))
+        self.advance_through_cleanup(game, lambda current: current.state.active_player == "B")
+        self.assertFalse(self.firebending_recipients(game))
+        self.save_replay(game, "comet-hand-cast-cleanup-game-record")
+
+    def test_foretell_private_staging_and_sorcery_timing_use_the_same_grant(self):
+        game = self.session(702189672)
+        spell = self.add(game.engine, self.name, zone="hand")
+        own = self.add(game.engine, "Grizzly Bears", ref="comet-foretell-own")
+        self.add(game.engine, "Grizzly Bears", seat="B", ref="comet-foretell-enemy")
+        for index in range(3):
+            self.add(game.engine, "Mountain", ref=f"comet-foretell-mountain-{index}")
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 2})
+        self.checkpoint(game)
+        legal = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [row for row in legal if row.get("action") == "stage_cast_lifecycle" and row.get("card") == spell.ref]
+        self.send(game, "A", {"action_id": offer["id"], "pay": "auto"})
+        staged = game.state.cards[spell.object_id]
+        self.assertEqual(("exile", True, ["A"]), (staged.zone, staged.face_down, staged.known_to))
+        for viewer in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            self.assertNotIn(self.name, json.dumps(game.packet(viewer, full=True)))
+        self.assertIn(self.name, json.dumps(game.packet("pilot:A", full=True)))
+        self.priority(game, "A")
+        self.send(game, "A", {"action_id": "cast:" + staged.ref, "from": "exile",
+                              "cost_option": "foretell", "pay": "auto"}, accepted=False)
+        self.save_replay(game, "comet-foretell-private-game-record")
+        self.advance_through_cleanup(game, lambda current: current.state.active_player == "B" and current.state.step == "upkeep")
+        self.priority(game, "A")
+        self.send(game, "A", {"action_id": "cast:" + staged.ref, "from": "exile",
+                              "cost_option": "foretell", "pay": "auto"}, accepted=False)
+        self.advance_through_cleanup(game, lambda current: current.state.active_player == "A" and current.state.phase == "precombat_main")
+        self.priority(game, "A")
+        quote = self.action(game, "A", game.state.cards[spell.object_id])
+        self.assertEqual({"foretell"}, {row["id"] for row in quote["cost_options"]})
+        self.send(game, "A", {"action_id": quote["id"], "from": "exile", "cost_option": "foretell", "pay": "auto"})
+        self.assertEqual("exile", game.state.stack[-1].context["cast_origin"])
+        self.settle(game)
+        self.assertEqual({own.object_id}, self.firebending_recipients(game))
+        self.save_replay(game, "comet-foretell-resolved-game-record")
+
+    def test_exact_query_and_child_are_source_spanned_and_foretell_survives(self):
+        card = self.db.lookup(self.name, fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        grant, = [node for node in ir.faces[0].nodes if node.kind == "spell_ability"]
+        child, = [node for node in ir.faces[0].nodes if node.kind == "granted_triggered_ability"]
+        self.assertEqual("firebending 5", card.oracle_text[child.span.start:child.span.end])
+        self.assertIsNone(grant.target_schema)
+        effect, = grant.effects
+        self.assertEqual(8, effect["schema_version"])
+        self.assertEqual(("$controller", ["creature"]), (effect["predicate"]["controller"], effect["predicate"]["types_all"]))
+        self.assertEqual(("creature.attacks", 5, "end_of_combat"),
+                         (child.event, child.effects[0]["amount"], child.effects[0]["retain_until"]))
+        self.assertTrue(any("foretell" in json.dumps(node.handlers).casefold() for node in ir.faces[0].nodes))
+        for changed in (card.oracle_text.replace("you control", "opponents control"),
+                        card.oracle_text.replace("firebending 5", "firebending X"),
+                        card.oracle_text.replace("until end of turn", "until your next turn")):
+            altered = compile_oracle_card(replace(card, oracle_text=changed), capability_registry=self.registry,
+                                          capability_profile="commander_review")
+            self.assertNotEqual("exact", altered.status)

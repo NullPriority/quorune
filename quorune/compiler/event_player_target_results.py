@@ -5,7 +5,10 @@ from . import regex_working_set as re
 
 from .direct_target import DirectPermanentTargetSpec
 from .event_player_results import _event_player
-from ..rules.event_player_targets import event_player_direct_target_schema, is_source_combat_damage_player_binding
+from ..rules.event_player_targets import (
+    event_player_direct_target_schema, is_graveyard_type_opponent_upkeep_binding,
+    is_source_combat_damage_player_binding,
+)
 from ..target_forms import EVENT_PLAYER_TARGET_REFERENCES
 
 
@@ -45,7 +48,11 @@ def event_player_target_result(binding, body, *, compile_result):
         return None
     match = matches[0]
     subject = match['player'].casefold()
-    player = _event_player(binding, subject)
+    scheduled_tap = (
+        subject == 'that player' and body.casefold().removesuffix('.') == 'tap target creature that player controls'
+        and is_graveyard_type_opponent_upkeep_binding(binding.event.value, binding.event_condition)
+    )
+    player = '$context.player' if scheduled_tap else _event_player(binding, subject)
     if player not in EVENT_PLAYER_TARGET_REFERENCES:
         return None
     normalized = body[:match.start()] + 'you control' + body[match.end():]
@@ -76,4 +83,4 @@ def event_player_target_result(binding, body, *, compile_result):
         del target_schema['count']
         target_schema['up_to'] = 1
     suffix = '-defending-player' if subject == 'defending player' else '-event-player'
-    return (template + suffix, effects, target_schema, mechanics), source_result
+    return (template + suffix, effects, target_schema, mechanics), source_result or scheduled_tap

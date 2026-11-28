@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-"""Public fixed-generic cost-increase application."""
+"""Read and apply current public casting costs."""
 
-from typing import Any
+from typing import Any, Sequence
 
 from ...compiled_cast_costs import compiled_self_spell_cost_reduction_specs
 from ...cast_cost_modifiers import PublicCastCostModifierV2Spec
-from ...semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
+from ...semantic_runtime.cast_costs import FixedSpellCostReductionSpec, active_fixed_spell_cost_reductions
 from ...self_cast_reductions import evaluated_self_reduction
 from ...targeted_spell_costs import validate_targeted_spell_cost_fact
 from .colored_hand_credit import HAND_CREDIT_AMOUNT
@@ -19,17 +19,13 @@ def fixed_generic_reduction(
     *,
     cast_type_line: str | None = None,
     face_down_method: str | None = None,
+    _public_modifiers: Sequence[FixedSpellCostReductionSpec] | None = None,
 ) -> int:
-    return sum(
-        modifier.generic_reduction
-        for modifier in active_fixed_spell_cost_reductions(
-            host,
-            seat,
-            card,
-            cast_type_line=cast_type_line,
-            face_down_method=face_down_method,
+    if _public_modifiers is None:
+        _public_modifiers = active_fixed_spell_cost_reductions(
+            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
         )
-    )
+    return sum(modifier.generic_reduction for modifier in _public_modifiers)
 
 
 def apply_fixed_generic_increases(
@@ -41,16 +37,14 @@ def apply_fixed_generic_increases(
     cast_type_line: str | None = None,
     face_down_method: str | None = None,
 ) -> None:
-    increase = sum(
-        max(0, modifier.generic_adjustment)
-        for modifier in active_fixed_spell_cost_reductions(
-            host,
-            seat,
-            card,
-            cast_type_line=cast_type_line,
-            face_down_method=face_down_method,
-        )
+    modifiers = active_fixed_spell_cost_reductions(
+        host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
     )
+    _apply_fixed_generic_increases(option, modifiers)
+
+
+def _apply_fixed_generic_increases(option, modifiers) -> None:
+    increase = sum(max(0, modifier.generic_adjustment) for modifier in modifiers)
     if not increase:
         return
     option["requirements"]["GENERIC"] += increase
@@ -69,7 +63,7 @@ def apply_static_reductions(
     option: dict[str, Any],
     *,
     program: Any,
-    fixed_reduction: int,
+    fixed_reduction: int | None = None,
     cast_type_line: str | None = None,
     face_down_method: str | None = None,
 ) -> None:
@@ -80,14 +74,14 @@ def apply_static_reductions(
         cast_type_line=cast_type_line,
         face_down_method=face_down_method,
     )
-    apply_fixed_generic_increases(
-        host,
-        seat,
-        card,
-        option,
-        cast_type_line=cast_type_line,
-        face_down_method=face_down_method,
-    )
+    if fixed_reduction is None:
+        from ...harmonize import harmonize_generic_reduction
+
+        fixed_reduction = fixed_generic_reduction(
+            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
+            _public_modifiers=public_modifiers,
+        ) + option.get(HAND_CREDIT_AMOUNT, 0) + harmonize_generic_reduction(option)
+    _apply_fixed_generic_increases(option, public_modifiers)
     colored_increases: dict[str, int] = {}
     colored_reductions: dict[str, int] = {}
     for modifier in public_modifiers:
@@ -186,8 +180,5 @@ def apply_cast_static_reductions(
     face_down_method = option.get("id") if option.get("id") in FACE_DOWN_CAST_METHODS else None
     apply_static_reductions(
         host, seat, card, option, program=program,
-        fixed_reduction=fixed_generic_reduction(
-            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
-        ) + option.get(HAND_CREDIT_AMOUNT, 0),
         cast_type_line=cast_type_line, face_down_method=face_down_method,
     )

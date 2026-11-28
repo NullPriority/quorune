@@ -869,6 +869,104 @@ class RepeatedOpponentPaymentTests(InheritedNativeFixture, unittest.TestCase):
         with patch("quorune.rules.repeated_apnap_payment.payment_round_node_capabilities", return_value=()):
             self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
 
+    def _onyx_loyalty(self, session, onyx, cost):
+        packet = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        action = next(row for row in packet["legal"]["actions"] if (
+            row["id"].startswith(f"activate:{onyx.ref}:") and row.get("cost_summary", {}).get("loyalty") == cost
+        ))
+        played = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(played.ok, played.summary)
+        return self.resolve(session)
+
+    def test_onyx_fixed_loyalty_rounds_require_the_printed_count_and_discard_domain(self):
+        from dataclasses import replace
+        from quorune.rules.repeated_apnap_payment import FIXED_DISCARD_MECHANIC, fixed_discard_round_effect
+
+        card = self.db.lookup("Professor Onyx", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for node in ir.faces[0].nodes if FIXED_DISCARD_MECHANIC in node.mechanics)
+        self.assertEqual((fixed_discard_round_effect(3, 7),), tuple(node.effects))
+        self.assertIsNone(node.target_schema)
+        self.assertEqual(-8, node.cost["loyalty_delta"])
+        for changed in (
+            card.oracle_text.replace("−8:", "{8}:"),
+            card.oracle_text.replace("six more times.", "X more times."),
+            card.oracle_text.replace("may discard a card.", "may discard or sacrifice a permanent."),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=changed), **options).status)
+        with patch("quorune.rules.repeated_apnap_payment.payment_round_node_capabilities", return_value=()):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+
+    def test_onyx_ultimate_resolves_seven_private_rounds_without_a_sacrifice_window(self):
+        session = self.session(70102404)
+        onyx = self.add(session.engine, "Professor Onyx")
+        discarded = [self.add(session.engine, "Divination", seat=seat, zone="hand", ref=f"onyx-discard-{seat}")
+                     for seat in "BC"]
+        keepers = [self.add(session.engine, "Divination", seat=seat, zone="hand", ref=f"onyx-keep-{seat}")
+                   for seat in "BC"]
+        nonland = self.add(session.engine, "Grizzly Bears", seat="B", ref="onyx-invalid-sacrifice")
+        for object_id in list(session.state.players["D"].zones["hand"]):
+            session.engine.move_card(object_id, "graveyard", reason="Arrange empty opponent hand")
+        onyx.counters["loyalty"] = 8
+        self.assert_closed(session, onyx)
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        self.assertEqual("choice.apnap", self._onyx_loyalty(session, onyx, -8).kind)
+
+        for index in range(1, 8):
+            ctx = session.packet("pilot:B", full=True)["decision"]["ctx"]
+            self.assertEqual((index, 7), (ctx["round"], ctx["rounds"]))
+            self.assertEqual([], ctx["sacrifice_options"])
+            self.assertNotIn(nonland.ref, ctx["options"])
+            if index == 1:
+                before = authoritative_state_hash(session.state)
+                bad = {"action_id": "choose", "cards": [nonland.ref]}
+                self.assertFalse(session.act("pilot:B", bad).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                self._select(session, "B", discarded[0].ref)
+                self.assertNotIn(discarded[0].ref, json.dumps(session.packet("pilot:C", full=True)))
+                self.assertEqual("hand", session.state.cards[discarded[0].object_id].zone)
+                self.assertEqual(40, session.state.players["D"].life)
+                session = self.replay(session, load=True)
+                self._select(session, "C", discarded[1].ref)
+                self.assertEqual(["graveyard"] * 2, [session.state.cards[card.object_id].zone for card in discarded])
+                self.assertEqual(session.state.cards[discarded[0].object_id].zone_timestamp,
+                                 session.state.cards[discarded[1].object_id].zone_timestamp)
+            else:
+                self._select(session, "B")
+                self._select(session, "C")
+            self.assertEqual(40 - 3 * index, session.state.players["D"].life)
+
+        self.assertEqual([40, 22, 22, 19], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual("graveyard", session.state.cards[onyx.object_id].zone)
+        self.assertEqual(["hand"] * 2, [session.state.cards[card.object_id].zone for card in keepers])
+        self.assertEqual("battlefield", session.state.cards[nonland.object_id].zone)
+        self.assertEqual(list(range(1, 8)), [event.details["round"] for event in session.state.events
+                                            if event.code == "choice.apnap.payment_round"])
+        self.replay(session, load=True)
+
+    def test_onyx_greatest_power_loyalty_uses_the_existing_simultaneous_sacrifice(self):
+        session = self.session(70102405)
+        onyx = self.add(session.engine, "Professor Onyx")
+        ties = [self.add(session.engine, "Grizzly Bears", seat="B", ref=f"onyx-tied-{index}") for index in (1, 2)]
+        other = self.add(session.engine, "Grizzly Bears", seat="D", ref="onyx-other-sacrifice")
+        onyx.counters["loyalty"] = 5
+        self.assert_closed(session, onyx)
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        self.assertEqual("choice.apnap", self._onyx_loyalty(session, onyx, -3).kind)
+        self.assertEqual(2, session.state.cards[onyx.object_id].counters["loyalty"])
+        self._select(session, "B", ties[1].ref)
+        self.assertEqual("battlefield", session.state.cards[ties[1].object_id].zone)
+        self._select(session, "D", other.ref)
+        targets = [session.state.cards[card.object_id] for card in (ties[1], other)]
+        self.assertEqual(["graveyard", "graveyard"], [card.zone for card in targets])
+        self.assertEqual(targets[0].zone_timestamp, targets[1].zone_timestamp)
+        self.assertEqual("battlefield", session.state.cards[ties[0].object_id].zone)
+        self.replay(session, load=True)
+
 
 if __name__ == "__main__":
     unittest.main()

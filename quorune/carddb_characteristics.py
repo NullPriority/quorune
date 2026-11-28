@@ -264,6 +264,13 @@ def base_card_characteristics(
     if shared_type_values is not None:
         return shared_type_values
     face = omen_characteristic_face(card, record, cast_face_version=cast_face_version)
+    if record.layout == "flip" and len(record.faces) == 2 and not card.annotations.get("prospective_cast_face"):
+        from .rules.copied_flip_faces import FLIPPED_STATUS
+
+        flipped_battlefield = card.zone == "battlefield" and (
+            card.annotations.get(FLIPPED_STATUS) is True or card.active_face == record.faces[1]["name"]
+        )
+        face = record.faces[1 if flipped_battlefield else 0]
     if (face is None and public_zone_front_faces and record.layout in {'modal_dfc', 'transform'}
             and len(record.faces) == 2 and card.zone in {'graveyard', 'exile', 'command'}
             and not card.face_down and card.annotations.get('prospective_cast_face') is not True):
@@ -287,10 +294,11 @@ def base_card_characteristics(
             and printed_shared_type_faces(record)
         )
     )
+    cost_face = record.faces[0] if selected and record.layout == "flip" else face
     return {
         "name": str(face.get("name")) if face else record.name,
-        "mana_cost": str(face.get("mana_cost") or "") if face else record.mana_cost,
-        "mana_value": current_face_mana_value(record, face) if selected else record.mana_value,
+        "mana_cost": str(cost_face.get("mana_cost") or "") if cost_face else record.mana_cost,
+        "mana_value": current_face_mana_value(record, cost_face) if selected else record.mana_value,
         "type_line": str(face.get("type_line") or "") if face else record.type_line,
         "oracle_text": str(face.get("oracle_text") or "") if face else record.oracle_text,
         "executable_oracle_text": (
@@ -303,7 +311,7 @@ def base_card_characteristics(
         "loyalty": face.get("loyalty") if face else record.loyalty,
         "defense": face.get("defense") if face else record.defense,
         "keywords": list(record.keywords),
-        "colors": printed_face_colors(face) if selected else list(record.colors),
+        "colors": printed_face_colors(cost_face) if selected else list(record.colors),
         "produced_mana": list(record.produced_mana),
         "ability_fragments": [],
     }

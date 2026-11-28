@@ -14,6 +14,7 @@ OPTIONAL_STACK_TARGET_CHANGE_FIELD = "optional_stack_target_change"
 STACK_SPELL_CONTROL_FIELD = "stack_spell_control"
 STACK_SPELL_CONTROL_CONTEXT = "stack_spell_control_history"
 STACK_TARGET_CHANGE_PAYMENT_VERSION = 15
+STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND = "stack_target_spell_mana_value_loss"
 STACK_TARGET_CHANGE_FIELDS = frozenset((MANDATORY_STACK_TARGET_CHANGE_FIELD, OPTIONAL_STACK_TARGET_CHANGE_FIELD))
 REPRESENTED_STACK_TARGET_CHANGE_KINDS = frozenset(("spell", "spell_copy", "activated_ability", "triggered_ability"))
 
@@ -38,6 +39,21 @@ class SingleStackTargetChangeSpec:
             "predicate": SINGLE_ANNOUNCED_STACK_TARGET,
             "count": 1,
         }
+
+
+def stack_target_spell_mana_value_loss_amount():
+    return {
+        "kind": STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND,
+        "schema_version": 1,
+        "stack": "$target.0",
+    }
+
+
+def stack_target_change_with_mana_value_loss_effects():
+    return (
+        *SingleStackTargetChangeSpec(False).effects,
+        {"op": "lose_life", "player": "$controller", "amount": stack_target_spell_mana_value_loss_amount()},
+    )
 
 
 @dataclass(frozen=True, slots=True)

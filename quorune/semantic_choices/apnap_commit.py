@@ -7,10 +7,11 @@ from typing import Any, Mapping
 
 from ..library_order_model import HAND_TOP_APNAP_EVENT
 from ..replacement.immutable import FrozenMap
-from ..apnap_object_payment import DECLINED_LIFE_LOSS
+from ..apnap_object_payment import DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS
 from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_FIELD
 from ..semantic_runtime.counted_sacrifice_token_intent import CountedSacrificeQuantityIntent, CountedSacrificeTokenIntent
 from ..rules.any_number_sacrifice import ANY_NUMBER_SACRIFICE_FIELD
+from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD
 from ..power_sacrifice_model import GREATEST_POWER_SACRIFICE_LIFE_RESULT, GreatestPowerSacrificeLifeResult
 from ..semantic_runtime.targeted_power_sacrifice_life_intent import TargetedPowerSacrificeLifeIntent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
@@ -68,7 +69,9 @@ def _intents(
 ) -> tuple[Any, ...]:
     if not isinstance(effect, Mapping) or set(effect) not in (
         _FIELDS, _FIELDS | _LOSS_FIELDS, _FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT},
-        *(_FIELDS | {key} for key in _COUNTED_MOVES),
+        _FIELDS | {ORDER_GRAVEYARD_ARRIVALS}, _FIELDS | _LOSS_FIELDS | {ORDER_GRAVEYARD_ARRIVALS},
+        _FIELDS | {ANY_NUMBER_SACRIFICE_FIELD, ORDER_GRAVEYARD_ARRIVALS},
+        *(_FIELDS | {key} for key in (*_COUNTED_MOVES, SELECTED_DISCARD_DRAW_FIELD)),
     ):
         raise SemanticChoiceError("APNAP object commit fields are malformed")
     if effect["op"] != APNAP_OBJECT_COMMIT_OPERATION:
@@ -109,6 +112,11 @@ def _intents(
         }
     ):
         raise SemanticChoiceError("APNAP object commit is malformed")
+    if ORDER_GRAVEYARD_ARRIVALS in effect and (
+        effect[ORDER_GRAVEYARD_ARRIVALS] is not True
+        or (zones, destination, event_code) != (("battlefield",), "graveyard", "choice.sacrifice")
+    ):
+        raise SemanticChoiceError("A physical order requires an exact battlefield sacrifice")
     move = (
         (
             MoveObjectsSimultaneouslyIntent(
@@ -145,6 +153,11 @@ def _intents(
     if GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect:
         move = (_sacrifice_power_move(effect, actor=actor, refs=refs, zones=zones,
                                       destination=destination, reason=reason, event_code=event_code),)
+    if SELECTED_DISCARD_DRAW_FIELD in effect:
+        if (type(effect[SELECTED_DISCARD_DRAW_FIELD]) is not int or effect[SELECTED_DISCARD_DRAW_FIELD] != 1
+                or (zones, destination, event_code) != (("hand",), "graveyard", "choice.discard")):
+            raise SemanticChoiceError("A private discard receipt requires its original hand movement")
+        return move
     if hand_top:
         return move
     loss = ()
@@ -190,7 +203,9 @@ class ApnapObjectCommitHandler:
     capability_dependencies: tuple[str, ...] = (
         "zone.change.destination_replacement",
     )
-    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS | _LOSS_FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT, *_COUNTED_MOVES}))
+    continuation_fields: tuple[str, ...] = tuple(sorted(
+        _FIELDS | _LOSS_FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT, ORDER_GRAVEYARD_ARRIVALS, *_COUNTED_MOVES}
+    ))
     private_data: tuple[str, ...] = ("object_refs",)
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (

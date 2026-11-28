@@ -28,6 +28,7 @@ from scripts.update_capability_evidence import build_index, discover_tests
 
 
 ORIGINAL = "Struggle for Project Purity"
+SIEGE = "Frostcliff Siege"
 PROFILE = "commander_review"
 
 
@@ -46,13 +47,16 @@ class FactionEntryTriggerTests(InheritedNativeFixture, unittest.TestCase):
             [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
             ["Generic Bound Commander"])
 
-    def choose_faction(self, game, card, faction):
+    def choose_faction(self, game, card, faction, *, siege=False, entering_from="stack"):
         pending = self.resolve(game)
+        return self.commit_faction(game, card, faction, pending, siege=siege, entering_from=entering_from)
+
+    def commit_faction(self, game, card, faction, pending, *, siege, entering_from):
         self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
         packet = game.packet("pilot:A", full=True)["decision"]
         offered = {row["id"].rsplit(":", 1)[-1]: row["id"] for row in packet["ctx"]["options"]}
-        self.assertEqual({"Brotherhood", "Enclave"}, set(offered))
-        self.assertEqual("stack", game.state.cards[card.object_id].zone)
+        self.assertEqual({"Jeskai", "Temur"} if siege else {"Brotherhood", "Enclave"}, set(offered))
+        self.assertEqual(entering_from, game.state.cards[card.object_id].zone)
         command = {"action_id": "choose", "choices": {"replacement": offered[faction]}}
         before = authoritative_state_hash(game.state)
         self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
@@ -62,8 +66,11 @@ class FactionEntryTriggerTests(InheritedNativeFixture, unittest.TestCase):
         result = game.act("pilot:A", command)
         self.assertTrue(result.ok, result.summary)
         self.settle(game)
-        self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
-        self.assertEqual(faction, game.state.cards[card.object_id].annotations.get("chosen_faction"))
+        entered = game.state.cards[card.object_id]
+        self.assertEqual("battlefield", entered.zone)
+        designation = "chosen_jeskai_temur_faction" if siege else "chosen_faction"
+        self.assertEqual(faction, entered.annotations.get(designation))
+        return entered
 
     def advance_through_cleanup(self, game, predicate):
         def cleanup(current):
@@ -319,5 +326,116 @@ class FactionEntryTriggerTests(InheritedNativeFixture, unittest.TestCase):
                                            capability_registry=self.registry, capability_profile=PROFILE)
             self.assertNotEqual("exact", declined.status)
         with patch("quorune.compiler.faction_trigger_templates.faction_trigger_node", return_value=None):
+            declined = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+            self.assertNotEqual("exact", declined.status)
+
+
+    def test_jeskai_coalesces_by_damaged_player_and_keeps_separate_private_draws(self):
+        game = self.session(30460754)
+        source = self.add(game.engine, SIEGE, zone="hand")
+        mirror = self.add(game.engine, "Mirage Mirror")
+        attackers = [self.add(game.engine, "Grizzly Bears", ref=f"siege-attacker-{index}")
+                     for index in range(3)]
+        self.prepare(game, mana={"C": 3, "U": 1, "R": 1})
+        self.assert_closed(game, source)
+        self.assert_closed(game, mirror)
+        self.checkpoint(game)
+        self.cast_for(game, "A", source)
+        entered = self.choose_faction(game, source, "Jeskai", siege=True)
+        action = next(action for action in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if action["id"].startswith(f"activate:{mirror.ref}:"))
+        result = game.act("pilot:A", {"action_id": action["id"], "targets": [entered.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(game)
+        self.assertEqual(SIEGE, game.engine.display_name(mirror.object_id))
+        self.assertNotIn("chosen_jeskai_temur_faction", game.state.cards[mirror.object_id].annotations)
+        before_life = {seat: game.state.players[seat].life for seat in "BCD"}
+        before_draws = self._draw_counts(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        result = game.act("pilot:A", {"action_id": "attack", "attackers": {
+            attackers[0].ref: "B", attackers[1].ref: "B", attackers[2].ref: "C",
+        }})
+        self.assertTrue(result.ok, result.summary)
+        self.until(game, lambda current: current.state.pending_decision.kind == "trigger.order")
+        self._replay_receipt(game, "frostcliff-jeskai-pending-game-record")
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual(2, len(packet["ctx"]["triggers"]))
+        result = game.act("pilot:A", {"action_id": "order",
+                                      "triggers": [row["id"] for row in packet["ctx"]["triggers"]]})
+        self.assertTrue(result.ok, result.summary)
+        items = [item for item in game.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(2, len(items))
+        self.assertEqual({"B", "C"}, {item.context["player"] for item in items})
+        self.assertEqual(2, len({item.context["one_or_more_aggregation_id"] for item in items}))
+        self.assertEqual(0, self.trigger_count(game, mirror))
+        self.assertEqual({"B": 4, "C": 2, "D": 0},
+                         {seat: before_life[seat] - game.state.players[seat].life for seat in "BCD"})
+        self.settle(game)
+        self.assertEqual({"A": 2, "B": 0, "C": 0, "D": 0},
+                         {seat: self._draw_counts(game)[seat] - before_draws[seat] for seat in "ABCD"})
+        hidden = game.state.players["A"].draw_history[-1]["object"]
+        self.assertNotIn(hidden, json.dumps(game.packet("pilot:B", full=True)))
+        self._replay_receipt(game, "frostcliff-jeskai-draw-game-record")
+
+    def test_temur_grants_live_characteristics_and_reentry_requires_a_fresh_choice(self):
+        game = self.session(30460755)
+        source = self.add(game.engine, SIEGE, zone="hand")
+        blink = self.add(game.engine, "Flicker of Fate", zone="hand")
+        friend = self.add(game.engine, "Grizzly Bears", ref="frostcliff-friendly")
+        enemy = self.add(game.engine, "Grizzly Bears", seat="B", ref="frostcliff-enemy")
+        self.prepare(game, mana={"C": 2, "W": 1, "U": 1, "R": 1})
+        self.assert_closed(game, source)
+        self.assert_closed(game, blink)
+        self.checkpoint(game)
+        self.cast_for(game, "A", source)
+        entered = self.choose_faction(game, source, "Temur", siege=True)
+
+        def assert_characteristics(card, power, keywords):
+            engine = game.engine
+            self.assertEqual((power, 2), (engine._numeric_stat(card.object_id, "power"),
+                                          engine._numeric_stat(card.object_id, "toughness")))
+            self.assertEqual({word.casefold() for word in keywords},
+                             engine._combat_keywords(card).intersection({"trample", "haste"}))
+
+        assert_characteristics(friend, 3, {"Trample", "Haste"})
+        assert_characteristics(enemy, 2, set())
+        self._replay_receipt(game, "frostcliff-temur-game-record")
+        old_logical_id = entered.logical_object_id
+        self.cast_for(game, "A", blink, [entered.ref])
+        pending = self.resolve(game)
+        self._replay_receipt(game, "frostcliff-reentry-pending-game-record")
+        assert_characteristics(friend, 2, set())
+        self.assertNotIn("chosen_jeskai_temur_faction", game.state.cards[source.object_id].annotations)
+        reentered = self.commit_faction(game, source, "Jeskai", pending, siege=True, entering_from="exile")
+        self.assertNotEqual(old_logical_id, reentered.logical_object_id)
+        assert_characteristics(friend, 2, set())
+        assert_characteristics(enemy, 2, set())
+        self._replay_receipt(game, "frostcliff-reentry-game-record")
+
+    def test_frostcliff_whole_binding_checks_entry_scope_and_exact_branches(self):
+        from quorune.entry_designations import ENTRY_JESKAI_TEMUR_CAPABILITY
+
+        card = self.db.lookup(SIEGE, fuzzy=False)
+        binding, semantics = register_card(self.db, self.registry, SIEGE)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        registered = {program.event: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        self.assertEqual({"zone.change", "damage.dealt", "characteristics.evaluate"}, set(registered))
+        for program in registered.values():
+            deps = [value for value in program.capability_dependencies if value != ENTRY_JESKAI_TEMUR_CAPABILITY]
+            changed = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile=PROFILE).to_dict())
+            declined = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(declined["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{ENTRY_JESKAI_TEMUR_CAPABILITY}",
+                          declined["blockers"])
+        for text in (card.oracle_text.split("\n", 1)[1],
+                     card.oracle_text.replace("Jeskai or Temur", "Jeskai or Mardu"),
+                     card.oracle_text.replace("to a player", "to a creature"),
+                     card.oracle_text.replace("trample and haste", "trample and lifelink")):
+            declined = compile_oracle_card(replace(card, oracle_text=text),
+                                           capability_registry=self.registry, capability_profile=PROFILE)
+            self.assertNotEqual("exact", declined.status)
+        with patch("quorune.compiler.jeskai_temur_faction._jeskai_trigger_node", return_value=None):
             declined = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
             self.assertNotEqual("exact", declined.status)

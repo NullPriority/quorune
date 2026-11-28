@@ -1,5 +1,6 @@
 {
   "cards": [
+    {"oracle_id": "d2ae893f-52af-4645-8712-d62fb78f901e", "name": "Ondu Spiritdancer", "mana_cost": "{4}{W}", "type_line": "Creature — Kor Cleric", "oracle_text": "Whenever an enchantment you control enters, you may create a token that's a copy of it. Do this only once each turn.", "power": "3", "toughness": "3", "colors": ["W"], "color_identity": ["W"], "keywords": [], "layout": "normal", "released_at": "2024-09-27", "legalities": {"alchemy": "not_legal", "brawl": "not_legal", "commander": "legal", "competitivebrawl": "not_legal", "duel": "legal", "future": "not_legal", "gladiator": "not_legal", "historic": "not_legal", "legacy": "legal", "modern": "not_legal", "oathbreaker": "legal", "oldschool": "not_legal", "pauper": "not_legal", "paupercommander": "not_legal", "penny": "not_legal", "pioneer": "not_legal", "predh": "not_legal", "premodern": "not_legal", "standard": "not_legal", "standardbrawl": "not_legal", "timeless": "not_legal", "tlr": "not_legal", "vintage": "legal"}, "cmc": 5.0},
     {
       "cmc": 3.0,
       "color_identity": [

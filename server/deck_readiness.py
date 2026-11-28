@@ -6,6 +6,7 @@ from quorune.card_programs.adapters import CardProgramSourceMismatch
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckLoader
 from quorune.preflight import _card_source_hashes, semantic_preflight
+from quorune.semantics import SemanticRegistry
 
 
 _REASON_LABELS = {
@@ -22,10 +23,15 @@ def assess_deck(
     deck: DeckDefinition,
     *,
     retained_snapshots: Callable[[], Iterable[CardDatabase]] | None = None,
+    registry: SemanticRegistry | None = None,
+    checked_card_programs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Keep a format-checked list available for review when card data conflicts."""
     try:
-        report = semantic_preflight(card_db, deck, collect_source_diagnostics=True)
+        report = semantic_preflight(
+            card_db, deck, collect_source_diagnostics=True,
+            registry=registry, checked_card_programs=checked_card_programs,
+        )
     except CardProgramSourceMismatch as exc:
         try:
             card = card_db.by_oracle_id(exc.oracle_id).name

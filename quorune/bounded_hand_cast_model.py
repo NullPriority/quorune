@@ -12,6 +12,8 @@ BOUNDED_HAND_CAST_CAPABILITY = 'casting.resolution.fixed_bounded_hand'
 BOUNDED_HAND_CAST_MECHANIC = 'fixed-bounded-hand-free-cast'
 LEGENDARY_WIZARD_HAND_CAST_VERSION = 3
 DAMAGED_PLAYER_HAND_CAST_VERSION = 4
+ANNOUNCED_X_HAND_CAST_VERSION = 5
+ANNOUNCED_X_HAND_CAST_CAPABILITY = "casting.resolution.announced_x_hand_cast_after_damage"
 DAMAGED_PLAYER_HAND_CAST_CAPABILITY = "casting.resolution.inspected_damage_recipient_hand"
 DAMAGED_PLAYER_HAND_CAST_OWNER = "$context.target"
 SOURCE_COMBAT_DAMAGE_PLAYER_CONDITION = FrozenMap({"all": [
@@ -53,7 +55,7 @@ class BoundedHandCastSpec:
             return
         if self.hand_owner is not None:
             raise ValueError("Controller-hand casts cannot select a different hand owner")
-        if self.schema_version in (1, LEGENDARY_WIZARD_HAND_CAST_VERSION):
+        if self.schema_version in (1, LEGENDARY_WIZARD_HAND_CAST_VERSION, ANNOUNCED_X_HAND_CAST_VERSION):
             if not isinstance(self.mana_value_limit, ManaValueLimitSpec) or self.shared_card_types != ():
                 raise ValueError('Hand free cast requires its closed fixed mana-value limit')
             return
@@ -81,7 +83,7 @@ class BoundedHandCastSpec:
                 and value["schema_version"] == DAMAGED_PLAYER_HAND_CAST_VERSION):
             return cls(None, value["schema_version"], hand_owner=value["hand_owner"])
         if (set(value) == {'schema_version', 'mana_value_limit'}
-                and value['schema_version'] in (1, LEGENDARY_WIZARD_HAND_CAST_VERSION)):
+                and value['schema_version'] in (1, LEGENDARY_WIZARD_HAND_CAST_VERSION, ANNOUNCED_X_HAND_CAST_VERSION)):
             return cls(ManaValueLimitSpec.from_dict(value['mana_value_limit']), value['schema_version'])
         if (set(value) == {'schema_version', 'shared_card_types'} and value['schema_version'] == 2
                 and isinstance(value['shared_card_types'], (list, tuple))):
@@ -139,9 +141,31 @@ def is_damaged_player_hand_cast_effect(effect) -> bool:
     return isinstance(permission, Mapping) and permission.get("schema_version") == DAMAGED_PLAYER_HAND_CAST_VERSION
 
 
+def announced_x_hand_cast_effect():
+    return {
+        "op": "choose_objects", "player": "$controller",
+        BOUNDED_HAND_CAST_FIELD: {"schema_version": ANNOUNCED_X_HAND_CAST_VERSION,
+                                 "mana_value_limit": {"schema_version": 1, "maximum": "$x"}},
+    }
+
+
+def is_announced_x_hand_cast_effect(effect) -> bool:
+    permission = effect.get(BOUNDED_HAND_CAST_FIELD) if isinstance(effect, Mapping) else None
+    return isinstance(permission, Mapping) and permission.get("schema_version") == ANNOUNCED_X_HAND_CAST_VERSION
+
+
 def bounded_hand_cast_payload_dependencies(effect):
     if not isinstance(effect, Mapping) or BOUNDED_HAND_CAST_FIELD not in effect:
         return ()
+    if is_announced_x_hand_cast_effect(effect):
+        from .query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+
+        permission = effect[BOUNDED_HAND_CAST_FIELD]
+        if (type(permission["schema_version"]) is not int
+                or FrozenMap(effect) != FrozenMap(announced_x_hand_cast_effect())
+                or type(permission["mana_value_limit"]["schema_version"]) is not int):
+            raise ValueError("An announced-X hand cast requires the original spell's bound value")
+        return (ANNOUNCED_X_HAND_CAST_CAPABILITY, BOUNDED_HAND_CAST_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
     if is_legendary_wizard_hand_cast_effect(effect):
         permission = effect[BOUNDED_HAND_CAST_FIELD]
         if (type(permission["schema_version"]) is not int

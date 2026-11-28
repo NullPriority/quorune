@@ -3,6 +3,9 @@
 from ..impulse_access_model import top_free_instant_sorcery_effect
 from ..next_spell_cost_model import MECHANIC as NEXT_COST_MECHANIC, next_turn_spell_cost_effect
 from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, other_blue_permanent_draw_effect
+from ..rules.captured_counter_keyword_grant import (
+    CAPTURED_COUNTER_FLYING_MECHANICS, CAPTURED_COUNTER_FLYING_VERSION, captured_counter_keyword_instruction,
+)
 from ..rules.loyalty_spell_results import CAPABILITY, DRAW_MECHANIC, MECHANIC, loyalty_spell_result_capabilities
 from ..rules.source_references import SourceReferenceSpec
 from .activated_costs import activated_ability_cost
@@ -13,13 +16,17 @@ from . import regex_working_set as re
 
 
 def fixed_loyalty_spell_result(ability, *, source_name, text, public_timing):
-    if (ability.loyalty_delta not in (1, -2, -8) or ability.zones != ("battlefield",)
+    if (ability.loyalty_delta not in (0, 1, -2, -8) or ability.zones != ("battlefield",)
             or ability.mana_ability or ability.sorcery_speed or ability.activation_conditions
             or public_timing is not None):
         return None
     delta = ability.loyalty_delta
     normalized = " ".join(text.strip().split())
-    if delta == 1 and normalized.casefold() == "until your next turn, instant and sorcery spells you cast cost {1} less to cast.":
+    if (delta == 0 and normalized.casefold() ==
+            "put a +1/+1 counter on each creature you control. those creatures gain flying until your next turn."):
+        effect = captured_counter_keyword_instruction(version=CAPTURED_COUNTER_FLYING_VERSION)
+        result = ("loyalty-captured-counter-flying-v1", (effect,), None, (MECHANIC, *CAPTURED_COUNTER_FLYING_MECHANICS))
+    elif delta == 1 and normalized.casefold() == "until your next turn, instant and sorcery spells you cast cost {1} less to cast.":
         result = ("loyalty-next-turn-spell-cost-v1", (next_turn_spell_cost_effect(),), None, (MECHANIC, NEXT_COST_MECHANIC))
     elif (delta == -8 and normalized.casefold() == "exile the top eight cards of your library. "
             "you may cast instant and sorcery spells from among them this turn without paying their mana costs."):

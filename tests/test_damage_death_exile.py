@@ -231,3 +231,127 @@ class DamageDeathExileNativeTests(InheritedNativeFixture, unittest.TestCase):
                 self.assertIsNone(self.resolve(session))
                 self.assertEqual('exile', session.state.cards[target.object_id].zone)
                 self.replay(session)
+
+    def test_enduring_courage_returns_only_as_an_enchantment_before_entry_and_dies_again(self):
+        session = self.session(603070301)
+        source = self.add(session.engine, "Enduring Courage")
+        session.engine.change_control(source.object_id, "B", reason="Seed original opponent control")
+        authority = self.add(session.engine, "Authority of the Consuls", seat="B")
+        destroy = self.add(session.engine, "Doom Blade", zone="hand")
+        disenchant = self.add(session.engine, "Disenchant", zone="hand")
+        for card in (source, authority, destroy, disenchant):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 2, "B": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", destroy, [source.ref], reserve={"W": 1, "C": 1})
+        self.resolve_top(session)
+        item, = session.state.stack
+        self.assertEqual(("triggered_ability", "B", source.object_id),
+                         (item.kind, item.controller, item.source_object_id))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[source.object_id]
+        self.assertEqual(("battlefield", "A", "A"), (returned.zone, returned.owner, returned.controller))
+        effective = session.engine._effective_card_data(returned)
+        self.assertEqual("Enchantment", effective["type_line"])
+        self.assertFalse(returned.tapped)
+        self.assertEqual(40, session.state.players["B"].life)
+        self.assertNotIn("Dog", effective["type_line"])
+        session = self.replay(session, load=True)
+        self.cast(session, "A", disenchant, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_enduring_courage_pumps_other_controlled_creature_without_targeting(self):
+        session = self.session(603070302)
+        source = self.add(session.engine, "Enduring Courage")
+        entrant = self.add(session.engine, "Grizzly Bears", zone="hand")
+        opposing = self.add(session.engine, "Grizzly Bears", seat="B", ref="enduring-opponent")
+        blink = self.add(session.engine, "Cloudshift", seat="B", zone="hand")
+        self.add(session.engine, "Plains", seat="B", ref="enduring-opponent-mana")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "G": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", entrant)
+        self.resolve_top(session)
+        item, = session.state.stack
+        self.assertEqual(("A", []), (item.controller, item.targets))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(4, session.engine._numeric_stat(entrant.object_id, "power"))
+        self.assertIn("haste", session.engine._combat_keywords(session.state.cards[entrant.object_id]))
+        self.cast(session, "B", blink, [opposing.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, session.engine._numeric_stat(opposing.object_id, "power"))
+        self.finish_turn(session)
+        self.assertEqual(2, session.engine._numeric_stat(entrant.object_id, "power"))
+        self.replay(session, load=True)
+
+
+    def test_enduring_courage_replacement_order_reloads_typed_return(self):
+        session = self.session(603070303)
+        source = self.add(session.engine, "Enduring Courage")
+        destroy = self.add(session.engine, "Doom Blade", zone="hand")
+        for seat in "BD":
+            orb = self.add(session.engine, "Orb of Dreams", seat=seat, ref=f"enduring-entry-orb-{seat}")
+            self.assert_closed(session, orb)
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1, "B": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", destroy, [source.ref])
+        pending = self.resolve(session)
+        self.assertEqual("replacement.order", pending.kind)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        session = self.replay(session, load=True)
+        for _ in range(4):
+            if session.state.pending_decision.kind != "replacement.order":
+                break
+            principal = session.pending_principals()[0]
+            option = session.packet(principal, full=True)["decision"]["ctx"]["options"][0]
+            answer = session.act(principal, {"action_id": "choose", "replacement": option["id"]})
+            self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(self.resolve(session))
+        card = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", card.zone)
+        self.assertTrue(card.tapped)
+        self.assertEqual("Enchantment", session.engine._effective_card_data(card)["type_line"])
+        self.replay(session, load=True)
+
+
+class EntryAndDeathCharacteristicCompilerTests(unittest.TestCase):
+    def test_entry_and_enchantment_death_require_closed_separate_printed_branches(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.entry_and_death_characteristics import (
+            creature_entry_pump_effect, death_enchantment_return_effect,
+        )
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Whenever another creature you control enters, it gets +2/+0 and gains haste until end of turn.\n"
+                "When this creature dies, if it was a creature, return it to the battlefield under its owner's control. "
+                "It's an enchantment.")
+
+        def compile_text(text):
+            return compile_oracle_card(replace(query_record(text), type_line="Enchantment Creature — Dog Glimmer"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            pump, death = ir.faces[0].nodes
+            self.assertEqual(("creature.enter", "creature.dies.self"), (pump.event, death.event))
+            self.assertEqual(creature_entry_pump_effect(2), pump.effects[0])
+            self.assertEqual(death_enchantment_return_effect(), death.effects[0])
+
+        witness()
+        with patch("quorune.compiler.event_card_return_templates.self_death_return_binding", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (text.replace("was a creature", "was an artifact"),
+                        text.replace("an enchantment", "an artifact"),
+                        text.replace("another creature you control", "a target creature")):
+            self.assertNotEqual("exact", compile_text(altered).status)

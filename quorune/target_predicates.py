@@ -292,12 +292,19 @@ def target_predicate_matches(
     source_incarnation: str | None = None,
     source_chosen_creature_type: str | None = None,
     source_chosen_color: str | None = None,
+    reserved_graveyard_source_id: str | None = None,
 ) -> bool:
     """Evaluate the closed predicate vocabulary for one normalized target row."""
 
     predicate = group.predicate
     if not predicate:
         return True
+    from .rules.controller_graveyard_mana_targets import (
+        CONTROLLER_GRAVEYARD_MANA_PREDICATE, controller_graveyard_mana_target_matches,
+    )
+
+    if predicate == CONTROLLER_GRAVEYARD_MANA_PREDICATE:
+        return controller_graveyard_mana_target_matches(host, row, reserved_source_id=reserved_graveyard_source_id)
     from .linked_ability_exile_model import LINKED_EXILE_COPY_TARGET_PREDICATE
 
     if predicate == LINKED_EXILE_COPY_TARGET_PREDICATE:
@@ -336,8 +343,10 @@ def target_predicate_matches(
     if predicate == 'activated_or_triggered_ability':
         item = row.get('stack_item')
         return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}
+    from .stack_spell_copy_model import COPYABLE_STACK_ITEM_PREDICATE
+
     if predicate in {'triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
-            'ability_or_legendary_spell','blue_instant_spell'}:
+            'ability_or_legendary_spell','blue_instant_spell', COPYABLE_STACK_ITEM_PREDICATE}:
         item = row.get('stack_item')
         if row.get('zone') != 'stack' or not isinstance(item, StackItem):
             return False
@@ -350,6 +359,8 @@ def target_predicate_matches(
             return ability or spell and 'creature' not in types
         if predicate == 'ability_or_legendary_spell':
             return ability or spell and 'legendary' in supertypes
+        if predicate == COPYABLE_STACK_ITEM_PREDICATE:
+            return ability or spell and bool(types.intersection({"instant", "sorcery"}))
         return spell and 'U' in colors and 'instant' in types
     if predicate == "artifact_or_enchantment_or_nonbasic_land":
         return bool(
@@ -375,6 +386,8 @@ def target_predicate_matches(
             row["category"] == "player"
             or types.intersection({"battle", "creature", "planeswalker"})
         )
+    if predicate == "player_or_creature_or_planeswalker":
+        return row["category"] == "player" or bool(types.intersection({"creature", "planeswalker"}))
     if predicate == "player_or_planeswalker":
         return row["category"] == "player" or "planeswalker" in types
     if predicate == "void_counter":

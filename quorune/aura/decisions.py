@@ -136,6 +136,12 @@ class AuraEntryContinuation:
                 validate_opposing_death_delayed_return(self.effect, required_phase="return")
             except ValueError as exc:
                 raise AuraRuleError(str(exc)) from exc
+        from ..rules.revival_return import is_revival_return, validate_resolved_revival_return
+        if is_revival_return(self.effect):
+            try:
+                validate_resolved_revival_return(self.effect, required_phase="return")
+            except (KeyError, TypeError, ValueError) as exc:
+                raise AuraRuleError(str(exc)) from exc
         from ..delayed_object_model import is_accepted_source_bound_creature_return, validate_source_bound_creature_return
         if is_accepted_source_bound_creature_return(self.effect):
             try:
@@ -430,6 +436,7 @@ def complete_aura_entry_choice(
     from ..rules.granted_death_role_return import is_granted_death_role_return, is_granted_self_death_return
     from ..rules.enchanted_departure_return import is_enchanted_departure_return
     from ..rules.opposing_death_delayed_return import is_opposing_death_delayed_return
+    from ..rules.revival_return import is_revival_return
     from ..delayed_object_model import is_accepted_source_bound_creature_return
     from ..delayed_object_model import is_artifact_graveyard_return, RESOLVE_OBJECT_ACTION
     from ..private_hand_entry_model import SELECTED_HAND_ENTRY_OPERATION
@@ -444,6 +451,7 @@ def complete_aura_entry_choice(
             or is_granted_death_role_return(effect) or is_granted_self_death_return(effect)
             or is_enchanted_departure_return(effect)
             or is_opposing_death_delayed_return(effect)
+            or is_revival_return(effect)
             or is_accepted_source_bound_creature_return(effect)
             or (effect.get("op") == RESOLVE_OBJECT_ACTION and is_artifact_graveyard_return(effect))
             or (effect.get("op") == LINKED_EXILE_RETURN_OPERATION and effect.get("phase") == "return"

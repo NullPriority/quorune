@@ -25,6 +25,7 @@ class EntryCharacteristicAddition:
     source: ResolutionEffectSource
     colors: tuple[str, ...]
     creature_subtypes: tuple[str, ...]
+    prospective: bool = False
 
     def __post_init__(self) -> None:
         from .continuous_effect_state import ResolutionEffectSource
@@ -32,15 +33,35 @@ class EntryCharacteristicAddition:
 
         if not isinstance(self.source, ResolutionEffectSource):
             raise ValueError("Entry characteristics require their typed resolving source")
-        if (type(self.colors) is not tuple or not self.colors
+        if (type(self.colors) is not tuple or not self.colors and self.prospective is not True
                 or any(type(color) is not str or color not in {"W", "U", "B", "R", "G"} for color in self.colors)
                 or len(set(self.colors)) != len(self.colors)):
             raise ValueError("Entry characteristics require distinct canonical colors")
+        if type(self.prospective) is not bool or self.prospective and self.colors:
+            raise ValueError("Prospective entry additions require an exact subtype-only result")
         if (type(self.creature_subtypes) is not tuple or not self.creature_subtypes
                 or any(type(word) is not str or not word or canonical_creature_subtype(word) != word
                        for word in self.creature_subtypes)
                 or len(set(self.creature_subtypes)) != len(self.creature_subtypes)):
             raise ValueError("Entry characteristics require distinct canonical creature subtypes")
+
+
+def prospective_entry_characteristics(host, *, card, enter_face, addition):
+    from .entry_counters import capture_prospective_entry_characteristics
+
+    values, type_line = capture_prospective_entry_characteristics(host, card=card, enter_face=enter_face)
+    if addition is None or not addition.prospective:
+        return values
+    from .characteristic_evaluation import type_parts
+
+    types, subtypes, _ = type_parts(type_line)
+    if not types.intersection({"creature", "kindred"}):
+        return values
+    added = [subtype.title() for subtype in addition.creature_subtypes if subtype not in subtypes]
+    if not added:
+        return values
+    separator = " " if subtypes else " \u2014 "
+    return {**values, "type_line": type_line + separator + " ".join(added)}
 
 
 def prepare_entry_characteristic_additions(state, changes, additions):
@@ -96,7 +117,8 @@ def commit_entry_characteristic_additions(host, prepared):
                 Layer.TYPE, "4", (ContinuousOperation("add_types", subtypes, field="subtypes"),),
                 applies=CREATURE_SUBTYPE_BATTLEFIELD_QUERY,
             ),
-            ResolutionContinuousComponent(Layer.COLOR, "5", (ContinuousOperation("add_colors", addition.colors),)),
+            *((ResolutionContinuousComponent(Layer.COLOR, "5", (ContinuousOperation("add_colors", addition.colors),)),)
+              if addition.colors else ()),
         )
         create_resolution_continuous_effect_components(
             host, source=addition.source, targets=cards, components=components,
@@ -111,6 +133,41 @@ class PreparedEntryResult(Protocol):
     keyword_grants: Sequence[EntryKeywordGrant]
 
 
+def prospective_zone_entry(host, card, enter_face, face_down, battlefield_entry, *, cloaked, type_setting):
+    from .entry_counters import capture_prospective_entry_characteristics
+    from .rules.entry_enchantment_setting import enchantment_only_entry_characteristics
+
+    if face_down:
+        from .manifest import cloak_characteristics
+
+        mask = cloak_characteristics() if cloaked else {}
+        return ({"name": "", "type_line": "Creature", "mana_cost": "", "mana_value": 0, "text": "", "colors": [],
+                 "keywords": mask.get("abilities", []), "ability_fragments": mask.get("ability_fragments", []),
+                 "power": "2", "toughness": "2"}, "Creature")
+    characteristics, type_line = capture_prospective_entry_characteristics(
+        host, card=card, enter_face=enter_face, battlefield_entry=battlefield_entry,
+    )
+    if type_setting is not None:
+        characteristics = enchantment_only_entry_characteristics(characteristics)
+        type_line = characteristics["type_line"]
+    return characteristics, type_line
+
+
+def with_copy_entry_preview(host, card, replacement, characteristics, type_line, enchant_spec, type_setting):
+    from .entry_copy import copied_entry_preview
+
+    copied = copied_entry_preview(card, replacement)
+    if copied is None:
+        return None, characteristics, type_line, enchant_spec
+    from .rules.room_copy_values import room_copy_characteristics
+    from .rules.entry_enchantment_setting import enchantment_only_entry_characteristics
+
+    characteristics = room_copy_characteristics(copied, replacement.event.payload["entry_copy"])
+    if type_setting is not None:
+        characteristics = enchantment_only_entry_characteristics(characteristics)
+    return copied, characteristics, str(characteristics["type_line"]), host._compiled_enchant_spec(copied)
+
+
 def commit_entry_designations(
     host: Any,
     card: Any,
@@ -119,12 +176,16 @@ def commit_entry_designations(
     creature_type: str | None,
     card_name: str | None = None,
     faction: str | None = None,
+    basic_land_type: str | None = None,
+    jeskai_temur_faction: str | None = None,
 ) -> None:
     """Retain entry choices through the canonical card-designation intent owner."""
     choices = (
         (EntryDesignationKind.COLOR, color),
         (EntryDesignationKind.CREATURE_TYPE, creature_type),
+        (EntryDesignationKind.BASIC_LAND_TYPE, basic_land_type),
         (EntryDesignationKind.FACTION, faction),
+        (EntryDesignationKind.JESKAI_TEMUR_FACTION, jeskai_temur_faction),
     )
     for kind, value in choices:
         if value is not None:
@@ -336,7 +397,7 @@ def _commit_linked_entry_card_type(host, prepared, card):
     from .card_program_faces import program_matches_face
     from .entry_copy import copiable_oracle_id
     from .linked_card_type import (
-        ANNOTATION, COST_TEMPLATE, ENTRY_FIELD, ENTRY_TEMPLATE, LinkedCardTypeChoice,
+        ANNOTATION, ENTRY_FIELD, LinkedCardTypeChoice,
     )
     from .rules.linked_entry_opponent import entry_opponent_copy_form
 
@@ -351,10 +412,11 @@ def _commit_linked_entry_card_type(host, prepared, card):
         program for program in host.semantics.programs_for_oracle(record.oracle_id)
         if program_matches_face(record, program, card) and host.semantic_program_is_current_trusted(program)
     )
+    entry_template, consumer_template = choice.templates
     if not any(program.key + ":0" == choice.component_id
-               and program.provenance.get("template_id") == ENTRY_TEMPLATE for program in programs):
+               and program.provenance.get("template_id") == entry_template for program in programs):
         return
-    consumers = [program.key for program in programs if program.provenance.get("template_id") == COST_TEMPLATE]
+    consumers = [program.key for program in programs if program.provenance.get("template_id") == consumer_template]
     if len(consumers) != 1:
         return
     retain_linked_copy_forms(card)
@@ -415,8 +477,13 @@ def commit_prepared_entry_results(
     commit_prepared_entry_identity_results(prepared,card,error_type=error_type,
         preserve_physical_face=token_copy_value_mode(host)==1,host=host)
     from .rules.entry_subtype_grants import entry_subtype_grants,commit_entry_subtype_grants
-    try:commit_entry_subtype_grants(host,card,entry_subtype_grants(prepared.event))
-    except (ValueError,TypeError) as exc:raise error_type(str(exc)) from exc
+    from .rules.entry_enchantment_setting import commit_resolution_entry_enchantment
+
+    try:
+        commit_entry_subtype_grants(host, card, entry_subtype_grants(prepared.event))
+        commit_resolution_entry_enchantment(host, card, prepared.event)
+    except (ValueError, TypeError) as exc:
+        raise error_type(str(exc)) from exc
 
     commit_counter_events_from_resolution(
         host,

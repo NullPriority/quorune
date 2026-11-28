@@ -462,3 +462,139 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
 
 if __name__ == '__main__':
     unittest.main()
+
+
+NIV = "Niv-Mizzet, Ghost Counsel"
+
+
+class LifeGainLifeDrawNativeTests(InheritedNativeFixture, unittest.TestCase):
+    reject = recovery_helpers.TurnLifeLossRecoveryNativeTests.reject
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "life-gain-life-draw.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/life-gain-counted-result-cards.json",
+            ROOT / "tests/fixtures/life-total-prohibition-cards.json",
+            ROOT / "tests/fixtures/live-combat-counterpart-lifelink-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Sliver Hivelord"
+        cls.deck = DeckDefinition("Life-gain life payment", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def test_niv_exact_original_controller_amount_draw_and_mutation(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.life_gain_counted_results import LIFE_GAIN_LIFE_DRAW_CAPABILITY, life_gain_life_draw_effect
+        from quorune.semantics import SemanticRegistry
+
+        profile = "commander_review"
+        record = self.db.lookup(NIV, fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertEqual(3, len(ir.faces[0].nodes))
+        node, = [node for node in ir.faces[0].nodes if node.event == "life.gained"]
+        self.assertEqual([life_gain_life_draw_effect()], list(node.effects))
+        self.assertIn(LIFE_GAIN_LIFE_DRAW_CAPABILITY, node.capability_dependencies)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile=profile)
+        proof = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+        self.assertTrue(proof["strict_capability_ready"], proof["blockers"])
+        for text in (
+            record.oracle_text.replace("you gain life", "an opponent gains life"),
+            record.oracle_text.replace("that much life", "the life you gained this turn"),
+            record.oracle_text.replace("that many cards", "two cards"),
+            record.oracle_text.replace("If you do, draw that many cards.", "If you do, draw that many cards and scry 1."),
+        ):
+            changed = compile_oracle_card(replace(record, oracle_text=text),
+                capability_registry=self.registry, capability_profile=profile)
+            self.assertTrue(changed.material_residuals)
+        with patch("quorune.compiler.life_gain_counted_results.life_gain_life_draw_payment", return_value=None):
+            omitted = compile_oracle_card(record, capability_registry=self.registry, capability_profile=profile)
+        self.assertTrue(omitted.material_residuals)
+
+    def quote(self, game, *, payable=True):
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        quote = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("life", quote["payment_kind"])
+        self.assertEqual(payable, quote["payable"])
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        return quote["life_payment"]
+
+    def test_niv_separate_committed_lifelink_amounts_allow_pay_and_decline_privately(self):
+        game = self.session(11904001)
+        source = self.add(game.engine, NIV)
+        first = self.add(game.engine, "Vault Skirge")
+        second = self.add(game.engine, "Child of Night")
+        multiplier = self.add(game.engine, "Boon Reflection")
+        for card in (source, first, second, multiplier):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, [(first, "B"), (second, "B")])
+        self.until(game, lambda s: self.trigger_count(s, source) == 2)
+        self.assertEqual((46, 37), tuple(game.state.players[seat].life for seat in "AB"))
+        self.assertEqual([2, 4], sorted(item.context["amount"] for item in game.state.stack
+            if item.source_object_id == source.object_id and item.kind == "triggered_ability"))
+        magnitudes = []
+        for _ in range(2):
+            amount = self.quote(game)
+            magnitudes.append(amount)
+            game = self.replay(game, load=True)
+            self.reject(game, "B", {"action_id": "choose", "pay": True})
+            self.reject(game, "A", {"action_id": "choose", "pay": amount})
+            player = game.state.players["A"]
+            old_life, old_hand, old_mana = player.life, set(player.zones["hand"]), dict(player.mana_pool)
+            paid = amount == 4
+            draws = set(player.zones["library"][-amount:]) if paid else set()
+            result = game.act("pilot:A", {"action_id": "choose", "pay": paid})
+            self.assertTrue(result.ok, result.summary)
+            player = game.state.players["A"]
+            self.assertEqual(old_life - (amount if paid else 0), player.life)
+            self.assertEqual(draws, set(player.zones["hand"]) - old_hand)
+            self.assertEqual(old_mana, dict(player.mana_pool))
+            for seat in "ABCD":
+                view = json.dumps(game.packet("pilot:" + seat, full=True)["state"])
+                for object_id in draws:
+                    ref = json.dumps(game.state.cards[object_id].ref)
+                    self.assertEqual(seat == "A", ref in view)
+        self.assertEqual([2, 4], sorted(magnitudes))
+        self.assertEqual(42, game.state.players["A"].life)
+        self.replay(game, load=True)
+
+    def test_niv_activated_drain_keeps_quote_when_life_payment_becomes_prohibited(self):
+        game = self.session(11904002)
+        source = self.add(game.engine, NIV)
+        flash = self.add(game.engine, "Vedalken Orrery")
+        prohibition = self.add(game.engine, "Platinum Emperion", zone="hand")
+        for card in (source, flash, prohibition):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 8})
+        self.checkpoint(game)
+        self.priority(game, "A")
+        rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [row for row in rows if row["id"].startswith(f"activate:{source.ref}:")]
+        accepted = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.resolve_top(game)
+        self.assertEqual((41, 39, 39, 39), tuple(game.state.players[seat].life for seat in "ABCD"))
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.cast_for(game, "A", prohibition)
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[prohibition.object_id].zone)
+        self.assertEqual(1, self.quote(game, payable=False))
+        game = self.replay(game, load=True)
+        self.reject(game, "A", {"action_id": "choose", "pay": True})
+        before = tuple(game.state.players["A"].zones["hand"])
+        accepted = game.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(41, game.state.players["A"].life)
+        self.assertEqual(before, tuple(game.state.players["A"].zones["hand"]))
+        self.replay(game, load=True)

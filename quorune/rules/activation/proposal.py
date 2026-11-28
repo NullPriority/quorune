@@ -9,7 +9,6 @@ from typing import Any, Protocol, Sequence
 from ...abilities import ActivatedAbility, choose_ability
 from ...activation_condition_model import public_activation_program_timing
 from ...announced_damage import announced_allocation_details
-from ...crew import activation_power_tap_hint
 from .pricing import (
     payable_activation_mana_options,
     select_activation_mana_option,
@@ -23,10 +22,9 @@ from ...creature_power_damage import (
 from ...errors import GameRuleError
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
-from ...station import station_candidates, station_cost_choice
+from ...station import station_cost_choice
 from ...targets import available_modes
-from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
-from ..activation_costs import activation_choice_candidates
+from ..action_proposals import ActionOffer, ActivationProposal, freeze_json, thaw_json
 from ..modal_selection import canonical_modes
 from ..random_activation_target import choose_random_activated_target, has_random_activation_target
 from .model import (
@@ -36,6 +34,10 @@ from .model import (
 )
 from .offer_payload import activation_offer_cost_hint
 from .query import activation_actor_allowed
+from .equip_permissions import (
+    EQUIP_PAYMENT_FIELD, EQUIP_PAYMENT_OPTIONS, PRINTED_EQUIP_PAYMENT, ZERO_EQUIP_PAYMENT,
+    equip_instant_timing, selected_equip_price, zero_equip_price,
+)
 
 
 class ActivationProposalHost(Protocol):
@@ -171,11 +173,21 @@ def activation_result_is_represented(host, source, ability):
         or station_cost_choice(ability) is not None or bool(ability.library_search_types))
 
 
+def _payable_activation_price(host, seat, source, ability, priced_ability=None):
+    if priced_ability is None or priced_ability is ability:
+        return host._ability_availability(seat, source, ability)
+    from .availability import activation_availability
+
+    return activation_availability(host, seat, source, ability, priced_ability=priced_ability)
+
+
 def _validate_activation_cost_contract(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
     source: Any,
     ability: ActivatedAbility,
+    *,
+    priced_ability: ActivatedAbility | None = None,
 ) -> None:
     if source.zone not in ability.zones:
         raise ActivationProposalError(
@@ -221,7 +233,7 @@ def _validate_activation_cost_contract(
     if host.state.config.semantic_policy == 'trusted_only' and not activation_result_is_represented(host, source, ability):
         raise ActivationProposalError('This ability has no compiled result semantics',
             status='unresolved', reason='unresolved_result_semantics')
-    status, reason = host._ability_availability(request.actor, source, ability)
+    status, reason = _payable_activation_price(host, request.actor, source, ability, priced_ability)
     if status != "payable":
         raise ActivationProposalError(
             f"{source.printed_name} {ability.ability_id} is not currently payable"
@@ -238,7 +250,7 @@ def _validate_activation_cost_contract(
             "Pilot-supplied activation costs are disabled in strict mode; select the Oracle ability and cost objects only.",
             reason="pilot_cost",
         )
-    if ability.sorcery_speed:
+    if ability.sorcery_speed and not equip_instant_timing(host, request.actor, source, ability):
         host._sorcery_timing(request.actor)
 
 
@@ -426,8 +438,12 @@ def build_activation_proposal(
                 "The advertised activation proposal is stale",
                 reason="stale_proposal",
             )
-    _validate_activation_cost_contract(host, request, source, ability)
-    _validate_activation_timing_costs(host, request, source, ability)
+    equip_payment = response.get(EQUIP_PAYMENT_FIELD)
+    priced_ability = selected_equip_price(host, request.actor, source, ability, equip_payment)
+    if priced_ability is not ability and any(field in response for field in ("cost_cards", "cost_option")):
+        raise ActivationProposalError("This Equip alternative does not pay the printed Equip cost", reason="equip_payment_fields")
+    _validate_activation_cost_contract(host, request, source, ability, priced_ability=priced_ability)
+    _validate_activation_timing_costs(host, request, source, priced_ability)
     target_schema = (
         thaw_value(ability.target_schema)
         if ability.target_schema is not None
@@ -479,7 +495,7 @@ def build_activation_proposal(
     context = host._fetch_context(request.actor, ability, response, program=program)
     context.update(_activation_effect_context(host, source, program, effective_target_schema, targets, response))
     requirements, announced_x, mana_option, price_details = _collect_activation_payment(
-        host, request.actor, source, ability, response, tuple(targets),
+        host, request.actor, source, priced_ability, response, tuple(targets),
     )
     from ..hand_artifact_mana import artifact_hand_activation_details
     try:
@@ -509,6 +525,7 @@ def build_activation_proposal(
                 "builtin_context": context,
                 **({'announced_x':announced_x} if announced_x is not None else {}),
                 **price_details,
+                **({EQUIP_PAYMENT_FIELD: equip_payment} if equip_payment == ZERO_EQUIP_PAYMENT else {}),
                 **artifact_hand_details,
                 **(
                     {
@@ -646,13 +663,15 @@ def _creature_power_damage_offer_result(
     )
 
 
-def build_activation_offer(
+def _build_priced_activation_offer(
     host: ActivationProposalHost,
     seat: str,
     source: Any,
     ability: ActivatedAbility,
+    *,
+    priced_ability: ActivatedAbility | None = None,
 ) -> ActivationProposalResult:
-    """Advertise one activation using the same source/cost/target queries."""
+    """Advertise one activation at the selected quotation."""
 
     request = ActivationProposalRequest(
         actor=seat,
@@ -663,8 +682,9 @@ def build_activation_offer(
     try:
         resolved = _resolve_activation_source(host, request)
         selected = _select_ability(host, resolved, request.ability_selector, actor=seat)
-        _validate_activation_cost_contract(host, request, resolved, selected)
-        _validate_activation_timing_costs(host, request, resolved, selected)
+        offer_price = priced_ability or selected
+        _validate_activation_cost_contract(host, request, resolved, selected, priced_ability=offer_price)
+        _validate_activation_timing_costs(host, request, resolved, offer_price)
     except ActivationProposalError as exc:
         return ActivationProposalResult(exc.status, exc.reason)
     semantic_key = host._semantic_key_for_ability(source, selected)
@@ -698,49 +718,19 @@ def build_activation_offer(
         public_schema = activation_public_targets(host, seat, source, selected, program, target_schema)
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
-    cost_hint = activation_offer_cost_hint(host, seat, source, selected)
+    cost_hint = activation_offer_cost_hint(host, seat, source, offer_price, selected=selected)
     if cost_hint is None:
         return ActivationProposalResult('unpayable', 'granting_equipment_payment_unpayable')
     hint, attachment_label = cost_hint
-    from ...paid_activation_card_types import has_bounded_sacrifice
-    if selected.choices and not has_bounded_sacrifice(selected):
-        hint["choose_cost"] = [
-            {
-                **choice.compact(),
-                "legal_refs": list(
-                    activation_choice_candidates(host, seat, source, choice, ability=selected)
-                ),
-            }
-            for choice in selected.choices
-        ]
-    power_tap = activation_power_tap_hint(host, seat, source, selected)
-    if power_tap is not None:
-        hint["choose_cost"] = [power_tap]
-    if station_cost_choice(selected) is not None:
-        hint["choose_cost"] = [
-            {
-                "k": "station",
-                "z": "battlefield",
-                "minimum": 1,
-                "maximum": 1,
-                "legal_refs": [
-                    candidate.ref
-                    for candidate in station_candidates(host, seat, source)
-                ],
-            }
-        ]
-    fetch_types = selected.library_search_types
-    if fetch_types:
-        hint["search_types"] = list(fetch_types)
     random_refs = tuple(public_schema["legal_refs"]) if random_target and public_schema else ()
     from .pricing import activation_priced_offer_payload
     try:
-        payload, public_schema = activation_priced_offer_payload(host, seat, source, selected, hint, public_schema, program=program)
+        payload, public_schema = activation_priced_offer_payload(host, seat, source, offer_price, hint, public_schema, program=program)
     except ValueError:
         if not random_target:
             raise
         return ActivationProposalResult("unpayable", "random_activation_payment_unavailable")
-    if selected.mana_cost_options:
+    if offer_price.mana_cost_options:
         payload["cost_options"] = [
             {
                 **option.to_dict(),
@@ -750,13 +740,13 @@ def build_activation_offer(
                 host,
                 seat,
                 source,
-                selected,
+                offer_price,
             )
         ]
     if selected.mana_ability:
         payload["mana_ability"] = True
     choice_schema = _activation_choice_schema(
-        host, seat, source, selected, hint
+        host, seat, source, offer_price, hint
     )
     if selected.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
@@ -777,9 +767,9 @@ def build_activation_offer(
         from .announced_subtype_sacrifice import variable_object_activation_offer
 
         choice_schema.update(variable_object_activation_offer(host, seat, selected, hint, choice_schema["x"]))
-    if not selected.mana_cost_options:
+    if not offer_price.mana_cost_options:
         from .pricing import activation_price_choice_schema
-        price_choices=activation_price_choice_schema(host,seat,source,selected)
+        price_choices=activation_price_choice_schema(host,seat,source,offer_price)
         if price_choices:choice_schema={**(choice_schema or {}),**price_choices}
     if choice_schema is not None:
         payload["choice_schema"] = choice_schema
@@ -798,6 +788,35 @@ def build_activation_offer(
         payload=freeze_json(payload),
     )
     return ActivationProposalResult("payable", "payable", offer=offer, random_target_refs=random_refs)
+
+
+def build_activation_offer(host, seat, source, ability):
+    """Advertise the printed price and, when payable, the first Equip alternative."""
+    printed = _build_priced_activation_offer(host, seat, source, ability)
+    alternate_price = zero_equip_price(host, seat, source, ability)
+    if alternate_price is None:
+        return printed
+    alternate = _build_priced_activation_offer(host, seat, source, ability, priced_ability=alternate_price)
+    if alternate.offer is None:
+        return printed
+
+    variants = []
+    for result, name, label in (
+        (printed, PRINTED_EQUIP_PAYMENT, "Pay the Equip cost"),
+        (alternate, ZERO_EQUIP_PAYMENT, "Use the first Equip alternative"),
+    ):
+        if result.offer is not None:
+            payload = thaw_json(result.offer.payload)
+            variants.append({"id": name, "label": label, **{
+                field: payload[field] for field in ("cost_summary", "cost_options", "choice_schema", "target_schema", "target_costs")
+                if field in payload
+            }})
+    chosen = printed if printed.offer is not None else alternate
+    payload = thaw_json(chosen.offer.payload)
+    payload.pop("cost_options", None)
+    payload.pop("choice_schema", None)
+    payload[EQUIP_PAYMENT_OPTIONS] = variants
+    return replace(chosen, offer=replace(chosen.offer, payload=freeze_json(payload)))
 
 
 __all__ = [

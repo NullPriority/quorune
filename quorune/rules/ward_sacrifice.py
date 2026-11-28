@@ -11,6 +11,8 @@ def ward_sacrifice_is_eligible(scope: WardSacrificeScope, row: ObjectQueryResult
         return False
     if scope is WardSacrificeScope.TWO_PERMANENTS:
         return True
+    if scope is WardSacrificeScope.THREE_NONLAND_PERMANENTS:
+        return "land" not in row.types
     if scope is WardSacrificeScope.CREATURE:
         return "creature" in row.types
     if scope is WardSacrificeScope.FOOD_ARTIFACT:

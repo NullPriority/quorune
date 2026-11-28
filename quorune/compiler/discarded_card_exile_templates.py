@@ -8,6 +8,7 @@ from ..replacement.immutable import thaw_value
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from ..rules.discarded_card_exile import (
     DISCARD_EVENT, DISCARD_EXILE_MECHANIC, controller_discard_condition, discarded_card_exile_effect,
+    discarded_card_play_effect,
 )
 from . import regex_working_set as re
 
@@ -17,8 +18,11 @@ def discarded_card_exile_template(binding, body):
         binding.event.value != DISCARD_EVENT or binding.active_zone != "battlefield"
         or binding.variant != "controller_discards_card" or body != binding.body
         or thaw_value(binding.event_condition) != controller_discard_condition()
-        or re.fullmatch(r"exile that card from your graveyard\.", body, re.IGNORECASE) is None
     ):
+        return None
+    if body.casefold() == "you may exile that card from your graveyard. if you do, you may play that card this turn.":
+        return "discarded-card-graveyard-exile-play-v1", (discarded_card_play_effect(),), None, (DISCARD_EXILE_MECHANIC,)
+    if re.fullmatch(r"exile that card from your graveyard\.", body, re.IGNORECASE) is None:
         return None
     return "discarded-card-graveyard-exile-v1", (discarded_card_exile_effect(),), None, (DISCARD_EXILE_MECHANIC,)
 

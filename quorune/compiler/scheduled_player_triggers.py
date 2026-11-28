@@ -97,7 +97,21 @@ def main_phase_opponent_mana_node(*, node_id, line, material_line, span, card_na
     )
 
 
+_POSTCOMBAT_LIFE_LOSS_MANA = re.compile(
+    r"At the beginning of each of your postcombat main phases, "
+    r"(?P<body>add \{[WUBRGC]\} for each 1 life your opponents have lost this turn\.)", re.I,
+)
+
+
 def scheduled_player_binding_spec(text, *, card_name=None):
+    if historic_mana := _POSTCOMBAT_LIFE_LOSS_MANA.fullmatch(text):
+        from ..rules.postcombat_life_loss_mana import REQUIREMENTS, TEMPLATE, VARIANT, condition
+
+        return FixedPublicEventBindingSpec(
+            event="step.begin", variant=VARIANT, body=historic_mana["body"],
+            template_id=TEMPLATE, mechanic="cr-603-handling-triggered-abilities",
+            condition=condition(), capabilities=REQUIREMENTS,
+        )
     if extra := _ADDITIONAL_BEGINNING.fullmatch(text):
         enchanted = extra["own"] is None
         return FixedPublicEventBindingSpec(

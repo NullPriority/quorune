@@ -327,6 +327,7 @@ class CardImageCache:
         self._locks: dict[str, asyncio.Lock] = {}
         self._printing_lock = asyncio.Lock()
         self._next_printing_lookup = 0.0
+        self._printing_options: dict[tuple[str, int], tuple[float, dict[str, Any]]] = {}
         self._downloaded = sum(1 for path in root.rglob("*") if path.is_file()) if root.exists() else 0
 
     @property
@@ -397,6 +398,52 @@ class CardImageCache:
         if parsed.scheme.casefold() != "https" or (parsed.hostname or "").casefold() not in SCRYFALL_IMAGE_HOSTS:
             raise ValueError("Image URL is not on the approved Scryfall CDN")
         return str(row["oracle_id"]), int(row["face_index"]), source
+
+    @staticmethod
+    def _printing_page(oracle_id: str, page: int) -> dict[str, Any]:
+        if not re.fullmatch(r"[0-9a-f-]{36}", oracle_id):
+            raise ValueError("Invalid Oracle identity")
+        query = urllib.parse.urlencode({
+            "q": f"oracleid:{oracle_id}", "unique": "prints", "order": "released",
+            "include_multilingual": "true", "page": page,
+        })
+        request = urllib.request.Request(
+            f"https://api.scryfall.com/cards/search?{query}",
+            headers={"Accept": "application/json", "User-Agent": SCRYFALL_USER_AGENT},
+        )
+        with urllib.request.urlopen(request, timeout=12) as response:
+            payload = json.loads(response.read(8 * 1024 * 1024))
+        rows = []
+        for raw in payload.get("data", ()):
+            if raw.get("oracle_id") != oracle_id:
+                continue
+            printing = CardPrinting.from_dict({
+                "scryfall_id": raw.get("id"), "set_code": raw.get("set"),
+                "collector_number": raw.get("collector_number"), "language": raw.get("lang"),
+            })
+            if printing is None or printing.scryfall_id is None:
+                continue
+            rows.append({
+                "printing": printing.to_dict(),
+                "set_name": str(raw.get("set_name") or printing.set_code or ""),
+                "finishes": [finish for finish in raw.get("finishes", ()) if finish in {"nonfoil", "foil", "etched"}],
+            })
+        return {"printings": rows, "has_more": payload.get("has_more") is True}
+
+    async def printing_options(self, oracle_id: str, page: int) -> dict[str, Any]:
+        key = oracle_id, page
+        async with self._printing_lock:
+            now = time.monotonic()
+            cached = self._printing_options.get(key)
+            if cached is not None and cached[0] > now:
+                return cached[1]
+            await asyncio.sleep(max(0, self._next_printing_lookup - now))
+            self._next_printing_lookup = time.monotonic() + 0.12
+            result = await asyncio.to_thread(self._printing_page, oracle_id, page)
+            if len(self._printing_options) >= 32:
+                self._printing_options.pop(next(iter(self._printing_options)))
+            self._printing_options[key] = (time.monotonic() + 3600, result)
+            return result
 
     @staticmethod
     def _download(source: str, destination: Path) -> str:

@@ -313,9 +313,11 @@ def fixed_owner_zone_move_node_capabilities(
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
-    from .opponent_spell_or_permanent_return import ENTRY_FIELD, FIELD, opponent_spell_or_permanent_return_capabilities
+    from .opponent_spell_or_permanent_return import (
+        ENTRY_FIELD, FIELD, SPELL_FIELD, opponent_spell_or_permanent_return_capabilities,
+    )
 
-    if FIELD in effect or ENTRY_FIELD in effect:
+    if {FIELD, ENTRY_FIELD, SPELL_FIELD}.intersection(effect):
         return opponent_spell_or_permanent_return_capabilities(effect, target_schema)
     if target_schema == owned_permanent_library_bottom_target_schema():
         expected = {"op": "move", "card": "$target.0", "destination": "library", "position": "bottom"}
@@ -465,11 +467,15 @@ def triggered_source_exile_runtime_dependencies(program):
 
 
 def _mixed_zone_exile_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
-    from ..public_zone_moves import FixedMixedZoneExileSpec, MIXED_ZONE_EXILE_CAPABILITY
+    from ..public_zone_moves import FixedMixedZoneExileSpec, MIXED_ZONE_EXILE_CAPABILITY, MixedZoneExileScope
 
     spec = FixedMixedZoneExileSpec.from_dict(value["set"])
     if value != spec.effect():
         raise ValueError("Mixed-zone exile requires its exact original source and set")
+    if spec.scope is MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY:
+        from .controller_hand_exile import DEPENDENCIES
+
+        return DEPENDENCIES
     return ("zone.move.fixed_public_set", MIXED_ZONE_EXILE_CAPABILITY)
 
 
@@ -480,6 +486,12 @@ def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple
     if is_mixed_zone_exile_spec(value["set"]):
         return _mixed_zone_exile_payload_dependencies(value)
     spec = PublicZoneMoveSetSpec.from_dict(value["set"])
+    from ..public_zone_moves import PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION, NONHISTORIC_NONLAND_RETURN_CAPABILITY
+
+    if spec.schema_version == PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION:
+        if set(value) != {"op", "source", "set"} or value.get("source") != "$source":
+            raise ValueError("Nonhistoric return requires the original complete battlefield set effect")
+        return ("zone.move.fixed_public_set", "zone.change.destination_replacement", NONHISTORIC_NONLAND_RETURN_CAPABILITY)
     history = (
         same_turn_graveyard_return_history_query(spec.seat_relation).capability_dependencies
         if spec.schema_version in SAME_TURN_GRAVEYARD_RETURN_VERSIONS else ()
@@ -514,8 +526,10 @@ def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple
     spec = PublicZoneMoveSetSpec.from_dict(raw)
     if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
         raise ValueError("Chosen graveyard return is generated only by its original public choice")
+    from ..public_zone_moves import PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
+
     return public_zone_move_set_payload_dependencies(value) if spec.schema_version in {
-        *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
+        *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION, PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION,
     } else ()
 
 
@@ -735,8 +749,10 @@ def fixed_public_zone_move_set_node_capabilities(
             return ()
     from .public_exile_result_model import ATTACKING_EXILE_SEARCH_MECHANIC, PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
 
+    from .affected_library_search_batch import EXILE_LAND_SEARCH_MECHANIC
+
     has_followup = "followup" in effect
-    supplied_followup = {PUBLIC_EXILE_RESULT_MECHANIC, ATTACKING_EXILE_SEARCH_MECHANIC} & mechanics
+    supplied_followup = {PUBLIC_EXILE_RESULT_MECHANIC, ATTACKING_EXILE_SEARCH_MECHANIC, EXILE_LAND_SEARCH_MECHANIC} & mechanics
     if len(supplied_followup) != int(has_followup):
         return ()
     expected = {"op", "source", "set"} | ({"followup"} if has_followup else set())
@@ -754,6 +770,9 @@ def fixed_public_zone_move_set_node_capabilities(
             followup.validate_move(spec)
             if followup.schema_version == 2:
                 if supplied_followup != {ATTACKING_EXILE_SEARCH_MECHANIC} or dict(target_schema or {}) != _PLAYER_TARGETS[0]:
+                    return ()
+            elif followup.schema_version == 3:
+                if supplied_followup != {EXILE_LAND_SEARCH_MECHANIC} or target_schema is not None:
                     return ()
             elif supplied_followup != {PUBLIC_EXILE_RESULT_MECHANIC}:
                 return ()

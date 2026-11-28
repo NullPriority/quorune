@@ -29,6 +29,44 @@ def apply_context(face, context, *, capability_registry, capability_profile):
         capability_registry=capability_registry, capability_profile=capability_profile)
 
 
+def lower_complete_face(
+    record, *, face_id, face_name, type_line, keywords, oracle_text, material_rows, card_types, spell,
+    effect_template, trusted_mechanics, capability_registry, capability_profile, residuals, context,
+    compile_spell_face,
+):
+    """Resolve closed whole-face rule groups before lowering independent paragraphs."""
+    if "creature" in card_types:
+        from .targeted_attack_die_copy import targeted_attack_die_copy_face
+
+        table = targeted_attack_die_copy_face(
+            record=record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
+            material_rows=material_rows, registry=capability_registry, profile=capability_profile,
+        )
+        if table is not None:
+            return material_rows, table
+    if not spell:
+        return material_rows, None
+
+    from .declared_effect_amounts import declared_spell_effect_compiler
+    from .public_replacement_rows import public_replacement_material_rows
+
+    compile_effect = declared_spell_effect_compiler(
+        record, is_spell=True, oracle_text=oracle_text, compile_effect=effect_template, face_name=face_name,
+    )
+    rows = public_replacement_material_rows(
+        material_rows, oracle_text=oracle_text, source_name=face_name or record.name, compile_effect=compile_effect,
+    )
+    face = compile_spell_face(
+        record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords,
+        oracle_text=oracle_text, material_rows=rows, effect_template=compile_effect,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    )
+    if face is not None:
+        face = apply_context(face, context, capability_registry=capability_registry, capability_profile=capability_profile)
+    return rows, face
+
+
 def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, oracle_text, material_rows,
                            keywords, nodes, residuals, capability_registry, capability_profile):
     from .discarded_card_exile_templates import restrict_linked_discard_exile
@@ -38,6 +76,7 @@ def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, orac
     from .linked_exile_characteristics import paired_linked_exile_characteristics
     from .linked_hand_mana import paired_linked_hand_mana
     from .linked_color_cast_exile import paired_linked_color_cast_exile
+    from .linked_graveyard_play_templates import paired_linked_graveyard_play
 
     nodes = restrict_linked_discard_exile(
         nodes, oracle_text=oracle_text, source_name=face_name or oracle_id,
@@ -52,6 +91,8 @@ def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, orac
     nodes = paired_linked_hand_mana(nodes, residuals, oracle_id=oracle_id, face_id=face_id,
         source_types=context.single_face_types, capability_registry=capability_registry,
         capability_profile=capability_profile)
+    nodes = paired_linked_graveyard_play(nodes, residuals, source_name=face_name or oracle_id, oracle_id=oracle_id,
+        face_id=face_id, capability_registry=capability_registry, capability_profile=capability_profile)
     face = leveler_face_ir(leveler, oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, nodes, residuals, capability_registry, capability_profile)
     return apply_context(face, context, capability_registry=capability_registry, capability_profile=capability_profile)

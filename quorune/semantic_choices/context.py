@@ -64,6 +64,7 @@ class ObjectRulesQuery(Protocol):
     ) -> ChoiceObjectView | None: ...
 
     def public_exile_rules_names(self, ref: str) -> tuple[str, ...]: ...
+    def resolving_library_rules_names(self, ref: str) -> tuple[str, ...]: ...
 
 
 class StackRulesQuery(Protocol):
@@ -219,6 +220,7 @@ class SnapshotSemanticChoiceQuery:
     affordable_costs: frozenset[str] = frozenset()
     authorized_cast_option_rows: tuple[FrozenMap, ...] = ()
     canonical_names: FrozenMap = field(default_factory=FrozenMap)
+    resolving_library_name_rows: FrozenMap = field(default_factory=FrozenMap)
     target_schemas: FrozenMap = field(default_factory=FrozenMap)
     validated_targets: FrozenMap = field(default_factory=FrozenMap)
     drawn_this_turn_by_seat: FrozenMap = field(default_factory=FrozenMap)
@@ -289,6 +291,7 @@ class SnapshotSemanticChoiceQuery:
             "libraries_by_seat",
             "mana_by_seat",
             "canonical_names",
+            "resolving_library_name_rows",
             "target_schemas",
             "validated_targets",
             "drawn_this_turn_by_seat",
@@ -372,6 +375,11 @@ class SnapshotSemanticChoiceQuery:
             ),
             None,
         )
+
+    def resolving_library_rules_names(self, ref: str) -> tuple[str, ...]:
+        if ref not in self.resolving_library_name_rows:
+            raise ValueError("The resolving reveal has no rules-name snapshot for this library card")
+        return tuple(self.resolving_library_name_rows[ref])
 
     def public_exile_rules_names(self, ref: str) -> tuple[str, ...]:
         if ref not in self.exile_offer_rule_names:

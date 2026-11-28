@@ -1,4 +1,5 @@
 import type { JsonValue, LegalAction } from "./generated/protocol";
+import { ManaText } from "./ManaText";
 
 
 function asRecord(value: JsonValue): Record<string, JsonValue> {
@@ -59,7 +60,7 @@ export function ManaHelp({
 }) {
   return (
     <div className="mana-help" role="status">
-      <span>Click a highlighted untapped permanent to add mana in the order you choose. Before spending or passing, click that tapped source again to remove its mana and untap it.</span>
+      <span>Tap a highlighted source to add mana. Tap it again before spending or passing to undo.</span>
       {actions.map((action) => (
         <button type="button" key={action.id} disabled={disabled} onClick={() => onSelect(action)}>
           {action.label ?? "Undo last mana activation"}
@@ -67,6 +68,21 @@ export function ManaHelp({
       ))}
     </div>
   );
+}
+
+
+export function ManaPoolStatus({ pool }: { pool: JsonValue | undefined }) {
+  const values = asRecord(pool ?? {});
+  const mana = ["W", "U", "B", "R", "G", "C"].flatMap((type) => {
+    const amount = Number(values[type] ?? 0);
+    return amount > 0 ? [{ type, amount }] : [];
+  });
+  return <div className="mana-pool-status" aria-live="polite" aria-label="Your mana pool">
+    <strong>Mana pool</strong>
+    {mana.length ? mana.map(({ type, amount }) => <span key={type} className="mana-pool-amount">
+      <ManaText text={`{${type}}`} /><span>×{amount}</span>
+    </span>) : <span>Empty</span>}
+  </div>;
 }
 
 

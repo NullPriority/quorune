@@ -1,0 +1,69 @@
+{
+  "cards": [
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{B}",
+      "name": "Breach the Multiverse",
+      "oracle_id": "ebbd5b9c-07ff-4b42-81c2-ba09539f3a42",
+      "oracle_text": "Each player mills ten cards. For each player, choose a creature or planeswalker card in that player's graveyard. Put those cards onto the battlefield under your control. Then each creature you control becomes a Phyrexian in addition to its other types.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "The creatures you control will be Phyrexians until they leave the battlefield. Any of them that stops being a creature will also stop being a Phyrexian until it becomes a creature again, if applicable.",
+      "oracle_id": "ebbd5b9c-07ff-4b42-81c2-ba09539f3a42",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cards you choose can be ones that were just milled or ones that were already in the graveyard.",
+      "oracle_id": "ebbd5b9c-07ff-4b42-81c2-ba09539f3a42",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

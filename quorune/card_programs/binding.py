@@ -25,7 +25,7 @@ def _semantic_program_requirements(program):
     from ..rules.announced_mana_value_target import (
         DISTINCT_GRAVEYARD_MANA_VALUE_CAPABILITY, announced_mana_value_capability,
         has_announced_mana_value_limit, has_distinct_own_graveyard_mana_value_limit,
-        project_announced_target_program, uses_distinct_graveyard_reanimation,
+        has_energy_reanimation_target, project_announced_target_program, uses_distinct_graveyard_reanimation,
     )
     from ..rules.effect_shape_walkers import nested_effects
 
@@ -47,6 +47,10 @@ def _semantic_program_requirements(program):
         ENTRY_X_SUPPORT_REQUIREMENTS, has_entry_x_support, project_entry_x_support_program,
     )
 
+    from ..rules.announced_energy_reanimation import CAPABILITY as ENERGY_REANIMATION_CAPABILITY, has_energy_reanimation_price
+
+    if has_energy_reanimation_price(program.cost_schema) and not has_energy_reanimation_target(program.target_schema):
+        return {ENERGY_REANIMATION_CAPABILITY}, {"runtime_announced_energy_reanimation:invalid:missing exact target"}
     if has_kicked_artifact_entry_limit(program.target_schema):
         try:
             projected, capabilities = project_kicked_artifact_entry_program(program)
@@ -247,6 +251,7 @@ def bind_card_program_runtime(
         validate_life_loss_self_death_grant_child, validate_temporary_combat_draw_unblockable_child,
     )
     from ..rules.equipped_planeswalker import validate_equipped_planeswalker_child
+    from ..rules.granted_death_treasure import validate_granted_death_treasure_child
 
     ability_bindings = [
         bind_semantic_program_runtime(
@@ -273,6 +278,10 @@ def bind_card_program_runtime(
             validate_life_loss_self_death_grant_child(ability, abilities_by_key.get)
         except (TypeError, ValueError, KeyError) as exc:
             blockers.add(f"ability:{ability.ability_id}:runtime_temporary_self_death_child:invalid:{exc}")
+        try:
+            validate_granted_death_treasure_child(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_granted_death_treasure_child:invalid:{exc}")
         try:
             validate_equipped_planeswalker_child(ability, abilities_by_key.get)
         except (TypeError, ValueError, KeyError) as exc:

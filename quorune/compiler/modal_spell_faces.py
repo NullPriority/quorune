@@ -34,6 +34,7 @@ def compile_whole_modal_face(*, record, face_id, face_name, type_line, keywords,
                             capability_profile, residuals, compile_inner, trigger_node, grant_effect_templates,
                             compile_keyword=None):
     from .whole_modal_templates import whole_modal_spell_template
+    from .announced_x_modal_templates import announced_x_modal_template
     from .own_combat_modal_templates import split_own_combat_modal
 
     original_rows=material_rows;siblings=()
@@ -49,7 +50,8 @@ def compile_whole_modal_face(*, record, face_id, face_name, type_line, keywords,
         capability_profile=capability_profile, compile_inner=compile_inner, trigger_node=trigger_node,
         grant_effect_templates=grant_effect_templates)
     branches = ModalTokenBranchCompiler(material_rows=material_rows,**arguments)
-    modal_template = whole_modal_spell_template(material_rows, compile_effect=branches)
+    modal_template = (announced_x_modal_template(record, material_rows)
+                      or whole_modal_spell_template(material_rows, compile_effect=branches))
     if modal_template is None and restricted is None and compile_keyword is not None:
         separated=_modal_keyword_siblings(material_rows,record=record,face_id=face_id,face_name=face_name,
             type_line=type_line,keywords=keywords,effect_template=effect_template,trusted_mechanics=trusted_mechanics,

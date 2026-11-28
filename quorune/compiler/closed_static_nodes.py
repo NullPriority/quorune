@@ -39,6 +39,13 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    if material_line.casefold().replace("’", "'") == "you don't lose unspent red mana as steps and phases end.":
+        from ..rules.step_mana_retention import RETENTION_CAPABILITY, RETENTION_EVENT, retention_descriptor
+
+        return runtime_handler_node(node_id=node_id,line=line,span=span,kind="static_ability",event=RETENTION_EVENT,
+            compiled=("static-step-red-retention-v1",retention_descriptor(),RETENTION_CAPABILITY),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),dependency_reason="Static mana retention needs its current component",
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     from .battlefield_activation_grant_nodes import battlefield_activation_grant_node
 
     grant = battlefield_activation_grant_node(source_name=face_name or record.name, node_id=node_id,
@@ -102,6 +109,11 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
     if emerge is not None:
         return emerge
+    from .offering_nodes import offering_static_node
+    offering = offering_static_node(record=record, node_id=node_id, line=line, material_line=material_line,
+        span=span, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if offering is not None:
+        return offering
     from .paid_graveyard_nodes import paid_graveyard_node
     graveyard = paid_graveyard_node(record=record, node_id=node_id, line=line,
         material_line=material_line, span=span, capability_registry=capability_registry,

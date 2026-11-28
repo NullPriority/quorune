@@ -97,11 +97,17 @@ def modal_event_runtime_dependencies(program):
     """Retain primitive event authority when current modal coverage is removed."""
     from .conditional_target_preparation import resolution_target_color_program_dependencies
 
+    from ..spree_model import tiered_runtime_dependencies
+
     required = set(resolution_target_color_program_dependencies(program))
+    from .captured_counter_keyword_grant import captured_counter_keyword_modal_dependencies
+    required.update(captured_counter_keyword_modal_dependencies(program))
+    required.update(tiered_runtime_dependencies(program))
     from .kicked_modal_capabilities import kicked_modal_runtime_dependencies
     required.update(kicked_modal_runtime_dependencies(program))
-    from .escalate_tap_capabilities import escalate_tap_runtime_dependencies
+    from .escalate_tap_capabilities import escalate_mana_runtime_dependencies, escalate_tap_runtime_dependencies
     required.update(escalate_tap_runtime_dependencies(program))
+    required.update(escalate_mana_runtime_dependencies(program))
     from .pawprint_capabilities import pawprint_runtime_dependencies
     required.update(pawprint_runtime_dependencies(program))
     required.update(attached_attack_modal_counter_dependencies(program))
@@ -112,7 +118,7 @@ def modal_event_runtime_dependencies(program):
                 or not distinct_turn_trigger_context_matches(
                     event=program.event, active_zone=program.active_zone, event_condition=program.event_condition,
                 )):
-            raise ValueError("Distinct turn modes require the closed controlled creature-entry trigger")
+            raise ValueError("Distinct turn modes require the closed controlled creature-entry or controller-discard trigger")
         required.update((DISTINCT_TURN_TRIGGER_MODES_CAPABILITY, "trigger.effect.fixed_event",
                          "trigger.event.normalized_zone_change", "trigger.placement.apnap"))
     elif DISTINCT_TURN_TRIGGER_MODES_CAPABILITY in program.capability_dependencies:
@@ -169,6 +175,15 @@ def fixed_modal_capability_dependencies(
     from .capabilities import capability_dependencies_for_node, capability_covered_mechanics, MECHANIC_CAPABILITY_DEPENDENCIES
 
     mechanic_values = tuple(str(value).casefold() for value in mechanics)
+    from .announced_x_modal import DEPENDENCIES as ANNOUNCED_X_MODAL_DEPENDENCIES
+    from .announced_x_modal import uses_announced_x_modal, validate_announced_x_modal_schema
+
+    if uses_announced_x_modal(target_schema):
+        try:
+            validate_announced_x_modal_schema(target_schema)
+        except (TypeError, ValueError, KeyError):
+            return ()
+        return ANNOUNCED_X_MODAL_DEPENDENCIES if not effects and FIXED_CHOOSE_ONE_MODAL_MECHANIC in mechanic_values else ()
     nonrepeating = FIXED_NONREPEATING_MODAL_MECHANIC in mechanic_values
     branches = (
         fixed_nonrepeating_modal_branches(

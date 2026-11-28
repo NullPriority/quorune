@@ -574,6 +574,7 @@ CHOSEN_CREATURE_TYPE_MODIFIER_FIELD = "chosen_creature_type_modifier"
 class ChosenCreatureTypeResult(str, Enum):
     CONTROLLED_PERMANENT_DRAW = "controlled_permanent_draw"
     NONMATCHING_CREATURE_STATS = "nonmatching_creature_stats"
+    NONMATCHING_CREATURE_RETURN = "nonmatching_creature_return"
     REVEAL_UNTIL_ENTRY = "reveal_until_entry"
 
     def choice_effect(self) -> dict[str, Any]:
@@ -607,10 +608,11 @@ class ChosenCreatureTypeResult(str, Enum):
             from .rules.chosen_type_library_entry import CHOSEN_TYPE_LIBRARY_ENTRY_CAPABILITY
             return (CHOSEN_TYPE_LIBRARY_ENTRY_CAPABILITY, "library.select.reveal_until_controller",
                     "library.select.battlefield_controller", "library.shuffle.fixed_controller")
-        result = (
-            "zone.draw.library_to_hand" if self is self.CONTROLLED_PERMANENT_DRAW
-            else "continuous.resolution.fixed_characteristics_until_end_of_turn"
-        )
+        result = {
+            self.CONTROLLED_PERMANENT_DRAW: "zone.draw.library_to_hand",
+            self.NONMATCHING_CREATURE_STATS: "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            self.NONMATCHING_CREATURE_RETURN: "zone.move.fixed_public_set",
+        }[self]
         return CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY, result
 
     def battlefield_query(self, subtype: str, *, actor: str) -> ObjectQuerySpec:

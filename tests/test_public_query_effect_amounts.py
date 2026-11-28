@@ -1866,5 +1866,135 @@ class OptionalPublicCountTriggerNativeTests(InheritedNativeFixture, unittest.Tes
                 self.replay(session)
 
 
+class PrefixedCountTokenNativeTests(InheritedNativeFixture, unittest.TestCase):
+    NAME = "Brass's Bounty"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        source = ROOT / "tests" / "fixtures"
+        files = [source / "public-collection-quantity-cards.json"]
+        support = {
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth"},
+            "attacking-token-result-cards.json": {"Parallel Lives"},
+            "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
+        }
+        for filename, names in support.items():
+            doc = json.loads((source / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            oracle_ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in oracle_ids]
+            path = folder / filename
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            files.append(path)
+        db = folder / "prefixed-token-count.sqlite3"
+        build_fixture_database(files, db)
+        cls.db = CardDatabase(db)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Prefixed token count", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    @staticmethod
+    def treasures(game):
+        return tuple(card for card in game.state.cards.values()
+                     if card.is_token and card.zone == "battlefield" and card.printed_name == "Treasure Token")
+
+    def begin(self, game, source):
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 6, "R": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source)
+        self.assertEqual([], game.state.stack[-1].targets)
+
+    def test_actual_land_count_changes_before_one_replacement_aware_creation_batch(self):
+        game = self.session(7010701)
+        source = self.add(game.engine, self.NAME, zone="hand", ref="bounty-original")
+        bounce = self.add(game.engine, "Generic Collection Land Return", seat="B", zone="hand")
+        doubled = self.add(game.engine, "Parallel Lives", ref="bounty-token-replacement")
+        own = self.add(game.engine, "Generic Bound Plains", ref="bounty-tapped-land")
+        own.tapped = True
+        leaving = self.add(game.engine, "Generic Bound Plains", ref="bounty-leaving-land")
+        borrowed = self.add(game.engine, "Generic Collection Dual Land", seat="B", ref="bounty-borrowed-land")
+        lent = self.add(game.engine, "Generic Bound Plains", ref="bounty-lent-land")
+        game.engine.change_control(borrowed.object_id, "A")
+        game.engine.change_control(lent.object_id, "B")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="bounty-private-card")
+        for card in (bounce, doubled):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool["W"] = 1
+        self.begin(game, source)
+        self.cast_for(game, "B", bounce, [leaving.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[leaving.object_id].zone)
+        self.assertEqual((), self.treasures(game))
+        game = self.replay(game, load=True)
+        pulse = []
+        dispatch = game.engine._dispatch_semantic_event
+
+        def observe(event, context, **fields):
+            if event in {"token.created", "tokens.created"}:
+                pulse.append((event, context.copy(), len(self.treasures(game))))
+            return dispatch(event, context, **fields)
+
+        with mock.patch.object(game.engine, "_dispatch_semantic_event", side_effect=observe):
+            self.assertIsNone(self.resolve(game))
+        tokens = self.treasures(game)
+        self.assertEqual(4, len(tokens))
+        self.assertEqual({"A"}, {token.controller for token in tokens})
+        self.assertTrue(all("artifact" in game.engine._type_parts(game.engine._effective_card_data(token)["type_line"])[0]
+                            for token in tokens))
+        created, = (context for event, context, _count in pulse if event == "tokens.created")
+        self.assertEqual(("A", 4, 0), (created["creator"], created["quantity"], created["creature_quantity"]))
+        self.assertEqual(5, len(pulse))
+        self.assertTrue(all(count == 4 for _event, _context, count in pulse))
+        batch, = (event for event in game.state.events if event.code == "token.create")
+        self.assertEqual((2, 2), (batch.details["base_quantity"], batch.details["replacement_count"]))
+        self.assertEqual({card.ref for card in tokens}, set(batch.details["objects"]))
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_zero_controlled_lands_have_no_token_or_creation_event(self):
+        game = self.session(7010702)
+        source = self.add(game.engine, self.NAME, zone="hand")
+        self.add(game.engine, "Generic Bound Plains", seat="B")
+        doubled = self.add(game.engine, "Parallel Lives")
+        self.assert_closed(game, doubled)
+        self.begin(game, source)
+        with mock.patch.object(game.engine, "_dispatch_semantic_event", wraps=game.engine._dispatch_semantic_event) as dispatch:
+            self.assertIsNone(self.resolve(game))
+        self.assertFalse(self.treasures(game))
+        self.assertTrue({"token.created", "tokens.created", "artifact.enter"}.isdisjoint(
+            call.args[0] for call in dispatch.call_args_list))
+        journal, = (event for event in game.state.events if event.code == "token.create")
+        self.assertEqual((0, []), (journal.details["base_quantity"], journal.details["objects"]))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_prefix_reuses_the_suffix_amount_definition_and_unsupported_boundaries(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from test_granted_skulk import record
+
+        front = record("For each land you control, create a Treasure token.", "Sorcery")
+        suffix = replace(front, oracle_text="Create a Treasure token for each land you control.")
+        prefixed, suffixed = (compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+                             for card in (front, suffix))
+        for ir in (prefixed, suffixed):
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+        a, b = (ir.faces[0].nodes[0] for ir in (prefixed, suffixed))
+        self.assertEqual(a.effects, b.effects)
+        self.assertEqual(a.capability_dependencies, b.capability_dependencies)
+        self.assertEqual((0, len(front.oracle_text)), (a.span.start, a.span.end))
+        for text in ("For each land in an opponent's hand, create a Treasure token.",
+                     "For each land you control, create an undefined flying Treasure token.",
+                     "For each land you control, create a Treasure token. Rewrite the library."):
+            altered = compile_oracle_card(replace(front, oracle_text=text), capability_registry=self.registry)
+            self.assertNotEqual("exact", altered.status)
+
+
 if __name__ == "__main__":
     unittest.main()

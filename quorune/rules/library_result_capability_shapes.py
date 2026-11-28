@@ -19,6 +19,10 @@ from .library_search_capability_shapes import (
 )
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
+from .announced_permanent_reveal import (
+    CAPABILITY as ANNOUNCED_PERMANENT_REVEAL_CAPABILITY, MECHANIC as ANNOUNCED_PERMANENT_REVEAL_MECHANIC,
+    announced_permanent_reveal_node_capabilities, announced_permanent_reveal_payload_dependencies,
+)
 from .mana_contribution_draw import (
     MANA_CONTRIBUTION_DRAW_CAPABILITIES,
     MANA_CONTRIBUTION_DRAW_CAPABILITY,
@@ -27,7 +31,30 @@ from .mana_contribution_draw import (
     mana_contribution_draw_node_capabilities,
     validate_mana_contribution_draw,
 )
-from ..library_search_model import PRIVATE_SEARCH_RANDOM_DISCARD_CAPABILITY, PRIVATE_SEARCH_RANDOM_DISCARD_MECHANIC
+from .secret_number_choices import (
+    CAPABILITY as SECRET_NUMBER_CAPABILITY,
+    MECHANIC as SECRET_NUMBER_MECHANIC,
+    secret_number_node_capabilities,
+    secret_number_payload_dependencies,
+)
+from ..library_search_model import (
+    PRIVATE_SEARCH_RANDOM_DISCARD_CAPABILITY,
+    PRIVATE_SEARCH_RANDOM_DISCARD_MECHANIC,
+    FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+    FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
+)
+from ..public_library_piles_model import (
+    DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY,
+    DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION,
+    PILE_CAPABILITY,
+    PILE_MECHANIC,
+    PILE_OPERATION,
+    is_public_search_split,
+    public_search_split_target_schema,
+    validate_public_search_split,
+)
+from ..replacement.immutable import thaw_value
+from .effect_shape_walkers import nested_effects
 from ..private_opponent_library_cast_model import DAMAGE_LIBRARY_CAST_CAPABILITY, DAMAGE_LIBRARY_CAST_MECHANIC
 from .private_opponent_library_cast_shapes import (
     private_opponent_library_cast_node_capabilities, private_opponent_library_cast_payload_dependencies,
@@ -49,6 +76,8 @@ LIBRARY_RESULT_MECHANICS = MappingProxyType({
     'library.order.fixed_hand_to_top': 'fixed-hand-to-library-top',
     'zone.hand.library_redraw': 'hand-library-redraw',
     MANA_CONTRIBUTION_DRAW_CAPABILITY: MANA_CONTRIBUTION_DRAW_MECHANIC,
+    SECRET_NUMBER_CAPABILITY: SECRET_NUMBER_MECHANIC,
+    ANNOUNCED_PERMANENT_REVEAL_CAPABILITY: ANNOUNCED_PERMANENT_REVEAL_MECHANIC,
     'library.order.affected_player_hand_to_top': 'fixed-affected-player-hand-to-top',
     'library.order.graveyard_targets': 'ordered-graveyard-library-targets',
     EXILE_UNTIL_SAME_NAME_CAPABILITY: EXILE_UNTIL_SAME_NAME_MECHANIC,
@@ -59,11 +88,42 @@ LIBRARY_RESULT_MECHANICS = MappingProxyType({
 })
 
 
+PUBLIC_SEARCH_SPLIT_CAPABILITIES = (
+    FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, PILE_CAPABILITY, "target.revalidate_resolution",
+    "zone.change.destination_replacement",
+)
+
+
+def _public_search_split_dependencies(effects, target_schema):
+    if (len(effects) != 1 or not isinstance(effects[0], Mapping) or not is_public_search_split(effects[0])
+            or not isinstance(target_schema, Mapping) or type(target_schema.get("count")) is not int
+            or thaw_value(target_schema) != public_search_split_target_schema()):
+        return ()
+    validate_public_search_split(effects[0])
+    if effects[0]["schema_version"] == DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION:
+        return (*PUBLIC_SEARCH_SPLIT_CAPABILITIES, DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY)
+    return PUBLIC_SEARCH_SPLIT_CAPABILITIES
+
+
+def public_search_split_runtime_dependencies(program):
+    if not any(is_public_search_split(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    deps = _public_search_split_dependencies(program.effects, program.target_schema)
+    if (not deps or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.cost_schema is not None or program.event_condition is not None):
+        raise ValueError("Public search split requires its exact resolving spell and one opponent target")
+    return deps
+
+
 def public_library_piles_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if {PILE_MECHANIC, FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID, "cr-115-targets"} <= set(mechanic_ids):
+        try:
+            if required := _public_search_split_dependencies(effects, target_schema):
+                return required
+        except (TypeError, ValueError, KeyError):
+            return ()
     if target_schema is not None or len(effects) != 1 or not isinstance(effects[0], Mapping):
         return ()
-    from ..public_library_piles_model import PILE_MECHANIC, PILE_OPERATION
-
     if PILE_MECHANIC not in mechanic_ids or effects[0].get("op") != PILE_OPERATION:
         return ()
     try:
@@ -87,6 +147,8 @@ def library_result_node_capabilities(*, effects, target_schema, mechanic_ids):
         fixed_putback_node_capabilities,
         hand_library_redraw_node_capabilities,
         mana_contribution_draw_node_capabilities,
+        secret_number_node_capabilities,
+        announced_permanent_reveal_node_capabilities,
         fixed_library_order_capabilities,
         variable_library_selection_node_capabilities,
         reveal_until_library_selection_node_capabilities,
@@ -121,6 +183,10 @@ def library_result_payload_dependencies(value):
         return (PAID_CREATURE_SEARCH_CAPABILITY,)
 
     from .dragon_graveyard_search_copy import dragon_graveyard_copy_search_payload_dependencies
+
+    if is_public_search_split(value):
+        validate_public_search_split(value)
+        return PUBLIC_SEARCH_SPLIT_CAPABILITIES
     from .paid_artifact_library_search import (
         PAID_ARTIFACT_SEARCH_CAPABILITY, is_paid_artifact_search, validate_paid_artifact_search_effect,
     )
@@ -149,6 +215,10 @@ def library_result_payload_dependencies(value):
         return fixed_putback_payload_dependencies(value)
     if value.get('op')=='hand_library_redraw':
         return hand_library_redraw_payload_dependencies(value)
+    if secret_numbers := secret_number_payload_dependencies(value):
+        return secret_numbers
+    if reveal := announced_permanent_reveal_payload_dependencies(value):
+        return reveal
     if value.get('op') == MANA_CONTRIBUTION_DRAW_OPERATION:
         validate_mana_contribution_draw(value)
         return MANA_CONTRIBUTION_DRAW_CAPABILITIES

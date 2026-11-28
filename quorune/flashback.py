@@ -196,16 +196,23 @@ def flashback_handler_descriptor(spec: FixedManaFlashbackSpec) -> dict[str, Any]
 
 def flashed_back_leave_replacement(card: CardInstance) -> ReplacementEffect | None:
     """Return Flashback's mandatory replacement for the current stack object."""
+    return paid_stack_exile_replacement(
+        card, annotation=FLASHBACK_CAST_ANNOTATION, rule="flashback",
+        description="exile the flashed-back spell instead",
+    )
+
+
+def paid_stack_exile_replacement(card, *, annotation, rule, description):
 
     if (
         not isinstance(card, CardInstance)
         or card.zone != "stack"
         or card.object_kind != "card"
-        or card.annotations.get(FLASHBACK_CAST_ANNOTATION) is not True
+        or card.annotations.get(annotation) is not True
     ):
         return None
     return ReplacementEffect(
-        effect_id=f"rule:flashback:{card.logical_object_id}",
+        effect_id=f"rule:{rule}:{card.logical_object_id}",
         source_id=card.ref,
         event_kind="zone.change",
         replacement_class=ReplacementClass.SELF_REPLACEMENT,
@@ -216,7 +223,7 @@ def flashed_back_leave_replacement(card: CardInstance) -> ReplacementEffect | No
             "logical_object_id": {"eq": card.logical_object_id},
         },
         operations=(SetField("destination", "exile"),),
-        label=f"{card.ref}: exile the flashed-back spell instead",
+        label=f"{card.ref}: {description}",
     )
 
 

@@ -3,13 +3,15 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import DB_PATH, keep_all, load_assets, make_session, pass_current
+from common import DB_PATH, ROOT, keep_all, load_assets, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import (
     CombatKeywordTriggerKind,
     CombatKeywordTriggerSpec,
@@ -880,3 +882,199 @@ class MentorRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FirebenderAscensionNativeTests(InheritedNativeFixture, unittest.TestCase):
+    name = "Firebender Ascension"
+    mentor_permanent = staticmethod(MentorRuntimeTests.permanent)
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests/fixtures"
+        source = json.loads((fixtures / "attack-counter-unblockable-cards.json").read_bytes())
+        source["cards"] = [row for row in source["cards"] if row["name"] == cls.name]
+        oracle, = [row["oracle_id"] for row in source["cards"]]
+        source["rulings"] = [row for row in source["rulings"] if row["oracle_id"] == oracle]
+        focused = folder / "attack-copy-cards.json"
+        focused.write_text(json.dumps(source), encoding="utf-8")
+        path = folder / "attack-copy.sqlite3"
+        build_fixture_database([fixtures / "bound-effect-program-cards.json", focused], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Attack-trigger ordering", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def _act(self, game, actor, command, *, accepted=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _record(self, game, comment):
+        from hashlib import sha256
+
+        folder = os.environ.get("QUORUNE_ASCENSION_RECORD_PARENT")
+        if folder is None:
+            self.replay(game, load=True)
+            return
+        path = Path(folder) / comment
+        game.save(path)
+        checked = replay_record(path, self.db, verify=True)
+        self.assertTrue(checked["ok"], checked)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(checked["final_state_hash"], state_hash)
+        path.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": sha256((path / "manifest.json").read_bytes()).hexdigest(),
+            "final_state_sha256": state_hash, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def _choices(self, game):
+        self.until(game, lambda current: current.state.pending_decision.kind == "semantic.choice")
+        return game.packet("pilot:A", full=True)["decision"]
+
+    def test_ascension_native_entry_creates_the_original_red_firebending_soldier(self):
+        game = self.session(5081601)
+        enchantment = self.add(game.engine, self.name, zone="hand")
+        self.assert_closed(game, enchantment)
+        self.prepare(game, mana={"C": 1, "R": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", enchantment)
+        self.settle(game)
+        soldier, = [card for card in game.state.cards.values()
+                    if card.zone == "battlefield" and card.owner == "A" and card.is_token]
+        actual = game.engine._effective_card_data(soldier)
+        self.assertEqual((2, 2, ["R"]), (int(actual["power"]), int(actual["toughness"]), actual["colors"]))
+        self.assertIn("Soldier", actual["type_line"])
+        fragment, = [row for row in actual["ability_fragments"] if row["kind"] == "granted_triggered"]
+        program = game.engine.semantics.get(fragment["value"]["semantic_key"])
+        self.assertEqual(("creature.attacks", 1, "end_of_combat"),
+                         (program.event, program.effects[0]["amount"], program.effects[0]["retain_until"]))
+        self._record(game, "ascension-token-entry-game-record")
+
+        from optional_result_followup_fixture import OptionalResultFollowupFixture
+        from quorune.rules.attack_trigger_copy import COPY_CONTEXT, EVENT
+
+        for seat in "BCDA":
+            OptionalResultFollowupFixture.finish_turn(self, game)
+            self.assertEqual(seat, game.state.active_player)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self._act(game, "A", {"action_id": "attack", "attackers": {soldier.ref: "B"}})
+        original, observer = game.state.stack
+        self.assertEqual((soldier.object_id, enchantment.object_id), (original.source_object_id, observer.source_object_id))
+        self.assertEqual(EVENT, observer.context["event"])
+        self.assertEqual(original.stack_id, observer.context[COPY_CONTEXT]["stack_item"]["stack_id"])
+        self.settle(game)
+        self.assertEqual(1, game.state.cards[enchantment.object_id].counters["quest"])
+        self.assertEqual(1, game.state.players["A"].mana_pool["R"])
+        self._record(game, "ascension-actual-firebending-observed-game-record")
+
+    def _combat(self, seed, quests):
+        from quorune.rules.attack_trigger_copy import COPY_CONTEXT, EVENT
+
+        game = self.session(seed)
+        enchantment = self.add(game.engine, self.name)
+        self.assert_closed(game, enchantment)
+        mentor = self.mentor_permanent(game.engine, "Mentor", power=3, mentor_instances=1)
+        first = self.mentor_permanent(game.engine, "First possible target", power=1)
+        second = self.mentor_permanent(game.engine, "Second possible target", power=1)
+        nonattacking = self.mentor_permanent(game.engine, "Uncommitted Mentor", power=3, mentor_instances=1)
+        self.prepare(game)
+        enchantment.counters["quest"] = quests
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self._act(game, "A", {"action_id": "attack", "attackers": {
+            mentor.ref: "B", first.ref: "B", second.ref: "B",
+        }})
+        self.assertEqual("semantic.target", game.state.pending_decision.kind)
+        self.assertEqual(2, len(game.state.stack))
+        original, observer = game.state.stack
+        self.assertEqual((mentor.object_id, enchantment.object_id), (original.source_object_id, observer.source_object_id))
+        self.assertNotIn(nonattacking.object_id, {item.source_object_id for item in game.state.stack})
+        self.assertEqual(EVENT, observer.context["event"])
+        self.assertEqual(original.stack_id, observer.context[COPY_CONTEXT]["stack_item"]["stack_id"])
+        self._act(game, "A", {"action_id": "choose", "targets": [first.ref]})
+        return game, enchantment, mentor, first, second, original
+
+    def test_ascension_causing_ability_is_below_its_observer_and_copy_can_retarget(self):
+        game, enchantment, mentor, first, second, original = self._combat(5081602, 3)
+        self._record(game, "ascension-causal-order-game-record")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(4, game.state.cards[enchantment.object_id].counters["quest"])
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        self._act(game, "B", {"action_id": "choose", "choice": "apply"}, accepted=False)
+        self._record(game, "ascension-optional-copy-pending-game-record")
+        self._act(game, "A", {"action_id": "choose", "choice": "apply"})
+        decision = self._choices(game)
+        group, = decision["ctx"]["target_schema"]["groups"]
+        self.assertEqual({first.ref, second.ref}, set(group["legal_refs"]))
+        self._act(game, "A", {"action_id": "choose", "targets": [mentor.ref]}, accepted=False)
+        self._act(game, "A", {"action_id": "choose", "targets": [second.ref]})
+        copies = [item for item in game.state.stack if item.semantic_key == original.semantic_key]
+        self.assertEqual([original.ref], [item.ref for item in copies if item.targets == [first.ref]])
+        copy, = [item for item in copies if item.targets == [second.ref]]
+        self.assertEqual(mentor.object_id, copy.source_object_id)
+        self.assertGreater(game.state.stack.index(copy), game.state.stack.index(original))
+        self._record(game, "ascension-retargeted-copy-game-record")
+        self.settle(game)
+        self.assertEqual((1, 1), tuple(game.state.cards[card.object_id].counters.get("+1/+1", 0)
+                                      for card in (first, second)))
+        self.assertEqual(4, game.state.cards[enchantment.object_id].counters["quest"])
+        self._record(game, "ascension-copy-and-original-settled-game-record")
+
+    def test_ascension_checks_actual_quest_count_after_placement_and_allows_decline(self):
+        for before_count in (2, 3):
+            with self.subTest(before_count=before_count):
+                game, enchantment, _, first, second, original = self._combat(5081610 + before_count, before_count)
+                if before_count == 3:
+                    self.assertEqual("semantic.choice", self.resolve(game).kind)
+                    self._act(game, "A", {"action_id": "choose", "choice": "decline"})
+                self.settle(game)
+                self.assertEqual(before_count + 1, game.state.cards[enchantment.object_id].counters["quest"])
+                self.assertEqual((1, 0), tuple(game.state.cards[card.object_id].counters.get("+1/+1", 0)
+                                              for card in (first, second)))
+                self._record(game, f"ascension-quest-{before_count}-game-record")
+
+    def test_ascension_closes_its_actual_stage_quest_threshold_and_dependency(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.attack_trigger_copy import CAPABILITY, EVENT, RESULT_FIELD
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup(self.name, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, self.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = [item for item in semantics.programs_for_oracle(card.oracle_id) if item.event == EVENT]
+        self.assertEqual(4, program.effects[1][RESULT_FIELD]["minimum"])
+        altered_deps = tuple(name for name in program.capability_dependencies if name != CAPABILITY)
+        mutant = replace(program, capability_dependencies=altered_deps,
+                         capability_closure=self.registry.closure(altered_deps, profile="commander_review").to_dict())
+        self.assertFalse(bind_semantic_program_runtime(mutant, capability_registry=self.registry,
+                                                       profile="commander_review")["strict"])
+        for edit in (("four or more", "three or more"), ("quest counter", "charge counter"),
+                     ("ability of that creature", "ability of another creature")):
+            changed = replace(card, oracle_text=card.oracle_text.replace(*edit))
+            ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+
+    def test_ascension_trigger_batch_apnap_preserves_two_passes_in_the_record_codec(self):
+        from quorune.model import StackItem
+        from quorune.trigger_batches import PendingTriggerBatch, PendingTriggerItem, SECONDARY_TRIGGER_CONTEXT, create_pending_trigger_batch
+
+        original_and_observers = [("B", True), ("B", False), ("A", True), ("A", False)]
+        inputs = [PendingTriggerItem.from_dict(StackItem(
+            stack_id=f"stable-{i}", ref=f"S{i}", kind="triggered_ability", controller=seat,
+            label=f"Trigger {i}", context={SECONDARY_TRIGGER_CONTEXT: True} if secondary else {},
+        ).to_dict()) for i, (seat, secondary) in enumerate(original_and_observers)]
+        batch = create_pending_trigger_batch(batch_id="stable-batch", ref="TB1", items=inputs,
+            apnap_order=("A", "B", "C", "D"), turn_sequence=1, priority_epoch=1)
+        saved = PendingTriggerBatch.from_dict(batch.to_dict())
+        self.assertEqual(["S3", "S1", "S2", "S0"], [item.ref for item in saved.items])
+        self.assertEqual(["A", "B", "A", "B"], [group.controller for group in saved.groups])

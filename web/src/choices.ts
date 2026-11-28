@@ -766,6 +766,18 @@ export function targetGroups(field: ChoiceField, values: ChoiceValues): ChoiceFi
   return selectedTargetGroups(field, values);
 }
 
+export function castsWithNoXTargets(form: ChoiceForm, values: ChoiceValues): boolean {
+  const groups = activeFields(form, values).filter((field) => field.control === "targets").flatMap((field) => {
+    const selected = record(values[stringValue(field.name)]);
+    return targetGroups(field, values).map((group) => ({
+      optional: group.min === 0,
+      usesX: group.maximum_from === "x",
+      count: list(selected[stringValue(group.id ?? "target")]).length,
+    }));
+  });
+  return groups.some((group) => group.usesX) && groups.every((group) => group.optional && group.count === 0);
+}
+
 export function targetGroupModes(field: ChoiceField): Map<string, string> {
   const schema = record(field.schema);
   const modeSchemas = record(schema.mode_schemas);

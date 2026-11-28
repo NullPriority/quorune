@@ -301,6 +301,11 @@ class OptionalDrawHandler:
     ) -> SemanticChoicePreparation:
         from ..rules.event_optional_draw_shapes import DAMAGE_DEALER_DRAW_VERSION
 
+        from .source_counter_mill import prepare_counter_mill_offer
+        from ..rules.source_counter_mill_choice import OFFER_FIELD
+
+        if OFFER_FIELD in effect:
+            return prepare_counter_mill_offer(effect, context)
         if NEXT_TURN_COUNTER_DRAW_FIELD in effect:
             return _prepare_next_turn_counter_draw(effect, context)
 
@@ -391,6 +396,11 @@ class OptionalDrawHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        from .source_counter_mill import complete_counter_mill_offer
+        from ..rules.source_counter_mill_choice import OFFER_FIELD
+
+        if OFFER_FIELD in continuation.effect:
+            return complete_counter_mill_offer(continuation, response, query)
         if NEXT_TURN_COUNTER_DRAW_FIELD in continuation.effect:
             return _complete_next_turn_counter_draw(continuation.effect, response, query)
         if 'event_optional_draw_version' in continuation.effect:

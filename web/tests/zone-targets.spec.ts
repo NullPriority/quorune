@@ -28,6 +28,8 @@ test("@browser-rules aim a cast at a graveyard, choose its card, and retain the 
     await clickMove(host, draft.getByTestId("submit-choice"));
     const top = host.getByTestId("contextual-decision").getByRole("button", { name: "Top", exact: true });
     await driveTo(pages, top, info, "Resolve Seer and inspect the private choice");
+    await host.getByTestId("contextual-decision").locator(".scry-preview .card-tile").focus();
+    await expect(host.locator(".floating-card-preview")).toBeVisible();
     await clickMove(host, top);
 
     const raise = castOffer(host, "Raise Dead");
@@ -54,7 +56,19 @@ test("@browser-rules aim a cast at a graveyard, choose its card, and retain the 
     await drawer.getByRole("button", { name: "Back to table" }).click();
     await expect(draft).toContainText("1 / 1 · Ornithopter");
     await expect(arrow).toHaveAttribute("data-arrow-count", "1");
+    await host.getByTestId("auto-pass-toggle").click();
     await clickMove(host, draft.getByTestId("submit-choice"));
+    await expect(arrow).toHaveAttribute("data-arrow-count", "1");
+    await host.locator(".board-detach summary").click();
+    const boardsMenu = host.locator(".board-detach-options");
+    await boardsMenu.getByLabel("Seat B").check();
+    const popup = host.waitForEvent("popup");
+    await boardsMenu.getByRole("button", { name: "Open detached boards" }).click();
+    const detached = await popup;
+    await expect(detached.getByTestId("stack-panel")).toContainText("Raise Dead");
+    await expect(detached.getByTestId("player-B")).toBeVisible();
+    await expect(detached.getByTestId("own-hand")).toHaveCount(0);
+    await detached.close();
     const inHand = host.getByTestId("own-hand").getByText("Ornithopter", { exact: true });
     await driveTo(pages, inHand, info, "Resolve Raise Dead and return the selected card to hand");
   } finally {

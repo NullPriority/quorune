@@ -512,9 +512,14 @@ class SemanticChoiceRequest:
     prompt: str
     choice: ChoiceModel
     public_context: FrozenMap = field(default_factory=FrozenMap)
+    simultaneous_actors: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         _string(self.prompt, field_name="choice prompt")
+        if (not isinstance(self.simultaneous_actors, tuple)
+                or any(type(actor) is not str or not actor for actor in self.simultaneous_actors)
+                or len(set(self.simultaneous_actors)) != len(self.simultaneous_actors)):
+            raise SemanticChoiceError("Simultaneous choices require distinct participant seats")
         if not isinstance(self.public_context, FrozenMap):
             object.__setattr__(
                 self,
@@ -905,6 +910,8 @@ class SemanticChoicePreparation:
             raise SemanticChoiceError(
                 "Preparation must issue a request or explicitly auto-continue"
             )
+        if self.request is not None and self.request.simultaneous_actors and self.preparation_intents:
+            raise SemanticChoiceError("Simultaneous choices must begin before any preparation commits")
         if not isinstance(self.continuation_effect, FrozenMap):
             object.__setattr__(
                 self,

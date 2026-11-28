@@ -128,16 +128,17 @@ def zone_lifecycle_base_options(
     if suppress_source_costs or force_without_mana_cost or cast_without_mana:
         return []
     if card.zone == "exile":
+        from ..airbend import airbend_cast_option
+
         designation = fixed_zone_cast_designation(
             host.state,
             card,
             actor=seat,
         )
-        return (
-            [designation.lifecycle.fixed_cost_option()]
-            if designation is not None
-            else []
-        )
+        options = [designation.lifecycle.fixed_cost_option()] if designation is not None else []
+        if airbend := airbend_cast_option(card, seat):
+            options.append(airbend)
+        return options
     if card.zone != "graveyard":
         return []
     aftermath=compiled_fixed_cast_lifecycle_spec(host,card,FixedCastLifecycleKind.AFTERMATH)

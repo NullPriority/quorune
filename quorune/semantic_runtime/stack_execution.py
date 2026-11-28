@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from .intents import CounterStackIntent, CopyStackItemIntent, RetargetStackItemIntent
 from ..errors import GameRuleError
+from ..rules.departing_x_reflexive import PaidDepartureDamageIntent, queue_paid_damage
 from ..replacement.immutable import thaw_value
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent, QueueRevealUntilReflexiveIntent
 
 
 STACK_INTENT_TYPES = (CounterStackIntent, CopyStackItemIntent, RetargetStackItemIntent,
-                      QueueReflexiveTriggerIntent, QueueRevealUntilReflexiveIntent)
+                      QueueReflexiveTriggerIntent, QueueRevealUntilReflexiveIntent, ResolveQualifiedLibraryCastIntent, PaidDepartureDamageIntent)
 
 
 def execute_stack_copy(host, intent: CopyStackItemIntent) -> str | None:
@@ -55,6 +57,11 @@ def execute_stack_copy(host, intent: CopyStackItemIntent) -> str | None:
 
 
 def execute_stack_intent(sink, intent):
+    if isinstance(intent, ResolveQualifiedLibraryCastIntent):
+        from ..rules.qualified_library_cast import execute_qualified_library_cast
+        return intent.actor, execute_qualified_library_cast(sink, intent)
+    if isinstance(intent, PaidDepartureDamageIntent):
+        return intent.controller, queue_paid_damage(sink, intent)
     if isinstance(intent, QueueRevealUntilReflexiveIntent):
         from ..rules.reveal_until_reflexive import enqueue_reveal_until_reflexive
         return intent.controller, enqueue_reveal_until_reflexive(sink, intent)

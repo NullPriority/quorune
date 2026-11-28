@@ -9,10 +9,27 @@ from ..event_subscriptions import FixedEventSubscriptionSet
 from ..mana_pool_payment import ManaPoolAllocation
 
 
+def _exile_cast_mana_relevant(host):
+    from ...mana_provenance import mana_provenance_lots
+    from ...mana_spend_rules import EXILE_CAST_MANA_CAPABILITY, EXILE_CAST_MANA_RESTRICTION
+
+    if any(lot.restriction == EXILE_CAST_MANA_RESTRICTION
+           for player in host.state.players.values() if player.in_game
+           for lot in mana_provenance_lots(player)):
+        return True
+    return any(EXILE_CAST_MANA_CAPABILITY in program.capability_dependencies
+               and host.semantic_program_is_current_trusted(program)
+               for program in host.semantics.programs_for_event("activate"))
+
+
 def cast_mana_spend_context(host, seat, card, type_line):
     """Bind spend permission while the offered or announced cast is still in its origin zone."""
     context = host._spell_mana_spend_context(type_line)
     if card.zone == "exile":
+        from ...mana_restrictions import with_exile_cast_origin
+
+        if _exile_cast_mana_relevant(host):
+            context = with_exile_cast_origin(context)
         from ...private_opponent_library_cast_model import has_private_opponent_library_mana_waiver
 
         if has_private_opponent_library_mana_waiver(host, actor=seat, card=card):

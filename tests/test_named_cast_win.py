@@ -125,7 +125,9 @@ class NamedCastWinTests(InheritedNativeFixture, unittest.TestCase):
                 self.cast_for(game, "A", source)
                 self.assertEqual(1, self.count(game))
                 game = self.replay(game, load=True)
-                self.resolve_top(game)
+                with patch.object(type(game.engine), "_semantic_choice_object_rows",
+                                  side_effect=AssertionError("Named cast needs only its bound facts")):
+                    self.resolve_top(game)
                 self.assertIsNone(game.state.winner)
                 self.assertEqual(47, game.state.players["A"].life)
                 self.assert_library_order(game, source, original)

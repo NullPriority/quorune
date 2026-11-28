@@ -293,14 +293,19 @@ def _distinct_target_controllers(host,group,chosen,copy_targets):
     if not group.distinct_controllers:return
     retained=copy_targets.retained_groups.get(group.group_id,()) if copy_targets is not None else ()
     if copy_targets is not None and all(ref in retained for ref in chosen):return
+    from ..rules.paired_target_controllers import controller_of_target_incarnation, uses_paired_controllers
+
     controllers=[]
     for ref in chosen:
         current=host._target_snapshot(ref)
+        controller=current.get('controller')
         if ref in retained:
             original=copy_targets.retained_snapshots[ref]
-            identity=('object_id','zone_change_counter')
-            if not all(key in original and current.get(key)==original[key] for key in identity):continue
-        controller=current.get('controller')
+            if uses_paired_controllers(group):
+                controller = controller_of_target_incarnation(host, ref, original)
+            else:
+                identity=('object_id','zone_change_counter')
+                if not all(key in original and current.get(key)==original[key] for key in identity):continue
         if type(controller)is not str or not controller:raise GameRuleError('Target controller relation is unavailable')
         controllers.append(controller)
     if len(controllers)!=len(set(controllers)):
@@ -400,6 +405,19 @@ def _validate_shared_type_pair_assignment(host, pair, grouped, copy_targets):
         raise GameRuleError("Selected permanents must share a required card type")
 
 
+def optional_player_controlled_target_groups(plan: TargetPlan) -> tuple[tuple[str, str], ...]:
+    """Identify an announced player role with one optional controlled-permanent group."""
+    groups = {group.group_id: group for group in plan.groups}
+    return tuple(
+        (left, right) for left, right in plan.same_player_groups
+        if left in groups and right in groups
+        and (groups[left].zones, groups[left].categories) == (("player",), ("player",))
+        and (groups[left].min_targets, groups[left].max_targets) == (1, 1)
+        and (groups[right].zones, groups[right].categories) == (("battlefield",), ("permanent",))
+        and groups[right].min_targets == 0
+    )
+
+
 def validate_grouped_target_assignment(
     host: TargetSnapshotQuery,
     plan: TargetPlan,
@@ -441,8 +459,11 @@ def validate_grouped_target_assignment(
         if plan.globally_distinct and any(ref in used_global for ref in chosen):
             raise GameRuleError("Target groups require globally distinct targets")
         used_global.update(chosen)
+    optional_relations = optional_player_controlled_target_groups(plan)
     for left_group, right_group in plan.same_player_groups:
         left, right = grouped.get(left_group, ()), grouped.get(right_group, ())
+        if left and not right and (left_group, right_group) in optional_relations:
+            continue
         if not left or not right:
             raise GameRuleError("Related target groups must both contain a target")
         if copy_targets is not None and all(

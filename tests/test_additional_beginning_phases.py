@@ -24,6 +24,7 @@ from quorune.drawing.step_exemption import is_first_draw_in_own_draw_step
 
 class AdditionalBeginningPhasesTests(InheritedNativeFixture, unittest.TestCase):
     finish_turn = OptionalResultFollowupFixture.finish_turn
+    step = OptionalResultFollowupFixture.step
 
     @classmethod
     def setUpClass(cls):
@@ -32,6 +33,7 @@ class AdditionalBeginningPhasesTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             ROOT / "tests/fixtures/draw-step-exempt-multiplier-cards.json",
             ROOT / "tests/fixtures/additional-beginning-originals-cards.json",
+            ROOT / "tests/fixtures/damage-result-cards.json",
         ], db)
         cls.db = CardDatabase(db)
         cls.registry = load_default_capability_registry()
@@ -39,6 +41,61 @@ class AdditionalBeginningPhasesTests(InheritedNativeFixture, unittest.TestCase):
         cls.deck = DeckDefinition("Additional beginning", [
             DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
         ], [commander])
+
+    def test_hive_upkeep_resolves_life_then_mite_and_replays(self):
+        game = self.session(1840001)
+        hive = self.add(game.engine, "Skrelv's Hive")
+        self.assert_closed(game, hive)
+        self.step(game, "B", "beginning", "upkeep")
+        self.assertFalse(game.state.stack)
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.step(game, "A", "beginning", "upkeep")
+        self.assertEqual(1, self.trigger_count(game, hive))
+        self.assertEqual(40, game.state.players["A"].life)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(39, game.state.players["A"].life)
+        mite, = [card for card in game.state.cards.values() if card.is_token]
+        self.assertEqual(("battlefield", "A"), (mite.zone, mite.controller))
+        effective = game.engine._effective_card_data(mite)
+        self.assertEqual("Phyrexian Mite Token", effective["name"])
+        self.assertEqual(("1", "1"), tuple(str(effective[k]) for k in ("power", "toughness")))
+        self.assertEqual([], list(effective["colors"]))
+        self.assertIn("artifact", effective["type_line"].casefold())
+        self.assertIn("creature", effective["type_line"].casefold())
+        fragments = {fragment["kind"]: fragment["value"] for fragment in effective["ability_fragments"]}
+        self.assertEqual(1, fragments["toxic"]["value"])
+        restriction = fragments["declaration_restriction"]
+        self.assertEqual(("self", "prohibit", ["block"]), (
+            restriction["scope"], restriction["mode"], restriction["declarations"],
+        ))
+        self.replay(game, load=True)
+
+    def test_hive_corrupted_uses_any_opponent_and_actual_toxic_damage_replays(self):
+        for poison in (2, 3):
+            with self.subTest(poison=poison):
+                game = self.session(1840010 + poison)
+                hive = self.add(game.engine, "Skrelv's Hive")
+                chorus = self.add(game.engine, "Crawling Chorus")
+                plain = self.add(game.engine, "Perilous Myr")
+                opposing = self.add(game.engine, "Crawling Chorus", seat="B", ref="opposing-chorus")
+                self.assert_closed(game, hive)
+                chorus.acquired_control_turn_count = -1
+                plain.acquired_control_turn_count = -1
+                game.state.players["A"].poison = 3
+                game.state.players["D"].poison = poison
+                self.prepare(game)
+                self.checkpoint(game)
+                for creature, has_lifelink in ((chorus, poison == 3), (plain, False), (opposing, False)):
+                    keywords = game.engine._effective_card_data(creature)["keywords"]
+                    self.assertEqual(has_lifelink, "lifelink" in {k.casefold() for k in keywords})
+                self.attack(game, [(chorus, "C"), (plain, "C")])
+                self.until(game, lambda s: s.state.phase == "postcombat_main")
+                self.assertEqual(40 + int(poison == 3), game.state.players["A"].life)
+                self.assertEqual(38, game.state.players["C"].life)
+                self.assertEqual(1, game.state.players["C"].poison)
+                self.assertEqual(poison, game.state.players["D"].poison)
+                self.replay(game, load=True)
 
     def test_multiple_actual_beginning_sequences_use_the_current_turn_and_end_after_the_draw(self):
         game = self.session(50008001)

@@ -156,6 +156,7 @@ class TurnPriorityDecisionOwner:
     def grant_priority(self, seat: str | None) -> None:
         if self.host._stabilize():
             return
+        self.state.post_resolution_priority_seat = None
         if not self.host.active_seats:
             return
         cleanup_frame = self.host._active_cleanup_frame()
@@ -186,6 +187,13 @@ class TurnPriorityDecisionOwner:
         )
         if plan is not None:
             self.commit_priority_grant(plan)
+
+    def defer_post_resolution(self) -> None:
+        if (
+            self.state.post_resolution_priority_version == 1
+            and self.state.pending_decision is not None and not self.state.game_over
+        ):
+            self.state.post_resolution_priority_seat = self.state.active_player
 
     def issue_priority(
         self, seat: str, hints: Mapping[str, Any] | None = None
@@ -537,7 +545,10 @@ class TurnPriorityDecisionOwner:
         self, seat: str, hints: Mapping[str, Any] | None = None
     ) -> bool:
         hints = dict(hints or self.host._priority_action_hints(seat))
-        return any(hints.get(key) for key in ("cast", "lands", "abilities"))
+        return any(hints.get(key) for key in ("cast", "lands", "abilities")) or (
+            self.state.config.priority_special_actions_version == 1
+            and bool(hints.get("special_actions"))
+        )
 
     def record_action_opportunity(
         self,
@@ -654,6 +665,7 @@ class TurnPriorityDecisionOwner:
             if self.state.game_over:
                 if resume_from is not None:
                     self.state.priority_concession_resume_from = None
+                self.state.post_resolution_priority_seat = None
                 return
             if (
                 self.state.pending_decision is not None
@@ -662,6 +674,9 @@ class TurnPriorityDecisionOwner:
                 return
             if not self.state.started:
                 return
+            if self.state.post_resolution_priority_seat is not None:
+                self.grant_priority(self.state.post_resolution_priority_seat)
+                continue
             if (
                 self.state.priority_player is None
                 and self.host._active_cleanup_frame() is not None
@@ -678,7 +693,7 @@ class TurnPriorityDecisionOwner:
                 meaningful = self.signature_has_actions(seat, hints)
                 controller = current_turn_controller(self.state, seat) or seat
                 holds = self.window_holds.get(controller)
-                held = holds is not None and holds.matches(self.state)
+                held = holds is not None and holds.matches(self.state, controller)
                 self.increment_optimization(seat, "priority_windows_considered")
                 if self.state.stack:
                     self.increment_optimization(

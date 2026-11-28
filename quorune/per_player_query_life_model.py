@@ -14,6 +14,11 @@ PER_PLAYER_QUERY_LIFE_CAPABILITY='life.loss.per_player_public_quantity'
 PER_PLAYER_QUERY_LIFE_MECHANIC='per-player-public-query-life-loss'
 OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION=2
 OPPONENT_POISON_THRESHOLD_LIFE_VERSION=3
+OPPONENT_ACTUAL_TURN_LOSS_VERSION = 4
+
+
+class TurnLifeLossHistory(str, Enum):
+    ACTUAL_CURRENT_TURN_LOSS = 'actual_current_turn_life_lost'
 
 
 class PlayerLifeLossRelation(str,Enum):
@@ -43,19 +48,25 @@ class PoisonCounterThresholdLifeLoss:
 
 @dataclass(frozen=True,slots=True)
 class PerPlayerQueryLifeLossSpec:
-    amount: PublicQueryAmountSpec | PoisonCounterThresholdLifeLoss
+    amount: PublicQueryAmountSpec | PoisonCounterThresholdLifeLoss | TurnLifeLossHistory
     relation: PlayerLifeLossRelation
     schema_version: int=1
 
     def __post_init__(self):
         if (type(self.schema_version) is not int or self.schema_version not in (
-                1, OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION, OPPONENT_POISON_THRESHOLD_LIFE_VERSION)
+                1, OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION, OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
+                OPPONENT_ACTUAL_TURN_LOSS_VERSION)
                 or not isinstance(self.relation,PlayerLifeLossRelation)):
             raise PublicQueryAmountError('Per-player life loss requires an explicit version and relation')
         if self.schema_version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION:
             if (self.relation is not PlayerLifeLossRelation.OPPONENTS
                     or not isinstance(self.amount, PoisonCounterThresholdLifeLoss)):
                 raise PublicQueryAmountError('Poison-qualified life loss applies independently to opponents')
+            return
+        if self.schema_version == OPPONENT_ACTUAL_TURN_LOSS_VERSION:
+            if (self.relation is not PlayerLifeLossRelation.OPPONENTS
+                    or self.amount is not TurnLifeLossHistory.ACTUAL_CURRENT_TURN_LOSS):
+                raise PublicQueryAmountError('Turn history loss requires each opponent’s individual current loss')
             return
         if not isinstance(self.amount, PublicQueryAmountSpec):
             raise PublicQueryAmountError('Per-player life loss requires a public object count')
@@ -88,8 +99,9 @@ class PerPlayerQueryLifeLossSpec:
         return quantity
 
     def to_dict(self):
+        amount = self.amount.value if isinstance(self.amount, TurnLifeLossHistory) else self.amount.to_dict()
         return {'kind':PER_PLAYER_QUERY_LIFE_KIND,'schema_version':self.schema_version,
-            'relation':self.relation.value,'amount':self.amount.to_dict()}
+            'relation':self.relation.value,'amount':amount}
 
     @classmethod
     def from_dict(cls,value):
@@ -97,9 +109,13 @@ class PerPlayerQueryLifeLossSpec:
                 or value['kind']!=PER_PLAYER_QUERY_LIFE_KIND):
             raise PublicQueryAmountError('Per-player life-loss producer fields are closed')
         version = value['schema_version']
-        amount_type = (PoisonCounterThresholdLifeLoss if version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION
-                       else PublicQueryAmountSpec)
-        return cls(amount_type.from_dict(value['amount']), PlayerLifeLossRelation(value['relation']), version)
+        if version == OPPONENT_ACTUAL_TURN_LOSS_VERSION:
+            amount = TurnLifeLossHistory(value['amount'])
+        else:
+            amount_type = (PoisonCounterThresholdLifeLoss if version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION
+                           else PublicQueryAmountSpec)
+            amount = amount_type.from_dict(value['amount'])
+        return cls(amount, PlayerLifeLossRelation(value['relation']), version)
 
 
 @dataclass(frozen=True,slots=True)

@@ -17,6 +17,9 @@ from ..selected_graveyard_mill_count import SelectedGraveyardMillCount
 from ..rules.milled_creature_tokens import MilledCreatureTokens
 from ..rules.committed_mill_cards import MillAdventuresToHand
 from ..rules.milled_permanent_battlefield import MillOnePermanentToBattlefield
+from ..rules.mill_paid_hand_return import MillPaidHandReturn
+from ..rules.milled_creature_land_to_hand import MillCreatureLandToHand
+from ..rules.milled_permanent_recovery import MilledPermanentRecovery
 from ..rad_counters import RadMillFollowup
 
 from ..discard_effect_origin import DiscardEffectOrigin
@@ -144,6 +147,29 @@ class FrontFaceGraveyardCreatureReturnIntent(MoveObjectsSimultaneouslyIntent):
 
 
 @dataclass(frozen=True, slots=True)
+class ReturnedCreatureCounterIntent(FrontFaceGraveyardCreatureReturnIntent):
+    source_ref: str | None = None
+
+    def __post_init__(self) -> None:
+        FrontFaceGraveyardCreatureReturnIntent.__post_init__(self)
+        if type(self.source_ref) is not str or not self.source_ref or len(self.object_refs) > 2:
+            raise ValueError("Returned creature counters require the original source and at most two targets")
+
+
+@dataclass(frozen=True, slots=True)
+class MultiownerFrontFaceGraveyardReturnIntent(FrontFaceGraveyardCreatureReturnIntent):
+    """Return a type union across physical owner graveyards in one batch."""
+
+    def __post_init__(self) -> None:
+        MoveObjectsSimultaneouslyIntent.__post_init__(self)
+        if (self.expected_zones != ("graveyard",) or self.destination != "battlefield"
+                or self.battlefield_controller is not PublicBattlefieldController.OWNER
+                or self.owned_only or self.controlled_only or self.battlefield_tapped
+                or self.transition_kind is not ZoneTransitionKind.ORDINARY or self.entry_life_payment_refs):
+            raise ValueError("Multiowner return requires an ordinary physical graveyard batch")
+
+
+@dataclass(frozen=True, slots=True)
 class ZoneMoveIntent:
     actor: str
     object_ref: str
@@ -165,6 +191,7 @@ class ZoneMoveIntent:
     transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
     manifest_entry: bool = False
     cloak_entry: bool = False
+    transformed_entry: bool = False
 
     @property
     def library_face_down_entry(self) -> bool:
@@ -180,6 +207,12 @@ class ZoneMoveIntent:
             )
         ):
             raise ValueError('A face-down zone intent requires one controller-bound library incarnation')
+        if type(self.transformed_entry) is not bool or self.transformed_entry and (
+            self.library_face_down_entry or self.expected_zones != ("graveyard",) or self.destination != "battlefield"
+            or type(self.expected_zone_change_counter) is not int or self.expected_zone_change_counter < 1
+            or self.new_controller is None or self.tapped_policy != "tapped" or self.effect_entry_counters
+        ):
+            raise ValueError("Transformed return requires one exact owner-bound graveyard incarnation")
         if not isinstance(self.transition_kind, ZoneTransitionKind):
             raise ValueError("Zone move transition kind must be typed")
         if self.expected_zone_change_counter is not None and (
@@ -314,7 +347,10 @@ class MillCardsIntent:
     reason: str
     batch_players: tuple[str, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
-    followup: MilledCreatureTokens | RadMillFollowup | MillAdventuresToHand | MillOnePermanentToBattlefield | None = None
+    followup: (
+        MilledCreatureTokens | RadMillFollowup | MillAdventuresToHand | MillOnePermanentToBattlefield
+        | MillPaidHandReturn | MillCreatureLandToHand | MilledPermanentRecovery | None
+    ) = None
 
     def __post_init__(self) -> None:
         if any(
@@ -343,10 +379,13 @@ class MillCardsIntent:
         if isinstance(self.followup, RadMillFollowup):
             if players or self.actor != self.player or type(self.count) is not int or self.count <= 0:
                 raise ValueError("Radiation requires resolved single-player Mill on its controller")
-        elif isinstance(self.followup, (MillAdventuresToHand, MillOnePermanentToBattlefield)):
+        elif isinstance(self.followup, (MillAdventuresToHand, MillOnePermanentToBattlefield, MillPaidHandReturn, MillCreatureLandToHand)):
             if (players or self.actor != self.player or type(self.count) is not int
                     or self.count != self.followup.effect()["count"]):
                 raise ValueError("Committed public card selection requires the fixed controller Mill")
+        elif isinstance(self.followup, MilledPermanentRecovery):
+            if players or self.actor != self.player or type(self.count) is not int or self.count != 3:
+                raise ValueError("Permanent recovery requires its controller's fixed three-card Mill")
         elif self.followup is not None and (
             not isinstance(self.followup, MilledCreatureTokens) or type(self.count) is not int or self.actor not in players
         ):

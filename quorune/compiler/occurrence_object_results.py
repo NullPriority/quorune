@@ -59,7 +59,7 @@ def entry_permanent_result(binding, body):
     if exchange is not None:
         return exchange, False
     from ..rules.entry_permanent_results import (
-        ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_MECHANIC,
+        ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_MECHANIC, TAPPED_ENTRY_UNTAP_OPERATION,
         entry_permanent_result_binding, entry_permanent_result_effect,
     )
     from ..saddle import SADDLE_OPERATION
@@ -67,6 +67,7 @@ def entry_permanent_result(binding, body):
     operation = {
         "it becomes an artifact creature until end of turn.": ENTRY_ANIMATION_OPERATION,
         "it becomes saddled until end of turn.": SADDLE_OPERATION,
+        "untap it.": TAPPED_ENTRY_UNTAP_OPERATION,
     }.get(body.casefold())
     if operation is None or not entry_permanent_result_binding(binding.event.value, binding.event_condition, operation):
         return None

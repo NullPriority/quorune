@@ -17,6 +17,7 @@ from .scalar_effect_amount_model import PaidCreatureStatSnapshot, ScalarAmountOr
 REFLEXIVE_PROGRAM_KIND = 'reflexive_trigger_program'
 REFLEXIVE_PAYMENT_MECHANIC = 'fixed-action-reflexive-trigger'
 REFLEXIVE_PAYMENT_CAPABILITY = 'trigger.reflexive.fixed_action_result'
+DEPARTURE_X_PAYMENT_OPERATION = 'offer_departure_x_player_damage'
 BOUND_REFLEXIVE_PROGRAM_VERSION = 2
 SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION = 3
 BOUND_REFLEXIVE_PROGRAM_VERSIONS = frozenset({BOUND_REFLEXIVE_PROGRAM_VERSION, SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION})
@@ -38,6 +39,8 @@ def _values(value):
 def bound_reflexive_has_targets(effects):
     for effect in effects:
         operation = effect.get('op')
+        if operation == DEPARTURE_X_PAYMENT_OPERATION:
+            return True
         if operation == 'create_token':
             child = effect.get(TOKEN_CREATION_REFLEXIVE_FIELD)
         elif operation == 'place_counters':

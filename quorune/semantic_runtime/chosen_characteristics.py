@@ -20,6 +20,7 @@ from ..entry_designations import (
     LINKED_PLAYER_PROTECTION_HANDLER_ID,
     validate_designation,
 )
+from ..linked_card_type import PROTECTION_CAPABILITY, PROTECTION_HANDLER
 from ..object_predicate import ObjectQuerySpec
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -125,6 +126,49 @@ class ChosenCharacteristicsHandler:
         raw["colors_all" if kind is EntryDesignationKind.COLOR else "subtypes_all"] = [value]
         condition["predicate"] = ObjectQuerySpec.from_dict(raw).to_dict()
         return handler.lower({**body, "condition": condition}, context)
+
+
+def linked_card_type_protection_descriptor() -> dict[str, Any]:
+    return {"handler_id": PROTECTION_HANDLER, "schema_version": 1, "event": "characteristics.evaluate"}
+
+
+def linked_card_type_protection_fragment(card_type: str) -> ProtectionSpec:
+    return ProtectionSpec(ProtectionQualityKind.CARD_TYPE, card_type)
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedCardTypeProtectionHandler:
+    handler_id: str = PROTECTION_HANDLER
+    schema_version: int = 1
+    family: str = "continuous.characteristics.linked_card_type_protection"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("109.5", "205.2a", "607.2d", "611.3a", "613.1f", "614.12a", "702.16a")
+    capability_dependencies: tuple[str, ...] = (PROTECTION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="linked card-type protection")
+        if type(descriptor["schema_version"]) is not int or dict(descriptor) != linked_card_type_protection_descriptor():
+            raise SemanticNodeError("Linked card-type Protection requires its closed current-source descriptor")
+
+    def may_affect_static_components(self, descriptor: Mapping[str, Any]) -> bool:
+        return False
+
+    def lower(self, descriptor, context: ContinuousEffectSourceContext) -> tuple[ContinuousEffect, ...]:
+        from .continuous_components import FixedQueryProtectionGrantHandler
+
+        self.validate(descriptor)
+        if context.linked_card_type is None:
+            return ()
+        grant = FixedQueryProtectionGrantHandler()
+        fragment = linked_card_type_protection_fragment(context.linked_card_type)
+        return grant.lower({
+            "handler_id": grant.handler_id,
+            "schema_version": grant.schema_version,
+            "event": grant.event,
+            "condition": {"target_controller": "source_controller", "exclude_source": False,
+                          "predicate": _SOURCE_COUNTER_CREATURES.to_dict()},
+            "modifier": {"add_abilities": ["Protection"], "add_ability_fragments": [ability_fragment_to_dict(fragment)]},
+        }, context)
 
 
 def linked_player_protection_descriptor() -> dict[str, Any]:

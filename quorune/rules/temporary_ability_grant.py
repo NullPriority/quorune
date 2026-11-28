@@ -15,6 +15,14 @@ OPERATION='apply_source_characteristics_until_end_of_turn'
 TEMPORARY_QUOTED_GRANT_CAPABILITY = 'continuous.ability.temporary_quoted_grant'
 LIFE_LOSS_SELF_DEATH_GRANT_TEMPLATE = 'fixed-life-loss-self-death-grant-v1'
 TEMPORARY_QUOTED_GRANT_MECHANIC = 'temporary-quoted-ability-grant'
+TEMPORARY_COMBAT_FIREBENDING_TEMPLATE = "temporary-combat-firebending-eot-v1"
+_OPTIONAL_CREATURE_TARGET = FrozenMap({
+    "zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "up_to": 1,
+})
+_CONTROLLER_COMBAT = FrozenMap({"all": [
+    {"field": "player", "op": "eq", "value": "$source.controller"},
+    {"field": "step", "op": "eq", "value": "beginning_combat"},
+]})
 TEMPORARY_EACH_COLOR_PROTECTION_CAPABILITY = 'continuous.ability.temporary_each_color_protection'
 TEMPORARY_LAND_MANA_GRANT_CAPABILITY = "continuous.ability.temporary_land_mana_grant"
 _LAND_TARGET = FrozenMap({"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["land"], "count": 1})
@@ -147,7 +155,11 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
     if TEMPORARY_QUOTED_GRANT_MECHANIC not in mechanic_ids or len(effects) != 1:
         return ()
     grant = effects[0]
+    from .blocked_damage_cast import grant_dependencies, represents_grant
     from .commander_lifelink import commander_lifelink_node_capabilities
+
+    if represents_grant(grant):
+        return grant_dependencies(effects, target_schema) if cost_schema is None else ()
 
     if lifelink := commander_lifelink_node_capabilities(grant, target_schema, mechanic_ids, cost_schema):
         return lifelink
@@ -155,7 +167,13 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
         return protection
     if isinstance(target_schema, Mapping) and FrozenMap(target_schema) == _LAND_TARGET:
         return _temporary_land_mana_grant_capabilities(grant)
+    optional_creature = False
     if grant.get('schema_version') == 9:
+        optional_creature = FrozenMap(target_schema or {}) == _OPTIONAL_CREATURE_TARGET
+        if optional_creature:
+            if type(target_schema["up_to"]) is not int or cost_schema is not None:
+                return ()
+            target_schema = COMBAT_DRAW_UNBLOCKABLE_TARGET
         if (set(grant) != {'op', 'schema_version', 'card', 'power', 'toughness', 'ability_fragments'}
                 or type(grant['power']) is not int or type(grant['toughness']) is not int):
             return ()
@@ -183,6 +201,9 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
     if (grant['card'] != '$target.0' or grant['printed_only'] or grant['exclude_source']
             or keywords or len(fragments) != 1):
         return ()
+    if optional_creature and (fragments[0]["kind"] != "granted_triggered"
+                              or fragments[0]["value"]["event"] != "creature.attacks"):
+        return ()
     if fragments[0]["kind"] == COMBAT_PREVENTION_DRAW_FRAGMENT:
         if target_schema != {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "count": 1}:
             return ()
@@ -191,6 +212,54 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
         return ()
     return (TEMPORARY_QUOTED_GRANT_CAPABILITY, 'target.revalidate_resolution',
         *direct_target_predicate_capabilities(target_schema))
+
+
+COMBAT_CREATURE_COUNTER_FIREBENDING_TEMPLATE = "temporary-combat-controlled-countered-firebending-v1"
+
+
+def combat_creature_counter_firebending_query():
+    from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+
+    return ObjectQuerySpec(zones=("battlefield",), controller="$controller", types_all=("creature",),
+                           state_predicate=PermanentStatePredicateSpec(minimum_total_counter_count=1))
+
+
+def temporary_combat_firebending_runtime_dependencies(program):
+    """Check the exact combat grant on the materialized program."""
+    if program.provenance.get("template_id") == COMBAT_CREATURE_COUNTER_FIREBENDING_TEMPLATE:
+        if ((program.event, program.active_zone) != ("step.begin", "battlefield")
+                or FrozenMap(program.event_condition or {}) != _CONTROLLER_COMBAT
+                or program.handlers or program.cost_schema is not None or program.target_schema is not None
+                or len(program.effects) != 1
+                or type(program.effects[0].get("schema_version")) is not int
+                or program.effects[0]["schema_version"] != 8
+                or FrozenMap(program.effects[0].get("predicate") or {}) != FrozenMap(combat_creature_counter_firebending_query().to_dict())):
+            raise ValueError("Combat Firebending for creatures with counters requires its exact untargeted combat snapshot")
+        dependencies = temporary_quoted_grant_node_capabilities(
+            effects=program.effects, target_schema=None, mechanic_ids=program.coverage,
+        )
+        fragments = program.effects[0].get("ability_fragments", ())
+        if (not dependencies or len(fragments) != 1 or fragments[0]["kind"] != "granted_triggered"
+                or fragments[0]["value"]["event"] != "creature.attacks"):
+            raise ValueError("Combat Firebending for creatures with counters requires the exact attack grant")
+        return (*dependencies, "trigger.keyword.firebending.fixed")
+    optional_bundle = (
+        isinstance(program.target_schema, Mapping)
+        and FrozenMap(program.target_schema) == _OPTIONAL_CREATURE_TARGET
+        and any(effect.get("op") == OPERATION and effect.get("schema_version") == 9 for effect in program.effects)
+    )
+    if not optional_bundle and program.provenance.get("template_id") != TEMPORARY_COMBAT_FIREBENDING_TEMPLATE:
+        return ()
+    if (not optional_bundle or (program.event, program.active_zone) != ("step.begin", "battlefield")
+            or FrozenMap(program.event_condition or {}) != _CONTROLLER_COMBAT or program.handlers):
+        raise ValueError("Temporary combat Firebending requires the controller's beginning of combat and zero or one creature")
+    dependencies = temporary_quoted_grant_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        cost_schema=program.cost_schema,
+    )
+    if TEMPORARY_QUOTED_GRANT_CAPABILITY not in dependencies:
+        raise ValueError("Temporary combat Firebending requires the exact coupled characteristic and attack grant")
+    return (*dependencies, "trigger.keyword.firebending.fixed")
 
 
 def life_loss_temporary_trigger_capabilities(effects, target_schema, mechanics):

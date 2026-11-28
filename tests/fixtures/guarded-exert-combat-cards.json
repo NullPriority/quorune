@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Combat Celebrant",
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "If this creature hasn't been exerted this turn, you may exert it as it attacks. When you do, untap all other creatures you control and after this phase, there is an additional combat phase. (An exerted creature won't untap during your next untap step.)",
+      "power": "4",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Exert"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-04-28",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can't do so later in combat, and creatures put onto the battlefield attacking can't be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Combat Celebrant's ability untaps all of your creatures, not just the ones that are attacking."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert's effect preventing it from untapping expires without having done anything."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If you exert Combat Celebrant, you get an additional combat phase even if Combat Celebrant doesn't survive the first combat phase."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If you exert multiple Combat Celebrants in one combat phase, you'll have that many additional combat phases, but all of your creatures are untapped only during the current combat phase. You'll need to exert the Combat Celebrants one at a time, in multiple combat phases, to untap your attacking creatures and attack with them in each combat step."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "If you gain control of another player's creature until end of turn and exert it, it will untap during that player's untap step."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "There's no main phase between your combat phases, so you'll have no opportunity to cast spells or activate abilities that could only be cast any time you could cast a sorcery. For example, you won't be able to cast another creature or equip Equipment between combats."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "Untapping an attacking creature doesn't remove it from combat."
+    },
+    {
+      "oracle_id": "5e15ff93-99a0-4000-918e-4bd2c257188d",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "You can't exert a creature unless an effect allows you to do so. Similar effects that \"tap and freeze\" a creature (such as that of Decision Paralysis) don't exert that creature."
+    }
+  ]
+}

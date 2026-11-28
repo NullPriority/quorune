@@ -65,6 +65,70 @@ def card_record(
 
 
 class FixedLibrarySearchCompilerTests(unittest.TestCase):
+    def test_fixed_optional_creatures_to_graveyard_use_order_authority(self):
+        from quorune.rules.graveyard_arrival_order import GRAVEYARD_ARRIVAL_ORDER_CAPABILITY
+
+        for number in ("two", "three"):
+            text = f"Search your library for up to {number} creature cards, put them into your graveyard, then shuffle."
+            compiled = self.compile(text)
+            self.assertEqual("exact", compiled.status, compiled.material_residuals)
+            nodes = [node for face in compiled.faces for node in face.nodes]
+            self.assertTrue(any(GRAVEYARD_ARRIVAL_ORDER_CAPABILITY in node.capability_dependencies for node in nodes))
+        for text in (
+            "Search your library for three creature cards, put them into your graveyard, then shuffle.",
+            "Search your library for up to three artifact cards, put them into your graveyard, then shuffle.",
+            "Search your library for up to three creature cards, reveal them, put them into your graveyard, then shuffle.",
+        ):
+            self.assertIsNone(fixed_library_search_effect_template(text))
+            self.assertNotEqual("exact", self.compile(text).status)
+
+    def test_searched_basic_land_untap_requires_the_complete_closed_instruction(self):
+        from quorune.errors import GameRuleError
+        from quorune.library_search_model import SEARCHED_LAND_UNTAP_CAPABILITY, SearchedLandUntapSearch
+        from quorune.selection.search_descriptor_validation import validate_semantic_search_descriptor
+
+        body = (
+            "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. "
+            "Then if you control four or more lands, untap that land."
+        )
+        text = "{T}, Sacrifice this land: " + body
+        ir = self.compile(text, type_line="Land")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertTrue(any(
+            SEARCHED_LAND_UNTAP_CAPABILITY in node.capability_dependencies
+            for node in ir.faces[0].nodes
+        ))
+        with patch("quorune.compiler.library_search_templates.SearchedLandUntapSearch", return_value=None):
+            self.assertNotEqual("exact", self.compile(text, type_line="Land").status)
+        blocked = deepcopy(self.registry_value)
+        capability = next(row for row in blocked["capabilities"] if row["id"] == SEARCHED_LAND_UNTAP_CAPABILITY)
+        capability["status"] = "blocked"
+        capability["blockers"] = ["Withheld by the focused capability test"]
+        ir = self.compile(text, type_line="Land", capabilities=CapabilityRegistry(blocked))
+        self.assertNotEqual("exact", ir.status)
+        effect = fixed_library_search_effect_template(body).effect()
+        self.assertEqual(SearchedLandUntapSearch.from_effect(effect).effect(), effect)
+        for alternate in (
+            body.replace("four", "three"),
+            body.replace("basic land", "land"),
+            body.replace(" tapped", ""),
+            body.replace("that land", "another land"),
+            body + " Draw a card.",
+        ):
+            with self.subTest(alternate=alternate):
+                self.assertIsNone(fixed_library_search_effect_template(alternate))
+        for change in (
+            {"schema_version": 26.0},
+            {"count": {"minimum": True, "maximum": 1}},
+            {"enters_tapped_override": 1},
+            {"enters_tapped_override": False},
+            {"shuffle_after": False},
+            {"destination": "hand"},
+            {"searching_player": "B"},
+        ):
+            with self.subTest(change=change), self.assertRaises(GameRuleError):
+                validate_semantic_search_descriptor({**effect, **change})
+
     def test_counted_numeric_search_dispatch_preserves_reveal_pronouns_and_the_complete_selector(self):
         from quorune.compiler.library_search_templates import fixed_counted_library_search_effect_template
         from test_granted_skulk import record

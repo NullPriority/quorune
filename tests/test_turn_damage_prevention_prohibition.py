@@ -43,13 +43,19 @@ class TurnDamagePreventionProhibitionTests(InheritedNativeFixture, unittest.Test
         support = {
             "ability-label-composition-cards.json": {"Island", "Plains", "Unsummon"},
             "ability-source-counter-cards.json": {"Shock"},
-            "additional-conditional-modifier-cards.json": {"Revitalize"},
+            "additional-conditional-modifier-cards.json": {"Revitalize", "Cloudshift"},
             "announced-x-public-damage-set-cards.json": {"Mending Hands"},
             "bound-effect-program-cards.json": {"Generic Bound Plains"},
             "combat-prevention-source-scopes-cards.json": {"Flaring Pain"},
             "counter-replacement-cards.json": {"Ancient Brontodon"},
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
-            "turn-damage-prevention-prohibition-cards.json": {"Boon of Safety", "Call In a Professional", "Skullcrack"},
+            "turn-damage-prevention-prohibition-cards.json": {
+                "Boon of Safety", "Call In a Professional", "Skullcrack", "Mutational Advantage",
+            },
+            "attached-destruction-set-cards.json": {"Grizzly Bears", "Sol Ring"},
+            "bound-static-declaration-cards.json": {"Vampire Hexmage", "Battlegrowth"},
+            "recipient-control-cards.json": {"Donate"},
+            "static-characteristic-setting-cards.json": {"Ensoul Artifact"},
         }
         parts = []
         for filename, names in support.items():
@@ -75,6 +81,116 @@ class TurnDamagePreventionProhibitionTests(InheritedNativeFixture, unittest.Test
         binding, semantics = register_card(self.db, self.registry, name)
         self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
         return card, {p.event: p for p in semantics.programs_for_oracle(card.oracle_id)}
+
+    def _mutational_choose(self, game, refs):
+        result = game.act("pilot:A", {"action_id": "choose", "objects": list(refs)})
+        self.assertTrue(result.ok, result.summary)
+
+    def _mutational_keywords(self, game, card):
+        live = game.state.cards[card.object_id]
+        return {k.casefold() for k in game.engine._effective_card_data(live)["keywords"]}
+
+    def test_mutational_advantage_locks_original_set_before_proliferate(self):
+        game = self.session(1968001)
+        source = self.add(game.engine, "Mutational Advantage", zone="hand")
+        late_growth = self.add(game.engine, "Battlegrowth", zone="hand")
+        donate = self.add(game.engine, "Donate", zone="hand")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        hexmage = self.add(game.engine, "Vampire Hexmage")
+        artifact = self.add(game.engine, "Sol Ring")
+        artifact.counters["charge"] = 1
+        protected = self.add(game.engine, "Grizzly Bears", ref="mutational-protected")
+        late = self.add(game.engine, "Grizzly Bears", ref="mutational-late")
+        opponent = self.add(game.engine, "Grizzly Bears", seat="B", ref="mutational-opponent")
+        for card in (protected, opponent):
+            card.counters["+1/+1"] = 1
+        game.state.players["B"].poison = 2
+        for card in (source, late_growth, donate, blink, hexmage):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 9, "U": 8, "G": 8, "W": 8})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        spell_set = {artifact.logical_object_id, protected.logical_object_id}
+        self.assertEqual(spell_set, {row.subject.logical_object_id for row in game.state.damage_prevention_shields})
+        both = {"hexproof", "indestructible"}
+        self.assertTrue(both <= self._mutational_keywords(game, artifact))
+        self.assertTrue(both <= self._mutational_keywords(game, protected))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "objects": [opponent.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self._mutational_choose(game, (opponent.ref, "B", artifact.ref))
+        self.assertEqual(3, game.state.players["B"].poison)
+        self.assertEqual(2, game.state.cards[opponent.object_id].counters["+1/+1"])
+        self.assertEqual(2, game.state.cards[artifact.object_id].counters["charge"])
+        self.assertFalse(both & self._mutational_keywords(game, opponent))
+
+        self.cast(game, "A", late_growth, [late.ref])
+        self.resolve_top(game)
+        self.assertEqual(1, game.state.cards[late.object_id].counters["+1/+1"])
+        self.assertFalse(both & self._mutational_keywords(game, late))
+        self.priority(game, "A")
+        states = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        ability = next(row for row in states if row["id"].startswith(f"activate:{hexmage.ref}:"))
+        result = game.act("pilot:A", {"action_id": ability["id"], "targets": [protected.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(game)
+        self.assertFalse(game.state.cards[protected.object_id].counters)
+        self.assertTrue(both <= self._mutational_keywords(game, protected))
+
+        self.cast(game, "A", donate, ["B", artifact.ref])
+        self.resolve_top(game)
+        self.assertEqual("B", game.state.cards[artifact.object_id].controller)
+        self.assertTrue(both <= self._mutational_keywords(game, artifact))
+        self.assertTrue(any(row.subject.logical_object_id == artifact.logical_object_id
+                            for row in game.state.damage_prevention_shields))
+        self.cast(game, "A", blink, [protected.ref])
+        self.resolve_top(game)
+        self.assertNotEqual(protected.logical_object_id, game.state.cards[protected.object_id].logical_object_id)
+        self.assertFalse(both & self._mutational_keywords(game, protected))
+        self.assertNotIn(game.state.cards[protected.object_id].logical_object_id,
+                         {row.subject.logical_object_id for row in game.state.damage_prevention_shields})
+        self.replay(game, load=True)
+
+    def test_mutational_advantage_prevents_damage_after_animation_unless_prohibited(self):
+        game = self.session(1968002)
+        source = self.add(game.engine, "Mutational Advantage", zone="hand")
+        animate = self.add(game.engine, "Ensoul Artifact", zone="hand")
+        pain = self.add(game.engine, "Flaring Pain", zone="hand")
+        first, second = (self.add(game.engine, "Shock", zone="hand", ref=f"mutational-damage-{i}")
+                         for i in range(2))
+        artifact = self.add(game.engine, "Sol Ring")
+        artifact.counters["charge"] = 1
+        for card in (source, animate, pain, first):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 9, "U": 8, "G": 8, "R": 8})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        pending = self.resolve(game)
+        self.assertEqual("semantic.choice", pending.kind)
+        self._mutational_choose(game, ())
+        self.assertEqual(1, game.state.cards[artifact.object_id].counters["charge"])
+        self.cast(game, "A", animate, [artifact.ref])
+        self.resolve_top(game)
+        self.assertIn("creature", game.engine._effective_card_data(artifact)["type_line"].casefold())
+        self.cast(game, "A", first, [artifact.ref])
+        self.resolve_top(game)
+        self.assertEqual(0, game.state.cards[artifact.object_id].marked_damage)
+        game = self.replay(game, load=True)
+        self.cast(game, "A", pain)
+        self.resolve_top(game)
+        self.cast(game, "A", second, [artifact.ref])
+        self.resolve_top(game)
+        self.assertEqual(2, game.state.cards[artifact.object_id].marked_damage)
+        self.assertTrue({"hexproof", "indestructible"} <= self._mutational_keywords(game, artifact))
+        from optional_result_followup_fixture import OptionalResultFollowupFixture
+
+        OptionalResultFollowupFixture.finish_turn(self, game)
+        self.assertFalse({"hexproof", "indestructible"} & self._mutational_keywords(game, artifact))
+        self.assertFalse(game.state.damage_prevention_shields)
+        self.replay(game, load=True)
 
     def test_complete_originals_keep_ordered_effects_and_flashback(self):
         for name in NAMES:

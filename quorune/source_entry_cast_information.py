@@ -23,15 +23,17 @@ SOURCE_ENTRY_CAST_HAND_MECHANIC='source-entry-cast-hand-condition'
 _CAST_ORIGINS=frozenset({'hand','library','graveyard','exile','command','outside'})
 
 
-def source_entry_cast_condition(*,origin=None):
+def source_entry_cast_condition(*,origin=None,any_caster=False):
     value={'field':SOURCE_ENTRY_CAST_CONDITION,'op':'eq','value':True}
     if origin is not None:value['origin']=origin
+    if any_caster:value['caster']='any'
     validate_source_entry_cast_condition(value)
     return value
 
 
 def validate_source_entry_cast_condition(value):
-    if (not isinstance(value,Mapping) or set(value) not in ({'field','op','value'},{'field','op','value','origin'})
+    if (not isinstance(value,Mapping) or set(value) not in ({'field','op','value'},{'field','op','value','origin'},{'field','op','value','caster'})
+            or 'caster' in value and value['caster']!='any'
             or 'origin' in value and value['origin']!='hand'
             or value['field']!=SOURCE_ENTRY_CAST_CONDITION or value['op']!='eq' or value['value'] is not True):
         raise ValueError('Source-entry cast conditions have one closed controller-relative predicate')

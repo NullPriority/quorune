@@ -41,6 +41,10 @@ def activation_matches_cost_scope(host,source,ability,scope):
     if scope=='all':return True
     if scope=='nonmana':return not ability.mana_ability
     if scope == 'equip':
+        from .equip_permissions import ZeroEquipPrice
+
+        if isinstance(ability, ZeroEquipPrice):
+            ability = ability.printed_equip
         return (ability.builtin_semantic_key in {EQUIP_SEMANTIC_KEY, PLANESWALKER_EQUIP_SEMANTIC_KEY}
                 or _catalogued_equip_matches(host, source, ability))
     if scope=='boast':

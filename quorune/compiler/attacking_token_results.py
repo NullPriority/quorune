@@ -54,3 +54,29 @@ def fixed_attacking_token_template(text, *, compile_fixed):
         'name': effect['name'], 'characteristics': characteristics,
         'tapped': bool(match['tapped']), 'token_entry_version': 1},
         mechanics=(*token.mechanics, ATTACKING_TOKEN_MECHANIC))
+
+
+def source_counter_attacking_tokens_template(text, *, card_name):
+    from ..rules.source_references import SourceReferenceSpec
+    from ..rules.source_counter_attacking_tokens import (
+        VERSION, original_source_counter_effect, source_counter_attacking_token_amount,
+    )
+    from .token_templates import fixed_token_creation_effect_template
+
+    match = re.fullmatch(
+        r"Put a \+1/\+1 counter on (?P<source>.+?), then create X "
+        r"(?P<definition>.+?) tokens that are tapped and attacking, where X is the number of "
+        r"\+1/\+1 counters on (?P<quantity_source>.+?)\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None or not card_name:
+        return None
+    source = SourceReferenceSpec(card_name)
+    if not source.matches(match["source"]) or not source.matches(match["quantity_source"]):
+        return None
+    token = fixed_token_creation_effect_template(f"Create a {match['definition']} token that's tapped and attacking.")
+    if token is None or token.effect.get("op") != ATTACKING_TOKEN_OPERATION:
+        return None
+    result = {**token.effect, "quantity": source_counter_attacking_token_amount(), "token_entry_version": VERSION}
+    return ("source-counter-attacking-tokens-v1", (original_source_counter_effect(), result), None,
+            ("cr-122-counters", "scalar-effect-amount", *token.mechanics))

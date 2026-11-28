@@ -30,7 +30,9 @@ class AbilityFragmentHostMixin:
         status_values=current_face_down_copy_values(self,card)
         if status_values is not None:return status_values
         if card.permanent_composition is not None:
-            return self._effective_card_data(card,maximum_layer=Layer.COPY)
+            from .composition_characteristics import composition_values_for_copy
+
+            return composition_values_for_copy(card, self._effective_card_data(card,maximum_layer=Layer.COPY))
         record=self.card_record(card)
         base=self._compiled_base_characteristics(card,record,error_type=GameRuleError)
         from .rules.room_copy_values import capture_room_copy_faces, room_copy_characteristics

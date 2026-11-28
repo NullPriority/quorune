@@ -3,10 +3,12 @@ from __future__ import annotations
 """Coordinate CR 122.5 through the existing counter state and placement owners."""
 
 from dataclasses import replace
+from ..characteristic_evaluation import type_parts
 from ..counter_placement import (
     CounterPlacementRequest, finish_counter_placement_commit,
     plan_prepared_counter_placement_commit, prepare_counter_placements,
 )
+from ..counter_snapshot import permanent_counter_snapshot
 from ..counter_state import CounterChange, commit_counter_changes, plan_counter_changes
 from ..semantic_runtime.counter_movement_intent import (
     CounterMovementIntent, DistributeSourceCountersIntent, MoveCounterSetIntent,
@@ -37,13 +39,18 @@ def _distribution_requests(intent, by_ref, source):
     return tuple(requests)
 
 
-def _single_recipient_requests(intent, by_ref, source):
+def _single_recipient_requests(host, intent, by_ref, source):
     recipient = _live_object(by_ref, intent.to_ref, intent.to_identity)
     if (recipient is None or recipient is source
-            or isinstance(intent, MoveCounterSetIntent)
-            and (source.controller != intent.actor or recipient.controller != intent.actor)
             or any(source.counters.get(kind, 0) < amount for kind, amount in intent.amounts.items())):
         return ()
+    if isinstance(intent, MoveCounterSetIntent):
+        if intent.all_to_creature:
+            types, _, _ = type_parts(host._effective_card_data(recipient)["type_line"])
+            if "creature" not in types or permanent_counter_snapshot(source.counters) != intent.amounts:
+                return ()
+        elif source.controller != intent.actor or recipient.controller != intent.actor:
+            return ()
     return tuple(
         CounterPlacementRequest(
             subject_kind="permanent", subject_id=recipient.object_id,
@@ -60,7 +67,8 @@ def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, 
     if source is None:
         return ()
     distributing = isinstance(intent, DistributeSourceCountersIntent)
-    requests = (_distribution_requests if distributing else _single_recipient_requests)(intent, by_ref, source)
+    requests = (_distribution_requests(intent, by_ref, source) if distributing
+                else _single_recipient_requests(host, intent, by_ref, source))
     if not requests:
         return ()
     prepared = prepare_counter_placements(host, requests, selections=intent.replacement_selections)

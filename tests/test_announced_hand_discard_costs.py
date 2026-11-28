@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.record import authoritative_state_hash
@@ -274,3 +275,185 @@ class AnnouncedHandDiscardCostTests(unittest.TestCase):
                                ('quorune.rules.casting.commit._fixed_zone_change_commit_entries',lambda *a,**k:[])):
             with patch(owner,mutation):
                 with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+
+class PaidDiscardDamageTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "paid-discard-damage.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "announced-hand-discard-cards.json",
+            "announced-destruction-controller-tokens-cards.json", "redirected-draw-cards.json",
+            "ability-source-counter-cards.json", "self-graveyard-reveal-and-owner-shuffle-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Paid discard damage", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _prize(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Grab the Prize", zone="hand")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _pay_discard(self, game, source, price, foreign=None):
+        from quorune.paid_discard_model import PAID_DISCARD_CONTEXT, PaidDiscardSnapshot
+
+        action = self.action(game, "A", source)
+        option = next(row for row in action["cost_options"] if row["id"] == "normal")
+        legal = option["choice_schema"]["discard_cards"]["legal_refs"]
+        self.assertIn(price.ref, legal)
+        self.assertNotIn(source.ref, legal)
+        payload = {"action_id": action["id"], "discard_cards": [price.ref], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", payload).ok)
+        invalid = [[], [price.ref, price.ref], [source.ref]]
+        if foreign is not None:
+            self.assertNotIn(foreign.ref, legal)
+            invalid.append([foreign.ref])
+        for refs in invalid:
+            self.assertFalse(game.act("pilot:A", {**payload, "discard_cards": refs}).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        identity = price.logical_object_id
+        result = game.act("pilot:A", payload)
+        self.assertTrue(result.ok, result.summary)
+        receipt = PaidDiscardSnapshot.from_dict(game.state.stack[-1].context[PAID_DISCARD_CONTEXT])
+        self.assertEqual(identity, receipt.logical_object_id)
+        return receipt
+
+    def test_grab_the_prize_pays_exactly_one_land_from_own_hand_and_only_draws(self):
+        game, source = self._prize(750791)
+        land = self.add(game.engine, "Generic Bound Plains", zone="hand", ref="grab-actual-land")
+        other = self.add(game.engine, "Grizzly Bears", seat="C", zone="hand", ref="grab-private-foreign")
+        self.prepare(game, mana={"C": 1, "R": 1})
+        self.checkpoint(game)
+        receipt = self._pay_discard(game, source, land, other)
+        self.assertTrue(receipt.is_land)
+        self.assertEqual("graveyard", game.state.cards[land.object_id].zone)
+        for seat in "ABD":
+            self.assertNotIn(other.ref, str(game.packet("pilot:" + seat, full=True)))
+        before = len(game.state.players["A"].zones["hand"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before + 2, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual([40, 40, 40], [game.state.players[seat].life for seat in "BCD"])
+        self.replay(game, load=True)
+
+    def test_grab_the_prize_uses_the_discard_after_exile_and_redirected_draws(self):
+        game, source = self._prize(750792)
+        price = self.add(game.engine, "Grizzly Bears", zone="hand", ref="grab-nonland-exile")
+        self.add(game.engine, "Rest in Peace", seat="D")
+        self.add(game.engine, "Notion Thief", seat="B")
+        self.prepare(game, mana={"C": 1, "R": 1})
+        self.checkpoint(game)
+        receipt = self._pay_discard(game, source, price)
+        self.assertFalse(receipt.is_land)
+        self.assertEqual("exile", game.state.cards[price.object_id].zone)
+        before = {seat: len(game.state.players[seat].zones["hand"]) for seat in "AB"}
+        game = self.replay(game, load=True)
+        cursor = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before["A"], len(game.state.players["A"].zones["hand"]))
+        self.assertEqual(before["B"] + 2, len(game.state.players["B"].zones["hand"]))
+        self.assertEqual([38, 38, 38], [game.state.players[seat].life for seat in "BCD"])
+        events = game.state.events[cursor:]
+        draws = [event.event_id for event in events if event.code == "card.draw"]
+        damage_events = [event.event_id for event in events if event.code == "effect.damage"]
+        self.assertEqual(2, len(draws))
+        self.assertTrue(damage_events)
+        self.assertLess(max(draws), min(damage_events))
+        self.replay(game, load=True)
+
+    def test_grab_the_prize_copy_uses_the_original_paid_type_and_its_own_opponents(self):
+        from quorune.paid_discard_model import PAID_DISCARD_CONTEXT, PaidDiscardSnapshot
+
+        game, source = self._prize(750793)
+        price = self.add(game.engine, "Grizzly Bears", zone="hand", ref="grab-copy-price")
+        twin = self.add(game.engine, "Twincast", seat="B", zone="hand")
+        self.prepare(game, mana={"C": 1, "R": 1})
+        game.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(game)
+        receipt = self._pay_discard(game, source, price)
+        original = game.state.stack[-1]
+        self.cast(game, "B", twin, [original.ref])
+        self.resolve_top(game)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual("B", copied.controller)
+        self.assertEqual(receipt, PaidDiscardSnapshot.from_dict(copied.context[PAID_DISCARD_CONTEXT]))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([38, 38, 36, 36], [game.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual("graveyard", game.state.cards[price.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_grab_the_prize_uses_actual_reveal_for_a_discard_shuffled_into_a_hidden_zone(self):
+        game, source = self._prize(750794)
+        price = self.add(game.engine, "Darksteel Colossus", zone="hand", ref="grab-revealed-library-discard")
+        self.assert_closed(game, price)
+        self.prepare(game, mana={"C": 1, "R": 1})
+        self.checkpoint(game)
+        receipt = self._pay_discard(game, source, price)
+        self.assertIs(receipt.is_land, False)
+        self.assertEqual("library", game.state.cards[price.object_id].zone)
+        self.assertTrue(any(event.code == "card.reveal" and event.details.get("object") == price.ref
+                            for event in game.state.events))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([38, 38, 38], [game.state.players[seat].life for seat in "BCD"])
+        self.replay(game, load=True)
+
+    def test_grab_the_prize_treats_an_unrevealed_hidden_discard_type_as_undefined(self):
+        from types import SimpleNamespace
+
+        from quorune.paid_discard_model import PAID_DISCARD_CONTEXT, PaidDiscardSnapshot
+        from quorune.rules.paid_discard_damage import bind_paid_nonland_damage, paid_discard_cast_context
+        from quorune.zone_trigger_events import ZoneTransitionKind
+
+        game, source = self._prize(750795)
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        card = SimpleNamespace(is_card_object=True, face_down=False, logical_object_id="test-original@2")
+        facts = SimpleNamespace(paid_discard_reveals=set(), deferred_events=[
+            (card, "hand", "A", "test-original@1", {"type_line":"Creature"}, (), "library", ZoneTransitionKind.DISCARD),
+        ])
+        result = paid_discard_cast_context(game.engine, program, facts)
+        saved = PaidDiscardSnapshot.from_dict(result[PAID_DISCARD_CONTEXT])
+        self.assertIsNone(saved.is_land)
+        item = SimpleNamespace(
+            semantic_key=program.key, kind="spell", targets=[],
+            context={**result, "currently_resolving": True},
+        )
+        self.assertIsNone(bind_paid_nonland_damage(game.engine, item, program.effects[1]))
+
+    def test_grab_the_prize_compiler_requires_the_original_paid_recipe(self):
+        from dataclasses import replace
+
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.errors import GameRuleError
+        from quorune.rules.paid_discard_damage import PAID_NONLAND_DAMAGE_FIELD
+
+        game, source = self._prize(750796)
+        card = self.db.lookup(source.printed_name, fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(card, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertEqual(["draw", "damage_each_opponent"], [effect["op"] for effect in node.effects])
+            self.assertEqual({"schema_version": 1}, node.effects[1][PAID_NONLAND_DAMAGE_FIELD])
+        witness()
+        with patch("quorune.compiler.paid_discard_damage_templates.paid_nonland_discard_damage_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        program, = game.engine.semantics.programs_for_oracle(card.oracle_id)
+        bound = bind_semantic_program_runtime(replace(program, cost_schema=None), capability_registry=self.registry,
+                                              profile="commander_review")
+        self.assertFalse(bound["strict"], bound)
+        before = authoritative_state_hash(game.state)
+        with self.assertRaisesRegex(GameRuleError, "authorized by its resolving spell"):
+            game.engine.apply_effect(program.effects[1], actor="A")
+        self.assertEqual(before, authoritative_state_hash(game.state))

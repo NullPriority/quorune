@@ -10,6 +10,19 @@ export async function clickMove(page: Page, control: Locator) {
   await expect.poll(() => viewRevision(page)).toBeGreaterThan(revision);
 }
 
+export async function projectedState(page: Page) {
+  const game = await page.locator(".game-shell").getAttribute("data-game-id");
+  return page.evaluate(async (id) => {
+    const tab = sessionStorage.getItem("commander-browser-tab");
+    if (!tab) throw new Error("Missing a browser tab identity");
+    const response = await fetch(`/api/v1/games/${id}/state?full=true`, {
+      headers: { "X-Commander-Tab": tab }, credentials: "same-origin",
+    });
+    if (!response.ok) throw new Error(`Game state request returned ${response.status}`);
+    return (await response.json()).packet.state;
+  }, game);
+}
+
 export async function startPlaytestPod(
   browser: Browser, decks: readonly PlaytestDeck[], seed: number,
   viewport = { width: 1366, height: 650 },

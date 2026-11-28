@@ -12,6 +12,10 @@ from ..mana_restriction_model import (
 
 def fixed_resolution_mana_capabilities(*,effects,target_schema,mechanic_ids):
     if FIXED_RESOLUTION_MANA_MECHANIC not in mechanic_ids or target_schema is not None or not effects:return ()
+    from .postcombat_life_loss_mana import REQUIREMENTS, effect_is_closed
+
+    if len(effects) == 1 and effect_is_closed(effects[0]):
+        return REQUIREMENTS
     if len(effects)==1 and effects[0].get('op')=='choose_mana':
         from ..resolution_mana_model import ResolutionManaChoiceSpec,RESOLUTION_MANA_CHOICE_CAPABILITY
         try:ResolutionManaChoiceSpec.from_effect(effects[0])
@@ -25,6 +29,10 @@ def fixed_resolution_mana_capabilities(*,effects,target_schema,mechanic_ids):
         return (FIXED_RESOLUTION_MANA_CAPABILITY, CAPABILITY)
     if thaw_value(effects) == list(attack_effects()):
         return (FIXED_RESOLUTION_MANA_CAPABILITY, ATTACK_CAPABILITY)
+    from .attack_declaration_mana import CAPABILITY as PLAYER_ATTACK_CAPABILITY, closed_effect
+
+    if closed_effect(effects):
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, PLAYER_ATTACK_CAPABILITY)
     colors=[];total=0;restrictions=set()
     for effect in effects:
         if (set(effect)-{'spend_restriction'}!={'op','player','color','amount','source'} or effect['op']!='mana' or effect['player']!='$controller' or effect['source']!='$source'
@@ -57,7 +65,17 @@ def fixed_resolution_mana_runtime_dependencies(program):
     from .entry_creature_type_mana import entry_shared_type_mana_runtime_dependencies
     from .turn_retained_resolution_mana import ATTACK_CAPABILITY, program_dependencies
 
+    from .source_power_firebending import source_power_firebending_dependencies
+
+    from .postcombat_life_loss_mana import program_dependencies as postcombat_mana_dependencies
+
+    from .attack_declaration_mana import program_dependencies as declaration_dependencies
+
+    if declaration := declaration_dependencies(program):
+        return declaration
     required = set(entry_shared_type_mana_runtime_dependencies(program))
+    required.update(postcombat_mana_dependencies(program))
+    required.update(source_power_firebending_dependencies(program))
     if ATTACK_CAPABILITY in getattr(program, "capability_dependencies", ()):
         required.update(program_dependencies(program))
     def visit(value):

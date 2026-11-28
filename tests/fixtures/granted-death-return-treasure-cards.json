@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Fake Your Own Death",
+      "oracle_id": "ad01df89-29fe-44c7-a133-91425f8ff09c",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature gets +2/+0 and gains \"When this creature dies, return it to the battlefield tapped under its owner's control and you create a Treasure token.\" (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Treasure"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ad01df89-29fe-44c7-a133-91425f8ff09c",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If the target creature is a token, the ability still triggers when it dies. Its controller won't return the token to the battlefield, but they will creature a Treasure token."
+    },
+    {
+      "oracle_id": "ad01df89-29fe-44c7-a133-91425f8ff09c",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "The Treasure token is created by the creature's controller, who may be different from Fake Your Own Death's controller and may be different from the creature's owner."
+    }
+  ]
+}

@@ -8,8 +8,11 @@ from ..library_search_model import DIFFERENT_NAME_SEARCH_FIELD
 
 
 def validate_search_different_names(host, effect, cards):
-    if effect.get(DIFFERENT_NAME_SEARCH_FIELD) is not True:
-        return
+    if effect.get(DIFFERENT_NAME_SEARCH_FIELD) is True:
+        require_distinct_search_card_names(host, cards, description="creature cards")
+
+
+def require_distinct_search_card_names(host, cards, *, description="cards"):
     seen = set()
     for card in cards:
         record = host.card_record(card)
@@ -17,5 +20,5 @@ def validate_search_different_names(host, effect, cards):
             raise GameRuleError("Different-name search requires the original library cards")
         names = {name.casefold().replace("’", "'") for name in library_card_rules_names(record)}
         if not names or not seen.isdisjoint(names):
-            raise GameRuleError("Choose creature cards with different names")
+            raise GameRuleError(f"Choose {description} with different names")
         seen.update(names)

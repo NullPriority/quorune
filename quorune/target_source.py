@@ -78,9 +78,15 @@ class TargetingSource:
     chosen_color: str | None = None
     supertypes: frozenset[str] | None = None
     is_commander: bool | None = None
+    reserved_graveyard_source_id: str | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
+        if self.reserved_graveyard_source_id is not None and (
+            self.kind != "spell" or type(self.reserved_graveyard_source_id) is not str
+            or not self.reserved_graveyard_source_id
+        ):
+            raise ValueError("Only a casting proposal may reserve a graveyard source departure")
         if self.logical_object_id is not None and (
             type(self.logical_object_id) is not str or not self.logical_object_id
         ):
@@ -195,9 +201,13 @@ def capture_targeting_source(host,source,*,characteristics=None,zone=None,schema
         schema_version=schema_version, is_commander=commander)
 
 
-def spell_targeting_source(host,card):
-    return TargetingSource.from_characteristics('spell',host._effective_card_data(card),
-        controller=card.controller,spell_owner=card.owner)
+def spell_targeting_source(host, card, *, reserve_graveyard_departure=False):
+    source = TargetingSource.from_characteristics(
+        'spell', host._effective_card_data(card), controller=card.controller, spell_owner=card.owner,
+    )
+    if reserve_graveyard_departure and card.zone == "graveyard":
+        return replace(source, reserved_graveyard_source_id=card.object_id)
+    return source
 
 
 def ability_targeting_source(host,card):

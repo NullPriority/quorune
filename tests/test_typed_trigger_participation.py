@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import test_bound_effect_programs as witnesses
 import test_counter_placement_events as counter_witnesses
+from inherited_composition_fixture import InheritedNativeFixture
 
 from quorune.ability_fragments import ability_fragment_to_dict,ability_fragment_from_dict
 from quorune.compiler.trigger_participation_templates import static_trigger_multiplier_handler
@@ -58,6 +59,22 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
         self.assertFalse(self.matches('shaman_or_another_wizard',source=same,source_data=data('Creature — Wizard')))
         self.assertTrue(self.matches('legendary_creature_source',source_data=data('Legendary Creature — Human')))
         self.assertFalse(self.matches('legendary_creature_source',source_data=data('Legendary Artifact')))
+
+    def test_power_gate_uses_current_or_sealed_source_power_and_exact_creature_scope(self):
+        from quorune.permanent_event_state_model import ZONE_EVENT_NUMERICS_KEY
+
+        rule = "power_at_most_two_creature_source"
+        source = card()
+        source.counters["+1/+1"] = 1
+        self.assertTrue(self.matches(rule, source=source, source_data=data(power="1")))
+        source.counters["+1/+1"] = 2
+        self.assertFalse(self.matches(rule, source=source, source_data=data(power="1")))
+        self.assertTrue(self.matches(rule, source=source, source_data=data(power="1", **{
+            ZONE_EVENT_NUMERICS_KEY: {"power": 2, "toughness": 2},
+        })))
+        self.assertFalse(self.matches(rule, source_data=data("Artifact", power="1")))
+        self.assertFalse(self.matches(rule, source_data=data(power="*")))
+        self.assertFalse(self.matches(rule, source=card(controller="B"), source_data=data(power="2")))
 
     def test_event_predicates_keep_controller_type_and_timing_distinctions(self):
         self.assertTrue(self.matches('land_enters',context={'types':['land'],'controller':'B'}))
@@ -142,6 +159,28 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
         self.assertEqual(before,captured)
         self.assertEqual([modifier.object_id]*2,reads)
 
+    def test_observer_gate_reads_the_complete_registered_event_set(self):
+        from quorune.rules.event_subscriptions import (
+            EVENT_SUBSCRIPTIONS_FIELD, LAND_PLAY_EVENT, physical_card_play_event_condition,
+        )
+        from quorune.trigger_discovery import _source_may_observe_event
+
+        source = card()
+        entry = SimpleNamespace(
+            trust_level="trusted", event="permanent.enter.self",
+            event_condition={"field": "controller", "op": "eq", "value": "A"},
+        )
+        played = SimpleNamespace(
+            trust_level="trusted", event="spell.cast",
+            event_condition=physical_card_play_event_condition(),
+        )
+        self.assertTrue(_source_may_observe_event(source, "permanent.enter", [(entry, None)]))
+        self.assertFalse(_source_may_observe_event(source, "life.gained", [(entry, None)]))
+        self.assertTrue(_source_may_observe_event(source, LAND_PLAY_EVENT, [(played, None)]))
+        self.assertFalse(_source_may_observe_event(source, "life.gained", [(played, None)]))
+        played.event_condition = {EVENT_SUBSCRIPTIONS_FIELD: []}
+        self.assertTrue(_source_may_observe_event(source, "life.gained", [(played, None)]))
+
     def test_observer_scan_shares_skipped_reads_and_resets_before_the_next_observer(self):
         from quorune.characteristic_read_frames import memoized_characteristic_read
         from quorune.trigger_discovery import _iter_event_observers
@@ -172,6 +211,139 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
         self.assertEqual("Artifact", characteristics["type_line"])
         self.assertEqual(["Creature", "Artifact"], reads)
         self.assertEqual([], list(observers))
+
+    def test_observer_prevention_reuses_current_reads_and_refreshes_after_yield(self):
+        from functools import partial
+
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.rules.trigger_participation_runtime import trigger_observer_is_prevented
+        from quorune.trigger_discovery import _iter_event_observers
+
+        host = SimpleNamespace()
+        first, stopped, last = (card(ref, controller) for ref, controller in (
+            ("FIRST", "A"), ("STOPPED", "B"), ("LAST", "A"),
+        ))
+        modifier = card("MODIFIER")
+        fragment = ability_fragment_to_dict(spec("prevent_opponent_permanent_enters"))
+        subscription = SimpleNamespace(trust_level="trusted", event_condition=None, event="permanent.enter")
+        reads = []
+        prohibition_active = False
+
+        def read_board():
+            reads.append(prohibition_active)
+            return prohibition_active
+
+        def effective(source):
+            active = memoized_characteristic_read(host, "prohibition-board", read_board)
+            fragments = (fragment,) if source is modifier and active else ()
+            return data(ability_fragments=fragments)
+
+        host._effective_card_data = effective
+
+        def inspect(source):
+            return source.zone, effective(source), [(subscription, None)]
+
+        prevents = partial(
+            trigger_observer_is_prevented, host, event="permanent.enter",
+            context={"types": ["creature"], "controller": "B"},
+            sources=(modifier, first, stopped, last), source_characteristics=None,
+        )
+        observers = _iter_event_observers(
+            host, (first, stopped, last), "permanent.enter", inspect, prevents=prevents,
+        )
+        self.assertIs(first, next(observers)[0])
+        self.assertEqual([False], reads)
+        prohibition_active = True
+        self.assertIs(last, next(observers)[0])
+        self.assertEqual([False, True, True], reads)
+        self.assertEqual([], list(observers))
+
+    def test_multiplier_read_frame_ends_before_targeted_copies_are_allocated(self):
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.model import StackItem
+        from quorune.trigger_discovery import applicable_trigger_multipliers, trigger_multiplier_copies
+
+        source, legacy, sealed_modifier = (card(ref) for ref in ("SOURCE", "LEGACY", "SEALED"))
+        legacy.annotations["chosen_creature_type"] = "elf"
+        legacy_fragment = ability_fragment_to_dict(TriggerMultiplierSpec(
+            TriggerMultiplierPredicate.ANOTHER_CREATURE_OF_CHOSEN_TYPE, exclude_self=True,
+        ))
+        sealed_fragment = ability_fragment_to_dict(spec("source_subtype", "wizard"))
+        current = (source, legacy)
+        board = {value.object_id: value for value in current}
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards=board, players={"A": SimpleNamespace(zones={"battlefield": list(board)})}),
+            _type_parts=lambda value: ({"creature"}, {value.split()[-1].casefold()}, set()),
+            _stable_runtime_id=lambda kind, ref: f"{kind}:{ref}",
+        )
+        legacy_active = True
+        reads = []
+        allocations = []
+
+        def read_board():
+            reads.append(legacy_active)
+            return legacy_active
+
+        def effective(value):
+            active = memoized_characteristic_read(host, "multiplier-board", read_board)
+            return data("Creature — Elf", ability_fragments=(legacy_fragment,) if value is legacy and active else ())
+
+        def next_ref(prefix):
+            nonlocal legacy_active
+            if not allocations:
+                self.assertEqual([True], reads)
+                legacy_active = False
+                self.assertEqual((), effective(legacy)["ability_fragments"])
+            ref = f"{prefix}{len(allocations) + 1}"
+            allocations.append(ref)
+            return ref
+
+        host._effective_card_data = effective
+        host._next_ref = next_ref
+        item = StackItem(
+            stack_id="stack:S0", ref="S0", kind="triggered_ability", controller="A", label="Choose a target",
+            source_object_id=source.object_id, context={"trigger_target_selection_pending": True},
+        )
+        arguments = {
+            "source": source, "event": "life.gained", "context": {"player": "A", "amount": 1},
+            "participation_sources": (source, sealed_modifier),
+            "participation_characteristics": {
+                sealed_modifier.object_id: data(ability_fragments=(sealed_fragment,)),
+            },
+            # Legacy keeps its live Elf read. Typed participation uses the sealed Wizard result.
+            "ability_characteristics": data(),
+        }
+        copies = trigger_multiplier_copies(host, item=item, **arguments)
+        self.assertEqual(["S1", "S2"], [copy.ref for copy in copies])
+        self.assertEqual([legacy.object_id, sealed_modifier.object_id], [
+            copy.context["additional_trigger_source"]["source_object_id"] for copy in copies
+        ])
+        self.assertTrue(all(copy.context["trigger_target_selection_pending"] for copy in copies))
+        self.assertEqual([True, False], reads)
+        (remaining,) = applicable_trigger_multipliers(host, controller="A", **arguments)
+        self.assertEqual(sealed_modifier.object_id, remaining.source_object_id)
+        self.assertEqual([True, False, False], reads)
+
+    def test_life_gain_skips_only_prohibitions_and_retains_matching_additions(self):
+        source, modifier = card(), card("MODIFIER")
+        characteristics = data(ability_fragments=(
+            ability_fragment_to_dict(spec("source_subtype", "wizard")),
+            ability_fragment_to_dict(spec("prevent_creature_enters")),
+        ))
+        host = SimpleNamespace(_effective_card_data=lambda _: characteristics)
+        arguments = {
+            "source": source, "controller": "A", "event": "life.gained", "context": {},
+            "sources": (modifier,), "ability_characteristics": data(),
+        }
+        with patch.object(host, "_effective_card_data", side_effect=AssertionError("No applicable prohibition")):
+            self.assertEqual(((), False), typed_trigger_participations(host, **arguments, prevention_only=True))
+        additions, prevented = typed_trigger_participations(host, **arguments)
+        self.assertFalse(prevented)
+        self.assertEqual([modifier.object_id], [item.source_object_id for item in additions])
+        self.assertEqual(((), True), typed_trigger_participations(
+            host, **{**arguments, "event": "creature.enter.self", "context": {"types": ["creature"]}},
+            prevention_only=True,
+        ))
 
     def test_prohibition_scope_beats_additions_and_preserves_opponent_relations(self):
         observer=card('OBSERVER');modifier=card('MODIFIER');orb=card('ORB','B')
@@ -391,3 +563,151 @@ class TypedTriggerParticipationNativeTests(unittest.TestCase):
         self.assertTrue(s.act('pilot:A',payload).ok)
         self.assertIsNone(self.resolve(s));self.assertEqual(hand+2,len(s.state.players['A'].zones['hand']))
         self.replay(s,load=True)
+
+
+class PowerGatedDelneyNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import json
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "activation-public-state-cards.json": {"Giant Growth"},
+            "announced-x-player-rounds-cards.json": {"Myr Sire"},
+            "bound-effect-program-cards.json": {
+                "Generic Bound Commander", "Generic Bound Plains", "Generic Bound Growth",
+                "Forest", "Frost Lynx", "Grizzly Bears", "Murder",
+            },
+            "power-gated-trigger-and-blocker-cards.json": {"Delney, Streetwise Lookout"},
+        }
+        pieces = []
+        for filename, names in support.items():
+            data = json.loads((ROOT / "tests/fixtures" / filename).read_bytes())
+            data["cards"] = [row for row in data["cards"] if row["name"] in names]
+            assert {row["name"] for row in data["cards"]} == names, filename
+            ids = {row["oracle_id"] for row in data["cards"]}
+            data["rulings"] = [row for row in data.get("rulings", ()) if row["oracle_id"] in ids]
+            piece = folder / filename
+            piece.write_text(json.dumps(data), encoding="utf-8")
+            pieces.append(piece)
+        database = folder / "power-gated-delney.sqlite3"
+        build_fixture_database(pieces, database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Stat-bounded declarations and triggers", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def test_delney_compiles_independent_blocker_and_trigger_power_thresholds(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from test_bound_effect_programs import record
+
+        first = "Creatures you control with power 2 or less can't be blocked by creatures with power 3 or greater."
+        second = "If a triggered ability of a creature you control with power 2 or less triggers, that ability triggers an additional time."
+        ir = compile_oracle_card(record(first + "\n" + second, "Creature — Human Scout"),
+                                 capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        block, trigger = ir.faces[0].nodes
+        self.assertEqual((first, second), (block.text, trigger.text))
+        self.assertIn("combat.declaration.typed_components", block.capability_dependencies)
+        self.assertIn("trigger.participation.typed_source_event", trigger.capability_dependencies)
+        for line in (first.replace("power 3", "mana value 3"),
+                     second.replace("a creature you control", "a creature card in your graveyard")):
+            outcome = compile_oracle_card(record(line, "Creature — Human Scout"), capability_registry=self.registry)
+            self.assertNotEqual("exact", outcome.status)
+
+    def test_actual_delney_uses_both_current_blocking_powers_without_unblocking(self):
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(5092001)
+        delney = self.add(game.engine, "Delney, Streetwise Lookout", zone="hand")
+        low = self.add(game.engine, "Grizzly Bears", ref="delney-low-attacker")
+        high = self.add(game.engine, "Grizzly Bears", ref="delney-high-attacker")
+        big = self.add(game.engine, "Grizzly Bears", seat="B", ref="delney-big-blocker")
+        small = self.add(game.engine, "Grizzly Bears", seat="B", ref="delney-small-blocker")
+        growth = self.add(game.engine, "Giant Growth", seat="B", zone="hand")
+        self.add(game.engine, "Forest", seat="B")
+        high.counters["+1/+1"] = 1
+        big.counters["+1/+1"] = 1
+        for card in (low, high):
+            card.acquired_control_turn_count = -1
+        self.assert_closed(game, delney)
+        self.prepare(game, mana={"W": 1, "C": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", delney)
+        self.assertIsNone(self.resolve(game))
+        self.attack(game, [(low, "B"), (high, "B")])
+        self.until(game, lambda state: state.state.pending_decision.kind == "combat.blockers")
+        self.assertFalse(game.engine._can_block(low, big)[0])
+        self.assertTrue(game.engine._can_block(high, big)[0])
+        self.assertTrue(game.engine._can_block(low, small)[0])
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "block", "blocks": {big.ref: [low.ref]}}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act("pilot:B", {"action_id": "block", "blocks": {
+            big.ref: [high.ref], small.ref: [low.ref],
+        }})
+        self.assertTrue(result.ok, result.summary)
+        self.cast(game, "B", growth, [small.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertIn(small.object_id, game.state.combat.blockers[low.object_id])
+        self.until(game, lambda state: any(row.code == "combat.damage" for row in state.state.events))
+        self.assertEqual(40, game.state.players["B"].life)
+        self.replay(game, load=True)
+
+    def test_actual_delney_uses_departure_power_at_the_trigger_occurrence(self):
+        for counters, count in ((1, 2), (2, 1)):
+            with self.subTest(counters=counters):
+                game = self.session(6032000 + counters)
+                delney = self.add(game.engine, "Delney, Streetwise Lookout")
+                sire = self.add(game.engine, "Myr Sire")
+                murder = self.add(game.engine, "Murder", seat="B", zone="hand")
+                sire.counters["+1/+1"] = counters
+                for card in (delney, sire):
+                    self.assert_closed(game, card)
+                self.prepare(game)
+                game.state.players["B"].mana_pool.update({"B": 2, "C": 1})
+                self.checkpoint(game)
+                self.cast(game, "B", murder, [sire.ref])
+                decision = self.resolve(game)
+                if count == 2:
+                    self.assertEqual("trigger.order", decision.kind)
+                    refs = [row["id"] for row in decision.payload_by_actor["A"]["triggers"]]
+                    self.assertEqual(2, len(refs))
+                    game = self.replay(game, load=True)
+                    result = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+                    self.assertTrue(result.ok, result.summary)
+                    decision = self.resolve(game)
+                self.assertIsNone(decision)
+                self.assertEqual("graveyard", game.state.cards[sire.object_id].zone)
+                tokens = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(count, len(tokens))
+                self.assertTrue(all(card.controller == "A" for card in tokens))
+                self.replay(game, load=True)
+
+    def test_actual_delney_creates_two_ordinary_entries_with_independent_targets(self):
+        game = self.session(6032010)
+        delney = self.add(game.engine, "Delney, Streetwise Lookout")
+        lynx = self.add(game.engine, "Frost Lynx", zone="hand")
+        bears = [self.add(game.engine, "Grizzly Bears", seat=seat, ref=f"delney-target-{seat}") for seat in "BC"]
+        for card in (delney, lynx):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 2, "U": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", lynx)
+        self.resolve_top(game)
+        self.until(game, lambda state: state.state.pending_decision.kind == "semantic.target")
+        game = self.replay(game, load=True)
+        for target in bears:
+            self.target(game, "A", [target.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(all(game.state.cards[card.object_id].tapped for card in bears))
+        self.replay(game, load=True)

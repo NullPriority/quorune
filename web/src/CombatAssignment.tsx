@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { asList, asRecord, cardName, CardTile } from "./CardSurface";
 import { projectedChoiceCards } from "./CardChoiceGrid";
+import { CardPages } from "./CardPages";
 import { list, record, type ChoiceField } from "./choices";
 import type { JsonValue } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
@@ -20,18 +21,20 @@ export function CombatAssignment({
   const dragSource = useRef("");
   const selected = record(value);
   const players = asRecord(view.state.players);
-  const cards = projectedChoiceCards(view);
+  const cards = useMemo(() => projectedChoiceCards(view), [view]);
   const isBlock = field.name === "blocks";
-  const rows = list(field.rows).map(record).map((row) => ({
+  const declaredBlocks = asRecord(asRecord(view.state.combat).blk);
+  const rows = useMemo(() => list(field.rows).map(record).map((row) => ({
     ref: String(row.value),
     options: list(row.options).map((option) => String(record(option).value)),
     capacity: Number(row.maximum ?? 1),
-  }));
+  })), [field.rows]);
+  const rowsByRef = useMemo(() => new Map(rows.map((row) => [row.ref, row])), [rows]);
   const destinations = isBlock
     ? asList(view.decision?.ctx.attackers).map(String)
     : [...new Set(rows.flatMap((row) => row.options))];
   const minimumGroups = record(field.minimum_group_sizes);
-  const current = rows.find((row) => row.ref === source);
+  const current = rowsByRef.get(source);
   const targetsOf = (ref: string): string[] => Array.isArray(selected[ref])
     ? list(selected[ref]).map(String) : selected[ref] ? [String(selected[ref])] : [];
   const unassigned = rows.filter((row) => targetsOf(row.ref).length === 0).length;
@@ -40,7 +43,7 @@ export function CombatAssignment({
     ? `Seat ${ref}, ${asRecord(players[ref]).life} life` : cardLabel(ref);
 
   function assign(ref: string, target: string) {
-    const row = rows.find((candidate) => candidate.ref === ref);
+    const row = rowsByRef.get(ref);
     if (!row?.options.includes(target)) return;
     const existing = targetsOf(ref);
     const next = { ...selected };
@@ -59,14 +62,23 @@ export function CombatAssignment({
     setSource("");
   }
 
+  function assignRemainingAttackers(target: string) {
+    const next = { ...selected };
+    for (const row of rows) {
+      if (!Object.hasOwn(next, row.ref) && row.options.includes(target)) next[row.ref] = target;
+    }
+    onValue(next);
+    setSource("");
+  }
+
   return <div className="combat-assignment">
     <div className="combat-picker-header">
       <strong>{unassigned} of {rows.length} {isBlock ? "blockers" : "attackers"} unassigned</strong>
       <button type="button" className="link-button" disabled={!Object.keys(selected).length && !source}
         onClick={() => { onValue({}); setSource(""); }}>Clear assignments</button>
     </div>
-    <div className="combat-source-bank" aria-label={isBlock ? "Eligible blockers" : "Eligible attackers"}>
-      {rows.map((row) => {
+    <CardPages items={rows} label={isBlock ? "Eligible blockers" : "Eligible attackers"}
+      trackClassName="combat-source-paged" layout="grid" render={(row) => {
         const card = cards.get(row.ref);
         const assigned = targetsOf(row.ref).length;
         return <button type="button" key={row.ref} className="combat-source" aria-pressed={source === row.ref}
@@ -83,8 +95,7 @@ export function CombatAssignment({
           {card ? <CardTile value={card} view={view} compact /> : <strong>{cardLabel(row.ref)}</strong>}
           <small>{assigned ? `${assigned} assigned` : row.options.length ? "Unassigned" : "No legal assignment"}</small>
         </button>;
-      })}
-    </div>
+      }} />
     <div className="combat-lanes" aria-label={isBlock ? "Incoming attackers" : "Defenders"}>
       {destinations.map((target) => {
         const card = cards.get(target);
@@ -93,10 +104,12 @@ export function CombatAssignment({
         const protector = asRecord(card).protect;
         const legal = current?.options.includes(target) ?? false;
         const attached = rows.filter((row) => targetsOf(row.ref).includes(target));
+        const canAssignMore = !isBlock && rows.some((row) => !Object.hasOwn(selected, row.ref) && row.options.includes(target));
         const minimum = Number(minimumGroups[target] ?? 0);
+        const blocked = attached.length > 0 || Object.hasOwn(declaredBlocks, target);
         return <section className={`combat-lane${legal ? " legal-destination" : ""}`} key={target}
           onDragOver={(event) => {
-            if (rows.some((row) => row.ref === dragSource.current && row.options.includes(target))) {
+            if (rowsByRef.get(dragSource.current)?.options.includes(target)) {
               event.preventDefault();
               event.dataTransfer.dropEffect = "move";
             }
@@ -114,16 +127,22 @@ export function CombatAssignment({
               <span className="seat-letter small">{target}</span><strong>{targetLabel(target)}</strong>
             </>}
           </button>
-          {isBlock && controller && <small>Attacking from Seat {controller}</small>}
+          {isBlock && <small className="attacker-block-status" data-blocked={blocked}>
+            {blocked ? "Blocked" : "Unblocked"}{controller && ` · Seat ${controller}`}
+          </small>}
           {!isBlock && typeof protector === "string" && <small>Protected by Seat {protector}</small>}
           {!isBlock && !protector && controller && <small>Controlled by Seat {controller}</small>}
           {minimum > 1 && <small>Block with at least {minimum}, or leave unblocked</small>}
+          {canAssignMore && <button type="button" className="link-button"
+            aria-label={`Assign all available attackers to ${targetLabel(target)}`}
+            onClick={() => assignRemainingAttackers(target)}>Assign remaining attackers</button>}
           {attached.length > 0 ? <ul className="combat-connections">
-            {attached.map((row) =>
+            {attached.slice(0, 12).map((row) =>
               <li key={row.ref}><button type="button" className="link-button"
                 aria-label={`Remove ${cardLabel(row.ref)} from ${targetLabel(target)}`}
                 onClick={() => assign(row.ref, target)}>{cardLabel(row.ref)} ×</button></li>,
             )}
+            {attached.length > 12 && <li><small>+{attached.length - 12} more assigned</small></li>}
           </ul> : <small>{isBlock ? "No blockers assigned" : "No attackers assigned"}</small>}
         </section>;
       })}

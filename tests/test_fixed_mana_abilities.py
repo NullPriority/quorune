@@ -641,6 +641,102 @@ class FixedManaCompilerTests(unittest.TestCase):
                 assert_exact_modes()
 
 
+class PoolDoublingManaTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "pool-doubling.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "fixed-mana-result-cards.json", "activation-public-state-cards.json",
+        )], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Unspent mana rules", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def prepare_pool(self, *, seed):
+        game = self.session(seed)
+        cube = self.add(game.engine, "Doubling Cube")
+        watch = self.add(game.engine, "Interdimensional Web Watch")
+        blade = self.add(game.engine, "Doom Blade", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        self.assert_closed(game, cube)
+        self.assert_closed(game, watch)
+        self.prepare(game, mana={"C": 3, "G": 1})
+        self.checkpoint(game)
+        mana = game.act("pilot:A", {"action_id": f"activate:{watch.ref}:ab2", "mana_output": {"B": 1, "R": 1}})
+        self.assertTrue(mana.ok, mana.summary)
+        return game, cube, blade, target
+
+    def test_actual_cube_copies_postpayment_amount_without_copying_original_restrictions(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        game, cube, _, _ = self.prepare_pool(seed=60503070)
+        command = {"action_id": f"activate:{cube.ref}:ab1", "pay": "manual", "payment": {"C": 3}}
+        before = authoritative_state_hash(game.state)
+        forged = game.act("pilot:A", {**command, "mana_output": {"U": 4}})
+        self.assertFalse(forged.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        actual = game.state.players["A"]
+        self.assertEqual({"B": 2, "C": 0, "G": 2, "R": 2, "U": 0, "W": 0}, actual.mana_pool)
+        self.assertEqual([(("B", 1), ("R", 1))], [lot.bundle for lot in mana_provenance_lots(actual)
+                         if lot.restriction == EXILE_CAST_MANA_RESTRICTION])
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_automatic_spell_funding_uses_only_the_new_unrestricted_copies(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        game, cube, blade, target = self.prepare_pool(seed=60503071)
+        paid = game.act("pilot:A", {"action_id": f"cast:{blade.ref}", "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertEqual([(("B", 1), ("R", 1))], [lot.bundle for lot in mana_provenance_lots(game.state.players["A"])
+                         if lot.restriction == EXILE_CAST_MANA_RESTRICTION])
+        self.settle(game)
+        self.assertEqual("graveyard", game.state.cards[target.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_cube_can_pay_to_double_an_empty_pool_and_replays(self):
+        game = self.session(60503072)
+        cube = self.add(game.engine, "Doubling Cube")
+        self.assert_closed(game, cube)
+        self.prepare(game, mana={"C": 3})
+        self.checkpoint(game)
+        result = game.act("pilot:A", {"action_id": f"activate:{cube.ref}:ab1", "pay": "manual", "payment": {"C": 3}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.assertTrue(game.state.cards[cube.object_id].tapped)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_doubling_marker_rejects_a_synthetic_fixed_output(self):
+        from quorune.fixed_mana_results import DOUBLE_UNSPENT_MANA_CAPABILITY
+
+        card = self.db.lookup("Doubling Cube", fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(DOUBLE_UNSPENT_MANA_CAPABILITY, node.capability_dependencies)
+        ability, = parse_activated_abilities(card_name=card.name, oracle_text=card.oracle_text, keywords=card.keywords)
+        spec = compile_fixed_activated_mana_ability(ability)
+        self.assertIsNotNone(spec)
+        self.assertFalse(spec.modes)
+        with self.assertRaisesRegex(FixedManaAbilityError, "no fixed output"):
+            replace(spec, modes=(FixedManaMode(colorless=1),))
+
+
 class FixedManaResultRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

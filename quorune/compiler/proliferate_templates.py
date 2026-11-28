@@ -34,6 +34,22 @@ class ProliferateEffectTemplate:
         )
 
 
+def counter_snapshot_proliferate_template(text):
+    if not re.fullmatch(
+        r"Permanents you control with counters on them gain hexproof and indestructible until end of turn\. "
+        r"Prevent all damage that would be dealt to those permanents this turn\. Proliferate\.", text.strip(), re.I,
+    ):
+        return None
+    from ..rules.counter_snapshot_protection import counter_snapshot_protection_effect
+    from .fixed_effect_clause_sequences import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+
+    return (
+        "counter-snapshot-protection-then-proliferate-v1",
+        (counter_snapshot_protection_effect(), *ProliferateEffectTemplate().effects),
+        None, (FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC, "cr-611-continuous-effects", "cr-615-prevention-effects", "proliferate"),
+    )
+
+
 def single_proliferate_effect_template(
     text: str,
 ) -> ProliferateEffectTemplate | None:

@@ -1,7 +1,12 @@
 """Printed all-player rules with a fixed cleanup duration."""
 
+from . import regex_working_set as re
+
 from ..all_player_turn_rule_model import AllPlayerTurnRule
-from ..rules.all_player_turn_rules import ALL_PLAYER_TURN_RULE_MECHANIC, all_player_turn_rule_instruction
+from ..rules.all_player_turn_rules import (
+    ALL_PLAYER_TURN_RULE_MECHANIC, all_player_turn_rule_instruction, turn_land_mana_trigger_instruction,
+)
+from ..all_player_turn_rule_model import TurnLandManaTriggerSpec
 
 
 _HEXPROOF = "players gain hexproof until end of turn"
@@ -17,8 +22,18 @@ _ALL_PLAYER_TURN_CLAUSES = {
 }
 
 
+_TURN_LAND_MANA = re.compile(
+    r"until end of turn, whenever a player taps an? (?P<subtype>plains|island|swamp|mountain|forest) "
+    r"for mana, that player adds an additional \{(?P<color>[wubrg])\}",
+)
+
+
 def all_player_turn_rules_template(text):
     clause = " ".join(text.casefold().replace("’", "'").split()).removesuffix(".")
+    if match := _TURN_LAND_MANA.fullmatch(clause):
+        spec = TurnLandManaTriggerSpec(match["subtype"], match["color"].upper())
+        return ("turn-land-mana-trigger-v1", (turn_land_mana_trigger_instruction(spec),),
+                None, (ALL_PLAYER_TURN_RULE_MECHANIC,))
     rules = _ALL_PLAYER_TURN_CLAUSES.get(clause)
     if rules is None:
         return None

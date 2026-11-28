@@ -12,13 +12,14 @@ from .control_recipient import ControlRecipientChoiceHandler
 from .target_land_type import TargetLandTypeChoiceHandler
 from .chosen_counter_removal import ChosenCounterRemovalHandler
 from .chosen_counter_placement import ChosenCounterPlacementHandler
-from .captured_draw_keyword_grant import CapturedDrawKeywordGrantHandler
+from .captured_draw_keyword_grant import CapturedCounterKeywordGrantHandler, CapturedDrawKeywordGrantHandler
 from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_ATTACHMENT_HANDLERS, CREATED_TOKEN_COUNTER_HANDLERS
 from .created_entry_aura_attachment import CREATED_ENTRY_AURA_ATTACHMENT_HANDLERS
 from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
 from .endure import SourceEndureChoiceHandler
+from .departure_x_payment import DepartingXPaymentHandler
 from .blight import FixedBlightChoiceHandler
 from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .stack_counter_name_scan import STACK_COUNTER_NAME_SCAN_HANDLERS
@@ -32,6 +33,8 @@ from .one_revealed_card_placement import ONE_REVEALED_CARD_PLACEMENT_HANDLERS
 from .revealed_creature_statistics import RevealedCreatureStatisticsHandler
 from .extort import ExtortChoiceHandler
 from .mana_contribution_draw import ManaContributionDrawHandler
+from .secret_number import SecretNumberExtremesHandler
+from .announced_permanent_reveal import AnnouncedPermanentRevealHandler
 from .target_permanent_shuffle_reveal import TargetPermanentShuffleRevealHandler
 from .opponent_library_shuffle import OpponentShuffleTopPartitionHandler
 from .fame_fortune import FameFortuneChoiceHandler
@@ -96,6 +99,7 @@ from .madness import MADNESS_CHOICE_HANDLERS
 from .miracle import MiracleCastChoiceHandler
 from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
 from .fixed_attacking_tokens import FixedAttackingTokenDestinationHandler
+from .targeted_attack_die_copy import TargetedAttackDieCopyHandler
 from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
 from .exploit import ExploitChoiceHandler
@@ -110,6 +114,7 @@ from .linked_hand_mana import LinkedHandImprintChoice
 from .colored_hand_reveals import ColoredHandRevealChoiceHandler
 from .graveyard_return import GraveyardReturnChoiceHandler
 from .targeted_graveyard_exile import TargetedGraveyardExileChoiceHandler
+from .qualified_library_cast import QualifiedLibraryCastChoice
 from .keep_permanents_by_type import KeepPermanentsByTypeHandler
 
 
@@ -119,7 +124,10 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
         (
             ExtortChoiceHandler(),
             ManaContributionDrawHandler(),
+            SecretNumberExtremesHandler(),
+            AnnouncedPermanentRevealHandler(),
             FixedAttackingTokenDestinationHandler(),
+            TargetedAttackDieCopyHandler(),
             TargetPermanentShuffleRevealHandler(),
             OpponentShuffleTopPartitionHandler(),
             FameFortuneChoiceHandler(),
@@ -136,12 +144,14 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             ColoredHandRevealChoiceHandler(),
             GraveyardReturnChoiceHandler(),
             TargetedGraveyardExileChoiceHandler(),
+            QualifiedLibraryCastChoice(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
             *CREATED_TOKEN_ATTACHMENT_HANDLERS,
             *CREATED_ENTRY_AURA_ATTACHMENT_HANDLERS,
             *INCUBATE_HANDLERS,
             SequentialInvestigateHandler(),
             SourceEndureChoiceHandler(),
+            DepartingXPaymentHandler(),
             FixedBlightChoiceHandler(),
             DiscoverScanHandler(),
             DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
@@ -204,6 +214,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             ChosenCounterRemovalHandler(),
             ChosenCounterPlacementHandler(),
             CapturedDrawKeywordGrantHandler(),
+            CapturedCounterKeywordGrantHandler(),
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,
             *FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS,

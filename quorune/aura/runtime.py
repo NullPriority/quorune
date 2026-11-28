@@ -125,6 +125,8 @@ def legal_aura_target_refs(
         elif not player_protection_allows_attachment(
             host,
             str(row["ref"]),
+            aura=aura,
+            controller=controller,
         ):
             continue
         if not host._target_row_matches(

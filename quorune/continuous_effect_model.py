@@ -67,6 +67,7 @@ class ContinuousEffectDuration(str, Enum):
     UNTIL_END_OF_TURN = "until_end_of_turn"
     UNTIL_END_OF_GAME = "until_end_of_game"
     UNTIL_NEXT_TURN = "until_next_turn"
+    UNTIL_END_OF_NEXT_TURN = "until_end_of_next_turn"
     UNTIL_RECIPIENT_CONTROLLER_UNTAP = "until_recipient_controller_untap"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
@@ -114,6 +115,7 @@ class ContinuousEffectRelation(str, Enum):
     SOURCE_CONTROLLED_AURA_RECIPIENT = "source_controlled_aura_recipient"
     SOURCE_BLOCK_COUNTERPART_OBJECT = "source_block_counterpart_object"
     SOURCE_COUNTER_PLACEMENT_RECIPIENT = "source_counter_placement_recipient"
+    SOURCE_ATTACK_HISTORY_RECIPIENT = "source_attack_history_recipient"
 
 
 _OPERATION_LAYERS = {
@@ -546,6 +548,15 @@ def _validate_continuous_effect_identity_scope(
     if effect.duration is ContinuousEffectDuration.UNTIL_END_OF_GAME:
         raise ContinuousEffectError("Game duration requires a typed player-rule effect")
     validate_turn_expiry(effect.duration, effect.expires_on_next_turn_of)
+    if effect.duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN:
+        if (effect.origin is not ContinuousEffectOrigin.RESOLUTION or effect.layer is not Layer.CONTROL
+                or len(effect.operations) != 1 or effect.operations[0].op != "set_controller"
+                or type(effect.operations[0].value) is not str or not effect.operations[0].value
+                or effect.applies != ObjectQuerySpec(zones=("battlefield",))
+                or type(effect.controller_cleanup_turn) is not int or effect.controller_cleanup_turn < 1):
+            raise ContinuousEffectError("Next-turn cleanup control requires its exact locked layer-two result and turn ordinal")
+    elif effect.controller_cleanup_turn is not None:
+        raise ContinuousEffectError("Only next-turn cleanup control can record a controller turn ordinal")
     if (effect.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN
             and effect.origin is not ContinuousEffectOrigin.RESOLUTION):
         raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
@@ -667,6 +678,16 @@ def _validate_continuous_effect_identity_scope(
                     controller=predicate.controller, exclude_ref=predicate.exclude_ref,
                 )):
             raise ContinuousEffectError("Counter placement recipients require a current controlled creature and fixed keywords")
+    elif effect.relation is ContinuousEffectRelation.SOURCE_ATTACK_HISTORY_RECIPIENT:
+        predicate = effect.applies
+        operations = effect.operations
+        if ((effect.layer, effect.sublayer) != (Layer.POWER_TOUGHNESS, "7c")
+                or len(operations) != 1 or operations[0].op != "modify_power_toughness"
+                or operations[0].value[0] <= 0 or operations[0].value[1] != 0
+                or not predicate.controller or predicate != ObjectQuerySpec(
+                    zones=("battlefield",), types_all=("creature",), controller=predicate.controller,
+                )):
+            raise ContinuousEffectError("Attack-history recipients require a controlled creature and positive power modifier")
 
 
 def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
@@ -712,6 +733,7 @@ class ContinuousEffect:
     attachment_duration: AttachmentDuration | None = None
     expires_on_next_turn_of: str | None = None
     recipient_scope_anchor: str | None = None
+    controller_cleanup_turn: int | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -832,6 +854,13 @@ class ContinuousEffect:
             raise ContinuousEffectError('Denied keyword grants must name a locked resolution target and added keyword')
         object.__setattr__(self, 'denied_keyword_grants', denied)
 
+    def expires_at_cleanup(self, state: Any) -> bool:
+        if self.duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN:
+            controller = self.operations[0].value
+            return (state.active_player == controller
+                    and state.players[controller].turns_begun >= self.controller_cleanup_turn)
+        return self.duration is ContinuousEffectDuration.UNTIL_END_OF_TURN
+
     def to_dict(self) -> dict[str, Any]:
         payload = {
             "effect_id": self.effect_id,
@@ -871,6 +900,8 @@ class ContinuousEffect:
             payload["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         if self.recipient_scope_anchor is not None:
             payload["recipient_scope_anchor"] = self.recipient_scope_anchor
+        if self.controller_cleanup_turn is not None:
+            payload["controller_cleanup_turn"] = self.controller_cleanup_turn
         return payload
 
     @classmethod
@@ -899,7 +930,10 @@ class ContinuousEffect:
         turn_expiry = decode_turn_expiry(value)
         if "recipient_scope_anchor" in value and value["recipient_scope_anchor"] is None:
             raise ContinuousEffectError("An explicit recipient scope anchor cannot be null")
-        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of', 'recipient_scope_anchor'})
+        if "controller_cleanup_turn" in value and value["controller_cleanup_turn"] is None:
+            raise ContinuousEffectError("An explicit controller cleanup turn cannot be null")
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of',
+                                                 'recipient_scope_anchor', 'controller_cleanup_turn'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -985,6 +1019,7 @@ class ContinuousEffect:
                     if 'attachment_duration' in value else None),
                 expires_on_next_turn_of=turn_expiry,
                 recipient_scope_anchor=value.get("recipient_scope_anchor"),
+                controller_cleanup_turn=value.get("controller_cleanup_turn"),
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

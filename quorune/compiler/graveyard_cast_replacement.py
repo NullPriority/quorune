@@ -204,6 +204,10 @@ def _main_phase_untap_addendum_template(default_text, tail, compile_component):
 
 
 def _main_phase_addendum_template(default_text, tail, compile_component):
+    from .creature_cohort_addendum import creature_cohort_addendum_template
+
+    if cohort := creature_cohort_addendum_template(default_text, tail):
+        return cohort
     bonus_text = _ADDITIVE_RESULTS.get(tail.casefold())
     if bonus_text is None:
         return _main_phase_untap_addendum_template(default_text, tail, compile_component)
@@ -259,6 +263,29 @@ def _main_phase_target_discard_template(default_text, tail, compile_component):
     )
 
 
+def _main_phase_optional_target_exile_template(default_text, tail, compile_component):
+    from ..cast_origin_replacement import (
+        BONUS_EXILE_REF, EXILE_MECHANICS, MAIN_PHASE_OPTIONAL_EXILE_TEMPLATE,
+        MAIN_PHASE_OPTIONAL_EXILE_VERSION, OPTIONAL_EXILE_MECHANICS, PRIMARY_EXILE_REF,
+        artifact_or_enchantment_exile_schema, main_phase_exile_instruction,
+        main_phase_optional_exile_target_schema, optional_exile_instruction,
+    )
+
+    if (default_text.casefold() != "exile target artifact or enchantment."
+            or tail.casefold() != "you may exile up to one other target artifact or enchantment."):
+        return None
+    ordinary = compile_component(default_text)
+    if (ordinary[0] is None or ordinary[1] != (main_phase_exile_instruction("$target.0"),)
+            or ordinary[2] != artifact_or_enchantment_exile_schema() or ordinary[3] != EXILE_MECHANICS):
+        return None
+    primary = main_phase_exile_instruction(PRIMARY_EXILE_REF)
+    scoped = (ordinary[0], (primary,), main_phase_optional_exile_target_schema(), EXILE_MECHANICS)
+    return _ordered_main_phase_result(
+        scoped, (primary, optional_exile_instruction(BONUS_EXILE_REF)), OPTIONAL_EXILE_MECHANICS,
+        MAIN_PHASE_OPTIONAL_EXILE_VERSION, MAIN_PHASE_OPTIONAL_EXILE_TEMPLATE,
+    )
+
+
 def cast_main_phase_replacement_template(text, *, source_name, compile_component):
     marker = _MAIN_PHASE_CLAUSE.search(text)
     if marker is None:
@@ -267,6 +294,9 @@ def cast_main_phase_replacement_template(text, *, source_name, compile_component
     if not default_text.endswith("."):
         return None
     tail = text[marker.end():]
+    optional_exile = _main_phase_optional_target_exile_template(default_text, tail, compile_component)
+    if optional_exile is not None:
+        return optional_exile
     alternate_text = _main_phase_alternate_text(default_text, tail, source_name)
     if alternate_text is None:
         prepared = _main_phase_preparation_template(default_text, tail, compile_component)

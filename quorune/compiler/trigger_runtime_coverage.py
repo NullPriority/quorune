@@ -26,10 +26,12 @@ from ..spell_history_transform_model import SPELL_HISTORY_TRANSFORM_COVERAGE
 
 
 def fixed_typed_result_requires_current_ability(binding, template, required):
+    from ..rules.combat_keyword_share import TEMPLATE as COMBAT_KEYWORD_SHARE_TEMPLATE
     from ..entry_designations import LINKED_PLAYER_CAST_MILL_TEMPLATE, LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE
     from ..rules.counter_placement_blocking import COUNTER_PLACEMENT_BLOCKING_TEMPLATE
     from ..rules.counter_recipient_control import COUNTER_RECIPIENT_CONTROL_TEMPLATE
     from ..rules.source_power_opponent_damage import SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE
+    from ..rules.exile_origin_creature_counters import TEMPLATE as EXILE_ORIGIN_COUNTER_TEMPLATE
     from ..power_sacrifice_model import (
         ATTACK_SACRIFICE_STAT_TEMPLATE, CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
     )
@@ -42,18 +44,25 @@ def fixed_typed_result_requires_current_ability(binding, template, required):
         template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
         or binding.variant == "fixed_entry_return_requirement"
         or template in {
+        "captured-legendary-cast-counter-keyword-v3",
             LEGENDARY_WIZARD_HAND_CAST_TEMPLATE, COUNTER_PLACEMENT_BLOCKING_TEMPLATE, COUNTER_RECIPIENT_CONTROL_TEMPLATE,
             SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, CAST_COIN_TRANSFORM_TEMPLATE,
+            EXILE_ORIGIN_COUNTER_TEMPLATE,
             "scheduled-player-hand-difference-v1", "linked-entry-opponent-upkeep-damage-v1",
             "fixed-counter-upkeep-target-hand-life-v1", "upkeep-fixed-other-controlled-creature-damage-v1",
             CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, ATTACK_SACRIFICE_STAT_TEMPLATE,
             LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE, LINKED_PLAYER_CAST_MILL_TEMPLATE, ATTACHED_COPY_PAYMENT_TEMPLATE,
+            COMBAT_KEYWORD_SHARE_TEMPLATE,
         }
     )
 
 
 def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant, aggregated_zone_variant, ability_word_public_event_variants, public_event_variants, counter_event_variants, one_or_more_variants, multi_event_variants, effect_mechanics=(), result_template_id=None) -> tuple[str, ...]:
     values: list[str] = []
+    from ..rules.entry_and_death_characteristics import NONHAND_ENTRY_PUMP_COVERAGE, NONHAND_ENTRY_PUMP_VARIANT
+
+    if binding.variant == NONHAND_ENTRY_PUMP_VARIANT:
+        values.extend(("intervening_condition", NONHAND_ENTRY_PUMP_COVERAGE))
     from .delayed_object_templates import DELAYED_SOURCE_CONVERT_TEMPLATE
     from .recipient_control_templates import SOURCE_UPKEEP_HANDOFF_TEMPLATE
     from ..rules.die_roll_draw import MECHANIC as DIE_DRAW_HAND_SIZE_MECHANIC
@@ -79,18 +88,27 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
     from ..additional_beginning_model import ADDITIONAL_BEGINNING_VARIANTS
     from ..rules.monarch_transition import MONARCH_BECAME_VARIANT
 
-    if binding.variant in ADDITIONAL_BEGINNING_VARIANTS or binding.variant == MONARCH_BECAME_VARIANT:
+    from ..rules.qualified_entry_effects import ENTRY_FLYING_HASTE_VARIANT, ENTRY_SUBTYPE_DAMAGE_VARIANT
+
+    if binding.variant in {*ADDITIONAL_BEGINNING_VARIANTS, MONARCH_BECAME_VARIANT,
+                           ENTRY_FLYING_HASTE_VARIANT, ENTRY_SUBTYPE_DAMAGE_VARIANT}:
         current_ability = True
     from ..rules.combat_point_counters import COMBAT_POINT_COUNTER_CAPABILITY
 
-    if COMBAT_POINT_COUNTER_CAPABILITY in binding.public_capabilities:
+    from ..rules.gift_occurrence import GIFT_GIVEN_CAPABILITY
+
+    if {COMBAT_POINT_COUNTER_CAPABILITY, GIFT_GIVEN_CAPABILITY}.intersection(binding.public_capabilities):
         current_ability = True
     if binding.variant in {ATTACHED_PLAYER_ATTACK_VARIANT, ATTACKED_PLAYER_OR_WALKER_VARIANT, DAY_TOGGLE_COUNTER_VARIANT}:
         current_ability = True
     if current_ability or binding.variant in {qualified_zone_variant, aggregated_zone_variant, "damage_human_destroy"} or binding.variant in {'your first main phase', 'your precombat main phase', 'your second main phase', 'your postcombat main phase', *ability_word_public_event_variants, *public_event_variants - counter_event_variants, 'class_level_changed'}:
         values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
     from ..rules.event_subscriptions import CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY
+    from ..attack_batch_model import ANY_PLAYER_ATTACK_BATCH_VARIANT, OPTIONAL_ATTACK_BATCH_STRIKE_COVERAGE
 
+    if binding.variant == ANY_PLAYER_ATTACK_BATCH_VARIANT:
+        values.extend(("one_or_more_event_batch", OPTIONAL_ATTACK_BATCH_STRIKE_COVERAGE,
+                       CURRENT_ABILITY_FRAGMENT_COVERAGE))
     if binding.variant in one_or_more_variants or CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY in binding.public_capabilities:
         values.append('one_or_more_event_batch')
     if binding.variant in multi_event_variants:
@@ -108,11 +126,22 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", COMBAT_DAMAGE_ENTRY_COVERAGE))
     if binding.variant == OTHER_LAND_ARRIVAL_VARIANT:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", OTHER_LAND_ARRIVAL_COVERAGE))
+    from ..rules.opponent_off_turn_draw import OFF_TURN_DRAW_CAPABILITY, OFF_TURN_DRAW_COVERAGE
+
+    if OFF_TURN_DRAW_CAPABILITY in binding.public_capabilities:
+        values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", OFF_TURN_DRAW_COVERAGE))
+    from ..rules.opposing_end_step_advantage import COVERAGE as END_STEP_ADVANTAGE, uses_opposing_end_step_advantage
+    if uses_opposing_end_step_advantage(binding.event_condition):
+        values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", END_STEP_ADVANTAGE))
     if uses_entrant_land_advantage(binding.event_condition):
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", ENTRANT_LAND_ADVANTAGE_COVERAGE))
+    from ..extra_combat_model import MAIN_PHASE_EXTRA_COMBAT_CAPABILITY, MAIN_PHASE_EXTRA_COMBAT_MECHANIC
+
+    if MAIN_PHASE_EXTRA_COMBAT_CAPABILITY in binding.public_capabilities:
+        values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", MAIN_PHASE_EXTRA_COMBAT_MECHANIC))
     if binding.public_state_condition is not None:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', FIXED_PUBLIC_STATE_INTERVENING_COVERAGE))
-        if binding.event.value == "step.begin":
+        if binding.event.value == "step.begin" and binding.variant == "your upkeep":
             from ..rules.fixed_effect_payment_shapes import (
                 SOURCE_COUNTER_UPKEEP_DRAW_COVERAGE, source_counter_upkeep_draw_condition,
             )

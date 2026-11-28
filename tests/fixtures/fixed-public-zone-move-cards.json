@@ -4,6 +4,374 @@
   "source": "Synthetic exact grammar witnesses and pinned originals for fixed public set tests",
   "cards": [
     {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Great Furnace",
+      "oracle_id": "f4819061-b0b5-48ab-af7b-6525c3d2eab7",
+      "oracle_text": "{T}: Add {R}.",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Artifact Land"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "5",
+      "mana_cost": "{4}",
+      "name": "Karn, Scion of Urza",
+      "oracle_id": "060209fa-4b7d-4e08-bf8b-8759bba5641b",
+      "oracle_text": "+1: Reveal the top two cards of your library. An opponent chooses one of them. Put that card into your hand and exile the other with a silver counter on it.\n−1: Put a card you own with a silver counter on it from exile into your hand.\n−2: Create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-04-27",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Karn"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "The One Ring",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "oracle_text": "Indestructible\nWhen The One Ring enters, if you cast it, you gain protection from everything until your next turn.\nAt the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.\n{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Urza's Ruinous Blast",
+      "oracle_id": "978e0d87-3ff2-4a73-916c-ff0dc0ab2797",
+      "oracle_text": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nExile all nonland permanents that aren't legendary.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Legendary Sorcery"
+    },
+    {
       "oracle_id": "00000000-0000-4000-8000-000000000294",
       "name": "Public Grave Exile",
       "mana_cost": "{B}",
@@ -14,13 +382,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -34,13 +411,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -54,13 +440,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -74,13 +469,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["W"],
-      "color_identity": ["W"],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -94,13 +498,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -114,13 +527,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["W"],
-      "color_identity": ["W"],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -134,13 +556,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -160,7 +591,12 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -174,13 +610,22 @@
       "toughness": "2",
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -194,13 +639,24 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Enchant"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -214,13 +670,22 @@
       "toughness": "2",
       "loyalty": null,
       "defense": null,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -234,13 +699,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -256,11 +730,18 @@
       "defense": null,
       "colors": [],
       "color_identity": [],
-      "keywords": ["Equip"],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -274,13 +755,24 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U", "R"],
-      "color_identity": ["U", "R"],
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -294,13 +786,24 @@
       "toughness": "2",
       "loyalty": null,
       "defense": null,
-      "colors": ["B", "W"],
-      "color_identity": ["B", "W"],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2023-05-12",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -320,7 +823,12 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -334,13 +842,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -354,13 +871,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -374,13 +900,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -394,13 +929,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["G"],
-      "color_identity": ["G"],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -414,13 +958,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2008-07-25",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -434,13 +987,22 @@
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["W"],
-      "color_identity": ["W"],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
       "keywords": [],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2000-10-02",
-      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal",
+        "legacy": "legal",
+        "vintage": "legal"
+      },
       "faces": []
     },
     {
@@ -630,7 +1192,659 @@
       "released_at": "2023-01-13",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Liquimetal Coating",
+      "oracle_id": "f4bdc551-c2eb-4a34-a3e3-b4a017c925af",
+      "oracle_text": "{T}: Target permanent becomes an artifact in addition to its other types until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-08",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Birds of Paradise",
+      "oracle_id": "d3a0b660-358c-41bd-9cd2-41fbf3491b1a",
+      "oracle_text": "Flying\n{T}: Add one mana of any color.",
+      "power": "0",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": "1",
+      "type_line": "Creature — Bird"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "The One Ring",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "oracle_text": "Indestructible\nWhen The One Ring enters, if you cast it, you gain protection from everything until your next turn.\nAt the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.\n{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Darksteel Citadel",
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "oracle_text": "Indestructible\n{T}: Add {C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Artifact Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Desynchronization",
+      "oracle_id": "dab64d0f-1246-4a4d-9a79-6db2ca0c8882",
+      "oracle_text": "Return each nonland permanent that's not historic to its owner's hand. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "The Birth of Meletis",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Search your library for a basic Plains card, reveal it, put it into your hand, then shuffle.\nII — Create a 0/4 colorless Wall artifact creature token with defender.\nIII — You gain 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Enchantment — Saga"
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Becoming an artifact doesn't change what color(s) a permanent is.",
+      "oracle_id": "f4bdc551-c2eb-4a34-a3e3-b4a017c925af",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may target any permanent with the ability, including an artifact.",
+      "oracle_id": "f4bdc551-c2eb-4a34-a3e3-b4a017c925af",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has protection from everything, it means three things: 1) All damage that would be dealt to that player is prevented. 2) Auras can't be attached to that player. 3) That player can't be the target of spells or abilities.",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining protection from everything causes a spell or ability on the stack to have an illegal target if it targets you. As a spell or ability tries to resolve, if all its targets are illegal, that spell or ability doesn't resolve and none of its effects happen, including effects unrelated to the target. If at least one target is still legal, the spell or ability does as much as it can to the remaining legal targets, and its other effects still happen.",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Nothing other than the specified events are prevented or illegal. An effect that doesn't target you could still cause you to discard cards, for example. Creatures can still attack you while you have protection from everything, although combat damage that they would deal to you will be prevented.",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Protection from everything will usually prevent damage if it would be dealt to you, but some damage can't be prevented. In this case, that damage reduces your life total as normal.",
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although Darksteel Citadel is an artifact, it can't be cast as a spell. Playing it follows the normal rules for playing a land.",
+      "oracle_id": "8dc067bf-f78f-4ac4-b6e7-b305c42cf0bc",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Lands are never cast, so abilities that trigger “whenever you cast a historic spell” won’t trigger if you play a legendary land. They also won’t trigger if a card on the battlefield transforms into a card with the legendary supertype, the artifact card type, or the Saga subtype.",
+      "oracle_id": "dab64d0f-1246-4a4d-9a79-6db2ca0c8882",
+      "published_at": "2024-07-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers “whenever you cast a historic spell” doesn’t trigger if a historic card is put onto the battlefield without being cast.",
+      "oracle_id": "dab64d0f-1246-4a4d-9a79-6db2ca0c8882",
+      "published_at": "2024-07-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card, spell, or permanent is historic if it has the legendary supertype, the artifact card type, or the Saga subtype. Having two of those qualities doesn’t make an object more historic than another or provide an additional bonus—an object either is historic or it isn’t.",
+      "oracle_id": "dab64d0f-1246-4a4d-9a79-6db2ca0c8882",
+      "published_at": "2024-07-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some abilities trigger “whenever you cast a historic spell.” Such an ability resolves before the spell that caused it to trigger. It resolves even if that spell is countered.",
+      "oracle_id": "dab64d0f-1246-4a4d-9a79-6db2ca0c8882",
+      "published_at": "2024-07-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the number of lore counters on a Saga is greater than or equal to the greatest number among its chapter abilities, the Saga’s controller sacrifices it as soon as its chapter ability has left the stack, most likely by resolving or being countered. This state-based action doesn’t use the stack.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each symbol on the left of a Saga’s text box represents a chapter ability. A chapter ability is a triggered ability that triggers when a lore counter that is put on the Saga causes the number of lore counters on the Saga to become equal to or greater than the ability’s chapter number. Chapter abilities are put onto the stack and may be responded to.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple chapter abilities trigger at the same time, their controller puts them on the stack in any order. If any of them require targets, those targets are chosen as you put the abilities on the stack, before any of those abilities resolve.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a chapter ability has triggered, the ability on the stack won’t be affected if the Saga gains or loses counters, or if it leaves the battlefield.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "As a Saga enters the battlefield, its controller puts a lore counter on it. As your precombat main phase begins (immediately after your draw step), you put another lore counter on each Saga you control. Putting a lore counter on a Saga in either of these ways doesn’t use the stack.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "A chapter ability doesn’t trigger if a lore counter is put on a Saga that already had a number of lore counters greater than or equal to that chapter’s number. For example, the third lore counter put on a Saga causes the III chapter ability to trigger, but I and II won’t trigger again.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Removing lore counters won’t cause a previous chapter ability to trigger. If lore counters are removed from a Saga, the appropriate chapter abilities will trigger again when the Saga receives lore counters.",
+      "oracle_id": "1ae54fe7-b1d3-4c13-a8ef-f502cf3eb1a0",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't cast a legendary sorcery unless you control a legendary creature or a legendary planeswalker. Once you begin to cast a legendary sorcery, losing control of your legendary creatures and planeswalkers won't affect that spell.",
+      "oracle_id": "978e0d87-3ff2-4a73-916c-ff0dc0ab2797",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Other than the casting restriction, the legendary supertype on a sorcery carries no additional rules. You may cast any number of legendary sorceries in a turn, and your deck may contain any number of legendary cards (but no more than four of any with the same name).",
+      "oracle_id": "978e0d87-3ff2-4a73-916c-ff0dc0ab2797",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    }
+  ]
 }

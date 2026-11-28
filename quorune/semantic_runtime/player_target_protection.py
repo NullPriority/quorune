@@ -5,8 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 
-from ..ability_fragments import StaticComponentSpec
-from ..all_player_turn_rule_model import AllPlayerTurnRule, has_all_player_turn_rule
+from ..ability_fragments import StaticComponentSpec, ability_fragment_to_dict
+from ..linked_card_type import ANNOTATION, PROTECTION_HANDLER, bound_card_type
+from ..all_player_turn_rule_model import AllPlayerTurnRule, has_player_turn_rule
 from ..qualified_hexproof import TURN_PLAYER_COLOR_HEXPROOF, color_hexproof_keywords
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from .component_registry import exact_fields
@@ -76,7 +77,7 @@ def current_player_target_keywords(host,seat):
     player=host.state.players.get(seat)
     if player is None:return frozenset()
     keywords = set(color_hexproof_keywords(player.stats.get(TURN_PLAYER_COLOR_HEXPROOF, ())))
-    if has_all_player_turn_rule(getattr(host.state, "continuous_effects", None), AllPlayerTurnRule.HEXPROOF):
+    if has_player_turn_rule(getattr(host.state, "continuous_effects", None), AllPlayerTurnRule.HEXPROOF, seat):
         keywords.add("hexproof")
     handler = PlayerTargetProtectionHandler()
     controller_turn = ControllerTurnPlayerHexproofHandler()
@@ -95,3 +96,45 @@ def current_player_target_keywords(host,seat):
                       and controller_turn.applies_to_turn(source.controller, host.state.active_player)):
                     keywords.add(controller_turn.validate(descriptor))
     return frozenset(keywords)
+
+
+def current_player_protection_characteristics(host, seat):
+    """Resolve live typed Protection from retained choices on active source components."""
+    from .chosen_characteristics import LinkedCardTypeProtectionHandler, linked_card_type_protection_fragment
+
+    player = host.state.players.get(seat)
+    fragments = []
+    if player is None:
+        return {"ability_fragments": fragments}
+    handler = LinkedCardTypeProtectionHandler()
+    for object_id in player.zones["battlefield"]:
+        source = host.state.cards[object_id]
+        if source.controller != seat or source.phased_out or ANNOTATION not in source.annotations:
+            continue
+        for fragment in host._effective_ability_fragments(source):
+            if not isinstance(fragment, StaticComponentSpec):
+                continue
+            program = host.semantics.get(fragment.semantic_key)
+            if program is None or not host.semantic_program_is_current_trusted(program):
+                continue
+            for descriptor in program.handlers:
+                if descriptor.get("handler_id") != PROTECTION_HANDLER:
+                    continue
+                handler.validate(descriptor)
+                card_type = bound_card_type(source, program.key)
+                if card_type is not None:
+                    value = linked_card_type_protection_fragment(card_type)
+                    fragments.append(ability_fragment_to_dict(value))
+    return {"ability_fragments": fragments}
+
+
+def player_protection_verdict_for_damage(host, seat, source):
+    """Use the current protected player's typed qualities for one damage source."""
+    from ..protection import ProtectionVerdict, protection_verdict_for_damage
+
+    if host.state.players[seat].stats.get("protection_from_everything_until_next_turn"):
+        return ProtectionVerdict.BLOCKED
+    characteristics = current_player_protection_characteristics(host, seat)
+    if not characteristics["ability_fragments"]:
+        return ProtectionVerdict.ALLOWED
+    return protection_verdict_for_damage(characteristics, source)

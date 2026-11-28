@@ -11022,8 +11022,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v1233-pr576-commander-playtest-support",
-      "compiler_version": "oracle-ir-v1233",
+      "transition_id": "oracle-ir-v1234-local-tailnet-card-intake",
+      "compiler_version": "oracle-ir-v1235",
       "bundle_id": "bundle:commander-playtest-support-pr576",
       "candidate_ids": [
         "bundle:commander-playtest-support-pr576"
@@ -11261,6 +11261,7 @@
         "combat.requirement.resolved_all_blockers",
         "condition.attachment.named_equipment_on_controlled_creature",
         "condition.creature.fixed_numeric_exists",
+        "condition.history.creature_counter_placement",
         "condition.history.fixed_public_query",
         "condition.history.nontoken_creature_entries",
         "condition.history.source_counter_receipt",
@@ -11594,6 +11595,7 @@
         "trigger.event.countered_creature_combat_damage",
         "trigger.event.creature_ability_activation",
         "trigger.event.expend",
+        "trigger.event.given_gift",
         "trigger.event.normalized_card_draw",
         "trigger.event.normalized_life_loss",
         "trigger.event.normalized_monarch_change",

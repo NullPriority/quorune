@@ -18,6 +18,7 @@ from .transform_timestamp_model import (
 )
 from .defined_token_faces import defined_token_definition
 from .rules.composition_faces import PreparedCompositionTransform
+from .rules.copied_flip_faces import FLIP_SOURCE_CAPABILITY, FLIP_SOURCE_OPERATION
 
 
 TRANSFORM_OPERATION = "transform"
@@ -221,6 +222,71 @@ def _other_face(
     if target_types.intersection({"instant", "sorcery"}):
         return None
     return current, names[target_index]
+
+
+def _source_can_flip(host, card, *, incarnation):
+    from .rules.copied_flip_faces import current_flipped_status
+
+    return (card is not None and card.logical_object_id == incarnation
+            and card.zone == "battlefield" and not card.phased_out
+            and not current_flipped_status(host, card))
+
+
+def prepare_optional_counter_source_flip(host, item, raw_effect, effect):
+    """Avoid a choice if the original permanent has already flipped or left."""
+    from .rules.copied_flip_faces import FLIP_SOURCE_OPERATION
+
+    children = raw_effect.get("effects", ())
+    if (not isinstance(children, (list, tuple)) or len(children) != 1
+            or not isinstance(children[0], Mapping) or children[0].get("op") != FLIP_SOURCE_OPERATION):
+        return effect
+    card = host.state.cards.get(item.source_object_id)
+    return effect if _source_can_flip(host, card, incarnation=item.context.get("source_logical_object_id")) else None
+
+
+def commit_source_flip(host, intent):
+    """Change only the original permanent's flip status and active printed half."""
+    from .rules.copied_flip_faces import FLIPPED_STATUS
+
+    card = host.state.cards.get(intent.object_id)
+    if card is None or card.ref != intent.card_ref or not _source_can_flip(host, card, incarnation=intent.incarnation):
+        return None
+    record = host.card_record(card)
+    card.annotations[FLIPPED_STATUS] = True
+    if record is not None and record.layout == "flip" and len(record.faces) == 2:
+        card.active_face = record.faces[1]["name"]
+    from .soulbond_state import reconcile_soulbond_pairs
+
+    reconcile_soulbond_pairs(host)
+    host._log(intent.actor, "permanent.flip", "A permanent flipped.",
+              {"object": card.ref, "reason": intent.reason}, importance=2, changed_objects=[card.object_id])
+    return card.ref
+
+
+@dataclass(frozen=True, slots=True)
+class FlipSourceHandler:
+    operation: str = FLIP_SOURCE_OPERATION
+    handler_id: str = "generic.flip-source-permanent.v1"
+    schema_version: int = 1
+    family: str = FLIP_SOURCE_CAPABILITY
+    rule_references: tuple[str, ...] = ("110.5", "110.5c", "710.1b", "710.2", "710.4")
+    capability_dependencies: tuple[str, ...] = (FLIP_SOURCE_CAPABILITY,)
+
+    def lower(self, effect, context):
+        from .semantic_runtime.context import SemanticNodeError
+        from .semantic_runtime.intents import FlipSourcePermanentIntent, IntentPlan
+
+        source = context.source
+        if (set(effect) != {"op", "card"} or effect["op"] != self.operation
+                or source is None or type(source.object_id) is not str or not source.object_id
+                or type(source.logical_object_id) is not str or not source.logical_object_id
+                or type(effect["card"]) is not str or not effect["card"] or effect["card"] != source.card_ref):
+            raise SemanticNodeError("Flip requires the original resolving source")
+        intent = FlipSourcePermanentIntent(
+            context.query.require_active_seat(context.actor), source.object_id, source.logical_object_id,
+            source.card_ref, context.default_reason,
+        )
+        return IntentPlan(self.operation, self.handler_id, (intent,))
 
 
 def _prepared_transform_faces(

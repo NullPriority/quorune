@@ -21,6 +21,8 @@ def created_token_cleanup_closure(effect):
     spec = CreatedTokenCleanupSpec.from_dict(effect.get('token_cleanup'))
     base = {key: value for key, value in thaw_value(FrozenMap(effect)).items() if key != 'token_cleanup'}
     if CREATED_TOKEN_HASTE_FIELD in base:
+        if type(base[CREATED_TOKEN_HASTE_FIELD]) is not int or base[CREATED_TOKEN_HASTE_FIELD] != 1:
+            raise ValueError("An existing token cleanup requires its original haste grant")
         required, mechanics = created_token_haste_closure(base)
         if spec != CreatedTokenCleanupSpec("sacrifice", "next_end_step") or base["quantity"] < 2:
             raise ValueError("A fixed plural hasty token batch may schedule only next-end-step sacrifice")

@@ -1,8 +1,9 @@
+import { useId, useRef, useState } from "react";
 import { asList, asRecord } from "./CardSurface";
 import { projectedChoiceCards } from "./CardChoiceGrid";
-import { ChoiceFormView } from "./ChoiceForm";
+import { ChoiceFormView, TargetControl } from "./ChoiceForm";
 import {
-  activeFields, activeVariants, list, record, selectedTargetCostLabel, targetGroupModes, targetGroups, type ChoiceValues,
+  activeFields, activeVariants, castsWithNoXTargets, list, record, selectedTargetCostLabel, targetGroupModes, targetGroups, type ChoiceValues,
 } from "./choices";
 import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
@@ -19,6 +20,7 @@ type Step = {
   selected: string[];
   minimum: number;
   maximum: number;
+  maximumFromX?: boolean;
 };
 
 export type TableObjectSelection = {
@@ -57,7 +59,7 @@ export function publicObjectSteps(action: LegalAction | null, view: ProjectedVie
       result.push({
         id: `target-${id}`, label: modeTitle ? `${modeTitle} · ${label}` : label, field: String(target.name),
         group: id, refs: list(group.legal_refs).map(String), selected: list(record(values[String(target.name)])[id]).map(String),
-        minimum: Number(group.min ?? 1), maximum: Number(group.max ?? 1),
+        minimum: Number(group.min ?? 1), maximum: Number(group.max ?? 1), maximumFromX: group.maximum_from === "x",
       });
     }
   }
@@ -74,8 +76,8 @@ export function publicObjectSteps(action: LegalAction | null, view: ProjectedVie
 }
 
 export function stageTableObject(step: Step, ref: string, values: ChoiceValues): ChoiceValues {
-  if (!step.refs.includes(ref) || step.maximum <= 0) return values;
   const hasRef = step.selected.includes(ref);
+  if (!step.refs.includes(ref) || (step.maximum <= 0 && !hasRef)) return values;
   const selected = hasRef ? step.selected.filter((value) => value !== ref)
     : step.maximum === 1 ? [ref] : [...step.selected, ref].slice(0, step.maximum);
   const value: JsonValue = step.group ? { ...record(values[step.field]), [step.group]: selected } : selected;
@@ -92,9 +94,17 @@ export function PublicActionDraft({
   errors: string[]; disabled: boolean; commitBlocked: boolean;
 }) {
   const form = action.form!;
+  const targetDialog = useRef<HTMLDialogElement>(null);
+  const targetListButton = useRef<HTMLButtonElement>(null);
+  const [targetPickerOpen, setTargetPickerOpen] = useState(false);
+  const targetDialogTitle = useId();
   const onBoard = new Set(steps.map((step) => step.field));
   const target = activeFields(form, values).find((field) => field.control === "targets");
   const schema = record(target?.schema);
+  const groups = target ? targetGroups(target, values) : [];
+  const xTargetStep = steps.find((step) => step.maximumFromX && step.id === activeStep)
+    ?? steps.find((step) => step.maximumFromX);
+  const xTargetGroup = groups.find((group) => String(group.id ?? "target") === xTargetStep?.group);
   const modes = list(schema.legal_modes).map(String);
   const modeLabels = record(schema.mode_labels);
   const hasModes = modes.length > 0;
@@ -104,8 +114,11 @@ export function PublicActionDraft({
   const face = action.face ? asList(definition?.faces).map(asRecord).find((entry) => entry.n === action.face) : undefined;
   const spellText = face?.o ?? source.o ?? definition?.o;
   const modesReady = !hasModes || list(values.modes).length >= Number(schema.min_modes ?? schema.mode_count ?? 1);
-  const targetsReady = !target || targetGroups(target, values).every((group) =>
-    list(record(values[String(target.name)])[String(group.id ?? "target")]).length >= Number(group.min ?? 1));
+  const selectedTargets = record(values[String(target?.name ?? "targets")]);
+  const targetsReady = groups.every((group) => {
+    const count = list(selectedTargets[String(group.id ?? "target")]).length;
+    return count >= Number(group.min ?? 1) && count <= Number(group.max ?? 1);
+  });
   const quotedPrice = target && modesReady && targetsReady ? selectedTargetCostLabel(target, values) : "";
   const tableTargets = target && hasModes ? {
     field: String(target.name),
@@ -126,20 +139,21 @@ export function PublicActionDraft({
   const hasRemainingChoices = activeFields(remaining, values).length > 0
     || list(activeVariants(remaining, values).options).length > 1;
   const cost = cardActionCost([action]);
-  return <form className="public-action-draft" data-testid="public-action-draft" aria-label="Prepare action"
-    onSubmit={(event) => { event.preventDefault(); onSubmit(); }}>
+  const content = <>
     <header data-action-source={sourceRef}>
       <SeatLabel seat={view.decision?.actor} />
       <h2><ManaText text={actionTitle(action)} /></h2>{(quotedPrice || cost) && <p aria-live="polite"><ManaText text={quotedPrice || cost} /></p>}
     </header>
-    <div className="draft-steps">
+    {(!xTargetStep || steps.length > 1) && <div className="draft-steps">
       {steps.map((step) =>
         <button key={step.id} type="button" className="secondary-button"
           aria-pressed={activeStep === step.id} onClick={() => onStage(step.id)}>
           <strong>{step.label}</strong>
-          <span>{step.selected.length} / {step.maximum}{step.selected.length ? ` · ${step.selected.map(labelFor).join(", ")}` : ""}</span>
+          <span>{step.maximumFromX && step.maximum === 0 && step.selected.length === 0
+            ? "Set X above 0 to select targets"
+            : <>{step.selected.length} / {step.maximum}{step.selected.length ? ` · ${step.selected.map(labelFor).join(", ")}` : ""}</>}</span>
         </button>)}
-    </div>
+    </div>}
     {hasRemainingChoices && <div className="contextual-fields">
       {typeof spellText === "string" && spellText && <details className="draft-spell-text">
         <summary>Spell text</summary>
@@ -149,13 +163,55 @@ export function PublicActionDraft({
         tableTargets={tableTargets} costLabels={phyrexianCastCostLabels(action)} />
     </div>}
     {errors.length > 0 && <p className="choice-warning" role="alert">{errors.join(" ")}</p>}
-    <footer>
-      {onPayManually && <button type="button" className="secondary-button" onClick={onPayManually} disabled={disabled}>Use manual mana</button>}
-      <button type="button" className="secondary-button" onClick={onCancel} disabled={disabled}>Cancel</button>
-      <button type="submit" data-testid="submit-choice"
-        disabled={disabled || commitBlocked || !modesReady || !targetsReady || steps.some((step) => step.selected.length < step.minimum)}>
-        {action.action === "activate" ? "Pay and activate" : "Cast spell"}
-      </button>
-    </footer>
-  </form>;
+  </>;
+  const actions = <>
+    {onPayManually && <button type="button" className="secondary-button" onClick={onPayManually} disabled={disabled}>Use manual mana</button>}
+    <button type="button" className="secondary-button" onClick={onCancel} disabled={disabled}>Cancel</button>
+    <button type="submit" data-testid="submit-choice"
+      disabled={disabled || commitBlocked || !modesReady || !targetsReady || steps.some((step) => step.selected.length < step.minimum)}>
+      {action.action === "activate" ? "Pay and activate"
+        : castsWithNoXTargets(form, values) ? "Cast with no targets" : "Cast spell"}
+    </button>
+  </>;
+  return <>
+    <form className={`public-action-draft${xTargetStep ? " x-target-draft" : ""}`} data-testid="public-action-draft"
+      aria-label="Prepare action" onSubmit={(event) => { event.preventDefault(); onSubmit(); }}
+      onKeyDown={(event) => {
+        if (xTargetStep && event.key === "Enter" && event.target instanceof HTMLInputElement && event.target.name === "x") {
+          event.preventDefault();
+          targetListButton.current?.focus();
+        }
+      }}>
+      {xTargetStep ? <div className="x-target-draft-fields">{content}</div> : content}
+      {xTargetStep ? <footer>
+        <div className="x-target-summary">
+          <p role="status" data-testid="x-target-status">{xTargetStep.maximum > 0
+            ? <><strong>Choose up to {xTargetStep.maximum} {xTargetStep.maximum === 1 ? "target" : "targets"}</strong>
+              <span>{xTargetStep.selected.length} selected</span></>
+            : xTargetStep.selected.length > 0 ? "Clear selected targets for X = 0" : "Set X above 0 to select targets"}</p>
+          {xTargetGroup && (xTargetStep.maximum > 0 || xTargetStep.selected.length > 0) &&
+            <button ref={targetListButton} type="button" className="secondary-button" aria-haspopup="dialog" disabled={disabled}
+              onClick={() => {
+                onStage(xTargetStep.id);
+                targetDialog.current?.showModal();
+                setTargetPickerOpen(true);
+              }}>Choose from list</button>}
+        </div>
+        <div className="x-target-actions">{actions}</div>
+      </footer> : <footer>{actions}</footer>}
+    </form>
+    {target && xTargetGroup && <dialog ref={targetDialog} className="choice-dialog x-target-dialog"
+      aria-labelledby={targetDialogTitle} onClose={() => setTargetPickerOpen(false)}
+      onKeyDown={(event) => { if (event.key === "Escape") event.stopPropagation(); }}>
+      <header>
+        <div>
+          <h2 id={targetDialogTitle}>Choose targets</h2>
+          <p role="status">{xTargetStep?.selected.length} of {xTargetStep?.maximum} selected</p>
+        </div>
+        <button type="button" className="secondary-button" onClick={() => targetDialog.current?.close()}>Back to table</button>
+      </header>
+      {targetPickerOpen && <TargetControl field={{ ...target, label: "Eligible targets", required: false, schema: { groups: [xTargetGroup] } }}
+        values={values} onChange={onValues} labelFor={labelFor} view={view} />}
+    </dialog>}
+  </>;
 }

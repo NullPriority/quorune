@@ -92,6 +92,15 @@ created shields remain distinct even when they share a source and label, so the
 selected shield alone owns its aftermath or triggered consequence. Each sibling
 scope remains independently available for later nonoverlapping events.
 
+A fixed creature-token aftermath can use all combat damage actually
+prevented by the resolving controller's turn-bounded player shield. The
+damage result retains one positive aggregate for each applied shield. Other
+prevention and unpreventable damage add no tokens. Before stabilization, the
+combat continuation passes each aggregate and its fixed recipe to ordinary
+token creation. A token replacement can suspend there while retaining the
+completed damage and the remaining token requests, so resumption neither
+repeats damage nor creates tokens twice.
+
 Finite recipient-set prevention uses a closed version-one selector to capture
 current creatures and active players when its instruction resolves. It creates
 one ordinary fixed-amount shield for each recipient, including creature tokens.

@@ -297,6 +297,15 @@ class TriggerOccurrence(Mapping[str, Any]):
 # name.  It is an alias, not a second authoritative occurrence model.
 PendingTriggerItem = TriggerOccurrence
 
+SECONDARY_TRIGGER_CONTEXT = "after_ordinary_trigger_placement"
+
+
+def _placement_stage(item: PendingTriggerItem) -> bool:
+    secondary = item.payload.get("context", {}).get(SECONDARY_TRIGGER_CONTEXT, False)
+    if type(secondary) is not bool:
+        raise TriggerBatchError("Dependent trigger placement requires a boolean occurrence marker")
+    return secondary
+
 
 @dataclass(frozen=True, slots=True)
 class TriggerControllerGroup(Mapping[str, Any]):
@@ -315,6 +324,8 @@ class TriggerControllerGroup(Mapping[str, Any]):
             raise TriggerBatchError(
                 "Every trigger item must match its group controller"
             )
+        if len({_placement_stage(item) for item in self.items}) != 1:
+            raise TriggerBatchError("A controller group must use one trigger placement pass")
         refs = [item.ref for item in self.items]
         if len(set(refs)) != len(refs):
             raise TriggerBatchError("A trigger group must not repeat an item")
@@ -397,20 +408,14 @@ class PendingTriggerBatch(Mapping[str, Any]):
             raise TriggerBatchError(
                 "trigger_batch.groups must contain controller groups"
             )
-        group_controllers = tuple(group.controller for group in self.groups)
-        if len(set(group_controllers)) != len(group_controllers):
-            raise TriggerBatchError(
-                "A trigger batch must contain at most one group per controller"
-            )
-        if any(controller not in self.apnap_order for controller in group_controllers):
-            raise TriggerBatchError(
-                "Every trigger controller must appear in APNAP order"
-            )
+        slots = tuple((_placement_stage(group.items[0]), group.controller) for group in self.groups)
+        if any(controller not in self.apnap_order for _, controller in slots):
+            raise TriggerBatchError("Every trigger controller must appear in APNAP order")
         expected = tuple(
-            seat for seat in self.apnap_order if seat in group_controllers
+            (stage, seat) for stage in (False, True) for seat in self.apnap_order if (stage, seat) in slots
         )
-        if group_controllers != expected:
-            raise TriggerBatchError("Trigger groups must be in APNAP order")
+        if slots != expected:
+            raise TriggerBatchError("Trigger groups must be in APNAP order within each placement pass")
         refs = [item.ref for group in self.groups for item in group.items]
         if len(set(refs)) != len(refs):
             raise TriggerBatchError("A trigger batch must not repeat an item")
@@ -517,15 +522,12 @@ def group_pending_trigger_items(
             "Trigger controllers are absent from APNAP order: "
             + ", ".join(sorted(inactive))
         )
+    groups = {}
+    for item in normalized:
+        groups.setdefault((_placement_stage(item), item.controller), []).append(item)
     return tuple(
-        TriggerControllerGroup(
-            controller=controller,
-            items=tuple(
-                item for item in normalized if item.controller == controller
-            ),
-        )
-        for controller in order
-        if any(item.controller == controller for item in normalized)
+        TriggerControllerGroup(controller=controller, items=tuple(groups[stage, controller]))
+        for stage in (False, True) for controller in order if (stage, controller) in groups
     )
 
 

@@ -42,6 +42,10 @@ def target_announcement_source_sacrifice(binding, body: str, *, card_name: str):
 
 
 def target_announcement_bound_result(binding, body: str, *, card_name: str):
+    from .phase_occurrence_templates import spell_target_occurrence_phase_out_result
+
+    if phase_out := spell_target_occurrence_phase_out_result(binding, body):
+        return phase_out
     if (binding.variant in {'source_target_announcement', 'public_target_announcement'}
             and _FIXED_COUNTER_PAYMENT.fullmatch(body)
             and target_announcement_payment_condition_is_closed(binding.public_condition)):

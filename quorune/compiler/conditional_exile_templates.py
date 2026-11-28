@@ -16,6 +16,7 @@ from .fixed_homogeneous_target_sets import _singularize_subject
 import hashlib
 from ..linked_exile_return_model import (
     ANNOUNCED_OPPONENT_EXILE_VERSION, LinkedExileReturnSpec, LINKED_EXILE_RETURN_MECHANIC,
+    CONDITIONAL_EXILE_CAST_BINDING, CONDITIONAL_EXILE_CAST_VERSION, conditional_exile_cast_target_schema,
     SAME_NAME_CONDITIONAL_EXILE_VERSION,
     SELECTED_CONDITIONAL_EXILE_VERSION, SELECTED_CONDITIONAL_EXILE_FIELD,
     SameNameConditionalExileScope, SelectedConditionalExileScope,
@@ -23,6 +24,10 @@ from ..linked_exile_return_model import (
 from ..replacement.immutable import thaw_value
 
 
+_CAST_EXILED = re.compile(
+    r"(?P<exile>Exile .+? leaves the battlefield)\. You may cast that card for as long as it remains exiled, "
+    r"and mana of any type can be spent to cast that spell\.", re.I,
+)
 _UNTIL = re.compile(r'^Exile (?P<subject>.+?) until (?P<source>.+?) leaves the battlefield\.?$', re.IGNORECASE)
 _ANNOUNCED_OPPONENTS = re.compile(
     r"For each opponent, exile up to one target nonland permanent that player controls "
@@ -54,12 +59,18 @@ class ConditionalSourceExileTemplate:
     target_schema: FrozenMap
     same_name_scope: SameNameConditionalExileScope | None = None
     announced_opponents: bool = False
+    cast_exiled: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.target_schema, FrozenMap):
             raise ValueError('Conditional exile target data must be immutable')
         if self.same_name_scope is not None and not isinstance(self.same_name_scope, SameNameConditionalExileScope):
             raise ValueError("Conditional exile requires a typed same-name scope")
+        if type(self.cast_exiled) is not bool or self.cast_exiled and (
+            self.announced_opponents or self.same_name_scope is not None
+            or self.target_schema != FrozenMap(conditional_exile_cast_target_schema())
+        ):
+            raise ValueError("Conditional cast requires another target creature or artifact")
         if type(self.announced_opponents) is not bool or (self.announced_opponents and self.same_name_scope is not None):
             raise ValueError("Conditional exile requires one closed selection scope")
 
@@ -82,9 +93,12 @@ class ConditionalSourceExileTemplate:
             template = "conditional-source-announced-opponent-exile-v1"
             identity += ":announced-opponents"
             mechanics += (ANY_NUMBER_TARGET_MECHANIC, PER_PLAYER_TARGET_MECHANIC)
+        if self.cast_exiled:
+            version = CONDITIONAL_EXILE_CAST_VERSION
+            template = "conditional-source-exile-cast-incarnation-v1"
         spec = LinkedExileReturnSpec(schema_version=version, timing="source_departure", same_name_scope=scope,
                                      announced_opponents=self.announced_opponents).to_dict()
-        binding = "blink:" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24]
+        binding = CONDITIONAL_EXILE_CAST_BINDING if self.cast_exiled else "blink:" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24]
         return template, (
             {'op':'linked_exile_return','phase':'exile','cards':'$targets','binding_id':binding,'spec':spec},
             {'op':'linked_exile_return','phase':'return','binding_id':binding,'spec':spec},
@@ -118,6 +132,13 @@ def conditional_source_exile_template(text: str, *, card_name: str,
         own_pronoun = scope is SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES and source.casefold() == "it"
         if own_pronoun or source_self_permanent_type(source) is not None or SourceReferenceSpec(card_name).matches(source):
             return SelectedConditionalExileTemplate(scope)
+    cast = _CAST_EXILED.fullmatch(text.strip())
+    if cast is not None:
+        exile = conditional_source_exile_template(cast["exile"], card_name=card_name, source_is_permanent=True)
+        if (isinstance(exile, ConditionalSourceExileTemplate)
+                and exile.target_schema == FrozenMap(conditional_exile_cast_target_schema())):
+            return ConditionalSourceExileTemplate(exile.target_schema, cast_exiled=True)
+        return None
     announced = _ANNOUNCED_OPPONENTS.fullmatch(text.strip())
     match = announced or _UNTIL.fullmatch(text.strip())
     if match is None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 from . import regex_working_set as re
 from .day_night_nodes import day_night_counter_binding
 from .nonmana_activation_copy import nonmana_activation_copy_binding
+from .fixed_resolution_mana import player_attack_combat_mana_binding
 from typing import Any, Mapping
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY, DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
@@ -376,6 +377,8 @@ def _public_discard_spec(
     combined = cycle_or_discard_binding_spec(material_line)
     if combined is not None:
         return combined
+    if batch := _public_discard_batch_spec(material_line):
+        return batch
     match = _PUBLIC_DISCARD_TRIGGER.fullmatch(material_line)
     if match is None:
         return None
@@ -418,6 +421,22 @@ def _public_discard_spec(
         "trigger-event-normalized-zone-change",
         condition=_all_conditions(*conditions),
     )
+
+
+def _public_discard_batch_spec(material_line):
+    from ..discard_effect_origin import DISCARD_BATCH_CAPABILITY, DISCARD_BATCH_EVENT, DISCARD_BATCH_VARIANT
+    from ..impulse_access_model import ImpulseAccessDuration
+    from .impulse_access_templates import fixed_impulse_access_effect_template
+
+    match = re.fullmatch(r'Whenever you discard one or more cards, (?P<body>.+)', material_line, re.I)
+    if match is None:
+        return None
+    impulse = fixed_impulse_access_effect_template(match['body'])
+    if impulse is None or impulse.count != 1 or impulse.duration != ImpulseAccessDuration.NEXT_END_STEP.value:
+        return None
+    return _spec(DISCARD_BATCH_EVENT, DISCARD_BATCH_VARIANT, match['body'],
+        'fixed-counter-public-zone-trigger-v1', 'trigger-event-normalized-zone-change',
+        condition=_actor_condition('you', field='previous_controller'), capabilities=(DISCARD_BATCH_CAPABILITY,))
 
 
 def _graveyard_departure_spec(
@@ -1016,6 +1035,21 @@ def _creature_activation_draw_spec(material_line: str) -> FixedPublicEventBindin
     )
 
 
+def _gift_given_draw_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.gift_occurrence import (
+        GIFT_GIVEN_CAPABILITY, GIFT_GIVEN_EVENT, GIFT_GIVEN_VARIANT, gift_giver_condition,
+    )
+
+    match = re.fullmatch(r"Whenever you give a gift, (?P<body>draw a card\.)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        GIFT_GIVEN_EVENT, GIFT_GIVEN_VARIANT, match["body"],
+        "fixed-controller-gives-gift-draw-v1", "trigger-event-normalized-public-action",
+        condition=gift_giver_condition(), capabilities=(GIFT_GIVEN_CAPABILITY,),
+    )
+
+
 def _public_ninjutsu_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     from ..combat_entry_activations import (
         NINJUTSU_ACTIVATED_CAPABILITY, NINJUTSU_ACTIVATED_EVENT, ninjutsu_activation_controller_condition,
@@ -1065,16 +1099,19 @@ def fixed_public_action_event_binding_spec(
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one bounded action/result occurrence without compiling its body."""
+    from .artifact_mana_tap_control import artifact_mana_tap_control_binding
 
     return (
         direct_player_attack_binding_spec(material_line)
         or _player_or_walker_attacked_spec(material_line)
         or day_night_counter_binding(material_line, card_name=card_name)
         or _equipment_unattachment_spec(material_line)
+        or player_attack_combat_mana_binding(material_line)
         or _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
         or _controller_life_loss_draw_spec(material_line)
         or _source_mana_tap_damage_spec(material_line)
+        or artifact_mana_tap_control_binding(material_line, _spec)
         or _land_mana_tap_damage_spec(material_line)
         or _mana_tapped_land_untap_spec(material_line)
         or _public_expend_spec(material_line)
@@ -1085,6 +1122,7 @@ def fixed_public_action_event_binding_spec(
         or _public_zone_spec(material_line, card_name=card_name)
         or _public_cycle_spec(material_line)
         or _creature_activation_draw_spec(material_line)
+        or _gift_given_draw_spec(material_line)
         or _public_ninjutsu_spec(material_line)
         or nonmana_activation_copy_binding(material_line)
     )

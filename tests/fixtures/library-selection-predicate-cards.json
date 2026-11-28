@@ -338,6 +338,75 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "c7aecca5-2f67-4245-ab2d-e723d8b23a67",
+      "name": "Expressive Iteration",
+      "mana_cost": "{U}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Look at the top three cards of your library. Put one of them into your hand, put one of them on the bottom of your library, and exile one of them. You may play the exiled card this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "cmc": 2.0,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "banned",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "banned",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
+  ],
+  "rulings": [
+      {
+        "published_at": "2026-03-20",
+        "source": "wotc",
+        "comment": "If you choose to play the exiled card this turn, you must still pay all costs and follow all timing restrictions required by that card. If it's a land, you can't play it unless you have a land play available.",
+        "oracle_id": "c7aecca5-2f67-4245-ab2d-e723d8b23a67"
+      },
+      {
+        "published_at": "2026-03-20",
+        "source": "wotc",
+        "comment": "If you don't play the exiled card, it remains exiled. It won't be available to be played on future turns.",
+        "oracle_id": "c7aecca5-2f67-4245-ab2d-e723d8b23a67"
+      },
+      {
+        "published_at": "2026-03-20",
+        "source": "wotc",
+        "comment": "If there are fewer than three cards in your library, follow the instructions in the order given for any cards that are there. For example, if there are two cards in your library, you'll put one of them into your hand and one of them on the bottom of your library. You won't have the option to exile either of them.",
+        "oracle_id": "c7aecca5-2f67-4245-ab2d-e723d8b23a67"
+      }
   ]
 }

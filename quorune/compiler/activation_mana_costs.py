@@ -41,7 +41,7 @@ def fixed_alternative_activation_mana_cost(ability: ActivatedAbility) -> Activat
 
 _PHYREXIAN_SELECTED_PRICE = re.compile(
     r"(?:\{[0-9]+\})?\{(?P<color>[WUBRG])/P\}\{(?P=color)/P\}, "
-    r"(?:Sacrifice two other creatures|Discard two cards|"
+    r"(?:Sacrifice two other creatures|Sacrifice two other artifacts and/or creatures|Discard two cards|"
     r"Exile three creature cards from your graveyard)",
     re.IGNORECASE,
 )

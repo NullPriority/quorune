@@ -52,6 +52,16 @@ class FixedControlHandler:
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
         if STACK_SPELL_CONTROL_FIELD in effect:
             return IntentPlan(self.operation, self.handler_id, (_spell_control_intent(effect, context),))
+        from ..rules.artifact_mana_tap_control import DURATION, bound_artifact_mana_control_identity, uses_artifact_mana_tap_control
+
+        if uses_artifact_mana_tap_control(effect):
+            try:
+                identity = bound_artifact_mana_control_identity(effect, context.actor)
+                intent = GainControlIntent(context.actor, effect["card"], context.actor, DURATION,
+                                           _source(context), context.default_reason, recipient_identity=identity)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
         fields = validate_direct_target_effect(
             effect, context, operation=self.operation, reference_field="card",
             family_label="Control", allow_replacement_selections=False,

@@ -59,7 +59,10 @@ def exert_permanent(host: Any, card: Any, *, actor: str, linked_program: str | N
     if (card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats
             or (linked_program is not None and (type(linked_program) is not str or not linked_program))):
         raise TapStateError('Exert requires a present permanent, acting player and linked cost')
+    from .turn_history import record_exert_occurrence
+
     prohibit_next_player_untap(host,card,actor=actor)
+    record_exert_occurrence(host, card, actor=actor)
     context = {'card': card.ref, 'player': actor, 'controller': card.controller,
                'object_id': card.object_id, 'logical_object_id': card.logical_object_id,
                **({'linked_exert_program': linked_program} if linked_program is not None else {})}

@@ -22,6 +22,12 @@ COPY_REFERENCE_CONTEXT = "token_copy_references_v1"
 ATTACHED_COPY_PAYMENT_CONTEXT = "attached_copy_payment_v1"
 
 
+def _enchantment_entry_copy(program):
+    from .rules.trigger_limits import uses_enchantment_entry_copy_limit
+
+    return uses_enchantment_entry_copy_limit(program)
+
+
 def _snapshot(host: Any, card: Any) -> dict[str, Any]:
     from .token_creation import token_copy_snapshot
     if card.phased_out:
@@ -56,12 +62,15 @@ def triggered_copy_reference_context(host, program, event, context):
         if event != "spell.cast" or card is None:
             raise TokenCopyRecipeError("Cast target copy lost its matching original target")
         return {COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
-    if not (represents_temporary_occurrence_copy(program.effects) or represents_occurrence_controller_copy(program.effects)):
+    enchantment_copy = _enchantment_entry_copy(program)
+    if not (enchantment_copy or represents_temporary_occurrence_copy(program.effects)
+            or represents_occurrence_controller_copy(program.effects)):
         return retained
     logical_id = context.get("card_object_identity")
     object_id = logical_id.rpartition("@")[0] if type(logical_id) is str else ""
     card = host.state.cards.get(object_id)
-    if (event != "creature.enter" or card is None or card.ref != context.get("card")
+    expected_event = "permanent.enter" if enchantment_copy else "creature.enter"
+    if (event != expected_event or card is None or card.ref != context.get("card")
             or card.logical_object_id != logical_id or card.zone != "battlefield"):
         raise TokenCopyRecipeError("Occurrence copy lost its original entering incarnation")
     return {**retained, COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
@@ -354,7 +363,7 @@ def _pin_original_occurrence_copy_departures(host, departing):
             continue
         program = host.semantics.get(semantic_key) if semantic_key else None
         if program is None or not (
-            represents_temporary_occurrence_copy(program.effects)
+            _enchantment_entry_copy(program) or represents_temporary_occurrence_copy(program.effects)
             or represents_occurrence_controller_copy(program.effects)
             or any(represents_cast_target_copy(effect) for effect in program.effects)
         ):

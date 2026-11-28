@@ -21,7 +21,10 @@ def _locked_creature_subtype_scope(effect):
         and effect.origin is ContinuousEffectOrigin.RESOLUTION
         and effect.duration is ContinuousEffectDuration.ZONE_OBJECT
         and bool(effect.locked_objects)
-        and effect.applies == CREATURE_SUBTYPE_BATTLEFIELD_QUERY
+        and effect.applies in (
+            CREATURE_SUBTYPE_BATTLEFIELD_QUERY,
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+        )
         and len(effect.operations) == 1
         and effect.operations[0].op == "add_types" and effect.operations[0].field == "subtypes"
     )
@@ -191,7 +194,7 @@ def effects_with_live_type_recipient_scopes(ordered, present, base, context, cyc
              and _matches(replace(effect.applies, types_all=()), base, context))
             or (_locked_creature_subtype_scope(effect)
                 and _type_effect_matches_object(
-                    replace(effect, applies=replace(effect.applies, types_any=())), base, context,
+                    replace(effect, applies=replace(effect.applies, types_any=(), types_all=())), base, context,
                 ))
             for effect in group
         ):

@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..stack_spell_copy_model import (
     FixedStackSpellCopySpec, STACK_SPELL_COPY_CAPABILITY, STACK_SPELL_COPY_MECHANIC,
     PERMANENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec,
-    FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, FixedQualifiedStackCopySpec,
+    COPYABLE_STACK_ITEM_PREDICATE, FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, FixedQualifiedStackCopySpec,
 )
 
 
@@ -31,6 +31,13 @@ def permanent_spell_copy_node_dependencies(effect, target_schema):
     return (PERMANENT_SPELL_COPY_CAPABILITY, QUALIFIED_STACK_COPY_CAPABILITY, "target.revalidate_resolution")
 
 
+def _qualified_copy_matches(spec, effects, schema):
+    return (
+        tuple(effects) == spec.effects and schema == spec.target_schema
+        and (spec.schema_version != 3 or type(schema.get("count")) is int)
+    )
+
+
 def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic_ids):
     from ..stack_spell_copy_model import (QUALIFIED_STACK_COPY_MECHANIC, QUALIFIED_STACK_COPY_CAPABILITY,
         qualified_stack_copy_specs)
@@ -48,7 +55,7 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
             return (QUALIFIED_STACK_COPY_CAPABILITY, 'target.revalidate_resolution')
         return ()
     for spec in qualified_stack_copy_specs():
-        if tuple(effects) == spec.effects and target_schema == spec.target_schema:
+        if _qualified_copy_matches(spec, effects, target_schema):
             from ..ability_source_information import ability_source_filter_dependencies
             return (QUALIFIED_STACK_COPY_CAPABILITY, 'target.revalidate_resolution',
                 *ability_source_filter_dependencies(target_schema))
@@ -57,7 +64,13 @@ def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic
     from ..event_spell_copy_model import EVENT_SPELL_COPY_CAPABILITY,EVENT_SPELL_COPY_MECHANIC,event_spell_copy_effect
     if EVENT_SPELL_COPY_MECHANIC in mechanics:
         return (EVENT_SPELL_COPY_CAPABILITY,) if any(tuple(effects)==(event_spell_copy_effect(retain_targets_only=retain),) for retain in (False,True)) and target_schema is None else ()
-    if STACK_SPELL_COPY_MECHANIC not in mechanics or len(effects) != 1:
+    if STACK_SPELL_COPY_MECHANIC not in mechanics:
+        return ()
+    if len(effects) == 2:
+        from .opponent_spell_or_permanent_return import copy_and_return_spell_capabilities
+
+        return copy_and_return_spell_capabilities(effects, target_schema)
+    if len(effects) != 1:
         return ()
     for controlled in (False, True):
         spec = FixedStackSpellCopySpec(controlled)
@@ -114,12 +127,13 @@ def qualified_stack_copy_runtime_dependencies(program):
             and effect.get('stack') == '$target.0' for effect in effects)):
         return ()
     for spec in qualified_stack_copy_specs():
-        if effects == spec.effects and schema == spec.target_schema:
+        if _qualified_copy_matches(spec, effects, schema):
             return fixed_stack_spell_copy_node_capabilities(effects=effects, target_schema=schema,
                 mechanic_ids=(QUALIFIED_STACK_COPY_MECHANIC,))
     permanent = bool(set(schema.get('types_any') or ()) &
         {'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'})
-    if schema.get('categories') == ['ability'] or permanent:
+    if (schema.get('categories') == ['ability'] or permanent
+            or schema.get("predicate") == COPYABLE_STACK_ITEM_PREDICATE):
         raise ValueError('Qualified stack-copy target or retained-target policy is malformed')
     return ()
 
@@ -143,6 +157,8 @@ def reviewed_stack_copy_with_current_policy(current, old):
     for spec in specs:
         if tuple(current.effects) != spec.effects or current.target_schema != spec.target_schema:
             continue
+        if spec.schema_version == 3:
+            return None
         legacy = deepcopy(spec.target_schema)
         legacy.pop('source_exclusion')
         legacy['controller'] = legacy.pop('controller_relation')

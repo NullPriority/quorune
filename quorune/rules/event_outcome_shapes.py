@@ -297,6 +297,34 @@ def event_outcome_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 
 def event_outcome_runtime_dependencies(program):
+    from .controlled_creature_main_combat import controlled_main_combat_runtime_dependencies
+    from .paid_attacking_extra_combat import paid_attacking_extra_combat_runtime_dependencies
+
+    if dependencies := (controlled_main_combat_runtime_dependencies(program)
+                        or paid_attacking_extra_combat_runtime_dependencies(program)):
+        return dependencies
+    from .apnap_library_reveals import library_reveal_round_program_dependencies
+    if dependencies := library_reveal_round_program_dependencies(program):
+        return dependencies
+    from .airbend import airbend_creature_set_program_dependencies
+    if dependencies := airbend_creature_set_program_dependencies(program):
+        return dependencies
+    from .attack_trigger_copy import program_dependencies as attack_copy_dependencies
+
+    if dependencies := attack_copy_dependencies(program):
+        return dependencies
+    from .cast_or_attack_source_exile import cast_or_attack_source_exile_runtime_dependencies
+
+    if dependencies := cast_or_attack_source_exile_runtime_dependencies(program):
+        return dependencies
+    from .blocked_damage_cast import program_dependencies as blocked_damage_dependencies
+
+    if dependencies := blocked_damage_dependencies(program):
+        return dependencies
+    from .meld_pair_shapes import meld_pair_runtime_dependencies
+
+    if dependencies := meld_pair_runtime_dependencies(program):
+        return dependencies
     from .faction_trigger_shapes import faction_trigger_runtime_dependencies
     from .paid_creature_library_search import paid_creature_search_program_dependencies
     if dependencies := paid_creature_search_program_dependencies(program):
@@ -311,6 +339,14 @@ def event_outcome_runtime_dependencies(program):
 
     if (grouped := controlled_subtype_damage_runtime_dependencies(program)) is not None:
         return grouped
+    from .fixed_opponent_land_search import opponent_land_search_program_dependencies
+
+    if dependencies := opponent_land_search_program_dependencies(program):
+        return dependencies
+    from .created_token_fights import created_token_fight_program_dependencies
+
+    if dependencies := created_token_fight_program_dependencies(program):
+        return dependencies
     from .repeated_apnap_payment import payment_round_program_dependencies
 
     if dependencies := payment_round_program_dependencies(program):
@@ -406,6 +442,7 @@ def event_outcome_runtime_dependencies(program):
 
 
 def event_outcome_program_is_closed(program):
+    from ..meld_model import MELD_CAPABILITY
     from .faction_trigger_model import FACTION_DRAW_CAPABILITY
     from .event_counter_threshold import SOURCE_DEPLETION_THRESHOLD_CAPABILITY
     from .paid_noncreature_counter_transform import CAPABILITY as PAID_CAST_TRANSFORM_CAPABILITY
@@ -414,7 +451,7 @@ def event_outcome_program_is_closed(program):
     except (TypeError,ValueError): return False
     return (
         bool(required)
-        and (len(program.effects) == 1
+        and (len(program.effects) == 1 or MELD_CAPABILITY in required
              or CAST_TRIGGER_SACRIFICE_COUNTER_CAPABILITY in required
              or CAST_EVENT_COUNTER_BIRDS_CAPABILITY in required
              or SOURCE_DEPLETION_THRESHOLD_CAPABILITY in required

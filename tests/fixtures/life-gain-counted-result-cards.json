@@ -213,7 +213,7 @@
       "produced_mana": [],
       "released_at": "2007-07-13",
       "toughness": "2",
-      "type_line": "Creature \u2014 Bear"
+      "type_line": "Creature — Bear"
     },
     {
       "card_faces": [],
@@ -357,7 +357,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Island"
+      "type_line": "Basic Land — Island"
     },
     {
       "cmc": 3.0,
@@ -406,7 +406,7 @@
       "produced_mana": [],
       "released_at": "2020-07-03",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 0.0,
@@ -453,7 +453,7 @@
       ],
       "released_at": "2026-11-13",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Plains"
+      "type_line": "Basic Land — Plains"
     },
     {
       "cmc": 2.0,
@@ -602,7 +602,7 @@
       "produced_mana": [],
       "released_at": "2023-08-04",
       "toughness": "5",
-      "type_line": "Legendary Creature \u2014 Sliver"
+      "type_line": "Legendary Creature — Sliver"
     },
     {
       "cmc": 1.0,
@@ -698,7 +698,7 @@
       "produced_mana": [],
       "released_at": "2014-02-07",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 0.0,
@@ -745,7 +745,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Swamp"
+      "type_line": "Basic Land — Swamp"
     },
     {
       "cmc": 1.0,
@@ -882,7 +882,7 @@
       "produced_mana": [],
       "released_at": "2020-07-03",
       "toughness": "2",
-      "type_line": "Creature \u2014 Zombie"
+      "type_line": "Creature — Zombie"
     },
     {
       "cmc": 4.0,
@@ -926,17 +926,68 @@
       "released_at": "2021-04-23",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "a5350327-e84c-44b6-8359-87882e521048",
+      "name": "Niv-Mizzet, Ghost Counsel",
+      "mana_cost": "{2}{W}{W}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Spirit Dragon",
+      "oracle_text": "Flying\nWhenever you gain life, you may pay that much life. If you do, draw that many cards.\n{T}: Each opponent loses 1 life and you gain 1 life.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
     {
-      "comment": "You choose a target when the ability triggers. You don\u2019t choose whether to pay {1}{W} until the ability resolves.",
+      "comment": "You choose a target when the ability triggers. You don’t choose whether to pay {1}{W} until the ability resolves.",
       "oracle_id": "956250da-532a-4457-8696-73915be56943",
       "published_at": "2008-10-01",
       "source": "wotc"
     },
     {
-      "comment": "Cradle of Vitality triggers just once for each life-gaining event, whether it\u2019s 1 life from Deathgreeter or 8 life from Soul\u2019s Grace. You pay the cost just once, but the targeted creature will get a number of counters equal to the amount of life you gained.",
+      "comment": "Cradle of Vitality triggers just once for each life-gaining event, whether it’s 1 life from Deathgreeter or 8 life from Soul’s Grace. You pay the cost just once, but the targeted creature will get a number of counters equal to the amount of life you gained.",
       "oracle_id": "956250da-532a-4457-8696-73915be56943",
       "published_at": "2008-10-01",
       "source": "wotc"
@@ -948,19 +999,19 @@
       "source": "wotc"
     },
     {
-      "comment": "In some unusual cases, you can gain life even though your life total actually decreases. For example, if you are being attacked by two 3/3 creatures and you block one with a 2/2 creature with lifelink, your life total will decrease by 1 even though you\u2019ve gained 2 life. You\u2019ll put two +1/+1 counters on the enchanted creature.",
+      "comment": "In some unusual cases, you can gain life even though your life total actually decreases. For example, if you are being attacked by two 3/3 creatures and you block one with a 2/2 creature with lifelink, your life total will decrease by 1 even though you’ve gained 2 life. You’ll put two +1/+1 counters on the enchanted creature.",
       "oracle_id": "163ece8a-0479-4bb2-b559-581985d1898b",
       "published_at": "2014-02-01",
       "source": "wotc"
     },
     {
-      "comment": "In a Two-Headed Giant game, life gained by your teammate won\u2019t cause the ability to trigger, even though it causes your team\u2019s life total to increase.",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won’t cause the ability to trigger, even though it causes your team’s life total to increase.",
       "oracle_id": "163ece8a-0479-4bb2-b559-581985d1898b",
       "published_at": "2014-02-01",
       "source": "wotc"
     },
     {
-      "comment": "If you gain an amount of life \u201cfor each\u201d of something, that life is gained as one event and the ability triggers only once.",
+      "comment": "If you gain an amount of life “for each” of something, that life is gained as one event and the ability triggers only once.",
       "oracle_id": "64c54c9f-0550-41e2-a44a-5892a199f670",
       "published_at": "2020-06-23",
       "source": "wotc"
@@ -1002,19 +1053,19 @@
       "source": "wotc"
     },
     {
-      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn\u2019t provide any additional benefit.",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "If you change the creature type of a Sliver you control so it\u2019s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "Slivers in this set affect only Sliver creatures you control. They don\u2019t grant bonuses to your opponents\u2019 Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
       "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
       "published_at": "2014-07-18",
       "source": "wotc"
@@ -1062,7 +1113,7 @@
       "source": "wotc"
     },
     {
-      "comment": "Effects that would replace gaining life with another effect won\u2019t apply because it\u2019s impossible for players to gain life.",
+      "comment": "Effects that would replace gaining life with another effect won’t apply because it’s impossible for players to gain life.",
       "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
       "published_at": "2012-10-01",
       "source": "wotc"
@@ -1074,7 +1125,7 @@
       "source": "wotc"
     },
     {
-      "comment": "If an effect says to set a player\u2019s life total to a certain number and that number is higher than the player\u2019s current life total, that part of the effect won\u2019t do anything. (If the number is lower than the player\u2019s current life total, the effect will work as normal.)",
+      "comment": "If an effect says to set a player’s life total to a certain number and that number is higher than the player’s current life total, that part of the effect won’t do anything. (If the number is lower than the player’s current life total, the effect will work as normal.)",
       "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
       "published_at": "2012-10-01",
       "source": "wotc"
@@ -1086,13 +1137,13 @@
       "source": "wotc"
     },
     {
-      "comment": "In a Two-Headed Giant game, the last ability triggers for each player. Any life loss is applied to the team\u2019s life total. For example, if the team has 30 life, the first ability will cause the player (and thus the team) to lose 15 life and then the second ability will cause the other player (and thus the team) to lose 8 life. The team will end up having 7 life.",
+      "comment": "In a Two-Headed Giant game, the last ability triggers for each player. Any life loss is applied to the team’s life total. For example, if the team has 30 life, the first ability will cause the player (and thus the team) to lose 15 life and then the second ability will cause the other player (and thus the team) to lose 8 life. The team will end up having 7 life.",
       "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
       "published_at": "2012-10-01",
       "source": "wotc"
     },
     {
-      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total \u201cbecomes 10,\u201d your life total will actually become 17.",
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total “becomes 10,” your life total will actually become 17.",
       "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
       "published_at": "2020-08-07",
       "source": "wotc"
@@ -1108,6 +1159,12 @@
       "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
       "published_at": "2020-08-07",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "a5350327-e84c-44b6-8359-87882e521048",
+      "published_at": "2026-08-21",
+      "source": "wotc",
+      "comment": "If more than one creature you control with lifelink deals combat damage at the same time, Niv-Mizzet's triggered ability will trigger once for each of those creatures."
     }
   ],
   "schema_version": 1,

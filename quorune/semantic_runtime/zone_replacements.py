@@ -6,6 +6,7 @@ import re
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..card_program_faces import program_matches_face, selected_face_id, prospective_face_view
+from ..characteristic_read_frames import characteristic_read_method
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
     capture_composed_commander_zone_components,
@@ -43,6 +44,7 @@ from ..replacement_effects import (
 from ..rules.capabilities import load_default_capability_registry
 from ..turn_history import opponent_was_dealt_damage_this_turn
 from ..flashback import flashed_back_subject_replacements
+from ..harmonize import harmonize_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..rules.finality_counters import finality_counter_replacement
@@ -66,6 +68,7 @@ from .tribute import TributeEntryHandler
 from .entry_designations import (
     CountedCreatureTypeEntryDesignationHandler, EntryCardNameHandler, EntryDesignationHandler,
     LimitedCreatureTypeEntryDesignationHandler, LinkedCardTypeEntryHandler,
+    LinkedProtectionCardTypeEntryHandler,
     CountedEntryOpponentHandler, EntryOpponentDesignationHandler, EntryPlayerDesignationHandler,
     SelfChosenSubtypeEntryHandler,
 )
@@ -98,8 +101,6 @@ from .external_entry_state import ExternalEntryStateHandler
 from .external_entry_counters import (
     ExternalChosenSubtypeEntryCounterHandler, ExternalEntryCounterHandler, ExternalNontokenEntryCounterHandler,
 )
-from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER_IDS
-from ..qualified_entry_state_model import QUALIFIED_ENTRY_STATE_HANDLER, EntryStateSourceSnapshot
 from .qualified_entry_state import QualifiedEntryStateHandler
 from .zone_replacement_model import (
     PreparedZoneChange,
@@ -114,7 +115,7 @@ from .zone_replacement_model import (
 )
 from .zone_replacement_inputs import (
     intrinsic_subject_replacement_effects,
-    source_local_zone_replacement_effects,
+    source_local_zone_replacement_effects, source_zone_replacement_context,
     active_zone_replacement_sources,
     subject_entry_counter_fields,
     zone_change_subject_characteristics,
@@ -125,6 +126,7 @@ from .zone_replacement_inputs import (
 
 
 from .graveyard_exile import GraveyardExileReplacementHandler
+from .linked_graveyard_exile import LinkedGraveyardExileReplacementHandler
 
 
 _DESTINATION_HANDLER_ID = "replacement.zone.destination.v1"
@@ -466,6 +468,8 @@ class ZoneChangeReplacementRegistry(
 @lru_cache(maxsize=1)
 def default_zone_change_replacement_registry(
 ) -> ZoneChangeReplacementRegistry:
+    from .chosen_basic_land_entry import ChosenBasicLandEntryHandler
+
     registry = ZoneChangeReplacementRegistry(
         (
             ConditionalSelfEntryCounterHandler(),
@@ -478,6 +482,7 @@ def default_zone_change_replacement_registry(
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
             LinkedCardTypeEntryHandler(),
+            LinkedProtectionCardTypeEntryHandler(),
             EntryCardNameHandler(),
             EntryOpponentDesignationHandler(),
             EntryPlayerDesignationHandler(),
@@ -486,6 +491,7 @@ def default_zone_change_replacement_registry(
             LimitedCreatureTypeEntryDesignationHandler(),
             CountedCreatureTypeEntryDesignationHandler(),
             SelfChosenSubtypeEntryHandler(),
+            ChosenBasicLandEntryHandler(),
             EntryCopyHandler(),
             entry_copy_handler(2),
             entry_copy_handler(3),
@@ -522,6 +528,7 @@ def default_zone_change_replacement_registry(
             SunburstEntryCounterHandler(),
             ZoneDestinationReplacementHandler(),
             GraveyardExileReplacementHandler(),
+            LinkedGraveyardExileReplacementHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -644,18 +651,12 @@ def collect_zone_change_replacement_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if descriptor.get('handler_id') in SELF_GRAVEYARD_REPLACEMENT_HANDLERS:
                     continue
-                source_context=None
-                if descriptor.get('handler_id') in EXTERNAL_ENTRY_COUNTER_HANDLER_IDS:
-                    from ..rules.external_entry_counters import snapshot_external_entry_counter_source
-                    source_context=snapshot_external_entry_counter_source(host,source,descriptor)
-                elif descriptor.get('handler_id') == QUALIFIED_ENTRY_STATE_HANDLER:
-                    source_context = EntryStateSourceSnapshot(source.ref, source.controller, source.tapped)
                 effects.extend(registry.source_replacement_effects(
                         descriptor,
                         source_ref=source.ref,
                         source_controller=source.controller,
                         component_id=f"{program.key}:{descriptor_index}",
-                        source_context=source_context,
+                        source_context=source_zone_replacement_context(host, source, descriptor),
                     ))
     effects.extend(
         collect_counter_placement_replacement_effects(
@@ -821,6 +822,7 @@ def _fixed_entry_condition_metrics(
     return cache[destination_controller]
 
 
+@characteristic_read_method
 def _zone_change_snapshot_subjects(
     host: ZoneReplacementHost,
     changes: Sequence[tuple[str, str]],
@@ -1047,6 +1049,7 @@ def _zone_change_snapshot_effects(
     effects=(
                 *ambient_effects,
                 *flashed_back_subject_replacements(subject_cards, (subject.object_id for subject in subjects)),
+                *harmonize_subject_replacements(subject_cards, (subject.object_id for subject in subjects)),
                 *fixed_cast_lifecycle_subject_replacements(
                     subject_cards,
                     tuple(subject.object_id for subject in subjects),

@@ -31,6 +31,7 @@ PROFILE = "commander_review"
 PAIRING_FIXTURE = ROOT / "tests/fixtures/commander-pairing-cards.json"
 MADNESS_FIXTURE = ROOT / "tests/fixtures/madness-cards.json"
 REPLACEMENT_FIXTURE = ROOT / "tests/fixtures/committed-milled-creature-tokens-cards.json"
+PLAY_FIXTURE = ROOT / "tests/fixtures/discarded-card-play-cards.json"
 MADNESS_CARD = "Generic Madness Life Fixture"
 OUTLET = "Generic Discard Outlet Fixture"
 
@@ -46,6 +47,21 @@ def source_record(text=CLAUSE):
 
 
 class DiscardedCardExileCompilerTests(unittest.TestCase):
+    def test_arbiter_cannot_supply_reserved_discard_play_instruction(self):
+        from quorune.errors import GameRuleError
+        from quorune.rules.discarded_card_exile import discarded_card_play_effect
+        from quorune.stack_resolution import arbiter_resolution_effects
+
+        optional = discarded_card_play_effect()
+        movement, = optional["effects"]
+        for effect in (movement, optional):
+            with self.subTest(op=effect["op"]):
+                with self.assertRaisesRegex(GameRuleError, "requires a bound card program"):
+                    arbiter_resolution_effects([effect])
+        ordinary = {"op": "move_if_in_zone", "card": "P0001", "from": "graveyard", "destination": "exile"}
+        self.assertEqual([ordinary], arbiter_resolution_effects([ordinary]))
+
+
     @classmethod
     def setUpClass(cls):
         cls.registry = load_default_capability_registry()
@@ -118,6 +134,35 @@ class DiscardedCardExileCompilerTests(unittest.TestCase):
                 discarded_card_exile_movement(mutated, actor="A")
 
 
+    def test_containment_requires_the_complete_optional_discard_play_shape(self):
+        from quorune.rules.discarded_card_exile import (
+            DISCARD_EXILE_MECHANIC, DISCARD_PLAY_CAPABILITY, DISCARD_PLAY_VERSION,
+            discarded_card_exile_node_capabilities, discarded_card_play_effect,
+        )
+
+        text = ("Whenever you discard a card, you may exile that card from your graveyard. "
+                "If you do, you may play that card this turn.")
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((discarded_card_play_effect(),), node.effects)
+        self.assertIn(DISCARD_PLAY_CAPABILITY, node.capability_dependencies)
+        wrapper = discarded_card_play_effect()
+        child, = wrapper["effects"]
+        for effects in ((child,), ({**wrapper, "player": "$context.owner"},),
+                        ({**wrapper, "effects": [{**child, DISCARD_PLAY_VERSION: True}]},)):
+            with self.subTest(effects=effects):
+                self.assertEqual((), discarded_card_exile_node_capabilities(
+                    effects=effects, target_schema=None, mechanics=(DISCARD_EXILE_MECHANIC,), cost_schema=None,
+                ))
+        data = json.loads(DEFAULT_CAPABILITY_REGISTRY.read_text(encoding="utf-8"))
+        row = next(row for row in data["capabilities"] if row["id"] == DISCARD_PLAY_CAPABILITY)
+        row.update(status="blocked", blockers=["withdrawn scoped discard play"])
+        registry = CapabilityRegistry(data)
+        registry.mark_evidence_verified("1" * 64)
+        self.assertNotEqual("exact", self.compile(text, registry=registry).status)
+
+
 class DiscardedCardExileNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -129,13 +174,17 @@ class DiscardedCardExileNativeTests(unittest.TestCase):
             {**card.compact(), "cmc": card.mana_value}
         ]}), encoding="utf-8")
         database = path / "discard.sqlite3"
-        build_fixture_database((PAIRING_FIXTURE, MADNESS_FIXTURE, REPLACEMENT_FIXTURE, source), database)
+        build_fixture_database((PAIRING_FIXTURE, MADNESS_FIXTURE, REPLACEMENT_FIXTURE, PLAY_FIXTURE, source), database)
         cls.db = CardDatabase(database)
         cls.deck = DeckDefinition(
             name="Discard occurrence and Madness",
             entries=[
                 DeckEntry("Thrasios, Triton Hero", board="commander"),
                 DeckEntry(SOURCE_NAME),
+                DeckEntry("Containment Construct"),
+                DeckEntry("Forest"),
+                DeckEntry("Island"),
+                DeckEntry("Cremate"),
                 DeckEntry(OUTLET, quantity=2),
                 DeckEntry(MADNESS_CARD, quantity=5),
                 DeckEntry("Rest in Peace"),
@@ -353,3 +402,160 @@ class DiscardedCardExileNativeTests(unittest.TestCase):
         self.assertIsNone(old_trigger.context[MADNESS_ARRIVAL])
         self.pass_until(game, lambda: not game.state.stack)
         self.assertEqual("graveyard", card.zone)
+
+    def construct_game(self, seed):
+        game, old = self.session(seed)
+        game.engine.move_card(old.object_id, "graveyard", log=False)
+        source = self.card(game, "Containment Construct", zone="battlefield")
+        outlet = self.card(game, OUTLET, zone="battlefield")
+        return game, source, outlet
+
+    def construct_checkpoint(self, game):
+        self.start_priority(game)
+        game.initial_checkpoint = checkpoint_envelope(game.state)
+        game.commands.clear()
+        game.decisions.clear()
+
+    def pay_construct_discard(self, game, outlet, card):
+        actions = game.engine._priority_action_hints("A")["actions"]
+        action, = [row for row in actions if row.get("source") == outlet.ref]
+        result = game.act("pilot:A", {"action_id": action["id"], "cost_cards": [card.ref]})
+        self.assertTrue(result.ok, result.summary)
+
+    def construct_choice(self, game):
+        return game.state.pending_decision is not None and game.state.pending_decision.kind == "semantic.choice"
+
+    def apply_construct_choice(self, game):
+        self.pass_until(game, lambda: self.construct_choice(game))
+        result = game.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_actual_construct_plays_one_land_at_ordinary_timing_and_expires_after_replay(self):
+        game, _source, outlet = self.construct_game(40070100)
+        first = self.card(game, "Forest", zone="hand")
+        second = self.card(game, "Island", zone="hand")
+        other = next(card for card in game.state.cards.values()
+                     if card.owner == "A" and card.printed_name == OUTLET and card.object_id != outlet.object_id)
+        game.engine.move_card(other.object_id, "battlefield", log=False)
+        game.state.players["A"].mana_pool["C"] = 2
+        self.construct_checkpoint(game)
+        self.pay_construct_discard(game, outlet, first)
+        self.pass_until(game, lambda: self.construct_choice(game))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "choice": "apply"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assert_replay(game)
+        self.apply_construct_choice(game)
+        first = game.state.cards[first.object_id]
+        self.assertEqual("exile", first.zone)
+        self.assertTrue(first.annotations["temporary_play_permission"]["allow_land"])
+        self.assertFalse(first.annotations["temporary_play_permission"]["without_mana_cost"])
+        self.assertTrue(game.state.stack)
+        first_play = f"play-land:{first.ref}"
+        self.assertNotIn(first_play, {r["id"] for r in game.engine._priority_action_hints("A")["actions"]})
+        self.pass_until(game, lambda: not game.state.stack and game.pending_principals() == ["pilot:A"])
+        self.assertIn(first_play, {r["id"] for r in game.engine._priority_action_hints("A")["actions"]})
+        played = game.act("pilot:A", {"action_id": first_play})
+        self.assertTrue(played.ok, played.summary)
+        self.assertEqual("battlefield", game.state.cards[first.object_id].zone)
+        self.assertEqual(0, game.state.players["A"].land_plays_remaining)
+        self.pay_construct_discard(game, other, second)
+        self.apply_construct_choice(game)
+        self.pass_until(game, lambda: not game.state.stack and game.pending_principals() == ["pilot:A"])
+        second = game.state.cards[second.object_id]
+        self.assertIn("temporary_play_permission", second.annotations)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id": f"play-land:{second.ref}"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        turn = game.state.turn_sequence
+        for _ in range(100):
+            if game.state.turn_sequence != turn:
+                break
+            decision = game.state.pending_decision
+            principal, = game.pending_principals()
+            if decision.kind == "cleanup.discard":
+                legal = decision.payload_by_actor[principal.removeprefix("pilot:")]
+                command = {"action_id":"discard", "cards":[row["id"] for row in legal["hand"][:legal["count"]]]}
+            elif decision.kind == "trigger.order":
+                items = game.state.pending_trigger_batches[0].items
+                command = {"action_id":"order", "triggers":[item.ref for item in items]}
+            else:
+                command = {
+                    "priority":{"action_id":"pass"},
+                    "combat.attackers":{"action_id":"attack","attackers":{}},
+                    "combat.blockers":{"action_id":"block","blocks":{}},
+                    "semantic.choice":{"action_id":"choose","choice":"decline"},
+                }[decision.kind]
+            result = game.act(principal, command)
+            self.assertTrue(result.ok, result.summary)
+        self.assertGreater(game.state.turn_sequence, turn)
+        self.assertNotIn("temporary_play_permission", game.state.cards[second.object_id].annotations)
+        self.assert_replay(game)
+
+    def test_actual_construct_replay_skips_redirected_and_moved_away_discards(self):
+        for redirected in (True, False):
+            with self.subTest(redirected=redirected):
+                game, source, outlet = self.construct_game(40070110 + int(redirected))
+                card = self.card(game, "Forest", zone="hand")
+                if redirected:
+                    self.card(game, "Rest in Peace", seat="B", zone="battlefield")
+                    response = None
+                else:
+                    response = self.card(game, "Cremate", seat="B", zone="hand")
+                    game.state.players["B"].mana_pool["B"] = 1
+                game.state.players["A"].mana_pool["C"] = 1
+                self.construct_checkpoint(game)
+                self.pay_construct_discard(game, outlet, card)
+                trigger, = [item for item in game.state.stack if item.source_object_id == source.object_id]
+                self.assertEqual(DISCARD_EVENT, trigger.context["event"])
+                self.assertEqual("exile" if redirected else "graveyard", trigger.context["to"])
+                if response is not None:
+                    self.pass_until(game, lambda: game.pending_principals() == ["pilot:B"])
+                    actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action, = [row for row in actions if row.get("card") == response.ref]
+                    cast = game.act("pilot:B", {"action_id": action["id"], "targets": [card.ref], "pay": "auto"})
+                    self.assertTrue(cast.ok, cast.summary)
+                    self.pass_until(game, lambda: game.state.cards[response.object_id].zone != "stack")
+                    self.assertGreater(game.state.cards[card.object_id].zone_change_counter,
+                                       trigger.context["card_zone_change_counter"])
+                self.pass_until(game, lambda: not game.state.stack)
+                current = game.state.cards[card.object_id]
+                self.assertEqual("exile", current.zone)
+                self.assertNotIn("temporary_play_permission", current.annotations)
+                self.assert_replay(game)
+
+    def test_actual_construct_replays_both_madness_orders_and_uses_the_declined_successor(self):
+        for madness_first in (True, False):
+            with self.subTest(madness_first=madness_first):
+                game, source, outlet = self.construct_game(40070120 + int(madness_first))
+                card = self.card(game, MADNESS_CARD, zone="hand")
+                game.state.players["A"].mana_pool["C"] = 1
+                self.construct_checkpoint(game)
+                self.pay_construct_discard(game, outlet, card)
+                self.assertEqual("exile", game.state.cards[card.object_id].zone)
+                self.assertEqual("trigger.order", game.state.pending_decision.kind)
+                items = game.state.pending_trigger_batches[0].items
+                construct, = [item.ref for item in items if item.event_facts.get(MADNESS_ARRIVAL, False) is None]
+                madness, = [item.ref for item in items if item.ref != construct]
+                refs = [construct, madness] if madness_first else [madness, construct]
+                result = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+                self.assertTrue(result.ok, result.summary)
+                self.pass_until(game, lambda: self.construct_choice(game))
+                declined = game.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+                self.assertTrue(declined.ok, declined.summary)
+                card = game.state.cards[card.object_id]
+                self.assertEqual("graveyard", card.zone)
+                if madness_first:
+                    pending, = [item for item in game.state.stack if item.source_object_id == source.object_id]
+                    self.assertEqual(card.zone_change_counter, pending.context[MADNESS_ARRIVAL])
+                    self.apply_construct_choice(game)
+                self.pass_until(game, lambda: not game.state.stack)
+                card = game.state.cards[card.object_id]
+                self.assertEqual("exile" if madness_first else "graveyard", card.zone)
+                permission = card.annotations.get("temporary_play_permission")
+                if madness_first:
+                    self.assertEqual(("A", False), (permission["player"], permission["without_mana_cost"]))
+                else:
+                    self.assertIsNone(permission)
+                self.assert_replay(game)

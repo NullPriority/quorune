@@ -9,7 +9,8 @@ from typing import Any, Callable, Mapping
 from ..permanent_event_state_model import supported_countered_combat_optional_result
 from ..rules.controlled_spell_counter import CONTROLLED_SPELL_COUNTER_EVENT
 from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
-    OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event,
+    OPTIONAL_RESULT_LIMIT_KIND, ENCHANTMENT_COPY_LIMIT_VERSION, departure_trigger_limit_event,
+    supported_enchantment_entry_copy_limit,
     supported_optional_result_limit, supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..dungeon_progress import DUNGEON_VENTURE_FIELD
@@ -91,6 +92,8 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
             return None
         if supported_countered_combat_optional_result(node):
             limit = TriggerLimitSpec(4, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        elif supported_enchantment_entry_copy_limit(node):
+            limit = TriggerLimitSpec(ENCHANTMENT_COPY_LIMIT_VERSION, kind=OPTIONAL_RESULT_LIMIT_KIND)
         elif supported_optional_result_limit(node):
             limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
         else:

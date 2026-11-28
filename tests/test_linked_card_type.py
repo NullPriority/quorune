@@ -242,3 +242,177 @@ class LinkedCardTypeTests(InheritedNativeFixture, unittest.TestCase):
         game, _ = self.choose_type(game, "A", "plane", resume=True)
         self.assertEqual("battlefield", game.state.cards[stenn.object_id].zone)
         self.replay(game, load=True)
+
+
+EMISSARY = "Serra's Emissary"
+
+
+class LinkedCardTypeProtectionTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        db_path = Path(cls.temporary.name) / "linked-card-type-protection.sqlite3"
+        build_fixture_database(
+            [ROOT / "tests/fixtures/linked-card-type-cards.json",
+             ROOT / "tests/fixtures/entry-chosen-player-protection-cards.json",
+             ROOT / "tests/fixtures/curse-of-opulence-cards.json",
+             ROOT / "tests/fixtures/activation-paid-creature-subtype-cards.json"], db_path,
+        )
+        cls.db = CardDatabase(db_path)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Linked type Protection", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    def test_emissary_exact_pair_rejects_unlinked_or_withdrawn_authority(self):
+        from quorune.linked_card_type import PROTECTION_CAPABILITY, PROTECTION_ENTRY_TEMPLATE, PROTECTION_TEMPLATE
+
+        record = self.db.lookup(EMISSARY, fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": PROFILE}
+        ir = compile_oracle_card(record, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        pair = [node for node in ir.faces[0].nodes
+                if node.template_id in {PROTECTION_ENTRY_TEMPLATE, PROTECTION_TEMPLATE}]
+        self.assertEqual(2, len(pair))
+        self.assertTrue(all(PROTECTION_CAPABILITY in node.capability_dependencies for node in pair))
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(), **options)
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=PROFILE)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+        text = record.oracle_text
+        for alternative in (text.splitlines()[1], text.splitlines()[2],
+                            text.replace("choose a card type.", "choose a card type other than creature or land."),
+                            text.replace("creatures you control", "creatures your opponents control")):
+            with self.subTest(alternative=alternative):
+                changed = compile_oracle_card(replace(record, oracle_text=alternative), **options)
+                self.assertTrue(changed.material_residuals)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        entry = next(row for row in raw["capabilities"] if row["id"] == PROTECTION_CAPABILITY)
+        entry.update(status="blocked", blockers=["Withdrawal test"])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified(self.registry.evidence_fingerprint)
+        withheld = compile_oracle_card(record, capability_registry=withdrawn, capability_profile=PROFILE)
+        with patch("quorune.compiler.linked_card_type_nodes.linked_card_type_face_rows", return_value={}):
+            omitted = compile_oracle_card(record, **options)
+        for result in (withheld, omitted):
+            self.assertTrue(result.material_residuals)
+            self.assertFalse(any(node.exact and node.template_id in {
+                PROTECTION_ENTRY_TEMPLATE, PROTECTION_TEMPLATE,
+            } for node in result.faces[0].nodes))
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def choose_type(self, game, actor, source, card_type, *, stale=None):
+        decision = game.state.pending_decision
+        self.assertEqual(("replacement.order", [actor]), (decision.kind, decision.actors))
+        view = game.packet("pilot:" + actor, full=True)["decision"]
+        options = {row["id"].rsplit(":", 1)[-1]: row["id"] for row in view["ctx"]["options"]}
+        self.assertEqual(EXPECTED_TYPES | {"creature", "land"}, set(options))
+        selected = options[card_type]
+        command = {"action_id": "choose", "choices": {"replacement": selected}}
+        self.reject(game, "D", command)
+        for invalid in ("aura", "basic"):
+            fake = selected.rsplit(":", 1)[0] + ":" + invalid
+            self.reject(game, actor, {"action_id": "choose", "choices": {"replacement": fake}})
+        if stale is not None:
+            self.assertNotIn(stale, options.values())
+            self.reject(game, actor, {"action_id": "choose", "choices": {"replacement": stale}})
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:" + actor, command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        current = game.state.cards[source.object_id]
+        self.assertEqual(("battlefield", actor), (current.zone, current.controller))
+        self.assertEqual(card_type, current.annotations[ANNOTATION]["choice"]["card_type"])
+        return game, selected
+
+    def test_emissary_protects_player_and_current_creatures_from_instants(self):
+        game = self.session(702160421)
+        source = self.add(game.engine, EMISSARY, zone="hand")
+        ally = self.add(game.engine, "Grizzly Bears", ref="emissary-ally")
+        enemy = self.add(game.engine, "Grizzly Bears", seat="B", ref="emissary-enemy")
+        shock = self.add(game.engine, "Shock", seat="B", zone="hand")
+        fallout = self.add(game.engine, "Volcanic Fallout", seat="B", zone="hand")
+        for card in (source, ally, enemy, shock, fallout):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"W": 3, "C": 4})
+        game.state.players["B"].mana_pool.update({"R": 3, "C": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.resolve(game)
+        game, _ = self.choose_type(game, "A", source, "instant")
+        self.priority(game, "B")
+        offer = self.action(game, "B", shock)
+        legal = set(offer["target_schema"]["legal_refs"])
+        self.assertTrue({"B", "C", enemy.ref} <= legal, legal)
+        self.assertTrue({"A", source.ref, ally.ref}.isdisjoint(legal), legal)
+        for forbidden in ("A", source.ref, ally.ref):
+            self.reject(game, "B", {"action_id": offer["id"], "pay": "auto", "targets": [forbidden]})
+        life = {seat: game.state.players[seat].life for seat in "ABCD"}
+        self.cast_for(game, "B", fallout)
+        self.resolve_top(game)
+        self.assertEqual(life["A"], game.state.players["A"].life)
+        self.assertEqual([life[seat] - 2 for seat in "BCD"], [game.state.players[seat].life for seat in "BCD"])
+        for protected in (source, ally):
+            current = game.state.cards[protected.object_id]
+            self.assertEqual(("battlefield", 0), (current.zone, current.marked_damage))
+        self.assertEqual("graveyard", game.state.cards[enemy.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_emissary_rechecks_auras_moves_with_control_and_rechooses_after_blink(self):
+        from quorune.attachments import attach_objects, attach_to_player
+        from quorune.protection import ProtectionSource, ProtectionVerdict, protection_verdict
+        from quorune.semantic_runtime.player_target_protection import current_player_protection_characteristics
+
+        game = self.session(702160422)
+        source = self.add(game.engine, EMISSARY, zone="hand")
+        ally = self.add(game.engine, "Grizzly Bears", ref="emissary-ally")
+        enemy = self.add(game.engine, "Grizzly Bears", seat="B", ref="emissary-enemy")
+        aura = self.add(game.engine, "Pacifism", seat="C")
+        curse = self.add(game.engine, "Curse of Opulence", seat="C")
+        donate = self.add(game.engine, "Donate", zone="hand")
+        blink = self.add(game.engine, "Cloudshift", seat="B", zone="hand")
+        for card in (source, ally, enemy, aura, curse, donate, blink):
+            self.assert_closed(game, card)
+        attach_objects(game.state.cards, aura, ally, players=game.state.players, source_timestamp=aura.zone_timestamp)
+        attach_to_player(game.state.cards, game.state.players, curse, "A", source_timestamp=curse.zone_timestamp)
+        self.prepare(game, mana={"W": 3, "U": 1, "C": 6})
+        game.state.players["B"].mana_pool["W"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", source, reserve={"C": 2, "U": 1})
+        self.resolve(game)
+        game, prior = self.choose_type(game, "A", source, "enchantment")
+
+        for attachment in (aura, curse):
+            attached = game.state.cards[attachment.object_id]
+            self.assertEqual(("graveyard", None), (attached.zone, attached.attached_to))
+        identity = game.state.cards[source.object_id].logical_object_id
+
+        def player_protection(seat, kind):
+            facts = current_player_protection_characteristics(game.engine, seat)
+            return protection_verdict(facts, ProtectionSource(card_types=frozenset({kind})))
+
+        self.assertEqual(ProtectionVerdict.BLOCKED, player_protection("A", "enchantment"))
+        self.assertEqual(ProtectionVerdict.ALLOWED, player_protection("B", "enchantment"))
+        self.cast_for(game, "A", donate, ["B", source.ref])
+        self.resolve_top(game)
+        current = game.state.cards[source.object_id]
+        self.assertEqual((identity, "B"), (current.logical_object_id, current.controller))
+        self.assertEqual(ProtectionVerdict.ALLOWED, player_protection("A", "enchantment"))
+        self.assertEqual(ProtectionVerdict.BLOCKED, player_protection("B", "enchantment"))
+        self.cast_for(game, "B", blink, [source.ref])
+        self.resolve(game)
+        game, _ = self.choose_type(game, "B", source, "creature", stale=prior)
+        current = game.state.cards[source.object_id]
+        self.assertNotEqual(identity, current.logical_object_id)
+        self.assertEqual("A", current.owner)
+        self.assertEqual(ProtectionVerdict.ALLOWED, player_protection("B", "enchantment"))
+        self.assertEqual(ProtectionVerdict.BLOCKED, player_protection("B", "creature"))
+        self.assertEqual(ProtectionVerdict.ALLOWED, player_protection("A", "creature"))
+        self.assertFalse(game.engine._can_block(game.state.cards[enemy.object_id], game.state.cards[ally.object_id])[0])
+        self.replay(game, load=True)

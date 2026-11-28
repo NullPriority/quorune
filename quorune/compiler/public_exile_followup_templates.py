@@ -82,7 +82,34 @@ def attacking_creature_exile_search_template(text):
             ("fixed-public-zone-move", "fixed-public-zone-move-set", "cr-115-targets", ATTACKING_EXILE_SEARCH_MECHANIC))
 
 
+def _exile_land_search_compensation(text):
+    from ..public_zone_moves import PublicZoneDestination, PublicZoneOrigin, PublicZoneSeatRelation
+    from ..rules.affected_library_search_batch import (
+        EXILE_LAND_SEARCH_MECHANIC, EXILE_SEARCH_QUERY, exile_land_target_effect, exile_land_target_schema,
+    )
+
+    match = re.fullmatch(
+        r"Exile (target|each) creature you don['’]t control\. For each creature exiled this way, its controller "
+        r"searches their library for a basic land card\. Those players put those cards onto the battlefield tapped, "
+        r"then shuffle(?: their libraries)?\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    if match[1].casefold() == "target":
+        return ("targeted-exile-controller-land-search-v1", (exile_land_target_effect(),), exile_land_target_schema(),
+                ("fixed-homogeneous-target-set", "exile", "cr-115-targets", EXILE_LAND_SEARCH_MECHANIC))
+    spec = PublicZoneMoveSetSpec(query=EXILE_SEARCH_QUERY, origin=PublicZoneOrigin.BATTLEFIELD,
+        destination=PublicZoneDestination.EXILE, seat_relation=PublicZoneSeatRelation.OPPONENTS)
+    effect = {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict(),
+              "followup": PublicExileFollowup.controller_land_search().to_dict()}
+    return ("public-exile-controller-land-search-v1", (effect,), None,
+            ("fixed-public-zone-move", "fixed-public-zone-move-set", EXILE_LAND_SEARCH_MECHANIC))
+
+
 def public_exile_followup_template(text: str, *, compile_literal):
+    if compensation := _exile_land_search_compensation(text):
+        return compensation
     if attacking_search := attacking_creature_exile_search_template(text):
         return attacking_search
     if opponent_draw := _opponent_exile_draw_template(text):

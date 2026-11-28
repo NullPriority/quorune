@@ -33,6 +33,10 @@ class OptionalDrawAttackRestrictionTests(InheritedNativeFixture, unittest.TestCa
             fixtures / "cast-participant-optional-opponent-draw-cards.json",
             fixtures / "redirected-draw-cards.json",
             fixtures / "optional-draw-attack-restriction-cards.json",
+            fixtures / "counter-replacement-cards.json",
+            fixtures / "announced-destruction-controller-tokens-cards.json",
+            fixtures / "target-player-sequence-cards.json",
+            fixtures / "event-spell-copy-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -97,6 +101,169 @@ class OptionalDrawAttackRestrictionTests(InheritedNativeFixture, unittest.TestCa
         choices = {option["value"] for option in row["options"]}
         self.assertTrue(set(legal) <= choices, choices)
         self.assertTrue(set(barred).isdisjoint(choices), choices)
+
+    def _palantir(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Palant\u00edr of Orthanc", ref="palantir-source")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _palantir_target(self, game, opponent="B"):
+        self.target(game, "A", [opponent])
+
+    def _palantir_scry(self, game, cards, *, reload=False):
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        a_packet = json.dumps(game.packet("pilot:A", full=True))
+        for card in cards:
+            self.assertIn(card.ref, a_packet)
+            for principal in ("pilot:B", "pilot:C", "spectator"):
+                self.assertNotIn(card.ref, json.dumps(game.packet(principal, full=True)))
+        if reload:
+            game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose",
+                                      "cards": {"top": [card.ref for card in cards], "bottom": []}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        return game
+
+    def _palantir_answer(self, game, choice):
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", {"action_id": "choose", "choice": choice}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:B", {"action_id": "choose", "choice": choice})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_palantir_uses_the_post_replacement_influence_count_and_public_milled_mana_values(self):
+        game, source = self._palantir(61012401)
+        self.add(game.engine, "Doubling Season")
+        self.add(game.engine, "Rest in Peace")
+        self.add(game.engine, "Leyline of the Void", seat="B")
+        third = self.add(game.engine, "Grizzly Bears", zone="library", ref="palantir-unmilled")
+        second = self.add(game.engine, "Darksteel Myr", zone="library", ref="palantir-mana-three")
+        top = self.add(game.engine, "Doubling Season", zone="library", ref="palantir-mana-five")
+        self.prepare(game)
+        self.checkpoint(game)
+        initial = game.state.players["B"].life
+        self._palantir_target(game)
+        game = self._palantir_scry(game, (top, second), reload=True)
+        self.assertEqual(2, game.state.cards[source.object_id].counters["influence"])
+        game = self.replay(game, load=True)
+        self._palantir_answer(game, "decline")
+        for _ in range(4):
+            pending = self.resolve(game)
+            if pending is None:
+                break
+            self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
+            self.assertEqual(initial, game.state.players["B"].life)
+            game = self.replay(game, load=True)
+            options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            result = game.act("pilot:A", {"action_id": "choose", "replacement": options[0]["id"]})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(initial - 8, game.state.players["B"].life)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "exile" for card in (top, second)))
+        self.assertEqual("library", game.state.cards[third.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_palantir_uses_departed_source_counters_and_skips_the_placement(self):
+        game, source = self._palantir(61012402)
+        source.counters["influence"] = 1
+        bastion = self.add(game.engine, "Karn's Bastion")
+        for i in range(4):
+            self.add(game.engine, "Generic Bound Plains", ref=f"palantir-a-bastion-land-{i}")
+        removal = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+        second = self.add(game.engine, "Darksteel Myr", zone="library", ref="palantir-lki-second")
+        top = self.add(game.engine, "Grizzly Bears", zone="library", ref="palantir-lki-top")
+        self.prepare(game)
+        for i in range(2):
+            self.add(game.engine, "Generic Bound Plains", seat="B", ref=f"palantir-b-removal-land-{i}")
+        self.checkpoint(game)
+        initial = game.state.players["B"].life
+        self._palantir_target(game)
+        self.priority(game, "A")
+        rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in rows if row["id"].startswith(f"activate:{bastion.ref}:")
+                   and "proliferate" in row["label"].casefold())
+        result = game.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        result = game.act("pilot:A", {"action_id": "choose", "objects": [source.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, game.state.cards[source.object_id].counters["influence"])
+        self.cast(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        game = self.replay(game, load=True)
+        game = self._palantir_scry(game, (top, second))
+        self._palantir_answer(game, "decline")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(initial - 5, game.state.players["B"].life)
+        self.assertEqual("graveyard", game.state.cards[top.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[second.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_palantir_draw_branch_and_illegal_target_leave_mill_unused(self):
+        for illegal in (False, True):
+            with self.subTest(illegal=illegal):
+                game, source = self._palantir(61012403 + illegal)
+                second = self.add(game.engine, "Darksteel Myr", zone="library", ref="palantir-draw-second")
+                top = self.add(game.engine, "Grizzly Bears", zone="library", ref="palantir-draw-top")
+                if illegal:
+                    self.add(game.engine, "Vedalken Orrery", seat="B")
+                    leyline = self.add(game.engine, "Leyline of Sanctity", seat="B", zone="hand")
+                    for i in range(4):
+                        self.add(game.engine, "Generic Bound Plains", seat="B", ref=f"palantir-b-leyline-land-{i}")
+                self.prepare(game)
+                self.checkpoint(game)
+                initial = game.state.players["B"].life
+                self._palantir_target(game)
+                if illegal:
+                    self.cast(game, "B", leyline, [])
+                    self.resolve_top(game)
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual({}, game.state.cards[source.object_id].counters)
+                    self.assertEqual("library", game.state.cards[top.object_id].zone)
+                else:
+                    game = self._palantir_scry(game, (top, second))
+                    self._palantir_answer(game, "draw")
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual(1, game.state.cards[source.object_id].counters["influence"])
+                    self.assertEqual("hand", game.state.cards[top.object_id].zone)
+                self.assertEqual(initial, game.state.players["B"].life)
+                self.assertEqual("library", game.state.cards[second.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_palantir_only_announced_opponent_departing_skips_the_whole_trigger(self):
+        game, source = self._palantir(61012411)
+        card = self.add(game.engine, "Grizzly Bears", zone="library", ref="palantir-target-departed")
+        self.prepare(game)
+        self.checkpoint(game)
+        self._palantir_target(game)
+        game = self.replay(game, load=True)
+        self.priority(game, "B")
+        result = game.act("pilot:B", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.players["B"].in_game)
+        self.assertEqual({}, game.state.cards[source.object_id].counters)
+        self.assertEqual("library", game.state.cards[card.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_palantir_compiler_requires_the_whole_targeted_end_step_ability(self):
+        from quorune.rules.source_counter_mill_choice import END_STEP_MILL_CAPABILITY
+
+        record = self.db.lookup("Palant\u00edr of Orthanc", fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertEqual(("counter", "scry", "offer_draw"), tuple(effect["op"] for effect in node.effects))
+            self.assertEqual("opponent", node.target_schema["player_relation"])
+            self.assertIn(END_STEP_MILL_CAPABILITY, node.capability_dependencies)
+        witness()
+        with patch("quorune.compiler.source_counter_mill_templates.source_counter_mill_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
 
     def test_native_apnap_draws_and_each_opponents_next_attack_turn(self):
         game = self.session(61012101)

@@ -5,17 +5,21 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Literal, Mapping, Protocol, Sequence
 
+from .turn_skip_model import TurnBoundary
+
 if TYPE_CHECKING:
     from .model import GameState
 
 
 PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD = "priority_concession_stabilization_version"
 PRIORITY_CONCESSION_RESUME_FIELD = "priority_concession_resume_from"
+POST_RESOLUTION_PRIORITY_VERSION_FIELD = "post_resolution_priority_version"
+POST_RESOLUTION_PRIORITY_SEAT_FIELD = "post_resolution_priority_seat"
 PRIORITY_WINDOW_HOLDS_FIELD = "priority_window_holds"
 PRIORITY_STOP_IDS = (
     "upkeep", "draw", "precombat_main", "combat", "beginning_combat",
     "declare_attackers", "declare_blockers", "first_strike_damage",
-    "combat_damage", "end_combat", "postcombat_main", "end_step", "cleanup",
+    "combat_damage", "end_combat", "postcombat_main", "end_step", "before_my_turn", "cleanup",
 )
 TURN_CONTROL_LIFETIME_VERSION_FIELD = "turn_control_lifetime_version"
 FIXED_NEXT_TURN_CONTROL_MECHANIC = "fixed-control-target-players-next-turn"
@@ -59,6 +63,27 @@ def read_priority_concession_resume(value: Mapping[str, Any]) -> str | None:
     return anchor
 
 
+def read_post_resolution_priority_version(value: Mapping[str, Any]) -> int | None:
+    if POST_RESOLUTION_PRIORITY_VERSION_FIELD not in value:
+        return None
+    version = value[POST_RESOLUTION_PRIORITY_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise ValueError("Unsupported post-resolution priority version")
+    return version
+
+
+def read_post_resolution_priority_seat(value: Mapping[str, Any]) -> str | None:
+    if POST_RESOLUTION_PRIORITY_SEAT_FIELD not in value:
+        return None
+    seat = value[POST_RESOLUTION_PRIORITY_SEAT_FIELD]
+    if (
+        read_post_resolution_priority_version(value) != 1
+        or type(seat) is not str or seat not in value.get("turn_order", ())
+    ):
+        raise ValueError("Post-resolution priority requires a known physical seat")
+    return seat
+
+
 def apnap_participants(
     turn_order: Sequence[str], participants: Sequence[str], turn_anchor: str | None,
 ) -> tuple[str, ...]:
@@ -88,6 +113,31 @@ YieldInvalidationReason = Literal[
 ]
 
 
+def upcoming_turn_player(state: GameState) -> str | None:
+    """Read the currently scheduled next player without consuming turns or skips."""
+    skips = {
+        grant.player: grant.spec.count for grant in state.scheduled_turn_skips
+        if grant.applies(grant.player, TurnBoundary.TURN, state.turn_sequence)
+    }
+    for entry in state.extra_turns:
+        if not state.players[entry.player].in_game:
+            continue
+        if entry.skip_steps:
+            return None
+        if not skips.get(entry.player):
+            return entry.player
+        skips[entry.player] -= 1
+
+    order = tuple(state.turn_order)
+    if not order:
+        return None
+    anchor = order.index(state.last_normal_turn_player or order[0])
+    rotation = (*order[anchor + 1:], *order[:anchor + 1])
+    active = [seat for seat in rotation if state.players[seat].in_game]
+    # Each normal cycle uses one of a player's remaining whole-turn skips.
+    return min(active, key=lambda seat: skips.get(seat, 0), default=None)
+
+
 @dataclass(frozen=True, slots=True)
 class PriorityWindowHolds:
     """Seat preferences that preserve ordinary priority decisions in fast mode."""
@@ -101,11 +151,16 @@ class PriorityWindowHolds:
         ) or len(set(self.steps)) != len(self.steps):
             raise ValueError("Priority holds require distinct known steps and a boolean empty-window preference")
 
-    def matches(self, state: GameState) -> bool:
+    def matches(self, state: GameState, seat: str | None = None) -> bool:
         step = state.step
         if step == "combat_damage" and state.combat.first_strike_step and state.combat.damage_step_index == 0:
             step = "first_strike_damage"
-        return self.preserve_empty or step in self.steps or state.phase in self.steps
+        if self.preserve_empty or step in self.steps or state.phase in self.steps:
+            return True
+        return (
+            seat is not None and step == "end_step" and "before_my_turn" in self.steps
+            and upcoming_turn_player(state) == seat
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {"steps": list(self.steps), "preserve_empty": self.preserve_empty}

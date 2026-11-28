@@ -10,6 +10,7 @@ from ..fixed_top_exile import ResolvingExileLandPlayIntent, validate_resolving_l
 from ..rules.shared_type_library_play_model import (
     ResolvingSharedTypeLibraryPlayIntent, validate_shared_type_play_identity,
 )
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent, validate_qualified_library_cast_identity
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent, validate_captured_draw_cast_identity
 from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
@@ -351,6 +352,8 @@ def _simultaneous_move_intent_identity(
 ) -> tuple[str, dict[str, Any]]:
     from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
     if isinstance(intent, GraveyardLibraryCostBatchIntent):return 'graveyard_library_cost_batch', intent.identity()
+    from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
+
     identity = {
         "actor": intent.actor,
         "object_refs": list(intent.object_refs),
@@ -368,6 +371,14 @@ def _simultaneous_move_intent_identity(
         identity["discard_effect_origin"] = intent.discard_effect_origin.to_dict()
     if intent.entry_life_payment_refs:
         identity["entry_life_payment_refs"] = list(intent.entry_life_payment_refs)
+    if isinstance(intent, MultiownerFrontFaceGraveyardReturnIntent):
+        identity["multiowner_graveyard_creature_return"] = 1
+    from ..semantic_runtime.linked_landfall_settlement_intent import LinkedLandfallSettlementIntent
+    if isinstance(intent,LinkedLandfallSettlementIntent):
+        identity["linked_landfall_settlement"]={
+            **({"damage_source":thaw_value(intent.damage_source)} if intent.spawn_receipt is None
+               else {"spawn_receipt":thaw_value(intent.spawn_receipt)}),
+            "orders":intent.orders.to_dict() if intent.orders is not None else None}
     return "move_objects_simultaneously", identity
 
 
@@ -409,6 +420,8 @@ def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] |
     if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
     if isinstance(intent, ResolvingSharedTypeLibraryPlayIntent):
         return 'resolving_shared_type_library_play', intent.identity()
+    if isinstance(intent, ResolveQualifiedLibraryCastIntent):
+        return 'resolving_qualified_library_cast', intent.identity()
     if isinstance(intent, ResolveCapturedDrawCastIntent):return 'resolving_captured_draw_cast', intent.identity()
     if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
     return None
@@ -446,6 +459,8 @@ def _counter_batch_intent_identity(intent: PlaceCounterBatchIntent) -> dict[str,
         value["paired_source"] = {"schema_version": 1, "ref": intent.paired_source_ref}
     if intent.recipient_identity is not None:
         value["recipient_identity"] = intent.recipient_identity
+        if intent.source_departure:
+            value["source_departure"] = True
     return value
 
 
@@ -573,10 +588,13 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
             )
         if intent.library_face_down_entry:
             identity['cloak_entry' if intent.cloak_entry else 'manifest_entry'] = True
-        return (
-            "zone_move",
-            identity,
-        )
+        from ..semantic_runtime.entry_enchantment_return_intent import EntryEnchantmentReturnIntent
+
+        if isinstance(intent, EntryEnchantmentReturnIntent):
+            return "enchantment_entry_return", {**identity, "entry_source_ref": intent.entry_source_ref}
+        if intent.transformed_entry:
+            identity["transformed_entry"] = True
+        return "zone_move", identity
     if isinstance(intent, MoveObjectsSimultaneouslyIntent):
         return _simultaneous_move_intent_identity(intent)
     if isinstance(intent, SurveilLibraryIntent):
@@ -802,6 +820,7 @@ def _validate_library_selection_intent_identity(
     from ..graveyard_arrival_order_model import GraveyardArrivalOrders
     from ..linked_library_imprint_model import LIBRARY_IMPRINT_DESTINATION
     from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
+    from ..rules.library_selection import PRIVATE_PARTITION_ROLE_DESTINATIONS
 
     if (
         not isinstance(value, Mapping)
@@ -825,6 +844,7 @@ def _validate_library_selection_intent_identity(
         or set(raw) != expected_fields
         or 'selected_destination' in raw and raw['selected_destination'] not in {
             'library_top', 'battlefield', LIBRARY_IMPRINT_DESTINATION, PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION,
+            *PRIVATE_PARTITION_ROLE_DESTINATIONS,
         }
         or not isinstance(raw["looked"], (list, tuple))
     ):
@@ -889,6 +909,11 @@ def validate_semantic_intent_identity(
     if kind == 'exile_graveyard_copies':
         try:return decode_exile_graveyard_copies_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_qualified_library_cast':
+        try:
+            return validate_qualified_library_cast_identity(value)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == 'resolving_shared_type_library_play':
         try: return validate_shared_type_play_identity(value)
         except (TypeError, ValueError) as exc: raise SemanticChoiceError(str(exc)) from exc
@@ -973,9 +998,27 @@ def validate_semantic_intent_identity(
         return _validate_library_selection_intent_identity(value)
     if kind in {"move_objects_simultaneously", "graveyard_library_cost_batch"}:
         return _validate_simultaneous_move_intent_identity(value, kind=kind)
+    if kind == "enchantment_entry_return":
+        return _validate_enchantment_entry_identity(value)
     if kind != "zone_move":
         raise SemanticChoiceError("Unknown semantic intent continuation kind")
     return _validate_zone_move_intent_identity(value)
+
+
+def _validate_enchantment_entry_identity(value):
+    if not isinstance(value, Mapping):
+        raise SemanticChoiceError("Enchantment return identity must be an object")
+    source = value.get("entry_source_ref")
+    fields = {key: child for key, child in value.items() if key != "entry_source_ref"}
+    if "transformed_entry" in fields:
+        raise SemanticChoiceError("Transformed entry cannot carry an enchantment-setting intent")
+    result = _validate_zone_move_intent_identity(fields)
+    if (type(source) is not str or not source or source.startswith("$")
+            or result["expected_zones"] != ["graveyard"] or result["destination"] != "battlefield"
+            or type(result.get("expected_zone_change_counter")) is not int or not result["optional_if_missing"]
+            or result["new_controller"] is None or result.get("effect_entry_counters") != []):
+        raise SemanticChoiceError("Enchantment return lost its original source or graveyard incarnation")
+    return {**result, "entry_source_ref": source}
 
 
 def _validate_zone_move_intent_identity(value):
@@ -986,7 +1029,10 @@ def _validate_zone_move_intent_identity(value):
     if (type(manifest_entry) is not bool or type(cloak_entry) is not bool
             or manifest_entry and cloak_entry or 'cloak_entry' in value and not cloak_entry):
         raise SemanticChoiceError('A face-down zone intent requires one valid entry method')
-    actual = set(value) - {'manifest_entry', 'cloak_entry'}
+    transformed_entry = value.get("transformed_entry", False)
+    if "transformed_entry" in value and transformed_entry is not True:
+        raise SemanticChoiceError("Transformed entry must use its canonical intent marker")
+    actual = set(value) - {'manifest_entry', 'cloak_entry', 'transformed_entry'}
     if (
         actual != _ZONE_MOVE_FIELDS
         and actual != _ZONE_MOVE_EFFECT_ENTRY_FIELDS
@@ -1057,6 +1103,13 @@ def _validate_zone_move_intent_identity(value):
                 or type(value.get('expected_zone_change_counter')) is not int):
             raise SemanticChoiceError('Face-down intent library/controller binding is malformed')
         result['cloak_entry' if cloak_entry else 'manifest_entry'] = True
+    if transformed_entry:
+        if (manifest_entry or cloak_entry or value["expected_zones"] != ["graveyard"] or destination != "battlefield"
+                or new_controller is None or tapped_policy != "tapped"
+                or type(value.get("expected_zone_change_counter")) is not int or value["expected_zone_change_counter"] < 1
+                or value.get("effect_entry_counters")):
+            raise SemanticChoiceError("Transformed return has an invalid original graveyard identity")
+        result["transformed_entry"] = True
     if actual == _ZONE_MOVE_EFFECT_ENTRY_FIELDS:
         incarnation = value["expected_zone_change_counter"]
         if incarnation is not None and (
@@ -1098,6 +1151,19 @@ def _validate_zone_move_intent_identity(value):
     return result
 
 
+def _linked_landfall_intent_fields(value):
+    if "linked_landfall_settlement" not in value:
+        return MoveObjectsSimultaneouslyIntent, {}
+    from ..semantic_runtime.linked_landfall_settlement_intent import LinkedLandfallSettlementIntent
+    from ..graveyard_arrival_order_model import GraveyardArrivalOrders
+
+    data=value["linked_landfall_settlement"]
+    if not isinstance(data,Mapping) or set(data) not in ({"damage_source","orders"}, {"spawn_receipt","orders"}):
+        raise ValueError("Malformed linked settlement identity")
+    return LinkedLandfallSettlementIntent, {**{key: value for key, value in data.items() if key != "orders"},
+        "orders":GraveyardArrivalOrders.from_dict(data["orders"]) if data["orders"] is not None else None}
+
+
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
     *, kind: str = "move_objects_simultaneously",
@@ -1110,7 +1176,9 @@ def _validate_simultaneous_move_intent_identity(
 
     from ..public_zone_moves import PublicBattlefieldController
 
-    optional = {"library_order", "discard_effect_origin", "entry_life_payment_refs"}
+    from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
+
+    optional = {"library_order", "discard_effect_origin", "entry_life_payment_refs", "multiowner_graveyard_creature_return", "linked_landfall_settlement"}
     if not isinstance(value, Mapping) or set(value) - optional not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
@@ -1119,7 +1187,14 @@ def _validate_simultaneous_move_intent_identity(
             "Simultaneous-move intent identity fields are malformed"
         )
     try:
-        intent = MoveObjectsSimultaneouslyIntent(
+        multiowner = "multiowner_graveyard_creature_return" in value
+        if multiowner and (type(value["multiowner_graveyard_creature_return"]) is not int or value["multiowner_graveyard_creature_return"] != 1):
+            raise ValueError("Malformed multiowner creature return")
+        if multiowner and 'linked_landfall_settlement' in value:
+            raise ValueError('A move cannot carry both settlement and multiowner authorities')
+        owner, extra = (MultiownerFrontFaceGraveyardReturnIntent, {}) if multiowner else _linked_landfall_intent_fields(value)
+        intent = owner(
+            **extra,
             actor=value["actor"],
             object_refs=tuple(value["object_refs"]),
             expected_zones=tuple(value["expected_zones"]),
@@ -1132,7 +1207,8 @@ def _validate_simultaneous_move_intent_identity(
             ),
             library_order=LibraryArrivalOrder.from_dict(value["library_order"]) if "library_order" in value else None,
             discard_effect_origin=DiscardEffectOrigin.from_dict(value["discard_effect_origin"]) if "discard_effect_origin" in value else None,
-            battlefield_controller=PublicBattlefieldController.ACTOR if "entry_life_payment_refs" in value else None,
+            battlefield_controller=(PublicBattlefieldController.OWNER if multiowner
+                else PublicBattlefieldController.ACTOR if "entry_life_payment_refs" in value else None),
             entry_life_payment_refs=tuple(value.get("entry_life_payment_refs", ())),
         )
     except (TypeError, ValueError) as exc:
@@ -1178,7 +1254,9 @@ def _validate_life_change_intent_identity(
 def _validate_counter_batch_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) - {"paired_source", "recipient_identity"} != _COUNTER_BATCH_INTENT_FIELDS:
+    if not isinstance(value, Mapping) or set(value) - {"paired_source", "recipient_identity", "source_departure"} != _COUNTER_BATCH_INTENT_FIELDS:
+        raise SemanticChoiceError("Counter batch intent identity fields are malformed")
+    if "source_departure" in value and (value["source_departure"] is not True or "recipient_identity" not in value):
         raise SemanticChoiceError(
             "Counter batch intent identity fields are malformed"
         )
@@ -1217,6 +1295,7 @@ def _validate_counter_batch_intent_identity(
             source_ref=value["source_ref"],
             paired_source_ref=paired_source,
             recipient_identity=value.get("recipient_identity"),
+            source_departure=value.get("source_departure", False),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise SemanticChoiceError(
@@ -1407,6 +1486,7 @@ def with_replacement_selections(
     DiscoverCastIntent
     | ResolvingExileLandPlayIntent
     | ResolvingSharedTypeLibraryPlayIntent
+    | ResolveQualifiedLibraryCastIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
     | ResolveRippleCastIntent
@@ -1438,6 +1518,7 @@ def with_replacement_selections(
             DiscoverCastIntent,
             ResolvingExileLandPlayIntent,
             ResolvingSharedTypeLibraryPlayIntent,
+            ResolveQualifiedLibraryCastIntent,
             ResolveCapturedDrawCastIntent,
             ResolveBoundedHandCastIntent,
             ResolveRippleCastIntent,

@@ -43,6 +43,10 @@ $env:MTG_CARD_DB = "data/test-ci.sqlite3"
 the production client build. The legacy `--no-open` flag is a compatibility
 alias for the safe default.
 
+New games advance through empty priority windows automatically. Start with
+`--full-priority-windows` when a local diagnostic needs to observe each
+window. Individual players can also use the table's priority stops.
+
 ## Managed card data
 
 Without `MTG_CARD_DB`, startup checks the Scryfall Oracle and rulings bulk
@@ -105,6 +109,7 @@ staging and rerun the check before deployment.
 | `MTG_CARD_UPDATE_SECONDS` | Manifest-check interval |
 | `MTG_ALLOWED_ORIGINS` | Additional development/deployment browser origins |
 | `MTG_SECURE_COOKIES` | Require secure cookies behind HTTPS |
+| `MTG_COOKIE_NAMESPACE` | Public port for an additional listener on the same hostname |
 
 The server's own HTTP origin is accepted automatically for WebSocket upgrades;
 do not repeat it in `MTG_ALLOWED_ORIGINS`. Restrict additional origins exactly.

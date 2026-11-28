@@ -206,6 +206,7 @@ class ZoneMovePlan:
     manifest_entry: bool = False
     reveal_face_down_departure: bool = False
     cloak_entry: bool = False
+    meld_entry: Any = None
 
     @property
     def library_face_down_entry(self) -> bool:
@@ -309,3 +310,28 @@ __all__ = [
     "ZoneMovePlan",
     "ZoneTransitionHost",
 ]
+
+
+
+def prepare_move_entry_characteristics(host, card, enter_face, library_face_down_entry, destination, *, cloaked, meld_entry, type_setting=None):
+    if meld_entry is not None:
+        from .meld_entry import meld_entry_characteristics
+
+        return meld_entry_characteristics(card, meld_entry, destination)
+    from .entry_results import prospective_zone_entry
+
+    return prospective_zone_entry(host, card, enter_face, library_face_down_entry,
+                                  destination == "battlefield", cloaked=cloaked, type_setting=type_setting)
+
+
+def prepare_move_entry_life_payment(host, replacement):
+    if not replacement.entry_life_payment:
+        return None
+    if replacement.destination != "battlefield" or replacement.destination_controller is None:
+        raise GameRuleError("Entry life payments require a battlefield controller")
+    from .life_state import LifeStateError, prepare_life_payment
+
+    try:
+        return prepare_life_payment(host, replacement.destination_controller, replacement.entry_life_payment)
+    except LifeStateError as exc:
+        raise GameRuleError(str(exc)) from exc

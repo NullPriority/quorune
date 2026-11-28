@@ -4,10 +4,13 @@ from collections.abc import Mapping
 from typing import Any, Protocol
 
 from .keyword_abilities import normalized_characteristic_keywords
-from .semantic_runtime.player_target_protection import current_player_target_keywords
+from .semantic_runtime.player_target_protection import (
+    current_player_protection_characteristics, current_player_target_keywords,
+)
 from .model import CardInstance, GameState
 from .protection import (
     ProtectionQueryHost,
+    ProtectionSource,
     ProtectionVerdict,
     protection_verdict,
     protection_verdict_for_ref,
@@ -67,11 +70,11 @@ def target_protection_verdict_for_row(
     characteristics = (
         host._effective_card_data(card)
         if isinstance(card, CardInstance)
-        else {"keywords": []}
+        else current_player_protection_characteristics(host, protected_controller)
     )
     bound_source = getattr(acting_source, "protection_source", None)
     verdict = ProtectionVerdict.ALLOWED
-    if isinstance(card, CardInstance):
+    if not target_is_player or characteristics["ability_fragments"]:
         verdict = (
             protection_verdict(characteristics, bound_source, source_player=acting_controller)
             if bound_source is not None
@@ -107,16 +110,18 @@ def target_protection_verdict_for_row(
 def player_protection_allows_attachment(
     host: TargetProtectionEngineQuery,
     seat: str,
+    *, aura: CardInstance, controller: str,
 ) -> bool:
     """Apply represented player Protection to live attachment legality."""
 
     player = host.state.players.get(seat)
-    return bool(
-        player is not None
-        and not player.stats.get(
-            "protection_from_everything_until_next_turn"
-        )
-    )
+    if player is None or player.stats.get("protection_from_everything_until_next_turn"):
+        return False
+    characteristics = current_player_protection_characteristics(host, seat)
+    if not characteristics["ability_fragments"]:
+        return True
+    source = ProtectionSource.from_characteristics(host._effective_card_data(aura))
+    return protection_verdict(characteristics, source, source_player=controller) is ProtectionVerdict.ALLOWED
 
 
 __all__ = [

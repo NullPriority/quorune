@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
+from .committed_land_search_model import COMMITTED_LAND_SEARCH_VERSION
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .continuous_effect_model import ContinuousEffectDuration,ContinuousEffectError
@@ -22,6 +23,8 @@ DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.counted_disjunction"
 QUERY_BOUND_SEARCH_VERSION = 8
 TARGET_NAME_LIBRARY_SEARCH_VERSION = 10
 RECRUITING_LIBRARY_SEARCH_VERSION = 12
+SUBTYPE_GRAVEYARD_SEARCH_VERSION = 37
+SUBTYPE_GRAVEYARD_SEARCH_CAPABILITY = "library.search.optional_subtype_to_graveyard"
 ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION = 14
 EXILED_TARGET_SEARCH_VERSION = 16
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION = 17
@@ -53,6 +56,8 @@ DRAGON_GRAVEYARD_COPY_SEARCH_VERSION = 27
 CAST_X_ZONE_SEARCH_VERSION = 28
 PRIVATE_SEARCH_PLAY_VERSION = 29
 TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION = 30
+SEARCHED_LAND_UNTAP_VERSION = 38
+SEARCHED_LAND_UNTAP_CAPABILITY = "library.search.basic_land_after_shuffle_untap"
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_CAPABILITY = "library.search.fixed_creature_battlefield_group"
 TARGET_NAME_SEARCH_SNAPSHOT = "_target_name_search_snapshot"
 TARGET_NAME_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
@@ -77,6 +82,7 @@ def semantic_search_maximum(effect, minimum, option_count):
     if effect.get("schema_version") in (
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
         ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
+        SUBTYPE_GRAVEYARD_SEARCH_VERSION,
         CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     ):
         return option_count
@@ -184,6 +190,7 @@ def project_semantic_search_result_publication(
         "revealed": reveal,
     }
     name_multizone = effect.get("schema_version") == TARGET_NAME_MULTIZONE_EXILE_VERSION
+    searched_land_untap = effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION
     if effect.get("schema_version") in (6, CAST_X_ZONE_SEARCH_VERSION) or name_multizone:
         public_details["searched_zones"] = list(effect["zone"])
     if reveal:
@@ -200,12 +207,17 @@ def project_semantic_search_result_publication(
         moved=moved,
     )
     nonrevealing_printed_cost_search = printed_cost_public_cards is not None
-    actual_public_zones = nonrevealing_printed_cost_search or (
+    from .qualified_library_search_model import QUALIFIED_LIBRARY_SEARCH_VERSION
+
+    qualified_graveyard_search = (
+        effect.get("schema_version") == QUALIFIED_LIBRARY_SEARCH_VERSION and destination_spec == "graveyard"
+    )
+    actual_public_zones = nonrevealing_printed_cost_search or qualified_graveyard_search or (
         public_choice
         and effect.get("schema_version") in {
             9,
             *SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
-            COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
+            COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, COMMITTED_LAND_SEARCH_VERSION,
             TARGET_NAME_MULTIZONE_EXILE_VERSION,
             DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
             TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
@@ -215,6 +227,7 @@ def project_semantic_search_result_publication(
             PAID_ARTIFACT_SEARCH_VERSION,
             PAID_CREATURE_SEARCH_VERSION,
             CAST_X_ZONE_SEARCH_VERSION,
+            SEARCHED_LAND_UNTAP_VERSION,
         }
     )
     public_cards = public_order
@@ -227,8 +240,8 @@ def project_semantic_search_result_publication(
             and not card.face_down
         )
 
-    restrict_public_results = nonrevealing_printed_cost_search or (
-        public_choice and (name_multizone or effect.get("schema_version") in {
+    restrict_public_results = nonrevealing_printed_cost_search or qualified_graveyard_search or (
+        public_choice and (name_multizone or searched_land_untap or effect.get("schema_version") in {
             PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION, CAST_X_ZONE_SEARCH_VERSION,
         })
     )
@@ -248,7 +261,8 @@ def project_semantic_search_result_publication(
     private_details = {
         **public_details,
         **allocation_details,
-        **({"count": len(moved)} if name_multizone or nonrevealing_printed_cost_search or effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION else {}),
+        **({"count": len(moved)} if (name_multizone or searched_land_untap or nonrevealing_printed_cost_search
+           or qualified_graveyard_search or effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION) else {}),
         "objects": [card.ref for card in moved],
     }
     return SemanticSearchResultPublication(
@@ -506,6 +520,40 @@ class RecruitingLibrarySearchSpec:
         return spec
 
 
+def is_subtype_graveyard_search(effect):
+    return effect.get("op") == "search" and effect.get("schema_version") == SUBTYPE_GRAVEYARD_SEARCH_VERSION
+
+
+@dataclass(frozen=True, slots=True)
+class SubtypeGraveyardSearchSpec:
+    subtype: str
+
+    def __post_init__(self):
+        if type(self.subtype) is not str or canonical_creature_subtype(self.subtype) != self.subtype:
+            raise ValueError("Graveyard search requires one canonical creature subtype")
+
+    def effect(self):
+        return {
+            "op": "search", "schema_version": SUBTYPE_GRAVEYARD_SEARCH_VERSION, "zone": "library",
+            "selector": {"types_any": ["creature", "kindred"], "subtypes_any": [self.subtype]},
+            "count": {"minimum": 0, "maximum": "all_eligible"}, "destination": "graveyard",
+            "reveal": False, "shuffle_after": True,
+        }
+
+    @classmethod
+    def from_effect(cls, effect):
+        selector = effect.get("selector")
+        subtypes = selector.get("subtypes_any") if isinstance(selector, Mapping) else None
+        if not isinstance(subtypes, (list, tuple)) or len(subtypes) != 1:
+            raise ValueError("Graveyard search requires one canonical creature subtype")
+        spec = cls(subtypes[0])
+        if (FrozenMap(effect) != FrozenMap(spec.effect()) or type(effect.get("schema_version")) is not int
+                or type(effect["count"]["minimum"]) is not int or effect.get("reveal") is not False
+                or effect.get("shuffle_after") is not True):
+            raise ValueError("Subtype search requires its exact graveyard and shuffle instruction")
+        return spec
+
+
 @dataclass(frozen=True, slots=True)
 class AnyNumberCreatureSubtypeSearch:
     subtype: str
@@ -686,6 +734,39 @@ def is_bargain_search_effect(value) -> bool:
     )
 
 
+class SearchedLandUntapSearch:
+    """One tapped basic-land result with an ordered, identity-bound untap."""
+
+    def effect(self) -> dict[str, Any]:
+        search = FixedCountedLibrarySearchTemplate(
+            count=1,
+            optional_count=False,
+            selector=FrozenMap({"types": ["land"], "supertypes": ["basic"]}),
+            destination="battlefield",
+            reveal=False,
+            enters_tapped=True,
+        )
+        return {**search.effect(), "schema_version": SEARCHED_LAND_UNTAP_VERSION}
+
+    def compiled(self):
+        return (
+            "searched-basic-land-untap-v1", (self.effect(),), None,
+            (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,),
+        )
+
+    @classmethod
+    def from_effect(cls, effect: Mapping[str, Any]) -> SearchedLandUntapSearch:
+        spec = cls()
+        if (
+            not isinstance(effect, Mapping)
+            or type(effect.get("schema_version")) is not int
+            or FrozenMap(effect) != FrozenMap(spec.effect())
+        ):
+            raise ValueError("Searched-land untap requires the complete tapped basic-land search")
+        FixedCountedLibrarySearchTemplate.from_effect({**effect, "schema_version": 2})
+        return spec
+
+
 def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
     from .named_search_model import LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION
 
@@ -695,11 +776,12 @@ def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
         ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, EXILED_TARGET_SEARCH_VERSION,
         FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
-        TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
+        COMMITTED_LAND_SEARCH_VERSION, TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION,
         CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
         PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
         BARGAIN_SEARCH_VERSION,
         PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
+        SEARCHED_LAND_UNTAP_VERSION,
     ) or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
@@ -709,6 +791,9 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     """Validate disjunctions and persisted X bounds before search opens."""
     if effect.get("op") != "search":
         return ()
+    if effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION:
+        SearchedLandUntapSearch.from_effect(effect)
+        return FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, SEARCHED_LAND_UNTAP_CAPABILITY
     if effect.get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION:
         return TargetNameLibrarySearchSpec.from_effect(effect).capabilities()
     if effect.get("schema_version") == PRIVATE_SEARCH_RANDOM_DISCARD_VERSION:
@@ -732,6 +817,13 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
         return FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, CREATURE_SUBSET_MANA_VALUE_SEARCH_CAPABILITY
     if effect.get("schema_version") == COMMITTED_ATTACKING_EXILE_SEARCH_VERSION:
         raise ValueError("An attacker search count must come from committed exile")
+    if effect.get("schema_version") == COMMITTED_LAND_SEARCH_VERSION:
+        from .committed_land_search_model import (
+            COMMITTED_LAND_SEARCH_CAPABILITY, validate_land_sacrifice_search_recipe,
+        )
+
+        validate_land_sacrifice_search_recipe(effect)
+        return FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, COMMITTED_LAND_SEARCH_CAPABILITY
     if effect.get("schema_version") == TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION:
         validate_target_player_basic_land_search(effect)
         return TARGET_PLAYER_BASIC_LAND_SEARCH_CAPABILITIES
@@ -743,6 +835,12 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
         from .library_order_model import TOP_ORDER_CAPABILITY
 
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, TOP_ORDER_CAPABILITY)
+    if is_subtype_graveyard_search(effect):
+        SubtypeGraveyardSearchSpec.from_effect(effect)
+        from .graveyard_arrival_order_model import GRAVEYARD_ARRIVAL_ORDER_CAPABILITY
+
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, SUBTYPE_GRAVEYARD_SEARCH_CAPABILITY,
+                GRAVEYARD_ARRIVAL_ORDER_CAPABILITY)
     if effect.get('schema_version') == QUERY_BOUND_SEARCH_VERSION:
         return QueryBoundLibrarySearchSpec.from_effect(effect).capabilities()
     if effect.get('schema_version') == 7:
@@ -766,6 +864,11 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID)
     if is_up_to_two_forest_search(effect):
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, UP_TO_TWO_FOREST_BATCH_CAPABILITY)
+    if is_ordered_creature_graveyard_search(effect):
+        from .graveyard_arrival_order_model import GRAVEYARD_ARRIVAL_ORDER_CAPABILITY
+
+        FixedCountedLibrarySearchTemplate.from_effect(effect)
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, GRAVEYARD_ARRIVAL_ORDER_CAPABILITY)
     from .entry_x_amount_model import ENTRY_X_AMOUNT_KIND, EntryXAmountSpec, entry_x_amount_dependencies
     from .query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec, cast_x_runtime_dependencies
 
@@ -881,6 +984,18 @@ def is_up_to_two_forest_search(effect):
     return FrozenMap(identities) == FrozenMap(expected)
 
 
+def is_ordered_creature_graveyard_search(effect: Mapping[str, Any]) -> bool:
+    count = effect.get("count")
+    return (
+        effect.get("op") == "search"
+        and effect.get("schema_version") == 2
+        and effect.get("destination") == "graveyard"
+        and isinstance(count, Mapping)
+        and type(count.get("maximum")) is int
+        and count["maximum"] > 1
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class FixedCountedLibrarySearchTemplate:
     count: int
@@ -917,13 +1032,22 @@ class FixedCountedLibrarySearchTemplate:
             raise ValueError("Fixed search selector is outside the closed vocabulary")
         object.__setattr__(self, "selector", FrozenMap(self.selector))
         if (self.count > 1 and self.destination != "hand"
-                and not (self._tapped_land_batch() or self.up_to_two_forest_batch or self.shared_land_type)):
+                and not (self._tapped_land_batch() or self.up_to_two_forest_batch
+                         or self.shared_land_type or self._ordered_creature_graveyard_batch())):
             raise ValueError("Fixed search destination or cardinality is unsupported")
 
     @property
     def up_to_two_forest_batch(self):
         return (self.count == 2 and self.optional_count and self.destination == "battlefield"
                 and not self.reveal and not self.enters_tapped and self.selector == _TWO_FOREST_SELECTOR)
+
+    def _ordered_creature_graveyard_batch(self) -> bool:
+        return (
+            self.destination == "graveyard"
+            and self.optional_count
+            and not self.reveal
+            and self.selector == FrozenMap({"types": ["creature"]})
+        )
 
     def _tapped_land_batch(self) -> bool:
         return (
@@ -1015,32 +1139,13 @@ class QueryBoundLibrarySearchSpec:
     enters_tapped: bool = True
 
     def __post_init__(self):
-        from .query_effect_amount_model import PublicQueryAmountSpec
-        from .characteristic_fragments import (
-            CharacteristicQuantitySpec,CharacteristicQuantityScope,CharacteristicQuantityReduction,
-        )
-        from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
-        if (not isinstance(self.amount,PublicQueryAmountSpec) or self.amount.schema_version!=1
-                or self.amount.coefficient!=1 or self.amount.binding_id is not None):
-            raise ValueError('Query-bounded search requires one unbound positive public quantity')
-        allowed=(
-            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
-                ObjectQuerySpec(zones=('battlefield',),types_all=('land',))),
-            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
-                ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),tapped=True)),
-            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
-                ObjectQuerySpec(zones=('battlefield',),types_all=('enchantment',),subtypes_all=('shrine',))),
-            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
-                ObjectQuerySpec(zones=('battlefield',)),schema_version=2,
-                reduction=CharacteristicQuantityReduction.DISTINCT_COLORS),
-        )
-        q=self.amount.quantity
-        if q not in allowed and not (isinstance(q,LiveBattlefieldQuantitySpec) and q.schema_version==3):
-            raise ValueError('Query-bounded search maximum is outside the closed public profiles')
+        from .query_effect_amount_model import validate_query_bound_search_amount
+
         if (type(self.reveal) is not bool or type(self.enters_tapped) is not bool
                 or (self.destination,self.reveal,self.enters_tapped) not in {
                     ('battlefield',False,True),('hand',True,False)}):
             raise ValueError('Query-bounded search requires its complete printed placement')
+        validate_query_bound_search_amount(self.amount, tapped_battlefield=self.destination == 'battlefield')
 
     def effect(self):
         value={'op':'search','schema_version':QUERY_BOUND_SEARCH_VERSION,'zone':'library',
@@ -1052,17 +1157,20 @@ class QueryBoundLibrarySearchSpec:
         return value
 
     def resolved_effect(self,value,frozen_amount):
-        from .query_effect_amount_model import PublicQueryAmountSpec
-        if (type(value) is not int or value<0 or not isinstance(frozen_amount,PublicQueryAmountSpec)
-                or frozen_amount.schema_version!=2 or frozen_amount.quantity!=self.amount.quantity
-                or frozen_amount.coefficient!=1):
+        from .query_effect_amount_model import matches_frozen_query_bound_search_amount
+
+        if (type(value) is not int or value < 0
+                or not matches_frozen_query_bound_search_amount(self.amount, frozen_amount)):
             raise ValueError('Resolved query search limit is malformed')
         return {**self.effect(),'count':{'minimum':0,'maximum':value},
             QUERY_BOUND_SEARCH_RESOLVED:frozen_amount.to_dict()}
 
     @classmethod
     def from_effect(cls,effect,*,allow_resolved=False):
-        from .query_effect_amount_model import PublicQueryAmountSpec
+        from .query_effect_amount_model import (
+            matches_frozen_query_bound_search_amount, query_bound_search_amount_from_dict,
+        )
+
         fields={'op','schema_version','zone','selector','count','destination','reveal',
             'shuffle_after','shuffle_before_placement','bound'}
         if (not isinstance(effect,Mapping) or type(effect.get('schema_version')) is not int
@@ -1075,7 +1183,7 @@ class QueryBoundLibrarySearchSpec:
         resolved=QUERY_BOUND_SEARCH_RESOLVED in effect
         if set(effect)!=expected|({QUERY_BOUND_SEARCH_RESOLVED} if resolved else set()):
             raise ValueError('Query-bounded search has unknown or missing fields')
-        spec=cls(PublicQueryAmountSpec.from_dict(effect['bound']),effect['destination'],
+        spec=cls(query_bound_search_amount_from_dict(effect['bound']),effect['destination'],
             effect['reveal'],effect.get('enters_tapped_override',False))
         count=effect['count']
         if (not isinstance(count,Mapping) or set(count)!={'minimum','maximum'}
@@ -1086,18 +1194,16 @@ class QueryBoundLibrarySearchSpec:
         else:
             if not allow_resolved or type(count['maximum']) is not int or count['maximum']<0:
                 raise ValueError('Resolved search maximum is internal continuation data')
-            frozen=PublicQueryAmountSpec.from_dict(effect[QUERY_BOUND_SEARCH_RESOLVED])
-            if (frozen.schema_version!=2 or frozen.quantity!=spec.amount.quantity or frozen.coefficient!=1
-                    or not frozen.binding_id.startswith('query-search:')
-                    or not frozen.binding_id.removeprefix('query-search:').isdigit()):
+            frozen = query_bound_search_amount_from_dict(effect[QUERY_BOUND_SEARCH_RESOLVED])
+            if not matches_frozen_query_bound_search_amount(spec.amount, frozen):
                 raise ValueError('Resolved search lost its quantity and instruction identity')
         return spec
 
     def capabilities(self):
-        from .characteristic_fragments import characteristic_quantity_capabilities
+        from .query_effect_amount_model import query_bound_search_amount_capabilities
+
         return tuple(dict.fromkeys((QUERY_BOUND_SEARCH_CAPABILITY,
-            FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
-            "quantity_expression.public_query_effect_amount",*characteristic_quantity_capabilities(self.amount.to_dict()))))
+            FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, *query_bound_search_amount_capabilities(self.amount))))
 
     def compiled(self):
         return ('public-query-bounded-basic-land-search-v1',(self.effect(),),None,

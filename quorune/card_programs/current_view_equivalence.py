@@ -170,3 +170,38 @@ def shadowed_reviewed_upkeep_type_count_keys(record,generated_programs,reviewed_
                     and scope==_upkeep_type_count(old.event_condition) and result==_upkeep_life_result(old)):
                 shadowed.add(old.key)
     return shadowed
+
+
+
+def shadowed_reviewed_greatest_artifact_upkeep_keys(record, generated_programs, reviewed_programs):
+    if not reviewed_programs:
+        return set()
+
+    from ..continuous_conditions import GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY
+    from ..rules.cumulative_object_upkeep import CONTROLLER_UPKEEP
+    from ..rules.event_subscriptions import (
+        LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD, greatest_artifact_upkeep_runtime_dependencies,
+    )
+
+    old_condition = {"all": [*CONTROLLER_UPKEEP["all"], {
+        "field": LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD, "op": "truthy",
+    }]}
+    old_draw = ({"op": "draw", "player": "$controller", "count": 1},)
+    shadowed = set()
+    for current in generated_programs:
+        if GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY not in current.capability_dependencies:
+            continue
+        try:
+            required = greatest_artifact_upkeep_runtime_dependencies(current)
+        except (TypeError, ValueError):
+            continue
+        if not required or not set(required) <= set(current.capability_dependencies):
+            continue
+        for old in reviewed_programs:
+            if (_same_current_source(record, current, old) and not old.handlers
+                    and old.cost_schema is None and old.trigger_limit is None
+                    and "intervening_condition" in old.coverage
+                    and thaw_value(old.event_condition) == old_condition
+                    and tuple(thaw_value(old.effects)) == old_draw):
+                shadowed.add(old.key)
+    return shadowed

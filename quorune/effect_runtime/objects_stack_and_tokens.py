@@ -27,12 +27,7 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..errors import GameRuleError
 from ..saddle import SADDLE_OPERATION, apply_saddle_effect
 from ..effect_contracts import effect_family_contract
-from ..impulse_access import grant_temporary_cast_permission
-from ..impulse_access_model import (
-    ImpulseAccessDuration,
-    TemporaryCastPermissionError,
-    TemporaryCastPermissionGrant,
-)
+from ..impulse_access import apply_single_card_cast_permission
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..permanent_transform import commit_transform_batch
 from ..util import unique_preserving_order
@@ -308,6 +303,22 @@ def _apply_delayed_trigger(
     op = operation
     from ..rules.destruction_result_model import NEXT_END_STEP_DESTRUCTION_FIELD, validate_next_end_step_destruction
     from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD
+    from ..rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, validate_bound_watched_combat_draw
+
+    condition = effect.get("condition")
+    if isinstance(condition, Mapping) and WATCHED_COMBAT_DRAW_FIELD in condition:
+        try:
+            validate_bound_watched_combat_draw(host, effect, actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    from ..rules.controlled_combat_tokens import COMBAT_TOKEN_FIELD, validate_bound_controlled_combat_token
+
+    condition = effect.get("condition")
+    if isinstance(condition, Mapping) and COMBAT_TOKEN_FIELD in condition:
+        try:
+            validate_bound_controlled_combat_token(host, effect, actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
 
     if NEXT_END_STEP_DESTRUCTION_FIELD in effect:
         try:
@@ -362,6 +373,7 @@ def _apply_delayed_trigger(
 
 
 def _apply_created_token_haste(host, effect, *, actor, reason):
+    from ..fixed_token_production import CREATED_TOKEN_HASTE_FIELD, created_token_keyword_grant
     from ..rules.token_creation_capability_shapes import created_token_haste_closure
     from ..token_creation import grant_haste_to_created_tokens
 
@@ -382,7 +394,9 @@ def _apply_created_token_haste(host, effect, *, actor, reason):
         )
         if created:
             targets = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in created)
-            grant_haste_to_created_tokens(host, source, targets)
+            grant_haste_to_created_tokens(
+                host, source, targets, keywords=created_token_keyword_grant(public[CREATED_TOKEN_HASTE_FIELD]),
+            )
         return created
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
@@ -396,6 +410,10 @@ def _apply_create_token(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.announced_token_sweep import TOKEN_SWEEP_FIELD
+
+    if TOKEN_SWEEP_FIELD in effect:
+        raise GameRuleError("A cast-X token sweep requires its trusted resolving spell")
     from ..fixed_token_production import CREATED_TOKEN_HASTE_FIELD
     from ..reflexive_trigger_model import TOKEN_CREATION_REFLEXIVE_FIELD
     from ..rules.destroyed_creature_copy import COMMITTED_DEATH_COPY_FIELD, apply_committed_death_copy
@@ -433,6 +451,14 @@ def _apply_create_token(
         return create_ordered_role_token(host, effect, actor=actor, reason=reason)
     if "copy_spec" in effect:
         from ..token_copy_runtime import apply_copy_recipe
+        from ..rules import gift_graveyard_spells as gift
+
+        if gift.COPY_RECEIPT_FIELD in effect:
+            try:
+                reference = gift.gift_return_copy_reference(host, effect, actor)
+            except (TypeError, ValueError, KeyError) as exc:
+                raise GameRuleError(str(exc)) from exc
+            return apply_copy_recipe(host, effect, actor=actor, reason=reason, bound_reference=reference) if reference else []
         return apply_copy_recipe(host, effect, actor=actor, reason=reason)
     copy_source = effect.get("copy_of")
     token_name = (
@@ -935,6 +961,23 @@ def _apply_add_subtype(
     operation: str,
     reason: str,
 ) -> Any:
+    if "schema_version" in effect:
+        from ..zone_object_subtype_grants import (
+            commit_controlled_creature_subtype_addition, locked_creature_subtype_from_effect,
+        )
+
+        try:
+            values = {key: value for key, value in effect.items() if key not in {"_runtime_source", "reason"}}
+            subtype = locked_creature_subtype_from_effect(values, actor=actor)
+            refs = commit_controlled_creature_subtype_addition(
+                host, controller=actor, source=resolution_effect_source(host, effect), subtype=subtype,
+            )
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if refs:
+            host._log(actor, "permanent.subtype.set", f"Creatures gained the {subtype.title()} subtype.",
+                      {"objects": list(refs), "subtype": subtype})
+        return refs
     op = operation
     card = host._resolve_object(
         actor,
@@ -1167,61 +1210,18 @@ def _apply_grant_cast_permission(
         return grant_turn_land_plays(host, effect, actor=actor, reason=reason)
     if CHOSEN_IMPULSE_GRANT_FIELD in effect:
         return apply_chosen_impulse_access(host, effect, actor=actor, reason=reason)
+    from ..rules.controller_hand_exile import OWNED_EXILE_PLAY_BATCH, grant_hand_exile_play
+
+    if OWNED_EXILE_PLAY_BATCH in effect:
+        return grant_hand_exile_play(host, effect, actor)
     if TEMPORARY_CAST_TIMING_FIELD in effect:
         return apply_temporary_cast_timing(host, effect, actor=actor, reason=reason)
     from ..rules.loyalty_graveyard_cast import LOYALTY_GRAVEYARD_CAST_FIELD, grant_loyalty_graveyard_cast_permission
 
     if LOYALTY_GRAVEYARD_CAST_FIELD in effect:
         return grant_loyalty_graveyard_cast_permission(host, effect, actor=actor, reason=reason)
-    card = host._resolve_object(
-        actor,
-        str(effect["card"]),
-        zones={str(effect.get("zone") or "graveyard")},
-        owned_only=bool(effect.get("owned_only", True)),
-    )
-    allowed_types = {
-        str(value).casefold()
-        for value in effect.get("types_any", [])
-    }
-    card_types, _, _ = host._type_parts(
-        str(
-            host._effective_card_data(card).get("type_line")
-            or ""
-        )
-    )
-    if allowed_types and not allowed_types.intersection(
-        card_types
-    ):
-        raise GameRuleError(
-            "The selected card does not satisfy the cast permission"
-        )
-    duration = effect.get("duration")
-    if duration not in {None, "until_used"}:
-        raise GameRuleError("Cast-permission duration is unsupported")
-    try:
-        grant = TemporaryCastPermissionGrant(
-            player=actor,
-            duration=(
-                ImpulseAccessDuration.UNTIL_USED
-                if duration == "until_used"
-                else ImpulseAccessDuration.END_OF_TURN
-            ),
-            not_before_turn_sequence=effect.get(
-                "not_before_turn_sequence"
-            ),
-            without_mana_cost=bool(
-                effect.get("without_mana_cost", False)
-            ),
-            source=str(effect.get("source") or ""),
-        )
-    except TemporaryCastPermissionError as exc:
-        raise GameRuleError(str(exc)) from exc
-    return grant_temporary_cast_permission(
-        host,
-        card=card,
-        grant=grant,
-        reason=reason,
-    )
+    return apply_single_card_cast_permission(host, effect, actor=actor, reason=reason)
+
 
 
 

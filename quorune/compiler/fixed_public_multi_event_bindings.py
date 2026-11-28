@@ -11,6 +11,8 @@ from ..rules.event_subscriptions import (
     COMBAT_PARTICIPANT_DAMAGE_VARIANT, combat_participant_damage_condition,
     GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
     GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, fixed_event_subscription_condition,
+    OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES, OPPONENT_ATTACK_DRAW_CAST_TEMPLATE,
+    OPPONENT_ATTACK_DRAW_CAST_VARIANT, opponent_attack_draw_cast_condition,
     graveyard_creature_transition_condition, graveyard_creature_transition_damage_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
@@ -365,6 +367,17 @@ def _color_cast_or_land_entry_spec(material_line):
 
 
 def _entry_or_cast_origin_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.exile_origin_creature_counters import BODY, DEPENDENCIES, TEMPLATE, exile_origin_counter_condition
+
+    match = re.fullmatch(
+        r"Whenever you cast a spell from exile and whenever a permanent you control enters from exile, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is not None and match["body"].casefold() == BODY:
+        return _spec(
+            "spell.cast", "independent_dual_event", match["body"], TEMPLATE, "trigger-event-normalized-zone-change",
+            condition=exile_origin_counter_condition(), capabilities=DEPENDENCIES,
+        )
     match = _ENTRY_OR_CAST_SHARED_ORIGIN.fullmatch(material_line)
     if match is None or match["first"].casefold() == match["second"].casefold():
         return None
@@ -557,6 +570,21 @@ def _source_combat_or_spell_target_spec(material_line, *, card_name):
     )
 
 
+def opponent_attack_draw_cast_binding_spec(material_line: str):
+    from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+
+    if re.fullmatch(
+        r"Whenever an opponent attacks you with two or more creatures, draws their second card each turn, "
+        r"or casts their second spell each turn, you draw a card\.", material_line, re.I,
+    ):
+        return _spec(
+            DIRECT_PLAYER_ATTACK_EVENT, OPPONENT_ATTACK_DRAW_CAST_VARIANT, "you draw a card.",
+            OPPONENT_ATTACK_DRAW_CAST_TEMPLATE, "trigger-event-normalized-public-action",
+            condition=opponent_attack_draw_cast_condition(), capabilities=OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES,
+        )
+    return None
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -566,7 +594,10 @@ def fixed_public_multi_event_binding_spec(
 
     if transitions := graveyard_creature_transition_binding(material_line, card_name=card_name):
         return transitions
-    paired = (_source_block_pair_spec(material_line)
+    from .cast_or_attack_source_exile import cast_or_attack_source_exile_binding
+
+    paired = (cast_or_attack_source_exile_binding(material_line, card_name=card_name)
+              or _source_block_pair_spec(material_line)
               or _color_cast_or_land_entry_spec(material_line)
               or _entry_or_cast_origin_spec(material_line)
               or _combat_participant_damage_spec(material_line)

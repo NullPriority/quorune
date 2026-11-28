@@ -3,42 +3,656 @@
   "fixture_kind": "token_copy_recipe_card_data",
   "source": "Constructed witnesses and pinned Oracle and rulings for token copy batches",
   "cards": [
-    {"oracle_id":"764121bf-535d-40d0-ab9d-65486da31734","name":"Jaxis, the Troublemaker","mana_cost":"{3}{R}","type_line":"Legendary Creature — Human Warrior","oracle_text":"{R}, {T}, Discard a card: Create a token that's a copy of another target creature you control. It gains haste and \"When this token dies, draw a card.\" Sacrifice it at the beginning of the next end step. Activate only as a sorcery.\nBlitz {1}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)","layout":"normal","released_at":"2022-04-29","power":"2","toughness":"3","cmc":4.0,"colors":["R"],"color_identity":["R"],"keywords":["Blitz"],"legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000001","name":"Generic Recipe Original","mana_cost":"{W}","cmc":1,"type_line":"Legendary Artifact Creature — Elf","oracle_text":"Flying","power":"4","toughness":"5","colors":["W"],"color_identity":["W"],"keywords":["Flying"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000002","name":"Generic Recipe Fixed Frog","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Create a token that's a copy of target non-Frog creature, except it isn't legendary and it's a 1/1 green Frog.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000003","name":"Generic Recipe Self Copy","mana_cost":"{W}","cmc":1,"type_line":"Creature — Elf","oracle_text":"{W}, Sacrifice this creature: Create a token that's a copy of this creature.","power":"2","toughness":"3","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000004","name":"Generic Recipe Temporary Copies","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Create two tokens that are copies of target creature you control, except they aren't legendary. They gain haste. Sacrifice them at the beginning of the next end step.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000005","name":"Generic Recipe Entry Observer","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever another nontoken creature you control enters, create a token that's a copy of that creature.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000006","name":"Generic Recipe Copiable Cleanup","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Create a token that's a copy of target creature, except it has haste and \"At the beginning of the end step, exile this token.\"","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"25100800-0000-4000-8000-000000000007","name":"Generic Recipe Populate","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"Populate.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","name":"Clone Legion","mana_cost":"{7}{U}{U}","cmc":9.0,"type_line":"Sorcery","oracle_text":"For each creature target player controls, create a token that's a copy of that creature.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2022-04-29","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"61a6341e-0d36-44b6-8026-9c87c8ef61cb","name":"Second Harvest","mana_cost":"{2}{G}{G}","cmc":4.0,"type_line":"Instant","oracle_text":"For each token you control, create a token that's a copy of that permanent.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2025-01-24","legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"not_legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"d3678fce-6897-4f2c-bf50-243facb6581b","name":"Multiversal Incursion","mana_cost":"{5}{U}{U}","cmc":7.0,"type_line":"Sorcery","oracle_text":"For each nontoken creature you control, create a token that's a copy of that creature, except it isn't legendary.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-06-26","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"3bb32408-81d3-4d0c-8674-1a1c5e3feb3b","name":"Elminster's Simulacrum","mana_cost":"{4}{U}{U}","cmc":6.0,"type_line":"Instant","oracle_text":"For each opponent, you create a token that's a copy of up to one target creature that player controls.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2022-06-10","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","name":"March of Progress","mana_cost":"{2}{U}","cmc":3.0,"type_line":"Sorcery","oracle_text":"Choose target artifact creature you control. For each creature chosen this way, create a token that's a copy of it.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\")","colors":["U"],"color_identity":["U"],"keywords":["Overload"],"layout":"normal","released_at":"2022-11-18","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"not_legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"legal","vintage":"legal"},"defense":null,"loyalty":null,"power":null,"produced_mana":[],"toughness":null},
-    {"oracle_id":"dbdd0963-b395-4cb8-ad9a-ed85a3e9f2e5","name":"Inkwell Leviathan","mana_cost":"{7}{U}{U}","cmc":9.0,"type_line":"Artifact Creature — Leviathan","oracle_text":"Trample\nIslandwalk (This creature can't be blocked as long as defending player controls an Island.)\nShroud (This creature can't be the target of spells or abilities.)","colors":["U"],"color_identity":["U"],"keywords":["Landwalk","Shroud","Trample","Islandwalk"],"layout":"normal","released_at":"2020-08-07","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"power":"7","toughness":"11"}
+    {
+      "oracle_id": "764121bf-535d-40d0-ab9d-65486da31734",
+      "name": "Jaxis, the Troublemaker",
+      "mana_cost": "{3}{R}",
+      "type_line": "Legendary Creature — Human Warrior",
+      "oracle_text": "{R}, {T}, Discard a card: Create a token that's a copy of another target creature you control. It gains haste and \"When this token dies, draw a card.\" Sacrifice it at the beginning of the next end step. Activate only as a sorcery.\nBlitz {1}{R} (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "power": "2",
+      "toughness": "3",
+      "cmc": 4.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Blitz"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000001",
+      "name": "Generic Recipe Original",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Legendary Artifact Creature — Elf",
+      "oracle_text": "Flying",
+      "power": "4",
+      "toughness": "5",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000002",
+      "name": "Generic Recipe Fixed Frog",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target non-Frog creature, except it isn't legendary and it's a 1/1 green Frog.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000003",
+      "name": "Generic Recipe Self Copy",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature — Elf",
+      "oracle_text": "{W}, Sacrifice this creature: Create a token that's a copy of this creature.",
+      "power": "2",
+      "toughness": "3",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000004",
+      "name": "Generic Recipe Temporary Copies",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create two tokens that are copies of target creature you control, except they aren't legendary. They gain haste. Sacrifice them at the beginning of the next end step.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000005",
+      "name": "Generic Recipe Entry Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever another nontoken creature you control enters, create a token that's a copy of that creature.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000006",
+      "name": "Generic Recipe Copiable Cleanup",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target creature, except it has haste and \"At the beginning of the end step, exile this token.\"",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "25100800-0000-4000-8000-000000000007",
+      "name": "Generic Recipe Populate",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Populate.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "name": "Clone Legion",
+      "mana_cost": "{7}{U}{U}",
+      "cmc": 9.0,
+      "type_line": "Sorcery",
+      "oracle_text": "For each creature target player controls, create a token that's a copy of that creature.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "61a6341e-0d36-44b6-8026-9c87c8ef61cb",
+      "name": "Second Harvest",
+      "mana_cost": "{2}{G}{G}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "For each token you control, create a token that's a copy of that permanent.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d3678fce-6897-4f2c-bf50-243facb6581b",
+      "name": "Multiversal Incursion",
+      "mana_cost": "{5}{U}{U}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "For each nontoken creature you control, create a token that's a copy of that creature, except it isn't legendary.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3bb32408-81d3-4d0c-8674-1a1c5e3feb3b",
+      "name": "Elminster's Simulacrum",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Instant",
+      "oracle_text": "For each opponent, you create a token that's a copy of up to one target creature that player controls.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "name": "March of Progress",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Choose target artifact creature you control. For each creature chosen this way, create a token that's a copy of it.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\")",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Overload"
+      ],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "defense": null,
+      "loyalty": null,
+      "power": null,
+      "produced_mana": [],
+      "toughness": null
+    },
+    {
+      "oracle_id": "dbdd0963-b395-4cb8-ad9a-ed85a3e9f2e5",
+      "name": "Inkwell Leviathan",
+      "mana_cost": "{7}{U}{U}",
+      "cmc": 9.0,
+      "type_line": "Artifact Creature — Leviathan",
+      "oracle_text": "Trample\nIslandwalk (This creature can't be blocked as long as defending player controls an Island.)\nShroud (This creature can't be the target of spells or abilities.)",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Landwalk",
+        "Shroud",
+        "Trample",
+        "Islandwalk"
+      ],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "power": "7",
+      "toughness": "11"
+    },
+    {
+      "oracle_id": "bea3ff6e-7649-4e51-b2ad-763f9ac2d4b8",
+      "name": "Renewed Solidarity",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nCreatures you control of the chosen type get +1/+0.\nAt the beginning of your end step, for each token you control of the chosen type that entered this turn, create a token that's a copy of it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
   ],
   "rulings": [
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"If the copied creature has {X} in its mana cost, X is considered to be zero."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"Remember that if you control more than one legendary permanent with the same name, you'll choose one to remain on the battlefield and put the rest into their owners' graveyards."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"A token that enters the battlefield as a copy of a face-down creature is a face-up colorless 2/2 creature with no name, abilities, or creature types."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"If the copied creature is a token, the token created by Clone Legion copies the original characteristics of that token as stated by the effect that put the token onto the battlefield."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the copied creature will also work."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"Each token copies exactly what was printed on the original creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"The token creatures all enter the battlefield at the same time."},
-    {"oracle_id":"690bd111-5b32-4156-b650-9afad3d6ef3d","published_at":"2015-02-25","source":"wotc","comment":"If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied."},
-    {"oracle_id":"61a6341e-0d36-44b6-8026-9c87c8ef61cb","published_at":"2025-01-24","source":"wotc","comment":"Second Harvest copies the original characteristics of each token as stated by the effect that created that token. It doesn’t copy whether that token is tapped or untapped, whether it has any counters on it or any Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."},
-    {"oracle_id":"61a6341e-0d36-44b6-8026-9c87c8ef61cb","published_at":"2025-01-24","source":"wotc","comment":"Second Harvest copies all tokens, not only creature tokens."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Overload doesn’t change when you can cast the spell."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"If you don’t pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won’t have any targets."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Each token copies exactly what was printed on the original artifact creature and nothing more (unless that creature is copying something else or is a token; see below. It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"If you are instructed to cast a spell with overload “without paying its mana cost,” you can’t choose to pay its overload cost instead."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"If the copied artifact creature has {X} in its mana cost, X is 0."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Casting a spell with overload doesn’t change that spell’s mana cost. You just pay the overload cost instead."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Because a spell with overload doesn’t target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"If the chosen artifact creature is itself a token, the token March of Progress creates copies the original characteristics of that token as stated by the effect that created that token."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Any enters-the-battlefield abilities of the copied artifact creature will trigger when the token enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the chosen creature will also work."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"If the chosen artifact creature is copying something else, then the token enters the battlefield as whatever the chosen creature is copying."},
-    {"oracle_id":"dd45c284-c34c-4085-8066-dbeee223fb6e","published_at":"2022-10-14","source":"wotc","comment":"Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."}
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be zero."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "Remember that if you control more than one legendary permanent with the same name, you'll choose one to remain on the battlefield and put the rest into their owners' graveyards."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "A token that enters the battlefield as a copy of a face-down creature is a face-up colorless 2/2 creature with no name, abilities, or creature types."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token created by Clone Legion copies the original characteristics of that token as stated by the effect that put the token onto the battlefield."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "The token creatures all enter the battlefield at the same time."
+    },
+    {
+      "oracle_id": "690bd111-5b32-4156-b650-9afad3d6ef3d",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied."
+    },
+    {
+      "oracle_id": "61a6341e-0d36-44b6-8026-9c87c8ef61cb",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Second Harvest copies the original characteristics of each token as stated by the effect that created that token. It doesn’t copy whether that token is tapped or untapped, whether it has any counters on it or any Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "61a6341e-0d36-44b6-8026-9c87c8ef61cb",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Second Harvest copies all tokens, not only creature tokens."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Overload doesn’t change when you can cast the spell."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you don’t pay the overload cost of a spell, that spell will have a single target. If you pay the overload cost, the spell won’t have any targets."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original artifact creature and nothing more (unless that creature is copying something else or is a token; see below. It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you are instructed to cast a spell with overload “without paying its mana cost,” you can’t choose to pay its overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the copied artifact creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a spell with overload doesn’t change that spell’s mana cost. You just pay the overload cost instead."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Because a spell with overload doesn’t target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is itself a token, the token March of Progress creates copies the original characteristics of that token as stated by the effect that created that token."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied artifact creature will trigger when the token enters the battlefield. Any “as [this creature] enters the battlefield” or “[this creature] enters the battlefield with” abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the chosen artifact creature is copying something else, then the token enters the battlefield as whatever the chosen creature is copying."
+    },
+    {
+      "oracle_id": "dd45c284-c34c-4085-8066-dbeee223fb6e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Effects that cause you to pay more or less for a spell will cause you to pay that much more or less while casting it for its overload cost, too."
+    },
+    {
+      "oracle_id": "bea3ff6e-7649-4e51-b2ad-763f9ac2d4b8",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "When this enchantment’s last ability resolves, for each applicable token you control that entered this turn, create a token that copies the original characteristics of that first token as stated by the effect that created it (unless that first token is copying something else; see below). It doesn’t copy whether that token is tapped or untapped, whether it has any counters on it or Auras or Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "bea3ff6e-7649-4e51-b2ad-763f9ac2d4b8",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Any abilities of the copied token that trigger when that permanent enters will trigger. Any “as [this permanent] enters” or “[this permanent] enters with” abilities of the copied token will also work."
+    },
+    {
+      "oracle_id": "bea3ff6e-7649-4e51-b2ad-763f9ac2d4b8",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If the last ability creates a copy of a token that is copying something else, then the new token enters as a copy of whatever the original token copied."
+    }
   ]
 }

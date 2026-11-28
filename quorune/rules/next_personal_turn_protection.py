@@ -95,7 +95,11 @@ def next_personal_turn_protection_dependencies(value):
         return ()
     if "schema_version" not in value and "preserve_life_total" not in value:
         return ()
+    from .targeted_opponent_protection import CAPABILITY, protection_effect
+
     if type(value.get("schema_version")) is int:
+        if value == protection_effect() and value["preserve_life_total"] is True:
+            return (CAPABILITY,)
         if value == activated_protection_effect():
             return (ACTIVATED_PROTECTION_CAPABILITY,)
         if value == cast_entry_protection_effect():
@@ -180,8 +184,14 @@ def next_personal_turn_protection_node_capabilities(*, effects, target_schema, m
 def next_personal_turn_protection_runtime_dependencies(program):
     from ..phasing_model import CONTROLLED_PERMANENT_PHASE_OUT_SUBJECT, PHASE_OUT_OPERATION
     from .effect_shape_walkers import nested_effects
+    from .gift_extra_turn_spells import gift_extra_turn_runtime_dependencies
+    from .targeted_opponent_protection import MECHANIC, program_dependencies, uses_targeted_opponent_protection
 
+    if required := gift_extra_turn_runtime_dependencies(program):
+        return required
     effects = tuple(nested_effects((*program.effects, *program.handlers)))
+    if MECHANIC in program.coverage or any(map(uses_targeted_opponent_protection, effects)):
+        return program_dependencies(program)
     if ACTIVATED_PROTECTION_MECHANIC in program.coverage or any(
         effect.get("op") == PROTECTION_OPERATION and effect.get("schema_version") == ACTIVATED_PROTECTION_VERSION
         for effect in effects

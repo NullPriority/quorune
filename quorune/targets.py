@@ -23,7 +23,9 @@ from .target_history import (
     GRAVEYARD_BATTLEFIELD_ARRIVAL_FIELD, PLAYER_HISTORY_FIELD, TargetDamageHistorySpec, TargetPlayerHistorySpec,
 )
 from .target_numeric import TargetNumericCharacteristicSpec
-from .pawprint_modes import PAWPRINT_SELECTION_FIELD, rebase_pawprint_controller_reference
+from .pawprint_modes import (
+    REPEATABLE_MODE_SELECTION_FIELD, has_repeatable_mode_slots, rebase_pawprint_controller_reference,
+)
 
 
 CONTROLLER_ISLAND_TARGET_PREDICATE = "creature_controller_controls_island"
@@ -283,7 +285,7 @@ def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
 
 
 _TARGET_COMBAT_STATES = frozenset({
-    "attacking", "unblocked_attacking", "blocking", "attacking_or_blocking",
+    "attacking", "unblocked_attacking", "blocked_attacking", "blocking", "attacking_or_blocking",
     "attacking_actor", "blocking_source", "blocked_by_source", "attacking_or_tapped",
 })
 
@@ -933,8 +935,10 @@ def mode_effects(
         group_ids=_scoped_mode_group_data(definition,mode)[2] if 'group_scope' in definition else None
         for effect in definition.get('effects', ()):
             rebased=_rebase_mode_effect(dict(effect),target_offset,count,group_reference,group_ids)
-            if schema.get(PAWPRINT_SELECTION_FIELD):
-                rebased = rebase_pawprint_controller_reference(rebased, target_offset, count)
+            if has_repeatable_mode_slots(schema):
+                rebased = rebase_pawprint_controller_reference(
+                    rebased, target_offset, count, live_controller=schema.get(REPEATABLE_MODE_SELECTION_FIELD) is True,
+                )
             if has_scoped_modal_targets(schema):
                 from .token_copy_recipes import executable_copy_effects
                 for copy in executable_copy_effects((rebased,)):

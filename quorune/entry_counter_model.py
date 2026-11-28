@@ -40,6 +40,7 @@ class DynamicEntryCounterValueSource(str, Enum):
     OPPONENTS_LIFE_LOST = "opponents_life_lost"
     PUBLIC_QUERY = "public_query"
     CAST_FROM_HAND = "cast_from_hand"
+    CAST_BY_ENTRY_CONTROLLER = "cast_by_entry_controller"
     ESCAPED = "escaped"
     MANA_WAS_SPENT = "mana_was_spent"
     CONTROLLER_PERMANENTS_LEFT = "controller_permanents_left"
@@ -56,6 +57,7 @@ class DynamicEntryCounterValueSource(str, Enum):
     OTHER_CONTROLLED_RED_AND_GREEN_COUNTS = "other_controlled_red_and_green_counts"
 
 
+CAST_REVIVAL_ENTRY_CAPABILITY = "counter.producer.caster_revival_self_entry"
 PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY = "counter.producer.public_maximum_self_entry"
 EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY = "counter.producer.exiled_mana_value_self_entry"
 INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY = "counter.producer.instant_sorcery_cast_loyalty_entry"

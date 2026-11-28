@@ -10,6 +10,10 @@ def attacking_token_result_closure(effect):
     from .token_creation_capability_shapes import _fixed_token_effect_closure
     from ..replacement.immutable import FrozenMap, thaw_value
     version = effect.get('token_entry_version') if isinstance(effect, Mapping) else None
+    from .source_counter_attacking_tokens import source_counter_attacking_token_closure, uses_source_counter_attacking_tokens
+
+    if uses_source_counter_attacking_tokens(effect):
+        return source_counter_attacking_token_closure(effect)
     from .attacking_entry_copy import DEPENDENCIES, uses_copy, validate_compiled
     if isinstance(effect, Mapping) and uses_copy(effect):
         validate_compiled(effect)

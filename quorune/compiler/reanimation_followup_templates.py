@@ -67,6 +67,28 @@ def fixed_battlefield_entry_followup(text, *, receiver_types):
         return None
 
 
+@dataclass(frozen=True, slots=True)
+class FixedReanimationEntrySubtypeTemplate:
+    subtype: str
+
+    def compiled(self):
+        from ..rules.reanimation_entry_subtype import TARGET, entry_subtype_reanimation_effect
+
+        return ("fixed-reanimation-entry-subtype-v1", (entry_subtype_reanimation_effect(self.subtype),), dict(TARGET),
+                ("fixed-target-reanimation", "cr-115-targets"))
+
+
+def fixed_reanimation_entry_subtype_template(text):
+    from ..creature_subtypes import canonical_creature_subtype
+
+    base, _, tail = text.strip().partition(". ")
+    subtype = re.fullmatch(r"It(?:'|\u2019)s an? (.+) in addition to its other types\.", tail, re.IGNORECASE)
+    if (base.casefold() == "put target creature card from a graveyard onto the battlefield under your control"
+            and subtype is not None and (name := canonical_creature_subtype(subtype[1])) is not None):
+        return FixedReanimationEntrySubtypeTemplate(name)
+    return None
+
+
 def fixed_reanimation_followup_template(text):
     base_text, separator, tail = text.strip().partition(". ")
     if (

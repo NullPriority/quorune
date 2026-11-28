@@ -60,7 +60,9 @@ def fixed_target_reanimation_covered_mechanics(
 
     if OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY in supplied:
         covered = (*covered, OPPOSING_DEATH_DELAYED_RETURN_MECHANIC)
-    return covered
+    from .revival_return import CAPABILITY as REVIVAL_CAPABILITY, MECHANIC as REVIVAL_MECHANIC
+
+    return (*covered, REVIVAL_MECHANIC) if REVIVAL_CAPABILITY in supplied else covered
 
 
 def fixed_target_reanimation_node_capabilities(
@@ -72,6 +74,14 @@ def fixed_target_reanimation_node_capabilities(
     """Recognize one closed graveyard-to-battlefield move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .reanimation_entry_subtype import entry_subtype_reanimation_node_capabilities, uses_entry_subtype_reanimation
+
+    if any(uses_entry_subtype_reanimation(effect) for effect in effects):
+        return entry_subtype_reanimation_node_capabilities(effects, target_schema)
+    from .revival_return import MECHANIC as REVIVAL_MECHANIC, revival_return_node_capabilities
+
+    if REVIVAL_MECHANIC in mechanics:
+        return revival_return_node_capabilities(effects, target_schema)
     from .ordered_graveyard_reanimation import ORDERED_GRAVEYARD_REANIMATION_MECHANIC
 
     if ORDERED_GRAVEYARD_REANIMATION_MECHANIC in mechanics:
@@ -119,18 +129,23 @@ def fixed_target_reanimation_node_capabilities(
         return (*required, ATTACKING_CARD_ENTRY_CAPABILITY, "target.revalidate_resolution") if required else ()
     if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') in REANIMATION_FOLLOWUP_VERSIONS:
         return _reanimation_followup_capabilities(effects[0], target_schema=target_schema, mechanics=mechanics)
+    from .entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD, death_enchantment_return_capabilities
+    if len(effects) == 1 and DEATH_ENCHANTMENT_RETURN_FIELD in effects[0]:
+        return death_enchantment_return_capabilities(effects, target_schema)
     if len(effects) == 1 and effects[0].get('schema_version') == 2:
         from ..event_card_return import (EVENT_BATTLEFIELD_RETURN_MECHANIC,
-            EVENT_BATTLEFIELD_RETURN_CAPABILITY, event_battlefield_return_effect)
+            EVENT_BATTLEFIELD_RETURN_CAPABILITY, EVENT_TRANSFORMED_RETURN_CAPABILITY, event_battlefield_return_effect)
         effect = effects[0]
+        transformed = effect.get("transformed_entry", False)
         try:
             expected = event_battlefield_return_effect(tapped=effect['tapped'],
-                entry_counter=effect['entry_counter'], controller=effect['controller'])
+                entry_counter=effect['entry_counter'], controller=effect['controller'], transformed_entry=transformed)
         except (ValueError, TypeError, KeyError):
             return ()
         if target_schema is not None or EVENT_BATTLEFIELD_RETURN_MECHANIC not in mechanics or dict(effect) != expected:
             return ()
         return (EVENT_BATTLEFIELD_RETURN_CAPABILITY, 'zone.change.destination_replacement',
+            *((EVENT_TRANSFORMED_RETURN_CAPABILITY,) if transformed else ()),
             *(('attachment.reference.current_or_lki',) if effect['controller'] == '$controller' else ()),
             *(('counter.producer.effect_entry',) if effect['entry_counter'] else ()))
     if (
@@ -231,12 +246,24 @@ def relative_target_reanimation_node_capabilities(*, effects, target_schema, mec
 
 
 def attached_event_battlefield_return_runtime_dependencies(program):
-    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC
+    from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC, EVENT_TRANSFORMED_RETURN_CAPABILITY
     from .attachment_source_return import ATTACHMENT_DEATH_TRANSFORM_MECHANIC, attachment_source_return_runtime_dependencies
     from .effect_shape_walkers import nested_effects
 
+    effects = tuple(nested_effects(program.effects))
+    if EVENT_TRANSFORMED_RETURN_CAPABILITY in program.capability_dependencies or any(
+        "transformed_entry" in effect for effect in effects
+    ):
+        required = fixed_target_reanimation_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (EVENT_TRANSFORMED_RETURN_CAPABILITY not in required
+                or (program.event, program.active_zone) != ("creature.dies.self", "battlefield")
+                or program.event_condition is not None or program.handlers or program.cost_schema is not None):
+            raise ValueError("Transformed return requires the source's exact battlefield death instruction")
+        return required
     if not any(effect.get('op') == REANIMATE_OPERATION and effect.get('schema_version') == 2
-               and effect.get('controller') == '$controller' for effect in nested_effects(program.effects)):
+               and effect.get('controller') == '$controller' for effect in effects):
         return ()
     if ATTACHMENT_DEATH_TRANSFORM_MECHANIC in getattr(program, "coverage", ()):
         return attachment_source_return_runtime_dependencies(program)

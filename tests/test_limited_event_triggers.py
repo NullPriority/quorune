@@ -363,6 +363,7 @@ class OptionalResultTriggerRuntimeTests(InheritedNativeFixture, unittest.TestCas
         build_fixture_database([ROOT / 'tests/fixtures' / name for name in (
             'bound-effect-program-cards.json', 'limited-event-triggers.json', 'counter-placement-event-cards.json',
             'discover-cards.json', 'event-spell-copy-cards.json', 'static-player-restriction-cards.json',
+            'enchant-public-state-cards.json', 'fixed-mixed-zone-exile-cards.json',
         )], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -382,6 +383,95 @@ class OptionalResultTriggerRuntimeTests(InheritedNativeFixture, unittest.TestCas
 
     def uses(self, session):
         return [event for event in session.state.turn_history.events if event.kind == OPTIONAL_RESULT_USED_HISTORY]
+
+    def test_ondu_spiritdancer_uses_only_one_pending_enchantment_copy_and_replays(self):
+        for decline_first in (False, True):
+            with self.subTest(decline_first=decline_first):
+                session = self.session(60320601 + int(decline_first))
+                source = self.add(session.engine, "Ondu Spiritdancer")
+                spell = self.add(session.engine, "Replenish", zone="hand")
+                for index in range(2):
+                    self.add(session.engine, "Solitary Confinement", zone="graveyard", ref=f"ondu-arrival-{index}")
+                self.assert_closed(session, source)
+                self.assert_closed(session, spell)
+                self.prepare(session, mana={"C": 3, "W": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", spell)
+                self.resolve_top(session)
+                if session.state.pending_decision.kind == "trigger.order":
+                    context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+                    result = session.act("pilot:A", {"action_id": "order", "triggers": [row["id"] for row in context["triggers"]]})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertEqual(2, self.trigger_count(session, source))
+                self.resolve_choice(session)
+                if decline_first:
+                    self.choose(session, choice="decline")
+                    self.assertEqual([], self.uses(session))
+                    self.resolve_choice(session)
+                session = self.replay(session, load=True)
+                self.choose(session, choice="apply")
+                self.assertIsNone(self.resolve(session))
+                tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(1, len(tokens))
+                self.assertEqual(("Solitary Confinement", "A"), (tokens[0].printed_name, tokens[0].controller))
+                self.assertEqual(1, len(self.uses(session)))
+                self.assertEqual(source.logical_object_id, self.uses(session)[0].object_incarnation)
+                self.replay(session, load=True)
+
+    def test_ondu_spiritdancer_copies_the_departed_original_entrant_and_replays(self):
+        session = self.session(60320603)
+        source = self.add(session.engine, "Ondu Spiritdancer")
+        original = self.add(session.engine, "Solitary Confinement", zone="hand")
+        removal = self.add(session.engine, "Disenchant", zone="hand")
+        self.prepare(session, mana={"C": 3, "W": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", original)
+        self.resolve_top(session)
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.cast(session, "A", removal, [original.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[original.object_id].zone)
+        self.resolve_choice(session)
+        session = self.replay(session, load=True)
+        self.choose(session, choice="apply")
+        self.assertIsNone(self.resolve(session))
+        token, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual("Solitary Confinement", token.printed_name)
+        self.assertEqual(1, len(self.uses(session)))
+        self.replay(session, load=True)
+
+    def test_ondu_spiritdancer_does_not_spend_an_impossible_aura_copy(self):
+        for remove_only_subject in (False, True):
+            with self.subTest(remove_only_subject=remove_only_subject):
+                session = self.session(60320604 + int(remove_only_subject))
+                source = self.add(session.engine, "Ondu Spiritdancer")
+                aura = self.add(session.engine, "Hyena Umbra", zone="hand")
+                bounce = self.add(session.engine, "Unsummon", zone="hand")
+                self.prepare(session, mana={"W": 1, "U": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", aura, [source.ref])
+                self.resolve_top(session)
+                self.assertEqual(1, self.trigger_count(session, source))
+                if remove_only_subject:
+                    self.cast(session, "A", bounce, [source.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("graveyard", session.state.cards[aura.object_id].zone)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual([], self.uses(session))
+                    self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+                else:
+                    self.resolve_choice(session)
+                    session = self.replay(session, load=True)
+                    self.choose(session, choice="apply")
+                    self.assertEqual("aura.entry", self.resolve(session).kind)
+                    session = self.replay(session, load=True)
+                    self.choose(session, aura_target=source.ref)
+                    self.assertIsNone(self.resolve(session))
+                    created, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                    self.assertEqual("Hyena Umbra", created.printed_name)
+                    self.assertEqual(source.object_id, created.attached_to)
+                    self.assertEqual(1, len(self.uses(session)))
+                self.replay(session, load=True)
 
     def test_terrasymbiosis_spends_one_use_for_departed_source_and_resets_on_return(self):
         session = self.session(825001)

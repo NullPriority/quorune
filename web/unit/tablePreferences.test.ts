@@ -5,6 +5,7 @@ import {
   DEFAULT_TABLE_PREFERENCES,
   effectiveCardScale,
   parseTablePreferences,
+  priorityStopsForTurn,
 } from "../src/tablePreferences.ts";
 
 test("table preferences default to automatic mana and automatic empty passes", () => {
@@ -39,6 +40,9 @@ test("table preferences preserve valid toggles and repair invalid fields", () =>
 test("bounded version-two layout preferences survive parsing", () => {
   const value = parseTablePreferences(JSON.stringify({
     handPanelHeight: 420,
+    handWidth: 62, handArtFocused: true,
+    opponentWidths: { A: 115, B: 450, E: 70 },
+    seatPriorityStops: { D: ["end_step", "before_my_turn", "unknown"], E: ["end_step"] },
     handAutoCollapse: false,
     cardScale: 1.2,
     rightRailWidth: 410,
@@ -49,6 +53,12 @@ test("bounded version-two layout preferences survive parsing", () => {
     activityVisible: false,
   }));
   assert.equal(value.handPanelHeight, 420);
+  assert.equal(value.handWidth, 62);
+  assert.equal(value.handArtFocused, true);
+  assert.deepEqual(value.opponentWidths, { A: 115, B: 200 });
+  assert.deepEqual(value.seatPriorityStops, { D: ["end_step"] });
+  assert.deepEqual(priorityStopsForTurn(value, "D"), ["end_step"]);
+  assert.deepEqual(priorityStopsForTurn(value, "B"), []);
   assert.equal(value.cardScale, 1.2);
   assert.equal(value.rightRailWidth, 410);
   assert.deepEqual(value.rightRailOrder, ["activity", "stack", "card"]);

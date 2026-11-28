@@ -2,7 +2,9 @@
 
 from . import regex_working_set as re
 from ..object_predicate import ObjectQuerySpec
-from ..qualified_library_search_model import CREATURE_KEYWORD_TOP_SEARCH_KEYWORDS, QualifiedLibrarySearchSpec
+from ..qualified_library_search_model import (
+    CREATURE_KEYWORD_TOP_SEARCH_KEYWORDS, NONLEGENDARY_LIBRARY_CARD_QUERY, QualifiedLibrarySearchSpec,
+)
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
 
@@ -48,8 +50,15 @@ _KEYWORD_TOP_SEARCH = (
 )
 
 
+_NONLEGENDARY_GRAVEYARD_SEARCH = re.compile(
+    r"Search your library for a nonlegendary card, put (?:it|that card) into your graveyard, then shuffle\.", re.I,
+)
+
+
 def qualified_library_search_template(text):
     normalized = " ".join(text.strip().split())
+    if _NONLEGENDARY_GRAVEYARD_SEARCH.fullmatch(normalized):
+        return QualifiedLibrarySearchSpec(NONLEGENDARY_LIBRARY_CARD_QUERY, "graveyard", False)
     if normalized.casefold() == _KEYWORD_TOP_SEARCH:
         return QualifiedLibrarySearchSpec(
             ObjectQuerySpec(zones=("library",), types_all=("creature",)), "library_top", True,

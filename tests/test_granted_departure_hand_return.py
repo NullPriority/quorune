@@ -26,7 +26,7 @@ class GrantedDepartureHandReturnTests(InheritedNativeFixture, unittest.TestCase)
         cls.temporary = TemporaryDirectory()
         path = Path(cls.temporary.name) / "departure-hand-return.sqlite3"
         fixtures = (
-            "bound-effect-program-cards", "granted-departure-hand-return-cards",
+            "bound-effect-program-cards", "death-keyword-absence-cards", "granted-departure-hand-return-cards",
             "activation-public-state-cards", "fixed-public-zone-move-cards", "mutate-casting-cards",
         )
         build_fixture_database([ROOT / f"tests/fixtures/{name}.json" for name in fixtures], path)
@@ -41,6 +41,79 @@ class GrantedDepartureHandReturnTests(InheritedNativeFixture, unittest.TestCase)
                     if item.source_object_id == card.object_id and item.kind == "triggered_ability"]
         item, = children
         return item
+
+    def test_other_legendary_departure_uses_lookback_when_the_source_leaves_and_replays(self):
+        game = self.session(603100804)
+        observer = self.add(game.engine, "Yomiji, Who Bars the Way")
+        legend = self.add(game.engine, "Isamaru, Hound of Konda", seat="B")
+        ordinary = self.add(game.engine, "Grizzly Bears", seat="B")
+        sweep = self.add(game.engine, "Damnation", zone="hand")
+        game.engine.change_control(legend.object_id, "C", reason="Legendary departure control witness")
+        self.assert_closed(game, observer)
+        self.assert_closed(game, sweep)
+        self.prepare(game, mana={"B": 2, "C": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", sweep, [])
+        self.resolve_top(game)
+        for card in (observer, legend, ordinary):
+            self.assertEqual("graveyard", game.state.cards[card.object_id].zone)
+
+        trigger, = game.state.stack
+        self.assertEqual("triggered_ability", trigger.kind)
+        self.assertEqual(observer.object_id, trigger.source_object_id)
+        self.assertEqual("A", trigger.controller)
+        self.assertEqual("B", trigger.context["owner"])
+        self.assertEqual(legend.ref, trigger.context["card"])
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[legend.object_id].zone)
+        self.assertIn(legend.object_id, game.state.players["B"].zones["hand"])
+        self.assertNotIn(legend.object_id, game.state.players["C"].zones["hand"])
+        self.assertEqual("graveyard", game.state.cards[observer.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[ordinary.object_id].zone)
+        self.assertNotIn(legend.object_id, json.dumps(game.packet("pilot:D", full=True)["state"]))
+        self.replay(game, load=True)
+
+    def test_other_legendary_departure_requires_its_exact_source_and_authority(self):
+        from quorune.compiler.event_card_return_templates import source_departure_hand_return_binding
+        from quorune.event_card_return import OTHER_LEGENDARY_HAND_RETURN_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        original = self.db.lookup("Yomiji, Who Bars the Way", fuzzy=False)
+        exact = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", exact.status, exact.material_residuals)
+        for line in (original.oracle_text.replace("legendary ", ""),
+                     original.oracle_text.replace("other than Yomiji", "other than Ishai"),
+                     original.oracle_text.replace("a graveyard", "exile"),
+                     original.oracle_text.replace("its owner's hand", "your hand")):
+            with self.subTest(line=line):
+                self.assertIsNone(source_departure_hand_return_binding(line, card_name=original.name))
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        row = next(item for item in raw["capabilities"] if item["id"] == OTHER_LEGENDARY_HAND_RETURN_CAPABILITY)
+        row.update(status="blocked", blockers=["The legendary departure authority is withheld"])
+        instance = CapabilityRegistry(raw)
+        instance.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(original, capability_registry=instance, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(OTHER_LEGENDARY_HAND_RETURN_CAPABILITY, str(refused.material_residuals))
+
+    def test_legendary_departure_shape_kills_removed_supertypes_guard(self):
+        from types import SimpleNamespace
+        from quorune.event_card_return import (
+            OTHER_LEGENDARY_HAND_RETURN_CAPABILITY, EVENT_HAND_RETURN_MECHANIC,
+            event_hand_return_runtime_dependencies, other_legendary_graveyard_departure_condition,
+        )
+
+        condition = other_legendary_graveyard_departure_condition()
+        program = SimpleNamespace(event="permanent.leave", active_zone="battlefield",
+            event_condition=condition, effects=(event_hand_return_effect(),), handlers=(),
+            target_schema=None, cost_schema=None, coverage=(EVENT_HAND_RETURN_MECHANIC,),
+            capability_dependencies=(OTHER_LEGENDARY_HAND_RETURN_CAPABILITY,))
+        self.assertIn(OTHER_LEGENDARY_HAND_RETURN_CAPABILITY, event_hand_return_runtime_dependencies(program))
+        forged = {"all": [row for row in condition["all"] if row["field"] != "supertypes"]}
+        program.event_condition = forged
+        with self.assertRaisesRegex(ValueError, "exact source or other legendary"):
+            event_hand_return_runtime_dependencies(program)
 
     def test_actual_death_or_exile_returns_to_owners_hand_under_prior_controller_and_replays(self):
         for spell_name, zone in (("Murder", "graveyard"), ("Final Reward", "exile")):

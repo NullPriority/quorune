@@ -3,7 +3,7 @@ from collections.abc import Mapping
 
 from ..source_sacrifice_model import (
     CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION, FORMER_ATTACHMENT_SACRIFICE_VERSION,
-    SOURCE_SACRIFICE_FIELD, SOURCE_SACRIFICE_MECHANIC,
+    REFLEXIVE_SEARCH_SACRIFICE_VERSION, SOURCE_SACRIFICE_FIELD, SOURCE_SACRIFICE_MECHANIC,
     UNATTACHMENT_EVENT, fixed_source_sacrifice_dependencies,
 )
 
@@ -117,13 +117,19 @@ def fixed_source_sacrifice_runtime_dependencies(program):
         or program.effects[0].get(SOURCE_SACRIFICE_FIELD) != CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION
     ):
         raise ValueError('Source sacrifice draw requires its single unqualified spell-cast frame')
+    from .source_sacrifice_reflexive_search import CAPABILITY, validate_parent
+
+    if REFLEXIVE_SEARCH_SACRIFICE_VERSION in versions or CAPABILITY in program.capability_dependencies:
+        validate_parent(program)
     return tuple(sorted(required))
 
 
 def is_closed_fixed_source_sacrifice_program(program):
     required = fixed_source_sacrifice_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)
-    if required and program.effects[0].get(SOURCE_SACRIFICE_FIELD) == CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION:
+    if required and program.effects[0].get(SOURCE_SACRIFICE_FIELD) in {
+        CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION, REFLEXIVE_SEARCH_SACRIFICE_VERSION,
+    }:
         try:
             fixed_source_sacrifice_runtime_dependencies(program)
         except (TypeError, ValueError):

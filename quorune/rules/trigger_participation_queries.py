@@ -2,17 +2,23 @@ from __future__ import annotations
 
 """Read immutable event/source facts through the shared object-query owner."""
 
-from ..object_query import ObjectQueryResult,object_matches_query
+from ..object_query import ObjectQueryResult, exact_numeric_characteristic, object_matches_query
+from ..permanent_event_state_model import ZONE_EVENT_NUMERICS_KEY
 from ..trigger_participation_query_model import trigger_participation_rule
 
 
-def _facts(source,characteristics):
+def _facts(source, characteristics, *, include_power=False):
     from ..zone_trigger_events import sealed_public_characteristic_facts
-    facts=sealed_public_characteristic_facts(characteristics)
+
+    facts = sealed_public_characteristic_facts(characteristics)
+    power = None
+    if include_power:
+        power = (facts["power"] if ZONE_EVENT_NUMERICS_KEY in characteristics
+                 else exact_numeric_characteristic(source, characteristics, "power"))
     return ObjectQueryResult(source.object_id,source.ref,source.printed_name,source.owner,source.controller,source.zone,
         types=tuple(facts['types']),subtypes=tuple(facts['subtypes']),supertypes=tuple(facts['supertypes']),
         colors=tuple(facts['colors']),keywords=tuple(facts['keywords']),logical_object_id=source.logical_object_id,
-        attached_to_ref=source.attached_to)
+        attached_to_ref=source.attached_to, effective_power=power)
 
 
 def _event_facts(event,context):
@@ -28,6 +34,8 @@ def _event_facts(event,context):
 
 
 def participation_rule_matches(spec,modifier,modifier_characteristics,ability_source,source_characteristics,event,context,active_zone):
+    if spec.required_faction is not None and modifier.annotations.get("chosen_faction") != spec.required_faction:
+        return False
     rule=trigger_participation_rule(spec.rule,spec.subtype)
     if active_zone not in rule.source_zones:return False
     if rule.events and event.removesuffix('.self') not in rule.events:return False
@@ -37,7 +45,10 @@ def participation_rule_matches(spec,modifier,modifier_characteristics,ability_so
         return False
     if rule.source_relation=='you' and ability_source.controller!=modifier.controller:return False
     if rule.source_relation=='opponent' and ability_source.controller==modifier.controller:return False
-    source=_facts(ability_source,source_characteristics)
+    source = _facts(
+        ability_source, source_characteristics,
+        include_power=any(query.numeric_characteristic is not None for query in rule.source_queries),
+    )
     if rule.source_queries and not any(object_matches_query(source,q) for q in rule.source_queries):return False
     if rule.modifier_condition=='equipped':
         if not modifier_characteristics.get('_trigger_participation_equipped'):return False

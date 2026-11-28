@@ -36,13 +36,19 @@ class _ComponentSources:
     def __init__(self) -> None:
         self.root = Path(__file__).resolve().parents[1]
         self.modules: dict[tuple[str, ...], Path | None] = {}
+        self.containing_directories: dict[Path, bool] = {}
         self.exports: dict[Path, frozenset[str] | None] = {}
 
     def module(self, parts: tuple[str, ...]) -> Path | None:
         if parts not in self.modules:
             relative = self.root.joinpath(*parts)
             module = relative.with_suffix(".py")
-            if module.is_file():
+            parent = module.parent
+            if parent not in self.containing_directories:
+                self.containing_directories[parent] = parent.is_dir()
+            if not self.containing_directories[parent]:
+                self.modules[parts] = None
+            elif module.is_file():
                 self.modules[parts] = module
             else:
                 package = relative / "__init__.py"

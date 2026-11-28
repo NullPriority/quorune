@@ -347,6 +347,146 @@
       "released_at": "2024-06-14",
       "toughness": "4",
       "type_line": "Creature — Djinn Monk"
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "name": "Chthonian Nightmare",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, you get {E}{E}{E} (three energy counters).\nPay X {E}, Sacrifice a creature, Return this enchantment to its owner's hand: Return target creature card with mana value X from your graveyard to the battlefield. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "name": "Hill Giant",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -596,6 +736,72 @@
       "oracle_id": "bdacd7a4-3d14-45eb-85a6-33ee711b34af",
       "published_at": "2024-06-07",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Some spells and abilities that give you {E} may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't get any {E}."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Energy counters aren't mana. They don't go away as steps, phases, and turns end, and effects that add mana \"of any type\" can't give you energy counters."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Some triggered abilities state that you \"may pay\" a certain amount of {E}. You can't pay that amount multiple times to multiply the effect. You simply choose whether or not to pay that amount of {E} as the ability resolves."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "If an effect says you get one or more {E}, you get that many energy counters. To pay one or more {E}, you lose that many energy counters. You can't pay more energy counters than you have. Any effects that interact with counters a player gets, has, or loses can interact with energy counters."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Keep track of how many energy counters each player has. Potential ways to track this include writing theme down on paper or using dice, but any method that is clear and mutually agreeable is fine. (At higher levels of tournament play, dice may not be allowed for tracking counters that players have.)"
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Energy counters are a kind of counter that a player may have. They're not associated with any specific permanents."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Some triggered abilities that state that you \"may pay\" a certain amount of {E} describe an effect that happens \"If you do.\" In that case, no player may take actions to try to stop the ability's effect after you make your choice. If the payment is followed by the phrase \"When you do,\" then you'll choose any targets for that reflexive triggered ability and put it on the stack before players can take actions."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "If a spell or ability with one or more targets states that you \"may pay\" some amount of {E}, and each permanent that it targets has become an illegal target, the spell or ability won't resolve. You can't pay any {E} even if you want to."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "{E} is the energy symbol. It represents one energy counter."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "Chthonian Nightmare's last ability must have a target to be activated. You can't activate it without a target in order to return Chthonian Nightmare to your hand."
+    },
+    {
+      "oracle_id": "c7a360f5-725e-4864-93cc-87f96f95975e",
+      "source": "wotc",
+      "published_at": "2024-06-07",
+      "comment": "If a card in your graveyard has {X} in its mana cost, X is 0 when determining its mana value."
     }
   ],
   "schema_version": 1,

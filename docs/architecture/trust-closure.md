@@ -91,7 +91,10 @@ decoded Python source in a bounded LRU. The capacity retains the registry's
 working set across repeated validation. A source edit, malformed replacement,
 unreadable file or deletion still changes the resolution result immediately;
 file size and timestamps do not establish trust. Default registry loads retain
-their existing capability and evidence validation scope.
+their existing capability and evidence validation scope. Within one
+implementation validation, candidates with the same missing containing
+directory share that absence check. The next validation checks current paths
+and source bytes again.
 
 Default registry construction creates a fresh registry and rereads the current
 evidence bytes. A bounded cache reuses only a successful validation fingerprint
@@ -108,17 +111,26 @@ through the ordinary card-record owner.
 Within a pure characteristic read frame, the database can reuse a row from
 its current connection. Each lookup still decodes an independent record.
 Open transactions read directly from SQLite.
+Trigger prevention discovery checks the typed event catalog before reading
+battlefield sources. Additional occurrences still use the normal participation
+query for every trigger that would be collected.
+
 Typed trigger participation evaluates current characteristic inputs inside one
 existing read frame per collection pass. Explicit event-time source snapshots
 remain separate inputs. The frame ends before the caller resumes, so later
 ability removal, control changes and source departures receive fresh reads.
-Departure snapshots, player-speed discovery, and Battle protector scans each
-reuse characteristic reads during collection. Zone moves and protector
-repairs run after the relevant read frame closes.
-Trigger discovery shares a frame while scanning past sources that cannot
-observe the event. It closes that frame before processing an observing source.
+Departure snapshots share characteristic reads for both individual and
+simultaneous moves. The read frame closes before zone replacement and
+mutation. Player-speed discovery and Battle protector scans also share
+characteristic reads during their own collection passes.
+Trigger discovery checks each program's registered event subscriptions while
+scanning past sources that cannot observe the event. It shares a read frame
+for that scan and closes the frame before processing an observing source.
 Oracle program candidates can also share this frame. Registry loads and edits
 invalidate the candidates, and each lookup returns a fresh ordered list.
+Deck preflight can match a unique printed loyalty ability to its strictly
+bound source span across faces. Its transformation check recognizes
+`transform` and `transformed` only in verified source spans.
 Current static fragments use the registry's current programs. Historical
 replay registries can also contribute their legacy handlers, with the
 current program taking precedence for a shared key.

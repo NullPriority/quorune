@@ -6,7 +6,7 @@ from ..cast_lifecycles import GRANTED_ESCAPE_CAPABILITY, granted_escape_descript
 from ..object_predicate import ObjectQuerySpec
 from ..rules.turn_cast_grant_model import (
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
-    TURN_CAST_RIDER_HANDLERS, TurnCastGrantScope,
+    TURN_CAST_RIDER_HANDLERS, TurnCastGrantScope, permanent_type_graveyard_grant,
 )
 
 _CLAUSE = re.compile(r'^Once during each of your turns, you may cast (?P<subject>.+?) spell '
@@ -61,6 +61,16 @@ def turn_cast_grant_handler(text):
     if _GRANTED_ESCAPE.fullmatch(material):
         return "source-granted-escape-v1", granted_escape_descriptor(), (GRANTED_ESCAPE_CAPABILITY,)
     material=re.sub(r"^[A-Z][A-Za-z' ]{0,80} — (?=Once during each of your turns,)",'',material)
+    if re.fullmatch(
+        r"During each of your turns, you may play a land and cast a permanent spell of each "
+        r"permanent type from your graveyard\.(?: \(If a card has multiple permanent types, choose one "
+        r"as you play it\.\))?", material, re.I,
+    ):
+        spec = permanent_type_graveyard_grant()
+        return ("permanent-types-own-turn-graveyard-grant-v1", {
+            "handler_id": spec.handler_id, "schema_version": 1, "event": TURN_CAST_GRANT_EVENT,
+            "requires_complete_card_program": True, "grant": spec.to_dict(),
+        }, spec.capability_dependencies)
     qualified = _qualified_graveyard_grant(material)
     if qualified is not None:
         return ('once-own-turn-qualified-grant-v1',{'handler_id':qualified.handler_id,'schema_version':1,

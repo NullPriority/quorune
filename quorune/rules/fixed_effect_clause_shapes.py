@@ -302,8 +302,11 @@ def closed_effect_component_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...]:
+    from ..extra_combat_model import extra_combat_node_capabilities, uses_paid_attacking_combat
     from .land_play_permissions import TURN_LAND_PLAY_ALLOWANCE_FIELD, turn_land_plays_node_capabilities
 
+    if len(effects) == 1 and uses_paid_attacking_combat(effects[0]):
+        return extra_combat_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if len(effects) == 1 and TURN_LAND_PLAY_ALLOWANCE_FIELD in effects[0]:
         return turn_land_plays_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
@@ -379,8 +382,13 @@ def fixed_optional_mana_payment_node_capabilities(
         from .optional_sacrifice_stats import optional_sacrifice_stat_node_capabilities
         return optional_sacrifice_stat_node_capabilities(effects=effects, target_schema=target_schema)
 
-    from .life_gain_counted_results import capped_life_gain_draw_node_capabilities, uses_capped_life_gain_draw
+    from .life_gain_counted_results import (
+        capped_life_gain_draw_node_capabilities, life_gain_life_draw_node_capabilities,
+        uses_capped_life_gain_draw, uses_life_gain_life_draw,
+    )
 
+    if any(uses_life_gain_life_draw(effect) for effect in effects):
+        return life_gain_life_draw_node_capabilities(effects=effects, target_schema=target_schema)
     if any(uses_capped_life_gain_draw(effect) for effect in effects):
         return capped_life_gain_draw_node_capabilities(effects=effects, target_schema=target_schema)
     if any('life_gain_counter_result_version' in effect for effect in effects):
@@ -517,6 +525,10 @@ def fixed_optional_effect_node_capabilities(
         return linked_artifact_library_node_capabilities(effects=effects, target_schema=target_schema)
     if is_optional_entry_shared_type_mana(wrapper):
         return optional_entry_shared_type_mana_node_capabilities(effects, target_schema)
+    from .landfall_life_loss_counters import uses_optional_loss_source_counters, optional_loss_source_counter_node_capabilities
+
+    if uses_optional_loss_source_counters(wrapper):
+        return optional_loss_source_counter_node_capabilities(effects=effects, target_schema=target_schema)
     from .optional_targeted_control import is_optional_targeted_control, optional_targeted_control_node_capabilities
 
     if is_optional_targeted_control(wrapper):

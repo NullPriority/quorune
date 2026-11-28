@@ -18,6 +18,7 @@ from ..entry_counter_model import (
     PAID_COLOR_ENTRY_CAPABILITY,
     PAID_GREEN_PAIRS_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
+    CAST_REVIVAL_ENTRY_CAPABILITY,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
     ENTRY_CREATURE_VALUE_CAPABILITY,
@@ -188,6 +189,7 @@ def _dynamic_compiled(
     uses_creature_values = amount_spec.value_source in ENTRY_CREATURE_VALUE_SOURCES
     uses_exile = amount_spec.value_source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE
     uses_cast_loyalty = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_INSTANT_SORCERY_CASTS
+    uses_cast_revival = amount_spec.value_source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER
     return (
         DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE,
         {
@@ -198,7 +200,7 @@ def _dynamic_compiled(
             "amount_spec": amount_spec.to_dict(),
             **({"requires_complete_card_program": True}
                if (amount_spec.mana_color is not None or uses_current_life or uses_public_maximum
-                   or uses_creature_values or uses_exile or uses_commander_history) else {}),
+                   or uses_creature_values or uses_exile or uses_commander_history or uses_cast_revival) else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -216,6 +218,7 @@ def _dynamic_compiled(
             *((EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,) if uses_exile else ()),
             *((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query")
               if uses_cast_loyalty else ()),
+            *((CAST_REVIVAL_ENTRY_CAPABILITY,) if uses_cast_revival else ()),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
             *((PAID_GREEN_PAIRS_ENTRY_CAPABILITY,)
               if amount_spec.calculation is DynamicEntryCounterCalculation.PAID_GREEN_PAIRS else ()),
@@ -549,6 +552,11 @@ def dynamic_self_entry_counter_handler(
     ability_word = _ABILITY_WORD.fullmatch(material)
     if ability_word is not None:
         material = ability_word.group("body")
+    if material.casefold() == "this creature enters with eight revival counters on it if you cast it.":
+        return _dynamic_compiled(counter_name="revival", amount_spec=DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER,
+            calculation=DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST, coefficient=8, minimum=1,
+        ))
     from .paid_color_entry_templates import paid_color_entry_amount
     paid=paid_color_entry_amount(material,source_name=source_name)
     if paid is not None:return _dynamic_compiled(counter_name=paid[0],amount_spec=paid[1])

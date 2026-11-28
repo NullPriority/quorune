@@ -1252,8 +1252,12 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if uses_attached_copy_payment(effect):
             from .attached_copy_payment import prepare_attached_copy_payment
             return prepare_attached_copy_payment(effect, context)
-        from ..rules.life_gain_counted_results import uses_capped_life_gain_draw
+        from ..rules.life_gain_counted_results import uses_capped_life_gain_draw, uses_life_gain_life_draw
 
+        if uses_life_gain_life_draw(effect):
+            from .life_gain_counted_results import prepare_life_gain_life_draw
+
+            return prepare_life_gain_life_draw(effect, context)
         if uses_capped_life_gain_draw(effect):
             from .life_gain_counted_results import prepare_capped_life_gain_draw
 

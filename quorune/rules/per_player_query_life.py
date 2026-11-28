@@ -1,15 +1,19 @@
 """Independent public quantity, life-loss relation and source-frame ownership."""
 from collections.abc import Mapping
 from ..characteristic_fragments import characteristic_quantity_capabilities
+from ..replacement.immutable import FrozenMap
 from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,PlayerLifeLossRelation,
     PER_PLAYER_QUERY_LIFE_KIND as KIND,BOUND_PER_PLAYER_QUERY_LIFE_KIND as BOUND_KIND,
     PER_PLAYER_QUERY_LIFE_CAPABILITY as CAP,
     OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION,OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
+    OPPONENT_ACTUAL_TURN_LOSS_VERSION,
 )
 from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 
 POISON_THRESHOLD_CAPABILITY = 'life.loss.opponent_poison_counter_threshold'
+OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY = 'life.loss.per_opponent_actual_turn_loss'
+_EACH_END_STEP = FrozenMap({'all': [{'field': 'step', 'op': 'eq', 'value': 'end_step'}]})
 _RUNTIME_FIELDS=frozenset({'reason','source','cause','_runtime_source','_replacement_selections'})
 
 
@@ -21,6 +25,8 @@ def per_player_query_life_value_dependencies(value):
     spec=PerPlayerQueryLifeLossSpec.from_dict(value)
     if spec.schema_version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION:
         return (CAP, POISON_THRESHOLD_CAPABILITY, 'life.change.effect')
+    if spec.schema_version == OPPONENT_ACTUAL_TURN_LOSS_VERSION:
+        return (CAP, OPPONENT_ACTUAL_TURN_LOSS_CAPABILITY, 'life.change.effect')
     return tuple(sorted({CAP,PUBLIC_QUERY_AMOUNT_CAPABILITY,'life.change.effect',
         *characteristic_quantity_capabilities(spec.amount.quantity)}))
 
@@ -64,7 +70,14 @@ def per_player_query_life_program_dependencies(program):
     version = amount.get('schema_version') if isinstance(amount, Mapping) and amount.get('kind') == KIND else None
     absence = version == OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION
     poison = version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION
-    if poison:
+    history = version == OPPONENT_ACTUAL_TURN_LOSS_VERSION
+    if history:
+        if ((program.event, program.active_zone) != ('step.begin', 'battlefield')
+                or not str(program.ability_id).startswith('trigger:')
+                or not isinstance(program.event_condition, Mapping)
+                or FrozenMap(program.event_condition) != _EACH_END_STEP):
+            raise ValueError('Actual turn life loss requires its untargeted each-end-step frame')
+    elif poison:
         if ((program.event, program.active_zone) != ('permanent.tap', 'battlefield')
                 or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}):
             raise ValueError('Poison-qualified life loss requires its normalized source tap')
@@ -78,6 +91,8 @@ def per_player_query_life_program_dependencies(program):
     required=per_player_query_life_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         cost_schema=getattr(program,'cost_schema',None))
     if not required:raise ValueError('Per-player life loss requires one complete independent quantity and result')
+    if history:
+        return tuple(sorted({*required, 'trigger.placement.apnap'}))
     if absence:
         return tuple(sorted({*required, 'trigger.event.normalized_self_attack', 'trigger.placement.apnap'}))
     if poison:

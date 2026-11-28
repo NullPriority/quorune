@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
 RESTRICTED_MANA_GRANT_CAPABILITY = 'continuous.ability.restricted_mana_grant'
 GRANTING_ATTACHMENT_PAYMENT_CAPABILITY = 'activation.granting_attachment.fixed_payment'
+SOURCE_EQUIPMENT_UNATTACH_CAPABILITY = 'activation.source_equipment.unattach_payment'
 GRANTING_ATTACHMENT_PAYMENT_FIELD = 'granting_attachment_payment'
 GRANTING_ATTACHMENT_SACRIFICE_REF = '$granting_attachment.zone_object'
 GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY = 'trigger.attachment.granting_source_reflexive_sacrifice'
@@ -27,6 +28,7 @@ GRANTED_SPORE_COUNTER_COST = FrozenMap({'schema_version': 1, 'counter_name': 'sp
 class GrantingAttachmentPaymentKind(StrEnum):
     UNATTACH = 'unattach'
     SACRIFICE = 'sacrifice'
+    UNATTACH_SOURCE = 'unattach_source'
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,7 +41,9 @@ class GrantingAttachmentPayment:
             raise AbilityFragmentError('Granting Equipment payment requires a typed operation')
         if self.granting_object is not None:
             from .continuous_effect_model import ContinuousObjectIdentity
-            if not isinstance(self.granting_object, ContinuousObjectIdentity):
+            if self.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE or not isinstance(
+                self.granting_object, ContinuousObjectIdentity
+            ):
                 raise AbilityFragmentError('Granting Equipment payment requires an exact incarnation')
 
     def bind(self, object_id: str, logical_object_id: str) -> GrantingAttachmentPayment:
@@ -65,8 +69,24 @@ class GrantingAttachmentPayment:
         return cls(GrantingAttachmentPaymentKind(value['kind']), identity)
 
 
+def has_source_equipment_unattach(ability):
+    payment = getattr(ability, "granting_attachment_payment", None)
+    return isinstance(payment, GrantingAttachmentPayment) and payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE
+
+
 def validate_bound_granting_attachment_payment(ability) -> None:
     payment = ability.granting_attachment_payment
+    if has_source_equipment_unattach(ability):
+        if (payment.granting_object is not None or ability.zones != ('battlefield',)
+                or ability.mana_ability or ability.sorcery_speed or ability.tap_source or ability.untap_source
+                or ability.sacrifice_source or ability.discard_source or ability.exile_source
+                or ability.life_payment or ability.energy_payment or ability.mana_cost_options
+                or not any(ability.mana.values()) or ability.choices or ability.complex_symbols
+                or ability.uncompiled_costs or ability.source_counter_removal_cost is not None
+                or ability.source_counter_placement_cost is not None or ability.loyalty_delta is not None
+                or ability.waterbend is not None or ability.announced_x_symbols is not None):
+            raise AbilityFragmentError('Unattaching the source Equipment requires its exact fixed-mana activation')
+        return
     if (
         not isinstance(payment, GrantingAttachmentPayment) or payment.granting_object is None
         or ability.zones != ('battlefield',) or not ability.tap_source or not ability.builtin_semantic_key
@@ -164,6 +184,7 @@ class GrantedActivatedAbilitySpec:
         if self.schema_version==3 and self.crew_threshold is None:raise AbilityFragmentError('Granted Crew schema requires its threshold')
         if self.schema_version == 5:
             if (not isinstance(self.granting_attachment_payment, GrantingAttachmentPayment) or not self.tap_source
+                    or self.granting_attachment_payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE
                     or self.mana_ability or self.untap_source or self.sacrifice_source or self.life_payment
                     or self.choices or self.mana_spend_restriction is not None or self.sorcery_speed):
                 raise AbilityFragmentError('Granting Equipment payment requires a fixed tap activation')

@@ -273,3 +273,161 @@ class AnyNumberSacrificeTests(InheritedNativeFixture, unittest.TestCase):
             self.assertNotEqual("exact", compile_oracle_card(
                 card, capability_registry=self.registry, capability_profile=PROFILE,
             ).status)
+
+    def test_scapeshift_seals_actual_land_sacrifices_before_private_tapped_search_and_shuffle(self):
+        game = self.session(76271191)
+        source = self.add(game.engine, "Scapeshift", zone="hand")
+        first = self.add(game.engine, "Forest", ref="scapeshift-first-land")
+        borrowed = self.add(game.engine, "Forest", seat="B", ref="scapeshift-borrowed-land")
+        retained = self.add(game.engine, "Forest", seat="B", ref="scapeshift-copy-model")
+        game.engine.change_control(borrowed.object_id, "A", reason="Seed borrowed controlled land")
+        vesuva = self.add(game.engine, "Vesuva", zone="library")
+        found = self.add(game.engine, "Plains", zone="library", ref="scapeshift-found-land")
+        extra = self.add(game.engine, "Plains", zone="library", ref="scapeshift-extra-land")
+        replacements = [self.add(game.engine, "Rest in Peace", seat=seat, ref=f"scapeshift-redirect-{seat}")
+                        for seat in "CD"]
+        self.start(game, source, *replacements, mana={"C": 2, "G": 2})
+        shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+        self.cast(game, "A", source)
+        self.assertTrue(all(self.zone(game, land) == "battlefield" for land in (first, borrowed)))
+        self.choice(game, [first.ref, borrowed.ref])
+        self.reject(game, "A", [retained.ref])
+        self.choose(game, [first.ref, borrowed.ref])
+        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+        self.assertTrue(all(self.zone(game, land) == "battlefield" for land in (first, borrowed)))
+        game = self.replay(game, load=True)
+        for _ in range(4):
+            if game.state.pending_decision.kind != "replacement.order":
+                break
+            principal = game.pending_principals()[0]
+            option = game.packet(principal, full=True)["decision"]["ctx"]["options"][0]
+            answer = game.act(principal, {"action_id": "choose", "replacement": option["id"]})
+            self.assertTrue(answer.ok, answer.summary)
+        self.assertEqual("semantic.search", game.state.pending_decision.kind)
+        self.assertTrue(all(self.zone(game, land) == "exile" for land in (first, borrowed)))
+        packet = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual({"minimum": 0, "maximum": 2}, packet["search_spec"]["count"])
+        for seat in "BCD":
+            self.assertNotIn(vesuva.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.assertEqual(shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+        before = authoritative_state_hash(game.state)
+        rejected = game.act("pilot:A", {"action_id": "choose", "search_cards": [vesuva.ref, found.ref, extra.ref]})
+        self.assertFalse(rejected.ok, rejected.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "search_cards": [vesuva.ref, found.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+        self.assertEqual(shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+        self.assertTrue(all(self.zone(game, land) == "library" for land in (vesuva, found)))
+        game = self.replay(game, load=True)
+        for _ in range(5):
+            if game.state.pending_decision.kind != "replacement.order":
+                break
+            principal = game.pending_principals()[0]
+            options = game.packet(principal, full=True)["decision"]["ctx"]["options"]
+            option = next((row for row in options if retained.ref in row["id"]),
+                          next((row for row in options if not row.get("decline")), options[0]))
+            answer = game.act(principal, {"action_id": "choose", "replacement": option["id"]})
+            self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(self.resolve(game))
+        returned = [game.state.cards[land.object_id] for land in (vesuva, found)]
+        self.assertTrue(all(card.zone == "battlefield" and card.tapped and card.controller == "A" for card in returned))
+        self.assertEqual(returned[0].zone_timestamp, returned[1].zone_timestamp)
+        self.assertEqual(shuffles + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+        self.replay(game, load=True)
+
+    def test_scapeshift_zero_still_searches_and_shuffles(self):
+        for has_land in (False, True):
+            with self.subTest(has_land=has_land):
+                game = self.session(76271192 + int(has_land))
+                source = self.add(game.engine, "Scapeshift", zone="hand")
+                land = self.add(game.engine, "Forest", ref="scapeshift-declined-land") if has_land else None
+                candidate = self.add(game.engine, "Plains", zone="library", ref="scapeshift-zero-candidate")
+                self.start(game, source, mana={"C": 2, "G": 2})
+                shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+                self.cast(game, "A", source)
+                if land is not None:
+                    self.choice(game, [land.ref])
+                    self.choose(game, [])
+                else:
+                    self.assertEqual("semantic.search", self.resolve(game).kind)
+                self.assertEqual("semantic.search", game.state.pending_decision.kind)
+                packet = game.packet("pilot:A", full=True)["decision"]["ctx"]
+                self.assertEqual({"minimum": 0, "maximum": 0}, packet["search_spec"]["count"])
+                self.assertFalse(game.act("pilot:A", {"action_id": "choose", "search_cards": [candidate.ref]}).ok)
+                game = self.replay(game, load=True)
+                answered = game.act("pilot:A", {"action_id": "choose", "search_cards": []})
+                self.assertTrue(answered.ok, answered.summary)
+                self.assertIsNone(self.resolve(game))
+                if land is not None:
+                    self.assertEqual("battlefield", self.zone(game, land))
+                self.assertEqual("library", self.zone(game, candidate))
+                self.assertEqual(shuffles + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.replay(game, load=True)
+
+
+    def test_scapeshift_waits_for_the_physical_owners_graveyard_order_before_search(self):
+        game = self.session(76271196)
+        source = self.add(game.engine, "Scapeshift", zone="hand")
+        lands = [self.add(game.engine, "Forest", seat="B", ref=f"scapeshift-ordered-{i}") for i in range(2)]
+        for land in lands:
+            game.engine.change_control(land.object_id, "A", reason="Seed another player's controlled land")
+        self.start(game, source, mana={"C": 2, "G": 2})
+        self.cast(game, "A", source)
+        refs = [land.ref for land in lands]
+        self.choice(game, refs)
+        self.choose(game, refs)
+        self.assertEqual("permanent.composition_order", game.state.pending_decision.kind)
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        self.assertIsNone(game.packet("pilot:A", full=True)["decision"])
+        self.assertTrue(all(self.zone(game, land) == "battlefield" for land in lands))
+        before = authoritative_state_hash(game.state)
+        for principal, answer in (("pilot:A", list(reversed(refs))), ("pilot:B", [refs[0], refs[0]])):
+            rejected = game.act(principal, {"action_id": "order", "cards": answer})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        order = game.act("pilot:B", {"action_id": "order", "cards": list(reversed(refs))})
+        self.assertTrue(order.ok, order.summary)
+        self.assertEqual([land.object_id for land in reversed(lands)], game.state.players["B"].zones["graveyard"][-2:])
+        self.assertEqual("semantic.search", game.state.pending_decision.kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        spec = game.packet("pilot:A", full=True)["decision"]["ctx"]["search_spec"]
+        self.assertEqual({"minimum": 0, "maximum": 2}, spec["count"])
+        searched = game.act("pilot:A", {"action_id": "choose", "search_cards": []})
+        self.assertTrue(searched.ok, searched.summary)
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+
+class CommittedLandSearchCompilerTests(unittest.TestCase):
+    def test_committed_land_search_requires_whole_printed_resolution_and_exact_hidden_recipe(self):
+        from quorune.rules.committed_land_sacrifice_search import COMMITTED_LAND_SEARCH_VERSION
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Sacrifice any number of lands. Search your library for up to that many land cards, "
+                "put them onto the battlefield tapped, then shuffle.")
+
+        def compile_text(source):
+            return compile_oracle_card(replace(query_record(source), type_line="Sorcery"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertIsNone(node.target_schema)
+            self.assertIsNone(node.cost)
+            domain, search = any_number_sacrifice_parts(node.effects[0])
+            self.assertEqual("lands", domain)
+            self.assertEqual(COMMITTED_LAND_SEARCH_VERSION, search["schema_version"])
+
+        witness()
+        with patch("quorune.compiler.resolution_effect_templates.any_number_sacrifice_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (text.replace("lands.", "permanents."), text.replace("up to that many", "that many"),
+                        text.replace("battlefield tapped", "battlefield"), text.replace("then shuffle", "then draw")):
+            self.assertNotEqual("exact", compile_text(altered).status)

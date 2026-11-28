@@ -60,6 +60,10 @@ from .reanimation_capability_shapes import fixed_target_reanimation_covered_mech
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
 from ..fixed_top_exile import FIXED_TOP_EXILE_MECHANIC_CAPABILITIES
+from .departing_x_reflexive import (
+    CAPABILITY as DEPARTURE_X_CAPABILITY, MECHANIC as DEPARTURE_X_MECHANIC,
+    RED_DEATH_CAPABILITY, RED_DEATH_MECHANIC,
+)
 from .controller_private_top_exile_model import (
     CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY, CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC,
 )
@@ -264,6 +268,10 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    "trigger-event-normalized-phase-in": ("trigger.event.normalized_phase_in",),
+    "fixed-phase-out-until-battlefield-departure": ("permanent.phasing.until_battlefield_departure",),
+    "fixed-untap-and-counted-creature-phasing-hold": ("permanent.phasing.untap_creature_set_until_battlefield_departure",),
+    "fixed-spell-target-occurrence-phase-out": ("trigger.effect.spell_target_occurrence_phase_out",),
     'fixed-target-color-scope': ('zone.object.fixed_resolution_color_scope',),
     'fixed-compound-target-set': ('resolution.effect.fixed_compound_target_set',),
     'fixed-target-role-damage': ('damage.batch.fixed_target_roles',),
@@ -276,8 +284,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'temporary-library-search-prohibition': ('library.search.prohibition.resolution_until_end_of_turn',),
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
     'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
+    'each-graveyard-return-after-mill': ('zone.reanimate.each_graveyard_choice',),
     **TERMINAL_SPELL_MOVE_CAPABILITIES,
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
+    'announced-x-destroy-or-life-modal': ('choice.modal.announced_x_destroy_or_life',),
     'any-number-target-set': ('target.cardinality.any_number',),
     'selected-player-result-set': ('resolution.target_set.selected_player_results',),
     'quantified-counter-target-set': ('counter.producer.quantified_target_set',),
@@ -294,6 +304,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'alternative-quality-discard': ('choice.affected_player.alternative_discard',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
+    'fixed-tiered-mode-costs': ('casting.additional_cost.tiered_fixed_modes',),
     'fixed-pawprint-mode-budget': ('casting.modal.pawprint_budget',),
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
     'fixed-extra-combat-after-untap': ('turn.phase.extra_combat_after_current',),
@@ -303,6 +314,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'cast-x-library-graveyard-creature-search': ('library.search.cast_x_library_graveyard',),
     'entry-private-search-play': ('library.search.private_face_down_play',),
     'announced-x-mixed-apnap-payment': ('choice.apnap.repeated_mixed_payment',),
+    'loyalty-fixed-discard-apnap-payment': ('choice.apnap.repeated_loyalty_discard_payment',),
     'named-library-graveyard-search': ('library.search.named_library_graveyard',),
     'qualified-library-card-search': ('library.search.qualified_card',),
     'fixed-target-library-inspection': ('library.inspect.fixed_target_player',),
@@ -361,6 +373,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'variable-resolution-mana-choice':('mana.production.variable_resolution_choice',),
     'ravenous':('keyword.ravenous.entry_x_and_draw',),
+    'artifact-graveyard-departure-return': ('target.mana_value.artifact_graveyard_departure',),
     'source-entry-x-result-amount':('quantity_expression.source_entry_x',),
     'fixed-attacking-token-result':('token.creation.fixed_attacking_definition',),
     'fixed-per-opponent-attacking-token-result':('token.creation.fixed_per_opponent_attacking_definition',),
@@ -372,6 +385,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
     'stack-counter-different-name-exile-cast': ('stack.counter.different_name_exile_cast',),
     **FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
+    DEPARTURE_X_MECHANIC: (DEPARTURE_X_CAPABILITY,),
+    RED_DEATH_MECHANIC: (RED_DEATH_CAPABILITY,),
     CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC: (CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY,),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
@@ -446,7 +461,32 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _VIGILANCE_MECHANIC: ("combat.attack.vigilance",),
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
+    "target-opponent-draw-or-source-counter-mill": ("zone.mill.target_opponent_draw_or_source_counters",),
+    "repeat-revealed-top-hand-life": ("library.top.repeated_revealed_hand_life",),
+    "recipient-counter-placement-damage": ("damage.counter_placement.single_recipient_total",),
+    "target-controller-graveyard-mana-value": ("target.mana_value.current_controller_graveyard",),
+    "fixed-repeatable-mode-choices": ("casting.modal.fixed_repeatable_choices",),
+    "committed-nonland-discard-damage": ("resolution.effect.committed_nonland_discard_damage",),
+    "look-land-or-hand-random-bottom": ("library.select.private_land_or_hand_random_bottom",),
+    "apnap-chosen-creature-type-return": ("zone.graveyard.return_apnap_chosen_type_union",),
+    "prior-qualified-controller-cast-copy": ("stack.copy.prior_qualified_controller_casts",),
+    "magecraft-rummage-ordinal": ("resolution.effect.magecraft_rummage_ordinal",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
+    "distinct-opponent-draw-result": ("zone.draw.distinct_opponents_committed_followup", "zone.draw.library_to_hand"),
+    "targeted-return-land-sacrifice-copy": ("stack.copy.targeted_return_land_sacrifice",),
+    "selected-opponent-discard-draw-result": (
+        "zone.discard.opponent_choice_committed_draw", "choice.affected_player.fixed_discard",
+        "zone.change.destination_replacement", "zone.draw.library_to_hand",
+    ),
+    "watched-combat-damage-draw": (
+        "trigger.delayed.watched_combat_damage_draw", "trigger.event.normalized_damage",
+        "trigger.placement.apnap", "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution", "zone.draw.library_to_hand",
+    ),
+    "other-controlled-creature-entry-pump": ("resolution.event_object.other_controlled_creature_pump",),
+    "death-return-as-enchantment": ("zone.return.death_as_enchantment",),
+    "cast-x-created-tokens-sweep": ("permanent.destroy.except_created_cast_x_tokens",),
+    "controlled-opponent-combat-token-this-turn": ("trigger.delayed.controlled_opponent_combat_token",),
     **_query.AMOUNT_MECHANIC_CAPABILITIES,
     "declared-effect-amount": ("quantity_expression.declared_effect_amount",),
     "mana-value-permanent-filter": ("state_query.permanent.mana_value_filter",),
@@ -551,6 +591,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'cast-x-library-graveyard-creature-search',
         'entry-private-search-play',
         'announced-x-mixed-apnap-payment',
+        'loyalty-fixed-discard-apnap-payment',
         *SELF_ZONE_MOVE_SHAPE_GATED_MECHANICS,
         'fixed-bounded-hand-free-cast',
         'fixed-event-player-optional-draw',
@@ -563,6 +604,8 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-target-entry-counter-reanimation',
         REANIMATION_FOLLOWUP_MECHANIC,
         *FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
+        DEPARTURE_X_MECHANIC,
+        RED_DEATH_MECHANIC,
         FIXED_TARGET_COLOR_MECHANIC,
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
@@ -581,6 +624,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',
         'own-graveyard-return-choice',
+        'each-graveyard-return-after-mill',
         'commander-learn',
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
@@ -591,6 +635,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
+        'fixed-tiered-mode-costs',
         'fixed-entwine-mode-costs',
         'sequential-reciprocal-power-damage',
         'conditional-target-power-preparation',
@@ -1194,6 +1239,10 @@ def capability_dependencies_for_node(
     if special is not None:
         return special
 
+    from .paired_token_creators import paired_token_node_capabilities, uses_paired_token_creators
+    if any(uses_paired_token_creators(effect) for effect in effects):
+        return paired_token_node_capabilities(effects, target_schema, cost_schema)
+
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
@@ -1308,6 +1357,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     from ..resolution_conditions import CAST_FACT_CONDITION_MECHANICS
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
+    from .affected_library_search_batch import EXILE_LAND_SEARCH_CAPABILITY, EXILE_LAND_SEARCH_MECHANIC
     from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
     from ..event_card_return import DEATH_LAND_EXILE_CAPABILITY, DEATH_LAND_EXILE_MECHANIC
 
@@ -1316,6 +1366,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         DEATH_LAND_EXILE_CAPABILITY: DEATH_LAND_EXILE_MECHANIC,
         DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
         PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
+        EXILE_LAND_SEARCH_CAPABILITY: EXILE_LAND_SEARCH_MECHANIC,
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',

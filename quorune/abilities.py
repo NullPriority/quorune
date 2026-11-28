@@ -75,7 +75,7 @@ _PAY_ENERGY = re.compile(
 )
 _REMOVE_SOURCE_COUNTER = re.compile(
     r"^remove\s+(?P<count>a|an|one|two|three|four|five|six|seven|eight|"
-    r"nine|ten|[1-9][0-9]*)\s+(?P<counter>[A-Za-z0-9+/-]+)\s+"
+    r"nine|ten|fifty|[1-9][0-9]*)\s+(?P<counter>[A-Za-z0-9+/-]+)\s+"
     r"counters?\s+from\s+(?P<source>.+)$",
     re.IGNORECASE,
 )
@@ -128,6 +128,7 @@ _NUMBER_WORDS.update(
         "eight": 8,
         "nine": 9,
         "ten": 10,
+        "fifty": 50,
     }
 )
 
@@ -186,6 +187,7 @@ class ActivatedAbility:
     mill_library_cost: int = 0
     source_counter_placement_cost: CounterPlacementCostSpec | None = None
     loyalty_x: bool = False
+    announced_energy_reanimation: bool = False
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -195,6 +197,8 @@ class ActivatedAbility:
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         validate_announced_subtype_ability(self)
+        from .rules.announced_energy_reanimation import validate_energy_reanimation_ability
+        validate_energy_reanimation_ability(self)
         from .rules.linked_loyalty_exile_model import validate_loyalty_x_ability
         validate_loyalty_x_ability(self)
         price = self.variable_colored_reveal_price
@@ -241,7 +245,7 @@ class ActivatedAbility:
     @property
     def chooses_activation_x(self) -> bool:
         return (self.loyalty_x or self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
-                or announced_subtype_sacrifice_choice(self) is not None)
+                or self.announced_energy_reanimation or announced_subtype_sacrifice_choice(self) is not None)
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -318,6 +322,8 @@ class ActivatedAbility:
             result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = self.variable_colored_reveal_price.to_dict()
         if self.loyalty_x:
             result["loyalty_x"] = True
+        if self.announced_energy_reanimation:
+            result["announced_energy_reanimation"] = True
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
@@ -340,6 +346,7 @@ class ActivatedAbility:
             ),
             announced_x_symbols=value.get('announced_x_symbols'),
             announced_x_minimum=value.get('announced_x_minimum', 0),
+            announced_energy_reanimation=value.get("announced_energy_reanimation", False),
             variable_colored_reveal_price=(
                 VariableColoredRevealPrice.from_dict(value[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
                 if VARIABLE_COLORED_REVEAL_PRICE_FIELD in value else None
@@ -466,6 +473,8 @@ class ActivatedAbility:
             result["life"] = self.life_payment
         if self.energy_payment:
             result["energy"] = self.energy_payment
+        if self.announced_energy_reanimation:
+            result["announced_energy_reanimation"] = True
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:
             result['random_discard']=self.random_discard_payment
@@ -1457,6 +1466,7 @@ def _parse_activated_line(
     parsed_cost, forecast = forecast_cost_without_source_reveal(prefix, actual_cost)
     cost = _parse_cost(parsed_cost, card_name)
     from .fixed_mana_abilities import is_hand_exile_mana_text
+    from .fixed_mana_results import double_unspent_mana_text
 
     if not prefix and is_hand_exile_mana_text(actual_cost, effect_text):
         cost = replace(cost, exile_source=True, uncompiled=())
@@ -1471,7 +1481,8 @@ def _parse_activated_line(
     mana_ability = bool(
         cost.loyalty_delta is None
         and "target" not in effect_lower
-        and (effect_lower.startswith("add ") or "add one mana" in effect_lower)
+        and (effect_lower.startswith("add ") or "add one mana" in effect_lower
+             or not prefix and double_unspent_mana_text(actual_cost, effect_text))
         and not _may_move_card_to_or_from_library(actual_cost, effect_text)
     )
     builtin_semantic_key, target_schema = _builtin_effect_descriptor(effect_text)

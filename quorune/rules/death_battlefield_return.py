@@ -82,10 +82,14 @@ def is_death_battlefield_return(effect) -> bool:
 def death_battlefield_return_context(host, context, occurrence, parts, *, permanent_graveyard=False):
     """Keep the public arrivals before any trigger is offered or token removed."""
     from .event_subscriptions import event_has_capability_subscriber
-
+    from .linked_death_upkeep import CAPABILITY as LINKED_DEATH_UPKEEP_CAPABILITY
     from .opposing_death_delayed_return import OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY
     from .granted_death_role_return import GRANTED_DEATH_ROLE_RETURN_CAPABILITY, has_granted_self_death_return
+    from .revival_return import CAPABILITY as REVIVAL_CAPABILITY, capture_revival_death_count
 
+    revival = not permanent_graveyard and event_has_capability_subscriber(
+        host, "creature.dies.self", REVIVAL_CAPABILITY,
+    )
     if permanent_graveyard and not (
         has_granted_self_death_return(host, occurrence.previous_characteristics)
         or event_has_capability_subscriber(host, SOURCE_DEATH_HAND_EVENT, SOURCE_DEATH_HAND_CAPABILITY)
@@ -94,12 +98,15 @@ def death_battlefield_return_context(host, context, occurrence, parts, *, perman
     watched = (
         ("creature.dies", DEATH_BATTLEFIELD_RETURN_CAPABILITY),
         ("creature.dies", OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY),
+        ("creature.dies", LINKED_DEATH_UPKEEP_CAPABILITY),
         ("creature.dies.self", GRANTED_DEATH_ROLE_RETURN_CAPABILITY),
     )
-    if not permanent_graveyard and not any(
+    if not permanent_graveyard and not revival and not any(
         event_has_capability_subscriber(host, event, capability) for event, capability in watched
     ):
         return context
+    if revival:
+        context = capture_revival_death_count(context, occurrence)
     return {**context, DEATH_BATTLEFIELD_ARRIVALS: committed_graveyard_arrivals(occurrence, parts)}
 
 
@@ -156,9 +163,17 @@ def death_battlefield_return_runtime_dependencies(program) -> tuple[str, ...]:
 
     from .granted_death_role_return import granted_death_role_return_dependencies
 
+    from .revival_return import revival_return_runtime_dependencies
+
+    if revival := revival_return_runtime_dependencies(program):
+        return revival
     required = granted_death_role_return_dependencies(program)
     if required:
         return required
+    from .granted_death_treasure import granted_death_treasure_runtime_dependencies
+    if required := granted_death_treasure_runtime_dependencies(program):
+        return required
+
     from .granted_death_role_return import granted_self_death_return_dependencies
 
     effects = tuple(nested_effects((program.effects, program.handlers)))

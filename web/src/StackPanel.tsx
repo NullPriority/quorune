@@ -14,9 +14,9 @@ export function StackPanel({ stack, view, labelFor, positions, targets, onFocusI
   positions: ReadonlyMap<string, number>;
   targets: string[];
   onFocusItem: (ref: string) => void;
-  onMinimize: () => void;
+  onMinimize?: () => void;
   onInspect: (card: JsonValue) => void;
-  onOpenInspector: (card: JsonValue) => void;
+  onOpenInspector?: (card: JsonValue) => void;
   selection?: TableObjectSelection | null;
 }) {
   const rows = useRef(new Map<string, HTMLLIElement>());
@@ -50,9 +50,12 @@ export function StackPanel({ stack, view, labelFor, positions, targets, onFocusI
   useLayoutEffect(() => {
     const viewport = list.current;
     if (!viewport) return;
+    const window = viewport.ownerDocument.defaultView!;
+    let frame = 0;
     const update = () => {
+      frame = 0;
       if (!viewport.clientHeight) return;
-      const style = getComputedStyle(viewport);
+      const style = window.getComputedStyle(viewport);
       const available = viewport.clientHeight - (parseFloat(style.paddingTop) || 0) - (parseFloat(style.paddingBottom) || 0);
       const gap = parseFloat(style.rowGap) || 0;
       const starts = [0];
@@ -68,11 +71,16 @@ export function StackPanel({ stack, view, labelFor, positions, targets, onFocusI
       setPageStarts((current) => current.length === starts.length && current.every((start, index) => start === starts[index])
         ? current : starts);
     };
-    const observer = new ResizeObserver(update);
+    const observer = new ResizeObserver(() => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    });
     observer.observe(viewport);
     rows.current.forEach((row) => observer.observe(row));
     update();
-    return () => observer.disconnect();
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [order]);
 
   useLayoutEffect(() => {
@@ -111,7 +119,7 @@ export function StackPanel({ stack, view, labelFor, positions, targets, onFocusI
   return <section className="stack-panel" id="match-stack" aria-label="Stack" data-testid="stack-panel">
     <header>
       <strong>Stack</strong>
-      <button type="button" className="link-button" aria-label="Minimize stack" onClick={onMinimize}>Minimize</button>
+      {onMinimize && <button type="button" className="link-button" aria-label="Minimize stack" onClick={onMinimize}>Minimize</button>}
     </header>
     <CardPageControls label="Stack" page={page} pages={pages.length} onPage={(next) => setPageAnchor(pages[next])} />
     {stack.length > 0 ? <ol ref={list} className="stack-items" aria-label="Next to resolve first">

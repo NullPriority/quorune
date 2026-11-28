@@ -85,6 +85,29 @@ class FixedStackSpellCopyModelCompilerTests(unittest.TestCase):
             next(row for row in changed['capabilities'] if row['id'] == capability).update(status='blocked', blockers=['Copy owner withdrawn'])
             self.assertNotEqual('exact', self.compile(registry=CapabilityRegistry(changed)).status)
 
+    def test_copy_then_owner_hand_binds_only_its_ordered_shared_stack_target(self):
+        from quorune.rules.opponent_spell_or_permanent_return import COPY_RETURN_FIELD
+        from quorune.rules.stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
+
+        clause = "Copy target instant or sorcery spell, then return it to its owner's hand."
+        text = clause + " You may choose new targets for the copy."
+        ir = self.compile(self.record(text))
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        copy, move = node.effects
+        self.assertEqual(FixedStackSpellCopySpec().effects, (copy,))
+        self.assertEqual(FixedStackSpellCopySpec().target_schema, node.target_schema)
+        self.assertEqual({"op": "move", "card": "$target.0", "destination": "hand", COPY_RETURN_FIELD: 1}, move)
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        for effects in ((move, copy), (copy, {**move, "card": "$target.1"}),
+                        (copy, {**move, "destination": "exile"}), (copy, {**move, COPY_RETURN_FIELD: True})):
+            self.assertFalse(fixed_stack_spell_copy_node_capabilities(
+                effects=effects, target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+        for variant in (text.replace("then return it", "then return another spell"),
+                        text.replace("its owner's hand", "your hand"), clause):
+            self.assertNotEqual("exact", self.compile(self.record(variant)).status)
+
     def test_fixed_stack_copy_producer_omission_fails_independent_positive_contract(self):
         with mock.patch('quorune.compiler.fixed_stack_spell_copy.fixed_stack_spell_copy_template', return_value=None):
             with self.assertRaises(AssertionError):
@@ -106,7 +129,14 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         path = Path(cls.temp.name) / 'stack-copy.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', FIXTURE], path)
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/colored-hand-reveal-cards.json",
+            ROOT / "tests/fixtures/opponent-spell-or-permanent-return-cards.json",
+            ROOT / "tests/fixtures/targeted-spell-control-cards.json",
+            ROOT / "tests/fixtures/optional-draw-attack-restriction-cards.json",
+            FIXTURE,
+        ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Stack copy witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
@@ -261,6 +291,107 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
         self.assertFalse(session.state.stack)
         self.assertEqual(1, len(session.engine._current_turn_history("spell_cast")))
         self.replay(session)
+
+    def test_actual_narset_copies_then_returns_foreign_owned_spell_and_keeps_or_changes_targets(self):
+        for retarget in (False, True):
+            with self.subTest(retarget=retarget):
+                session = self.session(70710201 + retarget)
+                reversal = self.add(session.engine, "Narset's Reversal", zone="hand")
+                takeover = self.add(session.engine, "Aethersnatch", zone="hand")
+                growth = self.add(session.engine, "Giant Growth", seat="B", zone="hand")
+                first = self.add(session.engine, "Llanowar Elves", ref="narset-original-target")
+                second = self.add(session.engine, "Llanowar Elves", ref="narset-replacement-target")
+                for card in (reversal, takeover, growth):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 4, "U": 6})
+                session.state.players["B"].mana_pool["G"] = 1
+                self.checkpoint(session)
+
+                self.cast(session, "B", growth, [first.ref])
+                original_ref = session.state.stack[-1].ref
+                self.cast(session, "A", takeover, [original_ref])
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                result = session.act("pilot:A", {"action_id": "choose"})
+                self.assertTrue(result.ok, result.summary)
+                original = next(item for item in session.state.stack if item.ref == original_ref)
+                self.assertEqual("A", original.controller)
+                self.assertEqual("B", session.state.cards[growth.object_id].owner)
+
+                self.cast(session, "A", reversal, [original_ref])
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertEqual("stack", session.state.cards[growth.object_id].zone)
+                self.assertEqual(original_ref, session.state.stack[0].ref)
+                self.reject(session, "choose", "B", targets=[second.ref])
+                self.reject(session, "choose", targets=[first.ref, second.ref])
+                session = self.replay(session, load=True)
+                choice = {"action_id": "choose", **({"targets": [second.ref]} if retarget else {})}
+                result = session.act("pilot:A", choice)
+                self.assertTrue(result.ok, result.summary)
+
+                copy, = session.state.stack
+                expected = second if retarget else first
+                self.assertEqual(("spell_copy", "A", [expected.ref]), (copy.kind, copy.controller, copy.targets))
+                self.assertNotEqual(original_ref, copy.ref)
+                self.assertEqual("hand", session.state.cards[growth.object_id].zone)
+                self.assertIn(growth.object_id, session.state.players["B"].zones["hand"])
+                self.assertNotIn(growth.object_id, session.state.players["A"].zones["hand"])
+                self.assertEqual(3, len(session.engine._current_turn_history("spell_cast")))
+                self.assertEqual([1, 1], [session.engine._numeric_stat(card.object_id, "power")
+                                          for card in (first, second)])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual([1, 4] if retarget else [4, 1], [
+                    session.engine._numeric_stat(card.object_id, "power") for card in (first, second)
+                ])
+                self.assertEqual(3, len(session.engine._current_turn_history("spell_cast")))
+                self.replay(session, load=True)
+
+    def test_actual_narset_loses_its_single_target_without_copy_or_return(self):
+        session = self.session(70710210)
+        reversal = self.add(session.engine, "Narset's Reversal", zone="hand")
+        growth = self.add(session.engine, "Giant Growth", seat="B", zone="hand")
+        counter = self.add(session.engine, "Counterspell", seat="C", zone="hand")
+        target = self.add(session.engine, "Llanowar Elves")
+        self.assert_closed(session, reversal)
+        self.prepare(session, mana={"U": 2})
+        session.state.players["B"].mana_pool["G"] = 1
+        session.state.players["C"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast(session, "B", growth, [target.ref])
+        original_ref = session.state.stack[-1].ref
+        self.cast(session, "A", reversal, [original_ref])
+        self.cast(session, "C", counter, [original_ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[growth.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[reversal.object_id].zone)
+        self.assertEqual(1, session.engine._numeric_stat(target.object_id, "power"))
+        self.assertFalse(any(card.is_spell_copy for card in session.state.cards.values()))
+        self.replay(session, load=True)
+
+    def test_actual_narset_copies_and_returns_targetless_uncounterable_spell(self):
+        session = self.session(70710211)
+        reversal = self.add(session.engine, "Narset's Reversal", zone="hand")
+        fallout = self.add(session.engine, "Volcanic Fallout", seat="B", zone="hand")
+        self.assert_closed(session, reversal)
+        self.assert_closed(session, fallout)
+        self.prepare(session, mana={"U": 2})
+        session.state.players["B"].mana_pool.update({"C": 1, "R": 2})
+        self.checkpoint(session)
+        self.cast(session, "B", fallout)
+        original = session.state.stack[-1]
+        self.assertFalse(session.engine._stack_item_can_be_countered(original))
+        self.cast(session, "A", reversal, [original.ref])
+        self.resolve_top(session)
+        copied, = session.state.stack
+        self.assertEqual(("spell_copy", "A", []), (copied.kind, copied.controller, copied.targets))
+        self.assertIn(fallout.object_id, session.state.players["B"].zones["hand"])
+        self.assertEqual([40] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.assertFalse(any(event.code == "stack.counter" and event.details.get("stack") == original.ref
+                             for event in session.state.events))
+        self.assertEqual(2, len(session.engine._current_turn_history("spell_cast")))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([38] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session, load=True)
 
     def test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay(self):
         session = self.session(70710001)
@@ -732,3 +863,158 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
         self.assertFalse(result.errors)
         self.assertEqual(1, len(result.failures))
         self.assertIn('self.assertEqual(1, len(copies))', result.failures[0][1])
+
+    def test_return_copy_preserves_borrowed_controller_payment_and_independent_targets(self):
+        from quorune.record import authoritative_state_hash
+
+        for retain in (False, True):
+            with self.subTest(retain=retain):
+                session = self.session(70710320 + int(retain))
+                source = self.add(session.engine, "Chain of Vapor", zone="hand")
+                original_target = self.add(session.engine, "Generic Bound Body", seat="C", ref="borrowed-target")
+                second_target = self.add(session.engine, "Generic Bound Body", seat="D", ref="followup-target")
+                borrowed_land = self.add(session.engine, "Generic Bound Plains", seat="D", ref="borrowed-land")
+                blocked_land = self.add(session.engine, "Generic Bound Plains", seat="C", ref="another-land")
+                second_land = self.add(session.engine, "Generic Bound Plains", seat="D", ref="followup-land")
+                session.engine.change_control(original_target.object_id, "B", reason="Seed borrowed permanent")
+                session.engine.change_control(borrowed_land.object_id, "B", reason="Seed borrowed land")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"U": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", source, [original_target.ref])
+                original = session.state.stack[-1]
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertEqual(["pilot:B"], session.pending_principals())
+                for seat in "ACD":
+                    self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+                self.assertEqual("hand", session.state.cards[original_target.object_id].zone)
+                self.assertIn(original_target.object_id, session.state.players["C"].zones["hand"])
+
+                before = authoritative_state_hash(session.state)
+                for principal, land in (("pilot:C", blocked_land), ("pilot:B", blocked_land)):
+                    response = session.act(principal, {"action_id": "choose", "cards": [land.ref]})
+                    self.assertFalse(response.ok, response.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                paid = session.act("pilot:B", {"action_id": "choose", "cards": [borrowed_land.ref]})
+                self.assertTrue(paid.ok, paid.summary)
+                self.assertIn(borrowed_land.object_id, session.state.players["D"].zones["graveyard"])
+                self.assertEqual(["pilot:B"], session.pending_principals())
+                copy = session.act("pilot:B", {"action_id": "choose", "choice": "copy"})
+                self.assertTrue(copy.ok, copy.summary)
+                self.assertEqual(["pilot:B"], session.pending_principals())
+                payload = session.packet("pilot:B", full=True)["decision"]["ctx"]
+                self.assertEqual([original_target.ref], list(payload["default_targets"]))
+                before = authoritative_state_hash(session.state)
+                invalid = session.act("pilot:B", {"action_id": "choose", "targets": [second_land.ref]})
+                self.assertFalse(invalid.ok, invalid.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                answer = {"action_id": "choose"}
+                if not retain:
+                    answer["targets"] = [second_target.ref]
+                accepted = session.act("pilot:B", answer)
+                self.assertTrue(accepted.ok, accepted.summary)
+                copied, = session.state.stack
+                self.assertEqual(("spell_copy", "B", [original_target.ref if retain else second_target.ref]),
+                                 (copied.kind, copied.controller, copied.targets))
+                self.assertNotEqual(original.ref, copied.ref)
+                self.assertEqual([original_target.ref], original.targets)
+                if retain:
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("battlefield", session.state.cards[second_target.object_id].zone)
+                else:
+                    self.assertEqual("semantic.choice", self.resolve(session).kind)
+                    self.assertEqual(["pilot:D"], session.pending_principals())
+                    self.assertEqual("hand", session.state.cards[second_target.object_id].zone)
+                    declined = session.act("pilot:D", {"action_id": "choose", "cards": []})
+                    self.assertTrue(declined.ok, declined.summary)
+                self.assertFalse(session.state.stack)
+                self.assertEqual(1, len(session.engine._current_turn_history("spell_cast")))
+                self.replay(session, load=True)
+
+    def test_arbiter_cannot_submit_reserved_return_copy_stages(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.rules.targeted_discard_spell_copy import COPY_OFFER_FIELD
+        from quorune.rules.targeted_return_spell_copy import (
+            LAND_PAYMENT_FIELD, RETURN_COPY_VERSION, RETURN_TARGET_FIELD, return_copy_instruction,
+        )
+
+        session = self.session(70710325)
+        source = self.add(session.engine, "Generic Raw Resolution Witness", zone="hand")
+        permanent = self.add(session.engine, "Generic Bound Body", seat="B")
+        land = self.add(session.engine, "Generic Bound Plains", seat="B")
+        session.state.config.semantic_policy = "arbitrate_or_pause"
+        actions.SpreeModeCostRuntimeTests.prepare(self, session, mana={"U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        self.assertEqual("arbiter.resolve", self.resolve(session).kind)
+        original = session.state.stack[-1]
+        payment = {"op": "choose_objects", "player": "B", LAND_PAYMENT_FIELD: 1}
+        offer = {"op": "choose_objects", "player": "B", COPY_OFFER_FIELD: RETURN_COPY_VERSION,
+                 RETURN_TARGET_FIELD: permanent.ref, "_paid_land": [land.ref, "fabricated"]}
+        copied = return_copy_instruction("B", original.ref, permanent.ref)
+        nested = {"op": "offer_optional_effect", "player": "A", "effects": [payment]}
+        before = authoritative_state_hash(session.state)
+        for action in ("resolve", "register_and_resolve"):
+            for item in (payment, offer, copied, nested):
+                with self.subTest(action=action, effect=item["op"]):
+                    result = session.act("arbiter", {"action_id": action, "effects": [item]})
+                    self.assertFalse(result.ok, result.summary)
+                    self.assertIn("requires a bound card program", result.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+        self.replay(session, load=True)
+
+    def test_return_copy_is_optional_even_after_a_committed_land_sacrifice(self):
+        session = self.session(70710324)
+        source = self.add(session.engine, "Chain of Vapor", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        land = self.add(session.engine, "Generic Bound Plains", seat="B")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source, [target.ref])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        for response in ({"cards": [land.ref]}, {"choice": "decline"}):
+            result = session.act("pilot:B", {"action_id": "choose", **response})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[land.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+
+class ReturnControllerCopyCompilerTests(unittest.TestCase):
+    record = FixedStackSpellCopyModelCompilerTests.record
+
+    def compile(self, record):
+        return compile_oracle_card(record, capability_registry=load_default_capability_registry(),
+                                   capability_profile="commander_review")
+
+    def test_only_whole_return_then_land_sacrifice_and_optional_copy_compiles(self):
+        from quorune.rules.targeted_return_spell_copy import return_copy_payment
+
+        text = ("Return target nonland permanent to its owner's hand. Then that permanent's controller "
+                "may sacrifice a land of their choice. If the player does, they may copy this spell "
+                "and may choose a new target for that copy.")
+
+        def witness():
+            ir = self.compile(self.record(text))
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertEqual(return_copy_payment(), node.effects[1])
+            self.assertEqual(["land"], node.target_schema["types_none"])
+            self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+
+        witness()
+        with mock.patch("quorune.compiler.targeted_discard_spell_copy.targeted_return_spell_copy_template",
+                        return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (
+            text.replace("controller", "owner"),
+            text.replace("sacrifice a land", "sacrifice a creature"),
+            text.replace("they may copy", "they copy"),
+            text.replace("target nonland permanent", "target land"),
+            text + " Draw a card.",
+        ):
+            self.assertNotEqual("exact", self.compile(self.record(altered)).status)

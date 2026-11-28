@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
+from functools import partial
 from typing import Any, Protocol
 
+from ..characteristic_read_frames import characteristic_read_frame
+from ..continuous_effect_model import Layer
 from ..additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_BATTLEFIELD_COST,
@@ -32,7 +35,9 @@ class AdditionalCostError(ValueError):
 class AdditionalCostQueryHost(Protocol):
     state: Any
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(
+        self, card: Any, *, maximum_layer: Layer | None = None,
+    ) -> Mapping[str, Any]: ...
 
     def _type_parts(
         self, type_line: str
@@ -755,8 +760,9 @@ def fixed_zone_change_cost_candidates(
     actor: str,
     cost: FixedZoneChangeAdditionalCost,
     exclude_object_id: str | None = None,
+    maximum_layer: Layer | None = None,
 ) -> tuple[str, ...]:
-    """Return operation-owned candidates through one immutable query path."""
+    """Read operation-owned candidates through the layer required by the price."""
 
     if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
                                CAST_COPY_SACRIFICE_PRICE_VERSION}:
@@ -765,25 +771,29 @@ def fixed_zone_change_cost_candidates(
 
     from ..sacrifice_prohibition_model import sacrifice_is_prohibited
 
+    read_characteristics = host._effective_card_data
+    if maximum_layer is not None:
+        read_characteristics = partial(read_characteristics, maximum_layer=maximum_layer)
     rows = []
-    for object_id in host.state.players[actor].zones[cost.origin_zone]:
-        if object_id == exclude_object_id:
-            continue
-        card = host.state.cards[object_id]
-        if cost.operation == SACRIFICE_ONE_COST and sacrifice_is_prohibited(host.state, card):
-            continue
-        effective = host._effective_card_data(card)
-        rows.append(
-            object_query_result(
-                card,
-                effective,
-                type_parts=host._type_parts(
-                    str(effective.get("type_line") or "")
-                ),
-                known_to_actor=True,
-                attached_to_ref=None,
+    with characteristic_read_frame(host):
+        for object_id in host.state.players[actor].zones[cost.origin_zone]:
+            if object_id == exclude_object_id:
+                continue
+            card = host.state.cards[object_id]
+            if cost.operation == SACRIFICE_ONE_COST and sacrifice_is_prohibited(host.state, card):
+                continue
+            effective = read_characteristics(card)
+            rows.append(
+                object_query_result(
+                    card,
+                    effective,
+                    type_parts=host._type_parts(
+                        str(effective.get("type_line") or "")
+                    ),
+                    known_to_actor=True,
+                    attached_to_ref=None,
+                )
             )
-        )
     matched = tuple(query_objects(rows, cost.bound_predicate(actor)))
     if cost.predicate_union is not None:
         admitted = {row.ref for query in cost.predicate_union.bound_predicates(actor) for row in query_objects(rows, query)}

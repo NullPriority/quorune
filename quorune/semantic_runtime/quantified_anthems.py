@@ -3,17 +3,86 @@ from __future__ import annotations
 """Live layer-7c quantities over the existing validated anthem subject owner."""
 
 from dataclasses import dataclass
+from collections import Counter
 from collections.abc import Mapping
 from ..characteristic_fragments import (
     CharacteristicQuantityReduction, CharacteristicQuantityScope as Scope, CharacteristicQuantitySpec,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..continuous_effect_model import ContinuousEffect,ContinuousOperation,ContinuousEffectOrigin,Layer
+from ..continuous_effect_model import (
+    ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation,
+    ContinuousObjectIdentity, ContinuousOperation, Layer,
+)
 from .context import SemanticNodeError
 from .component_registry import exact_fields
 
 QUANTIFIED_ANTHEM_HANDLER='continuous.anthem.live-quantity.v1'
 QUANTIFIED_ANTHEM_CAPABILITY='continuous.power_toughness.live_quantity'
+RECIPIENT_ATTACK_HISTORY_FIELD = "recipient_attack_history"
+RECIPIENT_ATTACK_ANTHEM_CAPABILITY = "continuous.power_toughness.recipient_attack_history"
+_RECIPIENT_ATTACK_HISTORY = {"schema_version": 1, "kind": "creature_attacked"}
+
+
+def recipient_attack_anthem_descriptor():
+    return {
+        "handler_id": QUANTIFIED_ANTHEM_HANDLER, "schema_version": 1, "event": "characteristics.evaluate",
+        "condition": {
+            "target_controller": "source_controller",
+            "predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)).to_dict(),
+            "exclude_source": False,
+        },
+        "modifier": {"power": 1, "toughness": 0, RECIPIENT_ATTACK_HISTORY_FIELD: dict(_RECIPIENT_ATTACK_HISTORY)},
+    }
+
+
+def _uses_recipient_attack_history(descriptor):
+    modifier = descriptor.get("modifier")
+    return (
+        descriptor.get("handler_id") == QUANTIFIED_ANTHEM_HANDLER
+        and isinstance(modifier, Mapping) and RECIPIENT_ATTACK_HISTORY_FIELD in modifier
+    )
+
+
+def recipient_attack_anthem_dependencies(descriptor):
+    if not _uses_recipient_attack_history(descriptor):
+        return ()
+    QuantifiedAnthemHandler().validate(descriptor)
+    return (RECIPIENT_ATTACK_ANTHEM_CAPABILITY,)
+
+
+def recipient_attack_history_facts(state, descriptor):
+    if not _uses_recipient_attack_history(descriptor):
+        return None
+    from ..turn_history import current_turn_history_events
+
+    history = getattr(state, "turn_history", None)
+    if history is None or history.schema_version != 1 or history.turn_sequence != state.turn_sequence:
+        raise SemanticNodeError("Attack-count anthems need complete current declaration history")
+    counts = Counter(event.object_incarnation for event in current_turn_history_events(
+        history, turn_sequence=state.turn_sequence, kind="creature_attacked",
+    ))
+    return tuple(
+        (ContinuousObjectIdentity(card.object_id, card.logical_object_id), counts[card.logical_object_id])
+        for card in sorted(state.cards.values(), key=lambda card: card.object_id)
+        if card.zone == "battlefield" and counts[card.logical_object_id]
+    )
+
+
+def _recipient_attack_effects(context, predicate):
+    counts = context.recipient_attack_counts
+    if counts is None:
+        raise SemanticNodeError("Attack-count anthems need resolved recipient history")
+    return tuple(
+        ContinuousEffect(
+            effect_id=f"{context.source_object_id}:{context.component_id}:attacks:{identity.object_id}",
+            source_id=context.source_object_id,
+            layer=Layer.POWER_TOUGHNESS, sublayer="7c", timestamp=context.source_timestamp,
+            origin=ContinuousEffectOrigin.STATIC_ABILITY, applies=predicate,
+            relation=ContinuousEffectRelation.SOURCE_ATTACK_HISTORY_RECIPIENT, related_object=identity,
+            operations=(ContinuousOperation("modify_power_toughness", [amount, 0]),),
+        )
+        for identity, amount in counts
+    )
 
 
 def recipient_is_in_quantity_domain(predicate,quantity):
@@ -47,6 +116,22 @@ class QuantifiedAnthemHandler:
                 or descriptor['schema_version']!=1 or descriptor['event']!=self.event):
             raise SemanticNodeError('Quantified anthem identity is malformed')
         modifier=descriptor['modifier']
+        if _uses_recipient_attack_history(descriptor):
+            from ..replacement.immutable import FrozenMap
+
+            raw = modifier[RECIPIENT_ATTACK_HISTORY_FIELD]
+            if (
+                FrozenMap(descriptor) != FrozenMap(recipient_attack_anthem_descriptor())
+                or type(modifier["power"]) is not int or type(modifier["toughness"]) is not int
+                or type(raw["schema_version"]) is not int
+                or descriptor["condition"]["exclude_source"] is not False
+            ):
+                raise SemanticNodeError("Attack-count anthems require their exact live controlled creature modifier")
+            base = FixedQueryPowerToughnessAnthemHandler().validate({
+                **descriptor, "handler_id": "continuous.anthem.fixed-query.v2", "schema_version": 2,
+                "modifier": {"power": 1, "toughness": 0},
+            })
+            return base, None, False
         exact_fields(modifier,{'power','toughness','quantity','exclude_recipient'},field='quantified anthem modifier')
         if type(modifier['exclude_recipient']) is not bool:
             raise SemanticNodeError('Quantified recipient exclusion must be explicit')
@@ -77,7 +162,11 @@ class QuantifiedAnthemHandler:
 
     def lower(self,descriptor,context):
         from .continuous_components import _fixed_query_effect_predicate
-        base,_quantity,exclude=self.validate(descriptor)
+        base,quantity,exclude=self.validate(descriptor)
+        predicate = _fixed_query_effect_predicate(base.predicate, target_controller=base.target_controller,
+                                                  exclude_source=base.exclude_source, context=context)
+        if quantity is None:
+            return _recipient_attack_effects(context, predicate)
         count=context.resolved_quantity
         if type(count) is not int or count<0:
             raise SemanticNodeError('Live anthem quantity is unavailable')
@@ -86,8 +175,6 @@ class QuantifiedAnthemHandler:
         # when the ability source itself is not a member.
         if exclude:count=max(0,count-1)
         if not count:return ()
-        predicate=_fixed_query_effect_predicate(base.predicate,target_controller=base.target_controller,
-            exclude_source=base.exclude_source,context=context)
         return (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}',
             source_id=context.source_object_id,layer=Layer.POWER_TOUGHNESS,sublayer='7c',
             timestamp=context.source_timestamp,origin=ContinuousEffectOrigin.STATIC_ABILITY,applies=predicate,

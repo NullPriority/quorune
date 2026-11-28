@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import sqlite3
 import tempfile
+from threading import Event
 import unittest
 from unittest.mock import patch
 
@@ -67,6 +68,35 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(1, len(cookies), "Expected one server-issued cookie scope")
         cookie = cookies[0]
         self.client.cookies.set(name, value, domain=cookie.domain, path=cookie.path)
+
+    def test_structured_deck_editor_preserves_board_tags_and_physical_printing(self):
+        token, _ = self.guest("Visual editor owner")
+        auth = self.auth(token)
+        room = self.client.post("/api/v1/rooms", headers=auth, json={}).json()["room"]["room_id"]
+        endpoint = f"/api/v1/rooms/{room}/deck"
+        original = self.client.put(endpoint, headers=auth, json={
+            "name": "Original", "commander": "Krenko, Tin Street Kingpin",
+            "decklist": "Commander:\n1 Krenko, Tin Street Kingpin\nMainboard:\n99 Mountain",
+        })
+        self.assertEqual(200, original.status_code, original.text)
+        prior = original.json()["deck"]["deck_id"]
+        edited = self.client.put(endpoint, headers=auth, json={
+            "name": "Edited", "edited_deck_id": prior,
+            "entries": [
+                {"name": "Krenko, Tin Street Kingpin", "quantity": 1, "board": "commander", "tags": ["Token engine"]},
+                {"name": "Mountain", "quantity": 99, "board": "mainboard", "tags": ["Mana"],
+                 "printing": {"set_code": "dmu", "collector_number": "272", "language": "ja", "finish": "foil"}},
+            ],
+        })
+        self.assertEqual(200, edited.status_code, edited.text)
+        new_id = edited.json()["deck"]["deck_id"]
+        payload = self.client.get(f"/api/v1/me/decks/{new_id}", headers=auth).json()
+        self.assertEqual(["Krenko, Tin Street Kingpin"], payload["deck"]["commanders"])
+        self.assertEqual(["Token engine"], payload["deck"]["entries"][0]["tags"])
+        self.assertEqual({
+            "set_code": "dmu", "collector_number": "272", "language": "ja", "finish": "foil",
+        }, payload["deck"]["entries"][1]["printing"])
+        self.assertIn("Mountain", payload["card_refs"])
 
     def test_deck_upload_accepts_printed_copy_limits_and_rejects_the_next_copy(self):
         player, _ = self.guest("Copy Limit Pilot")
@@ -808,6 +838,84 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, response.status_code, response.text)
         return response.json()["game_id"], tokens, room_id
 
+    def test_ready_room_prepares_rules_off_loop_and_start_reuses_them(self):
+        from quorune import session as session_module
+
+        room_id, tokens = self.create_ready_room(4)
+        self.restart_client()
+        room_path = f"/api/v1/rooms/{room_id}"
+        host = self.auth(tokens[0])
+        entered, release = Event(), Event()
+        compile_rules = session_module._compile_session_rules
+
+        def wait_for_room_poll(*args, **kwargs):
+            entered.set()
+            if not release.wait(timeout=15):
+                raise AssertionError("Room poll could not finish during warmup")
+            return compile_rules(*args, **kwargs)
+
+        with patch.object(session_module, "_compile_session_rules", side_effect=wait_for_room_poll) as compiler:
+            try:
+                room = self.client.get(room_path, headers=host)
+                self.assertEqual(200, room.status_code, room.text)
+                self.assertTrue(entered.wait(timeout=10))
+                self.assertEqual(200, self.client.get("/api/v1/health").status_code)
+                self.assertEqual("open", self.client.get(room_path, headers=host).json()["room"]["status"])
+                self.assertEqual([], list(self.settings.game_root.glob("*/manifest.json")))
+            finally:
+                release.set()
+            started = self.client.post(f"{room_path}/start", headers=host, json={"first_player": "D"})
+            self.assertEqual(200, started.status_code, started.text)
+            self.assertEqual(1, compiler.call_count)
+
+        game_id = started.json()["game_id"]
+        pilot = self.auth(tokens[3])
+        game_path = f"/api/v1/games/{game_id}"
+        packet = self.client.get(f"{game_path}/state", headers=pilot).json()["packet"]
+        decision = packet["decision"]
+        kept = self.client.post(f"{game_path}/commands", headers=pilot, json={
+            "protocol_version": "3.0",
+            "game_id": game_id,
+            "command_id": "prepared-room-keep",
+            "decision_id": decision["id"],
+            "action_id": "keep",
+            "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"],
+            "choices": {},
+        })
+        self.assertEqual(200, kept.status_code, kept.text)
+        self.assertTrue(kept.json()["receipt"]["ok"], kept.text)
+        with CardDatabase(self.settings.card_db) as database:
+            replay = replay_record(self.settings.game_root / game_id, database, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_start_uses_submitted_rules_without_waiting_for_a_lobby_poll(self):
+        from quorune.session import CommanderSession
+        from quorune.record_trust import semantics_fingerprint
+
+        room_id, tokens = self.create_ready_room(4)
+        runtime = self.client.app.state.runtime
+        host_id = runtime.store.authenticate(tokens[0])["guest_id"]
+        spec = runtime.store.start_spec(room_id, host_id)
+        ordinary = CommanderSession.prepare_rules(runtime.card_db, spec.decks, review_profile="commander_review")
+        with patch("quorune.session._compile_session_rules", side_effect=AssertionError("Deck rules were recompiled")) as compiler:
+            started = self.client.post(
+                f"/api/v1/rooms/{room_id}/start", headers=self.auth(tokens[0]), json={"first_player": "D"},
+            )
+            self.assertEqual(200, started.status_code, started.text)
+        compiler.assert_not_called()
+
+        game_id = started.json()["game_id"]
+        self.assertTrue((self.settings.game_root / game_id / "manifest.json").is_file())
+        actual = runtime.manager.get(game_id).service.session.engine.semantics
+        self.assertEqual(semantics_fingerprint(ordinary._semantics), semantics_fingerprint(actual))
+        self.assertEqual(ordinary._semantics.card_program_fingerprints(), actual.card_program_fingerprints())
+        for oracle_id in actual.card_program_fingerprints():
+            self.assertEqual(
+                ordinary._semantics.programs_for_oracle(oracle_id),
+                actual.programs_for_oracle(oracle_id),
+            )
+
     def test_host_selected_starting_seat_and_life_survive_replay(self):
         game_id, tokens, _ = self.create_ready_game(player_count=2, first_player="B", starting_life=27)
         base = f"/api/v1/games/{game_id}"
@@ -1001,6 +1109,26 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertTrue(retry.json()["receipt"]["ok"], retry.text)
         self.assertFalse(retry.json()["receipt"]["replayed"])
         self.assertEqual(1, len((directory / "commands.jsonl").read_text(encoding="utf-8").splitlines()))
+
+    def test_http_state_captures_projection_and_lifecycle_in_one_actor_read(self):
+        game_id, tokens, _ = self.create_ready_game(player_count=4, first_player="D")
+        actor = self.client.app.state.runtime.manager.get(game_id)
+        for index, seat in enumerate("ABCD"):
+            with self.subTest(seat=seat):
+                before = actor.processed_messages
+                response = self.client.get(
+                    f"/api/v1/games/{game_id}/state?full=true",
+                    headers=self.auth(tokens[index]),
+                )
+                self.assertEqual(200, response.status_code, response.text)
+                self.assertEqual(before + 1, actor.processed_messages)
+                payload = response.json()
+                packet, game = payload["packet"], payload["game"]
+                self.assertEqual(f"pilot:{seat}", packet["principal"])
+                self.assertEqual(seat, game["seat"])
+                self.assertEqual(packet["view_revision"], game["state_revision"])
+                for other, player in packet["state"]["players"].items():
+                    self.assertEqual(other == seat, "hand" in player)
 
     def test_command_progress_shows_only_the_requesting_pilots_timing(self):
         game_id, tokens, _room = self.create_ready_game(player_count=2)

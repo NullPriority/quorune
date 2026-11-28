@@ -209,6 +209,7 @@ class _AdditionalCostCommit:
     pre_recorded_zone_history_ids: set[str] = field(default_factory=set)
     paid_sacrifice_mana_value: PaidSacrificeManaValueSnapshot | None = None
     paid_sacrifice_characteristics: PaidSacrificeCharacteristics | None = None
+    paid_discard_reveals: set[str] | None = None
 
 
 def _commit_tap_costs(
@@ -315,9 +316,9 @@ def _pay_fixed_life_additional_cost(
 
 
 def _pay_cast_choice_life_costs(host, proposal, card, selected_option) -> None:
-    from .library_top_life import library_top_life_amount
+    from .library_top_life import mana_value_life_amount
 
-    if alternate_life := library_top_life_amount(selected_option):
+    if alternate_life := mana_value_life_amount(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, alternate_life)
     if printed_life := printed_phyrexian_life_payment(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, printed_life)
@@ -556,6 +557,10 @@ def _commit_additional_costs(
 ) -> _AdditionalCostCommit:
     result = _AdditionalCostCommit([], [], {}, {}, [], [])
     capabilities = program.capability_dependencies if program is not None else ()
+    from ..paid_discard_damage import PAID_NONLAND_DAMAGE_CAPABILITY
+
+    if PAID_NONLAND_DAMAGE_CAPABILITY in capabilities:
+        result.paid_discard_reveals = set()
     required_paid_facts = PAID_SACRIFICE_FACT_FIELDS.keys() & set(capabilities)
     if commit_whole_zone_costs(host, proposal, response, card, selected_option, program, result, required_paid_facts):
         return result
@@ -814,6 +819,11 @@ def _create_spell_item(
         mark_multikicker_paid(card, multikicker_cast_context(selected_option))
         if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
             mark_card_flashed_back(card)
+        from ...harmonize import FINGERPRINT as HARMONIZE_FINGERPRINT
+        from ...zone_object_state import mark_card_harmonized
+
+        if HARMONIZE_FINGERPRINT in selected_option:
+            mark_card_harmonized(card)
         _mark_selected_cast_lifecycle(card, lifecycle_spec, rebound)
     method_spec = _face_down_method_spec_from_details(details)
     if method_spec is not None and existing_item is None:
@@ -830,6 +840,7 @@ def _create_spell_item(
     )
     ref = existing_item.ref if existing_item is not None else host._next_ref("S")
     from ...next_spell_costs import consume_next_spell_rules
+    from ..paid_discard_damage import paid_discard_cast_context
     used_improvise,used_uncounterable,next_payments=consume_next_spell_rules(host,proposal,card,preparing=preparing)
     intrinsic_uncounterable = oracle_has_intrinsic_counter_prohibition(
         host.semantics,
@@ -866,6 +877,7 @@ def _create_spell_item(
             lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
             intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise,next_payments=next_payments),
             **paid_alternative_cast_context(host,card,selected_option),
+            **({} if preparing else paid_discard_cast_context(host, program, costs)),
             **impending_payment_context(selected_option),
             **({} if preparing else consume_paid_mana_protection(host.state.players[proposal.seat].stats))},
     )
@@ -1057,9 +1069,9 @@ def _dispatch_cast_events(
         mana_spent_total=item.context.get('mana_spent_total'),
         **card_fact,
     )
-    from ...cast_origin_replacement import MAIN_PHASE_CAST_CONTEXT, MainPhaseCastFact, is_main_phase_cast_replacement
+    from ...cast_origin_replacement import MAIN_PHASE_CAST_CONTEXT, MainPhaseCastFact, needs_own_main_phase_cast_fact
 
-    if program is not None and any(is_main_phase_cast_replacement(effect) for effect in program.effects):
+    if program is not None and any(needs_own_main_phase_cast_fact(effect) for effect in program.effects):
         item.context[MAIN_PHASE_CAST_CONTEXT] = MainPhaseCastFact.from_event(cast_event).to_dict()
     from .mana_spend_entry import bind_paid_commander_entry
     from .mana_spend_triggers import spent_mana_cast_triggers
@@ -1203,6 +1215,11 @@ def _revalidate_cast_contracts(
     from .kicked_targets import validate_kicked_target_commit
     try:validate_kicked_target_commit(program,selected_option)
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicked_targets') from exc
+    from .gift_card_costs import validate_gift_commit
+    try:
+        validate_gift_commit(host, proposal.seat, program, selected_option)
+    except (TypeError, ValueError) as exc:
+        raise CastProposalError(str(exc), reason="stale_gift_option") from exc
     from .fixed_text_variant_costs import validate_text_variant_commit
     validate_text_variant_commit(host,card,program,selected_option)
     try:
@@ -1234,6 +1251,12 @@ def _revalidate_cast_contracts(
                 "The fixed-mana Flashback contract changed before commit",
                 reason="stale_flashback_contract",
             )
+    from .harmonize_costs import validate_harmonize_cast
+
+    try:
+        validate_harmonize_cast(host, proposal, card, selected_option)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason="stale_harmonize_contract") from exc
     _revalidate_fixed_lifecycle_contract(
         host, proposal, card, selected_option,
         x_value=selected_option.get("announced_target_x", selected_option.get("announced_additional_x", response.get("x"))),

@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from ..replacement.immutable import FrozenMap,thaw_value
 from ..ripple_model import RippleSpec,RippleCastSnapshot
 from .library_selection import LibrarySelectionObjectIdentity
-from .ripple import RIPPLE_FIELD,decode_ripple_instruction,ripple_instruction
+from .ripple import RIPPLE_FIELD,decode_revealed_library_cast,ripple_instruction
+from .revealed_library_cast import MANA_VALUE_CAST_FIELD, HandCastRevealSnapshot, mana_value_cast_instruction
 
 RIPPLE_STATE_FIELD='ripple_state'
 _BASE_FIELDS={'op','player',RIPPLE_FIELD,'cast_snapshot'}
@@ -12,8 +13,8 @@ _BASE_FIELDS={'op','player',RIPPLE_FIELD,'cast_snapshot'}
 
 @dataclass(frozen=True,slots=True)
 class RippleResolutionState:
-    spec: RippleSpec
-    source: RippleCastSnapshot
+    spec: RippleSpec | None
+    source: RippleCastSnapshot | HandCastRevealSnapshot
     stack_ref: str
     looked: tuple[LibrarySelectionObjectIdentity,...]
     stage: str='cast'
@@ -21,10 +22,12 @@ class RippleResolutionState:
     actor: str | None=None
 
     def __post_init__(self):
+        ripple = isinstance(self.spec, RippleSpec) and isinstance(self.source, RippleCastSnapshot)
+        mana_value = self.spec is None and isinstance(self.source, HandCastRevealSnapshot)
         if (type(self.schema_version) is not int or self.schema_version!=1
-                or not isinstance(self.spec,RippleSpec) or not isinstance(self.source,RippleCastSnapshot)
+                or not (ripple or mana_value)
                 or type(self.stack_ref) is not str or not self.stack_ref or self.stage not in ('cast','bottom')
-                or not isinstance(self.looked,tuple) or len(self.looked)>self.spec.count
+                or not isinstance(self.looked,tuple) or len(self.looked)>self.reveal_count
                 or any(not isinstance(i,LibrarySelectionObjectIdentity) for i in self.looked)
                 or any(len({getattr(i,k) for i in self.looked})!=len(self.looked)
                     for k in ('object_id','logical_object_id','ref'))):
@@ -32,16 +35,32 @@ class RippleResolutionState:
         if self.actor is None:object.__setattr__(self,'actor',self.source.controller)
         if type(self.actor) is not str or not self.actor:raise ValueError('Ripple requires its current resolving controller')
 
+    @property
+    def casts_once(self):
+        return isinstance(self.source, HandCastRevealSnapshot)
+
+    @property
+    def reveal_count(self):
+        return self.source.mana_value if self.casts_once else self.spec.count
+
     def effect(self):
-        return {**ripple_instruction(self.spec),'player':self.actor,'cast_snapshot':self.source.to_dict(),
-            RIPPLE_STATE_FIELD:{'schema_version':1,'stack_ref':self.stack_ref,'stage':self.stage,
-                'looked':[i.to_dict() for i in self.looked]}}
+        if self.casts_once:
+            instruction = mana_value_cast_instruction(actor=self.actor, snapshot=self.source)
+        else:
+            instruction = {**ripple_instruction(self.spec), 'player':self.actor, 'cast_snapshot':self.source.to_dict()}
+        return {**instruction, RIPPLE_STATE_FIELD:{'schema_version':1,'stack_ref':self.stack_ref,'stage':self.stage,
+                                                  'looked':[i.to_dict() for i in self.looked]}}
 
     @classmethod
     def from_effect(cls,effect,*,actor):
-        if not isinstance(effect,Mapping) or set(effect)!=_BASE_FIELDS|{RIPPLE_STATE_FIELD}:
-            raise ValueError('Ripple resolution fields are closed')
-        spec,source=decode_ripple_instruction({k:effect[k] for k in _BASE_FIELDS},actor=actor,allow_symbolic=False)
+        if not isinstance(effect, Mapping):
+            raise ValueError('Revealed-library resolution requires its exact fields')
+        fields = _BASE_FIELDS
+        if MANA_VALUE_CAST_FIELD in effect:
+            fields = (_BASE_FIELDS - {RIPPLE_FIELD}) | {MANA_VALUE_CAST_FIELD}
+        if set(effect) != fields | {RIPPLE_STATE_FIELD}:
+            raise ValueError('Revealed-library resolution requires its exact fields')
+        spec,source=decode_revealed_library_cast({k:effect[k] for k in fields},actor=actor,allow_symbolic=False)
         state=effect[RIPPLE_STATE_FIELD]
         if (not isinstance(state,Mapping) or set(state)!={'schema_version','stack_ref','stage','looked'}
                 or not isinstance(state['looked'],(list,tuple))):

@@ -199,6 +199,18 @@ def next_personal_turn_protection_template(text):
     )
 
 
+def _targeted_opponent_protection_template(text):
+    from ..rules.targeted_opponent_protection import MECHANIC, TEMPLATE, effects, opponent_target_schema
+
+    material = " ".join(text.casefold().replace("’", "'").split()).removesuffix(".")
+    if material != (
+        "choose target opponent. until that player's next turn, they gain protection from everything "
+        "and their life total can't change. all nonland permanents they control phase out"
+    ):
+        return None
+    return TEMPLATE, effects(), opponent_target_schema(), (MECHANIC,)
+
+
 def _temporary_life_total_protection_template(text):
     if not re.fullmatch(
         r"Until end of turn, your life total can['’]t change, and permanents you control "
@@ -232,7 +244,8 @@ def temporary_player_rule_template(text):
             (DRAW_REDIRECT_MECHANIC, "cr-115-targets"),
         )
 
-    if grant := (all_player_turn_rules_template(text) or next_personal_turn_protection_template(text) or _temporary_life_total_protection_template(text)
+    if grant := (all_player_turn_rules_template(text) or next_personal_turn_protection_template(text)
+                 or _targeted_opponent_protection_template(text) or _temporary_life_total_protection_template(text)
                  or next_draw_replacement_effect_template(text)
                  or turn_color_spell_protection_template(text) or turn_spell_source_color_protection_template(text)
                  or _temporary_cascade_template(text)

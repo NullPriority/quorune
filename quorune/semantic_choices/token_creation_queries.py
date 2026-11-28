@@ -12,6 +12,7 @@ def semantic_choice_token_creation_preview(
     operation = str(effect.get("op") or "")
     common: dict[str, Any]
     from ..rules.attached_role_batch import ATTACHED_ROLE_BATCH_OPERATION, PREVIEW_FIELD, resolve_attached_role_batch
+    from ..rules.targeted_attack_die_copy import is_rolled_attacking_copy
 
     if operation == ATTACHED_ROLE_BATCH_OPERATION:
         base = {key: value for key, value in effect.items() if key != PREVIEW_FIELD}
@@ -28,6 +29,10 @@ def semantic_choice_token_creation_preview(
     elif operation == 'choose_fixed_attacking_token_destinations' and effect.get('token_entry_version') == 4:
         common = {'name': '', 'quantity': 1, 'tapped': True, 'attacking_groups': ('any',),
                   'copy_of': effect['copy_of'], 'copy_snapshot': dict(effect['copy_snapshot'])}
+    elif is_rolled_attacking_copy(effect):
+        attacking = self.state.phase == "combat" and self.state.active_player == actor
+        common = {"name": "", "quantity": 1, "tapped": True, "attacking_groups": ("any",) if attacking else (),
+                  "copy_of": effect["copy_of"], "copy_snapshot": dict(effect["copy_snapshot"])}
     elif operation in {"choose_attacking_token_destinations", 'choose_fixed_attacking_token_destinations'}:
         quantity = effect.get("quantity")
         if type(quantity) is not int or quantity < 0:

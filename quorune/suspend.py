@@ -142,7 +142,7 @@ def _suspend_timing_is_legal(
     face_name = str(face.get("name") or "") if face else None
     temporary = temporary_cast_timing_permissions(host, seat, card, face=face)
     if temporary and (compiled_self_cast_restriction_reason(host, seat, card, face_name=face_name)
-                      or static_cast_prohibition_reason(host, seat, card, face=face)):
+                      or static_cast_prohibition_reason(host, seat, card, face=face, x_unannounced=True)):
         return False
     printed = compiled_cast_timing_permissions(host, card, face_name=face_name, actor=seat)
     return cast_timing_is_legal(host.state, seat, type_line, (*printed, *temporary))

@@ -164,6 +164,7 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
     from ..semantic_runtime.draw_replacements import (
         EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID, LIBRARY_CHOICE_DRAW_HANDLER_ID,
     )
+    from ..semantic_runtime.draw_empty_library_win import HANDLER_ID as EMPTY_LIBRARY_WIN_HANDLER_ID
     from ..semantic_runtime.draw_exile_play import HANDLER_ID as DRAW_EXILE_PLAY_HANDLER_ID
 
     current_draw_handlers = {
@@ -172,6 +173,7 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
         DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
         EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
         DRAW_EXILE_PLAY_HANDLER_ID,
+        EMPTY_LIBRARY_WIN_HANDLER_ID,
         LIBRARY_CHOICE_DRAW_HANDLER_ID,
     }
     return StaticRuntimeTemplate(
@@ -789,6 +791,7 @@ def _static_damage_runtime_template(
         CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER, NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER,
     )
     from .counter_prevention_templates import fixed_counter_prevention_handler
+    from .damage_templates import CONTROLLED_SOURCE_TRIPLE_TEMPLATE
 
     static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
                      if source_permanent and not source_is_class else None)
@@ -797,10 +800,12 @@ def _static_damage_runtime_template(
         return None
     if (
         (source_is_class or not source_permanent)
-        and static_damage[1]["handler_id"]
-        in {"replacement.damage.quantity.v2", "prevention.damage.fixed.untapped.v3",
-            NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER, CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER,
-            LINKED_PLAYER_DAMAGE_HANDLER_ID}
+        and (static_damage[0] == CONTROLLED_SOURCE_TRIPLE_TEMPLATE
+             or static_damage[1]["handler_id"] in {
+                 "replacement.damage.quantity.v2", "prevention.damage.fixed.untapped.v3",
+                 NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER, CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER,
+                 LINKED_PLAYER_DAMAGE_HANDLER_ID,
+             })
     ):
         return None
     if (

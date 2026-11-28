@@ -4,6 +4,53 @@
   "source": "Pinned source candidates/rulings and exact existing shared fixture rows; incomplete siblings remain explicit controls",
   "cards": [
     {
+      "defense": null,
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Chain of Vapor",
+      "oracle_id": "2167ac25-d042-4b48-b770-8b94acc1a965",
+      "oracle_text": "Return target nonland permanent to its owner's hand. Then that permanent's controller may sacrifice a land of their choice. If the player does, they may copy this spell and may choose a new target for that copy.",
+      "power": null,
+      "released_at": "2016-11-11",
+      "toughness": null,
+      "type_line": "Instant",
+      "cmc": 1.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "produced_mana": []
+    },
+    {
       "oracle_id": "61495793-b0c7-40a5-ad3e-9df8e2b8096b",
       "name": "Choreographed Sparks",
       "mana_cost": "{R}{R}",

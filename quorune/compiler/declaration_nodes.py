@@ -55,8 +55,11 @@ def _typed_declaration_dependencies(templates):
     from ..city_blessing_model import CITYS_BLESSING_CAPABILITY
     from ..crime_model import crime_fact_dependencies
     from ..continuous_conditions import FixedPublicStateConditionKind
+    from ..battlefield_mana_value_query import even_mana_value_blocker_dependencies
+
     required={DECLARATION_COMPONENT_CAPABILITY_ID}
     for template in templates:
+        required.update(even_mana_value_blocker_dependencies(template))
         condition=getattr(template,'condition',None)
         if not isinstance(condition,FixedPublicStateConditionSpec):continue
         required.add(PUBLIC_STATE_DECLARATION_CAPABILITY_ID)
@@ -343,6 +346,7 @@ def declaration_static_node(
                     "printed": template.printed_cost,
                     "source_condition": template.source_condition,
                     "includes_planeswalkers": template.includes_planeswalkers,
+                    **({"mana_calculation": template.mana_calculation} if template.mana_calculation else {}),
                 },
             )
         residual_id = append_residual(

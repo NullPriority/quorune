@@ -1,6 +1,190 @@
 {
   "cards": [
     {
+      "oracle_id": "2c24b7c3-7c90-4109-a4aa-d9cae6febf34",
+      "name": "Orb of Dreams",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "Permanents enter tapped.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2005-02-04",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "defense": null,
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Enduring Courage",
+      "oracle_id": "b3de29cb-7d7d-4566-b5bf-37e571bd5d78",
+      "oracle_text": "Whenever another creature you control enters, it gets +2/+0 and gains haste until end of turn.\nWhen Enduring Courage dies, if it was a creature, return it to the battlefield under its owner's control. It's an enchantment. (It's not a creature.)",
+      "power": "3",
+      "released_at": "2024-09-27",
+      "toughness": "3",
+      "type_line": "Enchantment Creature — Dog Glimmer",
+      "cmc": 4.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "55f3c721-e13a-406e-bc8e-d6cdc91ac477",
+      "name": "Authority of the Consuls",
+      "mana_cost": "{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures your opponents control enter tapped.\nWhenever a creature an opponent controls enters, you gain 1 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
       "cmc": 3.0,
       "color_identity": [
         "R"
@@ -706,6 +890,24 @@
     }
   ],
   "rulings": [
+    {
+      "oracle_id": "b3de29cb-7d7d-4566-b5bf-37e571bd5d78",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Dog and Glimmer are both creature types. Enduring Courage won't have those creature types when its last ability returns it to the battlefield because it won't be a creature."
+    },
+    {
+      "oracle_id": "b3de29cb-7d7d-4566-b5bf-37e571bd5d78",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a nontoken permanent that's a copy of Enduring Courage dies while it's a creature, it will return to the battlefield as an enchantment when its last ability resolves. It won't have any card types other than enchantment."
+    },
+    {
+      "oracle_id": "b3de29cb-7d7d-4566-b5bf-37e571bd5d78",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "A token that's a copy of Enduring Courage won't return to the battlefield when its last ability resolves."
+    },
     {
       "comment": "Creatures don't necessarily have to be dealt lethal damage by Anger of the Gods to be exiled. After being dealt damage, if they would die for any reason that turn, they'll be exiled instead.",
       "oracle_id": "3a7fe095-8278-4b1d-bec4-19b35bdcdd1b",

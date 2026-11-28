@@ -100,6 +100,19 @@ def _activation_graveyard_return_template(ability, text):
 def announced_activation_mana_value_target_template(ability, text: str):
     if graveyard := _activation_graveyard_return_template(ability, text):
         return graveyard
+    if ability.announced_energy_reanimation:
+        from ..rules.announced_energy_reanimation import declared_energy_reanimation_target_schema, energy_reanimation_text_matches
+        from .reanimation_templates import fixed_target_reanimation_effect_template
+
+        if not energy_reanimation_text_matches(ability.cost_text, text):
+            return None
+        reanimation = fixed_target_reanimation_effect_template(
+            "Return target creature card from your graveyard to the battlefield."
+        )
+        if reanimation is None:
+            return None
+        name, effects, _target, mechanics = reanimation.compiled()
+        return _TEMPLATE_PREFIX + name, effects, declared_energy_reanimation_target_schema(), mechanics
     if (ability.zones != ("battlefield",) or ability.sorcery_speed or ability.activation_conditions
             or re.fullmatch(r"Destroy target noncreature artifact with mana value X[.]?", text.strip(), re.I) is None):
         return None

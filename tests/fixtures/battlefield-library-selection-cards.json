@@ -4,6 +4,49 @@
   "source": "Pinned original candidate Oracle identities from the independent destination/selector inventory.",
   "cards": [
     {
+      "oracle_id": "b368121b-9984-4a01-8d35-d1e4a8a87539",
+      "name": "Planar Genesis",
+      "mana_cost": "{G}{U}",
+      "cmc": 2.0,
+      "oracle_text": "Look at the top four cards of your library. You may put a land card from among them onto the battlefield tapped. If you don't, put a card from among them into your hand. Put the rest on the bottom of your library in a random order.",
+      "type_line": "Instant",
+      "keywords": [],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "oracle_id": "96e5d4a1-e59f-4140-823f-a17e15ee5d8d",
       "name": "Aang, at the Crossroads // Aang, Destined Savior",
       "mana_cost": "{2}{G}{W}{U} // ",

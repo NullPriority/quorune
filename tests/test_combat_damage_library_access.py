@@ -270,3 +270,180 @@ class CombatDamageLibraryAccessTests(InheritedNativeFixture, unittest.TestCase):
             result = compile_card()
             self.assertNotEqual("exact", result.status)
             self.assertTrue(any(row.span.line == 2 for row in result.material_residuals))
+
+
+    def _grenzo_attack(self, game, attacks):
+        self.attack(game, attacks)
+        self.until(game, lambda s: s.state.pending_decision.kind in {"trigger.order", "semantic.target"})
+        if game.state.pending_decision.kind == "trigger.order":
+            batch, = game.state.pending_trigger_batches
+            refs = [item.ref for item in batch.groups[0].items]
+            self.assertEqual(len(attacks), len(refs))
+            self.accept(game, "A", "order", triggers=refs)
+
+    def _grenzo_mode_item(self, game):
+        pending = game.state.pending_decision
+        self.assertEqual("semantic.target", pending.kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        ref = game.packet("pilot:A", full=True)["decision"]["ctx"]["stack"]
+        return next(item for item in game.state.stack if item.ref == ref)
+
+    def test_actual_grenzo_pins_each_damaged_player_and_casts_only_with_ordinary_timing(self):
+        game = self.session(1672001)
+        engine = game.engine
+        source = self.add(engine, "Grenzo, Havoc Raiser")
+        second = self.add(engine, "Grizzly Bears", ref="grenzo-second-attacker")
+        third = self.add(engine, "Grizzly Bears", ref="grenzo-third-attacker")
+        first_victim = self.add(engine, "Grizzly Bears", seat="B", ref="grenzo-b-target")
+        wrong_victim = self.add(engine, "Grizzly Bears", seat="C", ref="grenzo-c-target")
+        spell = self.add(engine, "Grizzly Bears", seat="B", zone="library", ref="grenzo-b-library-top")
+        land = self.add(engine, "Plains", seat="C", zone="library", ref="grenzo-c-library-top")
+        mountain = self.add(engine, "Mountain")
+        second_mountain = self.add(engine, "Mountain", ref="grenzo-second-mountain")
+        for card in (spell, land):
+            card.known_to.clear()
+            card.revealed_to.clear()
+        for attacker in (source, second, third):
+            attacker.acquired_control_turn_count = -1
+        self.assert_closed(game, source)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.reveal_check(game, (spell, land), visible=False)
+
+        self._grenzo_attack(game, [(source, "B"), (second, "B"), (third, "C")])
+        game = self.replay(game, load=True)
+        recipients = []
+        goaded = False
+        for _ in range(3):
+            hit = self._grenzo_mode_item(game)
+            seat = hit.context["target"]
+            recipients.append(seat)
+            if seat == "B" and not goaded:
+                self.reject(game, "A", "choose", modes=["mode_1"], targets=[wrong_victim.ref])
+                self.accept(game, "A", "choose", modes=["mode_1"], targets=[first_victim.ref])
+                goaded = True
+            else:
+                self.reject(game, "A", "choose", modes=["mode_2"], targets=[first_victim.ref])
+                self.accept(game, "A", "choose", modes=["mode_2"], targets=[])
+        self.assertCountEqual(["B", "B", "C"], recipients)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(["A"], [g.player for g in game.state.cards[first_victim.object_id].goaded_by])
+        self.assertEqual([], game.state.cards[wrong_victim.object_id].goaded_by)
+        self.reveal_check(game, (spell, land), visible=True)
+        cast_id = f"cast:{spell.ref}"
+        play_id = f"play-land:{land.ref}"
+        self.assertEqual("combat", game.state.phase)
+        self.priority(game, "A")
+        self.assertNotIn(cast_id, self.offers(game))
+        self.assertNotIn(play_id, self.offers(game))
+        self.until(game, lambda s: s.state.phase == "postcombat_main" and s.state.priority_player == "A")
+        self.assertIn(cast_id, self.offers(game))
+        self.assertNotIn(play_id, self.offers(game))
+        self.reject(game, "A", play_id)
+        self.assertNotIn("without_mana_cost", [row["id"] for row in self.offers(game)[cast_id]["cost_options"]])
+        self.accept(game, "A", cast_id, pay="auto")
+        self.assertTrue(game.state.cards[mountain.object_id].tapped)
+        self.assertTrue(game.state.cards[second_mountain.object_id].tapped)
+        self.assertIsNone(self.resolve(game))
+        permanent = game.state.cards[spell.object_id]
+        self.assertEqual(("battlefield", "B", "A"), (permanent.zone, permanent.owner, permanent.controller))
+        turn = game.state.turn_sequence
+        self.until(game, lambda s: s.state.turn_sequence > turn or s.state.pending_decision.kind == "cleanup.discard")
+        if game.state.pending_decision.kind == "cleanup.discard":
+            hand = game.packet("pilot:A", full=True)["decision"]["ctx"]
+            self.accept(game, "A", "discard", cards=[card["id"] for card in hand["hand"][:hand["count"]]])
+            self.until(game, lambda s: s.state.turn_sequence > turn)
+        self.assertEqual("exile", game.state.cards[land.object_id].zone)
+        self.assertNotIn("temporary_play_permission", game.state.cards[land.object_id].annotations)
+        self.replay(game, load=True)
+
+    def test_grenzo_redirected_or_stale_movement_does_not_grant_cast_authority(self):
+        from quorune.impulse_access import current_temporary_play_permission, temporary_play_permission_is_current
+        from quorune.replacement.model import ReplacementClass, ReplacementEffect
+        from quorune.replacement.operations import SetField
+        from quorune.semantic_runtime import zone_replacements
+
+        for redirect in (False, True):
+            with self.subTest(redirect=redirect):
+                game = self.session(1672002 + redirect)
+                source = self.add(game.engine, "Grenzo, Havoc Raiser")
+                source.acquired_control_turn_count = -1
+                spell = self.add(game.engine, "Grizzly Bears", seat="B", zone="library", ref="grenzo-redirected-top")
+                self.assert_closed(game, source)
+                self.prepare(game)
+                self.checkpoint(game)
+                self._grenzo_attack(game, [(source, "B")])
+                self._grenzo_mode_item(game)
+                self.accept(game, "A", "choose", modes=["mode_2"], targets=[])
+                collector = zone_replacements.collect_zone_change_replacement_effects
+                effect = ReplacementEffect(
+                    effect_id="fixture:grenzo-library-redirect", source_id="fixture:grenzo-library-redirect",
+                    event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+                    conditions={"origin": {"eq": "library"}, "destination": {"eq": "exile"}},
+                    operations=(SetField("destination", "graveyard"),),
+                )
+
+                def with_redirect(host, **kwargs):
+                    return (*collector(host, **kwargs), *((effect,) if redirect else ()))
+
+                with patch.object(zone_replacements, "collect_zone_change_replacement_effects", side_effect=with_redirect):
+                    self.assertIsNone(self.resolve(game))
+                    game = self.replay(game, load=True)
+                current = game.state.cards[spell.object_id]
+                grant = current_temporary_play_permission(game.state, "A", current)
+                if redirect:
+                    self.assertEqual("graveyard", current.zone)
+                    self.assertIsNone(grant)
+                else:
+                    self.assertEqual("exile", current.zone)
+                    self.assertIsNotNone(grant)
+                    from quorune.mana_restrictions import exile_play_mana_mode, spell_mana_spend_context
+                    from quorune.mana_spending_model import ManaSpendingMode, ManaSpendingPolicy
+                    from quorune.opponent_library_exile import opponent_library_exile_spend_context
+
+                    context = spell_mana_spend_context("Creature")
+                    enriched = opponent_library_exile_spend_context(game.state, "A", current, context)
+                    self.assertEqual(ManaSpendingMode.ANY_COLOR, exile_play_mana_mode(enriched, "A"))
+                    self.assertFalse(ManaSpendingPolicy(frozenset({ManaSpendingMode.ANY_COLOR})).permits("R", "C"))
+                    stale = replace(current, zone_change_counter=current.zone_change_counter + 2)
+                    self.assertFalse(temporary_play_permission_is_current(game.state, "A", stale, grant))
+                    self.assertEqual(context, opponent_library_exile_spend_context(game.state, "A", stale, context))
+
+    def test_grenzo_requires_closed_damage_recipient_modes(self):
+        from quorune.combat_damage_library_exile import (
+            COMBAT_DAMAGE_COLOR_CAST_EXILE_CAPABILITY, combat_damage_cast_exile_effect,
+            combat_damage_color_cast_exile_effect, validate_combat_damage_cast_exile,
+            validate_combat_damage_color_cast_exile,
+        )
+        from quorune.replacement.immutable import thaw_value
+
+        # A committed redirect may make the creature's controller its actual recipient.
+        validate_combat_damage_color_cast_exile({**combat_damage_color_cast_exile_effect(), "player": "A"}, actor="A")
+        with self.assertRaises(ValueError):
+            validate_combat_damage_cast_exile({**combat_damage_cast_exile_effect(), "player": "A"}, actor="A")
+
+        original = self.db.lookup("Grenzo, Havoc Raiser", fuzzy=False)
+        ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger = ir.faces[0].nodes[-1]
+        self.assertEqual("damage.dealt", trigger.event)
+        self.assertNotIn("one_or_more_event_batch", trigger.runtime_coverage)
+        for change in (
+            ("combat damage", "damage"),
+            ("that player controls", "an opponent controls"),
+            ("any color", "any type"),
+        ):
+            mutant = replace(original, oracle_text=original.oracle_text.replace(*change))
+            self.assertNotEqual("exact", compile_oracle_card(mutant, capability_registry=self.registry).status)
+        _, semantic = register_card(self.db, self.registry, original.name)
+        program, = (row for row in semantic.programs_for_oracle(original.oracle_id) if row.event == "damage.dealt")
+        cap = COMBAT_DAMAGE_COLOR_CAST_EXILE_CAPABILITY
+        reduced = tuple(dependency for dependency in program.capability_dependencies if dependency != cap)
+        absent = replace(program, capability_dependencies=reduced,
+                         capability_closure=self.registry.closure(reduced, profile=PROFILE).to_dict())
+        target = thaw_value(program.target_schema)
+        target["modes"]["mode_1"]["groups"][0]["controller_seat"] = "$context.player"
+        for mutated in (absent, replace(program, target_schema=target)):
+            self.assertFalse(bind_semantic_program_runtime(
+                mutated, capability_registry=self.registry, profile=PROFILE,
+            )["strict"])

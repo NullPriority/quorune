@@ -20,7 +20,7 @@ def initial_cast_base_authority(host, seat, card, alternative_base, *, force_wit
     from ...opponent_library_exile import opponent_library_exile_cast_mode
     from ..private_opponent_top_exile import controller_private_top_exile_play_permission
     from .disturb_costs import disturb_back_cast_permission, with_more_than_meets_the_eye_base
-    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD
+    from .library_top_life import mana_value_life_price_field
 
     temporary_permission = host._temporary_play_permission(seat, card)
     intrinsic_disturb = (disturb_back_cast_permission(host, seat, card)
@@ -29,7 +29,7 @@ def initial_cast_base_authority(host, seat, card, alternative_base, *, force_wit
         host, card, alternative_base,
         suppressed=force_without_mana_cost or suppress_source_costs or intrinsic_disturb,
     )
-    library_life_base = alternative_base is not None and LIBRARY_TOP_LIFE_PRICE_FIELD in alternative_base
+    library_life_base = alternative_base is not None and mana_value_life_price_field(alternative_base) is not None
     ordinary_private_authority = bool(
         temporary_permission and temporary_permission.get("without_mana_cost")
         and controller_private_top_exile_play_permission(host, seat, card) is not None

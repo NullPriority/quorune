@@ -21,10 +21,11 @@ def physical_order_payload(frame):
 
     def name(ref):
         state = states[ref]
-        if destination == "library" and state["face_down"] and actor not in (
+        ordered_sacrifice = frame.request.schema_version == 2
+        if (destination == "library" or ordered_sacrifice) and state["face_down"] and actor not in (
             *state["known_to"], *state["revealed_to"],
         ):
-            return "Face-down component"
+            return "Face-down card" if ordered_sacrifice else "Face-down component"
         return state["printed_name"]
 
     previous = [

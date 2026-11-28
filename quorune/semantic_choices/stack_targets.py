@@ -9,6 +9,9 @@ from ..rules.announced_ability_copies import COPY_FIELD, REMAINING_FIELD, choice
 from ..rules.cast_source_spell_copy import SOURCE_CAST_COPY_FIELD
 from ..rules.source_directed_redirect_model import is_source_directed_redirect
 from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_accepted_copy_instruction
+from ..rules.targeted_return_spell_copy import (
+    RETURN_COPY_VERSION, RETURN_TARGET_FIELD, return_copy_control_is_bound, return_copy_instruction,
+)
 from ..stack_spell_copy_model import FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec
 from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
 from ..semantic_runtime.intents import (
@@ -25,6 +28,21 @@ from .model import (
     SemanticChoiceRequest,
     TargetAssignmentChoice,
 )
+
+
+def _accepted_resolving_copy(effect, actor, stack_ref):
+    if effect.get(RESOLVING_COPY_FIELD) == RETURN_COPY_VERSION:
+        return (type(effect[RESOLVING_COPY_FIELD]) is int and bool(stack_ref)
+                and dict(effect) == return_copy_instruction(actor, stack_ref, effect.get(RETURN_TARGET_FIELD)))
+    return is_accepted_copy_instruction(effect, actor=actor, stack_ref=stack_ref)
+
+
+def _expected_resolving_copy_target(effect, target, actor):
+    if type(effect.get(RESOLVING_COPY_FIELD)) is not int or target is None or target.copy_source is None:
+        return False
+    if effect[RESOLVING_COPY_FIELD] == RETURN_COPY_VERSION:
+        return return_copy_control_is_bound(effect, target, actor)
+    return effect[RESOLVING_COPY_FIELD] == 1 and target.targets == (actor,)
 
 
 def _prepare_without_target_choices(effect, context, target, *, mode, copies, permanent_copy):
@@ -135,10 +153,10 @@ class StackTargetChoiceHandler:
             raise SemanticChoiceError("Three copies require the complete retained-target instruction")
         target_ref = str(effect.get("stack") or "")
         resolving_copy = RESOLVING_COPY_FIELD in effect
-        if resolving_copy and not is_accepted_copy_instruction(effect, actor=context.actor, stack_ref=context.stack_ref):
+        if resolving_copy and not _accepted_resolving_copy(effect, context.actor, context.stack_ref):
             raise SemanticChoiceError("Only an accepted affected-player choice may copy the resolving spell")
         target = context.query.stack_object(target_ref, exclude_ref=None if resolving_copy else context.stack_ref)
-        if resolving_copy and (target is None or target.copy_source is None or target.targets != (context.actor,)):
+        if resolving_copy and not _expected_resolving_copy_target(effect, target, context.actor):
             raise SemanticChoiceError("The resolving spell copy lost the current affected player or spell")
         if target is None:
             return SemanticChoicePreparation(
@@ -260,11 +278,10 @@ class StackTargetChoiceHandler:
                 "The stack object selected for the choice no longer exists"
             )
         if RESOLVING_COPY_FIELD in effect:
-            if (target_ref != continuation.stack_ref or target.copy_source is None
-                    or type(effect[RESOLVING_COPY_FIELD]) is not int or effect[RESOLVING_COPY_FIELD] != 1
+            if (target_ref != continuation.stack_ref
                     or effect.get("_choice_actor") != effect.get("_validation_actor")
-                    or effect.get("player") not in query.active_seats
-                    or target.targets != (effect.get("player"),) or effect.get("player") != effect.get("_choice_actor")):
+                    or effect.get("player") not in query.active_seats or effect.get("player") != effect.get("_choice_actor")
+                    or not _expected_resolving_copy_target(effect, target, effect.get("player"))):
                 raise SemanticChoiceError("The resolving spell copy continuation changed its source or affected player")
         submitted = response.get("targets")
         mandatory = is_mandatory_single_stack_target_change(effect)

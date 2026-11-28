@@ -28,8 +28,8 @@ from ..rules.graveyard_card_targets import (
 from ..rules.same_name_zone_moves import SameNameZoneMoveScope
 from .destruction_templates import fixed_affected_permanent_query
 from .direct_target import compiled_direct_target, direct_target_effect
-from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec
-from .graveyard_card_result_templates import parse_graveyard_card_counter_life
+from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec, GraveyardPermanentCardCounterSpec
+from .graveyard_card_result_templates import parse_graveyard_card_counter_life, parse_graveyard_permanent_card_counter
 from .public_tap_state_set_templates import (
     FixedPublicTapStateSetTemplate,
     fixed_public_tap_state_set_effect_template,
@@ -60,10 +60,12 @@ class PublicGraveyardCardExileTemplate:
         PublicGraveyardCardTargetSpec(self.target, owner_relation=self.owner_relation)
         if self.result is not None and (not isinstance(self.result, GraveyardCardCounterLifeSpec)
                 or self.target is not PublicGraveyardCardTargetKind.CARD or self.owner_relation != 'any'):
-            raise ValueError('Conditional creature-card result requires one unrestricted public graveyard card')
+            raise ValueError('Conditional card result requires one unrestricted public graveyard card')
 
     @property
     def template_id(self) -> str:
+        if isinstance(self.result, GraveyardPermanentCardCounterSpec):
+            return 'exile-target-graveyard-permanent-card-counter-result-v2'
         if self.result is not None:
             return 'exile-target-graveyard-card-counter-life-result-v1'
         if self.owner_relation != "any":
@@ -236,7 +238,7 @@ def _relation(
 def public_graveyard_card_exile_template(
     text: str,
 ) -> PublicGraveyardCardExileTemplate | None:
-    result = parse_graveyard_card_counter_life(text)
+    result = parse_graveyard_card_counter_life(text) or parse_graveyard_permanent_card_counter(text)
     if result is not None:
         return PublicGraveyardCardExileTemplate(result=result)
     targets = "|".join(
@@ -359,6 +361,14 @@ def _battlefield_set_template(
 
 
 def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    if " ".join(text.casefold().split()).rstrip(".") == "exile all nonland permanents that aren't legendary":
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(
+                zones=("battlefield",), excluded_types=("land",), excluded_supertypes=("legendary",),
+            ),
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.EXILE,
+        ))
     return _battlefield_set_template(
         text,
         action="exile",
@@ -367,6 +377,19 @@ def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
 
 
 def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    if re.fullmatch(
+        r"Return each nonland permanent that['’]s not historic to its owner['’]s hand\."
+        r"(?: \(Artifacts, legendaries, and Sagas are historic\.\))?",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        from ..public_zone_moves import NONHISTORIC_NONLAND_QUERY, PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION
+
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=NONHISTORIC_NONLAND_QUERY,
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.OWNER_HAND,
+            schema_version=PUBLIC_NONHISTORIC_NONLAND_RETURN_VERSION,
+        ))
     if re.fullmatch(r"Return each creature without a \+1/\+1 counter on it to its owner['’]s hand[.]?",
                     " ".join(text.split()), re.IGNORECASE):
         from .qualified_destruction_queries import creature_counter_absence_query
@@ -676,11 +699,18 @@ class FixedMixedZoneExileTemplate:
     scope: MixedZoneExileScope
 
     def compiled(self):
-        return "fixed-mixed-zone-exile-v1", (FixedMixedZoneExileSpec(self.scope).effect(),), None, ("exile",)
+        spec = FixedMixedZoneExileSpec(self.scope)
+        version = spec.to_dict()["schema_version"]
+        return f"fixed-mixed-zone-exile-v{version}", (spec.effect(),), None, ("exile",)
 
 
 def _fixed_mixed_zone_exile_template(text: str) -> FixedMixedZoneExileTemplate | None:
     normalized = " ".join(text.casefold().split())
+    if normalized == (
+        "exile all the cards from your hand, then draw that many cards. "
+        "until the end of your next turn, you may play cards exiled this way."
+    ):
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.CONTROLLER_HAND_DRAW_AND_PLAY)
     if normalized == "exile all cards from all hands and graveyards.":
         return FixedMixedZoneExileTemplate(MixedZoneExileScope.HANDS_AND_GRAVEYARDS)
     if normalized == ("exile all artifacts, creatures, and lands from the battlefield, "

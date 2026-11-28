@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { castOffer, clickMove, driveTo, evidence, startPlaytestPod } from "./support/playtest";
+import { castOffer, clickMove, driveTo, evidence, projectedState, startPlaytestPod } from "./support/playtest";
 import { completeCastGesture, openGameMenu } from "./support/startup";
-import { viewRevision } from "./support/progress";
+import { driveUntil, viewRevision } from "./support/progress";
 
 test("@browser-lifecycle opponents can be focused and crowded card groups page without scrolling", async ({ browser }, info) => {
   test.setTimeout(300_000);
@@ -12,6 +12,10 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     { commander: "Krenko, Tin Street Kingpin", cards: "99 Mountain" },
   ], 97249, { width: 1280, height: 720 });
   const [host, observer] = pages;
+  for (const page of pages) {
+    page.setDefaultTimeout(12_000);
+    page.setDefaultNavigationTimeout(18_000);
+  }
   try {
     const land = host.getByTestId("decision-panel").locator('[data-testid^="action-play-land:"]').first();
     await driveTo(pages, land, info, "Play the first Mountain");
@@ -21,8 +25,14 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
       await driveTo(pages, offer, info, `Offer ${name}`);
       await completeCastGesture(host, () => offer.click());
     }
-    await driveTo(pages, host.getByTestId("own-battlefield").getByText("Phyrexian Walker", { exact: true }),
-      info, "Resolve the final artifact creature");
+    await driveUntil(pages, async () => {
+      const { players } = await projectedState(host);
+      return players.A.bf.some((card: { n: string }) => card.n === "Phyrexian Walker");
+    }, info, { label: "Resolve the final artifact creature" });
+    for (const page of pages) {
+      const toggle = page.getByTestId("auto-pass-toggle");
+      if (await toggle.getAttribute("aria-pressed") === "true") await toggle.click();
+    }
 
     const views = observer.getByRole("group", { name: "Battlefield views" });
     const visible = observer.locator(".player-board:visible");
@@ -91,7 +101,7 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     await observer.getByTestId("open-game-menu").click();
     await views.getByRole("button", { name: "Seat A", exact: true }).click();
     expect(await viewRevision(observer)).toBe(revision);
-    await observer.reload();
+    await observer.reload({ waitUntil: "domcontentloaded" });
     await expect(views.getByRole("button", { name: "Seat A", exact: true })).toHaveAttribute("aria-pressed", "true");
     await expect(observer.getByRole("slider", { name: "Table card size" })).toHaveValue("1.6");
     await expect(visible).toHaveCount(2);
@@ -103,6 +113,43 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     await expect(opponent).toBeVisible();
     await expect(visible).toHaveCount(1);
     expect(await observer.evaluate(() => document.documentElement.scrollHeight)).toBe(480);
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});
+test("@browser-lifecycle table card size changes the commander and normal clicks preserve hand height", async ({ browser }) => {
+  const deck = { commander: "Yargle and Multani", cards: "99 Swamp" };
+  const { contexts, pages: [host] } = await startPlaytestPod(
+    browser, [deck, deck, deck, deck], 9183, { width: 1500, height: 940 },
+  );
+  try {
+    await expect(host.locator(".boards-grid > .player-board")).toHaveCount(4);
+    expect(await host.locator(".boards-grid > .player-board").evaluateAll(
+      (boards) => boards.map((board) => board.getAttribute("data-seat")),
+    )).toEqual(["B", "C", "D", "A"]);
+    const commander = host.getByTestId("player-A").locator(".command-cards .card-tile");
+    const slider = host.getByRole("slider", { name: "Table card size" }).first();
+    await slider.press("Home");
+    const small = (await commander.boundingBox())!.width;
+    await slider.press("End");
+    await expect.poll(async () => (await commander.boundingBox())!.width).toBeGreaterThan(small + 5);
+
+    const hand = host.getByTestId("hand-panel");
+    const before = (await hand.boundingBox())!.height;
+    await hand.getByRole("heading", { name: "Your hand" }).click();
+    await hand.getByRole("heading", { name: "Your hand" }).click();
+    await expect.poll(async () => (await hand.boundingBox())!.height).toBe(before);
+    const settings = host.getByTestId("table-settings");
+    await host.getByTestId("open-game-menu").click();
+    await settings.locator("summary").first().click();
+    await settings.getByText("Table colors", { exact: true }).click();
+    await settings.getByLabel("Accent").fill("#966cff");
+    await settings.getByLabel("Background tint").fill("#19122b");
+    const shell = host.locator(".game-shell");
+    await expect(shell).toHaveCSS("--accent", "#966cff");
+    await host.reload();
+    await expect(shell).toHaveCSS("--accent", "#966cff");
+    await expect(shell).toHaveCSS("--user-table-background", "#19122b");
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }

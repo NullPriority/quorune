@@ -5,6 +5,7 @@ from dataclasses import replace
 import threading
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 from common import load_assets, make_session
 from quorune import (
@@ -15,7 +16,118 @@ from quorune import (
     GameService,
     PROTOCOL_VERSION,
 )
+from quorune.characteristic_read_frames import memoized_characteristic_read
 from quorune.runtime import GameActor, GameLifecycleConflict
+from quorune.turn_priority_model import PriorityWindowHolds, upcoming_turn_player
+from quorune.turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipSpec
+
+
+class PriorityWindowScheduleTests(unittest.TestCase):
+    def test_before_my_turn_respects_extra_turns_skips_and_departed_seats(self):
+        state = SimpleNamespace(
+            phase="ending", step="end_step", turn_sequence=21, last_normal_turn_player="D",
+            turn_order=("A", "B", "C", "D"),
+            players={seat: SimpleNamespace(in_game=(seat != "A")) for seat in "ABCD"},
+            scheduled_turn_skips=[ScheduledTurnSkip("skip-b", "B", TurnSkipSpec(TurnBoundary.TURN))],
+            extra_turns=[],
+        )
+        hold = PriorityWindowHolds(("before_my_turn",), False)
+        self.assertEqual("C", upcoming_turn_player(state))
+        self.assertTrue(hold.matches(state, "C"))
+        self.assertFalse(hold.matches(state, "B"))
+        state.extra_turns = [
+            SimpleNamespace(player="A", skip_steps=[]),
+            SimpleNamespace(player="B", skip_steps=[]),
+            SimpleNamespace(player="D", skip_steps=[]),
+        ]
+        self.assertEqual("D", upcoming_turn_player(state))
+        self.assertTrue(hold.matches(state, "D"))
+        self.assertEqual(1, state.scheduled_turn_skips[0].spec.count)
+        state.step = "cleanup"
+        self.assertFalse(hold.matches(state, "D"))
+
+
+class GameActorIdempotencyTests(unittest.IsolatedAsyncioTestCase):
+    async def test_conflicting_request_retains_receipt_and_actor_accepts_next_command(self):
+        principal = "pilot:A"
+        state = SimpleNamespace(game_id="idempotency-conflict", revision=0, players={"A": object()})
+        calls = []
+
+        def decision_for_revision():
+            return SimpleNamespace(
+                decision_id=f"decision-{state.revision}",
+                kind="mulligan.declare",
+                payload_by_actor={"A": {}},
+            )
+
+        def capability_for(who):
+            if who != principal:
+                return None
+            return SimpleNamespace(
+                token=f"token-{state.revision}",
+                actor="A",
+                allowed_actions=("keep", "mulligan"),
+            )
+
+        def act(who, response, *, client_command_id, priority_window_holds):
+            calls.append((who, response["action_id"], client_command_id))
+            state.revision += 1
+            state.pending_decision = decision_for_revision()
+            session.commands.append({"principal": who, "client_command_id": client_command_id})
+            return SimpleNamespace(
+                ok=True, summary="Accepted keep", state_changed=True, event_ids=[state.revision],
+            )
+
+        def envelope(command_id):
+            return CommandEnvelope(
+                protocol_version=PROTOCOL_VERSION, game_id=state.game_id,
+                command_id=command_id, decision_id=state.pending_decision.decision_id,
+                action_id="keep", capability=capability_for(principal).token,
+                expected_view_revision=state.revision, choices={},
+            )
+
+        state.pending_decision = decision_for_revision()
+        session = SimpleNamespace(
+            state=state, record_status="in_progress", commands=[],
+            engine=SimpleNamespace(permissions=SimpleNamespace(capability_for=capability_for)),
+            act=act, packet=lambda who, **kwargs: {"principal": who, "view_revision": state.revision},
+        )
+        original = envelope("original")
+        accepted = GameService(session).command(original, principal=principal)
+        self.assertTrue(accepted.ok)
+        service = GameService(session)
+        stored = service.idempotency.get(state.game_id, principal, original.command_id)
+        self.assertIsNotNone(stored)
+        writes = []
+        persistence = SimpleNamespace(save=lambda service: writes.append(service.session.state.revision))
+        actor = GameActor(service, persistence=persistence)
+        try:
+            conflict = await actor.command(principal, replace(original, action_id="mulligan"))
+            self.assertFalse(conflict.ok)
+            self.assertEqual("idempotency_conflict", conflict.code)
+            self.assertFalse(conflict.state_changed)
+            self.assertFalse(actor.requires_recovery)
+            self.assertIs(stored, service.idempotency.get(state.game_id, principal, original.command_id))
+            self.assertEqual([], writes)
+            self.assertEqual(1, len(session.commands))
+            self.assertEqual(accepted.state_revision, (await actor.observe(principal))["view_revision"])
+
+            next_receipt = await actor.command(principal, envelope("next"))
+            self.assertTrue(next_receipt.ok)
+            self.assertEqual(accepted.state_revision + 1, next_receipt.state_revision)
+            self.assertEqual([next_receipt.state_revision], writes)
+            self.assertEqual(
+                [(principal, "keep", "original"), (principal, "keep", "next")], calls,
+            )
+
+            replayed = await actor.command(principal, original)
+            self.assertEqual(replace(accepted, replayed=True), replayed)
+            self.assertIs(stored, service.idempotency.get(state.game_id, principal, original.command_id))
+            self.assertFalse(actor.requires_recovery)
+            self.assertEqual(2, len(session.commands))
+            self.assertEqual([next_receipt.state_revision], writes)
+        finally:
+            await actor.close()
 
 
 class GameActorTests(unittest.IsolatedAsyncioTestCase):
@@ -87,6 +199,72 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
         await manager.close()
         with self.assertRaises(GameActorClosed):
             await actor.observe("pilot:A")
+
+    async def test_repeated_observations_reuse_only_the_same_principal_and_boundary(self):
+        session, service = self.make_service(32011)
+        manager = GameManager()
+        actor = await manager.add(service)
+        try:
+            first = await actor.observe("pilot:A", full=True)
+            first["state"]["rev"] = -1
+            next_packet = await actor.observe("pilot:A", full=True)
+            self.assertEqual(first["view"], next_packet["view"])
+            self.assertEqual(session.state.revision, next_packet["view_revision"])
+            self.assertNotEqual(-1, next_packet["state"]["rev"])
+            self.assertEqual([], (await actor.observe("pilot:A"))["patch"])
+            other = await actor.observe("pilot:B", full=True)
+            self.assertFalse("hand" in other["state"]["players"]["A"])
+            self.assertTrue((await actor.command("pilot:A", self.envelope(session))).ok)
+            changed = await actor.observe("pilot:A", full=True)
+            self.assertNotEqual(first["view"], changed["view"])
+            self.assertIsNone(changed["decision"])
+        finally:
+            await manager.close()
+
+    async def test_queued_observations_share_rules_reads_until_the_next_command(self):
+        session, service = self.make_service(32012)
+        manager = GameManager()
+        actor = await manager.add(service)
+        initial_revision = session.state.revision
+        read_revisions = []
+        original_observe = service.observe
+
+        def read_current_revision():
+            read_revisions.append(session.state.revision)
+            return session.state.revision
+
+        def observe(principal, **kwargs):
+            revision = memoized_characteristic_read(
+                session.engine, ("observation-batch-test",), read_current_revision,
+            )
+            packet = original_observe(principal, **kwargs)
+            self.assertEqual(revision, packet["view_revision"])
+            return packet
+
+        try:
+            with patch.object(service, "observe", side_effect=observe):
+                before_a, before_b, receipt, after_a, after_b = await asyncio.gather(
+                    actor.observe("pilot:A", full=True),
+                    actor.observe("pilot:B", full=True),
+                    actor.command("pilot:A", self.envelope(session)),
+                    actor.observe("pilot:A", full=True),
+                    actor.observe("pilot:B", full=True),
+                )
+                self.assertTrue(receipt.ok)
+                self.assertGreater(receipt.state_revision, initial_revision)
+                self.assertEqual([initial_revision, receipt.state_revision], read_revisions)
+                independent = await actor.observe("pilot:B", full=True)
+                self.assertEqual(receipt.state_revision, read_revisions[-1])
+                self.assertEqual(3, len(read_revisions))
+
+            for a_packet, b_packet in ((before_a, before_b), (after_a, after_b)):
+                self.assertIn("hand", a_packet["state"]["players"]["A"])
+                self.assertNotIn("hand", b_packet["state"]["players"]["A"])
+                self.assertIn("hand", b_packet["state"]["players"]["B"])
+                self.assertNotIn("hand", a_packet["state"]["players"]["B"])
+            self.assertEqual(after_b["view"], independent["view"])
+        finally:
+            await manager.close()
 
     async def test_projector_exception_leaves_the_actor_worker_available(self):
         calls = 0

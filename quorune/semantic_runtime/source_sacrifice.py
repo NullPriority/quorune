@@ -2,6 +2,7 @@
 from ..attachment_references import AttachmentReferenceKind, SourceAttachmentSnapshot
 from ..replacement.immutable import FrozenMap
 from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+from ..rules.source_sacrifice_reflexive_search import FIELD, admitted_reflexive_sacrifice
 from ..source_sacrifice_model import (
     CAST_PARTICIPANT_FIELD,
     FORMER_ATTACHMENT_SACRIFICE_VERSION, SOURCE_SACRIFICE_FIELD, UNATTACHMENT_SNAPSHOT,
@@ -40,7 +41,8 @@ def lower_fixed_source_sacrifice(effect, context, *, handler_id):
         if participant is not None:
             context.query.require_known_seat(participant)
         intent = FixedSourceSacrificeIntent(context.actor, source.stack_ref, *identity,
-            context.default_reason, tuple(effect.get('_replacement_selections', ())), cast_participant=participant)
+            context.default_reason, tuple(effect.get('_replacement_selections', ())), cast_participant=participant,
+            reflexive_child=FrozenMap(effect[FIELD]) if FIELD in effect else None)
     except (TypeError, ValueError) as exc:
         raise SemanticNodeError(str(exc)) from exc
     return IntentPlan(operation='self_zone_move', handler_id=handler_id, intents=(intent,))
@@ -55,10 +57,24 @@ def apply_fixed_source_sacrifice(host, intent):
             or card.logical_object_id != intent.logical_object_id
             or card.zone != 'battlefield' or card.phased_out or card.controller != intent.actor):
         return None if intent.cast_participant is None else CommittedQuantityFollowup(())
+    reflexive = None
+    if intent.reflexive_child is not None:
+        from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+        if sacrifice_is_prohibited(host.state, card):
+            return None
+        reflexive = admitted_reflexive_sacrifice(host, intent)
     moved = host.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
         actor=intent.actor, object_refs=(card.ref,), expected_zones=('battlefield',),
         destination='graveyard', reason=intent.reason, transition_kind=ZoneTransitionKind.SACRIFICE,
         controlled_only=True, replacement_selections=intent.replacement_selections))
+    if reflexive is not None:
+        departed = host.state.cards.get(intent.object_id)
+        if departed is None or (departed.zone != "battlefield" and departed.logical_object_id != intent.logical_object_id):
+            from ..rules.reflexive_triggers import enqueue_resolving_reflexive
+
+            parent, child = reflexive
+            enqueue_resolving_reflexive(host, parent, child)
     if intent.cast_participant is None:
         return moved
     # CR 118.12 checks that the mandatory cost started, including a replaced destination.

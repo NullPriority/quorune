@@ -9,7 +9,7 @@ from ..rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from ..trigger_batches import PendingTriggerItem, TriggerBatchError
-from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TurnBoundary
+from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TURN_START_SKIP_RESUME, TurnBoundary
 from .immutable import FrozenMap, thaw_value
 from .model import (
     ReplaceableEvent,
@@ -105,6 +105,7 @@ _TURN_COUNTER_ACTION_FIELDS = {
 _TURN_BOUNDARY_SKIP_FIELDS = _TURN_COUNTER_ACTION_FIELDS - {
     "turn_action_kind", "replacement_selections"
 }
+_TURN_START_SKIP_FIELDS = (_TURN_BOUNDARY_SKIP_FIELDS - {"held_triggers"}) | {"held_turn_entry"}
 _STATE_BASED_DESTRUCTION_FIELDS = {
     "replacement_resume_kind", "state_based_frame", "replacement_selections",
     "replacement_batch", "replacement_effects",
@@ -162,6 +163,8 @@ class ReplacementContinuation:
     turn_action_frame: FrozenMap | None = None
     held_triggers: tuple[PendingTriggerItem, ...] = ()
     opening_hand_entry: FrozenMap | None = None
+    held_turn_entry: FrozenMap | None = None
+    combat_prevention_tokens: FrozenMap | None = None
     state_based_destruction_selections: tuple[str | FrozenMap, ...] = ()
     completed_choice: FrozenMap | None = None
     damage_proposal_ids: tuple[str, ...] = ()
@@ -181,6 +184,18 @@ class ReplacementContinuation:
             return decode_opening_hand_entry(cls,value,batch,effects)
         if resume_kind == "combat_damage":
             return _decode_combat_continuation(cls, value, batch, effects)
+        if resume_kind == "combat_token_aftermath":
+            from ..rules.combat_prevention_tokens import CombatPreventionTokenQueue
+
+            try:
+                queue = CombatPreventionTokenQueue.from_dict(value["combat_prevention_tokens"])
+            except (TypeError, ValueError, KeyError) as exc:
+                raise ReplacementEffectError(str(exc)) from exc
+            return cls(
+                batch=batch, effects=effects, resume_kind=resume_kind,
+                combat_prevention_tokens=FrozenMap(queue.to_dict()),
+                replacement_selections=_decode_combat_selections(value),
+            )
         if resume_kind in {"mana_payment", "priority_action_cost", "face_up_copy"}:
             return _decode_mana_continuation(
                 cls,
@@ -214,6 +229,8 @@ class ReplacementContinuation:
             )
         if resume_kind == TURN_BOUNDARY_SKIP_RESUME:
             return _decode_turn_boundary_skip(cls, value, batch, effects)
+        if resume_kind == TURN_START_SKIP_RESUME:
+            return _decode_turn_start_skip(cls, value, batch, effects)
         if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
@@ -317,6 +334,9 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             _PRIORITY_ACTION_COST_FIELDS,
             "priority-action cost continuation",
         ),
+        "combat_token_aftermath": ({"replacement_resume_kind", "combat_prevention_tokens",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "combat prevention token continuation"),
         "land_entry": (_LAND_ENTRY_FIELDS, "land-entry continuation"),
         "semantic_counter_completion": (
             _SEMANTIC_COUNTER_COMPLETION_FIELDS,
@@ -339,6 +359,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "turn-counter action continuation",
         ),
         TURN_BOUNDARY_SKIP_RESUME: (_TURN_BOUNDARY_SKIP_FIELDS, "scheduled skip continuation"),
+        TURN_START_SKIP_RESUME: (_TURN_START_SKIP_FIELDS, "extra-turn replacement continuation"),
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
         "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
@@ -420,6 +441,45 @@ def _decode_turn_boundary_skip(continuation_type, value, batch, effects):
         batch=batch, effects=effects, resume_kind=TURN_BOUNDARY_SKIP_RESUME,
         turn_action_actor=actor, turn_action_frame=FrozenMap(frame),
         held_triggers=_decode_held_turn_triggers(value),
+    )
+
+
+def _decode_turn_start_skip(continuation_type, value, batch, effects):
+    actor = value["turn_action_actor"]
+    frame = value["turn_action_frame"]
+    entry = value["held_turn_entry"]
+    if not isinstance(frame, Mapping) or not isinstance(entry, Mapping):
+        raise ReplacementEffectError("Pending extra turn requires a retained turn and frame")
+    exact_fields(frame, _TURN_ACTION_FRAME_FIELDS, field_name="extra-turn replacement frame")
+    exact_fields(entry, {"turn_id", "player", "extra", "source", "created_sequence", "skip_steps"},
+                 field_name="pending extra turn")
+    if (
+        actor not in batch.apnap_order or entry["player"] != actor or entry["extra"] is not True
+        or type(entry["turn_id"]) is not str or not entry["turn_id"]
+        or entry["source"] is not None and type(entry["source"]) is not str
+        or type(frame["active_player"]) is not str or not frame["active_player"]
+        or type(frame["phase_index"]) is not int or frame["phase_index"] < 0
+        or type(frame["turn_sequence"]) is not int or frame["turn_sequence"] < 0
+        or type(entry["created_sequence"]) is not int or not 0 <= entry["created_sequence"] <= frame["turn_sequence"]
+        or type(entry["skip_steps"]) is not list or entry["skip_steps"]
+        or any(type(frame[field]) is not str or not frame[field] for field in ("phase", "step"))
+        or frame["priority_player"] is not None and frame["priority_player"] not in batch.apnap_order
+    ):
+        raise ReplacementEffectError("Pending extra-turn identity is malformed")
+    string_sequence(frame["stack_refs"], field_name="extra-turn replacement stack")
+    if len(batch.events) != 1 or batch.journal:
+        raise ReplacementEffectError("Extra-turn replacement requires one upcoming turn")
+    event, = batch.events
+    identity = f"turn-start:{entry['turn_id']}"
+    if (event.event_id != identity or batch.batch_id != identity
+            or event.kind != TURN_BOUNDARY_SKIP_EVENT or event.affected_player != actor
+            or event.applied_effects or event.children or event.entry_scope is not None
+            or event.payload != {"skipped": False, "boundary": "turn", "turn_id": entry["turn_id"]}
+            or len(effects) < 2 or any(effect.event_kind != TURN_BOUNDARY_SKIP_EVENT for effect in effects)):
+        raise ReplacementEffectError("Extra-turn replacement event is malformed")
+    return continuation_type(
+        batch=batch, effects=effects, resume_kind=TURN_START_SKIP_RESUME,
+        turn_action_actor=actor, turn_action_frame=FrozenMap(frame), held_turn_entry=FrozenMap(entry),
     )
 
 

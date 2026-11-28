@@ -22,6 +22,7 @@ from .keyword_counters import keyword_counter_abilities
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .util import unique_preserving_order
 from .ability_fragments import (
+    ability_fragment_from_dict,
     ability_fragment_to_dict,
     canonical_ability_fragments,
 )
@@ -510,6 +511,28 @@ def _object_continuous_effects(
     return effects
 
 
+def _has_query_characteristic_input(
+    state: CharacteristicState, effects: Sequence[ContinuousEffect],
+) -> bool:
+    """Check whether the ability-layer pass could discover a quantity fragment."""
+    quantity_fragments = (QueryCharacteristicModifierSpec, QueryPowerToughnessDefinitionSpec)
+    if any(isinstance(fragment, quantity_fragments) for fragment in state.ability_fragments):
+        return True
+    for effect in effects:
+        for operation in effect.operations:
+            # Copying, turning face down and granting a fragment are the
+            # layer operations that can introduce new typed ability fragments.
+            if operation.op == "add_ability_fragment":
+                inputs = (operation.value,)
+            elif operation.op in {"copy_values", "face_down"}:
+                inputs = operation.value.get("ability_fragments", ())
+            else:
+                continue
+            if any(isinstance(ability_fragment_from_dict(value), quantity_fragments) for value in inputs):
+                return True
+    return False
+
+
 def _intrinsic_quantity_fragments_after_abilities(state,effects,*,context):
     """Separate source ability applicability from the quantity's layer-5 reads."""
     through_abilities=evaluate_continuous_effects(copy.deepcopy(state),
@@ -536,6 +559,8 @@ def _query_characteristic_effects(
     """
 
     if card.zone == "battlefield" and card.phased_out:
+        return []
+    if not _has_query_characteristic_input(state, effects):
         return []
     fragments = _intrinsic_quantity_fragments_after_abilities(state,effects,context=context)
     materialized: list[ContinuousEffect] = []
@@ -679,14 +704,8 @@ def _render_characteristics(
                     values["ability_fragments"]
                 )
             ],
-            "activated_abilities": [
-                (
-                    ability.to_dict()
-                    if isinstance(ability, ActivatedAbility)
-                    else ActivatedAbility.from_dict(ability).to_dict()
-                )
-                for ability in values["activated_abilities"]
-            ],
+            # The layer evaluator supplies a fresh, already validated snapshot.
+            "activated_abilities": values["activated_abilities"],
         }
     )
     for field in ("power", "toughness", "loyalty", "defense"):

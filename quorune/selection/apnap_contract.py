@@ -8,7 +8,8 @@ from ..errors import GameRuleError
 from ..library_order_model import HAND_TOP_APNAP_RESULT, is_affected_hand_top_choice
 from ..linked_exile_return_model import LINKED_FADING_HAND_BINDING, validate_linked_ability_binding
 from ..apnap_object_payment import (
-    DECLINED_LIFE_LOSS, OTHER_PLAYER_SACRIFICE_SCOPE, apnap_object_payment_dependencies,
+    DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS, OTHER_PLAYER_SACRIFICE_SCOPE,
+    apnap_object_payment_dependencies,
 )
 from ..object_predicate import ObjectQuerySpec
 from ..power_sacrifice_model import (
@@ -27,7 +28,9 @@ from ..rules.any_number_sacrifice import (
 from ..rules.target_sacrifice_toughness import TARGET_SACRIFICE_TOUGHNESS_FIELD, validate_target_sacrifice_toughness
 from ..player_maximum import current_players_at_maximum
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
-from .fractional_counts import validate_apnap_count
+from ..rules.shared_type_sacrifice import SHARED_TYPE_SACRIFICE
+from .fractional_counts import apnap_required_count, validate_apnap_count
+from .shared_type_sacrifice import validate_shared_sacrifice_occurrence
 
 
 def bind_most_lands_sacrifice_players(host, effect, continuation):
@@ -65,8 +68,16 @@ def greatest_power_sacrifice_players(host, effect, continuation):
     except (ValueError, TypeError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     kinds = {"activated_ability"} if spec.lost_life_only else {"spell", "spell_copy"}
-    if item.kind not in kinds:
+    if item.kind not in kinds and not _is_greatest_power_loyalty_result(host, item, spec):
         raise GameRuleError("Greatest-power sacrifice has the wrong resolving object kind")
+    if spec.opponent_only:
+        from ..rules.gift_graveyard_spells import require_resolving_greatest_power_opponent
+
+        try:
+            require_resolving_greatest_power_opponent(host, item, spec.target_player)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return [spec.target_player]
     if spec.target_player is not None:
         if (tuple(item.targets) != (spec.target_player,) or spec.target_player not in host.active_seats
                 or item.context.get("targets_revalidated") is not True):
@@ -86,6 +97,21 @@ def greatest_power_sacrifice_players(host, effect, continuation):
         if event.amount > 0
     }
     return [seat for seat in opponents if seat in lost]
+
+
+def _is_greatest_power_loyalty_result(host, item, spec):
+    if item.kind != "activated_ability" or spec.mana_value or spec.target_player is not None:
+        return False
+    from ..rules.affected_player_sacrifice_capability_shapes import greatest_power_sacrifice_runtime_dependencies
+
+    program = host.semantics.get(item.semantic_key)
+    if program is None or not host.semantic_program_is_current_trusted(program):
+        return False
+    try:
+        return (bool(greatest_power_sacrifice_runtime_dependencies(program)) and len(program.effects) == 1
+                and GreatestPowerSacrificeSpec.from_effect(program.effects[0]) == spec)
+    except (TypeError, ValueError, KeyError):
+        return False
 
 
 def _target_sacrifice_toughness_player(host, effect, continuation):
@@ -142,12 +168,22 @@ def _source_sacrifice_stat_player(host, effect, continuation):
 
 def sacrifice_can_decline(effect):
     marker = effect.get(ENTRY_SACRIFICE_POWER_DRAW_FIELD)
-    return ATTACK_SACRIFICE_STAT_FIELD in effect or (isinstance(marker, Mapping) and marker.get("optional") is True)
+    return (
+        SHARED_TYPE_SACRIFICE in effect or ATTACK_SACRIFICE_STAT_FIELD in effect
+        or (isinstance(marker, Mapping) and marker.get("optional") is True)
+    )
 
 
 def revalidate_sacrifice_incarnations(host, state, player_order):
     effect = state["effect"]
-    if ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+    if SHARED_TYPE_SACRIFICE in effect:
+        paid = validate_shared_sacrifice_occurrence(host, effect, state["resume"])
+        actor = effect["actor"]
+        players = [actor] if paid is None else [seat for seat in host.apnap_order() if seat != actor]
+    elif ORDER_GRAVEYARD_ARRIVALS in effect:
+        validate_apnap_choice_effect(host, effect, state["resume"])
+        players = host.apnap_order()
+    elif ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
         players = [_source_sacrifice_stat_player(host, effect, state["resume"])]
     elif CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
         players = [_controller_sacrifice_life_player(host, effect, state["resume"])]
@@ -174,7 +210,8 @@ def revalidate_sacrifice_incarnations(host, state, player_order):
     for seat in players:
         refs = selected[seat]
         options = host._choice_options(seat, effect)
-        required = min(1, len(options))
+        required = (apnap_required_count(state, seat, options) if ORDER_GRAVEYARD_ARRIVALS in effect
+                    else min(1, len(options)))
         cardinalities = (0, required) if sacrifice_can_decline(effect) else (required,)
         if (not isinstance(refs, (list, tuple))
                 or not (len(refs) <= len(options) if any_number_sacrifice_count(effect.get("count"))
@@ -210,7 +247,7 @@ def sacrifice_life_commit_fields(effect, state, *, actor, selected_refs):
             characteristic = "toughness"
         elif GREATEST_POWER_SACRIFICE_FIELD in effect:
             spec = GreatestPowerSacrificeSpec.from_effect(effect, actor=actor)
-            if spec.target_player is None:
+            if spec.target_player is None or spec.opponent_only:
                 return {}
             player, characteristic = spec.target_player, "power"
         else:
@@ -321,9 +358,23 @@ def caster_discard_player_for_choice(host, effect, continuation):
 
 
 def validate_apnap_choice_effect(host, effect, continuation):
+    from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_commit_fields, uses_ordered_opponent_sacrifice
+
+    if uses_ordered_opponent_sacrifice(effect):
+        item = next((entry for entry in host.state.stack if entry.ref == continuation.get("stack_ref")), None)
+        ordered_opponent_sacrifice_commit_fields(host, item, effect)
+        return
     from ..rules.opponent_caster_discard_payment import uses_caster_discard_payment
     from ..rules.sacrifice_discard_fallback import uses_sacrifice_discard_fallback
+    from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD, validate_resolving_selected_discard_choice
 
+    if SELECTED_DISCARD_DRAW_FIELD in effect:
+        item = next((entry for entry in host.state.stack if entry.ref == continuation.get("stack_ref")), None)
+        try:
+            validate_resolving_selected_discard_choice(host, item, effect)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return
     if uses_sacrifice_discard_fallback(effect):
         _validate_sacrifice_discard_fallback_choice(host, effect, continuation)
         return
@@ -360,10 +411,35 @@ def _validate_apnap_choice_contract(host, effect, continuation):
             raise GameRuleError(str(exc)) from exc
         return
     validate_apnap_count(effect)
+    if SHARED_TYPE_SACRIFICE in effect:
+        validate_shared_sacrifice_occurrence(host, effect, continuation)
+        return
+    if ORDER_GRAVEYARD_ARRIVALS in effect:
+        from ..rules.affected_player_sacrifice_capability_shapes import ordered_creature_sacrifice_effect_is_closed
+
+        item = next((row for row in host.state.stack if row.ref == continuation.get("stack_ref")), None)
+        if (item is None or item.targets or item.controller not in host.active_seats
+                or item.context.get("currently_resolving") is not True
+                or not ordered_creature_sacrifice_effect_is_closed(effect, actor=item.controller)):
+            raise GameRuleError("Ordered creature sacrifice requires its original resolving instruction")
+        return
     if _validate_fixed_group_sacrifice(host, effect, continuation):
         return
     if LINKED_FADING_HAND_BINDING in effect and not is_typed_hand_exile(effect):
         raise GameRuleError("A linked hand choice requires its typed hand exile")
+    from ..rules.counter_marked_keep import KEEP_COUNTER_FIELD, require_counter_keep_effect
+
+    if KEEP_COUNTER_FIELD in effect:
+        ref = continuation.get("stack_ref")
+        item = next((item for item in host.state.stack if item.ref == ref), None)
+        if (item is None or item.kind not in {"spell", "spell_copy"} or item.targets
+                or item.controller not in host.active_seats or item.context.get("currently_resolving") is not True):
+            raise GameRuleError("Counter-marked retention requires its original resolving spell")
+        try:
+            require_counter_keep_effect(effect, actor=item.controller)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return
     if KEEP_THREE_SACRIFICE_FIELD in effect:
         ref = continuation.get("stack_ref")
         item = next((item for item in host.state.stack if item.ref == ref), None)
@@ -398,107 +474,113 @@ def _validate_apnap_choice_contract(host, effect, continuation):
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     if effect.get("predicate") is not None:
-        private_hand_choice = (
-            effect.get("zone") == "hand"
-            and effect.get("then") in {"discard", "exile", HAND_TOP_APNAP_RESULT}
+        _validate_apnap_predicate_choice(
+            host, effect, continuation, hand_top=hand_top, optional_payment=optional_payment,
         )
-        allowed_fields = {
-            "op",
-            "actor",
-            "players",
-            "zone",
-            "predicate",
-            "count",
-            "then",
-            "prompt",
-            *(("exclude_ref",) if "exclude_ref" in effect else ()),
-            *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
-            *(("hidden",) if private_hand_choice else ()),
-            *((DECLINED_LIFE_LOSS,) if optional_payment else ()),
-            *(('target',) if "target" in effect else ()),
-            *((LINKED_FADING_HAND_BINDING,) if LINKED_FADING_HAND_BINDING in effect else ()),
-        }
-        stack_ref = str(continuation.get("stack_ref") or "")
-        item = next(
-            (
-                candidate
-                for candidate in host.state.stack
-                if candidate.ref == stack_ref
-            ),
-            None,
-        )
-        from ..rules.event_player_choice_shapes import attacked_defender_exile_effect_is_closed, is_typed_defender_exile
 
-        if is_typed_defender_exile(effect):
-            defender = item.context.get("defending_player") if item is not None else None
-            if (
-                item is None or item.context.get("event") != "creature.attacks"
-                or type(defender) is not str or defender not in host.active_seats
-                or not attacked_defender_exile_effect_is_closed(effect, actor=item.controller, player=defender)
-            ):
-                raise GameRuleError("Defender exile requires its exact sealed combat choice")
-            return
+
+def _validate_apnap_predicate_choice(host, effect, continuation, *, hand_top, optional_payment):
+    private_hand_choice = (
+        effect.get("zone") == "hand"
+        and effect.get("then") in {"discard", "exile", HAND_TOP_APNAP_RESULT}
+    )
+    allowed_fields = {
+        "op",
+        "actor",
+        "players",
+        "zone",
+        "predicate",
+        "count",
+        "then",
+        "prompt",
+        *(("exclude_ref",) if "exclude_ref" in effect else ()),
+        *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
+        *(("hidden",) if private_hand_choice else ()),
+        *((DECLINED_LIFE_LOSS,) if optional_payment else ()),
+        *(('target',) if "target" in effect else ()),
+        *((LINKED_FADING_HAND_BINDING,) if LINKED_FADING_HAND_BINDING in effect else ()),
+    }
+    stack_ref = str(continuation.get("stack_ref") or "")
+    item = next(
+        (
+            candidate
+            for candidate in host.state.stack
+            if candidate.ref == stack_ref
+        ),
+        None,
+    )
+    from ..rules.event_player_choice_shapes import attacked_defender_exile_effect_is_closed, is_typed_defender_exile
+
+    if is_typed_defender_exile(effect):
+        defender = item.context.get("defending_player") if item is not None else None
         if (
-            set(effect) != allowed_fields
-            or effect.get("op") != "choose_cards_apnap"
-            or (
-                effect.get("zone"),
-                effect.get("then"),
-                effect.get("hidden", False),
-            )
-            not in {
-                ("battlefield", "sacrifice", False),
-                ("battlefield", "return_owner_hand", False),
-                ("hand", "discard", True),
-                ("hand", "exile", True),
-                ("hand", HAND_TOP_APNAP_RESULT, True),
-            }
-            or type(effect.get("actor")) is not str
-            or effect.get("actor") not in host.active_seats
-            or item is None
-            or effect.get("actor") != item.controller
-            or (
-                "target" in effect
-                and effect.get("players") != [effect.get("target")]
-            )
-            or type(effect.get("prompt")) is not str
-            or not str(effect.get("prompt")).strip()
-            or (
-                "exclude_ref" in effect
-                and (type(effect.get("exclude_ref")) is not str or not effect.get("exclude_ref"))
-            )
-            or (
-                effect.get("require_full_count") is True
-                and (
-                    effect.get("then") != "return_owner_hand"
-                    or not isinstance(effect.get("fallback_effects"), list)
-                    or not effect.get("fallback_effects")
-                )
-            )
+            item is None or item.context.get("event") != "creature.attacks"
+            or type(defender) is not str or defender not in host.active_seats
+            or not attacked_defender_exile_effect_is_closed(effect, actor=item.controller, player=defender)
         ):
-            raise GameRuleError("Typed APNAP choice effect is malformed")
-        if (is_typed_hand_exile(effect) or hand_top) and (
-            type(effect.get("count")) is not int or effect["count"] not in {1, 2, 3}
-            or effect["predicate"] != ObjectQuerySpec(zones=("hand",)).to_dict()
-            or "exclude_ref" in effect or "require_full_count" in effect
-            or ("target" not in effect and effect.get("players") not in ("all", "opponents"))
-        ):
-            if hand_top:
-                raise GameRuleError("Hand ordering requires a fixed private own-hand choice")
-            raise GameRuleError("Typed hand exile requires a fixed private own-hand choice")
-        if hand_top and "target" in effect and effect["target"] not in item.targets:
-            raise GameRuleError("The ordered hand choice lost its announced player target")
-        if LINKED_FADING_HAND_BINDING in effect:
-            try:
-                validate_linked_ability_binding(effect[LINKED_FADING_HAND_BINDING])
-            except ValueError as exc:
-                raise GameRuleError(str(exc)) from exc
-            target = effect.get("target")
-            if (effect.get("count") != 1 or target == item.controller or target not in host.active_seats
-                    or tuple(item.targets) != (target,) or item.kind != "activated_ability"
-                    or item.context.get("currently_resolving") is not True
-                    or item.context.get("targets_revalidated") is not True):
-                raise GameRuleError("Linked hand exile requires the activated ability's revalidated opponent")
+            raise GameRuleError("Defender exile requires its exact sealed combat choice")
+        return
+    if (
+        set(effect) != allowed_fields
+        or effect.get("op") != "choose_cards_apnap"
+        or (
+            effect.get("zone"),
+            effect.get("then"),
+            effect.get("hidden", False),
+        )
+        not in {
+            ("battlefield", "sacrifice", False),
+            ("battlefield", "return_owner_hand", False),
+            ("hand", "discard", True),
+            ("hand", "exile", True),
+            ("hand", HAND_TOP_APNAP_RESULT, True),
+        }
+        or type(effect.get("actor")) is not str
+        or effect.get("actor") not in host.active_seats
+        or item is None
+        or effect.get("actor") != item.controller
+        or (
+            "target" in effect
+            and effect.get("players") != [effect.get("target")]
+        )
+        or type(effect.get("prompt")) is not str
+        or not str(effect.get("prompt")).strip()
+        or (
+            "exclude_ref" in effect
+            and (type(effect.get("exclude_ref")) is not str or not effect.get("exclude_ref"))
+        )
+        or (
+            effect.get("require_full_count") is True
+            and (
+                effect.get("then") != "return_owner_hand"
+                or not isinstance(effect.get("fallback_effects"), list)
+                or not effect.get("fallback_effects")
+            )
+        )
+    ):
+        raise GameRuleError("Typed APNAP choice effect is malformed")
+    if (is_typed_hand_exile(effect) or hand_top) and (
+        type(effect.get("count")) is not int or effect["count"] not in {1, 2, 3}
+        or effect["predicate"] != ObjectQuerySpec(zones=("hand",)).to_dict()
+        or "exclude_ref" in effect or "require_full_count" in effect
+        or ("target" not in effect and effect.get("players") not in ("all", "opponents"))
+    ):
+        if hand_top:
+            raise GameRuleError("Hand ordering requires a fixed private own-hand choice")
+        raise GameRuleError("Typed hand exile requires a fixed private own-hand choice")
+    if hand_top and "target" in effect and effect["target"] not in item.targets:
+        raise GameRuleError("The ordered hand choice lost its announced player target")
+    if LINKED_FADING_HAND_BINDING in effect:
+        try:
+            validate_linked_ability_binding(effect[LINKED_FADING_HAND_BINDING])
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        target = effect.get("target")
+        if (effect.get("count") != 1 or target == item.controller or target not in host.active_seats
+                or tuple(item.targets) != (target,) or item.kind != "activated_ability"
+                or item.context.get("currently_resolving") is not True
+                or item.context.get("targets_revalidated") is not True):
+            raise GameRuleError("Linked hand exile requires the activated ability's revalidated opponent")
 
 
 def revalidate_ordered_hand_choices(host, state, player_order):

@@ -5,7 +5,8 @@ from typing import Any, Mapping, Sequence
 
 from .captured_hand import CaptureDrawnHandCard
 from ..rules.faction_trigger_model import CountFactionDraw, FACTION_AFTER_DRAW_ACTION
-from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT
+from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT, WIN_INSTEAD_OF_EMPTY_DRAW
+from ..rules.opponent_draw_result import ObserveOpponentDraw, OPPONENT_DRAW_OBSERVER_ACTION
 
 from ..replacement import (
     ReplaceableEvent,
@@ -113,6 +114,7 @@ DrawnCardAction = (
     | DiscardDrawnCardUnlessType
     | CaptureDrawnHandCard
     | CountFactionDraw
+    | ObserveOpponentDraw
 )
 
 
@@ -125,6 +127,11 @@ def drawn_card_action_from_dict(
     if action == FACTION_AFTER_DRAW_ACTION:
         try:
             return CountFactionDraw.from_dict(value)
+        except ValueError as exc:
+            raise DrawError(str(exc)) from exc
+    if action == OPPONENT_DRAW_OBSERVER_ACTION:
+        try:
+            return ObserveOpponentDraw.from_dict(value)
         except ValueError as exc:
             raise DrawError(str(exc)) from exc
     if action == "capture_drawn_hand_card":
@@ -187,7 +194,7 @@ class DrawCardsIntent:
     def __post_init__(self) -> None:
         actions = tuple(self.post_draw_actions)
         if any(not isinstance(action, (
-            RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard, CountFactionDraw,
+            RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard, CountFactionDraw, ObserveOpponentDraw,
         )) for action in actions):
             raise TypeError("Draw intents require typed post-draw actions")
         object.__setattr__(self, "post_draw_actions", actions)
@@ -398,6 +405,7 @@ class DrawEventResolution:
         if self.kind not in {
             "draw",
             EXILE_TURN_PLAY_DRAW_RESULT,
+            WIN_INSTEAD_OF_EMPTY_DRAW,
             "prevented",
             "prohibited",
             "result_draws",
@@ -667,8 +675,11 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         raise DrawError("Resolved draw library size is malformed")
     if (kind == "draw") != (is_draw is True):
         raise DrawError("Resolved draw kind and draw flag disagree")
+    if kind == WIN_INSTEAD_OF_EMPTY_DRAW and library_size != 0:
+        raise DrawError("A draw-to-win replacement requires the empty-library occurrence")
     if kind in {
         EXILE_TURN_PLAY_DRAW_RESULT,
+        WIN_INSTEAD_OF_EMPTY_DRAW,
         "prevented",
         "prohibited",
         "result_draws",

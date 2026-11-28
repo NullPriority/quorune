@@ -12,6 +12,7 @@ from ..rules.turn_cast_grant_model import (
     TURN_CAST_EXILE_CAPABILITY, TURN_CAST_EXILE_HANDLER, TURN_CAST_TAPPED_CAPABILITY, TURN_CAST_TAPPED_HANDLER,
     TURN_CAST_MILL_CAPABILITY, TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_CAPABILITY, TURN_CAST_LIBRARY_SHARED_HANDLER,
     TURN_CAST_NONBATTLEFIELD_CAPABILITY,TURN_CAST_NONBATTLEFIELD_HANDLER,
+    TURN_CAST_PERMANENT_TYPE_CAPABILITY, TURN_CAST_PERMANENT_TYPE_HANDLER,
 )
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -88,6 +89,9 @@ def turn_cast_rider_handlers():
 
 def qualified_turn_grant_handlers():
     return (
+        TurnCastGrantHandler(handler_id=TURN_CAST_PERMANENT_TYPE_HANDLER, family=TURN_CAST_PERMANENT_TYPE_CAPABILITY,
+            rule_references=("113.6", "205.2a", "305.1", "305.2", "400.7", "601.2"),
+            capability_dependencies=(TURN_CAST_GRANT_CAPABILITY, TURN_CAST_PERMANENT_TYPE_CAPABILITY)),
         TurnCastGrantHandler(handler_id=TURN_CAST_NONBATTLEFIELD_HANDLER,family=TURN_CAST_NONBATTLEFIELD_CAPABILITY,
             rule_references=('113.6','400.7','601.2'),
             capability_dependencies=(TURN_CAST_GRANT_CAPABILITY,TURN_CAST_NONBATTLEFIELD_CAPABILITY)),

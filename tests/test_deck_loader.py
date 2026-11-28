@@ -17,10 +17,49 @@ from quorune.deck import (
     parse_deck_text,
     parse_moxfield_json,
 )
+from quorune.deck_imports import DeckImportError, fetch_public_deck, parse_archidekt, parse_tappedout_csv, public_deck_source
 from common import ROOT, keep_all, load_assets, make_session
 from scripts.build_test_database import build_fixture_database
 from quorune.deck_copy_limits import DECK_COPY_LIMIT_CAPABILITY, DECK_COPY_LIMIT_EVENT
 from quorune.record import authoritative_state_hash, replay_record
+
+
+class PublicDeckImportTests(unittest.TestCase):
+    def test_archidekt_preserves_board_tags_and_printing(self):
+        printing = "00000000-0000-4891-8060-00000000da01"
+        payload = {
+            "name": "Fixture", "private": False,
+            "categories": [{"name": "Ramp", "includedInDeck": True}, {"name": "Possibles", "includedInDeck": False}],
+            "cards": [
+                {"quantity": 1, "categories": ["Commander"], "modifier": "Foil",
+                 "card": {"uid": printing, "collectorNumber": "16", "edition": {"editioncode": "otc"},
+                          "oracleCard": {"name": "Test Commander", "lang": "en"}}},
+                {"quantity": 99, "categories": ["Ramp"], "card": {"oracleCard": {"name": "Island"}}},
+                {"quantity": 1, "categories": ["Possibles"], "card": {"oracleCard": {"name": "Consider"}}},
+            ],
+        }
+        deck = parse_archidekt(payload, source="https://archidekt.com/decks/1234/")
+        self.assertEqual(["Test Commander"], deck.commanders)
+        self.assertEqual(100, deck.total_cards())
+        self.assertEqual(["Ramp"], deck.entries[1].tags)
+        self.assertEqual("maybeboard", deck.entries[2].board)
+        self.assertEqual((printing, "otc", "16", "en", "foil"), (
+            deck.entries[0].printing.scryfall_id, deck.entries[0].printing.set_code,
+            deck.entries[0].printing.collector_number, deck.entries[0].printing.language, deck.entries[0].printing.finish,
+        ))
+
+    def test_tappedout_csv_preserves_quoted_names_and_rejects_provider_errors(self):
+        raw = 'Board,Qty,Name,Set,Collector Number,Foil,Tags\nCommander,1,"Krenko, Tin Street Kingpin",WAR,137,Yes,Ramp|Tokens\nMain,99,Mountain,DMU,272,No,\n'
+        deck = parse_tappedout_csv(raw, source="https://tappedout.net/mtg-decks/public-list/", name="Public list")
+        self.assertEqual(["Krenko, Tin Street Kingpin"], deck.commanders)
+        self.assertEqual(["Ramp", "Tokens"], deck.entries[0].tags)
+        self.assertEqual("foil", deck.entries[0].printing.finish)
+        self.assertEqual(100, deck.total_cards())
+        self.assertIsNone(public_deck_source("https://tappedout.net.attacker.invalid/mtg-decks/public-list/"))
+        self.assertIsNone(public_deck_source("https://trusted@archidekt.com/decks/123/"))
+        with patch("quorune.deck_imports._download", side_effect=TimeoutError):
+            with self.assertRaisesRegex(DeckImportError, "Export a text list"):
+                fetch_public_deck("https://tappedout.net/mtg-decks/public-list/", cache_dir=None)
 
 
 class CardAliasResolutionTests(unittest.TestCase):

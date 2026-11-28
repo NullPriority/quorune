@@ -9,6 +9,23 @@ CARD_PLAY_EVENT_FACT_VERSION_FIELD = "card_play_event_fact_version"
 CURRENT_CARD_PLAY_EVENT_FACT_VERSION = 1
 PHYSICAL_CARD_EVENT_FIELD = "physical_card"
 
+LEGENDARY_SORCERY_FIELD = "legendary_sorcery_rule_version"
+
+
+def legendary_sorcery_rule_version(value: object) -> int | None:
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported legendary sorcery rule version")
+    return value
+
+
+def read_legendary_sorcery_rule_version(data: Mapping[str, object]) -> int | None:
+    if LEGENDARY_SORCERY_FIELD not in data:
+        return None
+    version = legendary_sorcery_rule_version(data[LEGENDARY_SORCERY_FIELD])
+    if version is None:
+        raise ValueError("A stored legendary sorcery rule version must be an integer")
+    return version
+
 
 def cast_event_type_snapshot_version(value: object) -> int | None:
     if value is None:

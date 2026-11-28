@@ -7,6 +7,7 @@ from .declaration_fragments import (
     DeclarationCostScope,
     DeclarationCostTemplate,
     DeclarationKind,
+    ENCHANTMENT_COUNT_ATTACK_TAX_ID,
 )
 from .rules.source_references import SourceReferenceSpec
 from .util import mana_cost_to_vector
@@ -35,6 +36,10 @@ _ATTACK_TAX = re.compile(
     r"(?P<planeswalkers> or planeswalkers you control)? unless their "
     r"controller pays (?P<cost>(?:\{[^{}]+\})+) for each "
     r"(?P<object>creature they control that's attacking you|of those creatures)\."
+)
+_ENCHANTMENT_COUNT_ATTACK_TAX = (
+    "creatures can't attack you or planeswalkers you control unless their controller "
+    "pays {x} for each of those creatures, where x is the number of enchantments you control."
 )
 _ATTACK_TAX_PREFIX = re.compile(
     r"(?:as long as this creature is untapped, )?"
@@ -193,12 +198,112 @@ class DeclarationCost:
         }
 
 
+def _parse_source_controller_attack_cost(line: str) -> DeclarationCostParse | None:
+    if line == _ENCHANTMENT_COUNT_ATTACK_TAX:
+        return DeclarationCostParse(
+            True,
+            DeclarationCostTemplate(
+                template_id=ENCHANTMENT_COUNT_ATTACK_TAX_ID,
+                declarations=("attack",),
+                scope="source_controller",
+                mana=(),
+                printed_cost="{x}",
+                includes_planeswalkers=True,
+                mana_calculation="source_controller_enchantment_count",
+            ),
+            declarations=("attack",),
+            scope="source_controller",
+        )
+
+    match = _ATTACK_TAX.fullmatch(line)
+    if match:
+        expected_object = (
+            "of those creatures"
+            if match.group("planeswalkers")
+            else "creature they control that's attacking you"
+        )
+        if match.group("object") != expected_object:
+            return DeclarationCostParse(
+                True,
+                reason="attack tax object binding is unresolved",
+                declarations=("attack",),
+                scope="source_controller",
+            )
+        mana = fixed_declaration_mana(match.group("cost"))
+        if mana is None:
+            return DeclarationCostParse(
+                True,
+                reason="attack tax uses non-fixed mana symbols",
+                declarations=("attack",),
+                scope="source_controller",
+            )
+        return DeclarationCostParse(
+            True,
+            DeclarationCostTemplate(
+                template_id=(
+                    "source-controller-fixed-mana-attack-tax-"
+                    + (
+                        "player-planeswalker"
+                        if match.group("planeswalkers")
+                        else "player"
+                    )
+                    + "-v1"
+                ),
+                declarations=("attack",),
+                scope="source_controller",
+                mana=mana,
+                printed_cost=match.group("cost"),
+                source_condition=(
+                    "source_untapped" if match.group("untapped") else None
+                ),
+                includes_planeswalkers=bool(match.group("planeswalkers")),
+            ),
+            declarations=("attack",),
+            scope="source_controller",
+        )
+    if _ATTACK_TAX_PREFIX.match(line):
+        return DeclarationCostParse(
+            True,
+            reason="attack tax grammar is unresolved",
+            declarations=("attack",),
+            scope="source_controller",
+        )
+
+    match = _PLANESWALKER_ATTACK_TAX.fullmatch(line)
+    if match:
+        mana = fixed_declaration_mana(match.group("cost"))
+        if mana is None:
+            return DeclarationCostParse(
+                True,
+                reason="planeswalker attack tax uses non-fixed mana symbols",
+                declarations=("attack",),
+                scope="source_planeswalkers",
+            )
+        return DeclarationCostParse(
+            True,
+            DeclarationCostTemplate(
+                template_id=(
+                    "source-controller-fixed-mana-attack-tax-"
+                    "planeswalker-v1"
+                ),
+                declarations=("attack",),
+                scope="source_planeswalkers",
+                mana=mana,
+                printed_cost=match.group("cost"),
+                includes_planeswalkers=True,
+            ),
+            declarations=("attack",),
+            scope="source_planeswalkers",
+        )
+    return None
+
+
 def parse_declaration_cost_line(
     text: str,
     *,
     card_name: str = "",
 ) -> DeclarationCostParse:
-    """Parse the reviewed fixed-mana attack/block cost sentence family.
+    """Parse the reviewed attack and block cost sentence families.
 
     Prefix matches are deliberately reported as unresolved. This keeps a new
     or mutated member of the family from silently losing a mandatory cost.
@@ -298,86 +403,8 @@ def parse_declaration_cost_line(
             scope="attached",
         )
 
-    match = _ATTACK_TAX.fullmatch(line)
-    if match:
-        expected_object = (
-            "of those creatures"
-            if match.group("planeswalkers")
-            else "creature they control that's attacking you"
-        )
-        if match.group("object") != expected_object:
-            return DeclarationCostParse(
-                True,
-                reason="attack tax object binding is unresolved",
-                declarations=("attack",),
-                scope="source_controller",
-            )
-        mana = fixed_declaration_mana(match.group("cost"))
-        if mana is None:
-            return DeclarationCostParse(
-                True,
-                reason="attack tax uses non-fixed mana symbols",
-                declarations=("attack",),
-                scope="source_controller",
-            )
-        return DeclarationCostParse(
-            True,
-            DeclarationCostTemplate(
-                template_id=(
-                    "source-controller-fixed-mana-attack-tax-"
-                    + (
-                        "player-planeswalker"
-                        if match.group("planeswalkers")
-                        else "player"
-                    )
-                    + "-v1"
-                ),
-                declarations=("attack",),
-                scope="source_controller",
-                mana=mana,
-                printed_cost=match.group("cost"),
-                source_condition=(
-                    "source_untapped" if match.group("untapped") else None
-                ),
-                includes_planeswalkers=bool(match.group("planeswalkers")),
-            ),
-            declarations=("attack",),
-            scope="source_controller",
-        )
-    if _ATTACK_TAX_PREFIX.match(line):
-        return DeclarationCostParse(
-            True,
-            reason="attack tax grammar is unresolved",
-            declarations=("attack",),
-            scope="source_controller",
-        )
-
-    match = _PLANESWALKER_ATTACK_TAX.fullmatch(line)
-    if match:
-        mana = fixed_declaration_mana(match.group("cost"))
-        if mana is None:
-            return DeclarationCostParse(
-                True,
-                reason="planeswalker attack tax uses non-fixed mana symbols",
-                declarations=("attack",),
-                scope="source_planeswalkers",
-            )
-        return DeclarationCostParse(
-            True,
-            DeclarationCostTemplate(
-                template_id=(
-                    "source-controller-fixed-mana-attack-tax-"
-                    "planeswalker-v1"
-                ),
-                declarations=("attack",),
-                scope="source_planeswalkers",
-                mana=mana,
-                printed_cost=match.group("cost"),
-                includes_planeswalkers=True,
-            ),
-            declarations=("attack",),
-            scope="source_planeswalkers",
-        )
+    if attack_tax := _parse_source_controller_attack_cost(line):
+        return attack_tax
 
     match = _BLOCK_TAX.fullmatch(line)
     if match:

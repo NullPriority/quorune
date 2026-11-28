@@ -2,6 +2,7 @@
   "schema_version": 1,
   "source": "Read-only selection from the pinned Oracle and rulings snapshot",
   "cards": [
+    {"cmc":4.0,"color_identity":["U"],"colors":["U"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"banned","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}{U}","name":"Gifts Ungiven","oracle_id":"58aec411-167d-4709-8560-793eaaed62c5","oracle_text":"Search your library for up to four cards with different names and reveal them. Target opponent chooses two of those cards. Put the chosen cards into your graveyard and the rest into your hand. Then shuffle.","power":null,"produced_mana":[],"released_at":"2022-07-08","toughness":null,"type_line":"Instant"},
     {
       "oracle_id": "437b2dab-15e0-4b9a-a204-58622d37a3b3",
       "name": "Fact or Fiction",
@@ -97,9 +98,57 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "3c9faba7-f2d3-4978-be94-020dc8003dc0",
+      "name": "Intuition",
+      "mana_cost": "{2}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Search your library for three cards and reveal them. Target opponent chooses one. Put that card into your hand and the rest into your graveyard. Then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2015-05-06",
+      "cmc": 3.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
+    {"comment":"You can choose to find fewer than four cards if you want. If you find one or two cards, your opponent must choose for them to be put into your graveyard, even if they don't want to.","oracle_id":"58aec411-167d-4709-8560-793eaaed62c5","published_at":"2017-03-14","source":"wotc"},
     {
       "oracle_id": "437b2dab-15e0-4b9a-a204-58622d37a3b3",
       "published_at": "2022-12-08",
@@ -117,6 +166,12 @@
       "published_at": "2013-09-15",
       "source": "wotc",
       "comment": "Steam Augury doesn't target any opponent. In a multiplayer game, you choose the opponent as the spell resolves."
+    },
+    {
+      "oracle_id": "3c9faba7-f2d3-4978-be94-020dc8003dc0",
+      "published_at": "2006-07-15",
+      "source": "wotc",
+      "comment": "Targets an opponent. You choose an opponent during announcement. If you can’t target an opponent, you can’t cast this card."
     }
   ]
 }

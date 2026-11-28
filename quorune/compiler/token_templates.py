@@ -17,6 +17,7 @@ from ..fixed_token_production import (
     CREATED_TOKEN_HASTE_FIELD,
     FOOD_TOKEN_CHARACTERISTICS,
     GOLD_TOKEN_CHARACTERISTICS,
+    TREASURE_TOKEN_CHARACTERISTICS,
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
     fixed_ordinary_token_name,
@@ -123,14 +124,7 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         "display_text": "{1}, {T}, Discard a card, Sacrifice this token: Draw a card.",
         "ability_profile": "one_tap_discard_sac_draw_card_v1",
     },
-    "treasure token": {
-        "name": _TOKEN_TREASURE,
-        "type_line": "Token Artifact — Treasure",
-        "display_text": (
-            "{T}, Sacrifice this token: Add one mana of any color."
-        ),
-        "ability_profile": "tap_sac_any_color_mana_v1",
-    },
+    "treasure token": {"name": _TOKEN_TREASURE, **TREASURE_TOKEN_CHARACTERISTICS},
     "gold token": {"name": "Gold", **GOLD_TOKEN_CHARACTERISTICS},
     "food token": {
         "name": _TOKEN_FOOD,
@@ -548,8 +542,22 @@ def fixed_token_creation_effect_template(
 
 
 def static_token_quantity_replacement_handler(text: str):
-    """Compile the existing mandatory controller-scoped double-token owner."""
-    if re.fullmatch(r'If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead\.?',text.strip(),re.I) is None:
+    """Compile the supported same-controller token quantity replacement."""
+    from ..creature_token_definition_replacement import (
+        CREATURE_TOKEN_TRIPLING_CAPABILITY, CREATURE_TOKEN_TRIPLING_HANDLER,
+    )
+
+    creature = (r"If one or more creature tokens would be created under your control, "
+                r"three times that many of those tokens are created instead")
+    if re.fullmatch(rf"{creature}\x2e?", text.strip(), re.IGNORECASE):
+        return "fixed-creature-token-quantity-replacement-v1", {
+            "handler_id": CREATURE_TOKEN_TRIPLING_HANDLER, "schema_version": 1, "event": "token.create",
+            "condition": {"event_controller": "source_controller", "created_types": ["creature"]},
+            "multiplier": 3,
+        }, (CREATURE_TOKEN_TRIPLING_CAPABILITY,)
+    current = r"If one or more tokens would be created under your control, twice that many of those tokens are created instead"
+    legacy = r"If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead"
+    if re.fullmatch(f"(?:{current}|{legacy})\\.?", text.strip(), re.IGNORECASE) is None:
         return None
     return 'fixed-token-quantity-replacement-v1', {
         'handler_id':'replacement.token.quantity.v1','schema_version':1,'event':'token.create',
@@ -706,3 +714,19 @@ __all__ = [
     "fixed_token_creation_effect_template",
     "static_additional_token_replacement_handler",
 ]
+
+
+def announced_token_sweep_template(text):
+    from ..rules.announced_token_sweep import TOKEN_SWEEP_MECHANIC, announced_token_sweep_effect
+
+    match = re.fullmatch(
+        r"Create X (?P<token>[^.]+?) tokens\. If X is (?P<bound>[1-9][0-9]?) or more, "
+        r"destroy all other creatures\.", " ".join(text.split()), re.I,
+    )
+    if match is None or int(match["bound"]) > 20:
+        return None
+    token = fixed_token_creation_effect_template(f"Create one {match['token']} token.")
+    if token is None or "Creature" not in str(token.effect.get("characteristics", {}).get("type_line", "")).split():
+        return None
+    return ("cast-x-created-tokens-sweep-v1", (announced_token_sweep_effect(token.effect, int(match["bound"])),),
+            None, (TOKEN_SWEEP_MECHANIC,))

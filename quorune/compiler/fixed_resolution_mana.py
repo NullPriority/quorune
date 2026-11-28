@@ -63,3 +63,37 @@ def source_attack_turn_retained_mana_result(binding, body):
             or " ".join(body.replace("’", "'").split()).casefold() != ATTACK_PRINTED_EFFECT):
         return None
     return ("fixed-source-attack-turn-retained-mana-v1", attack_effects(), None, (FIXED_RESOLUTION_MANA_MECHANIC,))
+
+
+def _player_attack_mana_amount(text):
+    from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+
+    match = re.fullmatch(
+        rf"Add (?P<amount>{FIXED_COUNT_PATTERN}|[1-9][0-9]*) \{{R\}}\. "
+        r"Until end of combat, you don['’]t lose this mana as steps end\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    amount = fixed_number(match["amount"])
+    return amount if 1 <= amount <= 10 else None
+
+
+def player_attack_combat_mana_binding(text):
+    from ..rules.attack_declaration_mana import DEPENDENCIES, EVENT, TEMPLATE, VARIANT
+    from .fixed_public_event_trigger_bindings import _spec
+
+    match = re.fullmatch(r"Whenever a player attacks, (?P<body>.+)", text, re.IGNORECASE)
+    if match is None or _player_attack_mana_amount(match["body"]) is None:
+        return None
+    return _spec(EVENT, VARIANT, match["body"], TEMPLATE, "trigger-event-normalized-public-action",
+                 condition=None, capabilities=DEPENDENCIES)
+
+
+def player_attack_combat_mana_result(binding, body):
+    from ..rules.attack_declaration_mana import EVENT, TEMPLATE, VARIANT, effect
+
+    if (binding.event.value, binding.variant, binding.active_zone) != (EVENT, VARIANT, "battlefield") or body != binding.body:
+        return None
+    amount = _player_attack_mana_amount(body)
+    return (TEMPLATE, (effect(amount),), None, (FIXED_RESOLUTION_MANA_MECHANIC,)) if amount is not None else None

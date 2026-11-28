@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 def quoted_printed_x_price(host, card, option, response):
     """Keep the exact base and surcharges behind a composed X quote."""
+    from ...harmonize import FINGERPRINT as HARMONIZE_FINGERPRINT
     from ...kicker import POSITIVE_GENERIC_KICKER_X
     from ...cast_lifecycles import GRANTED_ESCAPE_USE_FIELD
     from ...phasing_model import has_announced_phase_out_targets
@@ -23,7 +24,10 @@ def quoted_printed_x_price(host, card, option, response):
     spliced_phasing = CAST_TEXT_FRAMES in option and has_announced_phase_out_targets(option.get("effects", ()))
     kicker_x = option.get(POSITIVE_GENERIC_KICKER_X)
     granted_escape = GRANTED_ESCAPE_USE_FIELD in option
-    if kicker_x is None and not option.get(ANNOUNCED_MANA_VALUE_LIMIT) and not (spliced_phasing or granted_escape):
+    if (
+        kicker_x is None and not option.get(ANNOUNCED_MANA_VALUE_LIMIT)
+        and not (spliced_phasing or granted_escape or HARMONIZE_FINGERPRINT in option)
+    ):
         return None
 
     units = 1
@@ -64,10 +68,12 @@ def _maximum_affordable_x_with_mechanics(
 ) -> int:
     from ...semantic_runtime.cast_costs import active_spell_mana_floor, apply_final_spell_mana_floor
     from .costs import _apply_payment_mechanics
+    from .source_placement import quote_cast_affordability
     from .static_modifiers import apply_cast_static_reductions
 
     mana_floor = active_spell_mana_floor(host)
     credit_sources = set(reserved_credit_sources)
+    can_pay = quote_cast_affordability(host, seat, spend_context)
     maximum = -1
     for value in range(minimum, limit + generic_credit + 1):
         if quoted_price is None:
@@ -110,11 +116,9 @@ def _maximum_affordable_x_with_mechanics(
             if payment is None:
                 continue
             _, selected = payment
-            if host._cost_is_affordable(
-                seat,
+            if can_pay(
                 option["requirements"],
                 exclude_sources={source.object_id for source in selected} | credit_sources,
-                spend_context=spend_context,
                 **cast_snow_payment_kwargs(option),
             ):
                 value_payable = True

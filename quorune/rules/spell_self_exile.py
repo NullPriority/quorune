@@ -90,7 +90,10 @@ def terminal_spell_move_node_capabilities(*, effects, target_schema, mechanics, 
     )
     if paid_search is not None:
         return paid_search
-    scope = _conditional_return_target_dependencies(move, target_schema)
+    from .targeted_opponent_protection import MECHANIC as OPPONENT_PROTECTION_MECHANIC
+
+    scope = (() if move == SELF_EXILE and OPPONENT_PROTECTION_MECHANIC in mechanics
+             else _conditional_return_target_dependencies(move, target_schema))
     if scope is None or (move.condition is not None and cost_schema is not None):
         return ()
     from .capabilities import capability_dependencies_for_node

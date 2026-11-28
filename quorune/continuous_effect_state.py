@@ -5,7 +5,7 @@ from .life_gain_permission import ResolvedLifeGainProhibition
 from .damage_prevention_permission import ResolvedDamagePreventionProhibition
 from .game_hand_size_model import ResolvedNoMaximumHandSize
 from .turn_match_outcome_model import ResolvedTurnMatchOutcomeProtection
-from .all_player_turn_rule_model import ResolvedAllPlayerTurnRule
+from .all_player_turn_rule_model import ResolvedAllPlayerTurnRule, ResolvedTurnLandManaTrigger
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -33,6 +33,7 @@ from .next_draw_replacement_model import ResolvedNextDrawReplacement
 from .next_spell_cost_model import ResolvedNextSpellCostReduction
 from .protected_attack_payment_model import ResolvedProtectedAttackPayment
 from .next_turn_attack_restriction_model import ResolvedNextTurnAttackRestriction
+from .counter_bound_attack_model import ResolvedCounterBoundAttackRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
@@ -212,8 +213,9 @@ def commit_continuous_effect(
          ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction,
          ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition, ResolvedProtectedAttackPayment, ResolvedDrawRedirect,
          ResolvedActivationProhibition, ResolvedNextDrawReplacement, ResolvedTurnMatchOutcomeProtection,
-         ResolvedAllPlayerTurnRule, ResolvedSacrificeProhibition, ResolvedNoMaximumHandSize,
-         ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction, ResolvedTargetCombatDamageMultiplier),
+         ResolvedAllPlayerTurnRule, ResolvedTurnLandManaTrigger, ResolvedSacrificeProhibition, ResolvedNoMaximumHandSize,
+         ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction, ResolvedTargetCombatDamageMultiplier,
+         ResolvedCounterBoundAttackRestriction),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -224,11 +226,17 @@ def commit_continuous_effect(
             "Continuous-effect state is unavailable"
         )
     _require_expiry_player(state, getattr(effect, "expires_on_next_turn_of", None))
+    if isinstance(effect, ContinuousEffect) and effect.controller_cleanup_turn is not None:
+        _require_expiry_player(state, effect.operations[0].value)
     if (isinstance(effect, ResolutionDeclarationRuleEffect) and effect.block_opponents_of is not None
             and effect.block_opponents_of not in state.players):
         raise ContinuousEffectStateError("Opponent blocking rule lost its original controller")
-    if isinstance(effect, ResolvedNextTurnAttackRestriction):
+    if isinstance(effect, (ResolvedNextTurnAttackRestriction, ResolvedCounterBoundAttackRestriction)):
         effect.validate_players(state.players, live=True)
+    if isinstance(effect, ResolvedCounterBoundAttackRestriction):
+        card = state.cards.get(effect.subject.object_id)
+        if card is None or not effect.applies(card):
+            raise ContinuousEffectStateError("A counter-bound rule must begin on its original marked creature")
     if any(current.effect_id == effect.effect_id for current in journal):
         raise ContinuousEffectStateError(
             "Continuous-effect identity is already committed"
@@ -297,6 +305,11 @@ def matching_battlefield_objects(
                     host.state.cards[card.attached_to].ref
                     if card.attached_to in host.state.cards
                     else None
+                ),
+                entered_this_turn=(
+                    predicate.state_predicate is not None and predicate.state_predicate.entered_this_turn
+                    and host.state.turn_sequence > 0
+                    and card.entered_battlefield_turn_sequence == host.state.turn_sequence
                 ),
             )
             if object_matches_query(row, predicate):
@@ -543,6 +556,7 @@ def create_resolution_continuous_effect(
     ),
     expires_on_next_turn_of: str | None = None,
     zones: tuple[str, ...] = ("battlefield",),
+    required_types: tuple[str, ...] = (),
 ) -> ContinuousEffect | None:
     """Commit one immutable effect whose current affected set is locked."""
 
@@ -568,7 +582,7 @@ def create_resolution_continuous_effect(
         operations=tuple(operations),
         origin=ContinuousEffectOrigin.RESOLUTION,
         duration=duration,
-        applies=ObjectQuerySpec(zones=zones),
+        applies=ObjectQuerySpec(zones=zones, types_all=required_types),
         locked_objects=identities,
         expires_on_next_turn_of=expires_on_next_turn_of,
     )
@@ -825,7 +839,8 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
         return
     identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
     journal[:] = [effect for effect in journal if not (
-        isinstance(effect, ResolvedLinkedDepartureExile) and effect.subject == identity
+        isinstance(effect, (ResolvedLinkedDepartureExile, ResolvedCounterBoundAttackRestriction))
+        and effect.subject == identity
         or isinstance(effect, ContinuousEffect)
         and effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT
         and (effect.duration_source == identity or identity in effect.locked_objects)
@@ -839,6 +854,20 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
     )]
 
 
+def expire_counter_bound_attack_restrictions(state: Any, card: Any, counter_name: str | None = None) -> None:
+    """End a duration when its counter or the tracked incarnation ceases to be visible."""
+    journal = getattr(state, "continuous_effects", None)
+    if not journal:
+        return
+    identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    retained = [effect for effect in journal if not (
+        isinstance(effect, ResolvedCounterBoundAttackRestriction)
+        and effect.subject == identity and (counter_name is None or effect.counter_name == counter_name)
+    )]
+    if len(retained) != len(journal):
+        state.continuous_effects = retained
+
+
 def expire_end_of_turn_continuous_effects(state: Any) -> int:
     journal = state.continuous_effects
     if journal is None:
@@ -846,7 +875,7 @@ def expire_end_of_turn_continuous_effects(state: Any) -> int:
     retained = [
         effect
         for effect in journal
-        if (not effect.expires_at_cleanup(state) if isinstance(effect, ResolvedNextTurnAttackRestriction)
+        if (not effect.expires_at_cleanup(state) if isinstance(effect, (ContinuousEffect, ResolvedNextTurnAttackRestriction))
             else effect.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN)
     ]
     expired = len(journal) - len(retained)

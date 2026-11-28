@@ -22,6 +22,9 @@ from ..semantic_runtime.cross_zone_type_additions import (
 )
 
 
+from .chosen_basic_land_entry import chosen_basic_land_handler
+
+
 _CREATURES = re.compile(
     r"Creatures you control are (?P<type>artifacts|enchantments|the chosen type) in addition to their other types\. "
     r"The same is true for creature spells you control and creature cards you own that aren't on the battlefield\.",
@@ -46,6 +49,8 @@ _PERMANENTS_AND_SPELLS = re.compile(
 
 def cross_zone_type_addition_handler(text):
     material = " ".join(text.strip().replace("’", "'").split())
+    if chosen_basic_land := chosen_basic_land_handler(material):
+        return chosen_basic_land
     if material.casefold() == "this creature is the chosen type in addition to its other types.":
         return ("static-self-chosen-subtype-v1", {
             "handler_id": SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID, "schema_version": 1,

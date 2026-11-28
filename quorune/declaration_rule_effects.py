@@ -38,9 +38,12 @@ from .life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_KIND, Resolved
 from .damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_KIND, ResolvedDamagePreventionProhibition
 from .game_hand_size_model import EFFECT_KIND as GAME_HAND_SIZE_KIND, ResolvedNoMaximumHandSize
 from .turn_match_outcome_model import TURN_OUTCOME_FIELD, ResolvedTurnMatchOutcomeProtection
-from .all_player_turn_rule_model import ALL_PLAYER_TURN_RULE_KIND, ResolvedAllPlayerTurnRule
+from .all_player_turn_rule_model import (
+    ALL_PLAYER_TURN_RULE_KIND, TURN_LAND_MANA_TRIGGER_KIND, ResolvedAllPlayerTurnRule, ResolvedTurnLandManaTrigger,
+)
 from .protected_attack_payment_model import EFFECT_KIND as ATTACK_PAYMENT_KIND, ResolvedProtectedAttackPayment
 from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_EFFECT_KIND, ResolvedNextTurnAttackRestriction
+from .counter_bound_attack_model import COUNTER_BOUND_ATTACK_KIND, ResolvedCounterBoundAttackRestriction
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
@@ -367,8 +370,9 @@ ContinuousJournalEffect: TypeAlias = (
     ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition | ResolvedDamageDeathExile | ResolvedSourceUntapRestraint
     | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction | ResolvedLifeGainProhibition | ResolvedDamagePreventionProhibition
     | ResolvedProtectedAttackPayment | ResolvedDrawRedirect | ResolvedActivationProhibition | ResolvedNextDrawReplacement
-    | ResolvedTurnMatchOutcomeProtection | ResolvedAllPlayerTurnRule | ResolvedSacrificeProhibition | ResolvedNoMaximumHandSize
+    | ResolvedTurnMatchOutcomeProtection | ResolvedAllPlayerTurnRule | ResolvedTurnLandManaTrigger | ResolvedSacrificeProhibition | ResolvedNoMaximumHandSize
     | ResolvedNextTurnSorceryTiming | ResolvedNextTurnAttackRestriction | ResolvedTargetCombatDamageMultiplier
+    | ResolvedCounterBoundAttackRestriction
 )
 
 
@@ -390,10 +394,14 @@ def continuous_journal_effect_from_dict(
             return ResolvedProtectedAttackPayment.from_dict(value)
         if value["effect_kind"] == ATTACK_RESTRICTION_EFFECT_KIND:
             return ResolvedNextTurnAttackRestriction.from_dict(value)
+        if value["effect_kind"] == COUNTER_BOUND_ATTACK_KIND:
+            return ResolvedCounterBoundAttackRestriction.from_dict(value)
         if value["effect_kind"] == TEMPORARY_DAMAGE_PROHIBITION_KIND:
             return ResolvedDamagePreventionProhibition.from_dict(value)
         if value["effect_kind"] == ALL_PLAYER_TURN_RULE_KIND:
             return ResolvedAllPlayerTurnRule.from_dict(value)
+        if value["effect_kind"] == TURN_LAND_MANA_TRIGGER_KIND:
+            return ResolvedTurnLandManaTrigger.from_dict(value)
         if value["effect_kind"] == GAME_HAND_SIZE_KIND:
             return ResolvedNoMaximumHandSize.from_dict(value)
         if value["effect_kind"] == TURN_OUTCOME_FIELD:

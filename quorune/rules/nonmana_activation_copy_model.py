@@ -10,6 +10,7 @@ ABILITY_ACTIVATION_COPY_EVENT = "ability.nonmana.activated"
 ABILITY_ACTIVATION_COPY_CAPABILITY = "stack.copy.paid_nonmana_activation"
 ACTIVATION_COPY_CONTEXT = "activation_copy_source"
 COPY_SOURCE_VERSION = 2
+TRIGGER_COPY_SOURCE_VERSION = 3
 PAYMENT_VERSION = 19
 
 
@@ -21,15 +22,16 @@ class ActivationCopySource:
     schema_version: int = COPY_SOURCE_VERSION
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != COPY_SOURCE_VERSION or type(self.departed) is not bool:
-            raise ValueError("Activation copy source requires its exact version and departure state")
+        kinds = {COPY_SOURCE_VERSION: "activated_ability", TRIGGER_COPY_SOURCE_VERSION: "triggered_ability"}
+        if type(self.schema_version) is not int or self.schema_version not in kinds or type(self.departed) is not bool:
+            raise ValueError("Ability copy source requires its exact version and departure state")
         if not isinstance(self.stack_item, Mapping) or self.target_schema is not None and not isinstance(self.target_schema, Mapping):
             raise ValueError("Activation copy source lacks its represented stack object or target schema")
         object.__setattr__(self, "stack_item", FrozenMap(self.stack_item))
         if self.target_schema is not None:
             object.__setattr__(self, "target_schema", FrozenMap(self.target_schema))
         item = self.item()
-        if (item.kind != "activated_ability" or item.card_object_id is not None
+        if (item.kind != kinds[self.schema_version] or item.card_object_id is not None
                 or any(type(value) is not str or not value for value in
                        (item.ref, item.stack_id, item.controller, item.source_object_id, item.semantic_key))
                 or any(type(value) is not str or not value for value in (*item.targets, *item.modes))

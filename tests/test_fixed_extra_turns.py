@@ -294,6 +294,60 @@ class FixedExtraTurnRuntimeTests(unittest.TestCase):
 
 
 class ScheduledTurnSkipCompilerTests(unittest.TestCase):
+    def test_yosei_closed_player_and_dependent_permanent_envelope(self):
+        from quorune.turn_skip_model import TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, TargetPlayerUntapSkipTapSpec
+        from quorune.rules.scheduled_turn_skip_shapes import scheduled_turn_skip_event_dependencies
+        from types import SimpleNamespace
+
+        registry = load_default_capability_registry()
+        oracle = ("Flying\nWhen this creature dies, target player skips their next untap step. "
+                  "Tap up to five target permanents that player controls.")
+        card = turn_record(oracle, type_line="Legendary Creature — Dragon Spirit")
+        result = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", result.status, result.material_residuals)
+        node, = (node for face in result.faces for node in face.nodes if node.kind == "triggered_ability")
+        self.assertEqual(oracle[node.span.start:node.span.end], node.text)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in raw["capabilities"]
+                          if row["id"] == TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY)
+        capability.update(status="blocked", blockers=["The related untap skip and tap authority was withheld"])
+        withheld = CapabilityRegistry(raw)
+        withheld.mark_evidence_verified(registry.evidence_fingerprint)
+        refused = compile_oracle_card(card, capability_registry=withheld, capability_profile="commander_review")
+        self.assertNotEqual("exact", refused.status)
+        self.assertIn(TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, str(refused.material_residuals))
+
+        spec = TargetPlayerUntapSkipTapSpec(5)
+        self.assertEqual(spec.target_schema(), node.target_schema)
+        self.assertEqual(spec.effects(), tuple(node.effects))
+        self.assertIn(TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, node.capability_dependencies)
+        program = SimpleNamespace(effects=node.effects, target_schema=node.target_schema, coverage=node.mechanics)
+        self.assertIn(TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, scheduled_turn_skip_event_dependencies(program))
+        for changed in (
+            {**node.target_schema, "same_player_groups": []},
+            {**node.target_schema, "same_player_groups": [["target_1", "target_0"]]},
+            {**node.target_schema, "groups": [{**node.target_schema["groups"][0], "count": True},
+                                              node.target_schema["groups"][1]]},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                scheduled_turn_skip_event_dependencies(SimpleNamespace(
+                    effects=node.effects, target_schema=changed, coverage=node.mechanics,
+                ))
+        from quorune.errors import GameRuleError
+        from quorune.selection.target_validation import validate_grouped_target_assignment
+        from quorune.targets import target_plan
+
+        plan = target_plan(spec.target_schema())
+        selected = {"target_0": ["B"], "target_1": []}
+        self.assertEqual(["B"], validate_grouped_target_assignment(None, plan, selected, selected))
+        with patch("quorune.selection.target_validation.optional_player_controlled_target_groups", return_value=()):
+            with self.assertRaisesRegex(GameRuleError, "both contain a target"):
+                validate_grouped_target_assignment(None, plan, selected, selected)
+        for changed in (oracle.replace("five", "seven"), oracle.replace("permanents", "creatures"),
+                        oracle.replace("that player controls", "you control")):
+            invalid = turn_record(changed, type_line=card.type_line)
+            self.assertNotEqual("exact", compile_oracle_card(invalid, capability_registry=registry).status)
+
     def test_scheduled_skip_templates_require_closed_scope_and_dependencies(self):
         from quorune.compiler.scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
         from quorune.turn_skip_model import TURN_SKIP_CAPABILITY, TurnSkipSpec
@@ -361,6 +415,129 @@ class ScheduledTurnSkipRuntimeTests(InheritedNativeFixture, unittest.TestCase):
             "Scheduled skips", [DeckEntry("Generic Bound Commander", 1, "commander"),
                                 DeckEntry("Generic Bound Plains", 32)], ["Generic Bound Commander"],
         )
+
+    def start_yosei(self, seed, *, response=None):
+        game = self.session(seed)
+        source = self.add(game.engine, "Yosei, the Morning Star")
+        murder = self.add(game.engine, "Murder", zone="hand")
+        living = self.add(game.engine, "Generic Bound Body", seat="B", ref="yosei-eligible-body")
+        phased = self.add(game.engine, "Generic Bound Plains", seat="B", ref="yosei-phase-land")
+        stolen = self.add(game.engine, "Generic Bound Body", seat="C", ref="yosei-borrowed-body")
+        game.engine.change_control(stolen.object_id, "B", reason="Yosei selected controller witness")
+        outside = self.add(game.engine, "Generic Bound Plains", seat="C", ref="yosei-foreign-permanent")
+        others = [self.add(game.engine, "Generic Bound Plains", seat="B", ref=f"yosei-other-{i}") for i in range(3)]
+        private = self.add(game.engine, "Unsummon", seat="D", zone="hand", ref="yosei-private")
+        cards = {}
+        if response == "player":
+            cards["orrery"] = self.add(game.engine, "Vedalken Orrery", seat="B")
+            cards["response"] = self.add(game.engine, "True Believer", seat="B", zone="hand")
+        if response in {"phase", "phase_and_return"}:
+            cards["response"] = self.add(game.engine, "Reality Ripple", seat="B", zone="hand")
+        if response == "phase_and_return":
+            cards["warp"] = self.add(game.engine, "Time Warp", zone="hand")
+            cards["return"] = self.add(game.engine, "Homeward Path", seat="C")
+        for card in (source, murder, *cards.values()):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool.update({"C": 1, "U": 1, "W": 2})
+        self.prepare(game, mana={"C": 5, "B": 2, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", murder, [source.ref])
+        self.assertEqual("semantic.target", self.resolve(game).kind)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertNotIn(private.ref, str(game.packet("pilot:A", full=True)))
+        return game, living, phased, stolen, outside, others, cards, private
+
+    def yosei_targets(self, player, permanents):
+        return [{"group": "target_0", "ref": player},
+                *({"group": "target_1", "ref": card.ref} for card in permanents)]
+
+    def reject_yosei_targets(self, game, targets, *, principal="pilot:A"):
+        before = authoritative_state_hash(game.state)
+        result = game.act(principal, {"action_id": "choose", "targets": targets})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_yosei_related_targets_untap_skip_and_phasing_replay(self):
+        game, living, phased, stolen, outside, others, cards, private = self.start_yosei(
+            61410101, response="phase_and_return",
+        )
+        pending = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertIn("same_player_groups", str(pending))
+        selection = [living, phased, stolen, *others[:2]]
+        self.reject_yosei_targets(game, self.yosei_targets("B", [outside]))
+        self.reject_yosei_targets(game, self.yosei_targets("B", [living, living]))
+        self.reject_yosei_targets(game, self.yosei_targets("B", [*selection, others[2]]))
+        self.reject_yosei_targets(game, self.yosei_targets("B", selection)[1:])
+        self.reject_yosei_targets(game, self.yosei_targets("B", selection), principal="pilot:C")
+        self.target(game, "A", self.yosei_targets("B", selection))
+        self.cast(game, "B", cards["response"], [phased.ref])
+        self.resolve_top(game)
+        self.priority(game, "C")
+        actions = game.packet("pilot:C", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in actions if row["id"].startswith("activate:" + cards["return"].ref + ":")
+                   and "gains control" in row["label"].casefold())
+        result = game.act("pilot:C", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(game)
+        self.assertEqual("C", game.state.cards[stolen.object_id].controller)
+        self.assertTrue(game.state.cards[phased.object_id].phased_out)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        grant, = game.state.scheduled_turn_skips
+        self.assertEqual(("B", "untap"), (grant.player, grant.spec.boundary.value))
+        for card in (living, *others[:2]):
+            self.assertTrue(game.state.cards[card.object_id].tapped)
+        for card in (stolen, phased, outside, others[2]):
+            self.assertFalse(game.state.cards[card.object_id].tapped)
+
+        self.cast(game, "A", cards["warp"], ["B"])
+        self.assertIsNone(self.resolve(game))
+        self.until(game, lambda state: state.state.active_player == "B" and state.state.step == "upkeep")
+        self.assertTrue(game.state.current_turn.extra)
+        self.assertFalse(game.state.scheduled_turn_skips)
+        self.assertTrue(game.state.cards[living.object_id].tapped)
+        self.assertTrue(game.state.cards[phased.object_id].phased_out)
+        skipped, = (event for event in game.state.events if event.code == "turn.skip.applied")
+        self.assertEqual((grant.grant_id, "untap"), (skipped.details["effect"], skipped.details["boundary"]))
+        game = self.replay(game, load=True)
+        sequence = game.state.turn_sequence
+        self.until(game, lambda state: state.state.turn_sequence > sequence and state.state.active_player == "B"
+                   and state.state.step == "upkeep")
+        self.assertFalse(game.state.current_turn.extra)
+        self.assertFalse(game.state.cards[living.object_id].tapped)
+        self.assertFalse(game.state.cards[phased.object_id].phased_out)
+        self.assertNotIn(private.ref, str(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_yosei_illegal_player_keeps_independent_legal_tap_targets(self):
+        game, living, _, _, _, _, cards, _ = self.start_yosei(61410102, response="player")
+        self.target(game, "A", self.yosei_targets("B", [living]))
+        self.cast(game, "B", cards["response"])
+        self.resolve_top(game)
+        self.assertEqual("battlefield", game.state.cards[cards["response"].object_id].zone)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(game.state.cards[living.object_id].tapped)
+        self.assertFalse(game.state.scheduled_turn_skips)
+        self.replay(game, load=True)
+
+    def test_yosei_zero_or_illegal_permanent_targets_keeps_the_player_skip(self):
+        for offset, target_lost in enumerate((False, True)):
+            with self.subTest(target_lost=target_lost):
+                game, living, phased, _, _, _, cards, _ = self.start_yosei(
+                    61410103 + offset, response="phase" if target_lost else None,
+                )
+                self.target(game, "A", self.yosei_targets("B", [phased] if target_lost else []))
+                if target_lost:
+                    self.cast(game, "B", cards["response"], [phased.ref])
+                    self.resolve_top(game)
+                    self.assertTrue(game.state.cards[phased.object_id].phased_out)
+                self.assertIsNone(self.resolve(game))
+                grant, = game.state.scheduled_turn_skips
+                self.assertEqual(("B", "untap"), (grant.player, grant.spec.boundary.value))
+                self.assertFalse(game.state.cards[living.object_id].tapped)
+                self.assertFalse(game.state.cards[phased.object_id].tapped)
+                self.replay(game, load=True)
 
     def test_actual_meditate_draws_and_skips_the_queued_extra_turn(self):
         session = self.session(61410001)

@@ -14,13 +14,28 @@ from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .public_state_queries import fixed_battlefield_query_subject
 
 
-UntapStepHandlerTemplate = tuple[str, Mapping[str, Any], str]
+UntapStepHandlerTemplate = tuple[str, Mapping[str, Any], str | tuple[str, ...]]
 _COLOR_SYMBOLS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
 
 
 def static_turn_step_skip_handler(text: str) -> UntapStepHandlerTemplate | None:
     """Lower one continuously applicable, complete step-skip instruction."""
     normalized = " ".join(text.casefold().split())
+    if normalized == "if an opponent would begin an extra turn, that player skips that turn instead.":
+        from ..semantic_runtime.untap_steps import (
+            EXTRA_TURN_SKIP_STEP, STATIC_EXTRA_TURN_SKIP_HANDLER_ID, STATIC_EXTRA_TURN_SKIP_TEMPLATE,
+            STATIC_STEP_SKIP_CAPABILITY, STATIC_STEP_SKIP_EVENT,
+        )
+        from ..turn_skip_model import TURN_SKIP_CAPABILITY
+
+        return STATIC_EXTRA_TURN_SKIP_TEMPLATE, {
+            "handler_id": STATIC_EXTRA_TURN_SKIP_HANDLER_ID,
+            "schema_version": 1,
+            "event": STATIC_STEP_SKIP_EVENT,
+            "step": EXTRA_TURN_SKIP_STEP,
+            "scope": "source_opponents",
+            "requires_empty_hand": False,
+        }, (STATIC_STEP_SKIP_CAPABILITY, TURN_SKIP_CAPABILITY)
     own = re.fullmatch(r"skip your (?P<step>untap|upkeep|draw) step\.?", normalized)
     everyone = re.fullmatch(
         r"(?:players skip their (?P<steps>untap|upkeep|draw) steps"

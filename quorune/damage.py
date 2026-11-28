@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from .rules.damage_snapshots import source_snapshot,recipient_snapshot
 import hashlib
-from typing import Any, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Protocol, Sequence
 from .counter_placement_event_model import CounterPlacementOccurrence
 from .counter_prevention import collect_shield_counter_effects
 from .drawing.model import QueuedDraw
@@ -398,6 +398,7 @@ class DamageBatchResult:
     counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
     ring_trigger_items: tuple[StackItem, ...] = ()
     combat_prevention_draws: tuple[QueuedDraw, ...] = ()
+    combat_prevention_tokens: tuple[CombatPreventionTokenRequest, ...] = ()
 
     @property
     def dealt_amount(self) -> int:
@@ -480,6 +481,10 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
                 "Nested damage lost its canonical prepared value"
             )
         return commit_prepared_damage_batch(self.host, prepared)
+
+
+if TYPE_CHECKING:
+    from .rules.combat_prevention_tokens import CombatPreventionTokenRequest
 
 
 _DAMAGE_REASON_FIELD = "".join(("rea", "son"))
@@ -639,6 +644,8 @@ def _protection_prevention_effects(
     host: DamageHost,
     proposals: Sequence[DamageProposal],
 ) -> tuple[ReplacementEffect, ...]:
+    from .semantic_runtime.player_target_protection import player_protection_verdict_for_damage
+
     effects: dict[str, ReplacementEffect] = {}
     for proposal in proposals:
         recipient = proposal.recipient
@@ -646,11 +653,10 @@ def _protection_prevention_effects(
         protected = False
         source_id = ""
         if recipient.kind == "player":
-            protected = bool(
-                host.state.players[recipient.ref].stats.get(
-                    "protection_from_everything_until_next_turn"
-                )
-            )
+            verdict = player_protection_verdict_for_damage(host, recipient.ref, source)
+            if verdict is ProtectionVerdict.UNRESOLVED:
+                raise DamageError("Damage recipient has unresolved protection semantics")
+            protected = verdict is ProtectionVerdict.BLOCKED
             source_id = f"rules:protection:{recipient.ref}"
         else:
             assert recipient.object_id is not None
@@ -1326,6 +1332,12 @@ def commit_prepared_damage_batch(
     except (PreventionAftermathError, DamageResultError, DamageModifierError) as exc:
         raise DamageError(str(exc)) from exc
     prevention_events = _prevention_applied_events(host, prepared)
+    from .rules.combat_prevention_tokens import combat_prevention_token_requests
+
+    try:
+        token_instructions = combat_prevention_token_requests(host, prevention_events)
+    except ValueError as exc:
+        raise DamageError(str(exc)) from exc
 
     commander_updates: list[tuple[str, str, int]] = []
     history_events: list[DamageEvent] = []
@@ -1420,7 +1432,17 @@ def commit_prepared_damage_batch(
         counter_occurrences=(*committed.counter_occurrences,*aftermath.counter_occurrences),
         ring_trigger_items=ring_trigger_items,
         combat_prevention_draws=draw_instructions,
+        combat_prevention_tokens=token_instructions,
     )
+
+
+def _collect_dealt_damage_triggers(host, context, *, sources, source_zones, trigger_batch):
+    from .trigger_processing import collect_watched_combat_draw_triggers
+
+    host._dispatch_semantic_event("damage.dealt", context, sources=sources,
+        source_zones=source_zones, trigger_batch=trigger_batch)
+    if host._semantic_pause_annotation() is None:
+        collect_watched_combat_draw_triggers(host, context, trigger_batch)
 
 
 def _collect_damage_result_triggers(
@@ -1514,13 +1536,8 @@ def _collect_damage_result_triggers(
                 )
             event_context = event.semantic_context()
             event_context["event_id"] = result.event_batch_id
-            host._dispatch_semantic_event(
-                "damage.dealt",
-                event_context,
-                sources=trigger_sources,
-                source_zones=trigger_source_zones,
-                trigger_batch=trigger_batch,
-            )
+            _collect_dealt_damage_triggers(host, event_context, sources=trigger_sources,
+                source_zones=trigger_source_zones, trigger_batch=trigger_batch)
             if host._semantic_pause_annotation() is not None:
                 break
     if host._semantic_pause_annotation() is None:

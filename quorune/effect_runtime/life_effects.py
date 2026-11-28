@@ -164,6 +164,20 @@ def _loss_summary(result: LifeBatchResult, players: Sequence[str]) -> str:
     )
 
 
+def _apply_artifact_life_batch(host, effect, *, actor, reason):
+    from ..rules.artifact_destruction_life import artifact_life_changes
+
+    try:
+        changes = artifact_life_changes(host, effect, actor=actor)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    result = _result(_commit(host, changes, effect=effect, actor=actor, reason=reason))
+    host._log(actor, "effect.life", "The affected artifact controllers gained life.",
+              {"requested_deltas": {change.player: change.amount for change in changes}, **result.to_dict()},
+              importance=2, changed_players=list(result.changed_players))
+    return {change.player: host.state.players[change.player].life for change in changes}
+
+
 def _apply_selected_life(host, effect, *, actor, reason, field, source_ref=None):
     if set(effect) - {"op", "players", field, "reason", "_runtime_source", "_replacement_selections"}:
         raise GameRuleError("Selected life result has conflicting or unknown fields")
@@ -207,6 +221,10 @@ def _apply_life(
     from ..rad_counter_model import RAD_EFFECT_FIELD
     from ..rad_counters import plan_rad_removal
 
+    from ..rules.artifact_destruction_life import ARTIFACT_LIFE_RESULT_FIELD
+
+    if ARTIFACT_LIFE_RESULT_FIELD in effect:
+        return _apply_artifact_life_batch(host, effect, actor=actor, reason=reason)
     rad_plan = plan_rad_removal(host, effect, actor=actor) if RAD_EFFECT_FIELD in effect else None
 
     if TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in effect:

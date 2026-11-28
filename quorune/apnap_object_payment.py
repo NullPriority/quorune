@@ -5,6 +5,7 @@ from collections.abc import Mapping
 
 APNAP_OBJECT_PAYMENT_CAPABILITY = 'choice.apnap.optional_object_payment_or_life_loss'
 TWO_CARD_DISCARD_PAYMENT_CAPABILITY = "choice.apnap.optional_two_card_discard_or_life_loss"
+ORDER_GRAVEYARD_ARRIVALS = "order_graveyard_arrivals"
 DECLINED_LIFE_LOSS = 'declined_life_loss'
 
 

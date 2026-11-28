@@ -7,6 +7,10 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..attachment_references import (
     ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceError, AttachmentReferenceKind, AttachmentReferenceSpec,
 )
+from .combat_keyword_share import (
+    VERSION as COMBAT_KEYWORD_SHARE_VERSION,
+    combat_keyword_share_program_dependencies, combat_keyword_share_result_dependencies,
+)
 from ..compiler.fixed_resolution_characteristic_queries import (
     CONTROLLED_FLYING_CREATURES_QUERY, fixed_resolution_characteristic_query_is_closed,
 )
@@ -132,9 +136,27 @@ def fixed_resolution_characteristic_set_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     """Own one fixed or chosen resolution-locked public characteristic result."""
+    if len(effects) == 1 and COMBAT_KEYWORD_SHARE_VERSION in effects[0]:
+        return combat_keyword_share_result_dependencies(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
 
     from .target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION, target_player_stat_untap_node_capabilities
 
+    from .counter_snapshot_protection import FIELD, KEYWORDS, counter_snapshot_protection_query
+
+    if len(effects) == 1 and FIELD in effects[0]:
+        if target_schema is not None or not {"cr-611-continuous-effects", "cr-615-prevention-effects"} <= set(mechanic_ids):
+            return ()
+        try:
+            query = counter_snapshot_protection_query(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return (
+            FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, "damage.prevention.persistent_amount",
+            *object_query_capabilities(query),
+            *(cap for keyword in KEYWORDS for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+        )
     if len(effects) == 1 and TARGET_PLAYER_STAT_UNTAP_VERSION in effects[0]:
         return target_player_stat_untap_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -304,6 +326,8 @@ def _chosen_type_temporary_modifier_runtime_dependencies(program):
 
 def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
+    if share := combat_keyword_share_program_dependencies(program):
+        return share
     from .creature_subtype_set_results import creature_subtype_set_runtime_dependencies
     from .source_block_defender import source_block_defender_runtime_dependencies
 

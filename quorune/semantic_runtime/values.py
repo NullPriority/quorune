@@ -152,6 +152,13 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value["kind"] == "postcombat_opponent_life_loss_mana_amount":
+        from ..rules.postcombat_life_loss_mana import resolve_amount
+
+        try:
+            return resolve_amount(host, value, item)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if value["kind"] == "target_player_greatest_creature_power":
         from ..rules.greatest_power_life import resolve_greatest_power_life_value
 
@@ -408,14 +415,49 @@ def _resolve_deferred_effect_mapping(host, value, item, deferred_field):
     return {**_resolve_effect_mapping(host, preceding_action, item), deferred_field: followup}
 
 
+def _bind_target_damage(host, value, item):
+    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
+    from ..rules.announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD, bind_scaled_announced_target_damage
+
+    if "fixed_target_role_damage" in value:
+        from ..rules.fixed_damage_roles import bind_fixed_damage_roles
+
+        value = bind_fixed_damage_roles(host, value, item)
+    if "fixed_target_controller_damage" in value:
+        from ..rules.fixed_dual_damage import bind_fixed_dual_damage
+
+        value = {**value, "fixed_target_controller_damage": bind_fixed_dual_damage(host, value, item)}
+    if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in value:
+        value = bind_scaled_announced_target_damage(
+            host, value, item, amount=resolve_cast_x_amount(value["amount"], item),
+        )
+    if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
+        total, recipients = bind_announced_damage_recipients(host, value, item)
+        value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}
+    return value
+
+
+def _resolve_counted_source_result(host, value, item):
+    if uses_point_game_loss(value):
+        return bind_point_game_loss(host, value, item)
+    from ..rules.attack_trigger_copy import resolved_quest_copy, uses_quest_copy
+
+    if uses_quest_copy(value):
+        try:
+            return resolved_quest_copy(host, value, item)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    return None
+
+
 def _resolve_effect_mapping(host, value, item):
     if (bound := _resolve_cast_fact_mapping(host, value, item)) is not None:
         return bound
     from ..rules.controlled_return import uses_shared_entry_return
     if uses_shared_entry_return(value):
         return _resolve_shared_entry_return(host, value, item)
-    if uses_point_game_loss(value):
-        return bind_point_game_loss(host, value, item)
+    if (bound := _resolve_counted_source_result(host, value, item)) is not None:
+        return bound
     if KICKED_ENTRY_DESTRUCTION_FIELD in value:
         return _resolve_kicked_entry_destruction(host, value, item)
     if value.get("op") == LIBRARY_BOTTOM_RESULT_OPERATION:
@@ -501,20 +543,11 @@ def _resolve_effect_mapping(host, value, item):
     from ..rules.stack_damage_sources import bind_source_relative_damage, bound_stack_damage_source
     from ..rules.damage_capability_shapes import SOURCE_RELATIVE_DAMAGE_VERSION_FIELD
     from ..rules.random_opponent_damage import RANDOM_OPPONENT_DAMAGE_FIELD, bind_random_opponent_damage
-    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
         if SOURCE_RELATIVE_DAMAGE_VERSION_FIELD in value:
             value = bind_source_relative_damage(host, value, item, resolve=lambda operand: resolve_semantic_value(host, operand, item))
-        if 'fixed_target_role_damage' in value:
-            from ..rules.fixed_damage_roles import bind_fixed_damage_roles
-            value=bind_fixed_damage_roles(host,value,item)
-        if 'fixed_target_controller_damage' in value:
-            from ..rules.fixed_dual_damage import bind_fixed_dual_damage
-            value = {**value,'fixed_target_controller_damage':bind_fixed_dual_damage(host,value,item)}
-        if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
-            total, recipients = bind_announced_damage_recipients(host, value, item)
-            value = {**value, "amount": total, ANNOUNCED_DAMAGE_EFFECT_FIELD: recipients}
+        value = _bind_target_damage(host, value, item)
         if RANDOM_OPPONENT_DAMAGE_FIELD in value:
             value = bind_random_opponent_damage(host, value, item)
         missing = bound_mutation_target_overrides(host, value, item,
@@ -600,6 +633,13 @@ def _resolve_wrapped_effect(host, value, item):
             raise SemanticNodeError(str(exc)) from exc
     from ..rules.loyalty_damage import LOYALTY_X_DAMAGE_FIELD, bind_loyalty_x_target_damage
 
+    from ..rules.announced_three_target_damage import FIELD as SPELL_X_TARGET_FIELD, bind_spell_x_target_damage
+
+    if SPELL_X_TARGET_FIELD in value:
+        try:
+            value = bind_spell_x_target_damage(host, value, item)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if LOYALTY_X_DAMAGE_FIELD in value:
         try:
             value = bind_loyalty_x_target_damage(host, value, item)
@@ -637,6 +677,14 @@ def resolve_semantic_value(
             'target_controller_information','target_owner_information','occurrence_controller_information',
             'damage_dealer_controller_information','opponent_damage_source_sacrifice_player_set'}:
         return _resolve_target_information_value(host,value,item)
+    from ..stack_target_change_model import STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND
+    if isinstance(value, Mapping) and value.get("kind") == STACK_TARGET_SPELL_MANA_VALUE_LOSS_KIND:
+        from ..rules.stack_target_change_shapes import resolve_stack_target_mana_value_loss
+
+        try:
+            return resolve_stack_target_mana_value_loss(host, value, item)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_charge_life_total":
         from ..rules.source_charge_life_totals import resolve_source_charge_life_value
 
@@ -656,7 +704,8 @@ def resolve_semantic_value(
         from ..rules.attachment_controller_information import resolve_attachment_controller
         try:return resolve_attachment_controller(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','devoured_entry_creatures_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','source_entry_designation_library_filter','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount','target_player_greatest_creature_power'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','devoured_entry_creatures_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','source_entry_designation_library_filter','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount','target_player_greatest_creature_power',
+            'postcombat_opponent_life_loss_mana_amount'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_wrapped_effect(host, value, item)
@@ -767,9 +816,9 @@ def _current_target_value(host, item, index):
     if index >= len(item.targets):
         return None
     ref = item.targets[index]
-    from ..pawprint_modes import PAWPRINT_SELECTION_FIELD
+    from ..pawprint_modes import has_repeatable_mode_slots
     schema = getattr(item, "context", {}).get("target_schema_override") or {}
-    if ref is not None and schema.get(PAWPRINT_SELECTION_FIELD):
+    if ref is not None and has_repeatable_mode_slots(schema):
         from ..selection.target_query import target_identity_matches_snapshot
 
         snapshot = item.context.get("target_snapshots", {}).get(ref, {})

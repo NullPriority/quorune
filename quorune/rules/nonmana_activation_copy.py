@@ -4,7 +4,7 @@ from collections.abc import Mapping
 
 from .nonmana_activation_copy_model import (
     ACTIVATION_COPY_CONTEXT, ABILITY_ACTIVATION_COPY_CAPABILITY, ABILITY_ACTIVATION_COPY_EVENT,
-    ActivationCopySource, PAYMENT_VERSION,
+    ActivationCopySource, COPY_SOURCE_VERSION, PAYMENT_VERSION, TRIGGER_COPY_SOURCE_VERSION,
 )
 from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..replacement.immutable import FrozenMap, thaw_value
@@ -74,18 +74,23 @@ def publish_nonmana_activation_copy_occurrence(host, item):
         )
 
 
-def capture_activation_copy_source(host, item, *, departed=False):
+def capture_activation_copy_source(host, item, *, departed=False, schema_version=COPY_SOURCE_VERSION):
     from .activation.resolution import is_builtin_activation_semantic
 
     program = host.semantics.get(item.semantic_key)
-    if not (is_builtin_activation_semantic(item.semantic_key)
-            or program is not None and host.semantic_program_is_current_trusted(program)):
-        raise ValueError("The original activation has no trusted resolution")
+    builtin = is_builtin_activation_semantic(item.semantic_key)
+    if schema_version == TRIGGER_COPY_SOURCE_VERSION:
+        from .attack_trigger_copy import builtin_attack_source_identity
+
+        builtin = builtin_attack_source_identity(item) is not None
+    if not (builtin or program is not None and host.semantic_program_is_current_trusted(program)):
+        raise ValueError("The original ability has no trusted resolution")
     raw = item.to_dict()
     for key in ("semantic_frame", "currently_resolving", "declared_scalar_amounts",
                 "targets_revalidated", "target_groups_current"):
         raw["context"].pop(key, None)
-    return ActivationCopySource(raw, host._stack_target_schema(item, program), departed=departed)
+    return ActivationCopySource(raw, host._stack_target_schema(item, program), departed=departed,
+                                schema_version=schema_version)
 
 
 def retained_nonmana_activation_context(host, program, event, context):

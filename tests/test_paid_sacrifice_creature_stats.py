@@ -150,6 +150,35 @@ class PaidSacrificeCharacteristicTests(unittest.TestCase):
 
 
 class PaidSacrificeCreatureStatTests(unittest.TestCase):
+    def test_paid_token_count_preserves_the_quoted_intrinsic_trigger(self):
+        price = "As an additional cost to cast this spell, sacrifice a creature.\n"
+        result = (
+            'Create X 1/1 black and green Pest creature tokens with "When this token dies, you gain 1 life," '
+            "where X is the sacrificed creature's power."
+        )
+        registry = load_default_capability_registry()
+
+        def compile_source(text):
+            return compile_oracle_card(record(text), capability_registry=registry, capability_profile="commander_review")
+
+        ir = compile_source(price + result)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        spell, trigger = ir.faces[0].nodes
+        self.assertEqual(price + result, spell.text)
+        self.assertEqual(result, (price + result)[trigger.span.start:trigger.span.end])
+        creation, = spell.effects
+        amount = ScalarEffectAmountSpec.from_dict(creation["quantity"])
+        self.assertEqual((ScalarAmountOrigin.PAID_SACRIFICE_CREATURE, "power"), (amount.origin, amount.characteristic))
+        self.assertIn(PAID_SACRIFICE_STAT_CAPABILITY, spell.capability_dependencies)
+        self.assertEqual("creature.dies.self", trigger.event)
+        life, = trigger.effects
+        self.assertEqual(("life", 1), (life["op"], life["delta"]))
+
+        unsupported = price.replace("a creature", "an artifact") + result
+        self.assertNotEqual("exact", compile_source(unsupported).status)
+        unrepresented = result.replace("you gain 1 life", "rewrite the game")
+        self.assertNotEqual("exact", compile_source(price + unrepresented).status)
+
     def test_compiler_requires_the_closed_price_and_paid_stat_capability(self):
         price = 'As an additional cost to cast this spell, sacrifice a creature.\n'
         result = "Generic Bound Compiler Fixture deals damage equal to the sacrificed creature's power to any target."

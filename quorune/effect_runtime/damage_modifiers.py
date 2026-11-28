@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from ..damage_modifier_state import CreateTokensPreventionAftermath
 from ..damage import DamageError, recipient_snapshot
 from ..damage_modifier_state import (
     DamageModifierDuration,
@@ -217,7 +218,8 @@ def _prevention_aftermath_requests(
 ) -> tuple[
     GainLifeAftermathRequest
     | PlaceCountersAftermathRequest
-    | DealDamageAftermathRequest,
+    | DealDamageAftermathRequest
+    | CreateTokensPreventionAftermath,
     ...,
 ]:
     raw = effect.get("aftermath")
@@ -228,12 +230,18 @@ def _prevention_aftermath_requests(
         GainLifeAftermathRequest
         | PlaceCountersAftermathRequest
         | DealDamageAftermathRequest
+        | CreateTokensPreventionAftermath
     ] = []
     for value in values:
         if not isinstance(value, Mapping):
             raise GameRuleError("Prevention aftermath entries must be objects")
         kind = value.get("kind")
         common = {"kind", "per_prevented", "fixed_amount"}
+        if kind == "create_tokens":
+            from ..rules.prevention_component_shapes import decode_combat_token_aftermath
+
+            result.append(decode_combat_token_aftermath(value))
+            continue
         if kind == "gain_life":
             if set(value) != common | {"player"}:
                 raise GameRuleError("Prevention life aftermath is malformed")

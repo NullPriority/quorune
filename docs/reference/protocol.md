@@ -121,6 +121,11 @@ server preserves those priority decisions during fast advancement. The request
 itself leaves the game revision unchanged. Each accepted game command records
 the active hold settings as private replay input. An explicit pass still uses
 the current issuer's capability and yields only that seat's priority.
+`before_my_turn` holds the end step before that pilot's currently scheduled
+turn. The projected turn can include `next_player` during an end step.
+The browser can request the union of its general and seat-specific step
+holds and apply the active-seat filter locally. The request shape stores
+step names per acting principal and has no active-seat condition.
 
 ## Projected packets
 
@@ -261,6 +266,13 @@ including any snow requirement. The server checks each class's spending
 restriction and debits the actual selected units. Omit the choice to use the
 ordinary payment path.
 
+An Equip activation with an optional first-activation price projects an
+`equip_payment` form variant. Choose `printed` for its ordinary Equip cost or
+`zero` for the alternate base cost. Each variant carries its own payment
+controls. Ordinary modifiers and target and timing checks apply to both. The
+server checks a successfully committed activation even when its cost was paid
+ordinarily, including before the alternative became available.
+
 For a source-counter quantity with a counter-removal price, the advertised
 total uses a read-only preview of the canonical exact payment plan. It commits
 no counters or events; resolution still samples the amount after actual payment.
@@ -297,8 +309,10 @@ Administrative resume can clear only its own stop reason; it cannot override a
 rules, fidelity, corruption, or terminal boundary.
 
 The WebSocket event tail is bounded delivery context. The paginated public log
-returns a fixed spectator-filtered event shape and never exposes raw details,
-checkpoints, private events, capabilities, record paths, or analyst artifacts.
+returns spectator-filtered event descriptions and, when available, compact
+card references for their publicly visible subjects. Card references use the
+same spectator visibility check as the summary. The log excludes raw details,
+checkpoints, private events, capabilities, record paths, and analyst artifacts.
 
 ## Versioned schema ownership
 

@@ -34,6 +34,9 @@ def received_damage_occurrences(events, *, event_id: str):
 
 
 def dispatch_received_damage_events(host, result, *, sources, source_zones, trigger_batch):
+    from .trigger_processing import collect_controlled_combat_token_triggers
+
+    collect_controlled_combat_token_triggers(host, result.events, trigger_batch)
     for occurrence in received_damage_occurrences(result.events, event_id=result.event_batch_id):
         host._dispatch_semantic_event(
             RECEIVED_DAMAGE_EVENT, occurrence.semantic_context(), sources=sources,

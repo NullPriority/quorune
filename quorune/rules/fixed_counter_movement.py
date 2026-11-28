@@ -9,6 +9,7 @@ from ..fixed_counter_movement_model import (
     FIXED_COUNTER_MOVEMENT_CAPABILITY, FIXED_COUNTER_MOVEMENT_OPERATION,
     OPTIONAL_CHOSEN_CONTROLLED_CREATURES, OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY,
     FixedCounterMovementSpec, TWO_DISTINCT_TARGETS,
+    OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, SOURCE_HAS_COUNTERS,
 )
 from ..replacement.immutable import FrozenMap
 from .cumulative_object_upkeep import CONTROLLER_UPKEEP
@@ -24,6 +25,12 @@ FIXED_COUNTER_MOVEMENT_MECHANICS = ("cr-122-counters", "cr-115-targets")
 CONTROLLER_BEGINNING_COMBAT = FrozenMap({"all": [
     {"field": "player", "op": "eq", "value": "$source.controller"},
     {"field": "step", "op": "eq", "value": "beginning_combat"},
+]})
+
+
+SOURCE_COUNTERS_BEGINNING_COMBAT = FrozenMap({"all": [
+    *CONTROLLER_BEGINNING_COMBAT["all"],
+    {"field": SOURCE_HAS_COUNTERS, "op": "eq", "value": True},
 ]})
 
 
@@ -109,7 +116,9 @@ def fixed_counter_movement_node_capabilities(*, effects, target_schema, mechanic
     }
     if spec.optional:
         required.update(("trigger.effect.fixed_event", "trigger.placement.apnap"))
-    if spec.form == OPTIONAL_CHOSEN_CONTROLLED_CREATURES:
+    if spec.moves_all_source_counters:
+        required.update((OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY, "state_query.permanent.any_counter"))
+    elif spec.form == OPTIONAL_CHOSEN_CONTROLLED_CREATURES:
         required.add(OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY)
     elif spec.form == CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED:
         required.add(CHOSEN_OPPONENT_COUNTER_MOVEMENT_CAPABILITY)
@@ -139,6 +148,10 @@ def _validate_activation_catalog(program):
 
 
 def fixed_counter_movement_program_dependencies(program):
+    from .departure_counter_copy import departure_counter_copy_program_dependencies
+
+    if departure := departure_counter_copy_program_dependencies(program):
+        return departure
     effects = tuple(program.effects)
     marked = tuple(effect for effect in nested_effects((*effects, *program.handlers))
                    if effect.get("op") == FIXED_COUNTER_MOVEMENT_OPERATION or uses_source_counter_distribution(effect))
@@ -149,13 +162,16 @@ def fixed_counter_movement_program_dependencies(program):
         FIXED_COUNTER_MOVEMENT_CAPABILITY, CHOSEN_COUNTER_MOVEMENT_CAPABILITY,
         OPTIONAL_COMBAT_COUNTER_MOVEMENT_CAPABILITY, CHOSEN_COUNTER_QUANTITIES_CAPABILITY,
         CHOSEN_OPPONENT_COUNTER_MOVEMENT_CAPABILITY,
+        OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY,
     }.intersection(program.capability_dependencies):
         return ()
     if len(marked) != 1 or effects != marked:
         raise ValueError("Counter movement requires its complete original effect")
     spec = FixedCounterMovementSpec.from_effect(effects[0])
     if spec.optional:
-        expected = CONTROLLER_BEGINNING_COMBAT if spec.form == OPTIONAL_CHOSEN_CONTROLLED_CREATURES else CONTROLLER_UPKEEP
+        expected = (SOURCE_COUNTERS_BEGINNING_COMBAT if spec.moves_all_source_counters
+                    else CONTROLLER_BEGINNING_COMBAT if spec.form == OPTIONAL_CHOSEN_CONTROLLED_CREATURES
+                    else CONTROLLER_UPKEEP)
         if ((program.event, program.active_zone) != ("step.begin", "battlefield")
                 or program.handlers or program.cost_schema is not None
                 or FrozenMap(program.event_condition or {}) != FrozenMap(expected)):
@@ -181,8 +197,11 @@ def fixed_counter_movement_program_dependencies(program):
 
 
 def is_closed_fixed_counter_movement_program(program):
+    from .departure_counter_copy import uses_departure_counter_copy
+
     if not any(effect.get("op") == FIXED_COUNTER_MOVEMENT_OPERATION
-               or uses_source_counter_distribution(effect) for effect in program.effects):
+               or uses_source_counter_distribution(effect) or uses_departure_counter_copy(effect)
+               for effect in program.effects):
         return False
     try:
         required = fixed_counter_movement_program_dependencies(program)

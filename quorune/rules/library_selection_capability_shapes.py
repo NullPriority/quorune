@@ -357,6 +357,23 @@ def fixed_library_selection_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    from .library_play_partition import (
+        PRIVATE_HAND_BOTTOM_EXILE_DEPENDENCIES, uses_private_hand_bottom_exile, validate_private_hand_bottom_exile,
+    )
+
+    if uses_private_hand_bottom_exile(effect):
+        try:
+            validate_private_hand_bottom_exile(effect)
+        except (TypeError, ValueError):
+            return ()
+        return PRIVATE_HAND_BOTTOM_EXILE_DEPENDENCIES
+    from .blocked_damage_cast import represents_window, window_dependencies
+
+    if represents_window(effect):
+        try:
+            return window_dependencies(effect)
+        except (TypeError, ValueError, KeyError):
+            return ()
     if (type(effect.get("schema_version")) is int
             and effect["schema_version"] == PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION):
         return (FIXED_LIBRARY_SELECTION_CAPABILITY,) if private_one_hand_ordered_bottom_shape(effect) else ()
@@ -380,6 +397,22 @@ def fixed_library_selection_node_capabilities(
         except (TypeError, ValueError):
             return ()
         return (FIXED_LIBRARY_SELECTION_CAPABILITY, PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_CAPABILITY)
+    from .repeat_top_hand_life import (
+        REPEAT_TOP_HAND_LIFE_CAPABILITY, REPEAT_TOP_HAND_LIFE_FIELD,
+        validate_repeat_top_hand_life,
+    )
+
+    if REPEAT_TOP_HAND_LIFE_FIELD in effect:
+        try:
+            if validate_repeat_top_hand_life(effect) == "start":
+                return (FIXED_LIBRARY_SELECTION_CAPABILITY, REPEAT_TOP_HAND_LIFE_CAPABILITY, "life.change.effect")
+        except (TypeError, ValueError):
+            pass
+        return ()
+    from .private_look_land_or_hand import PRIVATE_LOOK_LAND_OR_HAND_VERSION, private_land_hand_capabilities
+
+    if effect.get("schema_version") == PRIVATE_LOOK_LAND_OR_HAND_VERSION:
+        return private_land_hand_capabilities(effect)
     if effect.get("schema_version") == REVEALED_TOP_HAND_LIFE_VERSION:
         try:
             validate_revealed_top_hand_life(effect)

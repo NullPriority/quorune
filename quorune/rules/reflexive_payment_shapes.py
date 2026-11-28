@@ -10,8 +10,36 @@ from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, RETURN_PAYMENT
 from ..granted_activation_model import (
     GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY, GRANTING_ATTACHMENT_SACRIFICE_REF,
 )
-from ..replacement.immutable import thaw_value
+from ..replacement.immutable import FrozenMap, thaw_value
+from ..object_predicate import ObjectQuerySpec
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
+
+
+BOUND_DISCARD_ATTACK_CAPABILITY = 'trigger.reflexive.discard_attacking_creature_result'
+_BOUND_DISCARD_ATTACK_TARGET = FrozenMap({'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1,
+    'types_any': ['creature'], 'combat_state': 'attacking'})
+_BOUND_DISCARD_ATTACK_CHILD = (
+    FrozenMap({'op': 'place_counters', 'card': '$target.0', 'counter': '+1/+1', 'amount': 1, 'source': '$source'}),
+    FrozenMap({'op': 'grant_keyword_until_end_of_turn', 'card': '$target.0', 'keyword': 'Trample'}),
+)
+_BOUND_DISCARD_ATTACK_DEPS = (
+    'combat.damage.assignment.trample', 'continuous.resolution.fixed_characteristics_until_end_of_turn',
+    'counter.producer.fixed_effect', 'state_query.permanent.public_state_predicate', 'target.revalidate_resolution',
+)
+
+
+def _bound_discard_attack_child(program):
+    return (program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION
+            and program.target_schema == _BOUND_DISCARD_ATTACK_TARGET
+            and type(program.target_schema['count']) is int
+            and program.effects == _BOUND_DISCARD_ATTACK_CHILD and type(program.effects[0]['amount']) is int)
+
+
+def _validate_bound_discard_attack(player, payment, program):
+    if (payment.kind != 'discard' or payment.amount != 1
+            or payment.predicate != ObjectQuerySpec(zones=('hand',), owner=player, known_to_actor=True)
+            or not _bound_discard_attack_child(program)):
+        raise ValueError('A bound attack discard requires one owned hand card and its closed attacking target')
 
 
 def reflexive_payment_parts(effect):
@@ -29,8 +57,11 @@ def reflexive_payment_parts(effect):
             or payment.kind == 'mana' and dict(effect['cost']) != dict(payment.requirements)):
         raise ValueError('Reflexive payment mana identity changed')
     program = ReflexiveTriggerProgram.from_dict(effect['reflexive_program'])
-    if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION and payment.kind not in {'mana', 'energy', 'source_sacrifice'}:
-        raise ValueError('Bound reflexive triggers require a fixed resource payment or original source sacrifice')
+    if program.schema_version == BOUND_REFLEXIVE_PROGRAM_VERSION:
+        if payment.kind == 'discard' or _bound_discard_attack_child(program):
+            _validate_bound_discard_attack(effect['player'], payment, program)
+        elif payment.kind not in {'mana', 'energy', 'source_sacrifice'}:
+            raise ValueError('Bound reflexive triggers require a fixed resource payment or original source sacrifice')
     if payment.kind == 'source_sacrifice' and program.schema_version != BOUND_REFLEXIVE_PROGRAM_VERSION:
         raise ValueError('Reflexive source sacrifice requires its bound parent')
     if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF and (
@@ -73,6 +104,8 @@ def reflexive_program_capabilities(program):
     schema = thaw_value(program.target_schema)
     if program.uses_paid_creature:
         return _paid_power_result_capabilities(effects, schema, program.mechanic_ids)
+    if _bound_discard_attack_child(program):
+        return _BOUND_DISCARD_ATTACK_DEPS
     owned = fixed_payment_result_capabilities(effects=effects, target_schema=schema, mechanic_ids=program.mechanic_ids)
     if owned or program.schema_version not in BOUND_REFLEXIVE_PROGRAM_VERSIONS:
         return owned
@@ -179,8 +212,9 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
                               if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION else ())
         granting_sacrifice = ((GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY,)
                              if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF else ())
+        discard = (BOUND_DISCARD_ATTACK_CAPABILITY,) if _bound_discard_attack_child(program) else ()
         return tuple(sorted({REFLEXIVE_PAYMENT_CAPABILITY, 'trigger.placement.apnap',
-            *selected_sacrifice, *granting_sacrifice, *payment.capabilities, *child_capabilities}))
+            *selected_sacrifice, *granting_sacrifice, *discard, *payment.capabilities, *child_capabilities}))
     except (KeyError, TypeError, ValueError):
         return ()
 
@@ -218,6 +252,10 @@ def reflexive_payment_runtime_dependencies(program):
         raise ValueError('Bound reflexive payments require an admitted creating trigger')
     if payment.kind == 'source_sacrifice' and program.active_zone != 'battlefield':
         raise ValueError('Reflexive source sacrifice requires its original battlefield program')
+    if BOUND_DISCARD_ATTACK_CAPABILITY in owned and (program.event != 'creature.attacks'
+            or program.active_zone != 'battlefield' or program.handlers or program.cost_schema is not None
+            or program.event_condition != {'field': 'controller', 'op': 'eq', 'value': '$source.controller'}):
+        raise ValueError('A bound attack discard requires its original controller attack declaration')
     if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF and (
         program.provenance.get('granted_only') is not True or program.event != 'creature.attacks'
         or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}

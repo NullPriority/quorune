@@ -34,6 +34,10 @@ from .permanent_event_state_model import BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD,
 from .turn_priority_model import (
     PRIORITY_CONCESSION_RESUME_FIELD,
     PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
+    POST_RESOLUTION_PRIORITY_SEAT_FIELD,
+    POST_RESOLUTION_PRIORITY_VERSION_FIELD,
+    read_post_resolution_priority_seat,
+    read_post_resolution_priority_version,
     read_priority_concession_resume,
     read_priority_concession_stabilization_version,
 )
@@ -46,7 +50,10 @@ from .declaration_rule_effects import (
     continuous_journal_effect_from_dict,
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
-from .extra_combat_model import EXTRA_COMBAT_PHASES_FIELD, decode_extra_combat_phases
+from .extra_combat_model import (
+    EXTRA_COMBAT_PHASES_FIELD, INSERTED_MAIN_COUNT_FIELD, MAIN_PHASE_COMBATS_FIELD, MainPhaseCombatSchedule,
+    decode_extra_combat_phases, decode_inserted_main_phase_count, decode_main_phase_combat_schedule,
+)
 from .additional_beginning_model import (
     ADDITIONAL_BEGINNING_FIELD, AdditionalBeginningPhases, decode_additional_beginning,
 )
@@ -87,6 +94,9 @@ from .cast_event_type_model import (
     card_play_event_fact_state_fields,
     card_play_event_fact_version,
     read_card_play_event_fact_version,
+    LEGENDARY_SORCERY_FIELD,
+    legendary_sorcery_rule_version,
+    read_legendary_sorcery_rule_version,
 )
 from .cast_source_placement_model import (
     cast_placement_state_fields, cast_source_placement_version, read_target_announcement_timing_version,
@@ -706,6 +716,10 @@ class DelayedTrigger:
             from .event_spell_copy_model import next_cast_copy_trigger_spec
 
             next_cast_copy_trigger_spec(self)
+        if isinstance(self.condition, dict) and "watched_combat_damage_draw" in self.condition:
+            from .delayed_combat_draw_model import validate_watched_combat_draw_trigger
+
+            validate_watched_combat_draw_trigger(self)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -903,6 +917,7 @@ class GameConfig:
     realistic_mulligan_guard: bool = True
     max_players: int = 6
     trace_level: str = "standard"
+    priority_special_actions_version: int | None = 1
 
     def effective_profile(self, player_count: int) -> str:
         if self.profile != "auto":
@@ -926,10 +941,18 @@ class GameConfig:
         return False
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        result = asdict(self)
+        if self.priority_special_actions_version is None:
+            result.pop("priority_special_actions_version")
+        return result
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameConfig":
+        if "priority_special_actions_version" not in data:
+            return cls(**data, priority_special_actions_version=None)
+        version = data["priority_special_actions_version"]
+        if type(version) is not int or version != 1:
+            raise ValueError("Unsupported priority special actions version")
         return cls(**data)
 
 
@@ -975,6 +998,8 @@ def read_scheduled_turn_fields(data: dict[str, Any]) -> dict[str, Any]:
     return {
         "extra_turns": [TurnEntry.from_dict(turn) for turn in data.get("extra_turns", [])],
         "extra_combat_phases": decode_extra_combat_phases(data),
+        "main_phase_extra_combats": decode_main_phase_combat_schedule(data),
+        "inserted_main_phase_count": decode_inserted_main_phase_count(data),
         "additional_beginning_phases": decode_additional_beginning(data),
         "scheduled_turn_skips": decode_scheduled_turn_skips(
             data.get("scheduled_turn_skips", ()), data["players"],
@@ -1009,6 +1034,8 @@ class GameState:
     soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
     extra_combat_phases: int = field(default=0, kw_only=True)
+    main_phase_extra_combats: MainPhaseCombatSchedule | None = field(default=None, kw_only=True)
+    inserted_main_phase_count: int = field(default=0, kw_only=True)
     additional_beginning_phases: AdditionalBeginningPhases | None = field(default=None, kw_only=True)
     scheduled_turn_skips: list[ScheduledTurnSkip] = field(default_factory=list)
     next_player_untap_restrictions: tuple[NextPlayerUntapRestriction, ...] = field(default=(), kw_only=True)
@@ -1078,6 +1105,7 @@ class GameState:
     declare_attack_cast_version: int | None = 1
     upkeep_completed: bool | None = False
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
+    legendary_sorcery_rule_version: int | None = 1
     cast_source_placement_version: int | None = 1
     target_announcement_timing_version: int | None = None
     ward_mana_offer_version: int | None = 1
@@ -1117,6 +1145,8 @@ class GameState:
     battlefield_entry_player_version: int | None = 1
     priority_concession_stabilization_version: int | None = 1
     priority_concession_resume_from: str | None = None
+    post_resolution_priority_version: int | None = 1
+    post_resolution_priority_seat: str | None = None
     unearth_leave_replacement_version: int | None = 1
     counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
@@ -1152,8 +1182,13 @@ class GameState:
             **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
             **({PRIORITY_CONCESSION_RESUME_FIELD: self.priority_concession_resume_from}
                if self.priority_concession_resume_from is not None else {}),
+            **({POST_RESOLUTION_PRIORITY_SEAT_FIELD: self.post_resolution_priority_seat}
+               if self.post_resolution_priority_seat is not None else {}),
             "extra_turns": [turn.to_dict() for turn in self.extra_turns],
             **({EXTRA_COMBAT_PHASES_FIELD: self.extra_combat_phases} if self.extra_combat_phases else {}),
+            **({INSERTED_MAIN_COUNT_FIELD: self.inserted_main_phase_count} if self.inserted_main_phase_count else {}),
+            **({MAIN_PHASE_COMBATS_FIELD: self.main_phase_extra_combats.to_dict()}
+               if self.main_phase_extra_combats is not None else {}),
             **({ADDITIONAL_BEGINNING_FIELD: self.additional_beginning_phases.to_dict()}
                if self.additional_beginning_phases is not None else {}),
             **(
@@ -1172,6 +1207,7 @@ class GameState:
             DAMAGE_PREVENTION_RESULT_VERSION_FIELD: self.damage_prevention_result_version,
             BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD: self.battlefield_entry_player_version,
             PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: self.priority_concession_stabilization_version,
+            POST_RESOLUTION_PRIORITY_VERSION_FIELD: self.post_resolution_priority_version,
             "qualified_attack_facts_version": qualified_attack_facts_version(self.qualified_attack_facts_version),
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
             "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
@@ -1182,12 +1218,14 @@ class GameState:
             "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
             "unblocked_attacker_event_version": unblocked_attacker_event_version(self.unblocked_attacker_event_version),
             "ward_mana_offer_version": ward_mana_offer_version(self.ward_mana_offer_version),
+            LEGENDARY_SORCERY_FIELD: legendary_sorcery_rule_version(self.legendary_sorcery_rule_version),
         }
         present = {name: version for name, version in versions.items() if version is not None}
         read_shield_counter_damage_version(present)
         read_damage_prevention_result_version(present)
         read_battlefield_entry_player_version(present)
         read_priority_concession_stabilization_version(present)
+        read_post_resolution_priority_version(present)
         present.update(continuous_dependency_order_fields(self.continuous_dependency_order_version))
         present.update(fetch_entry_placement_fields(self.fetch_entry_placement_version))
         present.update(evolve_entrant_lki_fields(self.evolve_entrant_lki_version))
@@ -1219,7 +1257,22 @@ class GameState:
         if self.upkeep_completed is not None:
             self.upkeep_completed = True
 
-    def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
+    def _serialized_journal_and_decision(self, include_ephemeral: bool, copy_journal_context: bool) -> dict[str, Any]:
+        return {
+            "events": [event.to_dict() for event in self.events] if include_ephemeral else [],
+            "annotations": copy.deepcopy(self.annotations) if copy_journal_context else self.annotations,
+            "action_opportunities": (
+                copy.deepcopy(self.action_opportunities) if copy_journal_context else self.action_opportunities
+            ),
+            "opportunity_sequence": self.opportunity_sequence,
+            "timestamp_sequence": self.timestamp_sequence,
+            "pending_decision": self.pending_decision.to_dict() if self.pending_decision else None,
+            "capabilities": {token: cap.to_dict() for token, cap in self.capabilities.items()} if include_ephemeral else {},
+        }
+
+    def to_dict(
+        self, *, include_ephemeral: bool = True, copy_journal_context: bool = True,
+    ) -> dict[str, Any]:
         record_versions = self._record_version_fields()
         legend_rule_choice_version(self.legend_rule_choice_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
@@ -1351,13 +1404,7 @@ class GameState:
                 batch.to_dict() for batch in self.pending_trigger_batches
             ],
             "combat": self.combat.to_dict(),
-            "events": [event.to_dict() for event in self.events] if include_ephemeral else [],
-            "annotations": copy.deepcopy(self.annotations),
-            "action_opportunities": copy.deepcopy(self.action_opportunities),
-            "opportunity_sequence": self.opportunity_sequence,
-            "timestamp_sequence": self.timestamp_sequence,
-            "pending_decision": self.pending_decision.to_dict() if self.pending_decision else None,
-            "capabilities": {token: cap.to_dict() for token, cap in self.capabilities.items()} if include_ephemeral else {},
+            **self._serialized_journal_and_decision(include_ephemeral, copy_journal_context),
             "started": self.started,
             "game_over": self.game_over,
             "winner": self.winner,
@@ -1376,6 +1423,8 @@ class GameState:
             battlefield_entry_player_version=read_battlefield_entry_player_version(data),
             priority_concession_stabilization_version=read_priority_concession_stabilization_version(data),
             priority_concession_resume_from=read_priority_concession_resume(data),
+            post_resolution_priority_version=read_post_resolution_priority_version(data),
+            post_resolution_priority_seat=read_post_resolution_priority_seat(data),
             land_entry_affordability_version=land_entry_affordability_version(
                 data.get(LAND_ENTRY_PAYMENT_VALIDATION_FIELD)
             ),
@@ -1439,6 +1488,7 @@ class GameState:
             declare_attack_cast_version=declare_attack_cast_version(data.get('declare_attack_cast_version')),
             upkeep_completed=read_upkeep_completion(data),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
+            legendary_sorcery_rule_version=read_legendary_sorcery_rule_version(data),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
@@ -1551,6 +1601,7 @@ class GameState:
     ) -> list[ContinuousJournalEffect]:
         from .game_hand_size_model import ResolvedNoMaximumHandSize
         from .next_turn_attack_restriction_model import ResolvedNextTurnAttackRestriction
+        from .counter_bound_attack_model import ResolvedCounterBoundAttackRestriction
         from .turn_match_outcome_model import ResolvedTurnMatchOutcomeProtection
 
         if not isinstance(data, list):
@@ -1564,7 +1615,7 @@ class GameState:
                 raise ValueError("Turn outcome protection names an unknown resolving player")
             if isinstance(effect, ResolvedNoMaximumHandSize) and effect.controller not in players:
                 raise ValueError("Game-duration hand-size rule names an unknown player")
-            if isinstance(effect, ResolvedNextTurnAttackRestriction):
+            if isinstance(effect, (ResolvedNextTurnAttackRestriction, ResolvedCounterBoundAttackRestriction)):
                 effect.validate_players(players)
         return effects
 

@@ -166,6 +166,7 @@ def temporary_player_rule_node_capabilities(**shape):
 
 def temporary_player_rule_covered_mechanics(supplied):
     from .all_player_turn_rules import ALL_PLAYER_TURN_RULE_CAPABILITIES, ALL_PLAYER_TURN_RULE_MECHANIC
+    from ..all_player_turn_rule_model import TURN_LAND_MANA_TRIGGER_CAPABILITY
     from ..draw_redirect_model import DRAW_REDIRECT_CAPABILITY, DRAW_REDIRECT_MECHANIC
     from ..next_draw_replacement_model import NEXT_DRAW_REPLACEMENT_CAPABILITY, NEXT_DRAW_REPLACEMENT_MECHANIC
     from .cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC
@@ -177,6 +178,7 @@ def temporary_player_rule_covered_mechanics(supplied):
 
     return {mechanic for capability, mechanic in ((NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_MECHANIC),
         *((capability, ALL_PLAYER_TURN_RULE_MECHANIC) for capability in ALL_PLAYER_TURN_RULE_CAPABILITIES.values()),
+        (TURN_LAND_MANA_TRIGGER_CAPABILITY, ALL_PLAYER_TURN_RULE_MECHANIC),
         (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC),
         (NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC),
         (NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC),

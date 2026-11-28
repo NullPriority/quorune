@@ -433,6 +433,14 @@ def fixed_public_fact_condition(
                 else FixedPublicStateFact.SOURCE_ATTACKED_THIS_TURN
             )
         )
+    distinct = re.fullmatch(
+        r"you attacked with (?P<count>two|three|four|five|[1-9][0-9]*) or more creatures this turn",
+        normalized, re.IGNORECASE,
+    )
+    if distinct is not None:
+        amount = _amount(distinct["count"])
+        assert amount is not None and amount > 0
+        return _condition(FixedPublicStateFact.CONTROLLER_DISTINCT_CREATURES_ATTACKED_THIS_TURN, amount=amount)
     subtype_attack = re.fullmatch(
         r"you attacked with (?P<count>two|three|four|five|[0-9]+) or more "
         r"(?P<subtype>[A-Za-z][A-Za-z'-]*) this turn",

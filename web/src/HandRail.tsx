@@ -7,9 +7,10 @@ import type { ProjectedView } from "./protocol";
 import type { TableObjectSelection } from "./PublicActionDraft";
 
 export function HandRail({
-  cards, zoneOffers, view, selection, selectedRef, actionsForCard, onIntent, onInspect, onDrag, onDrop,
+  cards, zoneOffers, view, selection, selectedRef, actionsForCard, onIntent, onInspect, onDrag, onDrop, artFocused,
 }: {
   cards: JsonValue[];
+  artFocused: boolean;
   zoneOffers: ReadonlyMap<string, HandZoneOffer>;
   view: ProjectedView;
   selection: TableObjectSelection | null;
@@ -25,13 +26,13 @@ export function HandRail({
     const chosen = selection?.selected.includes(ref) ?? false;
     const choice = selection?.refs.includes(ref)
       ? { selected: chosen, select: () => selection.select(ref) } : undefined;
-    return <CardTile key={ref || index} value={card} view={view} origin={origin} artCrop
+    return <CardTile key={ref || index} value={card} view={view} origin={origin} artCrop={artFocused}
       actions={selection ? [] : actionsForCard(ref)} onIntent={selection ? undefined : onIntent}
       onInspect={onInspect} onDragCard={onDrag} onDropCard={onDrop}
       selected={selectedRef === ref || chosen} choice={choice} explainUnavailable={!origin} />;
   }
 
-  return <div className="hand-scroll">
+  return <div className={`hand-scroll${artFocused ? " art-focused" : ""}`}>
     {zoneOffers.size > 0 && <CardPages items={[...zoneOffers.values()]} label="Available from other zones"
       className="hand-other-pages" trackClassName="hand-cards hand-zone-offers" testId="hand-zone-offers"
       style={{ "--offered-card-count": zoneOffers.size } as CSSProperties}

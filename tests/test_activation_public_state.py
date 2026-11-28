@@ -206,6 +206,150 @@ class ActivationPublicStateNativeTests(unittest.TestCase):
         result=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary)
         session=self.replay(session,load=True);self.assertIsNone(self.resolve(session));self.assertEqual(1,sum(c.zone=='battlefield' and c.is_token and 'Treasure' in c.printed_name for c in session.state.cards.values()));self.replay(session,load=True)
 
+    def test_dark_fortress_native_entry_or_current_basic_land_opens_its_colored_modes(self):
+        for fresh_entry in (False, True):
+            with self.subTest(fresh_entry=fresh_entry):
+                game = self.session(60510020 + fresh_entry)
+                dark = self.add(game.engine, "Dark Fortress", zone="hand" if fresh_entry else "battlefield")
+                basic = self.add(game.engine, "Plains", zone="hand", ref="dark-fortress-own-basic")
+                self.add(game.engine, "Plains", seat="B", ref="dark-fortress-opponent-basic")
+                self.assert_closed(game, dark)
+                self.prepare(game)
+                self.checkpoint(game)
+                if not fresh_entry:
+                    self.assertIsNotNone(self.offered(game, dark, "ab1"))
+                    self.assertIsNone(self.offered(game, dark, "ab2"))
+                    denied = {"action_id": f"activate:{dark.ref}:ab2", "mana_output": {"B": 1}}
+                    before = authoritative_state_hash(game.state)
+                    self.assertFalse(game.act("pilot:A", denied).ok)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                land = dark if fresh_entry else basic
+                result = game.act("pilot:A", {"action_id": f"play-land:{land.ref}"})
+                self.assertTrue(result.ok, result.summary)
+                self.priority(game, "A")
+                offer = self.offered(game, dark, "ab2")
+                self.assertIsNotNone(offer)
+                color = "R" if fresh_entry else "B"
+                result = game.act("pilot:A", {"action_id": offer["id"], "mana_output": {color: 1}})
+                self.assertTrue(result.ok, result.summary)
+                self.assertTrue(game.state.cards[dark.object_id].tapped)
+                self.assertEqual(1, game.state.players["A"].mana_pool[color])
+                self.assertFalse(game.state.stack)
+                self.replay(game, load=True)
+
+    def test_dark_fortress_automatic_payment_requires_the_same_typed_activation_condition(self):
+        game = self.session(60510022)
+        dark = self.add(game.engine, "Dark Fortress")
+        basic = self.add(game.engine, "Plains", zone="hand")
+        spell = self.add(game.engine, "Doom Blade", zone="hand")
+        creature = self.add(game.engine, "Grizzly Bears", seat="B")
+        self.assert_closed(game, dark)
+        self.prepare(game, mana={"C": 1})
+        self.checkpoint(game)
+        command = {"action_id": f"cast:{spell.ref}", "targets": [creature.ref], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertFalse(game.state.cards[dark.object_id].tapped)
+        played = game.act("pilot:A", {"action_id": f"play-land:{basic.ref}"})
+        self.assertTrue(played.ok, played.summary)
+        self.priority(game, "A")
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[creature.object_id].zone)
+        self.assertTrue(game.state.cards[dark.object_id].tapped)
+        self.replay(game, load=True)
+
+    def test_web_watch_exile_receipt_allows_direct_and_automatic_mana_only_for_that_cast(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        for manual in (False, True):
+            with self.subTest(manual=manual):
+                game = self.session(60510640 + manual)
+                watch = self.add(game.engine, "Interdimensional Web Watch", zone="hand")
+                hand_spell = self.add(game.engine, "Doom Blade", zone="hand", ref="web-watch-hand-blade")
+                exiled_spell = self.add(game.engine, "Doom Blade", zone="library", ref="web-watch-exiled-blade")
+                self.add(game.engine, "Plains", zone="library", ref="web-watch-library-plains")
+                victim = self.add(game.engine, "Grizzly Bears", seat="B")
+                self.assert_closed(game, watch)
+                self.prepare(game, mana={"C": 4})
+                self.checkpoint(game)
+                self.cast(game, "A", watch)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("exile", game.state.cards[exiled_spell.object_id].zone)
+                self.priority(game, "A")
+                if manual:
+                    ability = next(row for row in game.engine._activated_abilities(game.state.cards[watch.object_id])
+                                   if row.mana_spend_restriction == EXILE_CAST_MANA_RESTRICTION)
+                    offer = self.offered(game, watch, ability.ability_id)
+                    self.assertIsNotNone(offer)
+                    produced = game.act("pilot:A", {"action_id": offer["id"], "mana_output": {"B": 1, "R": 1}})
+                    self.assertTrue(produced.ok, produced.summary)
+                    lots = [lot.bundle for lot in mana_provenance_lots(game.state.players["A"])
+                            if lot.restriction == EXILE_CAST_MANA_RESTRICTION]
+                    self.assertEqual([(("B", 1), ("R", 1))], lots)
+                hand = {"action_id": f"cast:{hand_spell.ref}", "targets": [victim.ref], "pay": "auto"}
+                before = authoritative_state_hash(game.state)
+                self.assertFalse(game.act("pilot:A", hand).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                result = game.act("pilot:A", {**hand, "action_id": f"cast:{exiled_spell.ref}"})
+                self.assertTrue(result.ok, result.summary)
+                self.assertTrue(game.state.cards[watch.object_id].tapped)
+                self.assertEqual("exile", game.state.stack[-1].context["cast_origin"])
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("graveyard", game.state.cards[victim.object_id].zone)
+                self.assertEqual("hand", game.state.cards[hand_spell.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_cast_origin_mana_requires_the_sealed_typed_exile_context(self):
+        from quorune.mana_restrictions import (
+            ability_mana_spend_context, bind_exiled_spell_mana_spending, mana_restriction_allows,
+            spell_mana_spend_context, with_exile_cast_origin, with_spell_spend_colors,
+        )
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_RESTRICTION
+
+        spell = spell_mana_spend_context("Instant")
+        exact = with_exile_cast_origin(spell)
+        for context in (None, spell, ability_mana_spend_context("Artifact"),
+                        bind_exiled_spell_mana_spending(spell, payer="A"),
+                        exact + ";cast-origin=hand", exact + ";cast-origin=exile"):
+            with self.subTest(context=context):
+                self.assertFalse(mana_restriction_allows(EXILE_CAST_MANA_RESTRICTION, context))
+        for context in (exact, with_spell_spend_colors(exact, ("B",)),
+                        bind_exiled_spell_mana_spending(exact, payer="A")):
+            with self.subTest(context=context):
+                self.assertTrue(mana_restriction_allows(EXILE_CAST_MANA_RESTRICTION, context))
+
+        from quorune.mana_spend_rules import ManaSpendRule
+
+        def rejects_original_hand_context():
+            self.assertFalse(mana_restriction_allows(EXILE_CAST_MANA_RESTRICTION, spell))
+
+        rejects_original_hand_context()
+        with patch.object(ManaSpendRule, "allows", lambda _rule, action, *args, **kwargs: action == "spell"):
+            with self.assertRaises(AssertionError):
+                rejects_original_hand_context()
+
+    def test_web_watch_spend_rule_withdrawal_keeps_the_exact_entry_sibling(self):
+        from quorune.mana_spend_rules import EXILE_CAST_MANA_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        original = self.db.lookup("Interdimensional Web Watch", fuzzy=False)
+        good = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", good.status, good.material_residuals)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        row = next(item for item in raw["capabilities"] if item["id"] == EXILE_CAST_MANA_CAPABILITY)
+        row.update(status="blocked", blockers=["Exile cast payment authority is withheld"])
+        registry = CapabilityRegistry(raw)
+        registry.mark_evidence_verified(self.registry.evidence_fingerprint)
+        refused = compile_oracle_card(original, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("partial", refused.status)
+        self.assertIn(EXILE_CAST_MANA_CAPABILITY, str(refused.material_residuals))
+        self.assertTrue(any(node.exact and node.kind == "triggered_ability" for face in refused.faces for node in face.nodes))
+
     def test_actual_temple_fixed_mana_reuses_existing_control_count_after_land_play(self):
         session=self.session(603637060);source=self.add(session.engine,'Temple of the False God')
         for i in range(3):self.add(session.engine,'Plains',ref='existing-plains-'+str(i))

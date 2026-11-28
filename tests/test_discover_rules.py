@@ -4,6 +4,95 @@ import unittest
 from inherited_composition_fixture import InheritedNativeFixture
 
 
+MOTHER_LODE_TEXT = ("Discover 10. If the discovered card's mana value is less than 10, "
+    "create a number of tapped Treasure tokens equal to the difference.")
+
+
+class DiscoverTreasureValueTests(unittest.TestCase):
+    def test_discover_treasure_result_keeps_the_terminal_card_separate_from_the_cast_candidate(self):
+        from quorune.discover_model import ExileCastProgress, RecordedDiscoverCard
+        from quorune.discover_cleanup import _committed_treasure_difference
+        from quorune.rules.library_selection import LibrarySelectionObjectIdentity
+
+        final = LibrarySelectionObjectIdentity('CARDOID', 'CARDOID@2', 'CARDREF')
+        legacy = ExileCastProgress(10, (final,), final.ref)
+        self.assertEqual(1, legacy.to_dict()['schema_version'])
+        self.assertNotIn('last_exile_mana_value', legacy.to_dict())
+        self.assertEqual(legacy, ExileCastProgress.from_dict(legacy.to_dict()))
+        for value, candidate, discovered, quantity in (
+                (0, None, final, 10), (4, final.ref, final, 6), (10, final.ref, final, 0), (11, None, None, 0)):
+            with self.subTest(value=value):
+                progress = ExileCastProgress(10, (final,), candidate, recorded_card=RecordedDiscoverCard(value))
+                self.assertEqual(progress, ExileCastProgress.from_dict(progress.to_dict()))
+                self.assertEqual(discovered, progress.discovered_card)
+                self.assertEqual(() if candidate else (final,), progress.cleanup_cards)
+                followed = _committed_treasure_difference(value if discovered else None, 10).effects
+                self.assertEqual(quantity, followed[0]['quantity'] if followed else 0)
+                if followed:
+                    self.assertIs(True, followed[0]['tapped'])
+        empty = ExileCastProgress(10, (), None, recorded_card=RecordedDiscoverCard())
+        self.assertIsNone(ExileCastProgress.from_dict(empty.to_dict()).discovered_card)
+        good = ExileCastProgress(10, (final,), final.ref, recorded_card=RecordedDiscoverCard(4)).to_dict()
+        for invalid in (None, True, -1, 4.5, 11):
+            with self.assertRaises(ValueError):
+                ExileCastProgress.from_dict({**good, 'last_exile_mana_value': invalid})
+        with self.assertRaises(ValueError):
+            ExileCastProgress.from_dict({**good, 'extra': 1})
+
+    def test_discover_treasure_authority_comes_from_the_descriptor_and_bound_spell(self):
+        from dataclasses import replace
+        import json
+        from types import SimpleNamespace
+        from common import ROOT
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.discover_templates import discover_effect_template
+        from quorune.discover_model import (
+            DISCOVER_TREASURE_DIFFERENCE_CAPABILITY as capability, ExileCastProgress, RecordedDiscoverCard,
+        )
+        from quorune.discover_casting import _require_discover_treasure_source
+        from quorune.errors import GameRuleError
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+        from quorune.rules.discover_capability_shapes import validate_discover_treasure_program
+
+        _, effects, targets, _ = discover_effect_template(MOTHER_LODE_TEXT, source_is_permanent=False)
+        self.assertIsNone(targets)
+        self.assertIn(capability, typed_result_amount_runtime_dependencies(effects[0]))
+        program = SimpleNamespace(ability_id='spell:front', event='resolve', active_zone='stack',
+            effects=effects, target_schema=None, handlers=(), capability_dependencies=(capability,))
+        self.assertEqual(10, validate_discover_treasure_program(program))
+        host = SimpleNamespace(semantics={'trusted': program}, semantic_program_is_current_trusted=lambda value: value is program)
+        item = SimpleNamespace(semantic_key='trusted', kind='spell')
+        _require_discover_treasure_source(host, item, ExileCastProgress(10, (), None, recorded_card=RecordedDiscoverCard()))
+        for invalid in (ExileCastProgress(10, (), None),
+                ExileCastProgress(9, (), None, recorded_card=RecordedDiscoverCard())):
+            with self.assertRaises(GameRuleError):
+                _require_discover_treasure_source(host, item, invalid)
+        for key, wrong in (('event', 'spell.cast'), ('target_schema', {'count': 1}),
+                ('effects', (*effects, {'op': 'draw'})), ('ability_id', 'ability:activate')):
+            with self.assertRaises(ValueError):
+                validate_discover_treasure_program(SimpleNamespace(**{**vars(program), key: wrong}))
+        for neighbor in (MOTHER_LODE_TEXT.replace('less than 10', 'less than 9'),
+                MOTHER_LODE_TEXT.replace('tapped Treasure', 'Treasure'),
+                MOTHER_LODE_TEXT.replace('discovered card', 'cast spell')):
+            self.assertIsNone(discover_effect_template(neighbor, source_is_permanent=False))
+        self.assertIsNone(discover_effect_template(MOTHER_LODE_TEXT, source_is_permanent=True))
+        source = replace(query_record(MOTHER_LODE_TEXT), type_line='Sorcery', power=None, toughness=None)
+        registry = load_default_capability_registry()
+        self.assertEqual('exact', compile_oracle_card(source, capability_registry=registry,
+            capability_profile='commander_review').status)
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_bytes())
+        row = next(row for row in raw['capabilities'] if row['id'] == capability)
+        row.update(status='blocked', blockers=['The discovered-card result was withdrawn'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual('exact', compile_oracle_card(source, capability_registry=withdrawn,
+            capability_profile='commander_review').status)
+        self.assertEqual('exact', compile_oracle_card(replace(source, oracle_text='Discover 10.'),
+            capability_registry=withdrawn, capability_profile='commander_review').status)
+
+
 class DiscoverValueTests(unittest.TestCase):
     def test_qualified_exile_scan_compiler_keeps_supplier_and_mode_closed(self):
         import json
@@ -404,6 +493,160 @@ class DiscoverNativeTests(unittest.TestCase):
             semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
         self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+
+    def mother_lode(self, session, H):
+        source = H.add(self, session.engine, 'Hit the Mother Lode', zone='hand')
+        self.closed(source)
+        action = H.ready(self, session, source, {'R': 3, 'C': 4})
+        H.checkpoint(self, session)
+        result = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([], session.state.stack[-1].targets)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        return source
+
+    def lode_treasures(self, session, expected, *, completed=True):
+        tokens = [card for card in session.state.cards.values() if card.zone == 'battlefield' and card.is_token
+                  and card.printed_name == 'Treasure Token']
+        self.assertEqual(expected, len(tokens))
+        self.assertTrue(all(card.tapped and card.controller == 'A' for card in tokens))
+        events = [row for row in session.state.events if row.code == 'library.discover']
+        if not completed:
+            self.assertEqual([], events)
+            return None
+        discovery, = events
+        if tokens:
+            born, = [row for row in session.state.events if row.code == 'token.create']
+            self.assertGreater(born.event_id, discovery.event_id)
+            self.assertEqual('A', born.actor)
+            self.assertEqual(expected, born.details['base_quantity'])
+            self.assertEqual({token.object_id for token in tokens}, set(born.changed_objects))
+        return discovery.details
+
+    def replay_lode(self, session, case, *, load=False):
+        import json
+        import os
+        from pathlib import Path
+        from quorune.record import authoritative_state_hash, replay_record
+        from quorune.session import CommanderSession
+
+        saved = os.environ.get('QUORUNE_MOTHER_LODE_RECORD_PARENT')
+        directory = Path(saved or self.temporary.name)
+        if saved:
+            fixture = directory / 'fixture-cards.sqlite3'
+            if not fixture.exists():
+                fixture.write_bytes(self.db.path.read_bytes())
+        path = directory / ('mother-lode-' + case)
+        session.save(path)
+        manifest = json.loads((path / 'manifest.json').read_bytes())
+        self.assertEqual(3, manifest['schema_version'])
+        result = replay_record(path, self.db, verify=True)
+        digest = authoritative_state_hash(session.state)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual('command_replay', result['mode'])
+        self.assertEqual(digest, result['final_state_hash'])
+        if saved:
+            proof = directory / (path.name + '.verification.json')
+            proof.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        if load:
+            resumed = CommanderSession.load(self.db, path)
+            self.assertEqual(digest, authoritative_state_hash(resumed.state))
+            return resumed
+
+    def test_mother_lode_uses_the_exiled_split_value_and_finishes_before_the_cast_resolves(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+
+        session = H.session(self, 949794)
+        engine = session.engine
+        hidden = H.add(self, engine, 'Generic Bound Growth', zone='library', ref='lode-private-unscanned')
+        candidate = H.add(self, engine, 'Dead // Gone', zone='library', ref='lode-two-faces')
+        skip = H.add(self, engine, 'Forest', zone='library', ref='lode-faceup-skip')
+        target = H.add(self, engine, 'Generic Bound Body', seat='B', ref='lode-gone-target')
+        source = self.mother_lode(session, H)
+        self.assertIsNotNone(H.resolve(self, session))
+        self.lode_treasures(session, 0, completed=False)
+        for seat in 'BCD':
+            visibility = str(session.packet('pilot:' + seat, full=True))
+            self.assertIn(candidate.ref, visibility)
+            self.assertIn(skip.ref, visibility)
+            self.assertNotIn(hidden.ref, visibility)
+        session = self.replay_lode(session, 'split-offer', load=True)
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['cast_options']
+        self.assertEqual({'Dead', 'Gone'}, {option['face'] for option in options})
+        gone = next(option for option in options if option['face'] == 'Gone')
+        cast = {'face': 'Gone', 'cost_option': gone['id'], 'targets': [target.ref]}
+        command = {'action_id': 'choose', 'choice': 'cast', 'cast': cast}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', command).ok)
+        forged = {'action_id': 'choose', 'choice': 'cast', 'cast': {**cast, 'face': 'Dead // Gone'}}
+        self.assertFalse(session.act('pilot:A', forged).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertEqual('stack', session.state.cards[candidate.object_id].zone)
+        self.assertEqual('library', session.state.cards[skip.object_id].zone)
+        self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+        details = self.lode_treasures(session, 6)
+        self.assertEqual((candidate.ref, 4, 1), tuple(details[k] for k in (
+            'discovered_card', 'discovered_mana_value', 'bottom_count',
+        )))
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.replay_lode(session, 'created-before-nested-resolution')
+        self.assertIsNone(H.resolve(self, session))
+        self.assertEqual('hand', session.state.cards[target.object_id].zone)
+        self.lode_treasures(session, 6)
+
+    def test_mother_lode_keeps_declined_or_unpayable_discovery_in_hand(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for index, (name, choice, value) in enumerate((('Hill Giant', 'decline', 4), ('Cascade Trial', None, 2))):
+            with self.subTest(name=name):
+                session = H.session(self, 949795 + index)
+                candidate = H.add(self, session.engine, name, zone='library', ref='lode-hand-candidate')
+                self.closed(candidate)
+                H.add(self, session.engine, 'Generic Bound Body', seat='B', ref='lode-sacrifice-target')
+                self.mother_lode(session, H)
+                decision = H.resolve(self, session)
+                if choice:
+                    self.assertIsNotNone(decision)
+                    self.lode_treasures(session, 0, completed=False)
+                    result = session.act('pilot:A', {'action_id': 'choose', 'choice': choice})
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.assertIsNone(decision)
+                self.assertEqual('hand', session.state.cards[candidate.object_id].zone)
+                details = self.lode_treasures(session, 10 - value)
+                self.assertEqual((candidate.ref, value), (details['discovered_card'], details['discovered_mana_value']))
+                self.replay_lode(session, 'declined-to-hand' if choice else 'additional-cost-unavailable')
+
+    def test_mother_lode_distinguishes_empty_exhausted_lands_and_equal_threshold(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for index, (case, names, value, amount) in enumerate((
+                ('empty-library', (), None, 0), ('last-exiled-land', ('Forest', 'Island'), 0, 10),
+                ('exact-limit', ('Apex Devastator',), 10, 0))):
+            with self.subTest(case=case):
+                session = H.session(self, 949797 + index)
+                engine = session.engine
+                for oid in tuple(session.state.players['A'].zones['library']):
+                    engine.move_card(oid, 'outside', log=False)
+                cards = [H.add(self, engine, name, zone='library', ref=f'lode-tail-{i}') for i, name in enumerate(names)]
+                self.mother_lode(session, H)
+                decision = H.resolve(self, session)
+                if case == 'exact-limit':
+                    self.assertIsNotNone(decision)
+                    result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'decline'})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual('hand', session.state.cards[cards[0].object_id].zone)
+                else:
+                    self.assertIsNone(decision)
+                    self.assertTrue(all(session.state.cards[card.object_id].zone == 'library' for card in cards))
+                details = self.lode_treasures(session, amount)
+                last = cards[0].ref if cards else None
+                self.assertEqual((last, value), (details['discovered_card'], details['discovered_mana_value']))
+                self.replay_lode(session, case)
 
     def test_chaos_wand_casts_from_other_library_and_returns_unused_cards(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
@@ -1100,6 +1343,337 @@ class FixedTopExileTests(InheritedNativeFixture, unittest.TestCase):
     def chosen_impulse_options(self, session):
         self.assertEqual("semantic.choice", session.state.pending_decision.kind)
         return {row["id"] for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]}
+
+    def test_plargg_and_nassari_elects_and_casts_two_with_native_costs_and_stack_order(self):
+        import json
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(77191001)
+        source = self.add(game.engine, "Plargg and Nassari")
+        sacrifice = self.add(game.engine, "Grizzly Bears", ref="nonland-election-sacrifice")
+        hidden = self.add(game.engine, "Forest", zone="library", ref="nonland-election-hidden")
+        first = self.add(game.engine, "Village Rites", zone="library")
+        land = self.add(game.engine, "Forest", zone="library")
+        second = self.add(game.engine, "Twincast", seat="B", zone="library")
+        excluded = self.add(game.engine, "Grizzly Bears", seat="C", zone="library", ref="nonland-election-excluded")
+        unused = self.add(game.engine, "Grizzly Bears", seat="D", zone="library", ref="nonland-election-unused")
+        for card in (source, first, second):
+            self.assert_closed(game, card)
+        previous = game.state.turn_order[game.state.turn_order.index("A") - 1]
+        game.state.last_normal_turn_player = previous
+        self.prepare(game, actor=previous, active=previous)
+        self.checkpoint(game)
+        self.until(game, lambda s: s.state.active_player == "A" and s.state.step == "upkeep")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["A"], game.state.pending_decision.actors)
+        self.assertEqual({"B", "C", "D"}, set(game.packet("pilot:A", full=True)["decision"]["ctx"]["opponents"]))
+        for viewer in "BCD":
+            self.assertNotIn(hidden.ref, json.dumps(game.packet(f"pilot:{viewer}", full=True)))
+        response = game.act("pilot:A", {"action_id": "choose", "choice": "B"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual(["B"], game.state.pending_decision.actors)
+        choices = game.packet("pilot:B", full=True)["decision"]["ctx"]["objects"]
+        self.assertEqual({first.ref, second.ref, excluded.ref, unused.ref}, {card["id"] for card in choices})
+        game = self.replay(game, load=True)
+        before = authoritative_state_hash(game.state)
+        invalid = game.act("pilot:B", {"action_id": "choose", "objects": [land.ref]})
+        self.assertFalse(invalid.ok, invalid.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        response = game.act("pilot:B", {"action_id": "choose", "objects": [excluded.ref]})
+        self.assertTrue(response.ok, response.summary)
+
+        option, = [item for item in self.options(game) if item["card"] == first.ref]
+        cmd = {"action_id": "choose", "choice": "cast",
+               "cast": {"cost_option": option["id"], "sacrifice_cards": [land.ref]}}
+        before = authoritative_state_hash(game.state)
+        invalid = game.act("pilot:A", cmd)
+        self.assertFalse(invalid.ok, invalid.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        cmd["cast"]["sacrifice_cards"] = [sacrifice.ref]
+        response = game.act("pilot:A", cmd)
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("graveyard", game.state.cards[sacrifice.object_id].zone)
+        self.assertEqual("stack", game.state.cards[first.object_id].zone)
+        first_spell, = (item for item in game.state.stack if item.card_object_id == first.object_id)
+        self.assertTrue(any(item.kind == "triggered_ability" for item in game.state.stack))
+        game = self.replay(game, load=True)
+        self.cast_result(game, second, (first_spell.ref,))
+        self.assertEqual([first.object_id, second.object_id], [item.card_object_id for item in game.state.stack])
+        self.assertEqual([first_spell.ref], game.state.stack[-1].targets)
+        for card in (land, excluded, unused):
+            self.assertEqual("exile", game.state.cards[card.object_id].zone)
+        self.assertEqual("library", game.state.cards[hidden.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_plargg_and_nassari_handles_empty_libraries_and_a_library_of_only_lands(self):
+        game = self.session(77191002)
+        for seat in game.engine.seats:
+            for object_id in tuple(game.state.players[seat].zones["library"]):
+                game.engine.move_card(object_id, "exile", reason="Fixture clears libraries", semantic_events=False)
+        source = self.add(game.engine, "Plargg and Nassari")
+        land = self.add(game.engine, "Forest", zone="library")
+        only_spell = self.add(game.engine, "Grizzly Bears", seat="D", zone="library")
+        self.assert_closed(game, source)
+        previous = game.state.turn_order[game.state.turn_order.index("A") - 1]
+        game.state.last_normal_turn_player = previous
+        self.prepare(game, actor=previous, active=previous)
+        self.checkpoint(game)
+        self.until(game, lambda s: s.state.active_player == "A" and s.state.step == "upkeep")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        response = game.act("pilot:A", {"action_id": "choose", "choice": "B"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual([only_spell.ref], [row["id"] for row in
+            game.packet("pilot:B", full=True)["decision"]["ctx"]["objects"]])
+        response = game.act("pilot:B", {"action_id": "choose", "objects": [only_spell.ref]})
+        self.assertTrue(response.ok, response.summary)
+        self.assertFalse(game.state.stack)
+        self.assertEqual({"A", "B", "C", "D"}, set(game.engine.active_seats))
+        self.assertEqual(("exile", "exile"), tuple(game.state.cards[card.object_id].zone for card in (land, only_spell)))
+        self.replay(game, load=True)
+
+    def test_plargg_and_nassari_requires_the_original_upkeep_and_exact_cast_limit(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup("Plargg and Nassari", fuzzy=False)
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(card, **options).status)
+        changed = replace(card, oracle_text=card.oracle_text.replace("up to two", "up to three"))
+        self.assertNotEqual("exact", compile_oracle_card(changed, **options).status)
+        result, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(result["strict_capability_ready"], result["blockers"])
+        ability, = semantics.programs_for_oracle(card.oracle_id)
+        self.assertFalse(bind_semantic_program_runtime(replace(ability, event_condition=None),
+            capability_registry=self.registry, profile="commander_review")["strict"])
+        with patch("quorune.compiler.discover_templates._elected_nonland_exile_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
+
+    def _cast_prisoners(self, session, spell, mode, target):
+        offered = self.action(session, "A", spell)
+        command = {"action_id": offered["id"], "modes": [mode], "targets": [target], "pay": "auto"}
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_prisoners_artifact_mode_destroys_only_the_announced_artifact(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.record import authoritative_state_hash
+
+        printed = self.db.lookup("You Find Some Prisoners")
+        unsupported = replace(printed, oracle_text=printed.oracle_text.replace("mana of any color", "mana of any type"))
+        ir = compile_oracle_card(unsupported, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        session = self.session(60828101)
+        spell = self.add(session.engine, "You Find Some Prisoners", zone="hand")
+        artifact = self.add(session.engine, "Generic Bound Mentor", seat="B")
+        bear = self.add(session.engine, "Grizzly Bears", seat="B")
+        library_top = self.add(session.engine, "Mountain", seat="B", zone="library", ref="prisoners-untouched")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 1, "R": 1})
+        self.checkpoint(session)
+        source = self.action(session, "A", spell)
+        initial = authoritative_state_hash(session.state)
+        for mode, target in (("mode_1", bear.ref), ("mode_2", "A")):
+            rejected = session.act("pilot:A", {"action_id": source["id"], "modes": [mode],
+                                                "targets": [target], "pay": "auto"})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(initial, authoritative_state_hash(session.state))
+        self._cast_prisoners(session, spell, "mode_1", artifact.ref)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[artifact.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[bear.object_id].zone)
+        self.assertEqual("library", session.state.cards[library_top.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_prisoners_chosen_opponent_exile_and_color_only_cast_replay(self):
+        from quorune.mana_restrictions import exile_play_mana_mode
+        from quorune.mana_spending_model import ManaSpendingMode, ManaSpendingPolicy
+        from quorune.opponent_library_exile import opponent_library_exile_spend_context
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(60828102)
+        spell = self.add(session.engine, "You Find Some Prisoners", zone="hand")
+        self.add(session.engine, "Island", ref="prisoners-only-colored-source")
+        unrelated = self.add(session.engine, "Mountain", seat="B", zone="exile", ref="prisoners-other-exile")
+        untouched = self.add(session.engine, "Mountain", seat="C", zone="library", ref="prisoners-other-library")
+        fourth = self.add(session.engine, "Mountain", seat="B", zone="library", ref="prisoners-fourth")
+        bear = self.add(session.engine, "Grizzly Bears", seat="B", zone="library", ref="prisoners-bear")
+        land = self.add(session.engine, "Mountain", seat="B", zone="library", ref="prisoners-land")
+        bolt = self.add(session.engine, "Lightning Bolt", seat="B", zone="library", ref="prisoners-bolt")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 1, "R": 1})
+        self.checkpoint(session)
+        self._cast_prisoners(session, spell, "mode_2", "B")
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual({bear.ref, land.ref, bolt.ref}, self.chosen_impulse_options(session))
+        self.assertEqual("library", session.state.cards[fourth.object_id].zone)
+        self.assertEqual("library", session.state.cards[untouched.object_id].zone)
+        saved = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "choose", "objects": [unrelated.ref]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(saved, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", {"action_id": "choose", "objects": [bolt.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[bolt.object_id]
+        grant = session.engine._temporary_play_permission("A", current)
+        self.assertEqual("until_end_of_next_turn", grant["duration"])
+        self.assertIsNone(session.engine._temporary_play_permission("B", current))
+        for card in (land, bear):
+            self.assertIsNone(session.engine._temporary_play_permission("A", session.state.cards[card.object_id]))
+        context = session.engine._spell_mana_spend_context("Instant")
+        spend = opponent_library_exile_spend_context(session.state, "A", current, context)
+        self.assertEqual(ManaSpendingMode.ANY_COLOR, exile_play_mana_mode(spend, "A"))
+        self.assertFalse(ManaSpendingPolicy(frozenset({ManaSpendingMode.ANY_COLOR})).permits("U", "C"))
+        self.assertEqual(0, session.state.players["A"].mana_pool["R"])
+        before = session.state.players["C"].life
+        self.cast(session, "A", current, ["C"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before - 3, session.state.players["C"].life)
+        self.assertEqual("graveyard", session.state.cards[bolt.object_id].zone)
+        self.assertEqual("exile", session.state.cards[land.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_prisoners_choice_excludes_a_redirected_library_card(self):
+        from unittest.mock import patch
+        from quorune.replacement.model import ReplacementClass, ReplacementEffect
+        from quorune.replacement.operations import SetField
+        from quorune.semantic_runtime import zone_replacements
+
+        session = self.session(60828104)
+        spell = self.add(session.engine, "You Find Some Prisoners", zone="hand")
+        kept, selected, redirected = [
+            self.add(session.engine, "Mountain", seat="B", zone="library", ref=f"prisoners-redirect-{n}")
+            for n in range(3)
+        ]
+        self.prepare(session, mana={"C": 1, "R": 1})
+        self.checkpoint(session)
+        self._cast_prisoners(session, spell, "mode_2", "B")
+        collector = zone_replacements.collect_zone_change_replacement_effects
+        redirect = ReplacementEffect(
+            effect_id="fixture:opponent-scan-redirect", source_id="fixture:opponent-scan-redirect",
+            event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+            conditions={"origin": {"eq": "library"}, "destination": {"eq": "exile"},
+                        "logical_object_id": {"eq": redirected.logical_object_id}},
+            operations=(SetField("destination", "hand"),),
+        )
+
+        def with_redirect(host, **kwargs):
+            return (*collector(host, **kwargs), redirect)
+
+        with patch.object(zone_replacements, "collect_zone_change_replacement_effects", with_redirect):
+            self.assertIsNotNone(self.resolve(session))
+            self.assertEqual({kept.ref, selected.ref}, self.chosen_impulse_options(session))
+            self.assertEqual("hand", session.state.cards[redirected.object_id].zone)
+            session = self.replay(session, load=True)
+            choice = session.act("pilot:A", {"action_id": "choose", "objects": [selected.ref]})
+            self.assertTrue(choice.ok, choice.summary)
+            self.assertIsNone(self.resolve(session))
+            self.assertIsNone(session.engine._temporary_play_permission("A", session.state.cards[kept.object_id]))
+            self.assertIsNotNone(session.engine._temporary_play_permission("A", session.state.cards[selected.object_id]))
+            self.replay(session, load=True)
+
+    def _advance_prisoners_to(self, session, predicate):
+        for _ in range(5):
+            self.until(session, lambda state: predicate(state) or state.state.pending_decision.kind == "cleanup.discard")
+            if predicate(session):
+                return
+            principal = session.pending_principals()[0]
+            context = session.packet(principal, full=True)["decision"]["ctx"]
+            cards = [row["id"] for row in context["hand"][:context["count"]]]
+            discarded = session.act(principal, {"action_id": "discard", "cards": cards})
+            self.assertTrue(discarded.ok, discarded.summary)
+        self.fail("The native turn did not reach the expected priority window")
+
+    def test_prisoners_land_play_permission_expires_after_the_next_turn(self):
+        session = self.session(60828103)
+        spell = self.add(session.engine, "You Find Some Prisoners", zone="hand")
+        land = self.add(session.engine, "Mountain", seat="B", zone="library", ref="prisoners-expiring-land")
+        self.prepare(session, mana={"C": 1, "R": 1})
+        self.checkpoint(session)
+        self._cast_prisoners(session, spell, "mode_2", "B")
+        self.assertIsNotNone(self.resolve(session))
+        choice = session.act("pilot:A", {"action_id": "choose", "objects": [land.ref]})
+        self.assertTrue(choice.ok, choice.summary)
+        self.assertIsNone(self.resolve(session))
+        start = session.state.players["A"].turns_begun
+        self._advance_prisoners_to(session, lambda state:
+            state.state.active_player == "A" and state.state.players["A"].turns_begun > start
+            and state.state.phase == "precombat_main")
+        self.priority(session, "A")
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(f"play-land:{land.ref}", {row["id"] for row in offered})
+        session = self.replay(session, load=True)
+        next_end = session.state.turn_sequence
+        self._advance_prisoners_to(session, lambda state:
+            state.state.active_player == "B" and state.state.turn_sequence > next_end)
+        current = session.state.cards[land.object_id]
+        self.assertEqual("exile", current.zone)
+        self.assertIsNone(session.engine._temporary_play_permission("A", current))
+        self.replay(session, load=True)
+
+    def test_party_thrasher_private_discard_controls_the_actual_one_card_grant(self):
+        from quorune.engine import TURN_STEPS
+        from quorune.record import authoritative_state_hash
+
+        for decline in (False, True):
+            with self.subTest(decline=decline):
+                game = self.session(60305041 + decline)
+                source = self.add(game.engine, "Party Thrasher")
+                hand = self.add(game.engine, "Mountain", zone="hand", ref="thrasher-private-hand")
+                other = self.add(game.engine, "Mountain", seat="B", zone="hand", ref="thrasher-foreign-hand")
+                first = self.add(game.engine, "Mountain", zone="library", ref="thrasher-top-one")
+                second = self.add(game.engine, "Mountain", zone="library", ref="thrasher-top-two")
+                self.assert_closed(game, source)
+                self.prepare(game)
+                game.engine.permissions.invalidate_current()
+                game.state.pending_decision = None
+                game.state.phase, game.state.step = "beginning", "draw"
+                game.state.phase_index = TURN_STEPS.index(("beginning", "draw"))
+                game.engine._grant_priority("A")
+                game.engine.pump()
+                library_before = tuple(game.state.players["A"].zones["library"])
+                self.checkpoint(game)
+                self.until(game, lambda current: current.state.pending_decision.kind == "semantic.choice")
+                self.assertEqual("precombat_main", game.state.phase)
+                own = game.packet("pilot:A", full=True)["decision"]["ctx"]
+                self.assertIn(hand.ref, str(own))
+                self.assertNotIn(other.ref, str(own))
+                self.assertNotIn(first.ref, str(own))
+                self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+                before = authoritative_state_hash(game.state)
+                denied = game.act("pilot:A", {"action_id": "choose", "cards": [other.ref]})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                game = self.replay(game, load=True)
+                command = {"action_id": "choose", "pay": False, "cards": []} if decline else {
+                    "action_id": "choose", "cards": [hand.ref],
+                }
+                accepted = game.act("pilot:A", command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                if decline:
+                    self.assertEqual("hand", game.state.cards[hand.object_id].zone)
+                    self.assertEqual(library_before, tuple(game.state.players["A"].zones["library"]))
+                else:
+                    self.assertEqual("graveyard", game.state.cards[hand.object_id].zone)
+                    self.assertEqual({first.ref, second.ref}, self.chosen_impulse_options(game))
+                    game = self.replay(game, load=True)
+                    outcome = game.act("pilot:A", {"action_id": "choose", "objects": [first.ref]})
+                    self.assertTrue(outcome.ok, outcome.summary)
+                    self.priority(game, "A")
+                    actions = {row["id"] for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]}
+                    self.assertIn(f"play-land:{first.ref}", actions)
+                    self.assertNotIn(f"play-land:{second.ref}", actions)
+                    played = game.act("pilot:A", {"action_id": f"play-land:{first.ref}"})
+                    self.assertTrue(played.ok, played.summary)
+                    self.assertEqual("battlefield", game.state.cards[first.object_id].zone)
+                    self.assertEqual("exile", game.state.cards[second.object_id].zone)
+                self.replay(game, load=True)
 
     def test_chosen_impulse_scope_and_independent_binding_fail_closed(self):
         from dataclasses import replace

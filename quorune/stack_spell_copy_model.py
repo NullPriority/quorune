@@ -15,6 +15,8 @@ STACK_SPELL_COPY_MECHANIC = 'fixed-stack-spell-copy'
 QUALIFIED_STACK_COPY_CAPABILITY = 'stack.copy.fixed_qualified_target'
 QUALIFIED_STACK_COPY_MECHANIC = 'fixed-qualified-stack-copy'
 FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD = 'fixed_copy_count'
+COPYABLE_STACK_ITEM_PREDICATE = "instant_sorcery_or_activated_triggered_ability"
+_MIXED_STACK_COPY = "instant_sorcery_or_ability"
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,15 +61,18 @@ class FixedQualifiedStackCopySpec:
     copy_count: int = 1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version not in (1, 2)
+        if (type(self.schema_version) is not int or self.schema_version not in (1, 2, 3)
                 or type(self.target_kind) is not str
-                or self.target_kind not in {'permanent_spell', 'activated_or_triggered_ability', 'triggered_ability'}
+                or self.target_kind not in {
+                    'permanent_spell', 'activated_or_triggered_ability', 'triggered_ability', _MIXED_STACK_COPY,
+                }
+                or (self.schema_version == 3) != (self.target_kind == _MIXED_STACK_COPY)
                 or self.source_filter is not None and type(self.source_filter) is not str
                 or self.source_filter not in {None, 'artifact', 'colorless', 'legendary_noncommander'}
                 or self.source_filter is not None and self.target_kind != 'activated_or_triggered_ability'):
-            raise ValueError('Qualified stack copies require one represented controlled target kind')
+            raise ValueError("Qualified stack copies require one represented target kind and version")
         if (type(self.copy_count) is not int
-                or self.schema_version == 1 and self.copy_count != 1
+                or self.schema_version in (1, 3) and self.copy_count != 1
                 or self.schema_version == 2 and (self.target_kind != 'permanent_spell' or self.copy_count != 3)):
             raise ValueError('Only the controlled permanent spell recipe has a distinct three-copy count')
 
@@ -93,6 +98,11 @@ class FixedQualifiedStackCopySpec:
 
     @property
     def target_schema(self):
+        if self.target_kind == _MIXED_STACK_COPY:
+            return {
+                "zones": ["stack"], "categories": ["spell", "ability"], "source_exclusion": True,
+                "count": 1, "predicate": COPYABLE_STACK_ITEM_PREDICATE,
+            }
         schema = {'zones': ['stack'], 'categories': ['spell' if self.target_kind == 'permanent_spell' else 'ability'],
             'source_exclusion': True, 'count': 1, 'controller_relation': 'you'}
         if self.target_kind == 'permanent_spell':
@@ -115,8 +125,13 @@ class FixedQualifiedStackCopySpec:
         return ('cr-115-targets',)
 
 
+def mixed_stack_copy_spec() -> FixedQualifiedStackCopySpec:
+    return FixedQualifiedStackCopySpec(_MIXED_STACK_COPY, schema_version=3)
+
+
 def qualified_stack_copy_specs():
     return (FixedQualifiedStackCopySpec('permanent_spell'), FixedQualifiedStackCopySpec('triggered_ability'),
+        mixed_stack_copy_spec(),
         *(FixedQualifiedStackCopySpec('activated_or_triggered_ability', source) for source in (None, 'artifact', 'colorless', 'legendary_noncommander')))
 
 

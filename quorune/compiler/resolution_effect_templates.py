@@ -100,7 +100,7 @@ from .fixed_counter_controller_effect_sequences import (
 from .proliferate_templates import single_proliferate_effect_template
 from .reanimation_templates import fixed_target_reanimation_effect_template, fixed_target_reanimation_mana_value_loss_template
 from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
-from .reanimation_followup_templates import fixed_reanimation_followup_template
+from .reanimation_followup_templates import fixed_reanimation_entry_subtype_template, fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
@@ -180,6 +180,7 @@ from .creature_subtype_set_templates import creature_subtype_set_template
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     fixed_draw_hand_putback_template,
     hand_library_redraw_template,
+    fixed_reanimation_entry_subtype_template,
     fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_mana_value_loss_template, fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
@@ -209,6 +210,20 @@ def _single_stack_target_change_template(text, *, source_is_permanent):
         return None
     spec = SingleStackTargetChangeSpec(bool(match["ability"]))
     return "mandatory-single-stack-target-change-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
+
+
+def _stack_target_change_mana_value_loss_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import SingleStackTargetChangeSpec, stack_target_change_with_mana_value_loss_effects
+
+    if source_is_permanent is not False or re.fullmatch(
+        r"Change the target of target spell with a single target\. "
+        r"You lose life equal to that spell['’]s mana value\.?",
+        " ".join(text.split()), re.I,
+    ) is None:
+        return None
+    return ("mandatory-stack-target-change-mana-value-loss-v1", stack_target_change_with_mana_value_loss_effects(),
+            SingleStackTargetChangeSpec(False).target_schema, ("cr-115-targets",))
 
 
 def _optional_stack_target_change_template(text, *, source_is_permanent):
@@ -286,6 +301,7 @@ def _source_context_resolution_template(
         return forced
     stack_change = (
         _single_stack_target_change_template(text, source_is_permanent=source_is_permanent)
+        or _stack_target_change_mana_value_loss_template(text, source_is_permanent=source_is_permanent)
         or _optional_stack_target_change_template(text, source_is_permanent=source_is_permanent)
         or _stack_spell_control_template(text, source_is_permanent=source_is_permanent)
         or _stack_target_change_payment_template(text, source_is_permanent=source_is_permanent)
@@ -379,18 +395,37 @@ def _source_context_resolution_template(
         return control.compiled()
     conditional=conditional_source_exile_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
     if conditional is not None:return conditional.compiled()
+    from ..rules.graveyard_exchange_model import graveyard_exchange_effects
+    from ..linked_exile_return_model import LINKED_EXILE_RETURN_MECHANIC
+
+    if source_is_permanent is False and " ".join(text.split()).casefold() == (
+        "each player exiles all creature cards from their graveyard, then sacrifices all creatures "
+        "they control, then puts all cards they exiled this way onto the battlefield."
+    ):
+        return ("graveyard-exile-sacrifice-return-v1", graveyard_exchange_effects(), None,
+                (LINKED_EXILE_RETURN_MECHANIC,))
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
+    from .permanent_protection_life import permanent_protection_then_life_template
+
+    if protection := permanent_protection_then_life_template(text):
+        return protection
     """Retain the precedence of leaves that do not inspect source context."""
+    from .apnap_library_reveals import apnap_library_reveal_round_template
+    from .airbend_templates import airbend_and_cast_restriction_template
     from .library_search_templates import private_search_random_discard_effect_template
     from .player_life_exchange import player_life_exchange_template
     from .post_exchange_token import post_exchange_token_spell_template
+    from .created_token_fights import created_token_fight_template
 
     if closed := (private_search_random_discard_effect_template(text)
+                  or apnap_library_reveal_round_template(text)
+                  or airbend_and_cast_restriction_template(text)
                   or creature_subtype_set_template(text)
                   or post_exchange_token_spell_template(text)
+                  or created_token_fight_template(text)
                   or player_life_exchange_template(text)
                   or all_permanent_counters_then_token_exile_template(text)
                   or fixed_combat_prevention_attackers_untap_template(text)
@@ -534,6 +569,10 @@ def _affected_player_object_effect_template(text: str, *, card_name: str) -> Com
         return sacrifice_tokens
     if sacrifice_life := target_sacrifice_toughness_template(text):
         return sacrifice_life
+    from .affected_player_sacrifice_templates import ordered_opponent_creature_sacrifice_template
+
+    if ordered := ordered_opponent_creature_sacrifice_template(text):
+        return ordered
     sacrifice = fixed_affected_player_sacrifice_effect_template(text)
     if sacrifice is not None:
         return sacrifice.compiled()
@@ -587,7 +626,15 @@ def _fixed_phase_out_template(text, *, card_name, source_is_permanent):
     from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
     from .direct_target import direct_permanent_target_spec
 
-    match = re.fullmatch(r"(?P<subject>.+?) phases out\.?", " ".join(text.split()), re.I)
+    normalized = " ".join(text.split())
+    if (source_is_permanent is False
+            and normalized.casefold() == "put a +1/+1 counter on target creature. it phases out."):
+        from ..rules.occurrence_object_results import counter_then_phase_out_effects
+
+        target = direct_permanent_target_spec("target creature")
+        return ("fixed-target-counter-then-phase-out-v1", counter_then_phase_out_effects(),
+                target.to_target_schema(), ("cr-122-counters", "cr-115-targets", PHASE_OUT_MECHANIC))
+    match = re.fullmatch(r"(?P<subject>.+?) phases out\.?", normalized, re.I)
     if match is None:
         return None
     subject = match["subject"]
@@ -643,13 +690,21 @@ def _source_reference_resolution_template(text, *, card_name, source_is_permanen
     from .optional_source_damage_templates import optional_source_damage_template
     from .collective_source_damage_templates import collective_source_damage_spell_template
     from .source_directed_redirect import source_directed_redirect_template
+    from ..rules.counter_marked_keep import keep_counter_effect
+    from .secret_number_templates import secret_number_extremes_template
 
+    if (source_is_permanent is False and " ".join(text.casefold().split()) ==
+            "each player puts a vow counter on a creature they control and sacrifices the rest. "
+            "each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it."):
+        return ("fixed-counter-marked-creature-retention-v1", (keep_counter_effect(),), None,
+                ("fixed-affected-player-sacrifice", "sacrifice"))
     redirect = source_directed_redirect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
     if redirect is not None:
         return redirect
     return (
         optional_source_damage_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
         or collective_source_damage_spell_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+        or secret_number_extremes_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
         or keep_three_permanents_spell_template(text, source_is_permanent=source_is_permanent)
         or attachment_fixed_damage_template(
             text, card_name=card_name, source_is_permanent=source_is_permanent, relation=attachment,

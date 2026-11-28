@@ -703,6 +703,30 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
 
 
+def _cast_linked_permanent_nodes(
+    *, record, face_id, node_id, line, material_line, span, printed_card_types,
+    trusted_mechanics, capability_registry, capability_profile, residuals,
+):
+    """Lower a permanent's cast-linked printed abilities before generic grants."""
+    from .ripple_nodes import battlefield_ripple_grant_nodes
+
+    ripple = battlefield_ripple_grant_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+        span=span, printed_card_types=printed_card_types, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if ripple is not None:
+        return ripple
+
+    from .kicked_artifact_entry import kicked_artifact_entry_node
+
+    kicked_artifact = kicked_artifact_entry_node(record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, printed_card_types=printed_card_types, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if kicked_artifact is not None:
+        return (kicked_artifact,)
+
+    return None
+
+
 def compile_early_material_nodes(
     *,
     record: CardRecord,
@@ -732,13 +756,11 @@ def compile_early_material_nodes(
     from .deck_copy_limits import DECK_COPY_LIMIT_PREFIX, printed_deck_copy_limit_node
     from .cycle_or_discard_bindings import cycle_and_death_trigger_nodes
 
-    from .kicked_artifact_entry import kicked_artifact_entry_node
-
-    kicked_artifact = kicked_artifact_entry_node(record=record, face_id=face_id, node_id=node_id, line=line,
+    cast_linked = _cast_linked_permanent_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, printed_card_types=printed_card_types, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
-    if kicked_artifact is not None:
-        return (kicked_artifact,)
+    if cast_linked is not None:
+        return cast_linked
 
     cycle_death = cycle_and_death_trigger_nodes(
         node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
@@ -880,8 +902,8 @@ def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
         effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
-    from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
-    temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
+    from .blocked_damage_grant_nodes import composed_temporary_ability_nodes
+    temporary = composed_temporary_ability_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span,
         source_name=source_name, printed_card_types=printed_card_types,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,

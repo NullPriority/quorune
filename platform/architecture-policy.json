@@ -201,6 +201,7 @@
       "quorune/rules/room_unlock.py": "typed shared type line door unlock and occurrence owner using canonical mana payment and priority",
       "quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner",
       "quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination",
+      "quorune/selection/created_token_fights.py": "validates original public fight identities and delegates token creation, semantic choices, simultaneous damage and replacement to their canonical owners",
       "quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination",
       "quorune/selection/storm.py": "typed Storm copy-target selection and authoritative stack-copy commit owner",
       "quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner",
@@ -218,9 +219,12 @@
       "quorune/turn_step_owner.py": "typed turn selection, phase/step progression, cleanup iteration, and end-turn coordination owner",
       "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner",
       "quorune/zone_object_state.py": "typed object-local CR 400.7 reset owner behind the canonical zone transition",
-      "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner"
+      "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner",
+      "quorune/selection/fixed_opponent_land_search.py": "retains authenticated search participation and private land identities, delegating choices, actual zone changes and library shuffles to the canonical owners",
+      "quorune/selection/colored_permanent_sacrifice.py": "reads the complete current colored battlefield set and delegates one replacement-aware sacrifice and owner order to the canonical APNAP commit"
     },
     "read_only_consumers": {
+      "quorune/selection/apnap_library_reveals.py": "binds private APNAP reveal choices to the original library looks and delegates every reveal, move, partition and life result to existing owners",
       "quorune/spell_cast_names.py": "reads committed cast facts and delegates ledger updates to the spell name owner",
       "quorune/ability_resolution_ordinal.py": "read-only committed ability resolution order for typed conditions",
       "quorune/other_spell_history_model.py": "read-only current spell history for typed conditions",
@@ -302,6 +306,7 @@
       "quorune/power_up.py": "read-only typed Power-up pricing over current source mana cost and canonical entry history, delegating payment and usage mutation to existing activation owners",
       "quorune/projection.py": "principal-scoped projection",
       "quorune/rampage.py": "read-only sealed block occurrence derivation and current blocker count",
+      "quorune/record_checkpoint.py": "read-only authoritative checkpoint serialization and hashing",
       "quorune/record_decks.py": "read-only exact deck-list provenance hashing",
       "quorune/replacement_decisions.py": "replacement continuation validation and stack lookup",
       "quorune/reveal_until_library_selection_model.py": "pure version/prefix/descriptor planning or existing intent/partition delegation; no new GameState, randomization, zone-transition or projection mutation authority",
@@ -404,7 +409,15 @@
       "quorune/rules/token_creation_reflexive.py": "Reads the resolving source and verifies its bound instructions before the token owner handles mutation",
       "quorune/unattachment_triggers.py": "Reads attachment and departing object state and delegates event placement to the trigger owner",
       "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners",
-      "quorune/rules/linked_exile_activations.py": "Read current public exile incarnations and trusted activated ability catalogs for layer-six Food grants."
+      "quorune/rules/linked_exile_activations.py": "Read current public exile incarnations and trusted activated ability catalogs for layer-six Food grants.",
+      "quorune/rules/library_play_partition.py": "validates the resolving source and original library roles, delegating placement, zone changes and play permission to their canonical owners",
+      "quorune/rules/linked_return_subtype_counter.py": "reads the actual linked battlefield arrival and current subtype, retains typed stack-local continuation, and delegates counter placement to the canonical owner",
+      "quorune/rules/casting/gift_card_costs.py": "read-only current opponent choices and sealed cast-payment options",
+      "quorune/rules/gift_card_spells.py": "read-only sealed recipient and resolution instruction planning using ordinary draw and continuous-effect owners",
+      "quorune/rules/gift_fish_spells.py": "read-only exact Gift target branches and token instructions using existing target, token and return owners",
+      "quorune/rules/main_phase_creature_cohort.py": "read-only resolution-time creature cohort planning and current incarnation validation; placement and keyword mutations use existing owners",
+      "quorune/rules/reanimation_entry_subtype.py": "validates the original reanimation source and return object, delegating prospective subtype, actual battlefield arrival and layer state to the zone and entry owners",
+      "quorune/rules/ordered_opponent_creature_sacrifice.py": "validates the original choice program before delegating replacement-adjusted owner order to the APNAP bridge"
     }
   },
   "module_classifications": "platform/module-classifications.json",

@@ -72,7 +72,8 @@ class PreparedCompositionDepartureBatch:
 
 
 def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=None,
-        prepared_replacements=None,actor=None,position='top',replacement_selections=(),discard_effect_origin=None):
+        prepared_replacements=None,actor=None,position='top',replacement_selections=(),discard_effect_origin=None,
+        ordered_sacrifice=False):
     """Read all destinations, physical stores and LKI before offering any order."""
     from .composition_departure_commit import _prepare
     from .composition_replacements import composition_ordering_principal
@@ -116,7 +117,10 @@ def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=
         subject=CompositionDepartureSubject(FrozenMap(root.to_dict()),destination,plan.destination,chooser,
             plan.library_position or 'top',kind.value,redirects,actors)
         groups.append(PreparedCompositionDepartureGroup(subject, plan, storage, departure, current_actor, discard_origin))
-    request=CompositionDepartureBatchRequest(tuple(group.subject for group in groups),tuple(owner.host.apnap_order()))
+    request = CompositionDepartureBatchRequest(
+        tuple(group.subject for group in groups), tuple(owner.host.apnap_order()),
+        schema_version=2 if ordered_sacrifice else 1,
+    )
     return PreparedCompositionDepartureBatch(request,tuple(groups),reason)
 
 
@@ -145,7 +149,7 @@ def publish_composition_departure_batch(owner,batch,committed,counter_results):
     from .control_effects import synchronize_control_effects
     from .rules.city_blessing import synchronize_citys_blessing
     from .soulbond_state import end_pairs_containing,reconcile_soulbond_pairs
-    from .zone_trigger_processing import record_zone_change_history,dispatch_zone_change_occurrence
+    from .zone_trigger_processing import dispatch_committed_discard_groups, record_zone_change_history, dispatch_zone_change_occurrence
     from .counter_placement_events import dispatch_counter_event_trees
     from .rules.state_triggers import observe_public_state_triggers
     from .trigger_processing import enqueue_trigger_batch
@@ -171,6 +175,11 @@ def publish_composition_departure_batch(owner,batch,committed,counter_results):
                 trigger_batch=triggers, history_pre_recorded=True,
                 composition_departures=physical_departures if index == 0 else (),
             )
+    dispatch_committed_discard_groups(owner.host,
+        (facts[0][0] for _sources, facts in grouped_facts), trigger_batch=triggers)
+    for _sources, facts in grouped_facts:
+        dispatch_committed_discard_groups(owner.host,
+            (fact for fact, _card in facts[1:]), trigger_batch=triggers)
     dispatch_counter_event_trees(owner.host,tuple(counter_results),reason=batch.reason,trigger_batch=triggers)
     observe_public_state_triggers(owner.host,trigger_batch=triggers)
     enqueue_trigger_batch(owner.host,triggers)

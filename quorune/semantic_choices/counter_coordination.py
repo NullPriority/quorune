@@ -5,6 +5,7 @@ from ..semantic_runtime.counter_movement_intent import COUNTER_MOVEMENT_INTENT_T
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
@@ -192,7 +193,7 @@ def _source_ref(host: SemanticCounterCoordinationHost, item: Any) -> str | None:
     return source.ref if source is not None else None
 
 
-def _with_committed_quantity_followup(completion, intent, index, result):
+def _with_committed_quantity_followup(completion, intent, index, result, *, effect):
     from dataclasses import replace
     from ..rules.committed_quantity_followups import CommittedQuantityFollowup
     from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
@@ -200,12 +201,15 @@ def _with_committed_quantity_followup(completion, intent, index, result):
 
     from ..discard_result_model import (
         DiscardWholeHandsResultIntent, IntentResultPlayerDraws, PlayerDiscardCounts, SelectedLandDiscardCounterDraws,
+        is_ordered_opponents_discard,
     )
 
     if (isinstance(intent, DiscardWholeHandsResultIntent) and intent.graveyard_orders is not None
             and intent.require_graveyard_order):
         if not isinstance(result, PlayerDiscardCounts) or index != len(completion.intents) - 1:
             raise SemanticChoiceError("An ordered discard requires its exact committed result")
+        if is_ordered_opponents_discard(effect):
+            return completion
         binding = SelectedLandDiscardCounterDraws if intent.selected_lands else IntentResultPlayerDraws
         effects = binding(0, "own").resolved_effects(result)
         return replace(completion, prepend_effects=(*effects, *completion.prepend_effects))
@@ -290,7 +294,7 @@ def continue_semantic_completion(
                 from .resolution_mana import record_optional_target_mana_committed
 
                 record_optional_target_mana_committed(host, item, actor, continuation.effect, intent, result)
-            completion = _with_committed_quantity_followup(completion, intent, index, result)
+            completion = _with_committed_quantity_followup(completion, intent, index, result, effect=continuation.effect)
             if waiting:
                 from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
                 saved=encode_remaining_completion(continuation,actor,response,completion,index+1)
@@ -318,6 +322,7 @@ def continue_semantic_completion(
                     DiscoverCastIntent,
                     ResolvingExileLandPlayIntent,
                     ResolvingSharedTypeLibraryPlayIntent,
+                    ResolveQualifiedLibraryCastIntent,
                     ResolveCapturedDrawCastIntent,
                     ResolveBoundedHandCastIntent,
                     GraveyardCastIntent,

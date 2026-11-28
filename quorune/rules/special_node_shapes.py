@@ -47,6 +47,11 @@ def special_or_modal_node_capabilities(
     )
     if suspension is not None:
         return suspension
+    from .transform_capability_shapes import counter_end_step_flip_node_capabilities
+
+    flip = counter_end_step_flip_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
+    if flip is not None:
+        return special_trigger_envelope_capabilities(flip, mechanics)
     required = special_node_capabilities(
         effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
     )
@@ -157,6 +162,7 @@ def _owned_special_result_capabilities(**context):
     from .target_player_query_amounts import target_player_query_node_capabilities
     from .attachment_source_return import attachment_source_return_node_capabilities
     from .targeted_discard_spell_copy import targeted_discard_copy_node_capabilities
+    from .targeted_return_spell_copy import targeted_return_copy_node_capabilities
     from .graveyard_card_results import graveyard_card_counter_life_node_capabilities
     from .graveyard_exile_branches import graveyard_exile_branch_node_capabilities
     from .graveyard_exile_tokens import graveyard_exile_token_node_capabilities
@@ -166,18 +172,20 @@ def _owned_special_result_capabilities(**context):
     from .counter_placement_blocking import counter_placement_blocking_node_capabilities
     from .chosen_counter_placement import chosen_counter_placement_node_capabilities
     from .captured_draw_keyword_grant import captured_draw_keyword_grant_node_capabilities
+    from .captured_counter_keyword_grant import captured_counter_keyword_node_capabilities
     from .source_upkeep_handoff import source_upkeep_handoff_node_capabilities
     from .subtype_damage_controller import subtype_damage_node_capabilities
     from .fame_fortune_choices import fame_fortune_node_capabilities
     from .owned_commander_amount import owned_commander_amount_node_capabilities
     for resolver in (subtype_damage_node_capabilities,gravestorm_node_capabilities,demonstrate_node_capabilities,recover_node_capabilities,ripple_node_capabilities,current_life_node_capabilities,turn_life_loss_node_capabilities,per_player_query_life_node_capabilities,per_player_query_damage_node_capabilities,per_player_life_damage_node_capabilities,target_player_query_node_capabilities,
-                     attachment_source_return_node_capabilities, targeted_discard_copy_node_capabilities,
+                     attachment_source_return_node_capabilities, targeted_discard_copy_node_capabilities, targeted_return_copy_node_capabilities,
                      graveyard_card_counter_life_node_capabilities,
                      graveyard_exile_branch_node_capabilities, graveyard_exile_token_node_capabilities,
                      post_exchange_token_node_capabilities, fixed_counter_movement_node_capabilities,
                      departure_counter_transfer_node_capabilities,
                      counter_placement_blocking_node_capabilities,
                      chosen_counter_placement_node_capabilities, captured_draw_keyword_grant_node_capabilities,
+                     captured_counter_keyword_node_capabilities,
                      graveyard_exile_type_outcome_node_capabilities, source_upkeep_handoff_node_capabilities,
                      fame_fortune_node_capabilities, owned_commander_amount_node_capabilities):
         required=resolver(**context)
@@ -186,6 +194,29 @@ def _owned_special_result_capabilities(**context):
 
 
 def _early_source_and_choice_capabilities(effects, target_schema, mechanics, cost_schema):
+    from .source_counter_attacking_tokens import source_counter_attacking_tokens_node_capabilities
+
+    if (tokens := source_counter_attacking_tokens_node_capabilities(effects, target_schema)) is not None:
+        return tokens if cost_schema is None else ()
+    from .created_token_fights import created_token_fight_node_capabilities
+
+    if (fights := created_token_fight_node_capabilities(effects, target_schema, cost_schema)) is not None:
+        return fights
+    from .apnap_library_reveals import library_reveal_round_node_capabilities
+
+    reveal_round = library_reveal_round_node_capabilities(effects, target_schema, cost_schema)
+    if reveal_round is not None:
+        return reveal_round
+    from .announced_x_damage_hand_cast import announced_x_damage_hand_cast_node_capabilities
+
+    hand_cast = announced_x_damage_hand_cast_node_capabilities(effects, target_schema, cost_schema)
+    if hand_cast is not None:
+        return hand_cast
+    from .artifact_mana_tap_control import artifact_mana_tap_control_node_capabilities
+
+    control = artifact_mana_tap_control_node_capabilities(effects, target_schema, cost_schema)
+    if control is not None:
+        return control
     from .opponent_library_exile_triggers import library_exile_trigger_node_capabilities
 
     exile_trigger = library_exile_trigger_node_capabilities(
@@ -193,6 +224,10 @@ def _early_source_and_choice_capabilities(effects, target_schema, mechanics, cos
     )
     if exile_trigger is not None:
         return exile_trigger
+    from .fixed_opponent_land_search import opponent_land_search_node_capabilities
+
+    if (search := opponent_land_search_node_capabilities(effects, target_schema, cost_schema, mechanics)) is not None:
+        return search
     from .repeated_apnap_payment import payment_round_node_capabilities
 
     payment_round = payment_round_node_capabilities(effects, target_schema, cost_schema, mechanics)
@@ -223,6 +258,12 @@ def _early_source_and_choice_capabilities(effects, target_schema, mechanics, cos
 def _shared_and_source_result_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     if (exile_result := _early_source_and_choice_capabilities(effects, target_schema, mechanics, cost_schema)) is not None:
         return exile_result
+    from .departure_counter_copy import uses_departure_counter_copy, departure_counter_copy_node_capabilities
+
+    if any(uses_departure_counter_copy(effect) for effect in effects):
+        return departure_counter_copy_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+        )
     from .cast_trigger_life_payment import CAST_TRIGGER_LIFE_PAYMENT_FIELD, cast_trigger_life_payment_node_capabilities
 
     if any(CAST_TRIGGER_LIFE_PAYMENT_FIELD in effect for effect in effects):
@@ -388,18 +429,21 @@ def _protection_or_phase_out_capabilities(effects, target_schema, mechanics, cos
         cast_entry_protection_node_capabilities, next_personal_turn_protection_node_capabilities,
     )
     from .occurrence_object_results import phase_out_node_capabilities
+    from .targeted_opponent_protection import MECHANIC as OPPONENT_MECHANIC, node_capabilities as opponent_capabilities
 
     if CAST_ENTRY_PROTECTION_MECHANIC in mechanics:
         return cast_entry_protection_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
         ) if cost_schema is None else ()
-    if NEXT_PERSONAL_TURN_PROTECTION_MECHANIC in mechanics:
+    if {NEXT_PERSONAL_TURN_PROTECTION_MECHANIC, OPPONENT_MECHANIC}.intersection(mechanics):
         from .spell_self_exile import TERMINAL_SPELL_MOVE_MECHANICS, terminal_spell_move_node_capabilities
 
         if TERMINAL_SPELL_MOVE_MECHANICS.intersection(mechanics):
             return terminal_spell_move_node_capabilities(
                 effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
             )
+        if OPPONENT_MECHANIC in mechanics:
+            return opponent_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics) if cost_schema is None else ()
         return next_personal_turn_protection_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
         )
@@ -438,6 +482,9 @@ def _multi_zone_search_shape_capabilities(effects, target_schema, mechanics):
 
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
+    from .qualified_library_cast import OPERATION, qualified_library_cast_node_capabilities
+    if any(effect.get("op") == OPERATION for effect in effects):
+        return qualified_library_cast_node_capabilities(effects, target_schema)
     """Route independently owned special shapes before ordinary leaf composition."""
     from .cast_coin_transform import random_result_node_capabilities
     if (random_result := random_result_node_capabilities(effects, target_schema, mechanics, cost_schema)) is not None:
@@ -499,6 +546,11 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     from .graveyard_card_targets import OPPOSING_GRAVEYARD_RETURN_MECHANIC, opposing_graveyard_return_sequence_capabilities
     if OPPOSING_GRAVEYARD_RETURN_MECHANIC in mechanics:
         return opposing_graveyard_return_sequence_capabilities(effects=effects, target_schema=target_schema)
+    from .phase_occurrence_model import PHASE_IN_MECHANIC
+    if PHASE_IN_MECHANIC in mechanics:
+        from .phase_occurrence_shapes import phase_in_token_node_capabilities
+
+        return phase_in_token_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_MECHANIC
     if GRAVEYARD_CAST_MECHANIC in mechanics:
         from .graveyard_card_targets import targeted_graveyard_cast_node_capabilities
@@ -534,6 +586,11 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if TERMINAL_SPELL_MOVE_MECHANICS.intersection(mechanics):
         return terminal_spell_move_node_capabilities(effects=effects,target_schema=target_schema,
             mechanics=mechanics,cost_schema=cost_schema)
+    from .airbend import airbend_node_capabilities
+
+    airbend = airbend_node_capabilities(effects, target_schema, cost_schema)
+    if airbend is not None:
+        return airbend
     from ..compiler.reanimation_templates import RELATIVE_TARGET_REANIMATION_MECHANIC
     if RELATIVE_TARGET_REANIMATION_MECHANIC in mechanics:
         from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_MECHANIC
@@ -581,6 +638,7 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
 
 def special_node_covered_mechanics(supplied):
     """Keep special capability coverage with its typed shape routing."""
+    from .artifact_mana_tap_control import EVENT_CAPABILITY as ARTIFACT_TAP_CAPABILITY, MECHANIC as ARTIFACT_TAP_MECHANIC
     from .combat_prevention_draw import CAPABILITY as COMBAT_PREVENTION_DRAW_CAPABILITY
     from ..counter_placement_sets import (
         SOURCE_POWER_COMBAT_TARGET_COUNTER_CAPABILITY, SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC,
@@ -615,6 +673,8 @@ def special_node_covered_mechanics(supplied):
     from .opposing_owner_entry_life import OPPOSING_OWNER_ENTRY_LIFE_CAPABILITY, OPPOSING_OWNER_ENTRY_LIFE_MECHANIC
     from .owned_commander_amount import OWNED_COMMANDER_AMOUNT_CAPABILITY, OWNED_COMMANDER_AMOUNT_MECHANIC
 
+    from .departure_counter_copy import DEPARTURE_COUNTER_COPY_CAPABILITY, DEPARTURE_COUNTER_COPY_MECHANIC
+
     mapping = {
         SAGA_CHAPTER_GRANT_CAPABILITY: SAGA_CHAPTER_GRANT_MECHANIC,
         PAID_SACRIFICE_COPY_CAPABILITY: PAID_SACRIFICE_COPY_MECHANIC,
@@ -625,6 +685,7 @@ def special_node_covered_mechanics(supplied):
         DRAW_STEP_SETTLEMENT_CAPABILITY: DRAW_STEP_SETTLEMENT_MECHANIC,
         DIE_DRAW_CAPABILITY: DIE_DRAW_HAND_SIZE_MECHANIC,
         CAST_COIN_CAPABILITY: CAST_COIN_MECHANIC,
+        DEPARTURE_COUNTER_COPY_CAPABILITY: DEPARTURE_COUNTER_COPY_MECHANIC,
         COMBAT_PREVENTION_DRAW_CAPABILITY: TEMPORARY_QUOTED_GRANT_MECHANIC,
         "continuous.ability.temporary_each_color_protection": TEMPORARY_QUOTED_GRANT_MECHANIC,
         "continuous.ability.temporary_commander_lifelink": TEMPORARY_QUOTED_GRANT_MECHANIC,
@@ -643,6 +704,9 @@ def special_node_covered_mechanics(supplied):
         CREATURE_SELF_DAMAGE_SET_CAPABILITY: CREATURE_POWER_DAMAGE_MECHANIC,
         "continuous.resolution.target_basic_land_type_choice": "target-basic-land-type-choice",
         "resolution.effect_program.optional_target_result": "fixed-optional-target-characteristic-result",
+        "resolution.effect_program.optional_nonbasic_land_controller_search": "fixed-optional-target-characteristic-result",
+        "permanent.flip.original_source": "optional-counter-end-step-source-flip",
+        "zone.reanimate.returned_creature_counters": "returned-creature-counters",
         "counter.removal.chosen_kind": "chosen-counter-removal",
         "resolution.event_player.optional_draw": "fixed-event-player-optional-draw",
         'library.top.shared_type_optional_reveal': 'private-top-shared-type-reveal',
@@ -669,6 +733,8 @@ def special_node_covered_mechanics(supplied):
         'casting.resolution.fixed_bounded_hand': 'fixed-bounded-hand-free-cast',
     }
     covered = {mechanic for capability, mechanic in mapping.items() if capability in supplied}
+    if ARTIFACT_TAP_CAPABILITY in supplied:
+        covered.add(ARTIFACT_TAP_MECHANIC)
     from ..source_block_defender_model import SOURCE_BLOCK_DEFENDER_CAPABILITY, SOURCE_BLOCK_DEFENDER_MECHANIC
 
     if PAID_SACRIFICE_COPY_CAPABILITY in supplied:

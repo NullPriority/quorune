@@ -8,7 +8,7 @@ from ..rules.modal_selection import (
     COMMANDER_CAST_MODE_LIMIT, COMMANDER_CAST_MODE_LIMIT_FIELD, WIZARD_CAST_MODE_LIMIT,
 )
 from .modal_templates import fixed_choose_one_modal_spell_template, fixed_nonrepeating_modal_template
-from .spree_templates import fixed_spree_modal_template
+from .spree_templates import fixed_spree_modal_template, fixed_tiered_modal_template
 from .entwine_templates import fixed_entwine_modal_template
 
 
@@ -56,17 +56,26 @@ def whole_modal_spell_template(material_rows, *, compile_effect):
     escalate = fixed_escalate_tap_template(material_rows, compile_effect=compile_effect)
     if escalate is not None:
         return escalate
+    from .escalate_mana_templates import fixed_escalate_mana_template
 
-    from .pawprint_mode_templates import fixed_pawprint_mode_template
+    mana_escalate = fixed_escalate_mana_template(material_rows, compile_effect=compile_effect)
+    if mana_escalate is not None:
+        return mana_escalate
 
+    from .pawprint_mode_templates import fixed_pawprint_mode_template, fixed_repeatable_mode_template
+
+    if repeated := fixed_repeatable_mode_template(material_rows, compile_effect=compile_effect):
+        return repeated
     pawprint = fixed_pawprint_mode_template(material_rows, compile_effect=compile_effect)
     if pawprint is not None:
         return pawprint
     entwine=fixed_entwine_modal_template(material_rows,compile_effect=compile_effect)
     if entwine is not None:return entwine
-    spree = fixed_spree_modal_template(material_rows, compile_effect=compile_effect)
-    if spree is not None:
-        return spree
+    priced = fixed_tiered_modal_template(material_rows, compile_effect=compile_effect) or fixed_spree_modal_template(
+        material_rows, compile_effect=compile_effect,
+    )
+    if priced is not None:
+        return priced
     commander_modal = _commander_cast_modal_spell_template(material_rows, compile_effect=compile_effect)
     if commander_modal is not None:
         return commander_modal

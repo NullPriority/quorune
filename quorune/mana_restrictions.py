@@ -17,6 +17,8 @@ _BATTLEFIELD_CREATURE_ABILITY_CONTEXT_PREFIX = "mana-spend-battlefield-creature-
 _EXILED_SPELL_ANY_TYPE_PREFIX = "mana-spend-exiled-spell-any-type-v1:"
 _EXILE_PLAY_CASTER_FIELD = ";exile-play-caster="
 _EXILE_PLAY_COLOR_CASTER_FIELD = ";exile-play-color-caster="
+_SPELL_ORIGIN_FIELD = "cast-origin"
+_EXILE_ORIGIN_TAIL = ";" + _SPELL_ORIGIN_FIELD + "=exile"
 _LEGACY_RESTRICTION_TAILS = {
     ("spend this mana only to", "cast room spells and unlock doors"): ROOM_CAST_UNLOCK_MANA_RESTRICTION,
     (
@@ -80,6 +82,15 @@ def spell_mana_spend_context(type_line: str) -> str:
     """Encode public spell characteristics consumed by restriction predicates."""
 
     return _typed_context("spell", type_line)
+
+
+def with_exile_cast_origin(spend_context: str) -> str:
+    if not isinstance(spend_context, str) or not spend_context.startswith(_CONTEXT_PREFIX + ";kind=spell;"):
+        raise ValueError("Exile casting requires its ordinary spell context")
+    context = spend_context + _EXILE_ORIGIN_TAIL
+    if not _context_facts(context)[-1]:
+        raise ValueError("Exile origin must be the only new spell context fact")
+    return context
 
 
 def bind_exiled_spell_mana_spending(spend_context: str, *, payer: str) -> str:
@@ -230,40 +241,44 @@ def actual_ability_payment_color(context):
 
 def _context_facts(
     spend_context: str | None,
-) -> tuple[str | None, frozenset[str], frozenset[str], frozenset[str], bool]:
+) -> tuple[str | None, frozenset[str], frozenset[str], frozenset[str], bool, bool]:
     if spend_context and spend_context.startswith(_EXILED_SPELL_ANY_TYPE_PREFIX):
         parts = _read_exiled_spell_spending(spend_context)
         spend_context = parts[1] if parts else None
     if not spend_context:
-        return None, frozenset(), frozenset(), frozenset(), False
+        return None, frozenset(), frozenset(), frozenset(), False, False
     spend_context, _caster, _mode = _split_exile_play_caster(spend_context)
     spend_context, _colors = split_spell_colors(spend_context)
     spend_context, _actual = _split_actual_ability_color(spend_context)
     if spend_context == ROOM_UNLOCK_MANA_SPEND_CONTEXT:
-        return ROOM_UNLOCK_SPEND_KIND, frozenset(), frozenset(), frozenset(), False
+        return ROOM_UNLOCK_SPEND_KIND, frozenset(), frozenset(), frozenset(), False, False
     if spend_context.startswith((_CONTEXT_PREFIX + ";", _BATTLEFIELD_CREATURE_ABILITY_CONTEXT_PREFIX + ";")):
         rows = spend_context.split(";")
         battlefield_creature_ability = rows[0] == _BATTLEFIELD_CREATURE_ABILITY_CONTEXT_PREFIX
         pairs = tuple(row.split("=", 1) for row in rows[1:] if "=" in row)
         fields = dict(pairs)
+        cast_origin = fields.pop(_SPELL_ORIGIN_FIELD, None)
         if (
-            len(pairs) != 4
+            len(pairs) != 4 + int(cast_origin is not None)
+            or len(rows) != len(pairs) + 1
+            or (cast_origin is not None and (cast_origin != "exile" or fields.get("kind") != "spell"))
             or set(fields) != {"kind", "types", "subtypes", "supertypes"}
             or fields["kind"] not in {"spell", "ability"}
             or (battlefield_creature_ability and fields["kind"] != "ability")
         ):
-            return None, frozenset(), frozenset(), frozenset(), False
+            return None, frozenset(), frozenset(), frozenset(), False, False
         values = tuple(
             frozenset(value for value in fields[field].split(",") if value)
             for field in ("types", "subtypes", "supertypes")
         )
-        return fields["kind"], *values, battlefield_creature_ability
+        return fields["kind"], *values, battlefield_creature_ability, cast_origin == "exile"
     if spend_context in {"ability", "artifact_ability"}:
         return (
             "ability",
             frozenset({"artifact"} if spend_context == "artifact_ability" else ()),
             frozenset(),
             frozenset(),
+            False,
             False,
         )
     if "spell" in spend_context:
@@ -278,8 +293,9 @@ def _context_facts(
             frozenset(),
             frozenset({"legendary"} if "legendary" in tokens else ()),
             False,
+            False,
         )
-    return None, frozenset(), frozenset(), frozenset(), False
+    return None, frozenset(), frozenset(), frozenset(), False, False
 
 
 def mana_restriction_allows(
@@ -292,14 +308,15 @@ def mana_restriction_allows(
     if decode_source_bound_cast_mana(restriction) is not None:
         return True
 
-    kind, types, subtypes, supertypes, battlefield_creature_ability = _context_facts(spend_context)
+    kind, types, subtypes, supertypes, battlefield_creature_ability, spell_from_exile = _context_facts(spend_context)
     rule = decode_mana_spend_rule(restriction)
     if rule is not None:
         from .mana_spend_rules import ManaSpendRuleKind
 
         colors = _spell_context_colors(spend_context) if rule.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL else ()
         return rule.allows(kind, types, subtypes, supertypes,
-                           battlefield_creature_ability=battlefield_creature_ability, colors=colors)
+                           battlefield_creature_ability=battlefield_creature_ability, colors=colors,
+                           spell_from_exile=spell_from_exile)
     is_spell = kind == "spell"
     is_artifact = "artifact" in types
     is_creature = "creature" in types
@@ -341,7 +358,7 @@ def mana_restriction_allows(
 
 def mana_spend_protects_spell(restriction: str, spend_context: str | None) -> bool:
     rule = decode_mana_spend_rule(restriction)
-    kind, types, subtypes, supertypes, _battlefield_creature_ability = _context_facts(spend_context)
+    kind, types, subtypes, supertypes, _battlefield_creature_ability, _spell_from_exile = _context_facts(spend_context)
     return rule is not None and rule.protects(kind, types, subtypes, supertypes)
 
 
@@ -349,7 +366,7 @@ def mana_spend_haste_lifetime(restriction: str, spend_context: str | None):
     rule = decode_mana_spend_rule(restriction)
     if rule is None:
         return None
-    kind, types, subtypes, _supertypes, _battlefield_creature_ability = _context_facts(spend_context)
+    kind, types, subtypes, _supertypes, _battlefield_creature_ability, _spell_from_exile = _context_facts(spend_context)
     return rule.haste_lifetime(kind, types, subtypes)
 
 

@@ -8,6 +8,7 @@ from typing import Any
 
 from ..discard_effect_origin import DiscardEffectOrigin
 from ..errors import GameRuleError
+from ..rules.opponent_draw_result import ObserveOpponentDraw
 from ..milling import MillRequest, commit_mill, prepare_mill
 from ..replacement import FrozenMap, ReplacementEffectError
 from ..replacement.immutable import thaw_value
@@ -29,7 +30,7 @@ class DrawDiscardContinuation:
         if (
             not isinstance(self.draw, QueuedDraw)
             or self.draw.count != 1
-            or self.draw.post_draw_actions
+            or any(not isinstance(action, ObserveOpponentDraw) for action in self.draw.post_draw_actions)
             or not self.draw.excluded_effect_ids
             or not isinstance(self.after, DrawResume)
             or type(self.turn_sequence) is not int

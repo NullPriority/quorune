@@ -6,6 +6,7 @@ from . import regex_working_set as re
 
 from ..turn_skip_model import (
     MAX_PRINTED_SKIP_COUNT, TURN_SKIP_MECHANIC, TURN_SKIP_OPERATION,
+    TARGET_PLAYER_UNTAP_SKIP_TAP_MECHANIC, TargetPlayerUntapSkipTapSpec,
     TurnBoundary, TurnSkipScope, TurnSkipSpec,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -63,6 +64,25 @@ def scheduled_turn_skip_effect_template(text: str):
         effect["player"] = "$controller"
     mechanics = (TURN_SKIP_MECHANIC, *(("cr-115-targets",) if targeted else ()))
     return "fixed-scheduled-turn-skip-v1", (effect,), schema, mechanics
+
+
+def target_player_untap_skip_tap_template(text: str):
+    match = re.fullmatch(
+        r"Target player skips their next untap step\. Tap up to "
+        rf"(?P<count>{FIXED_COUNT_PATTERN}) target permanents that player controls\.?",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    maximum = fixed_number(match["count"])
+    if not 1 <= maximum <= 6:
+        return None
+    from .fixed_homogeneous_target_sets import FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC
+
+    spec = TargetPlayerUntapSkipTapSpec(maximum)
+    return ("target-player-untap-skip-and-tap-v1", spec.effects(), spec.target_schema(),
+            (TARGET_PLAYER_UNTAP_SKIP_TAP_MECHANIC, TURN_SKIP_MECHANIC,
+             FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC, "tap-and-untap", "cr-115-targets"))
 
 
 def damage_player_turn_skip_result(binding, body: str):

@@ -461,11 +461,27 @@ class PrivateTopLandOrGoblinEffectTemplate:
 
 @dataclass(frozen=True, slots=True)
 class RevealedTopHandLifeEffectTemplate:
+    repeat: bool = False
+
     def compiled(self):
+        from ..rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_MECHANIC, repeat_top_hand_life_effect
+
+        if self.repeat:
+            return ("repeat-revealed-top-hand-life-v1", (repeat_top_hand_life_effect(),), None,
+                    (FIXED_LIBRARY_SELECTION_MECHANIC, REPEAT_TOP_HAND_LIFE_MECHANIC))
         from ..rules.library_selection_capability_shapes import revealed_top_hand_life_effect
 
         return ("revealed-top-hand-life-v1", (revealed_top_hand_life_effect(),), None,
                 (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+@dataclass(frozen=True, slots=True)
+class PrivateHandBottomExileEffectTemplate:
+    def compiled(self):
+        from ..rules.library_play_partition import private_hand_bottom_exile_effect
+
+        return ("private-hand-bottom-exile-play-v1", (private_hand_bottom_exile_effect(),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
 
 
 def fixed_library_selection_effect_template(
@@ -473,10 +489,16 @@ def fixed_library_selection_effect_template(
 ) -> (FixedLibrarySelectionEffectTemplate | ChosenTypeLibrarySelectionEffectTemplate
       | ChosenTypeTopSelectionEffectTemplate | PrivateTopLandEntryEffectTemplate | PrivateTopLandOrHandEffectTemplate
       | PrivateTopLandOrGoblinEffectTemplate | RevealedTopHandLifeEffectTemplate
-      | PrivateFixedTopTakeOrGraveyardEffectTemplate | None):
+      | PrivateFixedTopTakeOrGraveyardEffectTemplate | PrivateHandBottomExileEffectTemplate | None):
     """Lower one complete fixed self-library hand/remainder instruction."""
 
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == (
+        "look at the top three cards of your library. put one of them into your hand, "
+        "put one of them on the bottom of your library, and exile one of them. "
+        "you may play the exiled card this turn."
+    ):
+        return PrivateHandBottomExileEffectTemplate()
     if normalized.casefold() == (
         "look at the top three cards of your library. "
         "you may reveal a creature card of the chosen type from among them and put it into your hand. "
@@ -495,6 +517,10 @@ def fixed_library_selection_effect_template(
     if optional_fixed_top is not None:
         return PrivateFixedTopTakeOrGraveyardEffectTemplate(optional_fixed_top["quality"])
     hand_reveal = "reveal the top card of your library and put that card into your hand. "
+    if normalized_top == hand_reveal + (
+        "you lose life equal to its mana value. you may repeat this process any number of times."
+    ):
+        return RevealedTopHandLifeEffectTemplate(repeat=True)
     if normalized_top in (
         hand_reveal + "you lose life equal to its mana value.",
         hand_reveal + "you lose life equal to that card's mana value.",

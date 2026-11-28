@@ -21,10 +21,19 @@ _RESOLVING_ENTRY:ContextVar[object]=ContextVar('resolving_entry_cast_information
 def source_entry_cast_reader_present(host):
     registry=getattr(host,'semantics',None)
     programs=getattr(registry,'programs_for_event',None)
-    return callable(programs) and any(
+    if not callable(programs):
+        return False
+    from .entry_and_death_characteristics import NONHAND_ENTRY_PUMP_CAPABILITY
+
+    return any(
         isinstance(getattr(program,'event_condition',None),Mapping) and program.event_condition.get('field')==SOURCE_ENTRY_CAST_CONDITION
         and host.semantic_program_is_current_trusted(program)
-        for program in programs('permanent.enter.self'))
+        for program in programs('permanent.enter.self')
+    ) or any(
+        NONHAND_ENTRY_PUMP_CAPABILITY in program.capability_dependencies
+        and host.semantic_program_is_current_trusted(program)
+        for program in programs('permanent.enter')
+    )
 
 
 def _program_reads_white_entry(host, program):
@@ -62,7 +71,8 @@ def resolving_entry_cast_information(host, item):
         return
     card = host.state.cards.get(item.card_object_id or "")
     receipt = payment = None
-    if card is not None and item.kind == "spell":
+    # A spell can move itself before generic resolution finishes.
+    if card is not None and card.zone == "stack" and item.kind == "spell":
         if cast_reader:
             receipt = capture_stack_cast_receipt(host, card)
         if payment_reader and item.mana_spent_counts is not None:
@@ -73,6 +83,15 @@ def resolving_entry_cast_information(host, item):
         yield
     finally:
         _RESOLVING_ENTRY.reset(token)
+
+
+def direct_token_entry_cast_context(host, card):
+    if not source_entry_cast_reader_present(host):
+        return {}
+    if card.zone != "battlefield" or not card.is_token:
+        raise ValueError("Direct token entry cast context requires the committed token")
+    source = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    return {SOURCE_ENTRY_CAST_INFORMATION_FIELD: EntryCastInformation(source, None).to_dict()}
 
 
 def information_for_committed_entry(host, card, departure):
@@ -99,12 +118,32 @@ def information_for_committed_entry(host, card, departure):
     return EntryCastInformation(source, receipt, 2 if payment_reader else 1, payment).to_dict()
 
 
-def source_entry_cast_value(host,context,*,controller,source,origin=None):
+def source_entry_cast_value(host,context,*,controller,source,origin=None,any_caster=False):
     info=EntryCastInformation.from_dict(context.get(SOURCE_ENTRY_CAST_INFORMATION_FIELD))
     if controller not in host.state.players or info.cast is not None and (
             info.cast.caster not in host.state.players or info.cast.origin_owner not in host.state.players):
         raise ValueError('Source-entry cast information names an unknown player')
+    if any_caster:
+        if info.source != source or origin is not None:
+            raise ValueError("An any-caster entry requires its exact original cast receipt")
+        return info.cast is not None
     return info.was_cast_by(controller,source=source,origin=origin)
+
+
+def nonhand_entrant_was_cast_by(host, context, *, controller):
+    if context.get("from") != "stack":
+        return False
+    information = EntryCastInformation.from_dict(context.get(SOURCE_ENTRY_CAST_INFORMATION_FIELD))
+    if information.source.logical_object_id != context.get("card_object_identity"):
+        raise ValueError("A nonhand cast trigger requires the committed entering incarnation")
+    if controller not in host.state.players:
+        raise ValueError("A nonhand cast trigger requires the original active controller")
+    cast = information.cast
+    if cast is None:
+        return False
+    if cast.caster not in host.state.players or cast.origin_owner not in host.state.players:
+        raise ValueError("An original cast entry names an unknown player")
+    return cast.caster == controller and (cast.origin != "hand" or cast.origin_owner != controller)
 
 
 def entry_condition_actual(host, field, condition, *, source, context):
@@ -112,13 +151,19 @@ def entry_condition_actual(host, field, condition, *, source, context):
     from ..source_entry_cast_information import validate_source_entry_cast_condition
     from .unpaid_creature_entry import CONDITION_FIELD, condition_actual
 
+    from .entry_and_death_characteristics import NONHAND_ENTRY_PUMP_CONDITION
+
     try:
+        if field == NONHAND_ENTRY_PUMP_CONDITION:
+            if condition != {"field": NONHAND_ENTRY_PUMP_CONDITION, "op": "eq", "value": True}:
+                raise ValueError("Expected the original nonhand cast entry predicate")
+            return nonhand_entrant_was_cast_by(host, context, controller=source.controller)
         if field == CONDITION_FIELD:
             return condition_actual(condition, context, source)
         validate_source_entry_cast_condition(condition)
         return source_entry_cast_value(host, context, controller=source.controller,
             source=ContinuousObjectIdentity(source.object_id, source.logical_object_id),
-            origin=condition.get('origin'))
+            origin=condition.get('origin'), any_caster=condition.get('caster')=='any')
     except (ValueError, TypeError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
 

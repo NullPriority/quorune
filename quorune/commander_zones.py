@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed CR 903.9 commander movement boundaries."""
 
 from dataclasses import dataclass
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable, Mapping, Protocol
 
 from .replacement_effects import ReplacementClass, ReplacementEffect
 from .composition_commander_replacement_model import CommanderZoneComponent,COMPONENTS_FIELD,RETURNS_FIELD,EPOCH_FIELD
@@ -217,6 +217,45 @@ def commander_hand_library_replacement_effects(subject,*,maximum_destination_cha
                 operations=({'op':'union','field':RETURNS_FIELD,'values':[component.designation_id]},),optional=True,
                 label=f'{component.owner}: put commander {component.printed_name} ({component.ref}) into command instead'))
     return tuple(effects)
+
+
+def present_commander_replacement_options(
+    context: dict[str, Any], continuation: Mapping[str, Any]
+) -> None:
+    """Label offered commander destinations without changing the decision or record."""
+    options = context.get("options", ())
+    prefix = f"{COMMANDER_ZONE_REPLACEMENT_EFFECT_PREFIX}:"
+    if not any(str(option.get("id", "")).startswith(f"decline:{prefix}") for option in options):
+        return
+    batch = continuation.get("replacement_batch", {})
+    offered_effects = {
+        str(option.get("id", "")).removeprefix("decline:")
+        for option in options
+        if str(option.get("id", "")).removeprefix("decline:").startswith(prefix)
+    }
+    if len(offered_effects) != 1:
+        return
+    effects = {effect["effect_id"]: effect for effect in continuation.get("replacement_effects", ())}
+    event_choices = context.get("event_effect_options", {})
+    events = list(batch.get("events", ()))
+    destinations = {"hand": "Return to hand", "library": "Put into library"}
+    for option in options:
+        value = str(option.get("id", ""))
+        effect_id = value.removeprefix("decline:")
+        if not effect_id.startswith(prefix) or effect_id not in effects:
+            continue
+        subject = effects[effect_id]["conditions"]["logical_object_id"]["eq"]
+        possible = {
+            event["payload"].get("destination")
+            for event in events
+            if event["kind"] == "zone.change"
+            and event["payload"].get("logical_object_id") == subject
+            and (not event_choices or value in event_choices.get(event["event_id"], ()))
+        }
+        if len(possible) == 1:
+            label = destinations.get(next(iter(possible)))
+            if label:
+                option["label"] = label if option["decline"] else "Move to command zone"
 
 
 def commit_commander_zone_choice_decline(

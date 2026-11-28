@@ -13,6 +13,7 @@ from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.blight_model import blight_decline_branch_is_closed
 from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
+from ..rules.mill_paid_hand_return import MILL_HAND_PAYMENT_FIELD
 from ..rules.targeted_life_decline import is_targeted_life_decline_effect
 from ..rules.scheduled_life_return import is_scheduled_life_return
 from .scheduled_life_return import complete_scheduled_life_return, prepare_scheduled_life_return
@@ -165,6 +166,10 @@ def _prepare_opponent_event_payment(effect, context):
 def prepare_fixed_effect_payment(
     effect: Mapping[str, Any], context: SemanticChoiceContext,
 ) -> SemanticChoicePreparation:
+    if MILL_HAND_PAYMENT_FIELD in effect:
+        from .mill_paid_hand_return import prepare_mill_hand_payment
+
+        return prepare_mill_hand_payment(effect, context)
     from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
 
     from ..rules.opponent_event_mana_payment import uses_opponent_event_mana_payment
@@ -343,6 +348,10 @@ def complete_fixed_effect_payment(
     query: SemanticChoiceQuery,
 ) -> SemanticChoiceCompletion:
     effect = continuation.effect
+    if MILL_HAND_PAYMENT_FIELD in effect:
+        from .mill_paid_hand_return import complete_mill_hand_payment
+
+        return complete_mill_hand_payment(continuation, response, query)
     from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
 
     from ..rules.opponent_event_mana_payment import resolved_opponent_event_mana_payment, uses_opponent_event_mana_payment

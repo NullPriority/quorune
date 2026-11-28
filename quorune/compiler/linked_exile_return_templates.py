@@ -55,7 +55,11 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
     """Assemble linked source abilities against the prepared face rows."""
     from .entry_x_results import entry_result_trigger_node_compiler
     from .linked_loyalty_exile_templates import linked_loyalty_activation_compiler
+    from .linked_creature_settlement import linked_creature_settlement_activation_compiler
 
+    compile_ability = linked_creature_settlement_activation_compiler(
+        compile_ability, material_rows=material_rows, card_name=card_name, card_types=card_types,
+    )
     compile_ability = linked_loyalty_activation_compiler(
         compile_ability, material_rows=material_rows, card_name=card_name, card_types=card_types,
     )
@@ -66,6 +70,11 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
     trigger_compiler = linked_ability_trigger_compiler(
         trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
         card_name=card_name, match_source=match_source, permanent=permanent,
+    )
+    from .linked_death_upkeep import linked_death_upkeep_compiler
+
+    trigger_compiler = linked_death_upkeep_compiler(
+        trigger_compiler, material_rows=material_rows, card_name=card_name, permanent=permanent,
     )
     from .linked_library_imprint import linked_artifact_library_trigger_compiler, linked_library_imprint_trigger_compiler
 
@@ -86,6 +95,11 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
 
     trigger_compiler = private_opponent_library_cast_trigger_compiler(
         trigger_compiler, permanent=permanent, trigger_node=trigger_node, match_source=match_source,
+    )
+    from .named_artifact_echo import named_artifact_echo_compiler
+
+    trigger_compiler = named_artifact_echo_compiler(
+        trigger_compiler, material_rows=material_rows, permanent=permanent, card_types=card_types,
     )
     return linked_fading_compilers(
         compile_ability, trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
@@ -291,9 +305,29 @@ def prospective_entry_linked_return_template(text):
             linked_type_entry_counter_target_schema(version), (LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"))
 
 
+def canonical_optional_enchantment_return(text: str) -> str | None:
+    normalized = " ".join(text.split()).casefold().replace("’", "'")
+    if normalized == (
+        "you may exile this enchantment. if you do, return it to the battlefield under its owner's control."
+    ):
+        return "You may exile this enchantment, then return it to the battlefield under its owner's control."
+    return None
+
+
 def linked_exile_return_effect_template(text: str, *, card_name: str,
                                       source_is_permanent: bool | None = None) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     normalized = " ".join(text.strip().removeprefix("• ").split())
+    from ..rules.linked_return_subtype_counter import linked_subtype_counter_effects, linked_subtype_counter_target
+
+    if source_is_permanent is not True and normalized.casefold() == (
+        "exile target creature you control, then return that card to the battlefield under its owner's control. "
+        "if it's a spirit, put a +1/+1 counter on it."
+    ):
+        return (
+            "linked-return-subtype-counter-v1", linked_subtype_counter_effects(), linked_subtype_counter_target(),
+            (LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"),
+        )
+    normalized = canonical_optional_enchantment_return(normalized) or normalized
     if prospective := prospective_entry_linked_return_template(normalized):
         return prospective
     if normalized.casefold().startswith("you may "):
@@ -301,6 +335,8 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
         if inner is None:
             return None
         template, effects, schema, mechanics = inner
+        if template == "linked-return-subtype-counter-v1":
+            return None
         # Both phases belong to one optional instruction, not two decisions.
         wrapper = {"op": "offer_optional_effect", "player": "$controller",
                    "effects": [dict(effect) for effect in effects]}
@@ -322,6 +358,7 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
     if transformed and not self_subject:
         return None
     schema = None
+    owned_creature = subject.casefold() == "another target creature you own"
     cards: Any = "$source.zone_object"
     if self_subject:
         if source_is_permanent is not True or match["reference"].casefold() not in {"it", "that card"}:
@@ -337,10 +374,12 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
             subject = ("another target " if cardinality["other"] else "target ") + _singularize_subject(cardinality["quality"])
         else:
             minimum = maximum = 1
-        target = direct_permanent_target_spec(subject)
+        target = direct_permanent_target_spec("another target creature" if owned_creature else subject)
         if target is None:
             return None
         schema = target.to_target_schema()
+        if owned_creature:
+            schema["owner_relation"] = "you"
         if minimum == 0:
             schema.pop("count")
             schema["up_to"] = maximum
@@ -365,6 +404,11 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
                                     entry_counters=((match["counter"].casefold(), {"a":1,"one":1,"two":2,"three":3}[match["count"].casefold()]),) if match["counter"] else ())
     except ValueError:
         return None
+    if owned_creature:
+        from ..rules.linked_exile_return_shapes import is_owned_creature_end_step_return
+
+        if not is_owned_creature_end_step_return(spec, schema):
+            return None
     binding = "blink:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
     effects = (
         {"op": LINKED_EXILE_RETURN_OPERATION, "phase": "exile", "cards": cards, "binding_id": binding, "spec": spec.to_dict()},

@@ -1,9 +1,22 @@
 """Fixed destruction selections expressed by existing immutable query fields."""
 from . import regex_working_set as re
 from dataclasses import replace
+from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import CounterAbsenceSpec, ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristic,TargetNumericCharacteristicSpec,TargetNumericComparison
 from .noncreature_quantity_subtypes import noncreature_quantity_subtype_fields
+
+
+def fixed_creature_subtype_destruction_query(subject: str) -> ObjectQuerySpec | None:
+    phrase = " ".join(subject.casefold().split())
+    if not phrase.endswith(" creatures"):
+        return None
+    qualifier = phrase.removesuffix(" creatures")
+    subtype = canonical_creature_subtype(qualifier.removeprefix("non-"))
+    if subtype is None:
+        return None
+    field = "excluded_subtypes" if qualifier.startswith("non-") else "subtypes_all"
+    return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), **{field: (subtype,)})
 
 
 def creature_counter_absence_query(counter_name: str | None) -> ObjectQuerySpec:

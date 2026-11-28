@@ -1462,8 +1462,8 @@ def commit_damage_result_plan(
             defeated.append(card)
     for battle in defeated:
         host._queue_siege_defeated_trigger(battle)
-    from .counter_placement_events import capture_counter_placement_occurrences
-    counter_occurrences=capture_counter_placement_occurrences(host, plan.counter_placements.prepared.events, reason="damage result")
+    from .counter_placement_events import capture_counter_damage_occurrences
+    counter_occurrences=capture_counter_damage_occurrences(host, plan.counter_placements.prepared.events, reason="damage result")
     return DamageResultCommit(
         records=plan.records,
         changed_players=plan.changed_players,

@@ -51,18 +51,22 @@ export function printingLabel(value: JsonValue): string {
   ].filter(Boolean).join(" · ");
 }
 
+const treasureTokenArt = "3c549374";
+
 export function cardImageUrl(value: JsonValue, size: string, face = Number(asRecord(value).face ?? 0)): string | undefined {
   const card = asRecord(value);
-  const cid = typeof card.cid === "string" ? card.cid : "";
+  const defaultTreasure = card.tok === 1 && !card.printing && (card.n === "Treasure" || card.n === "Treasure Token");
+  const cid = defaultTreasure ? treasureTokenArt : typeof card.cid === "string" ? card.cid : "";
   if (!cid || card.n === "?") return undefined;
   const query = new URLSearchParams({ size, face: String(face) });
   const printing = asRecord(card.printing);
-  if (typeof printing.scryfall_id === "string") query.set("printing", printing.scryfall_id);
-  else if (typeof printing.set_code === "string" && typeof printing.collector_number === "string") {
+  // Use the same coordinates as the displayed printing when the import
+  // supplies both coordinates and a potentially stale provider UUID.
+  if (typeof printing.set_code === "string" && typeof printing.collector_number === "string") {
     query.set("edition", printing.set_code);
     query.set("collector", printing.collector_number);
     if (typeof printing.language === "string") query.set("language", printing.language);
-  }
+  } else if (typeof printing.scryfall_id === "string") query.set("printing", printing.scryfall_id);
   return `/api/v1/cards/${cid}/image?${query}`;
 }
 
@@ -93,6 +97,8 @@ export function CardTile({
   artCrop = false,
   origin,
   attachment,
+  showPrintedCost = true,
+  commandZone = false,
   showFaceStatus = false,
   choice,
 }: {
@@ -116,6 +122,8 @@ export function CardTile({
   artCrop?: boolean;
   origin?: string;
   attachment?: string;
+  showPrintedCost?: boolean;
+  commandZone?: boolean;
   showFaceStatus?: boolean;
   choice?: { selected: boolean; select: () => void; label?: string };
 }) {
@@ -155,12 +163,16 @@ export function CardTile({
   const stats = currentStats(card, definition);
   const counters = asRecord(card.ctr);
   const loyalty = typeof counters.loyalty === "number" ? counters.loyalty : undefined;
-  const otherCounters = Object.entries(counters).filter(([key]) => key !== "loyalty");
+  const otherCounters = Object.entries(counters).filter(([key]) => key !== "loyalty" && key !== "+1/+1");
+  const plusCounters = Number(counters["+1/+1"] ?? 0);
+  const counterDescription = useId();
   const damage = Number(card.dmg ?? 0);
   const canDrag = interactive && !choice && actions.some((action) => ["play_land", "cast"].includes(action.action));
   const actionKinds = new Set(actions.map((action) => action.action));
   const offerCost = !choice && actionable ? cardActionCost(actions) : "";
-  const printedCost = String(card.m ?? definition?.m ?? "");
+  const commanderTax = commandZone && showPrintedCost ? Number(card.cmd_tax ?? 0) : 0;
+  const printedCost = showPrintedCost ? String(card.m ?? definition?.m ?? "") : "";
+  const visibleCost = !battlefield && !commandZone ? offerCost || printedCost : "";
   const actionHint = choice || !actionable ? "" : manualMana
     ? actionKinds.has("undo_mana") ? "Untap" : "Tap"
     : actions.length > 1
@@ -197,7 +209,7 @@ export function CardTile({
         ? [actions.map((action) => spokenMana(action.label ? actionTitle(action) : `${actionHint} ${cardName(value)}`)).join(" or "), origin].filter(Boolean).join(" · ")
         : interactive || inspectable ? `Inspect ${cardName(value)}` : undefined}
       aria-describedby={[
-        offerCost ? costDescription : "", loyalty === undefined ? "" : loyaltyDescription,
+        offerCost || commandZone && showPrintedCost ? costDescription : "", plusCounters > 0 ? counterDescription : "", loyalty === undefined ? "" : loyaltyDescription,
         attachment ? attachmentDescription : "", card.tap && table ? tappedDescription : "",
       ].filter(Boolean).join(" ") || undefined}
       aria-pressed={choice?.selected}
@@ -222,7 +234,7 @@ export function CardTile({
       onMouseLeave={() => setPreviewAnchor(null)}
       onFocus={(event) => {
         onInspect?.(value);
-        if (inspectable && previewOnHover && !choice && event.currentTarget.matches(":focus-visible")) setPreviewAnchor(event.currentTarget);
+        if (inspectable && previewOnHover && !choice) setPreviewAnchor(event.currentTarget);
       }}
       onBlur={() => setPreviewAnchor(null)}
       onPointerDown={(event) => {
@@ -266,16 +278,30 @@ export function CardTile({
         {otherCounters.length > 0 && <span>{otherCounters.map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
         {Boolean(card.prepared) && <span>PREPARED</span>}
       </div>
+      {plusCounters > 0 && <span id={counterDescription} className="plus-counters" data-testid="plus-counters"
+        aria-label={`${plusCounters} +1/+1 counters`}>{plusCounters} × +1/+1</span>}
       {(stats || loyalty !== undefined || damage > 0) && <div className="card-stats">
         {stats && <strong data-testid="card-current-stats" aria-label={`Current power and toughness ${stats}`}>{stats}</strong>}
         {loyalty !== undefined && <strong id={loyaltyDescription} data-testid="card-current-loyalty">{loyalty} loyalty</strong>}
         {damage > 0 && <span data-testid="card-marked-damage" aria-label={`${damage} damage marked`}>{damage} dmg</span>}
       </div>}
       {card.tap && table && <span hidden id={tappedDescription}>Tapped</span>}
-      {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && <span className="card-action-hint">{actionHint}</span>}
-      {offerCost && <span id={costDescription} hidden>{spokenMana(offerCost)}</span>}
-      {(offerCost || printedCost) && <span className="card-cost-overlay"
-        data-testid={offerCost ? "card-offer-cost" : undefined} aria-hidden="true"><ManaText text={offerCost || printedCost} /></span>}
+      {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && !battlefield && <span className="card-action-hint">{actionHint}</span>}
+      {(offerCost || commandZone && showPrintedCost) && <span id={costDescription} hidden>
+        {commandZone ? <>Base cost {spokenMana(printedCost)}
+          {commanderTax > 0 && ` · Commander tax ${commanderTax}`}
+        </> : spokenMana(offerCost)}
+      </span>}
+      {visibleCost && <span className="card-cost-overlay"
+        data-testid={offerCost ? "card-offer-cost" : undefined} aria-hidden="true">
+        <ManaText text={visibleCost} className="mana-cost" />
+      </span>}
+      {commandZone && showPrintedCost && <div className="command-price" aria-hidden="true">
+        <span className="command-card-cost" title="Base commander cost">
+          <ManaText text={printedCost || "—"} className="mana-cost" />
+        </span>
+        {commanderTax > 0 && <span className="commander-tax" title={`Commander tax +${commanderTax}`}>Tax +{commanderTax}</span>}
+      </div>}
       {previewAnchor && <FloatingCardPreview anchor={previewAnchor} value={value} view={view} />}
     </article>
   );
@@ -321,6 +347,7 @@ export function CardInspector({
   const isCurrentFace = faceIndex === projectedFace;
   const name = isCurrentFace ? cardName(value) : String(face.n ?? cardName(value));
   const mana = String((isCurrentFace ? card.m : face.m) ?? definition?.m ?? "");
+  const commanderTax = isCurrentFace ? Number(card.cmd_tax ?? 0) : 0;
   const typeLine = String((isCurrentFace ? card.t : face.t) ?? definition?.t ?? "");
   const oracle = card.n === "?" ? "This card’s identity is hidden." :
     String((isCurrentFace ? card.o : face.o) ?? definition?.o ?? "No rules text available.");
@@ -329,7 +356,7 @@ export function CardInspector({
   return (
     <section className={`card-inspector-panel${expanded ? " expanded" : ""}`} data-testid={previewOnly ? "hover-card-preview" : expanded ? "card-inspector-expanded" : "card-inspector"}>
       <header>
-        <div><span className="eyebrow">CARD VIEWER</span><strong>{name}</strong></div>
+        <div className="inspector-heading"><strong>{name}</strong>{mana && <ManaText text={mana} className="mana-cost" />}</div>
         {onExpand && <button type="button" className="link-button" onClick={onExpand}>Enlarge</button>}
       </header>
       <div className="inspector-art">
@@ -337,13 +364,11 @@ export function CardInspector({
           <img
             key={image}
             src={image}
-            alt={name}
+            alt=""
             onError={() => setFailedImage(image)}
           />
         ) : (
-          <div className="inspector-art-fallback"><strong>{name}</strong><span>{typeLine}</span>
-            {printingLabel(value) && <span>Printing art unavailable</span>}
-          </div>
+          <div className="inspector-art-fallback"><span>Card art unavailable</span></div>
         )}
       </div>
       {!previewOnly && faces.length > 1 && (
@@ -362,16 +387,16 @@ export function CardInspector({
         </div>
       )}
       <div className="inspector-text">
-        <div><strong>{name}</strong>{mana && <ManaText text={mana} />}</div>
         {typeLine && <small>{typeLine}</small>}
+        {commanderTax > 0 && <small>Commander tax +{commanderTax}</small>}
         {printingLabel(value) && <small className="printing-label">{printingLabel(value)}</small>}
-        {isCurrentFace && <div className="inspector-condition">
+        {isCurrentFace && (stats || card.dmg || card.tap || counters.length > 0) && <div className="inspector-condition">
           {stats && <strong>Current {stats}</strong>}
           {card.dmg ? <span>{String(card.dmg)} damage marked</span> : null}
           {card.tap ? <span>Tapped</span> : null}
           {counters.map(([key, count]) => <span key={key}>{String(count)} × {key} {Number(count) === 1 ? "counter" : "counters"}</span>)}
         </div>}
-        <p>{oracle}</p>
+        <p><ManaText text={oracle} /></p>
       </div>
     </section>
   );
@@ -386,7 +411,10 @@ export function FloatingTablePreview({
   const [position, setPosition] = useState({ left: 0, top: 0, width: 0, maxHeight: 0 });
   const previewRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
+    const window = anchor.ownerDocument.defaultView!;
+    let frame = 0;
     function place() {
+      frame = 0;
       const bounds = anchor.getBoundingClientRect();
       const width = Math.max(0, Math.min(280, window.innerWidth - 24));
       const maxHeight = Math.max(0, window.innerHeight - 24);
@@ -400,12 +428,16 @@ export function FloatingTablePreview({
         maxHeight,
       });
     }
-    const observer = new ResizeObserver(place);
+    function schedulePlacement() {
+      if (!frame) frame = window.requestAnimationFrame(place);
+    }
+    const observer = new ResizeObserver(schedulePlacement);
     if (previewRef.current) observer.observe(previewRef.current);
     place();
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => {
+      window.cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
@@ -413,7 +445,7 @@ export function FloatingTablePreview({
   }, [anchor]);
   return createPortal(<div ref={previewRef} className="floating-card-preview" style={position} aria-hidden="true">
     {children}
-  </div>, document.body);
+  </div>, anchor.closest(".game-shell") ?? anchor.ownerDocument.body);
 }
 
 function FloatingCardPreview({ anchor, value, view }: {

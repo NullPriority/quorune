@@ -120,6 +120,45 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
             self.assertTrue(result.ok,result.summary)
         self.fail('Counter trigger sequence did not finish')
 
+    def test_counter_subscribers_share_reads_then_refresh_after_ability_change(self):
+        from types import SimpleNamespace
+
+        from quorune.counter_placement_event_model import COUNTER_PLACEMENT_EVENT, SINGLE_COUNTER_EVENT
+        from quorune.counter_placement_events import counter_event_subscribers
+        from quorune.recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
+
+        source = SimpleNamespace(object_id="counter-source")
+        host = SimpleNamespace(_semantic_event_sources=lambda **_: (source,))
+        enabled = True
+        reads = []
+        event_visits = []
+
+        def read_characteristics():
+            reads.append(enabled)
+            return {"subscribed": enabled}
+
+        def program_views(owner, card, event, *, source_zones, source_characteristics):
+            self.assertIs(source, card)
+            self.assertIsNone(source_zones)
+            event_visits.append(event)
+            facts = source_characteristics.get(card.object_id)
+            if facts is None:
+                facts = read_characteristics()
+            program = SimpleNamespace(event=event, event_condition=None)
+            subscribed = facts["subscribed"] and event != SINGLE_COUNTER_EVENT
+            return "battlefield", facts, [(program, None)] if subscribed else []
+
+        with patch("quorune.trigger_discovery._event_programs_for_source", side_effect=program_views):
+            events = (COUNTER_PLACEMENT_EVENT, SINGLE_COUNTER_EVENT, RECIPIENT_COUNTER_EVENT)
+            first = counter_event_subscribers(host)
+            self.assertEqual(([source], [], [source]), tuple(first[event] for event in events))
+            self.assertEqual([True], reads)
+            enabled = False
+            second = counter_event_subscribers(host)
+            self.assertEqual(([], [], []), tuple(second[event] for event in events))
+            self.assertEqual([True, False], reads)
+            self.assertEqual(list(events) * 2, event_visits)
+
     def test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence(self):
         session=self.session(286001);engine=session.engine
         fathom=self.add(engine,'Fathom Mage')
@@ -500,6 +539,218 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
         self.assertEqual(3, len(insects))
         self.assertTrue(all(card.controller == "A" for card in insects))
         self.replay(session, load=True)
+
+
+class RecipientCounterDamageNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "recipient-counter-damage.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "counter-replacement-cards.json", "counter-doubling-cards.json",
+            "counter-placement-event-cards.json", "optional-draw-attack-restriction-cards.json",
+            "target-player-sequence-cards.json", "event-spell-copy-cards.json", "damage-result-cards.json",
+            "revealed-top-card-mana-value-cards.json", "counter-prohibition-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Recipient counter damage", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    order_triggers = CounterPlacementEventRuntimeTests.order_triggers
+
+    def _source(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "All Will Be One")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _targets(self, game, targets):
+        for ref in targets:
+            self.order_triggers(game)
+            self.assertEqual("semantic.target", game.state.pending_decision.kind)
+            result = game.act("pilot:A", {"action_id": "choose", "targets": [ref]})
+            self.assertTrue(result.ok, result.summary)
+
+    def test_all_will_be_one_exact_compiler_pins_the_recipient_and_target_roles(self):
+        from quorune.recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
+        from quorune.rules.recipient_counter_damage import RECIPIENT_COUNTER_DAMAGE_CAPABILITY
+
+        record = self.db.lookup("All Will Be One", fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertEqual(RECIPIENT_COUNTER_EVENT, node.event)
+            self.assertEqual("opponent", node.target_schema["controller_relation"])
+            self.assertIn(RECIPIENT_COUNTER_DAMAGE_CAPABILITY, node.capability_dependencies)
+        witness()
+        with patch("quorune.compiler.event_counter_results.recipient_counter_damage_result", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def test_all_will_be_one_preserves_post_replacement_amount_target_roles_and_departed_source(self):
+        game, source = self._source(286101)
+        body = self.add(game.engine, "Generic Bound Body")
+        self.add(game.engine, "Branching Evolution")
+        self.add(game.engine, "Hardened Scales")
+        spell = self.add(game.engine, "Generic Counter Event Two", zone="hand")
+        opponent_body = self.add(game.engine, "Generic Bound Body", seat="C", ref="awbo-opposing-creature")
+        walker = self.add(game.engine, "Generic Protected Walker", seat="B", ref="awbo-opposing-walker")
+        walker.counters["loyalty"] = 9
+        own_walker = self.add(game.engine, "Generic Protected Walker", ref="awbo-own-walker")
+        own_walker.counters["loyalty"] = 9
+        battle = self.add(game.engine, "Generic Protected Battle", seat="B")
+        battle.counters["defense"] = 4
+        battle.battle_protector = "C"
+        land = self.add(game.engine, "Karn's Bastion", seat="D")
+        removal = self.add(game.engine, "Disenchant", seat="B", zone="hand", ref="awbo-hidden-removal")
+        for i in range(2):
+            self.add(game.engine, "Generic Bound Plains", seat="B", ref=f"awbo-b-land-{i}")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast(game, "A", spell, [body.ref])
+        pending = self.resolve(game)
+        self.assertEqual("replacement.order", pending.kind)
+        self.assertEqual({}, game.state.cards[body.object_id].counters)
+        game = self.replay(game, load=True)
+        while game.state.pending_decision.kind == "replacement.order":
+            options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            result = game.act("pilot:A", {"action_id": "choose", "replacement": options[0]["id"]})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", self.resolve(game).kind)
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertNotIn(removal.ref, str(packet))
+        legal = packet["ctx"]["target_schema"]["groups"][0]["legal_refs"]
+        self.assertEqual({"B", "C", "D", opponent_body.ref, walker.ref}, set(legal))
+        before = authoritative_state_hash(game.state)
+        for wrong in ("A", body.ref, own_walker.ref, battle.ref, land.ref):
+            result = game.act("pilot:A", {"action_id": "choose", "targets": [wrong]})
+            self.assertFalse(result.ok, wrong)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self._targets(game, [walker.ref])
+        dealt = game.state.cards[body.object_id].counters["+1/+1"]
+        self.assertIn(dealt, (5, 6))
+        pending = next(item for item in game.state.stack if item.source_object_id == source.object_id)
+        self.assertEqual(dealt, pending.context["amount"])
+        self.cast(game, "B", removal, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        pending = next(item for item in game.state.stack if item.source_object_id == source.object_id)
+        self.assertEqual("battlefield", pending.context["source_damage_snapshot"]["zone"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(9 - dealt, game.state.cards[walker.object_id].counters["loyalty"])
+        self.assertEqual(9, game.state.cards[own_walker.object_id].counters["loyalty"])
+        self.replay(game, load=True)
+
+    def test_all_will_be_one_counts_counters_from_the_actual_battlefield_entry(self):
+        game, source = self._source(286105)
+        card = self.add(game.engine, "Feral Hydra", zone="hand")
+        self.prepare(game, mana={"C": 2, "G": 1})
+        self.checkpoint(game)
+        action = self.action(game, "A", card)
+        result = game.act("pilot:A", {"action_id": action["id"], "x": 2, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", self.resolve(game).kind)
+        self._targets(game, ["C"])
+        occurrence, = (item.context for item in game.state.stack if item.source_object_id == source.object_id)
+        current = game.state.cards[card.object_id]
+        self.assertEqual(("battlefield", 2), (current.zone, current.counters["+1/+1"]))
+        self.assertEqual((current.ref, current.logical_object_id, "A", 2),
+                         tuple(occurrence[k] for k in ("recipient", "recipient_logical_id", "placing_player", "amount")))
+        before = game.state.players["C"].life
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before - 2, game.state.players["C"].life)
+        self.replay(game, load=True)
+
+    def test_all_will_be_one_does_not_trigger_for_prohibited_counter_placements(self):
+        game, source = self._source(286106)
+        self.add(game.engine, "Solemnity", seat="B")
+        body = self.add(game.engine, "Generic Bound Body")
+        spell = self.add(game.engine, "Generic Counter Event Two", zone="hand")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast(game, "A", spell, [body.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({}, game.state.cards[body.object_id].counters)
+        self.assertFalse(any(item.source_object_id == source.object_id for item in game.state.stack))
+        self.replay(game, load=True)
+
+    def _proliferate(self, game, seat, bastion, refs):
+        self.priority(game, seat)
+        actions = game.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in actions if row["id"].startswith(f"activate:{bastion.ref}:")
+                   and "proliferate" in row["label"].casefold())
+        result = game.act(f"pilot:{seat}", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        result = game.act(f"pilot:{seat}", {"action_id": "choose", "objects": refs})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_all_will_be_one_groups_counter_kinds_per_recipient_and_checks_the_placing_player(self):
+        game, source = self._source(286102)
+        first = self.add(game.engine, "Karn's Bastion", ref="awbo-a-bastion")
+        second = self.add(game.engine, "Karn's Bastion", seat="B", ref="awbo-b-bastion")
+        body = self.add(game.engine, "Generic Bound Body", ref="awbo-mixed-recipient")
+        body.counters.update({"charge": 1, "+1/+1": 1})
+        game.state.players["B"].poison = 1
+        for seat in "AB":
+            for i in range(4):
+                self.add(game.engine, "Generic Bound Plains", seat=seat, ref=f"awbo-{seat}-bastion-land-{i}")
+        self.prepare(game)
+        self.checkpoint(game)
+        self._proliferate(game, "B", second, [body.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({"charge": 2, "+1/+1": 2}, game.state.cards[body.object_id].counters)
+        before = game.state.players["C"].life
+        self._proliferate(game, "A", first, [body.ref, "B"])
+        game = self.replay(game, load=True)
+        self._targets(game, ["C", "C"])
+        events = [item.context for item in game.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual({(body.ref, 2), ("B", 1)}, {(event["recipient"], event["amount"]) for event in events})
+        self.assertEqual({"A"}, {event["placing_player"] for event in events})
+        by_ref = {event["recipient"]: event["counter_kinds"] for event in events}
+        self.assertEqual({"charge": 1, "+1/+1": 1}, by_ref[body.ref])
+        self.assertEqual({"poison": 1}, by_ref["B"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(before - 3, game.state.players["C"].life)
+        self.replay(game, load=True)
+
+    def test_all_will_be_one_groups_simultaneous_toxic_on_one_player(self):
+        game, source = self._source(286103)
+        attackers = [self.add(game.engine, "Crawling Chorus", ref=f"awbo-toxic-{i}") for i in range(2)]
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        game.state.players["C"].life = 25
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, [(card, "B") for card in attackers])
+        for _ in range(28):
+            decision = game.state.pending_decision
+            if decision.kind == "semantic.target":
+                break
+            if decision.kind == "priority":
+                command = {"action_id": "pass"}
+            elif decision.kind == "combat.blockers":
+                command = {"action_id": "block", "blocks": {}}
+            else:
+                self.fail(f"Expected a combat decision, got {decision.kind}")
+            result = game.act(game.pending_principals()[0], command)
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, game.state.players["B"].poison)
+        self._targets(game, ["C"])
+        trigger, = (item for item in game.state.stack if item.source_object_id == source.object_id)
+        self.assertEqual(("B", "A", 2), tuple(trigger.context[key] for key in ("recipient", "placing_player", "amount")))
+        self.assertEqual(2, len(trigger.context["counter_event_ids"]))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(23, game.state.players["C"].life)
+        self.replay(game, load=True)
 
 
 if __name__=='__main__':unittest.main()

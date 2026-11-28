@@ -385,3 +385,157 @@ class QualifiedAttackNativeTests(unittest.TestCase):
         for card in (source,bear):self.assertNotIn('double strike',session.engine._combat_keywords(session.state.cards[card.object_id]))
         self.until(session,lambda s:s.state.players['B'].life==life['B']-10 and s.state.players['C'].life==life['C']-2)
         self.replay(session,load=True)
+
+
+    def select_tempest_damage_target(self, game, target):
+        pending = self.resolve(game)
+        if pending.kind == "trigger.order":
+            self.assertEqual(["A"], pending.actors)
+            triggers = [item.ref for batch in game.state.pending_trigger_batches for item in batch.items]
+            self.assertEqual(2, len(triggers))
+            before = authoritative_state_hash(game.state)
+            command = {"action_id": "order", "triggers": triggers}
+            self.assertFalse(game.act("pilot:B", command).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+            ordered = game.act("pilot:A", command)
+            self.assertTrue(ordered.ok, ordered.summary)
+            pending = game.state.pending_decision
+        self.assertEqual(("semantic.target", ["A"]), (pending.kind, pending.actors))
+        chosen = game.act("pilot:A", {"action_id": "choose", "targets": [target]})
+        self.assertTrue(chosen.ok, chosen.summary)
+
+    def test_tempest_independent_flying_and_dragon_triggers_use_departure_source_and_live_count(self):
+        game = self.session(60361011)
+        game.state.config.semantic_policy = "trusted_only"
+        tempest = self.add(game.engine, "Dragon Tempest")
+        entrant = self.add(game.engine, "Shivan Dragon", zone="hand", ref="tempest-entrant")
+        retained = self.add(game.engine, "Universal Automaton", ref="tempest-retained-dragon")
+        foreign = self.add(game.engine, "Shivan Dragon", seat="B", ref="tempest-foreign")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        hidden = self.add(game.engine, "Unsummon", seat="D", zone="hand", ref="tempest-private")
+        for card in (tempest, entrant, retained):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 4, "R": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", entrant)
+        self.assertEqual("trigger.order", self.resolve(game).kind)
+        game = self.replay(game, load=True)
+        self.select_tempest_damage_target(game, "C")
+        trigger_items = [item for item in game.state.stack if item.source_object_id == tempest.object_id]
+        self.assertEqual(2, len(trigger_items))
+        self.assertEqual([[], ["C"]], sorted((item.targets for item in trigger_items), key=len))
+        incarnation = game.state.cards[entrant.object_id].logical_object_id
+        self.cast_for(game, "B", bounce, [entrant.ref])
+        game = self.replay(game, load=True)
+        life = game.state.players["C"].life
+        observed = []
+        dispatch = game.engine._dispatch_semantic_event
+
+        def capture(event, context, **fields):
+            if event == "damage.dealt":
+                observed.append(dict(context))
+            return dispatch(event, context, **fields)
+
+        with patch.object(game.engine, "_dispatch_semantic_event", side_effect=capture):
+            self.assertIsNone(self.resolve(game))
+        event, = observed
+        self.assertEqual((entrant.object_id, incarnation, "A", 1),
+                         (event["source_object_id"], event["source_logical_object_id"],
+                          event["source_controller"], event["amount"]))
+        self.assertEqual(life - 1, game.state.players["C"].life)
+        self.assertEqual("hand", game.state.cards[entrant.object_id].zone)
+        self.assertFalse(any("haste" in game.engine._combat_keywords(game.state.cards[card.object_id])
+                             for card in (entrant, retained, foreign)))
+        for seat in "ABC":
+            self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_tempest_keeps_one_result_for_nonoverlapping_entry_and_ignores_the_opponent(self):
+        game = self.session(60361012)
+        game.state.config.semantic_policy = "trusted_only"
+        tempest = self.add(game.engine, "Dragon Tempest")
+        dragon = self.add(game.engine, "Universal Automaton", zone="hand", ref="tempest-only-dragon")
+        flyer = self.add(game.engine, "Ornithopter", zone="hand", ref="tempest-only-flying")
+        self.assert_closed(game, tempest)
+        self.assert_closed(game, flyer)
+        self.prepare(game, mana={"C": 1, "U": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", dragon)
+        self.select_tempest_damage_target(game, "D")
+        self.assertEqual(1, self.trigger_count(game, tempest))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(39, game.state.players["D"].life)
+        self.assertNotIn("haste", game.engine._combat_keywords(dragon))
+
+        self.cast_for(game, "A", flyer)
+        self.assertIsNone(self.resolve(game))
+        self.assertIn("haste", game.engine._combat_keywords(game.state.cards[flyer.object_id]))
+        self.assertEqual(39, game.state.players["D"].life)
+        turn = game.state.turn_sequence
+        self.until(game, lambda current: current.state.turn_sequence > turn and current.state.phase == "precombat_main")
+        self.assertNotIn("haste", game.engine._combat_keywords(game.state.cards[flyer.object_id]))
+        self.assertFalse(game.state.stack)
+        other = self.session(60361013)
+        other.state.config.semantic_policy = "trusted_only"
+        self.add(other.engine, "Dragon Tempest")
+        opponent = self.add(other.engine, "Ornithopter", seat="B", zone="hand")
+        self.prepare(other, actor="B", active="B", mana={"C": 1, "U": 1})
+        self.checkpoint(other)
+        self.cast_for(other, "B", opponent)
+        self.assertIsNone(self.resolve(other))
+        self.assertFalse(other.state.stack)
+        self.assertNotIn("haste", other.engine._combat_keywords(other.state.cards[opponent.object_id]))
+        self.replay(game, load=True)
+        self.replay(other, load=True)
+
+    def test_tempest_ignores_forged_entry_result_owners_and_unmatched_count(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.qualified_entry_effects import ENTRY_FLYING_HASTE_CAPABILITY, ENTRY_SUBTYPE_DAMAGE_CAPABILITY
+        from test_controller_creature_keyword_absence import register_card
+
+        record = self.db.lookup("Dragon Tempest", fuzzy=False)
+        synthetic = replace(query_record(record.oracle_text), type_line="Enchantment", power=None, toughness=None)
+        arguments = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(synthetic, **arguments).status)
+        for text in (synthetic.oracle_text.replace("number of Dragons", "number of Goblins"),
+                     synthetic.oracle_text.replace("flying enters", "vigilance enters"),
+                     synthetic.oracle_text.replace("any target", "target opponent")):
+            self.assertNotEqual("exact", compile_oracle_card(replace(synthetic, oracle_text=text), **arguments).status)
+        with patch("quorune.compiler.qualified_entry_effects.qualified_entry_result_binding", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(synthetic, **arguments).status)
+        report, semantics = register_card(self.db, self.registry, record.name)
+        self.assertTrue(report["strict_capability_ready"], report)
+        expected = {"creature.enter": ENTRY_FLYING_HASTE_CAPABILITY,
+                    "permanent.enter": ENTRY_SUBTYPE_DAMAGE_CAPABILITY}
+        for program in semantics.programs_for_oracle(record.oracle_id):
+            cap = expected.pop(program.event)
+            self.assertIn(cap, program.capability_dependencies)
+            changed = replace(program, event_condition={"field": "controller", "op": "eq", "value": "$controller"})
+            self.assertFalse(bind_semantic_program_runtime(changed, capability_registry=self.registry,
+                                                         profile="commander_review")["strict"])
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            changed = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            bound = bind_semantic_program_runtime(changed, capability_registry=self.registry,
+                                                  profile="commander_review")
+            self.assertIn("capability:undeclared_runtime_dependency:" + cap, bound["blockers"])
+        self.assertEqual({}, expected)
+
+
+    def test_tempest_zero_live_subtype_count_deals_no_damage_after_the_only_dragon_leaves(self):
+        game = self.session(60361015)
+        game.state.config.semantic_policy = "trusted_only"
+        self.add(game.engine, "Dragon Tempest")
+        dragon = self.add(game.engine, "Universal Automaton", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.prepare(game, mana={"C": 1})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", dragon)
+        self.select_tempest_damage_target(game, "C")
+        self.cast_for(game, "B", bounce, [dragon.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[dragon.object_id].zone)
+        self.assertEqual(40, game.state.players["C"].life)
+        self.replay(game, load=True)

@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from test_qualified_zone_event_queries import query_record
 import test_activation_public_state as native
 from quorune.carddb import CardDatabase
@@ -211,7 +212,8 @@ class EventSpellCopyNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'event-spell-copy.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/event-spell-copy-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/event-spell-copy-cards.json',
+            ROOT/'tests/fixtures/fixed-resolution-mana-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Event copy',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
 
@@ -225,6 +227,113 @@ class EventSpellCopyNativeTests(unittest.TestCase):
             if decision.kind=='trigger.order':self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='priority')
             else:self.fail('Unexpected copy decision: '+decision.kind)
         self.fail('Event copy did not finish')
+
+    @staticmethod
+    def _storm_triggers(game, source):
+        return [item for item in game.state.stack if item.kind == "triggered_ability"
+                and item.source_object_id == source.object_id]
+
+    def _storm_copy_target(self, game, target):
+        pending = self.resolve(game)
+        self.assertIsNotNone(pending)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        self.assertEqual("copy_stack_item", game.packet("pilot:A", full=True)["decision"]["ctx"]["operation"])
+        before = authoritative_state_hash(game.state)
+        command = {"action_id": "choose", "targets": [target]}
+        self.assertFalse(game.act("pilot:D", command).ok)
+        self.assertFalse(game.act("pilot:A", {**command, "targets": ["bad-ref"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_thousand_year_storm_counts_only_the_original_casters_earlier_qualified_casts(self):
+        from quorune.rules.prior_qualified_cast_copy import PRIOR_CAST_COPY_COUNT
+
+        game = self.session(603638310)
+        source = self.add(game.engine, "Thousand-Year Storm", seat="D")
+        game.engine.change_control(source.object_id, "A", reason="Seed the original cast controller")
+        creature = self.add(game.engine, "Grizzly Bears", zone="hand")
+        early = self.add(game.engine, "Dark Ritual", zone="hand", ref="tys-first-cast")
+        later = self.add(game.engine, "Dark Ritual", zone="hand", ref="tys-later-response")
+        prior_targeted = self.add(game.engine, "Lightning Bolt", zone="hand", ref="tys-earlier-bolt")
+        opposing = self.add(game.engine, "Lightning Bolt", zone="hand", seat="B", ref="tys-bolt-by-opponent")
+        spell = self.add(game.engine, "Blaze", zone="hand")
+        counter = self.add(game.engine, "Counterspell", zone="hand", seat="C")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 5, "G": 1, "R": 2, "B": 2})
+        game.state.players["B"].mana_pool["R"] = 1
+        game.state.players["C"].mana_pool["U"] = 2
+        self.checkpoint(game)
+
+        self.cast_for(game, "A", creature)
+        self.assertEqual([], self._storm_triggers(game, source))
+        self.assertIsNone(self.resolve(game))
+        self.cast_for(game, "A", early)
+        first, = self._storm_triggers(game, source)
+        self.assertEqual(0, first.context[PRIOR_CAST_COPY_COUNT])
+        self.assertIsNone(self.resolve(game))
+        self.cast_for(game, "B", opposing, ["D"])
+        self.assertEqual([], self._storm_triggers(game, source))
+        self.assertIsNone(self.resolve(game))
+
+        self.cast_for(game, "A", prior_targeted, ["B"])
+        observed, = self._storm_triggers(game, source)
+        self.assertEqual(1, observed.context[PRIOR_CAST_COPY_COUNT])
+        self._storm_copy_target(game, "B")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(34, game.state.players["B"].life)
+        self.assertEqual(37, game.state.players["D"].life)
+
+        self.priority(game, "A")
+        action = self.action(game, "A", spell)
+        accepted = game.act("pilot:A", {"action_id": action["id"], "x": 3, "targets": ["B"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        original = next(item for item in game.state.stack if item.card_object_id == spell.object_id)
+        locked, = self._storm_triggers(game, source)
+        self.assertEqual(2, locked.context[PRIOR_CAST_COPY_COUNT])
+        self.cast_for(game, "A", later)
+        earlier, response = self._storm_triggers(game, source)
+        self.assertEqual((locked.ref, 2, 3), (earlier.ref, earlier.context[PRIOR_CAST_COPY_COUNT],
+                                               response.context[PRIOR_CAST_COPY_COUNT]))
+        self.cast_for(game, "C", counter, [original.ref])
+        game = self.replay(game, load=True)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        retained, = self._storm_triggers(game, source)
+        self.assertEqual(2, retained.context[PRIOR_CAST_COPY_COUNT])
+        self.assertTrue(EventSpellCopySource.from_dict(retained.context[KEY]).departed)
+        game = self.replay(game, load=True)
+        self._storm_copy_target(game, "C")
+        game = self.replay(game, load=True)
+        self._storm_copy_target(game, "D")
+        copies = [item for item in game.state.stack if item.kind == "spell_copy"]
+        self.assertEqual([(3, ["C"]), (3, ["D"])], [(item.x_value, item.targets) for item in copies])
+        self.assertEqual([], self._storm_triggers(game, source))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((34, 37, 34), tuple(game.state.players[seat].life for seat in "BCD"))
+        casts = game.engine._current_turn_history("spell_cast")
+        self.assertEqual(5, sum(event.actor == "A" for event in casts))
+        self.replay(game, load=True)
+
+    def test_thousand_year_storm_compiler_requires_the_original_prior_cast_scope(self):
+        from quorune.rules.prior_qualified_cast_copy import PRIOR_CAST_COPY_CAPABILITY, PRIOR_CAST_COPY_FIELD
+
+        record = self.db.lookup("Thousand-Year Storm", fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertEqual("spell.cast", node.event)
+            self.assertEqual({"schema_version": 1}, node.effects[0][PRIOR_CAST_COPY_FIELD])
+            self.assertIn(PRIOR_CAST_COPY_CAPABILITY, node.capability_dependencies)
+        witness()
+        with patch("quorune.compiler.fixed_stack_spell_copy.cast_event_spell_copy_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        changed = replace(record, oracle_text=record.oracle_text.replace("you've cast before it", "any player has cast"))
+        ir = compile_oracle_card(changed, capability_registry=self.registry)
+        self.assertNotEqual("exact", ir.status)
 
     def test_actual_jin_copies_departed_spell_and_counters_only_first_opponent(self):
         session = self.session(603638201)
@@ -1271,3 +1380,337 @@ class DirectCastSpellTokenNativeTests(InheritedNativeFixture, unittest.TestCase)
         token, = self.copy_tokens(session,source)
         self.assert_copy(session,source,token)
         self.replay(session,load=True)
+
+
+ARCHAIC_FRONT = "Wandering Archaic"
+VASTLANDS_BACK = "Explore the Vastlands"
+ARCHAIC = f"{ARCHAIC_FRONT} // {VASTLANDS_BACK}"
+
+
+class ArchaicAndVastlandsNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "event-spell-copy-cards.json": {ARCHAIC, "Counterspell", "Grizzly Bears", "Isamaru, Hound of Konda",
+                                            "Lightning Bolt", "Mountain"},
+            "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth"},
+        }
+        files = []
+        for filename, names in support.items():
+            doc = json.loads((ROOT / "tests" / "fixtures" / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in ids]
+            part = folder / filename
+            part.write_text(json.dumps(doc), encoding="utf-8")
+            files.append(part)
+        db = folder / "archaic-vastlands.sqlite3"
+        build_fixture_database(files, db)
+        cls.db = CardDatabase(db)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Archaic and Vastlands", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def okay(self, game, seat, command):
+        result = game.act("pilot:" + seat, command)
+        self.assertTrue(result.ok, result.summary)
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def cast_face(self, game, source, name, *, payment=None):
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action_id = f"cast:{source.ref}" if name == ARCHAIC_FRONT else f"cast:{source.ref}:face:{name}"
+        self.assertIn(action_id, {row["id"] for row in actions})
+        cost = {"pay": "auto"} if payment is None else {"pay": "manual", "payment": payment}
+        self.okay(game, "A", {"action_id": action_id, "face": name, **cost})
+
+    def scene(self, seed, *, counter_original=False, payer_lands=False):
+        game = self.session(seed)
+        source = self.add(game.engine, ARCHAIC, zone="hand", ref="archaic-front-or-back")
+        spell = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand", ref="archaic-instant-original")
+        counter = self.add(game.engine, "Counterspell", zone="hand", ref="archaic-outside-counter") if counter_original else None
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="archaic-hidden-d")
+        lands = [self.add(game.engine, "Mountain", seat="B", ref=f"archaic-payer-land-{i}") for i in range(2)] if payer_lands else []
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 5, "U": 2} if counter_original else {"C": 5})
+        game.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(game)
+        self.cast_face(game, source, ARCHAIC_FRONT, payment={"C": 5})
+        self.assertIsNone(self.resolve(game))
+        resident = game.state.cards[source.object_id]
+        self.assertEqual(("battlefield", ARCHAIC_FRONT), (resident.zone, resident.active_face))
+        self.cast_for(game, "B", spell, ["A"])
+        return game, source, spell, counter, private, lands
+
+    def payment_offer(self, game, *, payable):
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["B"]), (decision.kind, decision.actors))
+        context = game.packet("pilot:B", full=True)["decision"]["ctx"]
+        self.assertEqual({"GENERIC": 2}, {key: value for key, value in context["cost"].items() if value})
+        action, = (row for row in decision.payload_by_actor["B"]["legal_actions"] if row["id"] == "choose")
+        self.assertEqual([True, False] if payable else [False], list(action["choice_schema"]["legal_values"]))
+
+    def test_actual_opposing_caster_pays_through_existing_payment_and_denies_copy(self):
+        game, source, _spell, _counter, private, lands = self.scene(70710111, payer_lands=True)
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.payment_offer(game, payable=True)
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.reject(game, "A", {"action_id": "choose", "pay": True})
+        game = self.replay(game, load=True)
+        self.okay(game, "B", {"action_id": "choose", "pay": True})
+        self.assertTrue(all(game.state.cards[land.object_id].tapped for land in lands))
+        self.assertEqual(["spell"], [item.kind for item in game.state.stack])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(37, game.state.players["A"].life)
+        self.replay(game, load=True)
+
+    def test_actual_declined_copy_uses_departed_spell_and_controller_retargets(self):
+        game, source, spell, counter, private, _lands = self.scene(70710112, counter_original=True, payer_lands=True)
+        original, trigger = game.state.stack
+        self.assertEqual((["A"], "B"), (original.targets, original.controller))
+        self.assertEqual([], trigger.targets)
+        self.cast_for(game, "A", counter, [original.ref])
+        self.assertEqual(1, self.trigger_count(game, source))
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertTrue(game.state.stack[-1].context[KEY]["departed"])
+        self.payment_offer(game, payable=True)
+        self.reject(game, "A", {"action_id": "choose", "pay": True})
+        self.okay(game, "B", {"action_id": "choose", "pay": False})
+        decision = game.state.pending_decision
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal_actions"]
+        self.assertEqual(["apply", "decline"], actions[0]["choice_schema"]["legal_values"])
+        command = {"action_id": "choose", "choice": "apply"}
+        self.reject(game, "B", command)
+        game = self.replay(game, load=True)
+        self.okay(game, "A", command)
+        self.reject(game, "C", {"action_id": "choose", "targets": ["C"]})
+        self.okay(game, "A", {"action_id": "choose", "targets": ["C"]})
+        copy, = game.state.stack
+        self.assertEqual(("spell_copy", "A", ["C"]), (copy.kind, copy.controller, copy.targets))
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((40, 37), (game.state.players["A"].life, game.state.players["C"].life))
+        self.replay(game, load=True)
+
+    def library(self, game, seat, names, *, leave_lower=True):
+        if not leave_lower:
+            for object_id in tuple(game.state.players[seat].zones["library"]):
+                game.engine.move_card(object_id, "exile", reason="fixture short library", log=False, semantic_events=False)
+        return [self.add(game.engine, name, seat=seat, zone="library", ref=f"vastlands-{seat}-{index}")
+                for index, name in enumerate(names)]
+
+    def role(self, game, seat, legal):
+        decision = game.state.pending_decision
+        self.assertEqual(("choice.apnap", [seat]), (decision.kind, decision.actors))
+        context = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]
+        schema = context["legal_actions"][0]["choice_schema"]
+        self.assertEqual((0, 1, True), (schema["minimum"], schema["maximum"], schema["optional"]))
+        self.assertEqual(set(legal), set(schema["legal_refs"]))
+        return context
+
+    def test_actual_vastlands_reveals_in_apnap_and_commits_private_partitions(self):
+        from quorune.rules import library_selection
+
+        game = self.session(10140111)
+        source = self.add(game.engine, ARCHAIC, zone="hand", ref="vastlands-resolving-source")
+        self.assert_closed(game, source)
+        a = self.library(game, "A", ["Grizzly Bears", "Generic Bound Plains", "Generic Bound Growth", "Mountain", "Grizzly Bears"])
+        b = self.library(game, "B", ["Lightning Bolt", "Counterspell", "Grizzly Bears"], leave_lower=False)
+        c = self.library(game, "C", ["Grizzly Bears", "Generic Bound Plains", "Grizzly Bears"], leave_lower=False)
+        self.library(game, "D", [], leave_lower=False)
+        self.prepare(game, mana={"C": 3})
+        self.checkpoint(game)
+        self.cast_face(game, source, VASTLANDS_BACK)
+        self.assertEqual(VASTLANDS_BACK, game.state.cards[source.object_id].active_face)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        ctx = self.role(game, "A", [a[1].ref, a[3].ref])
+        self.assertEqual(5, len(ctx["looked"]))
+        for other in "BCD":
+            self.assertNotIn(a[1].ref, json.dumps(game.packet("pilot:" + other, full=True)))
+        self.reject(game, "B", {"action_id": "choose", "cards": [a[1].ref]})
+        self.reject(game, "A", {"action_id": "choose", "cards": [a[1].ref, a[3].ref]})
+        self.reject(game, "A", {"action_id": "choose", "cards": [a[2].ref]})
+        self.okay(game, "A", {"action_id": "choose", "cards": [a[1].ref]})
+        self.role(game, "A", [a[2].ref])
+        game = self.replay(game, load=True)
+        self.okay(game, "A", {"action_id": "choose", "cards": [a[2].ref]})
+
+        ctx = self.role(game, "B", [b[0].ref, b[1].ref])
+        self.assertEqual(3, len(ctx["looked"]))
+        self.assertEqual({a[1].ref, a[2].ref}, {row["ref"] for row in ctx["previous_reveals"][0]["cards"]})
+        self.assertNotIn(a[3].ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.assertNotIn(b[1].ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "library" for card in (a[1], a[2])))
+        self.assertTrue(all("B" not in game.state.cards[card.object_id].known_to for card in (a[1], a[2])))
+        self.okay(game, "B", {"action_id": "choose", "cards": [b[0].ref]})
+        ctx = self.role(game, "C", [c[1].ref])
+        self.assertEqual(["A", "B"], [row["player"] for row in ctx["previous_reveals"]])
+        self.assertTrue(all(game.state.players[seat].life == 40 for seat in "ABCD"))
+        game = self.replay(game, load=True)
+        with patch.object(library_selection, "_shuffle_bottom_selection", wraps=library_selection._shuffle_bottom_selection) as randomize:
+            self.okay(game, "C", {"action_id": "choose", "cards": []})
+        self.assertEqual({"A": 3, "B": 2, "C": 3, "D": 0},
+                         {call.args[1]: len(call.args[3]) for call in randomize.call_args_list})
+        self.assertFalse(game.state.stack)
+        self.assertTrue(all(game.state.players[seat].life == 43 for seat in "ABCD"))
+        for seat, selected, remainder in (("A", [a[1], a[2]], [a[0], a[3], a[4]]), ("B", [b[0]], b[1:]), ("C", [], c)):
+            self.assertTrue(all(card.object_id in game.state.players[seat].zones["hand"] for card in selected))
+            self.assertTrue(all(set(game.state.cards[card.object_id].known_to) == set("ABCD") for card in selected))
+            self.assertCountEqual([card.object_id for card in remainder], game.state.players[seat].zones["library"][:len(remainder)])
+            self.assertTrue(all(not game.state.cards[card.object_id].revealed_to
+                                and not game.state.cards[card.object_id].known_to for card in remainder))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_both_faces_exact_and_checked_roles_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.apnap_library_reveals import CAPABILITY as REVEAL_CAPABILITY, library_reveal_round_effects
+        from quorune.rules.opponent_cast_copy_payment import OPPONENT_CAST_COPY_PAYMENT_CAPABILITY
+        from test_granted_skulk import record
+
+        card = self.db.lookup(ARCHAIC, fuzzy=False)
+        oracle = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        front, back = (face.nodes[0] for face in oracle.faces)
+        self.assertIn(OPPONENT_CAST_COPY_PAYMENT_CAPABILITY, front.capability_dependencies)
+        self.assertIn(REVEAL_CAPABILITY, back.capability_dependencies)
+        self.assertEqual(library_reveal_round_effects(), tuple(back.effects))
+        for face, bad, kind in ((card.faces[0], ("an opponent", "you"), "Creature"),
+                                (card.faces[0], ("you may copy", "copy"), "Creature"),
+                                (card.faces[1], ("a land card and/or", "a land card and"), "Sorcery"),
+                                (card.faces[1], ("a random order", "any order"), "Sorcery")):
+            altered = compile_oracle_card(record(face["oracle_text"].replace(*bad), kind), capability_registry=self.registry)
+            caps = {cap for row in altered.faces for node in row.nodes for cap in node.capability_dependencies}
+            self.assertTrue({REVEAL_CAPABILITY, OPPONENT_CAST_COPY_PAYMENT_CAPABILITY}.isdisjoint(caps))
+        game = self.session(10140112)
+        source = self.add(game.engine, ARCHAIC, zone="hand")
+        programs = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        for cap in (REVEAL_CAPABILITY, OPPONENT_CAST_COPY_PAYMENT_CAPABILITY):
+            program, = (entry for entry in programs if cap in entry.capability_dependencies)
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            mutated = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{cap}", binding["blockers"])
+
+
+class MagecraftRummageOrdinalTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/"magecraft-ordinal.sqlite3"
+        fixtures=ROOT/"tests/fixtures"
+        build_fixture_database([fixtures/name for name in (
+            "bound-effect-program-cards.json","event-spell-copy-cards.json",
+            "ability-source-counter-cards.json","earthbend-cards.json",
+        )],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition("Magecraft ordinal",[
+            DeckEntry("Isamaru, Hound of Konda",1,"commander"),DeckEntry("Generic Bound Plains",30),
+        ],["Isamaru, Hound of Konda"])
+
+    def _ashling(self,seed):
+        game=self.session(seed)
+        source=self.add(game.engine,"Ashling, Flame Dancer")
+        self.assert_closed(game,source)
+        return game,source
+
+    def _rummage(self,game):
+        self.assertEqual("choice.apnap",self.resolve(game).kind)
+        self.assertEqual(["pilot:A"],game.pending_principals())
+        price=next(game.state.cards[oid] for oid in game.state.players["A"].zones["hand"]
+                   if game.state.cards[oid].printed_name=="Generic Bound Plains")
+        hand=len(game.state.players["A"].zones["hand"])
+        result=game.act("pilot:A",{"action_id":"choose","cards":[price.ref]})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual(hand,len(game.state.players["A"].zones["hand"]))
+        self.assertEqual("graveyard",game.state.cards[price.object_id].zone)
+
+    def test_ashling_counts_actual_copies_and_retains_red_through_the_step(self):
+        game,source=self._ashling(603639101)
+        bolt=self.add(game.engine,"Lightning Bolt",zone="hand")
+        twin=self.add(game.engine,"Twincast",zone="hand")
+        enemy=self.add(game.engine,"Grizzly Bears",seat="B")
+        friend=self.add(game.engine,"Grizzly Bears",ref="ashling-friendly")
+        self.prepare(game,mana={"R":1,"U":2,"G":1})
+        self.checkpoint(game)
+        self.cast(game,"A",bolt,["D"])
+        self._rummage(game)
+        original,=[item for item in game.state.stack if item.card_object_id==bolt.object_id]
+        self.assertEqual("battlefield",game.state.cards[enemy.object_id].zone)
+        self.cast(game,"A",twin,[original.ref])
+        game=self.replay(game,load=True)
+        self._rummage(game)
+        self.assertEqual("graveyard",game.state.cards[enemy.object_id].zone)
+        self.assertEqual("battlefield",game.state.cards[friend.object_id].zone)
+        self.assertEqual([38,38,38],[game.state.players[seat].life for seat in "BCD"])
+        self.assertEqual("semantic.choice",self.resolve(game).kind)
+        result=game.act("pilot:A",{"action_id":"choose","targets":["D"]})
+        self.assertTrue(result.ok,result.summary)
+        self.assertTrue(any(item.kind=="spell_copy" for item in game.state.stack))
+        game=self.replay(game,load=True)
+        self._rummage(game)
+        self.assertEqual(4,game.state.players["A"].mana_pool["R"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40,38,38,32],[game.state.players[seat].life for seat in "ABCD"])
+        self.until(game,lambda current:current.state.step=="end_step")
+        self.assertEqual(4,game.state.players["A"].mana_pool["R"])
+        self.assertEqual(0,game.state.players["A"].mana_pool["G"])
+        game=self.replay(game,load=True)
+        self.assertEqual(4,game.state.players["A"].mana_pool["R"])
+
+    def test_ashling_second_result_uses_source_lki_and_retention_ends_on_departure(self):
+        game,source=self._ashling(603639102)
+        first=self.add(game.engine,"Lightning Bolt",zone="hand",ref="ashling-bolt-one")
+        second=self.add(game.engine,"Lightning Bolt",zone="hand",ref="ashling-bolt-two")
+        doom=self.add(game.engine,"Doom Blade",seat="B",zone="hand")
+        self.prepare(game,mana={"R":3})
+        game.state.players["B"].mana_pool.update({"C":1,"B":1})
+        self.checkpoint(game)
+        self.cast(game,"A",first,["D"])
+        self._rummage(game)
+        self.assertIsNone(self.resolve(game))
+        self.cast(game,"A",second,["D"])
+        self.cast(game,"B",doom,[source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard",game.state.cards[source.object_id].zone)
+        game=self.replay(game,load=True)
+        self._rummage(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40,38,38,32],[game.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual(1,game.state.players["A"].mana_pool["R"])
+        self.until(game,lambda current:current.state.step=="end_step")
+        self.assertEqual(0,game.state.players["A"].mana_pool["R"])
+        self.replay(game,load=True)
+
+    def test_ashling_retained_red_keeps_spend_restrictions_without_reviving_expired_duration(self):
+        from quorune.mana_provenance import ManaProvenanceLot, _store_lots, clear_step_mana, mana_provenance_lots
+
+        original=ManaProvenanceLot((("R",2),("G",1)),restriction="creature_spell",retention="end_of_turn")
+        player=SimpleNamespace(mana_pool={"G":1,"R":2},stats={})
+        _store_lots(player,(original,))
+        self.assertEqual({"G":1},clear_step_mana(player,phase="ending",step="cleanup",preserve_colors=("R",)))
+        lot,=mana_provenance_lots(player)
+        self.assertEqual(((("R",2),),"creature_spell",None),(lot.bundle,lot.restriction,lot.retention))
+        self.assertEqual({"R":2},clear_step_mana(player,phase="precombat_main",step="main"))
+
+    def test_ashling_requires_exact_static_and_ordered_magecraft_shapes(self):
+        card=self.db.lookup("Ashling, Flame Dancer",fuzzy=False)
+        ir=compile_oracle_card(card,capability_registry=self.registry)
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        for old,new in (("second time","fourth time"),("each creature they control","each planeswalker they control"),
+                        ("unspent red mana","unspent blue mana")):
+            changed=replace(card,oracle_text=card.oracle_text.replace(old,new))
+            self.assertNotEqual("exact",compile_oracle_card(changed,capability_registry=self.registry).status)

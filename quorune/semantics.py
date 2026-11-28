@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 import hashlib
 import marshal
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
 from .characteristic_read_frames import characteristic_oracle_program_cache
 from .creature_power_damage_model import CREATURE_POWER_DAMAGE_OPERATION
@@ -15,6 +16,9 @@ from .semantic_runtime import (
     validate_runtime_handler_descriptors,
 )
 from .util import stable_json
+
+if TYPE_CHECKING:
+    from .card_programs.model import CardProgram
 
 TRUST_LEVELS = {
     "trusted",
@@ -531,6 +535,12 @@ def _record_snapshot_inputs(
         return None
 
 
+@dataclass(frozen=True, slots=True)
+class PreparedOraclePrograms:
+    programs: tuple[SemanticProgram, ...]
+    card_program: CardProgram | None
+
+
 class SemanticRegistry:
     """
     Cache of card/ability semantics expressed in the engine's generic effect DSL.
@@ -649,8 +659,11 @@ class SemanticRegistry:
             self._card_program_cache = None
 
     @staticmethod
-    def _source_hash(path: Path) -> str:
-        return hashlib.sha256(path.read_bytes()).hexdigest()
+    def builtin_pack_fingerprints() -> tuple[tuple[str, str], ...]:
+        return tuple(
+            (str(path), hashlib.sha256(path.read_bytes()).hexdigest())
+            for path in sorted(BUILTIN_PACK_DIRECTORY.glob("*.json"))
+        )
 
     def load_packs(self, paths: Iterable[str | Path]) -> None:
         """Load declarative semantic packs without coupling them to the kernel."""
@@ -664,7 +677,8 @@ class SemanticRegistry:
             elif path.exists():
                 candidates.append(path)
         for path in candidates:
-            raw = json.loads(path.read_text(encoding="utf-8"))
+            source = path.read_bytes()
+            raw = json.loads(source.decode("utf-8"))
             if int(raw.get("schema_version", 0)) != SEMANTIC_SCHEMA_VERSION:
                 raise ValueError(
                     f"{path} must use semantic pack schema "
@@ -688,7 +702,7 @@ class SemanticRegistry:
                     "name": str(raw.get("name") or path.stem),
                     "path": str(path),
                     "schema_version": int(raw.get("schema_version", 1)),
-                    "hash": self._source_hash(path),
+                    "hash": hashlib.sha256(source).hexdigest(),
                     "program_count": len(items),
                 }
             )
@@ -728,9 +742,13 @@ class SemanticRegistry:
         encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         temporary.write_bytes(encoded)
         temporary.replace(self.path)
-        if inputs is not None:
-            self._record_snapshot = (inputs, hashlib.sha256(encoded).digest())
+        self._record_snapshot = (inputs, hashlib.sha256(encoded).digest()) if inputs is not None else None
         return payload if return_payload else None
+
+    @property
+    def record_snapshot_digest(self) -> bytes | None:
+        """Digest of the snapshot attested by the last reusable save."""
+        return self._record_snapshot[1] if self._record_snapshot is not None else None
 
     def get(self, key: str | None) -> SemanticProgram | None:
         if not key:
@@ -877,6 +895,52 @@ class SemanticRegistry:
         self._card_program_cache = None
         self._invalidate_program_read_indexes()
         self.save()
+
+    def install_prepared_oracle_programs(
+        self, batches: Iterable[Mapping[str, PreparedOraclePrograms]],
+    ) -> bool:
+        """Assemble checked Oracle groups in a new in-memory session registry."""
+        if self.path is not None:
+            return False
+        batches = tuple(batches)
+        selected = {oracle_id: group for batch in batches for oracle_id, group in batch.items()}
+        if any(selected[oracle_id] != group for batch in batches for oracle_id, group in batch.items()):
+            return False
+        # Generated keys are namespaced by their Oracle ID. A retained key
+        # occupying another selected Oracle's namespace can change precedence.
+        for key, program in self._programs.items():
+            prefix = key.partition(":")[0]
+            if prefix in selected and program.oracle_id != prefix:
+                return False
+        inherited = {key: program for key, program in self._programs.items() if program.oracle_id not in selected}
+        programs = inherited.copy()
+        checked = {}
+        empty = {oracle_id: program for oracle_id, program in self._empty_card_programs.items() if oracle_id not in selected}
+        for oracle_id, group in deepcopy(selected).items():
+            card_program = group.card_program
+            if card_program is None and group.programs:
+                return False
+            if card_program is not None:
+                if card_program.oracle_id != oracle_id or bool(card_program.abilities) != bool(group.programs):
+                    return False
+                checked[oracle_id] = card_program
+                if not group.programs:
+                    empty[oracle_id] = card_program
+            for program in group.programs:
+                prior = self._programs.get(program.key)
+                if program.oracle_id != oracle_id or program.key in programs or (
+                    prior.oracle_id != oracle_id if prior is not None else not program.key.startswith(f"{oracle_id}:")
+                ):
+                    return False
+                programs[program.key] = program
+        from .card_programs.adapters import card_programs_from_semantic_programs
+
+        remaining = card_programs_from_semantic_programs(inherited.values())
+        self._programs = programs
+        self._empty_card_programs = empty
+        self._card_program_cache = empty | remaining | checked
+        self._invalidate_program_read_indexes()
+        return True
 
     def card_programs(self) -> list[Any]:
         """Return deterministic CardProgram V2 groups used by this registry."""

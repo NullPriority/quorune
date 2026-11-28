@@ -84,14 +84,22 @@ def _apply_goad(
 ) -> Any:
     op = operation
     host._require_seat(actor, in_game=True)
-    if effect.get('schema_version') == 2:
-        from ..goad_instruction import resolve_fixed_goad_refs
+    if "schema_version" in effect:
+        from ..goad_instruction import GOAD_BLOCK_PROHIBITION_VERSION, resolve_fixed_goad_refs
         try:
             instruction={key:value for key,value in effect.items() if key!='_runtime_source'}
             refs=resolve_fixed_goad_refs(host,instruction,actor=actor)
         except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+        if effect["schema_version"] == GOAD_BLOCK_PROHIBITION_VERSION:
+            from .declaration_effects import commit_goad_snapshot_block_prohibition
+
+            subjects = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
+        else:
+            subjects = ()
         for ref in refs:
             _apply_goad(host,{'op':'goad','card':ref},actor=actor,operation=operation,reason=reason)
+        if subjects:
+            commit_goad_snapshot_block_prohibition(host, effect, subjects, actor=actor, reason=reason)
         return refs
     card = host._resolve_object(
         actor,
@@ -443,6 +451,12 @@ def _apply_mana(
     reason: str,
 ) -> Any:
     op = operation
+    from ..rules.turn_retained_resolution_mana import TURN_POOL_COLOR_FIELD, apply_turn_pool_red
+    if TURN_POOL_COLOR_FIELD in effect:
+        try:
+            return apply_turn_pool_red(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if set(effect) - {
         "op",
         "player",
@@ -478,7 +492,14 @@ def _apply_mana(
             validate_resolution(host, effect, actor=actor)
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
-    elif retain_until not in {None, "end_of_combat"}:
+    elif retain_until == "end_of_combat":
+        from ..rules.attack_declaration_mana import validate_resolution
+
+        try:
+            validate_resolution(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    elif retain_until is not None:
         raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
         seat,

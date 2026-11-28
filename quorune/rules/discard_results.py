@@ -9,7 +9,7 @@ from ..replacement.immutable import FrozenMap
 def discard_result_hand_snapshot(host, actor, effect):
     from ..discard_result_model import (
         DISCARD_GRAVEYARD_ORDER_FIELD, DISCARD_RESULT_OPERATION, SELECTED_LAND_DISCARD_FIELD,
-        event_discard_player_departed, validate_discard_draw,
+        event_discard_player_departed, is_ordered_opponents_discard, validate_discard_draw,
     )
     if effect.get('op') != DISCARD_RESULT_OPERATION:return None
     if DISCARD_GRAVEYARD_ORDER_FIELD in effect:
@@ -21,7 +21,10 @@ def discard_result_hand_snapshot(host, actor, effect):
             raise GameRuleError(str(exc)) from exc
         if pending.current_group is None or pending.current_group.owner != actor:
             raise GameRuleError("The decision actor must be the pending graveyard owner")
-        effect = {k: v for k, v in effect.items() if k != DISCARD_GRAVEYARD_ORDER_FIELD}
+        fields = {DISCARD_GRAVEYARD_ORDER_FIELD}
+        if is_ordered_opponents_discard(effect):
+            fields.add("player")
+        effect = {k: v for k, v in effect.items() if k not in fields}
         actor = effect["actor"]
     validate_discard_draw(effect)
     if event_discard_player_departed(effect, seats=host.seats, active_seats=host.active_seats):
@@ -60,6 +63,12 @@ def _commit_selected_land_discards(sink, intent, current):
     )
 
 
+def committed_discard_members(events, members):
+    selected = {tuple(member) for member in members}
+    return frozenset((event.actor, event.object_incarnation) for event in events
+                     if (event.actor, event.object_incarnation) in selected)
+
+
 def execute_discard_result(sink, intent):
     from ..semantic_runtime.whole_hand_discard import execute_whole_hand_discard
     snapshot = whole_hand_input_snapshot(sink, {'op': 'discard_whole_hands', 'actor': intent.actor, 'players': list(intent.players)}, actor=intent.actor)
@@ -76,5 +85,6 @@ def execute_discard_result(sink, intent):
             graveyard_orders=intent.graveyard_orders, require_graveyard_order=intent.require_graveyard_order,
         )
     events = tuple(sink._current_turn_history('card_discarded'))[before:]
-    return PlayerDiscardCounts(tuple((player, len({event.object_incarnation for event in events
-        if event.actor == player and event.object_incarnation in {member['logical_object_id'] for member in intent.hands[player]}})) for player in intent.players))
+    return PlayerDiscardCounts(tuple((player, len(committed_discard_members(
+        events, ((player, member["logical_object_id"]) for member in intent.hands[player]),
+    ))) for player in intent.players))

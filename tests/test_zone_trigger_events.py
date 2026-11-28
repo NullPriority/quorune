@@ -44,6 +44,37 @@ def occurrence(**changes) -> ZoneChangeOccurrence:
 
 
 class ZoneTriggerEventModelTests(unittest.TestCase):
+    def test_zone_trigger_snapshot_shares_reads_and_detaches_sources(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.zone_trigger_processing import capture_zone_trigger_snapshot
+
+        host = SimpleNamespace()
+        first = SimpleNamespace(object_id="one", zone="battlefield", markers=[])
+        second = SimpleNamespace(object_id="two", zone="battlefield", markers=[])
+        board = {"type_line": "Creature"}
+        reads = []
+
+        def read():
+            reads.append(board["type_line"])
+            return dict(board)
+
+        def characteristics(owner, _source):
+            return memoized_characteristic_read(owner, "test-board", read)
+
+        with patch("quorune.zone_trigger_processing._damage_source_characteristics", side_effect=characteristics):
+            capture = capture_zone_trigger_snapshot(host, (first, second))
+            self.assertEqual(["Creature"], reads)
+            self.assertEqual({"one": board, "two": board}, capture.source_characteristics)
+            first.markers.append("changed")
+            self.assertEqual([], capture.sources[0].markers)
+            board["type_line"] = "Artifact"
+            next_capture = capture_zone_trigger_snapshot(host, (second,))
+            self.assertEqual({"two": board}, next_capture.source_characteristics)
+            self.assertEqual(["Creature", "Artifact"], reads)
+
     def test_composition_separates_one_permanent_departure_from_each_physical_arrival(self):
         from quorune.composition_departure import CompositionZoneFact,CompositionZoneRole
         from quorune.continuous_effect_model import ContinuousObjectIdentity

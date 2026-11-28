@@ -2,6 +2,7 @@
 
 from collections.abc import Mapping
 
+from ..continuous_effect_model import Layer
 from ..continuous_effect_state import commit_continuous_effect
 from ..declaration_costs import DeclarationCost
 from ..protected_attack_payment_model import (
@@ -28,6 +29,21 @@ def source_controls_planeswalker(host, target, controller):
         return False
     types, _, _ = host._type_parts(str(host._effective_card_data(target).get("type_line") or ""))
     return "planeswalker" in types
+
+
+def declaration_mana_cost(host, source, template):
+    """Derive this source's cost from effective battlefield characteristics."""
+    if template.mana_calculation is None:
+        return template.mana, template.printed_cost
+    enchantment_count = sum(
+        "enchantment" in host._type_parts(
+            str(host._effective_card_data(card, maximum_layer=Layer.TYPE).get("type_line") or "")
+        )[0]
+        for card in host.state.cards.values()
+        if card.zone == "battlefield" and not card.phased_out and card.controller == source.controller
+    )
+    mana = (("GENERIC", enchantment_count),) if enchantment_count else ()
+    return mana, f"{{{enchantment_count}}}"
 
 
 def protected_attack_payment_costs(host, *, kind, payer, domains, by_ref):

@@ -1077,3 +1077,232 @@ class PsychicShuffleNativeTests(InheritedNativeFixture, unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+EXPRESSIVE_ITERATION = (
+    "Look at the top three cards of your library. Put one of them into your hand, "
+    "put one of them on the bottom of your library, and exile one of them. "
+    "You may play the exiled card this turn."
+)
+
+
+class ExpressiveIterationNativeTests(InheritedNativeFixture, unittest.TestCase):
+    ready = bound_witnesses.BoundEffectProgramRuntimeTests.ready
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "expressive-iteration.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/library-selection-predicate-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Private partition witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def iteration(self, seed, *, names, only_cards=False, payment_land=False):
+        game = self.session(seed)
+        engine = game.engine
+        hand = game.state.players["A"].zones["hand"]
+        if hand:
+            engine.move_card(hand[0], "outside", log=False)
+        if payment_land:
+            self.add(engine, "Generic Bound Plains", ref="iteration-payment")
+        if only_cards:
+            for object_id in tuple(game.state.players["A"].zones["library"]):
+                engine.move_card(object_id, "outside", log=False)
+        cards = [
+            self.add(engine, name, zone="library", ref=f"iteration-role-{index}")
+            for index, name in enumerate(names)
+        ]
+        source = self.add(engine, "Expressive Iteration", zone="hand", ref="iteration-source")
+        self.assert_closed(game, source)
+        action = self.ready(game, source, {"R": 1, "U": 1})
+        self.checkpoint(game)
+        result = game.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        decision = self.resolve(game)
+        if len(cards) > 1:
+            self.assertIsNotNone(decision)
+            self.assertEqual("semantic.choice", decision.kind)
+        else:
+            self.assertIsNone(decision)
+        return game, tuple(card.object_id for card in cards)
+
+    def submit(self, game, *, hand, remainder, actor="A"):
+        return game.act("pilot:" + actor, {
+            "action_id": "choose",
+            "cards": {"hand": [hand], "remainder": list(remainder)},
+        })
+
+    def actions(self, game, seat="A"):
+        return {
+            row["id"] for row in game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+        }
+
+    def test_iteration_partitions_privately_then_plays_the_exiled_land(self):
+        game, ids = self.iteration(873001, names=(
+            "Generic Bound Plains", "Generic Bound Growth", "Generic Bound Body",
+        ))
+        land, hand, bottom = (game.state.cards[object_id] for object_id in ids)
+        for card in (land, hand, bottom):
+            self.assertIn(card.ref, json.dumps(game.packet("pilot:A", full=True)))
+            for seat in "BCD":
+                self.assertNotIn(card.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.assertNotIn("temporary_play_permission", land.annotations)
+        before = authoritative_state_hash(game.state)
+        for actor, remainder in (
+            ("B", [bottom.ref, land.ref]), ("A", [hand.ref, land.ref]), ("A", [bottom.ref, "unissued"]),
+        ):
+            self.assertFalse(self.submit(game, hand=hand.ref, remainder=remainder, actor=actor).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = self.submit(game, hand=hand.ref, remainder=[bottom.ref, land.ref])
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        land, hand, bottom = (game.state.cards[object_id] for object_id in ids)
+        self.assertEqual(("exile", "hand", "library"), (land.zone, hand.zone, bottom.zone))
+        self.assertEqual(bottom.object_id, game.state.players["A"].zones["library"][0])
+        self.assertEqual(["A"], bottom.known_to)
+        for seat in "BCD":
+            packet = json.dumps(game.packet("pilot:" + seat, full=True))
+            self.assertIn(land.ref, packet)
+            self.assertNotIn(hand.ref, packet)
+            self.assertNotIn(bottom.ref, packet)
+        self.settle(game)
+        action = f"play-land:{land.ref}"
+        self.assertIn(action, self.actions(game))
+        self.assertTrue(game.act("pilot:A", {"action_id": action}).ok)
+        self.assertEqual("battlefield", game.state.cards[land.object_id].zone)
+        self.assertEqual(0, game.state.players["A"].land_plays_remaining)
+        self.assertNotIn("temporary_play_permission", game.state.cards[land.object_id].annotations)
+        self.replay(game, load=True)
+
+    def test_iteration_short_libraries_use_only_the_printed_prefix(self):
+        names = ("Generic Bound Plains", "Generic Bound Body")
+        for count in range(3):
+            with self.subTest(available=count):
+                game, ids = self.iteration(873010 + count, names=names[:count], only_cards=True)
+                if count == 2:
+                    hand, bottom = (game.state.cards[object_id] for object_id in ids)
+                    result = self.submit(game, hand=hand.ref, remainder=[bottom.ref])
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertIsNone(self.resolve(game))
+                self.assertEqual(
+                    tuple(["hand", "library"][:count]),
+                    tuple(game.state.cards[object_id].zone for object_id in ids),
+                )
+                self.assertEqual(list(ids[1:]), game.state.players["A"].zones["library"])
+                self.assertEqual([], game.state.players["A"].zones["exile"])
+                self.replay(game)
+
+    def test_iteration_binds_play_to_actual_exile_and_expires_at_cleanup(self):
+        from quorune.impulse_access import temporary_play_permission_is_current
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        names = ("Generic Bound Draw Loss", "Generic Bound Growth", "Generic Bound Body")
+        game, ids = self.iteration(873021, names=names)
+        exile, hand, bottom = (game.state.cards[object_id] for object_id in ids)
+        result = self.submit(game, hand=hand.ref, remainder=[bottom.ref, exile.ref])
+        self.assertTrue(result.ok, result.summary)
+        self.settle(game)
+        card = game.state.cards[exile.object_id]
+        permission = card.annotations["temporary_play_permission"]
+        self.assertTrue(temporary_play_permission_is_current(game.state, "A", card, permission))
+        self.assertFalse(temporary_play_permission_is_current(game.state, "B", card, permission))
+        self.assertNotIn(f"cast:{card.ref}", self.actions(game))
+        self.until(game, lambda s: s.state.active_player != "A" or (
+            s.state.pending_decision is not None and s.state.pending_decision.kind == "cleanup.discard"
+        ))
+        if game.state.active_player == "A":
+            context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+            result = game.act("pilot:A", {
+                "action_id": "discard", "cards": [row["id"] for row in context["hand"][:context["count"]]],
+            })
+            self.assertTrue(result.ok, result.summary)
+            self.until(game, lambda s: s.state.active_player != "A")
+        card = game.state.cards[exile.object_id]
+        self.assertEqual("exile", card.zone)
+        self.assertNotIn("temporary_play_permission", card.annotations)
+        self.replay(game, load=True)
+
+        game, ids = self.iteration(873022, names=names)
+        exile, hand, bottom = (game.state.cards[object_id] for object_id in ids)
+        original_move = ZoneTransitionOwner.move_cards_simultaneously
+        arrivals = []
+
+        def redirect(owner, moves, **kwargs):
+            requested = list(moves)
+            if requested == [(exile.object_id, "exile")]:
+                self.assertEqual(bottom.object_id, game.state.players["A"].zones["library"][0])
+                self.assertEqual("hand", game.state.cards[hand.object_id].zone)
+                arrivals.append("exile")
+                requested = [(exile.object_id, "hand")]
+            return original_move(owner, requested, **kwargs)
+
+        with patch.object(ZoneTransitionOwner, "move_cards_simultaneously", autospec=True, side_effect=redirect):
+            result = self.submit(game, hand=hand.ref, remainder=[bottom.ref, exile.ref])
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["exile"], arrivals)
+        redirected = game.state.cards[exile.object_id]
+        self.assertEqual("hand", redirected.zone)
+        self.assertNotIn("temporary_play_permission", redirected.annotations)
+
+        game, ids = self.iteration(873023, names=(
+            "Generic Bound Body", "Generic Bound Growth", "Generic Bound Draw Loss",
+        ), payment_land=True)
+        exile, hand, bottom = (game.state.cards[object_id] for object_id in ids)
+        result = self.submit(game, hand=hand.ref, remainder=[bottom.ref, exile.ref])
+        self.assertTrue(result.ok, result.summary)
+        self.settle(game)
+        card = game.state.cards[exile.object_id]
+        action = f"cast:{card.ref}"
+        self.assertIn(action, self.actions(game))
+        result = game.act("pilot:A", {"action_id": action, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(game.state.cards["fixture:iteration-payment"].tapped)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+        self.assertNotIn("temporary_play_permission", game.state.cards[card.object_id].annotations)
+        self.replay(game, load=True)
+
+    def test_iteration_shape_and_dependency_withdrawal_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.library_play_partition import PRIVATE_HAND_BOTTOM_EXILE_CAPABILITY as capability
+
+        record = replace(base_record(), oracle_text=EXPRESSIVE_ITERATION)
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status)
+        template = fixed_library_selection_effect_template(record.oracle_text)
+        _, effects, target, mechanics = template.compiled()
+        for mutation in (
+            {"schema_version": True}, {"remainder_destination": "exile"}, {"look_count": 2},
+            {"public_reveal": True}, {"player": "$target.0"},
+        ):
+            self.assertEqual((), fixed_library_selection_node_capabilities(
+                effects=({**effects[0], **mutation},), target_schema=target, mechanic_ids=mechanics,
+            ))
+        for text in (
+            record.oracle_text.replace("this turn", "until your next turn"),
+            record.oracle_text.replace("play", "cast"),
+            record.oracle_text.replace("exile one of them", "you may exile one of them"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(replace(record, oracle_text=text),
+                                                           capability_registry=self.registry).status)
+        with patch("quorune.compiler.fixed_library_selection_templates.PrivateHandBottomExileEffectTemplate",
+                   return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+        game = self.session(873025)
+        source = self.add(game.engine, "Expressive Iteration", zone="hand")
+        programs = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual(1, len(programs))
+        program, = programs
+        self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+        dependencies = tuple(dep for dep in program.capability_dependencies if dep != capability)
+        mutant = replace(program, capability_dependencies=dependencies,
+                         capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", binding["blockers"])

@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from ..ability_resolution_ordinal import (
     FIRST_ARTIFACT_ENTRY_COUNTER_CAPABILITY, SECOND_LAND_ENTRY_REVEAL_CAPABILITY,
     is_first_ability_counter, is_second_ability_draw, is_second_ability_reveal,
-    is_third_ability_result, ordinal_controller_creatures,
+    is_second_ability_scry_replacement, is_third_ability_result, ordinal_controller_creatures,
     validate_first_ability_counter, validate_second_ability_draw, validate_second_ability_reveal,
-    validate_third_ability_result,
+    validate_second_ability_scry_replacement, validate_third_ability_result,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 
@@ -112,6 +112,45 @@ def second_ability_reveal_runtime_dependencies(program):
     )
     if not required:
         raise ValueError("The second-resolution reveal requires a complete mana choice and reveal-until partition")
+    return (*required, "trigger.effect.fixed_event", "trigger.event.normalized_zone_change", "trigger.placement.apnap")
+
+
+SECOND_ABILITY_SCRY_CAPABILITY = "resolution.effect.second_creature_entry_draw_instead_of_scry"
+OTHER_CONTROLLED_CREATURE_ENTRY = FrozenMap({"all": (
+    {"field": "controller", "op": "eq", "value": "$source.controller"},
+    {"field": "card", "op": "ne", "value": "$source.ref"},
+)})
+_SECOND_SCRY_MECHANICS = {"fixed-resolution-public-condition", "scry", "cr-121-drawing-a-card"}
+_SECOND_SCRY_DEPENDENCIES = (
+    SECOND_ABILITY_SCRY_CAPABILITY, *sorted(_ORDINAL_CAPABILITIES),
+    "zone.draw.library_to_hand", "library.scry.fixed_controller",
+)
+
+
+def second_ability_scry_replacement_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) != 1 or target_schema is not None or not _SECOND_SCRY_MECHANICS <= set(mechanic_ids):
+        return ()
+    try:
+        validate_second_ability_scry_replacement(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return _SECOND_SCRY_DEPENDENCIES
+
+
+def second_ability_scry_replacement_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(is_second_ability_scry_replacement(effect) for effect in nested_effects(program.effects)):
+        return ()
+    if ((program.event, program.active_zone) != ("creature.enter", "battlefield")
+            or program.cost_schema is not None or program.handlers or not program.ability_id.startswith("trigger:")
+            or FrozenMap(program.event_condition or {}) != OTHER_CONTROLLED_CREATURE_ENTRY):
+        raise ValueError("The second-resolution scry replacement requires another creature entering under the source controller")
+    required = second_ability_scry_replacement_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required:
+        raise ValueError("The second-resolution scry replacement requires exactly one closed result branch per ordinal")
     return (*required, "trigger.effect.fixed_event", "trigger.event.normalized_zone_change", "trigger.placement.apnap")
 
 

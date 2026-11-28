@@ -39,6 +39,10 @@ def _contains_arrival_count(value):
 def matching_arrival_counter_program_dependencies(program):
     if _contains_arrival_count((program.target_schema, program.cost_schema, program.handlers)):
         raise ValueError("Matching arrival count belongs only to the original triggered result")
+    from .aggregated_arrival_damage import artifact_arrival_damage_program_dependencies, uses_artifact_arrival_damage
+
+    if any(map(uses_artifact_arrival_damage, program.effects)):
+        return artifact_arrival_damage_program_dependencies(program)
     uses_count = _contains_arrival_count(program.effects)
     if not uses_count and MATCHED_ARRIVAL_MECHANIC not in program.coverage:
         return ()
@@ -52,10 +56,14 @@ def matching_arrival_counter_program_dependencies(program):
 
 
 def matching_arrival_member_context(program, event, context):
-    if MATCHED_ARRIVAL_MECHANIC not in program.coverage:
+    from .aggregated_arrival_damage import uses_artifact_arrival_damage
+
+    artifacts = any(map(uses_artifact_arrival_damage, program.effects))
+    if not artifacts and MATCHED_ARRIVAL_MECHANIC not in program.coverage:
         return {}
-    if event != "permanent.enter" or context.get("token") is not True:
-        raise ValueError("Matching arrival count requires a normalized token entry")
+    qualifies = "artifact" in context.get("types", ()) if artifacts else context.get("token") is True
+    if event != "permanent.enter" or not qualifies:
+        raise ValueError("Matching arrival count requires the normalized qualifying entry")
     identity = event_object_identity(event, context)["logical_object_id"]
     return {MATCHED_ARRIVAL_CONTEXT: (identity,)}
 

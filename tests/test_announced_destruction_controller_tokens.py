@@ -65,6 +65,110 @@ class AnnouncedDestructionControllerTokenTests(InheritedNativeFixture, unittest.
         self.assertFalse(result.ok, result.summary)
         self.assertEqual(before, authoritative_state_hash(game.state))
 
+    def test_martial_coup_lowering_requires_the_protection_and_locked_x(self):
+        from unittest.mock import patch
+
+        from quorune.query_effect_amount_model import CastXAmountSpec
+        from quorune.rules.announced_token_sweep import TOKEN_SWEEP_FIELD
+
+        record = self.db.lookup("Martial Coup", fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            effect = ir.faces[0].nodes[0].effects[0]
+            self.assertEqual(CastXAmountSpec().to_dict(), effect["quantity"])
+            self.assertEqual({"schema_version": 1, "minimum": 5}, effect[TOKEN_SWEEP_FIELD])
+        witness()
+        with patch("quorune.compiler.token_templates.announced_token_sweep_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def _cast_martial_coup(self, game, spell, x):
+        self.priority(game, "A")
+        action = self.action(game, "A", spell)
+        result = game.act("pilot:A", {"action_id": action["id"], "x": x, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(x, game.state.stack[-1].x_value)
+
+    def _martial_setup(self, seed):
+        game = self.session(seed)
+        spell = self.add(game.engine, "Martial Coup", zone="hand")
+        original, = game.engine.create_token(
+            "A", name="Soldier Token", characteristics={
+                "type_line": "Creature â€” Soldier", "power": 1, "toughness": 1, "colors": ["W"]},
+        )
+        doubler = self.add(game.engine, "Parallel Lives")
+        return game, spell, original, doubler
+
+    def _martial_soldiers(self, game):
+        return {card.ref for card in game.state.cards.values()
+                if card.zone == "battlefield" and card.is_token and card.printed_name == "Soldier Token"}
+
+    def test_martial_coup_locks_the_cast_threshold_before_token_replacement(self):
+        game, spell, original, doubler = self._martial_setup(76349110)
+        survivor = self.add(game.engine, "Grizzly Bears", seat="C")
+        self.ready(game, spell, doubler, mana={"C": 8, "W": 2})
+        self._cast_martial_coup(game, spell, 4)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[survivor.object_id].zone)
+        soldiers = self._martial_soldiers(game)
+        self.assertIn(original, soldiers)
+        self.assertEqual(9, len(soldiers))
+        self.replay(game, load=True)
+
+    def test_martial_coup_protects_actual_created_tokens_through_receiving_owner_order(self):
+        game, spell, original, doubler = self._martial_setup(76349115)
+        victims = [self.add(game.engine, "Grizzly Bears", seat="B", ref=f"coup-bear-{i}") for i in range(2)]
+        game.engine.change_control(victims[1].object_id, "A", reason="Seed a borrowed creature")
+        indestructible = self.add(game.engine, "Darksteel Myr", seat="C")
+        self.ready(game, spell, doubler, indestructible, mana={"C": 5, "W": 2})
+        self._cast_martial_coup(game, spell, 5)
+        pending = self.resolve(game)
+        self.assertIsNotNone(pending)
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        self.assertIsNone(game.packet("pilot:A", full=True)["decision"])
+        created = self._martial_soldiers(game) - {original}
+        self.assertEqual(10, len(created))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "battlefield" for card in victims))
+        refs = [card.ref for card in reversed(victims)]
+        self.reject(game, "A", {"action_id": "choose", "cards": refs})
+        self.reject(game, "B", {"action_id": "choose", "cards": [refs[0], refs[0]]})
+        game = self.replay(game, load=True)
+        result = game.act("pilot:B", {"action_id": "choose", "cards": refs})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([card.object_id for card in reversed(victims)], game.state.players["B"].zones["graveyard"][-2:])
+        self.assertEqual("battlefield", game.state.cards[indestructible.object_id].zone)
+        self.assertEqual(created, self._martial_soldiers(game))
+        self.replay(game, load=True)
+
+    def test_martial_coup_retains_its_created_tokens_during_destruction_replacements(self):
+        game, spell, original, doubler = self._martial_setup(76349117)
+        victim = self.add(game.engine, "Grizzly Bears", seat="C")
+        rest = self.add(game.engine, "Rest in Peace")
+        leyline = self.add(game.engine, "Leyline of the Void", seat="B")
+        self.ready(game, spell, doubler, rest, leyline, mana={"C": 5, "W": 2})
+        self._cast_martial_coup(game, spell, 5)
+        pending = self.resolve(game)
+        self.assertEqual(("replacement.order", ["C"]), (pending.kind, pending.actors))
+        protected = self._martial_soldiers(game) - {original}
+        self.assertEqual(10, len(protected))
+        game = self.replay(game, load=True)
+        options = game.packet("pilot:C", full=True)["decision"]["ctx"]["options"]
+        chosen = game.act("pilot:C", {"action_id": "choose", "replacement": options[0]["id"]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        pending = self.resolve(game)
+        if pending is not None:
+            self.assertEqual("replacement.order", pending.kind)
+            principal = game.pending_principals()[0]
+            options = game.packet(principal, full=True)["decision"]["ctx"]["options"]
+            chosen = game.act(principal, {"action_id": "choose", "replacement": options[0]["id"]})
+            self.assertTrue(chosen.ok, chosen.summary)
+            self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[victim.object_id].zone)
+        self.assertEqual(protected, self._martial_soldiers(game))
+        self.replay(game, load=True)
+
     def test_paid_partial_targets_use_current_controllers_and_one_simultaneous_token_batch(self):
         game = self.session(76349001)
         spell = self.add(game.engine, "Descent of the Dragons", zone="hand")

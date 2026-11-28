@@ -4,14 +4,15 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..combat_damage_library_exile import (
-    COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_EXILE_VERSION,
-    validate_combat_damage_cast_exile, validate_combat_damage_exile,
+    COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION, COMBAT_DAMAGE_EXILE_VERSION,
+    validate_combat_damage_cast_exile, validate_combat_damage_color_cast_exile, validate_combat_damage_exile,
 )
 from ..compiler.impulse_access_templates import IMPULSE_ACCESS_CAPABILITY_ID
 from ..defending_player_library_exile import DEFENDING_PLAYER_EXILE_VERSION, validate_defending_player_exile
 from ..impulse_access_model import (
     IMPULSE_ACCESS_DECLARED_COUNT_VERSION, SHUFFLED_TOP_FREE_PLAY_VERSION, ImpulseAccessDuration,
     TOP_FREE_INSTANT_SORCERY_VERSION, impulse_access_count_is_legal,
+    SPAWN_SETTLEMENT_IMPULSE_VERSION, validate_spawn_settlement_impulse, POWER_COUNTED_IMPULSE_VERSION,
     validate_shuffled_top_free_play, validate_top_free_instant_sorcery,
 )
 from ..opponent_library_top_model import (
@@ -60,9 +61,10 @@ class FixedImpulseAccessHandler:
             )
         count = effect.get("count")
         version = effect.get("schema_version", 1)
-        if version in {SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION}:
-            validate = (validate_top_free_instant_sorcery if version == TOP_FREE_INSTANT_SORCERY_VERSION
-                        else validate_shuffled_top_free_play)
+        if version in {SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION, SPAWN_SETTLEMENT_IMPULSE_VERSION}:
+            validate = {TOP_FREE_INSTANT_SORCERY_VERSION: validate_top_free_instant_sorcery,
+                        SHUFFLED_TOP_FREE_PLAY_VERSION: validate_shuffled_top_free_play,
+                        SPAWN_SETTLEMENT_IMPULSE_VERSION: validate_spawn_settlement_impulse}[version]
             try:
                 validate(
                     {key: value for key, value in effect.items() if key != "reason"}, actor=context.actor,
@@ -70,9 +72,17 @@ class FixedImpulseAccessHandler:
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
             duration = ImpulseAccessDuration.END_OF_TURN
-        elif version in {COMBAT_DAMAGE_EXILE_VERSION, COMBAT_DAMAGE_CAST_EXILE_VERSION}:
-            validate = (validate_combat_damage_cast_exile
-                        if version == COMBAT_DAMAGE_CAST_EXILE_VERSION else validate_combat_damage_exile)
+        elif version == POWER_COUNTED_IMPULSE_VERSION:
+            if (type(version) is not int or not impulse_access_count_is_legal(count, version)
+                    or effect["player"] != context.actor or effect["duration"] != ImpulseAccessDuration.NEXT_END_STEP.value):
+                raise SemanticNodeError("Power-counted impulse access requires the controller's bound count and duration")
+            duration = ImpulseAccessDuration.NEXT_END_STEP
+        elif version in {COMBAT_DAMAGE_EXILE_VERSION, COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION}:
+            validate = {
+                COMBAT_DAMAGE_EXILE_VERSION: validate_combat_damage_exile,
+                COMBAT_DAMAGE_CAST_EXILE_VERSION: validate_combat_damage_cast_exile,
+                COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION: validate_combat_damage_color_cast_exile,
+            }[version]
             try:
                 validate(
                     {key: value for key, value in effect.items() if key != "reason"}, actor=context.actor,

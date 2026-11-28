@@ -42,6 +42,7 @@ from .color_set_mana_abilities import (
 )
 from .mana_abilities import default_fixed_mana_ability_registry
 from .maximum_hand_size import default_no_maximum_hand_size_registry
+from .step_mana_retention import step_mana_retention_registry
 from .morph import default_fixed_mana_morph_registry
 from .bestow import default_fixed_mana_bestow_registry
 from .flashback import default_fixed_mana_flashback_registry
@@ -104,6 +105,7 @@ def _runtime_component_registries() -> tuple[Any, ...]:
         default_color_set_mana_ability_registry(),
         default_fixed_mana_ability_registry(),
         default_no_maximum_hand_size_registry(),
+        step_mana_retention_registry(),
         default_fixed_mana_morph_registry(),
         default_fixed_mana_bestow_registry(),
         default_fixed_mana_flashback_registry(),

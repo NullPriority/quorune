@@ -225,15 +225,18 @@ class MoveFixedTargetSetHandler:
 
             return lower_targeted_graveyard_outcome(effect, context, handler_id=self.handler_id)
         from ..rules.opponent_exile_draw_results import OPPONENT_EXILE_DRAW_FIELD
+        from ..rules.affected_library_search_batch import EXILE_LAND_SEARCH_FIELD
 
         exile_tokens = self.operation == "exile_permanent_targets" and "followup" in effect
         exile_draw = self.operation == "exile_permanent_targets" and OPPONENT_EXILE_DRAW_FIELD in effect
+        exile_search = self.operation == "exile_permanent_targets" and EXILE_LAND_SEARCH_FIELD in effect
         cards, _maximum, reason, selections = _fixed_target_fields(
             effect,
             context,
             operation=self.operation,
             replacements=True,
-            additional_fields=("followup",) if exile_tokens else (OPPONENT_EXILE_DRAW_FIELD,) if exile_draw else (),
+            additional_fields=(("followup",) if exile_tokens else (OPPONENT_EXILE_DRAW_FIELD,) if exile_draw
+                               else (EXILE_LAND_SEARCH_FIELD,) if exile_search else ()),
         )
         intent_type = MoveObjectsSimultaneouslyIntent
         options = {}
@@ -253,6 +256,13 @@ class MoveFixedTargetSetHandler:
             if type(version) is not int or version != 1 or effect.get("announced_target_count") is not True:
                 raise SemanticNodeError("Opponent exile draws require the closed announced instruction")
             intent_type = OpponentExileDrawIntent
+        elif exile_search:
+            from .targeted_exile_token_intent import ExileControllerLandSearchIntent
+
+            marker = effect[EXILE_LAND_SEARCH_FIELD]
+            if type(marker) is not int or marker != 1 or _maximum != 1:
+                raise SemanticNodeError("Compensation requires its original single creature target")
+            intent_type = ExileControllerLandSearchIntent
         return _target_set_plan(
             self.operation, self.handler_id, cards,
             intent_type(
@@ -281,11 +291,14 @@ class ReanimateFixedTargetSetHandler:
     def lower(self,effect:Mapping[str,Any],context:ReadOnlyHandlerContext)->IntentPlan:
         from ..public_zone_moves import PublicBattlefieldController
         from ..rules.announced_mana_value_target import DISTINCT_REANIMATION_RESULT_VERSION
+        from ..rules.reanimation_followup import RETURNED_CREATURE_COUNTER_VERSION
+        from .zone_move_intent import ReturnedCreatureCounterIntent
 
         version = effect.get("schema_version")
+        returned_counters = type(version) is int and version == RETURNED_CREATURE_COUNTER_VERSION
         announced = version == DISTINCT_REANIMATION_RESULT_VERSION
         if (
-            type(version) is not int or version not in (1, DISTINCT_REANIMATION_RESULT_VERSION)
+            type(version) is not int or version not in (1, DISTINCT_REANIMATION_RESULT_VERSION, RETURNED_CREATURE_COUNTER_VERSION)
             or type(effect.get("battlefield_tapped")) is not bool
             or announced != ("announced_target_count" in effect)
             or announced and (effect["announced_target_count"] is not True
@@ -299,6 +312,15 @@ class ReanimateFixedTargetSetHandler:
         if not announced and maximum < 2:
             raise SemanticNodeError("One-target reanimation retains its scalar owner")
         context.query.require_known_seat(context.actor)
+        if returned_counters:
+            if (maximum != 2 or controller is not PublicBattlefieldController.ACTOR
+                    or effect["battlefield_tapped"] or context.source is None):
+                raise SemanticNodeError("Returned creature counters require their original owned reanimation")
+            return _target_set_plan(self.operation, self.handler_id, cards, ReturnedCreatureCounterIntent(
+                actor=context.actor, object_refs=cards, expected_zones=("graveyard",), destination="battlefield",
+                reason=reason, owned_only=True, replacement_selections=selections, battlefield_controller=controller,
+                source_ref=context.source.card_ref or context.source.stack_ref,
+            ))
         intent = FrontFaceGraveyardCreatureReturnIntent if announced else MoveObjectsSimultaneouslyIntent
         return _target_set_plan(self.operation,self.handler_id,cards,intent(
             actor=context.actor,object_refs=cards,expected_zones=('graveyard',),destination='battlefield',reason=reason,

@@ -6,6 +6,7 @@ from typing import Any, Mapping, Protocol
 from ..model import GameState
 from ..replacement import FrozenMap
 from ..rules.faction_trigger_model import CountFactionDraw
+from ..rules.opponent_draw_result import ObserveOpponentDraw
 from ..replacement.immutable import thaw_value
 from ..semantic_runtime.context import SemanticNodeError
 from ..semantic_runtime.draw_reveals import (
@@ -331,10 +332,10 @@ def _prepare_runtime_draw_event(
         selections.append(options[0])
 
 
-def _retain_faction_draw_observers(draw, original):
+def _retain_committed_draw_observers(draw, original):
     observers = tuple(
         action for action in original.post_draw_actions
-        if isinstance(action, CountFactionDraw) and action not in draw.post_draw_actions
+        if isinstance(action, (CountFactionDraw, ObserveOpponentDraw)) and action not in draw.post_draw_actions
     )
     return replace(draw, post_draw_actions=(*draw.post_draw_actions, *observers)) if observers else draw
 
@@ -359,7 +360,7 @@ def _arrange_draw_result(
         if result.discard_followup is not None:
             from .discard_coordination import begin_discard_replacement
 
-            followup = _retain_faction_draw_observers(result.discard_followup, unconsumed)
+            followup = _retain_committed_draw_observers(result.discard_followup, unconsumed)
             if begin_discard_replacement(host, followup, after):
                 return None
         else:
@@ -369,7 +370,7 @@ def _arrange_draw_result(
                 return None
     if result.result_draws:
         tail = _draw_batch_resume((unconsumed,) if unconsumed.count else (), after=resume)
-        observed = tuple(_retain_faction_draw_observers(draw, unconsumed) for draw in result.result_draws)
+        observed = tuple(_retain_committed_draw_observers(draw, unconsumed) for draw in result.result_draws)
         return 0, _draw_batch_resume(observed, after=tail)
     return unconsumed.count, resume
 
@@ -446,6 +447,8 @@ def _continue_draw_sequence(
             if prepared is None:
                 return
             result = commit_prepared_draw_result(host, prepared)
+            if host.state.game_over:
+                return
             remaining -= 1
             if result.has_followup:
                 arranged = _arrange_draw_result(
@@ -624,6 +627,8 @@ def complete_draw_replacement(
     if prepared is None:
         return
     result = commit_prepared_draw_result(host, prepared)
+    if host.state.game_over:
+        return
     remaining = continuation.remaining_draws - 1
     resume = continuation.after
     if result.has_followup:

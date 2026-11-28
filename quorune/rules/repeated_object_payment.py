@@ -17,5 +17,7 @@ def validate_repeated_object_payment(spec):
         expected=ObjectQuerySpec(zones=('battlefield',),controller=p.controller,types_all=p.types_all)
     elif spec.kind == 'sacrifice' and spec.amount == 2 and type(p.controller) is str and p.controller and not p.types_all:
         expected = ObjectQuerySpec(zones=('battlefield',), controller=p.controller)
+    elif spec.kind == 'sacrifice' and spec.amount == 3 and type(p.controller) is str and p.controller:
+        expected = ObjectQuerySpec(zones=('battlefield',), controller=p.controller, excluded_types=('land',))
     else:raise ValueError('Repeated object cost is outside its closed hand/permanent family')
     if p!=expected:raise ValueError('Repeated object price changed its selection domain')

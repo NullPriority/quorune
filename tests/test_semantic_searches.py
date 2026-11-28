@@ -1011,6 +1011,19 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
         return session, fetch, pool, spelunking
 
+    def test_fetch_previews_include_entry_life_only_for_eligible_lands_and_the_chooser(self):
+        session, _, pool, _ = self._activate_fetch_with_spelunking()
+        decision = session.packet("pilot:B", full=True)["decision"]
+        previews = decision["ctx"]["preview_cards"]
+        selected = next(row for row in previews if row["id"] == pool.ref)
+        self.assertEqual(pool.printed_name, selected["n"])
+        self.assertEqual(2, selected["entry_life"])
+        self.assertTrue(any("entry_life" not in row for row in previews))
+        for principal in ("pilot:A", "spectator"):
+            packet = session.packet(principal, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(pool.printed_name, json.dumps(packet))
+
     def test_fetch_entry_choice_preserves_paid_activation_and_exact_replay(self):
         for pay_life in (False, True):
             for spelunking_first in (False, True):

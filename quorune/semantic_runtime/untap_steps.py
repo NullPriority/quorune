@@ -30,6 +30,9 @@ OPTIONAL_UNTAP_HANDLER_ID = "participation.untap-step.optional-source.v1"
 STATIC_STEP_SKIP_HANDLER_ID = "participation.turn-step.skip.v1"
 STATIC_STEP_SKIP_EVENT = "turn.step.skip"
 STATIC_STEP_SKIP_CAPABILITY = "turn.step.static_skip"
+STATIC_EXTRA_TURN_SKIP_HANDLER_ID = "participation.turn-step.opponent-extra-skip.v1"
+STATIC_EXTRA_TURN_SKIP_TEMPLATE = "static-opponent-extra-turn-skip-v1"
+EXTRA_TURN_SKIP_STEP = "extra_turn"
 _SKIPPABLE_STEPS = frozenset({"untap", "upkeep", "draw"})
 _SOURCE_STATES = {"any", "untapped"}
 _CONTROLLER_RELATIONS = {"any", "source_controller"}
@@ -379,6 +382,23 @@ class StaticTurnStepSkipHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class StaticExtraTurnSkipHandler(StaticTurnStepSkipHandler):
+    handler_id: str = STATIC_EXTRA_TURN_SKIP_HANDLER_ID
+    rule_references: tuple[str, ...] = ("500.7", "614.10", "616.1")
+    capability_dependencies: tuple[str, ...] = (STATIC_STEP_SKIP_CAPABILITY, "turn.boundary.scheduled_skip")
+
+    def validate(self, descriptor: Mapping[str, Any]) -> TurnStepSkip:
+        expected = {
+            "handler_id": self.handler_id, "schema_version": self.schema_version, "event": self.event,
+            "step": EXTRA_TURN_SKIP_STEP, "scope": "source_opponents", "requires_empty_hand": False,
+        }
+        if (descriptor != expected or type(descriptor["schema_version"]) is not int
+                or descriptor["requires_empty_hand"] is not False):
+            raise SemanticNodeError("A static extra-turn skip requires its exact opposing turn scope")
+        return TurnStepSkip(EXTRA_TURN_SKIP_STEP, "source_opponents", False)
+
+
+@dataclass(frozen=True, slots=True)
 class PrintedPhasing:
     """One current literal Phasing instruction."""
 
@@ -439,7 +459,8 @@ def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     registry = UntapStepComponentRegistry(
         (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(),
          ConditionalUntapStepParticipationHandler(),
-         FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler(), PrintedPhasingHandler())
+         FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler(), StaticExtraTurnSkipHandler(),
+         PrintedPhasingHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -477,18 +498,38 @@ def current_printed_phasing_object_ids(host: UntapStepHost) -> frozenset[str]:
                      if any(handler.validate(descriptor) for descriptor in program.handlers))
 
 
+def static_extra_turn_skip_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..turn_skip_model import TURN_SKIP_CAPABILITY
+
+    marked = any(descriptor.get("handler_id") == STATIC_EXTRA_TURN_SKIP_HANDLER_ID
+                 for descriptor in program.handlers)
+    if not marked and program.provenance.get("template_id") != STATIC_EXTRA_TURN_SKIP_TEMPLATE:
+        return ()
+    if (not marked or len(program.handlers) != 1 or program.effects or program.event_condition is not None
+            or program.cost_schema is not None or program.target_schema is not None
+            or (program.event, program.active_zone) != (STATIC_STEP_SKIP_EVENT, "battlefield")
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError("A static extra-turn replacement requires its complete live source")
+    StaticExtraTurnSkipHandler().validate(program.handlers[0])
+    return (STATIC_STEP_SKIP_CAPABILITY, TURN_SKIP_CAPABILITY)
+
+
 def active_step_skip_sources(host: UntapStepHost, active: str, step: str):
     if (
-        step not in _SKIPPABLE_STEPS
+        step not in _SKIPPABLE_STEPS and step != EXTRA_TURN_SKIP_STEP
         or active not in host.active_seats
         or not host.semantics.programs_for_event(STATIC_STEP_SKIP_EVENT)
     ):
         return
-    handler = StaticTurnStepSkipHandler()
+    step_handler = StaticTurnStepSkipHandler()
+    extra_turn_handler = StaticExtraTurnSkipHandler()
     for source, program in _active_step_programs(host, STATIC_STEP_SKIP_EVENT):
         for index, descriptor in enumerate(program.handlers):
+            handler = extra_turn_handler if descriptor.get("handler_id") == extra_turn_handler.handler_id else step_handler
             skip = handler.validate(descriptor)
-            if skip.step != step or skip.scope == "source_controller" and source.controller != active:
+            if (skip.step != step or skip.scope == "source_controller" and source.controller != active
+                    or skip.scope == "source_opponents" and source.controller == active):
                 continue
             if skip.requires_empty_hand and host.state.players[active].zones["hand"]:
                 continue

@@ -44,6 +44,7 @@ from .continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .chosen_basic_land_entry import basic_land_entry_choice_handler, scope_basic_land_entry_pair
 from .ir_model import OracleFaceIR, append_residual
 
 
@@ -54,7 +55,8 @@ def scope_entry_designation_faces(
     result = []
     for original in faces:
         face = _scope_entry_player_pair(_scope_entry_opponent_pair(_compose_self_chosen_subtype_entry(original)))
-        face = _scope_entry_card_name(face)
+        face = scope_basic_land_entry_pair(_scope_entry_card_name(face))
+        face = _scope_chosen_entry_token_copy(face)
         declarations = Counter(
             descriptor["designation"]
             for node in face.nodes
@@ -191,6 +193,26 @@ def _scope_entry_card_name(face: OracleFaceIR) -> OracleFaceIR:
         face, choices, consumers, complete=complete,
         reason="The entry card name requires its exact same-face restriction",
         blocker="linked entry card name ownership",
+    )
+
+
+def _scope_chosen_entry_token_copy(face):
+    from ..token_copy_recipes import uses_chosen_entry_token_copy
+
+    consumers = [
+        node for node in face.nodes if any(uses_chosen_entry_token_copy(effect) for effect in node.effects)
+    ]
+    if not consumers:
+        return face
+    choices = [
+        node for node in face.nodes
+        if any(descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+               and descriptor.get("designation") == "creature_type" for descriptor in node.handlers)
+    ]
+    return _scope_linked_entry_pair(
+        face, choices, consumers,
+        reason="Chosen-type token copying requires its exact same-face creature-type entry choice",
+        blocker="linked entry creature type ownership",
     )
 
 
@@ -343,7 +365,8 @@ def source_chosen_creature_type_target_template(text: str):
 def entry_designation_handler(text: str, *, source_name: str):
     from .entry_color_composition import composed_entry_color_designation_handler
 
-    return (_entry_faction_handler(text)
+    return (basic_land_entry_choice_handler(text)
+            or _entry_faction_handler(text)
             or composed_entry_color_designation_handler(text, source_name=source_name)
             or _counted_entry_opponent_handler(text)
             or _linked_entry_opponent_handler(text)
@@ -353,9 +376,24 @@ def entry_designation_handler(text: str, *, source_name: str):
 
 
 def _entry_faction_handler(text: str):
-    if " ".join(text.casefold().split()) != "as this enchantment enters, choose brotherhood or enclave.":
+    from ..rules.jeskai_temur_faction import ENTRY_CAPABILITIES, entry_descriptor
+    from .jeskai_temur_faction import ENTRY
+
+    material = " ".join(text.casefold().split())
+    if material == ENTRY:
+        return "intrinsic-entry-jeskai-temur-v1", entry_descriptor(), ENTRY_CAPABILITIES
+    from ..entry_designations import ENTRY_FACTION_CAPABILITY, ENTRY_MARDU_JESKAI_CAPABILITY, EntryDesignationKind
+
+    scopes = {
+        "as this enchantment enters, choose brotherhood or enclave.":
+            (EntryDesignationKind.FACTION, ENTRY_FACTION_CAPABILITY),
+        "as this enchantment enters, choose mardu or jeskai.":
+            (EntryDesignationKind.MARDU_JESKAI_FACTION, ENTRY_MARDU_JESKAI_CAPABILITY),
+    }
+    selected = scopes.get(" ".join(text.casefold().split()))
+    if selected is None:
         return None
-    from ..entry_designations import ENTRY_FACTION_CAPABILITY
+    kind, capability = selected
 
     return (
         "intrinsic-entry-faction-v1",
@@ -363,9 +401,9 @@ def _entry_faction_handler(text: str):
             "handler_id": ENTRY_DESIGNATION_HANDLER_ID,
             "schema_version": 1,
             "event": "zone.change",
-            "designation": "faction",
+            "designation": kind.value,
         },
-        (ENTRY_DESIGNATION_CAPABILITY, ENTRY_FACTION_CAPABILITY),
+        (ENTRY_DESIGNATION_CAPABILITY, capability),
     )
 
 

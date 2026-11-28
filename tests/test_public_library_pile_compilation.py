@@ -6,7 +6,9 @@ import unittest
 from quorune.carddb import CardRecord
 from quorune.compiler.public_library_pile_templates import public_library_piles_template
 from quorune.oracle_ir import compile_oracle_card
-from quorune.public_library_piles_model import PILE_CAPABILITY, PILE_MECHANIC, PILE_OPERATION
+from quorune.public_library_piles_model import (
+    DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION, PILE_CAPABILITY, PILE_MECHANIC, PILE_OPERATION, PUBLIC_SEARCH_SPLIT_VERSION,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.library_result_capability_shapes import (
     is_closed_public_library_piles_program,
@@ -43,6 +45,131 @@ class PublicLibraryPileCompilerTests(unittest.TestCase):
 
     def compile(self, record):
         return compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+
+    def test_distinct_search_split_has_closed_printed_and_persisted_dialects(self):
+        from dataclasses import replace
+        import json
+        from unittest.mock import patch
+
+        from common import ROOT
+        from quorune.public_library_piles_model import (
+            DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY, RevealedPileCard, SearchedLibraryPileState,
+            distinct_public_search_split_effect, searched_pile_effect,
+        )
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.library_selection import LibrarySelectionObjectIdentity
+
+        text = (
+            "Search your library for up to four cards with different names and reveal them. "
+            "Target opponent chooses two of those cards. Put the chosen cards into your graveyard "
+            "and the rest into your hand. Then shuffle."
+        )
+        record = spell("Distinct searched split", "fixture:distinct-searched-split", "{3}{U}", text)
+        ir = self.compile(record)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertEqual((distinct_public_search_split_effect(),), node.effects)
+        self.assertIn(DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY, node.capability_dependencies)
+        for variant in (
+            text.replace("up to four", "five"),
+            text.replace("different names", "the same name"),
+            text.replace("chooses two", "chooses up to two"),
+            text.replace("Target opponent", "An opponent"),
+            text.removesuffix(" Then shuffle."),
+        ):
+            self.assertIsNone(public_library_piles_template(variant))
+        for malformed in (
+            {**node.effects[0], "schema_version": float(DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION)},
+            {**node.effects[0], "schema_version": PUBLIC_SEARCH_SPLIT_VERSION},
+            {**node.effects[0], "count": {"minimum": False, "maximum": 4}},
+            {**node.effects[0], "count": {"minimum": 0, "maximum": 5}},
+            {**node.effects[0], "public_search_chooser": "B"},
+        ):
+            self.assertEqual((), public_library_piles_node_capabilities(
+                effects=(malformed,), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+        with patch("quorune.compiler.public_library_pile_templates._DISTINCT_SEARCHED_SPLIT_TEXT", ""):
+            self.assertNotEqual("exact", self.compile(record).status)
+        value = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        cap = next(row for row in value["capabilities"] if row["id"] == DISTINCT_PUBLIC_SEARCH_SPLIT_CAPABILITY)
+        cap.update(status="blocked", blockers=["Withdrawn by focused witness"])
+        blocked = CapabilityRegistry(value)
+        blocked.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(
+            record, capability_registry=blocked, capability_profile="commander_review",
+        ).status)
+
+        cards = tuple(RevealedPileCard(LibrarySelectionObjectIdentity(
+            f"object-{n}", f"object-{n}@0", f"ref-{n}",
+        ), f"Card {n}") for n in range(4))
+        legacy = SearchedLibraryPileState("A", "S1", "Legacy", "B", cards[:3], "commit", "B", "ref-0")
+        self.assertNotIn("schema_version", legacy.to_dict())
+        self.assertEqual(legacy, SearchedLibraryPileState.from_dict(legacy.to_dict()))
+        self.assertEqual(2, searched_pile_effect(legacy)["schema_version"])
+        current = SearchedLibraryPileState(
+            "A", "S2", "Distinct", "B", cards, "commit", "B", ("ref-0", "ref-3"), schema_version=3,
+        )
+        self.assertEqual(("ref-1", "ref-2"), current.hand_refs())
+        self.assertEqual(("ref-0", "ref-3"), current.graveyard_refs())
+        self.assertEqual(current, SearchedLibraryPileState.from_dict(current.to_dict()))
+        self.assertEqual(3, searched_pile_effect(current)["schema_version"])
+        for malformed in (("ref-0",), ("ref-0", "ref-0"), ("ref-0", "foreign")):
+            with self.assertRaises(ValueError):
+                replace(current, chosen=malformed)
+        with self.assertRaises(ValueError):
+            SearchedLibraryPileState.from_dict({**legacy.to_dict(), "schema_version": 2})
+
+    def test_distinct_effective_names_use_both_split_names_and_only_mdfc_front(self):
+        from dataclasses import replace
+        from quorune.errors import GameRuleError
+        from quorune.selection.different_name_search import require_distinct_search_card_names
+
+        inert = spell("Fixture", "fixture:name", "{U}", "")
+        table = {
+            "first": replace(inert, name="Split One // Shared", layout="split",
+                             faces=({"name": "Split One"}, {"name": "Shared"})),
+            "second": replace(inert, name="Shared // Split Two", layout="split",
+                              faces=({"name": "Shared"}, {"name": "Split Two"})),
+            "modal": replace(inert, name="Modal Front // Shared", layout="modal_dfc",
+                             faces=({"name": "Modal Front"}, {"name": "Shared"})),
+        }
+        host = SimpleNamespace(card_record=lambda card: table[card.object_id])
+        cards = {key: SimpleNamespace(object_id=key, zone="library") for key in table}
+        with self.assertRaisesRegex(GameRuleError, "different names"):
+            require_distinct_search_card_names(host, (cards["first"], cards["second"]))
+        require_distinct_search_card_names(host, (cards["first"], cards["modal"]))
+
+    def test_searched_split_is_exact_only_for_the_complete_opponent_procedure(self):
+        from quorune.public_library_piles_model import public_search_split_effect, public_search_split_target_schema
+
+        text = ("Search your library for three cards and reveal them. Target opponent chooses one. "
+                "Put that card into your hand and the rest into your graveyard. Then shuffle.")
+        ir = self.compile(spell("Searched split fixture", "fixture:searched-split", "{2}{U}", text))
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertEqual((public_search_split_effect(),), node.effects)
+        self.assertEqual(public_search_split_target_schema(), node.target_schema)
+        for bad in (
+            text.replace("three cards", "up to three cards"),
+            text.replace("Target opponent", "An opponent"),
+            text.replace("your graveyard", "exile"),
+            text.removesuffix(" Then shuffle."),
+        ):
+            self.assertIsNone(public_library_piles_template(bad))
+        for malformed in (
+            {**node.effects[0], "schema_version": float(PUBLIC_SEARCH_SPLIT_VERSION)},
+            {**node.effects[0], "public_search_chooser": "B"},
+            {**node.effects[0], "shuffle_after": False},
+        ):
+            self.assertFalse(public_library_piles_node_capabilities(
+                effects=(malformed,), target_schema=node.target_schema, mechanic_ids=node.mechanics,
+            ))
+        self.assertFalse(public_library_piles_node_capabilities(
+            effects=node.effects, target_schema={**node.target_schema, "player_relation": "any"},
+            mechanic_ids=node.mechanics,
+        ))
 
     def test_complete_printed_spell_compilation_keeps_opponent_roles(self):
         examples = (

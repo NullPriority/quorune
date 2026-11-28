@@ -213,17 +213,22 @@ test("@browser-rules @combat two distinct blockers group under the same attacker
     await evidence(attacker, info, "attack-staged-to-seat-a");
     await clickMove(attacker, attack.getByRole("button", { name: "Confirm attackers" }));
 
-    const block = host.getByRole("form", { name: "Declare blockers" });
+    const block = host.getByRole("form", { name: "Select blockers" });
     const ornithopter = block.getByRole("button", { name: "Select Ornithopter" });
     const memnite = block.getByRole("button", { name: "Select Memnite" });
     const incoming = block.getByRole("button", { name: "Assign to Raging Goblin" });
     const group = block.locator(".combat-connections");
     await driveTo(pages, ornithopter, info, "Reach the defending seat's declaration");
     await expect(block).toContainText("Defending seat A");
+    await expect(block.getByRole("button", { name: "Confirm no blockers", exact: true })).toBeVisible();
+    await expect(block.locator("[data-blocked=false]")).toContainText("Unblocked");
+    await expect(host.getByTestId("target-arrow-layer")).toHaveAttribute("data-attack-arrow-count", "1");
+    await expect(attacker.getByTestId("target-arrow-layer")).toHaveAttribute("data-attack-arrow-count", "1");
     await ornithopter.click();
     await incoming.click();
     await memnite.dragTo(incoming);
     await expect(group.getByRole("button")).toHaveCount(2);
+    await expect(block.locator("[data-blocked=true]")).toContainText("Blocked");
     await group.getByRole("button", { name: /Remove Memnite/ }).click();
     await expect(group.getByRole("button")).toHaveCount(1);
     const revision = await viewRevision(host);

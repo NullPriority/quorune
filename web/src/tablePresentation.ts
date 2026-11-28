@@ -29,6 +29,12 @@ function cardTransferText(verb: CardTransferVerb, count: number): string {
   return `${verb} ${count} ${count === 1 ? "card" : "cards"}`;
 }
 
+export function orderedTableSeats(seats: readonly string[], ownSeat: string): string[] {
+  const ordered = [...seats].sort();
+  const own = ordered.indexOf(ownSeat);
+  return own < 0 ? ordered : [...ordered.slice(own + 1), ...ordered.slice(0, own + 1)];
+}
+
 export function summarizeTableActivity(events: readonly PublicGameEvent[], ownSeat: string) {
   const ownCounts = new Map<CardTransferVerb, number>();
   let latestPublic: PublicGameEvent | undefined;
@@ -48,6 +54,10 @@ export function summarizeTableActivity(events: readonly PublicGameEvent[], ownSe
     milled: ownCounts.has("milled"),
     latestPublic,
   };
+}
+
+function hideInternalRefs(summary: string): string {
+  return summary.replace(/\b(?:[ABCD]\d+|S\d+|DT\d+)(?=[\s:.,!?]|$):?\s*/g, "").replace(/\.\.+$/g, ".");
 }
 
 export function publicEventSummary(
@@ -86,7 +96,7 @@ export function publicEventSummary(
     const [, count, ability] = legacyCopy;
     return `Created ${count} ${count === "1" ? "copy" : "copies"} with ${ability}.`;
   }
-  return event.summary || "Game event recorded.";
+  return hideInternalRefs(event.summary || "Game event recorded.");
 }
 
 export function modeLabel(mode: JsonValue, index: number): string {
@@ -207,6 +217,12 @@ export function needsActivationConfirmation(action: LegalAction): boolean {
   const price = action.cost_summary as Record<string, JsonValue> | undefined;
   return Boolean(price?.sac_self || price?.discard_self || price?.exile_self
     || price?.life || price?.energy || price?.random_discard);
+}
+
+export function commanderCardCost(printed: string, tax: number): string {
+  if (!printed || !tax) return printed;
+  const generic = /^\{(\d+)\}/.exec(printed);
+  return generic ? `{${Number(generic[1]) + tax}}${printed.slice(generic[0].length)}` : `{${tax}}${printed}`;
 }
 
 export function cardActionCost(actions: readonly LegalAction[]): string {

@@ -34,6 +34,7 @@ DeclarationCostScope = Literal[
     "source_planeswalkers",
 ]
 DeclarationSourceCondition = Literal["source_attacking", "source_untapped"]
+DeclarationManaCalculation = Literal["source_controller_enchantment_count"]
 DeclarationRestrictionScope = Literal[
     "attached",
     "attached_option",
@@ -76,6 +77,7 @@ DeclarationRequirementKind = Literal[
 
 DECLARATION_COMPONENT_CAPABILITY_ID = "combat.declaration.typed_components"
 DECLARATION_MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
+ENCHANTMENT_COUNT_ATTACK_TAX_ID = "source-controller-enchantment-count-attack-tax-v1"
 ATTACHED_GOAD_CAPABILITY = "combat.goad.attached_creature"
 ATTACHED_GOAD_HANDLER_ID = "ability.static.attached-goad.v1"
 
@@ -121,7 +123,7 @@ def _mechanics(values: tuple[DeclarationKind, ...]) -> tuple[str, ...]:
 
 @dataclass(frozen=True, slots=True)
 class DeclarationCostTemplate:
-    """One fixed-mana declaration cost compiled from a whole line."""
+    """One closed declaration cost compiled from a whole line."""
 
     template_id: str
     declarations: tuple[DeclarationKind, ...]
@@ -130,6 +132,7 @@ class DeclarationCostTemplate:
     printed_cost: str
     source_condition: DeclarationSourceCondition | None = None
     includes_planeswalkers: bool = False
+    mana_calculation: DeclarationManaCalculation | None = None
 
     def __post_init__(self) -> None:
         if type(self.template_id) is not str or not self.template_id:
@@ -143,8 +146,7 @@ class DeclarationCostTemplate:
             "source_planeswalkers",
         }:
             raise ValueError("Unknown declaration cost scope")
-        if not self.mana:
-            raise ValueError("Declaration cost requires fixed positive mana")
+        self._validate_mana_source()
         seen: set[str] = set()
         for key, amount in self.mana:
             if (
@@ -168,12 +170,29 @@ class DeclarationCostTemplate:
                 "Declaration cost planeswalker inclusion must be boolean"
             )
 
+    def _validate_mana_source(self) -> None:
+        if self.mana_calculation is None and self.template_id != ENCHANTMENT_COUNT_ATTACK_TAX_ID:
+            if not self.mana:
+                raise ValueError("Declaration cost requires fixed positive mana")
+            return
+        expected = (
+            ENCHANTMENT_COUNT_ATTACK_TAX_ID, ("attack",), "source_controller",
+            (), "{x}", None, True, "source_controller_enchantment_count",
+        )
+        actual = (
+            self.template_id, self.declarations, self.scope, self.mana,
+            self.printed_cost, self.source_condition, self.includes_planeswalkers,
+            self.mana_calculation,
+        )
+        if actual != expected:
+            raise ValueError("Unsupported declaration mana calculation or defender scope")
+
     @property
     def mechanics(self) -> tuple[str, ...]:
         return _mechanics(self.declarations)
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        result = {
             "template_id": self.template_id,
             "declarations": list(self.declarations),
             "scope": self.scope,
@@ -182,6 +201,9 @@ class DeclarationCostTemplate:
             "source_condition": self.source_condition,
             "includes_planeswalkers": self.includes_planeswalkers,
         }
+        if self.mana_calculation is not None:
+            result["mana_calculation"] = self.mana_calculation
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "DeclarationCostTemplate":
@@ -194,8 +216,10 @@ class DeclarationCostTemplate:
             "source_condition",
             "includes_planeswalkers",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or set(value) not in (expected, expected | {"mana_calculation"}):
             raise ValueError("Declaration cost fragments have a closed schema")
+        if "mana_calculation" in value and value["mana_calculation"] != "source_controller_enchantment_count":
+            raise ValueError("Unsupported declaration mana calculation")
         declarations = value["declarations"]
         mana = value["mana"]
         if not isinstance(declarations, list) or not isinstance(mana, Mapping):
@@ -225,6 +249,7 @@ class DeclarationCostTemplate:
             printed_cost=value["printed_cost"],
             source_condition=value["source_condition"],
             includes_planeswalkers=value["includes_planeswalkers"],
+            mana_calculation=value.get("mana_calculation"),
         )
 
 
@@ -398,8 +423,13 @@ class DeclarationObjectPredicate:
     tapped: bool | None = None
     enchanted: bool | None = None
     has_any_counter: bool | None = None
+    mana_value_even: bool = False
 
-    def matches_counter_state(self, counters: Mapping[str, Any]) -> bool:
+    def matches_public_state(self, counters: Mapping[str, Any], *, mana_value: int | float | None) -> bool:
+        from .battlefield_mana_value_query import is_even_mana_value
+
+        if self.mana_value_even and not is_even_mana_value(mana_value):
+            return False
         if self.has_any_counter is None:
             return True
         return (any(int(amount) > 0 for amount in counters.values())) == (
@@ -425,6 +455,7 @@ class DeclarationObjectPredicate:
             "tapped": self.tapped,
             "enchanted": self.enchanted,
             "has_any_counter": self.has_any_counter,
+            **({"mana_value_even": True} if self.mana_value_even else {}),
         }
 
     @classmethod
@@ -456,7 +487,8 @@ class DeclarationObjectPredicate:
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset(expected),
             frozenset(expected - {"has_any_counter"}),
-        }:
+            frozenset(expected | {"mana_value_even"}),
+        } or ("mana_value_even" in value and value["mana_value_even"] is not True):
             raise ValueError(
                 "Declaration object predicates have a closed schema"
             )
@@ -496,6 +528,7 @@ class DeclarationObjectPredicate:
             tapped=value["tapped"],
             enchanted=value["enchanted"],
             has_any_counter=value.get("has_any_counter"),
+            mana_value_even=value.get("mana_value_even", False),
         )
 
 

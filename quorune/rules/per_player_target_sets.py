@@ -23,6 +23,10 @@ def per_player_target_node_capabilities(*,effects,target_schema,mechanic_ids):
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
         )
     if not isinstance(target_schema,Mapping):return ()
+    if target_schema.get("distinct_controllers") is True and "retain_controller" not in target_schema:
+        from .paired_target_controllers import paired_controller_target_dependencies
+
+        return paired_controller_target_dependencies(effects, target_schema, mechanic_ids)
     if (target_schema.get('distinct_controllers') is not True or target_schema.get('retain_controller') is not True
             or target_schema.get('zones')!=['battlefield'] or target_schema.get('categories')!=['permanent']
             or target_schema.get('controller_relation','any') not in {'any','opponent'}):return ()
@@ -97,6 +101,13 @@ def per_player_target_runtime_dependencies(program):
     inferred.update(_OPERATION_MECHANICS[effect['op']] for effect in program.effects if effect.get('op') in _OPERATION_MECHANICS)
     required=per_player_target_node_capabilities(effects=program.effects,target_schema=schema,mechanic_ids=inferred)
     if not required:raise ValueError('Per-player targets lack their closed domain, cardinality or primitive')
+    from .paired_target_controllers import PAIRED_CONTROLLER_CAPABILITY
+
+    if PAIRED_CONTROLLER_CAPABILITY in required and (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or program.event_condition is not None or program.cost_schema is not None or handlers
+    ):
+        raise ValueError("Paired controllers require the complete ordinary resolving spell")
     if announced_exile and (ANNOUNCED_OPPONENT_EXILE_CAPABILITY not in required
             or program.event != "permanent.enter.self" or program.active_zone != "battlefield"
             or program.event_condition is not None or program.cost_schema is not None or program.handlers):

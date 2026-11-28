@@ -25,7 +25,9 @@ def default_continuous_effect_component_registry(
         CrossZoneTypeAdditionHandler, SelfChosenCreatureSubtypeHandler,
     )
     from .basic_type_setting import FixedBasicTypeSettingHandler
+    from .chosen_basic_land_entry import ChosenBasicLandTypeHandler
     from .chosen_characteristics import ChosenCharacteristicsHandler, LinkedColorProtectionHandler, LinkedPlayerProtectionHandler
+    from .chosen_characteristics import LinkedCardTypeProtectionHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .qualified_attached_settings import QualifiedAttachedCharacteristicsHandler
@@ -70,6 +72,7 @@ def default_continuous_effect_component_registry(
             OpponentKeywordProhibitionHandler(),
             ChosenCharacteristicsHandler(),
             LinkedColorProtectionHandler(),
+            LinkedCardTypeProtectionHandler(),
             LinkedExileCharacteristicsHandler(),
             LinkedExileActivatedGrantHandler(),
             LinkedPlayerProtectionHandler(),
@@ -86,6 +89,7 @@ def default_continuous_effect_component_registry(
             ControlledChosenCreatureSubtypeHandler(),
             SelfChosenCreatureSubtypeHandler(),
             FixedBasicTypeSettingHandler(),
+            ChosenBasicLandTypeHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             CombatCounterpartLifelinkHandler(),

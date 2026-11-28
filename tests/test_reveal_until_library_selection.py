@@ -219,7 +219,7 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
         self.assertEqual('capability_closed',binding['trust_basis'])
         engine.state.phase_index = TURN_STEPS.index(('precombat_main','main'))
-        offer = H.ready(self,session,source,{'U':5,'G':5,'C':8})
+        offer = H.ready(self,session,source,{'U':5,'G':5,'C':8,'B':1})
         H.checkpoint(self,session)
         return session,cards,source,offer
 
@@ -426,3 +426,138 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         for card in cards[1:]:self.assertEqual('graveyard',session.state.cards[card.object_id].zone)
         self.assertEqual([],session.state.players['A'].zones['library'])
         H.replay(self,session,load=True)
+
+    def _cast_and_name(self, names, chosen, *, seed, inspect_order=False):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+        import json
+
+        session, cards, source, offer = self.prepare("Demonic Consultation", list(reversed(names)), seed=seed)
+        cards.reverse()
+        self.act(session, offer)
+        self.assertEqual("semantic.choice", H.resolve(self, session).kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        before = authoritative_state_hash(session.state)
+        original_library = list(session.state.players["A"].zones["library"])
+        for principal, name in (("pilot:B", chosen), ("pilot:A", "Unknown Bog Creature ZZZ")):
+            rejected = session.act(principal, {"action_id": "choose", "card_name": name})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            for card in cards:
+                self.assertNotIn(card.ref, json.dumps(packet))
+        self.assertEqual(original_library, session.state.players["A"].zones["library"])
+        session = H.replay(self, session, load=True)
+        start = len(session.state.events)
+        if inspect_order:
+            from unittest.mock import patch
+
+            move = session.engine.move_objects_simultaneously_intent
+            reveal = session.engine.reveal_library_cards_intent
+            observed = []
+
+            def observe_move(intent, *args, **kwargs):
+                observed.append(("exile", intent.object_refs, session.state.cards[cards[7].object_id].zone))
+                return move(intent, *args, **kwargs)
+
+            def observe_reveal(intent, *args, **kwargs):
+                observed.append(("reveal", intent.refs_top_first,
+                                 tuple(session.state.cards[card.object_id].zone for card in cards[:6])))
+                return reveal(intent, *args, **kwargs)
+
+            with (patch.object(session.engine, "move_objects_simultaneously_intent", side_effect=observe_move),
+                  patch.object(session.engine, "reveal_library_cards_intent", side_effect=observe_reveal)):
+                answer = session.act("pilot:A", {"action_id": "choose", "card_name": chosen})
+            self.assertEqual([
+                ("exile", tuple(card.ref for card in cards[:6]), "library"),
+                ("reveal", tuple(card.ref for card in cards[6:8]), ("exile",) * 6),
+                ("exile", (cards[6].ref,), "hand"),
+            ], observed)
+        else:
+            answer = session.act("pilot:A", {"action_id": "choose", "card_name": chosen})
+        self.assertTrue(answer.ok, answer.summary)
+        self.assertIsNone(H.resolve(self, session))
+        return session, cards, session.state.events[start:]
+
+    def test_demonic_consultation_names_on_resolution_and_reveals_exact_prefix(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        import json
+
+        session, cards, events = self._cast_and_name(
+            ["Forest"] * 6 + ["Forest", "Treasure Hunt", "Forest"], "tREaSure HuNT", seed=648091, inspect_order=True,
+        )
+        chosen, = (event for event in events if event.code == "card.name.chosen")
+        self.assertEqual("Treasure Hunt", chosen.details["card_name"])
+        reveal, = (event for event in events if event.code == "library.reveal")
+        self.assertEqual([card.ref for card in cards[6:8]], [card["ref"] for card in reveal.details["cards"]])
+        self.assertEqual(["exile"] * 7 + ["hand", "library"],
+                         [session.state.cards[card.object_id].zone for card in cards])
+        self.assertEqual(list("ABCD"), session.state.cards[cards[7].object_id].known_to)
+        for seat in "BCD":
+            packet = json.dumps(session.packet("pilot:" + seat, full=True))
+            for card in cards[:8]:
+                self.assertIn(card.ref, packet)
+            self.assertNotIn(cards[-1].ref, packet)
+        H.replay(self, session, load=True)
+
+    def test_demonic_consultation_miss_and_short_library_exile_every_available_card(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for i, names in enumerate((
+            ["Treasure Hunt"] + ["Forest"] * 8,
+            ["Forest"] * 9,
+            ["Forest"] * 3,
+            [],
+        )):
+            with self.subTest(names=names):
+                session, cards, events = self._cast_and_name(names, "Treasure Hunt", seed=648092 + i)
+                self.assertEqual([], session.state.players["A"].zones["library"])
+                self.assertTrue(session.state.players["A"].in_game)
+                self.assertEqual(["exile"] * len(cards),
+                                 [session.state.cards[card.object_id].zone for card in cards])
+                reveals = [event for event in events if event.code == "library.reveal"]
+                self.assertEqual(int(len(cards) > 6), len(reveals))
+                if reveals:
+                    self.assertEqual([card.ref for card in cards[6:]],
+                                     [row["ref"] for row in reveals[0].details["cards"]])
+                H.replay(self, session, load=True)
+
+class ChosenNameRevealCompilerTests(unittest.TestCase):
+
+    def test_chosen_name_reveal_requires_the_complete_printed_procedure(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Choose a card name. Exile the top three cards of your library, "
+                "then reveal cards from the top of your library until you reveal a card with the chosen name. "
+                "Put that card into your hand and exile all other cards revealed this way.")
+
+        def compile_text(value):
+            return compile_oracle_card(replace(query_record(value), type_line="Instant"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertIsNone(node.target_schema)
+            self.assertEqual(3, node.effects[0]["exile_count"])
+
+        witness()
+        with patch("quorune.compiler.reveal_until_library_selection_templates.chosen_name_reveal_template",
+                   return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (
+            text.replace("your library", "target player's library"),
+            text.replace("three cards", "X cards"),
+            text.replace("exile all other", "shuffle all other"),
+            text.replace("your hand", "exile"),
+            text + " Draw a card.",
+        ):
+            self.assertNotEqual("exact", compile_text(altered).status)

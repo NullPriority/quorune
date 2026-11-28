@@ -15,6 +15,7 @@ CHOSEN_SUBTYPE_MANA_CAPABILITY = "mana.activated.chosen_subtype_spending"
 PAID_MANA_HASTE_CAPABILITY = "mana.spend.creature_haste"
 CREATURE_SPELL_OR_BATTLEFIELD_ABILITY_CAPABILITY = "mana.spend.creature_spell_or_battlefield_ability"
 NONCAST_MANA_PAYMENT_CAPABILITY = "mana.spend.noncast_payment"
+EXILE_CAST_MANA_CAPABILITY = "mana.spend.cast_from_exile"
 PAID_MANA_PROTECTION_FIELD = "paid_mana_counter_protection"
 _PAID_MANA_HASTE_FIELD = "paid_mana_haste"
 MANA_SPEND_RULES = ("106.6", "601.2h", "605.1a", "605.3b", "701.6a", "707.2")
@@ -92,6 +93,7 @@ def decode_commander_scry_mana(value: object) -> CommanderScryMana | None:
 
 class ManaSpendRuleKind(StrEnum):
     NONCAST_PAYMENT = "noncast_payment"
+    CAST_FROM_EXILE = "cast_from_exile"
     CHOSEN_MONOCOLORED_SPELL = "chosen_monocolored_spell"
     CHOSEN_CREATURE = "chosen_creature"
     CHOSEN_CREATURE_OR_ABILITY = "chosen_creature_or_ability"
@@ -146,6 +148,7 @@ class ManaSpendRule:
     def requires_choice(self) -> bool:
         return self.kind not in {
             ManaSpendRuleKind.NONCAST_PAYMENT,
+            ManaSpendRuleKind.CAST_FROM_EXILE,
             ManaSpendRuleKind.INSTANT_OR_SORCERY_UNCOUNTERABLE,
             ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY,
             *_HASTE_LIFETIMES,
@@ -157,6 +160,8 @@ class ManaSpendRule:
             return (MANA_SPEND_RULE_CAPABILITY, CHOSEN_MONOCOLORED_MANA_CAPABILITY)
         if self.kind is ManaSpendRuleKind.NONCAST_PAYMENT:
             return (MANA_SPEND_RULE_CAPABILITY, NONCAST_MANA_PAYMENT_CAPABILITY)
+        if self.kind is ManaSpendRuleKind.CAST_FROM_EXILE:
+            return (MANA_SPEND_RULE_CAPABILITY, EXILE_CAST_MANA_CAPABILITY)
         if self.kind is ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY:
             return (MANA_SPEND_RULE_CAPABILITY, CREATURE_SPELL_OR_BATTLEFIELD_ABILITY_CAPABILITY)
         if self.kind in _HASTE_LIFETIMES:
@@ -173,7 +178,10 @@ class ManaSpendRule:
         suffix = f"|{self.chosen_type or '-'}" if self.bound else ""
         return _PREFIX + self.kind.value + suffix
 
-    def allows(self, action, types, subtypes, supertypes, *, battlefield_creature_ability=False, colors=()) -> bool:
+    def allows(self, action, types, subtypes, supertypes, *, battlefield_creature_ability=False,
+               colors=(), spell_from_exile=False) -> bool:
+        if self.kind is ManaSpendRuleKind.CAST_FROM_EXILE:
+            return action == "spell" and spell_from_exile is True
         if self.kind is ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL:
             return (action == "spell" and self.bound and self.chosen_type is not None
                     and set(colors) == {self.chosen_type})
@@ -215,6 +223,7 @@ class ManaSpendRule:
 
 
 NONCAST_MANA_PAYMENT_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.NONCAST_PAYMENT).encode()
+EXILE_CAST_MANA_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.CAST_FROM_EXILE).encode()
 CHOSEN_MONOCOLORED_RESTRICTION = ManaSpendRule(ManaSpendRuleKind.CHOSEN_MONOCOLORED_SPELL).encode()
 CHOSEN_MONOCOLORED_MANA_CAPABILITY = "mana.spend.chosen_monocolored_spell"
 

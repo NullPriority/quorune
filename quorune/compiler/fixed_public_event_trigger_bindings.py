@@ -673,6 +673,26 @@ def _power_entry_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     )
 
 
+def _controlled_artifact_departure_return_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..rules.artifact_graveyard_departure import (
+        CAPABILITY, EVENT, VARIANT, departure_artifact_return_condition,
+    )
+
+    match = re.fullmatch(
+        r"Whenever this creature dies or another artifact you control is put into a graveyard from the battlefield, "
+        r"(?P<body>return to your hand target artifact card in your graveyard with lesser mana value[.])",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(
+        EVENT, VARIANT, match["body"], "fixed-counter-public-zone-trigger-v1",
+        "trigger-event-normalized-zone-change", condition=departure_artifact_return_condition(),
+        capabilities=(CAPABILITY,),
+    )
+
+
 def _source_or_artifact_death_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -1008,7 +1028,9 @@ def _public_zone_spec(
     entry_return = _entry_return_spec(material_line)
     if entry_return is not None:
         return entry_return
-    closed = _closed_public_zone_event_spec(material_line)
+    from .qualified_entry_effects import qualified_entry_result_binding
+
+    closed = qualified_entry_result_binding(material_line, spec=_spec) or _closed_public_zone_event_spec(material_line)
     if closed is not None:
         return closed
     parsers: tuple[Callable[[str], FixedPublicEventBindingSpec | None], ...] = (
@@ -1016,6 +1038,7 @@ def _public_zone_spec(
         creature_graveyard_owner_spec,
         _land_entry_spec,
         _power_entry_spec,
+        _controlled_artifact_departure_return_spec,
         _source_or_artifact_death_spec,
         _subtype_graveyard_spec,
     )

@@ -16,6 +16,15 @@ def fixed_stack_spell_copy_template(text):
     qualified = fixed_qualified_stack_copy_template(text)
     if qualified is not None:
         return qualified
+    if re.fullmatch(
+        r"Copy target instant or sorcery spell, then return it to its owner['’]s hand\. "
+        r"You may choose new targets for the copy\.", text.strip(), re.I,
+    ):
+        from ..rules.opponent_spell_or_permanent_return import copy_and_return_spell_effects
+
+        copy = FixedStackSpellCopySpec()
+        return ("fixed-instant-sorcery-copy-and-owner-hand-return-v1", copy_and_return_spell_effects(),
+                copy.target_schema, copy.mechanics)
     match = re.fullmatch(r'Copy target instant or sorcery spell(?P<controlled> you control)?\. '
         r'You may choose new targets for the copy\.', text.strip(), re.I)
     if match is None:
@@ -26,9 +35,15 @@ def fixed_stack_spell_copy_template(text):
 
 
 def fixed_qualified_stack_copy_template(text):
-    from ..stack_spell_copy_model import FixedQualifiedStackCopySpec
+    from ..stack_spell_copy_model import FixedQualifiedStackCopySpec, mixed_stack_copy_spec
 
     if re.fullmatch(
+        r"Copy target instant spell, sorcery spell, activated ability, or triggered ability\. "
+        r"You may choose new targets for the copy\.",
+        " ".join(text.split()), re.I,
+    ):
+        spec = mixed_stack_copy_spec()
+    elif re.fullmatch(
         r'Copy target permanent spell you control three times\.(?: \(The copies become tokens\.\))?',
         text.strip(), re.I,
     ):
@@ -57,6 +72,14 @@ def fixed_qualified_stack_copy_template(text):
 def cast_event_spell_copy_template(binding,text):
     from ..event_spell_copy_model import EVENT_SPELL_COPY_MECHANIC,event_spell_copy_effect
     if binding.event.value!='spell.cast':return None
+    from ..rules.prior_qualified_cast_copy import PRIOR_CAST_COPY_MECHANIC, prior_cast_copy_condition, prior_cast_copy_instruction
+
+    if (binding.event_condition == prior_cast_copy_condition() and re.fullmatch(
+        r"Copy it for each other instant and sorcery spell you['’]ve cast before it this turn\. "
+        r"You may choose new targets for the copies\.", " ".join(text.split()), re.I,
+    )):
+        return ("copy-prior-qualified-controller-casts-v1", (prior_cast_copy_instruction(),),
+                None, (PRIOR_CAST_COPY_MECHANIC,)), False
     from .cast_spell_suspend_templates import cast_spell_suspend_template
     if suspended_copy := cast_spell_suspend_template(binding, text):
         return suspended_copy

@@ -5,12 +5,14 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..apnap_object_payment import (
-    DECLINED_LIFE_LOSS, OTHER_PLAYER_SACRIFICE_CAPABILITY, OTHER_PLAYER_SACRIFICE_SCOPE,
+    DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS, OTHER_PLAYER_SACRIFICE_CAPABILITY,
+    OTHER_PLAYER_SACRIFICE_SCOPE,
     apnap_object_payment_dependencies, validate_other_player_sacrifice,
 )
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
     FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
+    AffectedPlayerSacrificeSubject, FixedAffectedPlayerSacrificeTemplate,
     MOST_LANDS_ATTACK_SACRIFICE, MOST_LANDS_ATTACK_SACRIFICE_MECHANIC,
     SOURCE_EXCLUDED_SACRIFICE_CAPABILITY, SOURCE_EXCLUDED_SACRIFICE_MECHANIC,
     fixed_affected_player_sacrifice_predicate_is_closed,
@@ -29,6 +31,7 @@ from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
 from ..replacement.immutable import FrozenMap, thaw_value
 from .effect_shape_walkers import contains_nested_key, nested_effects
+from .graveyard_arrival_order import GRAVEYARD_ARRIVAL_ORDER_CAPABILITY
 from .keep_permanents_by_type import (
     KEEP_PERMANENTS_BY_TYPE_OPERATION, keep_by_type_capabilities, keep_by_type_runtime_dependencies,
 )
@@ -162,9 +165,36 @@ def _attack_sacrifice_stat_runtime_dependencies(program):
     return _ATTACK_SACRIFICE_STAT_DEPENDENCIES
 
 
+def ordered_creature_sacrifice_effect_is_closed(effect, *, actor="$controller"):
+    if not isinstance(effect, Mapping) or effect.get(ORDER_GRAVEYARD_ARRIVALS) is not True:
+        return False
+    if type(effect.get("count")) is not int:
+        return False
+    template = FixedAffectedPlayerSacrificeTemplate(
+        AffectedPlayerSacrificeSubject.EACH_PLAYER, 13,
+        ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+        order_graveyard_arrivals=True,
+    )
+    return thaw_value(effect) == {**template.effects[0], "actor": actor}
+
+
+def _ordered_creature_sacrifice_runtime_dependencies(program):
+    marked = tuple(effect for effect in nested_effects((*program.effects, *program.handlers))
+                   if ORDER_GRAVEYARD_ARRIVALS in effect)
+    if not marked:
+        return ()
+    required = fixed_affected_player_sacrifice_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if tuple(program.effects) != marked or not required:
+        raise ValueError("Ordered creature sacrifice requires the complete fixed instruction")
+    return required
+
+
 def greatest_power_sacrifice_runtime_dependencies(program):
     if required := (
-        _controller_sacrifice_life_runtime_dependencies(program)
+        _ordered_creature_sacrifice_runtime_dependencies(program)
+        or _controller_sacrifice_life_runtime_dependencies(program)
         or _entry_sacrifice_power_draw_runtime_dependencies(program)
         or _attack_sacrifice_stat_runtime_dependencies(program)
         or target_sacrifice_toughness_runtime_dependencies(program)
@@ -180,6 +210,10 @@ def greatest_power_sacrifice_runtime_dependencies(program):
     if len(marked) != 1 or not program.effects or marked[0] != program.effects[-1]:
         raise ValueError("Greatest-power sacrifice requires its closed result")
     spec = GreatestPowerSacrificeSpec.from_effect(marked[0])
+    if spec.opponent_only:
+        from .gift_graveyard_spells import greed_dependencies
+
+        return greed_dependencies(program)
     if not _greatest_power_sacrifice_target_is_closed(program.target_schema, spec):
         raise ValueError("Greatest-power sacrifice has the wrong affected target scope")
     event_zone = (program.event, program.active_zone)
@@ -192,6 +226,11 @@ def greatest_power_sacrifice_runtime_dependencies(program):
     elif spec.lost_life_only:
         if event_zone != ("activate", "battlefield") or len(program.effects) != 1:
             raise ValueError("Life-qualified greatest-power sacrifice requires its fixed battlefield activation")
+    elif event_zone == ("activate", "battlefield"):
+        from .repeated_apnap_payment import is_plain_loyalty_removal_program
+
+        if len(program.effects) != 1 or not is_plain_loyalty_removal_program(program):
+            raise ValueError("Greatest-power sacrifice requires its closed loyalty result")
     elif event_zone != ("resolve", "stack") or len(program.effects) > 2:
         raise ValueError("Greatest-power sacrifice requires its closed spell resolution")
     return _greatest_power_sacrifice_dependencies(spec)
@@ -210,7 +249,8 @@ def _greatest_power_sacrifice_dependencies(spec):
         "zone.change.destination_replacement",
         PUBLIC_QUERY_AMOUNT_CAPABILITY if spec.mana_value else PUBLIC_STAT_AGGREGATE_CAPABILITY,
         *(("condition.history.fixed_public_query",) if spec.lost_life_only else ()),
-        *(("target.revalidate_resolution", "life.change.effect") if spec.target_player is not None else ()),
+        *(("target.revalidate_resolution",) if spec.opponent_only else
+          ("target.revalidate_resolution", "life.change.effect") if spec.target_player is not None else ()),
     )
 
 
@@ -221,6 +261,10 @@ def is_closed_affected_player_sacrifice_program(program: Any) -> bool:
 
 
 def _specialized_sacrifice_node_capabilities(effect, target_schema):
+    from .shared_type_sacrifice import SHARED_TYPE_SACRIFICE, shared_type_sacrifice_node_capabilities
+
+    if SHARED_TYPE_SACRIFICE in effect:
+        return shared_type_sacrifice_node_capabilities(effect, target_schema)
     if effect.get("op") == KEEP_PERMANENTS_BY_TYPE_OPERATION:
         try:
             return keep_by_type_capabilities(effect, target_schema)
@@ -252,7 +296,10 @@ def fixed_affected_player_sacrifice_node_capabilities(
 ) -> tuple[str, ...]:
     """Recognize one fixed affected-player permanent-sacrifice choice."""
     from .keep_three_sacrifice import KEEP_THREE_SACRIFICE_FIELD, keep_three_sacrifice_node_capabilities
+    from .counter_marked_keep import KEEP_COUNTER_FIELD, keep_counter_node_capabilities
 
+    if len(effects) == 1 and KEEP_COUNTER_FIELD in effects[0]:
+        return keep_counter_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if len(effects) == 1 and KEEP_THREE_SACRIFICE_FIELD in effects[0]:
         return keep_three_sacrifice_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -264,6 +311,15 @@ def fixed_affected_player_sacrifice_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    if ORDER_GRAVEYARD_ARRIVALS in effect:
+        if target_schema is not None or not ordered_creature_sacrifice_effect_is_closed(effect):
+            return ()
+        return (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, "zone.change.destination_replacement",
+                GRAVEYARD_ARRIVAL_ORDER_CAPABILITY)
+    from .ordered_opponent_creature_sacrifice import DEPENDENCIES, ordered_opponent_sacrifice_is_closed, uses_ordered_opponent_sacrifice
+
+    if uses_ordered_opponent_sacrifice(effect):
+        return DEPENDENCIES if target_schema is None and ordered_opponent_sacrifice_is_closed(effect) else ()
     from .ordered_type_sacrifice import ORDERED_TYPE_SACRIFICE_OPERATION, ordered_type_sacrifice_node_capabilities
     from .sacrifice_discard_fallback import sacrifice_discard_fallback_node_capabilities, uses_sacrifice_discard_fallback
 
@@ -271,6 +327,10 @@ def fixed_affected_player_sacrifice_node_capabilities(
         return sacrifice_discard_fallback_node_capabilities(effects, target_schema)
     if effect.get("op") == ORDERED_TYPE_SACRIFICE_OPERATION:
         return ordered_type_sacrifice_node_capabilities(effects=effects, target_schema=target_schema)
+    from .colored_permanent_sacrifice import DEPENDENCIES, all_colored_sacrifice_is_closed, uses_all_colored_sacrifice
+
+    if uses_all_colored_sacrifice(effect):
+        return DEPENDENCIES if target_schema is None and all_colored_sacrifice_is_closed(effect) else ()
     specialized = _specialized_sacrifice_node_capabilities(effect, target_schema)
     if specialized is not None:
         return specialized
@@ -395,6 +455,10 @@ _OTHER_PLAYER_SACRIFICE_DEPENDENCIES = (
 
 
 def other_player_sacrifice_runtime_dependencies(program):
+    from .ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_program_dependencies
+
+    if required := ordered_opponent_sacrifice_program_dependencies(program):
+        return required
     marked = tuple(effect for effect in nested_effects((*program.effects, *program.handlers))
                    if effect.get("players") == OTHER_PLAYER_SACRIFICE_SCOPE
                    and COUNTED_SACRIFICE_TOKEN_FIELD not in effect)

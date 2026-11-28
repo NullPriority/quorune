@@ -19,8 +19,10 @@ def search_control_payload(host, item, searcher, zones, *, library_owner=None):
 
 def is_registered_library_search(effect):
     from ..semantic_choices.artifact_search_exchange import scoped_exchange_search
+    from ..rules.qualified_library_cast import OPERATION
 
     return (scoped_exchange_search(effect)
+            or effect.get("op") == OPERATION and effect.get("phase") == "search"
             or effect.get("op") == "transmute_artifact" and effect.get("stage") in {"search", "search_v2", "search_v3"})
 
 
@@ -78,11 +80,11 @@ def complete_controlled_search_election(host, decision):
     _offer(host, control, {**state, "choices": [*state["choices"], source_ref]})
 
 
-def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, library_owner=None):
-    """Return pending, applied, or unchanged for one original validated search."""
+def controlled_find_recipients(host, decision, *, item, actor, zones, refs, library_owner=None):
+    """Choose the existing replacement recipients before any found card moves."""
     control = _scope(host, decision, item, actor, zones, library_owner)
     if control is None or not control.replacements or not refs:
-        return "unchanged"
+        return ()
     winners = getattr(decision, "controlled_find_choices", None)
     if winners is None:
         candidates = {source.controller for source in control.replacements}
@@ -92,16 +94,28 @@ def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, librar
                 "search": deepcopy(decision.continuation), "response": deepcopy(decision.responses[actor]),
                 "find_refs": list(refs), "choices": [],
             })
-            return "pending"
+            return None
         winners = (control.replacements[0].ref,) * len(refs)
     by_ref = {source.ref: source.controller for source in control.replacements}
     if len(winners) != len(refs) or any(winner not in by_ref for winner in winners):
         raise GameRuleError("The found-card replacement changed its selected sources")
+    return tuple(by_ref[winner] for winner in winners)
+
+
+def resolve_controlled_finds(host, decision, *, item, actor, zones, refs, library_owner=None):
+    """Return pending, applied, or unchanged for one original validated search."""
+    recipients = controlled_find_recipients(
+        host, decision, item=item, actor=actor, zones=zones, refs=refs, library_owner=library_owner,
+    )
+    if recipients is None:
+        return "pending"
+    if not recipients:
+        return "unchanged"
     cards = [host._resolve_object(actor, ref, zones=set(zones), owned_only=True) for ref in refs]
     from ..opponent_library_exile import grant_controlled_search_exile_play
     from ..zone_transitions import ZoneTransitionOwner
 
-    grants = {card.object_id: by_ref[winner] for card, winner in zip(cards, winners, strict=True)}
+    grants = {card.object_id: recipient for card, recipient in zip(cards, recipients, strict=True)}
     moved = ZoneTransitionOwner(host).move_cards_simultaneously(
         tuple((card.object_id, "exile") for card in cards),
         reason="Exile cards found in the controlled search",

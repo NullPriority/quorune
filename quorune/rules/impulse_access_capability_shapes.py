@@ -4,8 +4,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import Protocol
 
 from ..combat_damage_library_exile import (
-    is_combat_damage_cast_exile, is_combat_damage_exile,
-    validate_combat_damage_cast_exile, validate_combat_damage_exile,
+    is_combat_damage_cast_exile, is_combat_damage_color_cast_exile, is_combat_damage_exile,
+    validate_combat_damage_cast_exile, validate_combat_damage_color_cast_exile, validate_combat_damage_exile,
 )
 from ..defending_player_library_exile import (
     DEFENDING_PLAYER_EXILE_CAPABILITY, is_defending_player_exile, validate_defending_player_exile,
@@ -18,6 +18,7 @@ from .land_entry_library_exile import land_entry_top_exile_node_capabilities
 from ..impulse_access_model import (
     IMPULSE_ACCESS_DECLARED_COUNT_CAPABILITY, IMPULSE_ACCESS_DECLARED_COUNT_VERSION,
     IMPULSE_ACCESS_NEXT_END_STEP_CAPABILITY, SHUFFLED_TOP_FREE_PLAY_VERSION, TOP_FREE_INSTANT_SORCERY_VERSION,
+    SPAWN_SETTLEMENT_IMPULSE_VERSION, validate_spawn_settlement_impulse, POWER_COUNTED_IMPULSE_VERSION,
     ImpulseAccessDuration, validate_top_free_instant_sorcery,
     impulse_access_count_is_legal, shuffled_top_free_play_effect, validate_shuffled_top_free_play,
 )
@@ -125,10 +126,25 @@ def declared_impulse_access_dependencies(effect):
     if _is_shuffled_top_free_play(effect):
         validate_shuffled_top_free_play(effect)
         return SHUFFLED_TOP_FREE_PLAY_CAPABILITIES
+    if effect.get("schema_version") == POWER_COUNTED_IMPULSE_VERSION:
+        from .power_counted_impulse import DEPENDENCIES, validate_effect
+
+        validate_effect(effect)
+        return DEPENDENCIES
+    if effect.get("schema_version") == SPAWN_SETTLEMENT_IMPULSE_VERSION:
+        from .impulse_spawn_settlement import DEPENDENCIES
+
+        validate_spawn_settlement_impulse(effect)
+        return DEPENDENCIES
     if effect.get("schema_version") == TOP_FREE_INSTANT_SORCERY_VERSION:
         from .loyalty_spell_results import CAPABILITY
         validate_top_free_instant_sorcery(effect)
         return CAPABILITY, IMPULSE_ACCESS_CAPABILITY_ID
+    if is_combat_damage_color_cast_exile(effect):
+        from .combat_damage_library_access import COMBAT_DAMAGE_COLOR_CAST_LIBRARY_DEPENDENCIES
+
+        validate_combat_damage_color_cast_exile(effect)
+        return COMBAT_DAMAGE_COLOR_CAST_LIBRARY_DEPENDENCIES
     if is_combat_damage_cast_exile(effect):
         from .combat_damage_library_access import COMBAT_DAMAGE_CAST_LIBRARY_DEPENDENCIES
 
@@ -263,6 +279,20 @@ def is_closed_fixed_impulse_access_program(
             mechanic_ids=program.coverage,
         )
     )
+    from .impulse_spawn_settlement import CAPABILITY as SPAWN_SETTLEMENT_CAPABILITY, spawn_program_dependencies
+
+    from .power_counted_impulse import CAPABILITY as POWER_COUNTED_CAPABILITY, program_dependencies
+
+    if POWER_COUNTED_CAPABILITY in required:
+        try:
+            program_dependencies(program)
+        except (KeyError, TypeError, ValueError):
+            return False
+    if SPAWN_SETTLEMENT_CAPABILITY in required:
+        try:
+            spawn_program_dependencies(program)
+        except (KeyError, TypeError, ValueError):
+            return False
     if SHUFFLED_TOP_FREE_PLAY_CAPABILITY in required:
         try:
             shuffled_top_free_play_runtime_dependencies(program)

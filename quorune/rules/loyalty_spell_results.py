@@ -14,6 +14,10 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_CAPABILITY, RESOLUTION_CONDITION_MECHANIC, is_other_blue_permanent_draw,
     other_blue_permanent_draw_effect,
 )
+from .captured_counter_keyword_grant import (
+    CAPTURED_COUNTER_FLYING_CAPABILITY, CAPTURED_COUNTER_FLYING_DEPENDENCIES, CAPTURED_COUNTER_FLYING_MECHANICS,
+    CAPTURED_COUNTER_FLYING_VERSION, CAPTURED_COUNTER_KEYWORD_OPERATION, captured_counter_keyword_instruction,
+)
 from .effect_shape_walkers import nested_effects
 
 CAPABILITY = "activation.loyalty.fixed_spell_results"
@@ -42,7 +46,10 @@ def loyalty_result_cost_is_closed(cost, delta):
     if not isinstance(cost, Mapping):
         return False
     text = cost.get("text")
-    allowed = (str(delta), str(delta).replace("-", "−")) if delta < 0 else (f"+{delta}",)
+    if delta == 0:
+        allowed = ("0",)
+    else:
+        allowed = (str(delta), str(delta).replace("-", "−")) if delta < 0 else (f"+{delta}",)
     expected = thaw_value({**_COST_DEFAULTS, "text": text, "loyalty_delta": delta})
     return text in allowed and immutable_fingerprint(cost) == immutable_fingerprint(expected)
 
@@ -53,6 +60,7 @@ def uses_loyalty_spell_result(effect):
         (effect.get("op"), version) in (
             (NEXT_COST_OPERATION, NEXT_TURN_SPELL_COST_VERSION),
             ("fixed_impulse_access", TOP_FREE_INSTANT_SORCERY_VERSION),
+            (CAPTURED_COUNTER_KEYWORD_OPERATION, CAPTURED_COUNTER_FLYING_VERSION),
         )
         or is_other_blue_permanent_draw(effect)
     )
@@ -65,6 +73,10 @@ def loyalty_spell_result_capabilities(*, effects, target_schema, active_zone, co
     delta = (cost_schema or {}).get("loyalty_delta")
     if type(delta) is not int or not loyalty_result_cost_is_closed(cost_schema, delta):
         return ()
+    if delta == 0 and target_schema is None and set(CAPTURED_COUNTER_FLYING_MECHANICS).issubset(mechanics):
+        exact = captured_counter_keyword_instruction(version=CAPTURED_COUNTER_FLYING_VERSION)
+        if actual == (immutable_fingerprint(exact),):
+            return (CAPABILITY, *CAPTURED_COUNTER_FLYING_DEPENDENCIES)
     if delta == 1 and target_schema is None and NEXT_COST_MECHANIC in mechanics:
         if actual == (immutable_fingerprint(next_turn_spell_cost_effect()),):
             return CAPABILITY, NEXT_COST_CAPABILITY
@@ -86,7 +98,8 @@ def loyalty_spell_result_capabilities(*, effects, target_schema, active_zone, co
 
 
 def loyalty_spell_result_runtime_dependencies(program):
-    if (CAPABILITY not in program.capability_dependencies and MECHANIC not in program.coverage
+    if (not {CAPABILITY, CAPTURED_COUNTER_FLYING_CAPABILITY}.intersection(program.capability_dependencies)
+            and MECHANIC not in program.coverage
             and not any(uses_loyalty_spell_result(effect) for effect in nested_effects((program.effects, program.handlers)))):
         return ()
     from ..compiler.activated_costs import activated_ability_cost

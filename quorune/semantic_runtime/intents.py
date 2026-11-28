@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from ..rules.departing_x_reflexive import PaidDepartureDamageIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
 from ..stack_spell_copy_model import PermanentSpellCopySpec
 
@@ -29,6 +31,7 @@ from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
 from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
 from ..next_turn_attack_restriction_model import NextTurnAttackRestrictionIntent
+from ..counter_bound_attack_model import CounterBoundAttackRestrictionIntent
 from ..extra_combat_model import ScheduleExtraCombatIntent
 from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
 from ..rules.token_mill_repeat import TokenMillRepeatIntent
@@ -37,6 +40,7 @@ from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
+from .entry_enchantment_return_intent import EntryEnchantmentReturnIntent
 from .zone_move_intent import (
     MillCardsIntent, ZoneMoveIntent, ExilePublicGraveyardCardIntent, MovePublicZoneSetIntent,
     MoveObjectsSimultaneouslyIntent, _freeze_replacement_selections,
@@ -55,6 +59,7 @@ from ..source_untap_rule_model import PendingSourceUntapRestraint
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TYPE_CHECKING, TypeAlias
 
+from ..ordered_incarnation_exclusion import OrderedIncarnationExclusion
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..rules.destruction_result_model import DestructionFollowup
 from ..rules.artifact_destruction_treasure import ArtifactDestructionTreasure
@@ -92,6 +97,7 @@ from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
+from ..rules.qualified_library_cast import ResolveQualifiedLibraryCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
@@ -226,10 +232,21 @@ class DestroyPermanentSetIntent:
     regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     followup: DestructionFollowup | None = None
+    ordered_exclusion: OrderedIncarnationExclusion | None = None
 
     def __post_init__(self) -> None:
+        if self.ordered_exclusion is not None and (
+            not isinstance(self.ordered_exclusion, OrderedIncarnationExclusion)
+            or self.followup is not None and (
+                not isinstance(self.followup, DestructionFollowup) or not self.followup.uses_owned_return
+                or self.ordered_exclusion.protected
+            )
+        ):
+            raise ValueError("Ordered destruction requires its typed incarnation exclusion")
         if self.followup is not None and not isinstance(self.followup, DestructionFollowup):
             raise ValueError("Destruction-set follow-up must be typed")
+        if self.followup is not None and self.followup.uses_owned_return and self.ordered_exclusion is None:
+            raise ValueError("An owned destruction return requires its ordered batch")
         if any(type(value) is not str or not value for value in (self.actor, self.reason)):
             raise ValueError(
                 "Destruction-set intents require actor and reason"
@@ -469,7 +486,10 @@ class AddManaIntent:
 @dataclass(frozen=True, slots=True)
 class SetCardDesignationIntent:
     object_ref: str
-    designation: Literal["chosen_name", "chosen_creature_type", "chosen_color", "chosen_faction", "last_noted_mana_type"]
+    designation: Literal[
+        "chosen_name", "chosen_creature_type", "chosen_color", "chosen_faction",
+        "chosen_jeskai_temur_faction", "last_noted_mana_type", "chosen_basic_land_type",
+    ]
     value: str
     actor: str
     reason: str
@@ -481,6 +501,8 @@ class SetCardDesignationIntent:
             "chosen_creature_type",
             "chosen_color",
             "chosen_faction",
+            "chosen_jeskai_temur_faction",
+            "chosen_basic_land_type",
             "last_noted_mana_type",
         }:
             raise ValueError("Card designation kind is unsupported")
@@ -509,10 +531,16 @@ class SetCardDesignationIntent:
 
             if self.value not in NOTED_MANA_TYPES:
                 raise ValueError("Noted mana requires one ordinary mana type")
-        if self.designation == "chosen_faction":
+        if self.designation == "chosen_basic_land_type":
             from ..entry_designations import EntryDesignationKind, validate_designation
 
-            validate_designation(EntryDesignationKind.FACTION, self.value)
+            validate_designation(EntryDesignationKind.BASIC_LAND_TYPE, self.value)
+        if self.designation in {"chosen_faction", "chosen_jeskai_temur_faction"}:
+            from ..entry_designations import EntryDesignationKind, validate_designation
+
+            kind = (EntryDesignationKind.FACTION if self.designation == "chosen_faction"
+                    else EntryDesignationKind.JESKAI_TEMUR_FACTION)
+            validate_designation(kind, self.value)
 
 
 @dataclass(frozen=True, slots=True)
@@ -822,6 +850,7 @@ class ReorderLibraryTopIntent:
     viewer: str
     refs_top_first: tuple[str, ...]
     reason: str
+    shuffle_remainder: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -1481,7 +1510,23 @@ class ProliferateIntent:
         return tuple(subject.ref for subject in self.subjects)
 
 
+@dataclass(frozen=True, slots=True)
+class FlipSourcePermanentIntent:
+    actor: str
+    object_id: str
+    incarnation: str
+    card_ref: str
+    reason: str
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not str or not value for value in (
+            self.actor, self.object_id, self.incarnation, self.card_ref, self.reason,
+        )):
+            raise ValueError("A flip intent requires its original source, actor and reason")
+
+
 SemanticIntent: TypeAlias = (
+    FlipSourcePermanentIntent |
     DrawCardsIntent | ControlIntent
     | QueueReflexiveTriggerIntent
     | QueueRevealUntilReflexiveIntent
@@ -1507,6 +1552,7 @@ SemanticIntent: TypeAlias = (
     | MovePublicZoneSetIntent
     | DealFixedDamageSetIntent
     | AddManaIntent
+    | PaidDepartureDamageIntent
     | SetCardDesignationIntent
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
@@ -1527,6 +1573,7 @@ SemanticIntent: TypeAlias = (
     | DiscoverCastIntent
     | ResolvingExileLandPlayIntent
     | ResolvingSharedTypeLibraryPlayIntent
+    | ResolveQualifiedLibraryCastIntent
     | RevealCapturedDrawsIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
@@ -1582,7 +1629,7 @@ SemanticIntent: TypeAlias = (
     | FixedSourceSacrificeIntent
     | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | TargetCombatDamageMultiplierIntent | ScheduleNextDrawResultIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
-    | NextTurnAttackRestrictionIntent
+    | NextTurnAttackRestrictionIntent | CounterBoundAttackRestrictionIntent
     | ScheduleTurnSkipIntent
     | ScheduleExtraCombatIntent
     | ScheduleAdditionalBeginningIntent

@@ -194,9 +194,17 @@ def fixed_effect_payment_template(
                 cost = FixedEffectPaymentSpec(
                     RETURN_PAYMENT_KIND, predicate=returned.predicate, schema_version=RETURN_PAYMENT_VERSION,
                 )
-    body=match['body'].strip()
-    if cost is None or _OPEN.search(body) or '"' in body:return None
-    template,effects,schema,mechanics=compile_effect(body)
+    body = match["body"].strip()
+    if cost is None or '"' in body:
+        return None
+    chosen_impulse = None
+    if not declined and cost.kind == "discard" and cost.amount == 1:
+        from .discover_templates import _chosen_impulse_template
+
+        chosen_impulse = _chosen_impulse_template(body)
+    if chosen_impulse is None and _OPEN.search(body):
+        return None
+    template, effects, schema, mechanics = chosen_impulse or compile_effect(body)
     if len(effects)==1 and effects[0].get('op')=='modify_stats_until_end_of_turn' and effects[0].get('card')=='$source':
         from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
         source_result=FixedSourceCharacteristicsTemplate(source_kind='permanent',power=effects[0]['power'],toughness=effects[0]['toughness'])

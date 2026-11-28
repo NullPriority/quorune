@@ -5,7 +5,7 @@ import copy
 from dataclasses import dataclass, field
 from pathlib import Path
 import time
-from typing import Any, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 from .permissions import decision_context_for_capability
 from .carddb import CardDatabase
@@ -23,7 +23,7 @@ from .profiles import (
 )
 from .rules.action_catalog import concealed_face_down_exile_cards, visible_decision_payload
 from .rules.action_explanations import projected_action_explanations
-from .rules.capabilities import load_default_capability_registry
+from .rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from .rules.evidence import _capability_validation_snapshot
 from .semantic_runtime.action_permissions import (
     land_play_permission_options,
@@ -37,20 +37,24 @@ from .record import (
     authoritative_state_hash,
     capability_id,
     checkpoint_envelope,
+    database_fingerprint,
     semantics_fingerprint,
     utc_now,
     write_record,
+    write_record_privacy_audit,
 )
 from .record_trust import (
     capture_stack_resolution_inputs,
     command_card_program_fingerprints,
     resolved_semantic_execution_provenance_rows,
+    record_semantics_provenance,
+    runtime_trust_provenance,
     submit_with_resolution_capture,
     verified_replay_inputs,
 )
 from .turn_priority_model import PRIORITY_WINDOW_HOLDS_FIELD, PriorityWindowHolds
 from .review_artifacts import write_review_artifacts
-from .semantics import SemanticRegistry
+from .semantics import PreparedOraclePrograms, SemanticRegistry
 
 
 ACTION_ALIASES = {
@@ -108,6 +112,7 @@ def _state_projector(
         land_play_count_resolver=lambda seat: len(
             land_play_permission_options(engine, seat)
         ),
+        land_entry_life_resolver=engine._land_entry_life_amount,
     )
 
 
@@ -116,6 +121,148 @@ def _observation_provenance(cursor: ProjectionCursor | None) -> dict[str, Any]:
         "projected_state_hash": cursor.view_hash if cursor else None,
         "observation_revision": cursor.snapshot.get("rev") if cursor and cursor.snapshot else None,
         "observation_base_hash": cursor.view_hash if cursor else None,
+    }
+
+
+def _deck_rule_names(deck: DeckDefinition) -> tuple[str, ...]:
+    return tuple(entry.name for entry in deck.entries if entry.board in {"mainboard", "commander"})
+
+
+def _deck_program_names(decks: Mapping[str, DeckDefinition]) -> tuple[tuple[str, ...], ...]:
+    return tuple(_deck_rule_names(deck) for deck in decks.values())
+
+
+def _compile_session_rules(
+    card_db: CardDatabase,
+    deck_names: tuple[tuple[str, ...], ...],
+    capabilities: CapabilityRegistry,
+    review_profile: str,
+    semantics_path: str | Path | None = None,
+) -> SemanticRegistry:
+    semantics = SemanticRegistry(semantics_path)
+    deck_records = [card_db.lookup(name) for names in deck_names for name in names]
+    register_generated_programs(
+        card_db,
+        semantics,
+        deck_records,
+        trust_level="provisional",
+        capability_registry=capabilities,
+        capability_profile=review_profile,
+        promote_exact_runtime_handlers=True,
+        promote_exact_trigger_programs=True,
+        promote_exact_effect_programs=True,
+        promote_exact_capability_declarations=True,
+    )
+    return semantics
+
+
+@dataclass(frozen=True, slots=True)
+class PreparedDeckRules:
+    """The registered programs and verified groups produced by one deck check."""
+
+    card_db: CardDatabase
+    database_hash: str
+    deck_names: tuple[str, ...]
+    review_profile: str
+    capability_fingerprints: tuple[str, str | None]
+    pack_fingerprints: tuple[tuple[str, str], ...]
+    oracle_programs: Mapping[str, PreparedOraclePrograms]
+
+    @classmethod
+    def from_preflight(
+        cls, card_db: CardDatabase, deck: DeckDefinition, registry: SemanticRegistry,
+        report: Mapping[str, Any], checked_card_programs: Mapping[str, Any],
+    ) -> "PreparedDeckRules | None":
+        names = _deck_rule_names(deck)
+        rows = report.get("cards", ())
+        capability_fingerprint = report.get("capability_registry_fingerprint")
+        if len(rows) != len(names) or not capability_fingerprint or report.get("card_data_metadata") != card_db.metadata():
+            return None
+        oracle_ids = dict.fromkeys(row["oracle_id"] for row in rows)
+        return cls(
+            card_db, database_fingerprint(card_db)["metadata_hash"], names, report["capability_profile"],
+            (capability_fingerprint, report.get("capability_evidence_fingerprint")),
+            tuple((pack["path"], pack["hash"]) for pack in registry.loaded_packs),
+            {
+                oracle_id: PreparedOraclePrograms(
+                    tuple(registry.programs_for_oracle(oracle_id)), checked_card_programs.get(oracle_id),
+                )
+                for oracle_id in oracle_ids
+            },
+        )
+
+
+def _assemble_submitted_deck_rules(
+    card_db: CardDatabase,
+    database_hash: str,
+    deck_names: tuple[tuple[str, ...], ...],
+    capabilities: CapabilityRegistry,
+    review_profile: str,
+    submitted_decks: tuple[PreparedDeckRules, ...],
+) -> SemanticRegistry | None:
+    if len(submitted_decks) != len(deck_names):
+        return None
+    semantics = SemanticRegistry()
+    packs = tuple((pack["path"], pack["hash"]) for pack in semantics.loaded_packs)
+    capability_fingerprints = (capabilities.fingerprint, capabilities.evidence_fingerprint)
+    for names, deck in zip(deck_names, submitted_decks, strict=True):
+        if (
+            deck.card_db is not card_db or deck.database_hash != database_hash or deck.deck_names != names
+            or deck.review_profile != review_profile or deck.capability_fingerprints != capability_fingerprints
+            or deck.pack_fingerprints != packs
+        ):
+            return None
+    if not semantics.install_prepared_oracle_programs(deck.oracle_programs for deck in submitted_decks):
+        return None
+    return semantics
+
+
+@dataclass(frozen=True, slots=True)
+class PreparedSessionRules:
+    """An in-memory seed for a new session on the same rule and card inputs."""
+
+    _card_db: CardDatabase
+    _database_hash: str
+    _deck_names: tuple[tuple[str, ...], ...]
+    _review_profile: str
+    _capability_fingerprints: tuple[str, str | None]
+    _pack_fingerprints: tuple[tuple[str, str], ...]
+    _semantics: SemanticRegistry
+
+    def _copy_for(
+        self,
+        card_db: CardDatabase,
+        decks: Mapping[str, DeckDefinition],
+        capabilities: CapabilityRegistry,
+        review_profile: str,
+    ) -> SemanticRegistry | None:
+        if (
+            self._card_db is not card_db
+            or self._database_hash != database_fingerprint(card_db)["metadata_hash"]
+            or self._deck_names != _deck_program_names(decks)
+            or self._review_profile != review_profile
+            or self._capability_fingerprints != (capabilities.fingerprint, capabilities.evidence_fingerprint)
+            or self._pack_fingerprints != SemanticRegistry.builtin_pack_fingerprints()
+        ):
+            return None
+        return copy.deepcopy(self._semantics)
+
+
+def _load_persisted_plans(path: Path, seats: Iterable[str]) -> dict[str, list[dict[str, Any]]]:
+    if not path.exists():
+        return {}
+    stored_plans = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(stored_plans, Mapping):
+        return {}
+    pilots = {f"pilot:{seat}" for seat in seats}
+    return {
+        principal: [
+            copy.deepcopy(dict(item))
+            for item in items[:64]
+            if isinstance(item, Mapping) and item.get("action_id")
+        ]
+        for principal, items in stored_plans.items()
+        if principal in pilots and isinstance(items, list)
     }
 
 
@@ -144,6 +291,38 @@ class CommanderSession:
     arena_metadata: dict[str, Any] = field(default_factory=dict)
     record_status: str = "created"
     pause_reason: dict[str, Any] | None = None
+    _record_semantic_provenance: tuple[bytes, tuple[str, dict[str, dict[str, Any]]]] | None = field(
+        default=None, init=False, repr=False,
+    )
+    _verified_runtime_trust: dict[str, Any] | None = field(default=None, init=False, repr=False)
+
+    @staticmethod
+    @_capability_validation_snapshot()
+    def prepare_rules(
+        card_db: CardDatabase, decks: Mapping[str, DeckDefinition], *, review_profile: str,
+        submitted_decks: tuple[PreparedDeckRules, ...] | None = None,
+    ) -> PreparedSessionRules:
+        capabilities = load_default_capability_registry()
+        database_hash = database_fingerprint(card_db)["metadata_hash"]
+        deck_names = _deck_program_names(decks)
+        semantics = (
+            _assemble_submitted_deck_rules(
+                card_db, database_hash, deck_names, capabilities, review_profile, submitted_decks,
+            )
+            if submitted_decks is not None else None
+        )
+        if semantics is None:
+            semantics = _compile_session_rules(card_db, deck_names, capabilities, review_profile)
+        semantics.card_programs()
+        return PreparedSessionRules(
+            card_db,
+            database_hash,
+            deck_names,
+            review_profile,
+            (capabilities.fingerprint, capabilities.evidence_fingerprint),
+            tuple((pack["path"], pack["hash"]) for pack in semantics.loaded_packs),
+            semantics,
+        )
 
     @classmethod
     @_capability_validation_snapshot()
@@ -157,30 +336,20 @@ class CommanderSession:
         seed: int | None = None,
         config: GameConfig | None = None,
         semantics_path: str | Path | None = None,
+        prepared_rules: PreparedSessionRules | None = None,
     ) -> "CommanderSession":
-        semantics = SemanticRegistry(semantics_path)
         game_config = config or GameConfig(seed=seed)
         if seed is not None:
             game_config.seed = seed
-        capability_registry = load_default_capability_registry()
-        deck_records = [
-            card_db.lookup(entry.name)
-            for deck in decks.values()
-            for entry in deck.entries
-            if entry.board in {"mainboard", "commander"}
-        ]
-        register_generated_programs(
-            card_db,
-            semantics,
-            deck_records,
-            trust_level="provisional",
-            capability_registry=capability_registry,
-            capability_profile=game_config.review_profile,
-            promote_exact_runtime_handlers=True,
-            promote_exact_trigger_programs=True,
-            promote_exact_effect_programs=True,
-            promote_exact_capability_declarations=True,
+        capabilities = load_default_capability_registry()
+        semantics = (
+            prepared_rules._copy_for(card_db, decks, capabilities, game_config.review_profile)
+            if prepared_rules is not None and semantics_path is None else None
         )
+        if semantics is None:
+            semantics = _compile_session_rules(
+                card_db, _deck_program_names(decks), capabilities, game_config.review_profile, semantics_path,
+            )
         engine = CommanderEngine.create(
             card_db,
             decks,
@@ -281,6 +450,7 @@ class CommanderSession:
         *,
         full: bool = False,
         cursor_key: str | None = None,
+        observation_epoch: object | None = None,
     ) -> dict[str, Any]:
         # Rebind after a loaded/rolled-back engine state.
         self.projector.state = self.engine.state
@@ -289,6 +459,7 @@ class CommanderSession:
                 principal,
                 self._cursor(cursor_key or principal),
                 force_full=full,
+                observation_epoch=observation_epoch,
             )
 
     def drop_projection_cursor(self, cursor_key: str) -> None:
@@ -872,6 +1043,7 @@ class CommanderSession:
                     selected_refs.append(str(payload[key]))
             for key in ("cards", "cost_cards", "targets"):
                 selected_refs.extend(str(value) for value in payload.get(key) or [])
+            registry_fingerprint = semantics_fingerprint(self.engine.semantics)
             self.commands.append(
                 {
                     "sequence": len(self.commands) + 1,
@@ -919,10 +1091,10 @@ class CommanderSession:
                             if after_shuffles[seat] != before_shuffles.get(seat)
                         },
                     },
-                    "semantics_fingerprint": semantics_fingerprint(self.engine.semantics),
+                    "semantics_fingerprint": registry_fingerprint,
                     "semantics": {
                         "registry_schema_version": 1,
-                        "registry_hash": semantics_fingerprint(self.engine.semantics),
+                        "registry_hash": registry_fingerprint,
                         "programs_used": programs_used,
                         "card_program_schema_version": 2,
                         "card_programs_used": card_programs_used,
@@ -1010,10 +1182,19 @@ class CommanderSession:
         directory.mkdir(parents=True, exist_ok=True)
         if not self.initial_checkpoint:
             self.initial_checkpoint = checkpoint_envelope(self.state)
-        self.engine.semantics.path = directory / "semantics.json"
-        saved_semantics = self.engine.semantics.save(
-            return_payload=True, reuse_unchanged=reuse_semantic_snapshot,
-        )
+        registry = self.engine.semantics
+        registry.path = directory / "semantics.json"
+        saved_semantics = registry.save(return_payload=not reuse_semantic_snapshot, reuse_unchanged=reuse_semantic_snapshot)
+        semantic_provenance = None
+        if reuse_semantic_snapshot:
+            digest = registry.record_snapshot_digest
+            cached = self._record_semantic_provenance
+            if digest is not None and cached is not None and cached[0] == digest:
+                semantic_provenance = cached[1]
+            else:
+                saved_semantics = json.loads(registry.path.read_bytes())
+                semantic_provenance = record_semantics_provenance(registry, saved_semantics)
+                self._record_semantic_provenance = (digest, semantic_provenance) if digest is not None else None
         manifest = write_record(
             directory,
             state=self.state,
@@ -1030,7 +1211,9 @@ class CommanderSession:
             status=self.record_status,
             pause_reason=self.pause_reason,
             saved_semantics=saved_semantics,
+            saved_semantics_provenance=semantic_provenance,
             runtime_trust_snapshot=runtime_trust_snapshot,
+            include_privacy_audit=False,
         )
         self.arena_metadata = copy.deepcopy(
             dict(manifest.get("codex_arena") or {})
@@ -1060,6 +1243,7 @@ class CommanderSession:
         authoritative_seconds = time.perf_counter() - started
         derived_started = time.perf_counter()
         if include_review:
+            write_record_privacy_audit(directory, self.decisions)
             write_review_artifacts(
                 directory,
                 self.engine,
@@ -1070,7 +1254,7 @@ class CommanderSession:
             # Reviews are derived analyst artifacts, not part of the durable
             # command commit.  Remove an older paused/final review after a
             # resumed live save rather than leaving a misleading snapshot.
-            for name in ("review.json", "review.md"):
+            for name in ("review.json", "review.md", "hidden-information-audit.json"):
                 (directory / name).unlink(missing_ok=True)
         derived_seconds = time.perf_counter() - derived_started
         return {
@@ -1191,27 +1375,7 @@ class CommanderSession:
             if profiles_path.exists()
             else {}
         )
-        plans: dict[str, list[dict[str, Any]]] = {}
-        plans_path = directory / "plans.json"
-        if plans_path.exists():
-            stored_plans = json.loads(
-                plans_path.read_text(encoding="utf-8")
-            )
-            if isinstance(stored_plans, Mapping):
-                for principal, items in stored_plans.items():
-                    if (
-                        principal not in {
-                            f"pilot:{seat}" for seat in engine.state.players
-                        }
-                        or not isinstance(items, list)
-                    ):
-                        continue
-                    plans[str(principal)] = [
-                        copy.deepcopy(dict(item))
-                        for item in items[:64]
-                        if isinstance(item, Mapping)
-                        and item.get("action_id")
-                    ]
+        plans = _load_persisted_plans(directory / "plans.json", engine.state.players)
         deck_provenance: dict[str, dict[str, Any]] = {}
         profile_validation: dict[str, dict[str, Any]] = {}
         arena_metadata: dict[str, Any] = {}
@@ -1244,7 +1408,7 @@ class CommanderSession:
                 profile_validation[str(principal)] = copy.deepcopy(
                     dict(profile["validation"])
                 )
-        return cls(
+        session = cls(
             card_db=card_db,
             engine=engine,
             projector=_state_projector(card_db, engine),
@@ -1262,3 +1426,6 @@ class CommanderSession:
             record_status=record_status,
             pause_reason=pause_reason,
         )
+        if verify_rules and manifest.get("runtime_trust") is not None:
+            session._verified_runtime_trust = runtime_trust_provenance()
+        return session

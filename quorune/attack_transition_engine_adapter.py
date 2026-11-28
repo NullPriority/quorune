@@ -252,6 +252,19 @@ def commit_engine_attack_declaration(
         raise StateInvariantError(str(exc)) from exc
 
 
+def _begin_attack_event_discovery(engine, event, trigger_batch):
+    """Discover declaration observers and collect sources for individual attack events."""
+    from .rules.attack_declaration_mana import dispatch_player_attack_declaration
+    from .rules.attacking_card_entry import graveyard_attacking_entry_sources
+
+    battlefield = tuple(engine._semantic_event_sources(zones={"battlefield"}))
+    sources = (*battlefield, *graveyard_attacking_entry_sources(engine, event.active_player))
+    declaration_refs = dispatch_player_attack_declaration(
+        engine, event, receivers=battlefield, trigger_batch=trigger_batch,
+    )
+    return sources, declaration_refs
+
+
 def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
     """Seal the attack declaration and return its represented stack items."""
 
@@ -316,11 +329,8 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
         from .qualified_attack_model import ATTACK_RECIPIENT_KIND_FIELD
         declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
             if any(characteristic_contexts.values()) else {})
-        from .rules.attacking_card_entry import graveyard_attacking_entry_sources
-        semantic_sources = (
-            *engine._semantic_event_sources(zones={"battlefield"}),
-            *graveyard_attacking_entry_sources(engine, event.active_player),
-        )
+        semantic_sources, declaration_refs = _begin_attack_event_discovery(engine, event, stack_items)
+        semantic_trigger_refs.extend(declaration_refs)
         for assignment in event.assignments:
             source = engine.state.cards.get(
                 assignment.attacker_object_id
@@ -368,6 +378,9 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                 semantic_trigger_refs.extend(engine._dispatch_semantic_event(
                     DIRECT_PLAYER_ATTACK_EVENT, facts, sources=semantic_sources, trigger_batch=stack_items,
                 ))
+        from .rules.attack_trigger_copy import append_attack_trigger_observers
+
+        append_attack_trigger_observers(engine, event, stack_items, semantic_sources)
     except (AbilityFragmentError, AttackTransitionError) as exc:
         raise StateInvariantError(str(exc)) from exc
     engine._log(

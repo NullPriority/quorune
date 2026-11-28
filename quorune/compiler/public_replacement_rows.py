@@ -12,9 +12,26 @@ from .fixed_control_templates import TWO_CONTROLLER_CREATURE_TRANSFER_TEMPLATE
 
 
 def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_effect):
+    if len(rows) == 2 and all(row[1].casefold().startswith("choose an opponent.") for row in rows):
+        from .paired_token_creator_templates import PAIRED_TOKEN_TEMPLATE
+
+        first, second = rows
+        combined = first[1] + " " + second[1]
+        if compile_effect(combined, card_name=source_name)[0] == PAIRED_TOKEN_TEMPLATE:
+            span = SourceSpan(first[2].start, second[2].end, first[2].line)
+            return [(oracle_text[span.start:span.end], combined, span)]
     result=[]
     for row in rows:
         material = row[1]
+        if result and material.casefold().endswith(", exile that creature."):
+            from .resolution_condition_templates import CONTROLLED_ARTIFACT_TAP_EXILE_TEMPLATE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            if compile_effect(combined, card_name=source_name)[0] == CONTROLLED_ARTIFACT_TAP_EXILE_TEMPLATE:
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
         if result and material.casefold().startswith("ferocious — that creature gains indestructible"):
             from .resolution_condition_templates import BLOCKER_PROTECTION_TEMPLATE
 
@@ -24,16 +41,43 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
                 span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
                 result[-1] = (oracle_text[span.start:span.end], combined, span)
                 continue
-        if result and material.casefold().startswith("exile ") and result[-1][1].casefold().endswith("phase out."):
-            from ..rules.next_personal_turn_protection import NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE
-            from ..rules.spell_self_exile import SELF_EXILE
+
+        if result and material.casefold().startswith("ferocious — that creature also gains "):
+            from ..rules.ferocious_keyword_append import FEROCIOUS_KEYWORD_TEMPLATE
 
             previous = result[-1]
             combined = previous[1] + " " + material
-            if compile_effect(combined, card_name=source_name)[0] == f"{SELF_EXILE.template}+{NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE}":
+            if compile_effect(combined, card_name=source_name)[0] == FEROCIOUS_KEYWORD_TEMPLATE:
                 span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
                 result[-1] = (oracle_text[span.start:span.end], combined, span)
                 continue
+        if result and material.casefold().startswith("exile ") and result[-1][1].casefold().endswith(
+            ("phase out.", "no maximum hand size for the rest of the game."),
+        ):
+            from ..rules.announced_x_draw_replacement import TEMPLATE as ANNOUNCED_X_DRAW_REPLACEMENT_TEMPLATE
+            from ..rules.next_personal_turn_protection import NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE
+            from ..rules.spell_self_exile import SELF_EXILE
+            from ..rules.targeted_opponent_protection import TEMPLATE as TARGET_OPPONENT_TEMPLATE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            templates = {f"{SELF_EXILE.template}+{body}" for body in
+                         (NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE, ANNOUNCED_X_DRAW_REPLACEMENT_TEMPLATE, TARGET_OPPONENT_TEMPLATE)}
+            if compile_effect(combined, card_name=source_name)[0] in templates:
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
+        if result and material.casefold().startswith(("until your next turn, your opponents can't cast", "exile ")):
+            from ..rules.airbend import TEMPLATE as AIRBEND_TEMPLATE
+            from ..rules.spell_self_exile import SELF_EXILE
+
+            previous = result[-1]
+            if "airbend all other creatures" in previous[1].casefold():
+                combined = previous[1] + " " + material
+                if compile_effect(combined, card_name=source_name)[0] in {AIRBEND_TEMPLATE, f"{SELF_EXILE.template}+{AIRBEND_TEMPLATE}"}:
+                    span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                    result[-1] = (oracle_text[span.start:span.end], combined, span)
+                    continue
         if result and material.casefold().replace("’", "'") == "you draw a card at the beginning of the next turn's upkeep.":
             from .stack_counter_followup import STACK_NEXT_TURN_DRAW_PAIR_TEMPLATE
 

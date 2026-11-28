@@ -169,6 +169,10 @@ def _death_controller_opponents_result(binding, body):
 
 
 def fixed_event_player_result(binding,body,*,effect_template,card_name):
+    from .artifact_mana_tap_control import artifact_mana_tap_control_result
+
+    if control := artifact_mana_tap_control_result(binding, body):
+        return control
     from ..rules.recipient_control_shapes import DAMAGE_DEALER_CONTROL_VARIANT, damage_dealer_control_condition
 
     if binding.variant == DAMAGE_DEALER_CONTROL_VARIANT:

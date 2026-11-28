@@ -42,6 +42,31 @@ def source_mana_tap_condition():
     }
 
 
+def source_mana_tap_observer_mismatch(source, program, event, condition, context):
+    """Recognize a proven false occurrence for the closed live source-tap trigger."""
+    if (event != SOURCE_MANA_TAP_EVENT or context is None
+            or getattr(program, "event", None) != event
+            or getattr(program, "active_zone", None) != "battlefield"
+            or getattr(source, "zone", None) != "battlefield"
+            or getattr(program, "trust_level", None) != "trusted"
+            or SOURCE_MANA_TAP_DAMAGE_MECHANIC not in getattr(program, "coverage", ())
+            or SOURCE_MANA_TAP_CAPABILITY not in getattr(program, "capability_dependencies", ())
+            or "intervening_condition_controller" in context):
+        return False
+    from .replacement.immutable import thaw_value
+    from .trigger_participation_query_model import trigger_prohibition_can_observe
+
+    if trigger_prohibition_can_observe(event) or thaw_value(condition) != source_mana_tap_condition():
+        return False
+    subject = context.get("card_object_identity")
+    actor = context.get("player")
+    identity = getattr(source, "logical_object_id", None)
+    controller = getattr(source, "controller", None)
+    if any(type(value) is not str or not value for value in (subject, actor, identity, controller)):
+        return False
+    return (subject, actor) != (identity, controller)
+
+
 def source_mana_tap_damage_effect():
     return {"op": "damage_each_opponent", "source": "$source", "amount": 1}
 

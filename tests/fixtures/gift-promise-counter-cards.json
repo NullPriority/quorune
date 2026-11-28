@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Long River's Pull",
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nCounter target creature spell. If the gift was promised, instead counter target spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Gift"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "As an additional cost to cast a spell with gift, you can promise the listed gift to an opponent. That opponent is chosen as part of that additional cost. The gift isn't given at this time; rather, it's given at a later time based on whether or not the spell is a permanent spell."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "For instants and sorceries with gift, the gift is given to the appropriate opponent as part of the resolution of the spell. This happens before any of the spell's other effects would take place."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "For permanent spells with gift, an ability triggers when that permanent enters if the gift was promised. When that ability resolves, the gift is given to the appropriate opponent."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If a spell for which the gift was promised is countered, doesn't resolve (perhaps because all of its targets are illegal), or is otherwise removed from the stack, the gift won't be given. None of its other effects will happen either."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If you copy a spell for which the gift was promised, the gift was also promised to the same opponent for the copy. If a card or token enters as a copy of a permanent that's already on the battlefield, the gift isn't promised for that new permanent, even if it was promised for the original."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "In the main set, there are four different kinds of gifts. \"Gift a Food\" causes the chosen opponent to create a Food token, while \"Gift a Treasure\" causes the chosen opponent to create a Treasure token. \"Gift a card\" causes them to draw a card, and \"Gift a tapped Fish\" causes them to create a tapped 1/1 blue Fish creature token. The Commander decks contain two more kinds of gifts: \"Gift an Octopus,\" which causes the chosen opponent to create an 8/8 blue Octopus creature token, and \"Gift an extra turn,\" which causes them to take an extra turn after the current turn ends."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Some instant or sorcery spells require alternative or additional targets if the gift was promised. You ignore these targeting requirements if the gifts aren't promised for those spells. On the other hand, you can promise a gift for a permanent spell even if you won't be able to choose targets for an enters ability of that permanent once the spell resolves."
+    },
+    {
+      "oracle_id": "f1993767-1d07-49c8-b8dc-04ec9840a999",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "You can't pay a gift cost more than once."
+    }
+  ]
+}

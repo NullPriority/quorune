@@ -64,6 +64,203 @@ class FixedNonmanaEquipTests(unittest.TestCase):
             bound=self.binding(session, source)
             self.assertTrue(bound['strict_capability_ready'],(name,bound))
 
+    def forge_action(self, session, source, *, starts="Equip"):
+        ability = next(a for a in session.engine._activated_abilities(source)
+            if a.oracle_line.startswith(starts))
+        return f"activate:{source.ref}:{ability.ability_id}"
+
+    def forge_command(self, session, action, target, *, price=None, seat="A", valid=True):
+        command = {"action_id": action, "targets": [target.ref], "pay": "auto"}
+        if price is not None:
+            command["equip_payment"] = price
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:" + seat, command)
+        self.assertEqual(valid, result.ok, result.summary)
+        if not valid:
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_forge_anew_returns_only_owned_equipment_and_zeroes_nonmana_equip(self):
+        from quorune.turn_history import equip_activated_this_turn
+
+        session = self.session(759080)
+        forge = self.add(session.engine, "Forge Anew", zone="hand")
+        returned = self.add(session.engine, "Murderer's Axe", zone="graveyard")
+        non_equipment = self.add(session.engine, "Sol Ring", zone="graveyard")
+        foreign = self.add(session.engine, "Short Sword", seat="B", zone="graveyard")
+        target = self.add(session.engine, "Generic Bound Body")
+        keep = self.add(session.engine, "Generic Bound Growth", zone="hand", ref="forge-keep")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand", ref="forge-private")
+        self.prepare(session, mana={"C": 2, "W": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": "cast:" + forge.ref, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        pending = self.resolve(session)
+        self.assertEqual("semantic.target", pending.kind)
+        for illegal in (non_equipment, foreign):
+            before = authoritative_state_hash(session.state)
+            result = session.act("pilot:A", {"action_id": "choose", "targets": [illegal.ref]})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": "choose", "targets": [returned.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[returned.object_id]
+        self.assertEqual("battlefield", returned.zone)
+        self.assertIsNone(returned.attached_to)
+        self.assertFalse(equip_activated_this_turn(session.state, "A"))
+
+        action = self.forge_action(session, returned)
+        offer = next(row for row in self.actions(session) if row["id"] == action)
+        options = offer["equip_payment_options"]
+        self.assertEqual(["printed", "zero"], [row["id"] for row in options])
+        self.assertIn("choose_cost", options[0]["cost_summary"])
+        self.assertNotIn("choose_cost", options[1]["cost_summary"])
+        public = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        form = next(row["form"] for row in public if row["id"] == action)
+        self.assertEqual("equip_payment", form["variants"]["field"])
+        printed_form, zero_form = form["variants"]["options"]
+        self.assertIn("cost_cards", {field["name"] for field in printed_form["fields"]})
+        self.assertNotIn("cost_cards", {field["name"] for field in zero_form["fields"]})
+        self.forge_command(session, action, target, price="free", valid=False)
+        self.forge_command(session, action, target, price="zero", seat="B", valid=False)
+        self.forge_command(session, action, target, price="zero")
+        self.assertTrue(equip_activated_this_turn(session.state, "A"))
+        self.assertEqual("hand", session.state.cards[keep.object_id].zone)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[returned.object_id]
+        self.assertEqual(target.object_id, returned.attached_to)
+        self.forge_command(session, action, target, price="zero", valid=False)
+        self.private_replay(session, private)
+
+    def test_forge_anew_earlier_paid_equip_consumes_zero_but_restricted_equip_gets_instant_timing(self):
+        from quorune.turn_history import equip_activated_this_turn
+
+        session = self.session(759081)
+        forge = self.add(session.engine, "Forge Anew", zone="hand")
+        sword = self.add(session.engine, "Short Sword")
+        blade = self.add(session.engine, "Dúnedain Blade")
+        human = self.add(session.engine, "Elite Vanguard")
+        rabbit = self.add(session.engine, "Rabbit Battery")
+        bolt = self.add(session.engine, "Lightning Bolt", zone="hand")
+        self.prepare(session, mana={"C": 4, "R": 1, "W": 1})
+        self.checkpoint(session)
+        self.forge_command(session, self.forge_action(session, sword), human)
+        self.assertTrue(equip_activated_this_turn(session.state, "A"))
+        self.assertIsNone(self.resolve(session))
+        result = session.act("pilot:A", {"action_id": "cast:" + forge.ref, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+
+        result = session.act("pilot:A", {"action_id": "cast:" + bolt.ref, "targets": ["D"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.priority(session, "A")
+        self.assertTrue(session.state.stack)
+        blade = session.state.cards[blade.object_id]
+        action = self.forge_action(session, blade, starts="Equip Human")
+        offer = next(row for row in self.actions(session) if row["id"] == action)
+        self.assertNotIn("equip_payment_options", offer)
+        self.forge_command(session, action, human, price="zero", valid=False)
+        self.forge_command(session, action, rabbit, valid=False)
+        self.forge_command(session, action, human)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(human.object_id, session.state.cards[blade.object_id].attached_to)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.replay(session)
+
+    def test_forge_anew_restricted_zero_respects_reconfigure_and_previous_record_mode(self):
+        from quorune.model import TurnHistory, TurnHistoryEvent
+        from quorune.turn_history import reset_turn_history
+
+        legacy = TurnHistory(turn_sequence=1)
+        self.assertNotIn("equip_activation_history_version", legacy.to_dict())
+        self.assertNotIn("equip_activation_history_version", reset_turn_history(legacy, 2).to_dict())
+        sealed = TurnHistory(turn_sequence=1, equip_activation_history_version=1,
+            events=[TurnHistoryEvent("first_equip_activation", actor="A", object_incarnation="o1")])
+        self.assertEqual(sealed, TurnHistory.from_dict(sealed.to_dict()))
+        self.assertEqual([], reset_turn_history(sealed, 2).events)
+        with self.assertRaises(ValueError):
+            TurnHistory(turn_sequence=1, events=sealed.events)
+
+        session = self.session(759082)
+        forge = self.add(session.engine, "Forge Anew")
+        self.assertTrue(self.binding(session, forge)["strict_capability_ready"])
+        blade = self.add(session.engine, "Dúnedain Blade")
+        battery = self.add(session.engine, "Rabbit Battery")
+        opposing_forge = self.add(session.engine, "Forge Anew", seat="B", ref="opposing-forge")
+        opposing_sword = self.add(session.engine, "Short Sword", seat="B", ref="opposing-short-sword")
+        opposing_bear = self.add(session.engine, "Generic Bound Body", seat="B", ref="opposing-equip-target")
+        human = self.add(session.engine, "Elite Vanguard")
+        bolt = self.add(session.engine, "Lightning Bolt", zone="hand")
+        self.prepare(session, mana={"R": 1})
+        session.state.players["B"].mana_pool["C"] = 2
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": "cast:" + bolt.ref, "targets": ["D"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.priority(session, "A")
+        self.assertTrue(session.state.stack)
+        reconfigure = self.forge_action(session, battery, starts="Reconfigure")
+        self.assertFalse(any(row["id"] == reconfigure for row in self.actions(session)))
+        self.forge_command(session, reconfigure, human, price="zero", valid=False)
+        restricted = self.forge_action(session, blade, starts="Equip Human")
+        row = next(row for row in self.actions(session) if row["id"] == restricted)
+        self.assertEqual(["zero"], [option["id"] for option in row["equip_payment_options"]])
+        self.forge_command(session, restricted, human, price="zero")
+        self.priority(session, "B")
+        self.assertTrue(session.state.stack)
+        self.assertIn(opposing_forge.object_id, session.state.cards)
+        self.forge_command(session, self.forge_action(session, opposing_sword), opposing_bear,
+            price="zero", seat="B", valid=False)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(human.object_id, session.state.cards[blade.object_id].attached_to)
+        self.replay(session)
+
+    def test_forge_anew_alternate_exposes_and_pays_the_actual_activation_tax(self):
+        from quorune.mana_provenance import add_mana
+
+        session = self.session(759083)
+        self.add(session.engine, "Forge Anew")
+        self.add(session.engine, "Suppression Field", seat="B")
+        source = self.add(session.engine, "Short Sword")
+        target = self.add(session.engine, "Elite Vanguard")
+        add_mana(session.state.players["A"], {"C": 2}, snow=True)
+        self.prepare(session)
+        self.checkpoint(session)
+        action = self.forge_action(session, source)
+        public = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+        row = next(row for row in public if row["id"] == action)
+        option, = row["equip_payment_options"]
+        self.assertEqual("zero", option["id"])
+        self.assertEqual({"GENERIC": 2}, option["cost_summary"]["m"])
+        zero, = row["form"]["variants"]["options"]
+        self.assertTrue(all(field["name"] != "mana_pool_payment" for field in row["form"]["fields"]))
+        self.assertIn("mana_pool_payment", {field["name"] for field in zero["fields"]})
+        self.forge_command(session, action, target, price="printed", valid=False)
+        self.forge_command(session, action, target, price="zero")
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(target.object_id, session.state.cards[source.object_id].attached_to)
+        self.replay(session)
+
+    def test_forge_anew_rejects_unmodeled_permission_text(self):
+        import quorune.compiler.runtime_templates as runtime
+        from quorune.compiler.action_permission_templates import static_action_permission_handler
+
+        orig = static_action_permission_handler
+        bad = (
+            "As long as it's your turn, you may activate reconfigure abilities any time you could cast an instant.",
+            "You may pay {0} rather than pay the equip cost of the second equip ability you activate during each of your turns.",
+        )
+        for line in bad:
+            self.assertIsNone(orig(line))
+        def without_equip(text, **kwargs):
+            return None if "equip" in text.casefold() else orig(text, **kwargs)
+
+        with patch.object(runtime, "static_action_permission_handler", side_effect=without_equip):
+            ir = compile_oracle_card(self.db.lookup("Forge Anew"), capability_registry=self.registry,
+                capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+
     def equip(self, session, source, target, *, costs=(), valid=True):
         self.priority(session, 'A')
         abilities = [a for a in session.engine._activated_abilities(source)

@@ -27,6 +27,8 @@ from ..rules.library_selection_capability_shapes import (
     validate_revealed_top_hand_life,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.library_play_partition import uses_private_hand_bottom_exile, validate_private_hand_bottom_exile
+from ..rules.blocked_damage_cast import exile_offer, represents_window, window_dependencies, window_predicate
 from ..rules.library_partition import LibraryPartitionError, partition_refs
 from ..rules.library_selection import (
     LibrarySelectionArrangement,
@@ -187,14 +189,15 @@ def _current_library_top(query, actor):
     return row
 
 
-def _prepare_revealed_top_hand_life(effect, context):
+def _prepare_revealed_top_hand_life(effect, context, *, repeat_offer=None):
     from ..public_quantity_reductions import public_mana_value
 
     actor = context.actor
     if actor != context.stack_controller:
         raise SemanticChoiceError("The public top procedure belongs to the resolving controller")
     try:
-        validate_revealed_top_hand_life(effect, player=actor)
+        if repeat_offer is None:
+            validate_revealed_top_hand_life(effect, player=actor)
         top = _current_library_top(context.query, actor)
         if top is None:
             return SemanticChoicePreparation(None, FrozenMap(effect),
@@ -207,6 +210,7 @@ def _prepare_revealed_top_hand_life(effect, context):
         remainder_destination="graveyard", remainder_order="chosen",
     )
     life_loss = (FrozenMap({"op": "lose_life", "player": actor, "amount": amount}),) if amount else ()
+    following = (*life_loss, FrozenMap(repeat_offer)) if repeat_offer is not None else life_loss
     return SemanticChoicePreparation(
         request=None, continuation_effect=FrozenMap(effect),
         preparation_intents=(
@@ -216,7 +220,7 @@ def _prepare_revealed_top_hand_life(effect, context):
                 source_stack_ref=context.stack_ref, looked_are_public=True, selected_are_public=True,
             ),
         ),
-        auto_continue=AutoContinue("Apply the revealed mana value after the hand movement", prepend_effects=life_loss),
+        auto_continue=AutoContinue("Apply the revealed mana value after the hand movement", prepend_effects=following),
     )
 
 
@@ -408,6 +412,22 @@ class FixedLibrarySelectionChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> tuple[tuple[ObjectQuerySpec, ...], ...]:
+        if uses_private_hand_bottom_exile(effect):
+            if context.stack_controller != context.actor:
+                raise SemanticChoiceError("The private partition belongs to its resolving controller")
+            try:
+                validate_private_hand_bottom_exile(effect, player=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return ()
+        if represents_window(effect):
+            if context.stack_controller != context.actor:
+                raise SemanticChoiceError("The private damage window belongs to its resolving controller")
+            try:
+                window_dependencies(effect, actor=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return ((window_predicate(),),)
         if uses_private_opponent_library_cast_selection(effect):
             player = effect.get("player")
             if context.stack_controller != context.actor or player == context.actor or player not in context.query.active_seats:
@@ -531,7 +551,17 @@ class FixedLibrarySelectionChoiceHandler:
                     auto_continue=AutoContinue(reason="The original damaged player left the game."))
             if DAMAGE_SELECTED in effect:
                 return prepare_damage_library_cast_commit(effect, context)
+        from ..rules.private_look_land_or_hand import PRIVATE_LOOK_LAND_OR_HAND_VERSION
+        from .private_look_land_or_hand import prepare_private_land_hand
+
+        if effect.get("schema_version") == PRIVATE_LOOK_LAND_OR_HAND_VERSION:
+            return prepare_private_land_hand(effect, context)
         if effect.get("schema_version") == REVEALED_TOP_HAND_LIFE_VERSION:
+            from ..rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_FIELD
+            from .repeat_top_hand_life import prepare_repeat_top_hand_life
+
+            if REPEAT_TOP_HAND_LIFE_FIELD in effect:
+                return prepare_repeat_top_hand_life(effect, context, _prepare_revealed_top_hand_life)
             return _prepare_revealed_top_hand_life(effect, context)
         if effect.get("schema_version") == RANDOM_REVEALED_CREATURE_ENTRY_VERSION:
             return _prepare_random_revealed_creature_entry(effect, context)
@@ -603,7 +633,8 @@ class FixedLibrarySelectionChoiceHandler:
             ),
         ) if refs else ()
 
-        deterministic = (policy == "all_matching" or not refs
+        sole_partition = uses_private_hand_bottom_exile(effect) and len(refs) == 1
+        deterministic = (policy == "all_matching" or not refs or sole_partition or (represents_window(effect) and not legal_refs)
                          or effect.get("schema_version") in {LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION,
                                                              CHOSEN_TYPE_LIBRARY_SELECTION_VERSION} and not legal_refs)
         needs_remainder_order = (
@@ -611,7 +642,7 @@ class FixedLibrarySelectionChoiceHandler:
             and len(refs) - effective_minimum > 1
         )
         if deterministic and not needs_remainder_order:
-            selected = legal_refs if policy == "all_matching" else ()
+            selected = legal_refs if policy == "all_matching" or sole_partition else ()
             remainder = tuple(ref for ref in refs if ref not in selected)
             arrangement = _arrangement(effect, identities, selected, remainder)
             return SemanticChoicePreparation(
@@ -665,6 +696,10 @@ class FixedLibrarySelectionChoiceHandler:
                 ],
             }
         )
+        if uses_private_hand_bottom_exile(effect):
+            from .library_play_partition import private_hand_bottom_exile_request
+
+            return private_hand_bottom_exile_request(refs, public_context)
         if uses_private_opponent_library_cast_selection(effect):
             return SemanticChoiceRequest(
                 prompt=("Choose one card to exile face down. The rest go to their owner's graveyard."
@@ -740,6 +775,11 @@ class FixedLibrarySelectionChoiceHandler:
                 visibility="actor_private",
                 owner_relation="actor",
             )
+        if represents_window(effect):
+            return SemanticChoiceRequest(
+                prompt="Exile up to one nonland card. The rest go to the bottom in a random order.",
+                choice=choice, public_context=public_context,
+            )
         if effect.get("schema_version") == FIXED_UP_TO_TWO_HAND_SELECTION_VERSION:
             remainder = ("Order the rest into your graveyard." if effect["remainder_destination"] == "graveyard"
                          else "The rest go to the bottom of your library in a random order.")
@@ -792,7 +832,17 @@ class FixedLibrarySelectionChoiceHandler:
     ) -> SemanticChoiceCompletion:
         from .damage_library_cast_order import DAMAGE_GRAVE_ORDER, DAMAGE_SELECTED, complete_damage_library_graveyard_order
 
+        from ..rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_FIELD
+        from .repeat_top_hand_life import complete_repeat_top_hand_life
+
+        from ..rules.private_look_land_or_hand import PRIVATE_LOOK_LAND_OR_HAND_VERSION
+        from .private_look_land_or_hand import complete_private_land_hand
+
         effect = continuation.effect
+        if REPEAT_TOP_HAND_LIFE_FIELD in effect:
+            return complete_repeat_top_hand_life(continuation, response, query)
+        if effect.get("schema_version") == PRIVATE_LOOK_LAND_OR_HAND_VERSION:
+            return complete_private_land_hand(continuation, response, query)
         if effect.get("schema_version") == RANDOM_REVEALED_CREATURE_ENTRY_VERSION:
             raise SemanticChoiceError("Random creature entry accepts no player selection")
         if DAMAGE_GRAVE_ORDER in effect:
@@ -810,6 +860,8 @@ class FixedLibrarySelectionChoiceHandler:
             ) from exc
         looked_refs = tuple(value.ref for value in looked)
         raw_cards = response.get("cards")
+        if represents_window(effect) and not isinstance(raw_cards, (list, tuple)):
+            raise SemanticChoiceError("Choose zero or one nonland from the private damage window")
         if effect.get("schema_version") == RESOLVED_TOP_RANDOM_BOTTOM_VERSION and (
             set(response) - {"action", "choice_schema", "cards"} or ("cards" in response and raw_cards is None)
         ):
@@ -822,6 +874,8 @@ class FixedLibrarySelectionChoiceHandler:
                 raise SemanticChoiceError("Choose one card from the unchanged private library window")
         if imprint and not isinstance(raw_cards, Mapping):
             raise SemanticChoiceError("Private library imprint requires both exile and bottom partitions")
+        if uses_private_hand_bottom_exile(effect) and not isinstance(raw_cards, Mapping):
+            raise SemanticChoiceError("Submit both the private hand selection and the ordered remainder")
         if effect.get("schema_version") == PRIVATE_ONE_HAND_ORDERED_BOTTOM_VERSION and not isinstance(raw_cards, Mapping):
             raise SemanticChoiceError("Submit both the private hand selection and the bottom order")
         if effect.get("schema_version") == FIXED_UP_TO_TWO_HAND_SELECTION_VERSION:
@@ -837,6 +891,8 @@ class FixedLibrarySelectionChoiceHandler:
             )
             selected_key=('exile' if imprint else 'top' if effect.get('selected_destination')=='library_top' else
                 'battlefield' if effect.get('selected_destination')=='battlefield' else 'hand')
+            if uses_private_hand_bottom_exile(effect):
+                destination = "remainder"
             if set(raw_cards) != {selected_key, destination}:
                 raise SemanticChoiceError(
                     "Library partition destinations are malformed"
@@ -892,15 +948,17 @@ class FixedLibrarySelectionChoiceHandler:
             raise SemanticChoiceError(str(exc)) from exc
         if uses_damage_library_cast_selection(effect):
             return SemanticChoiceCompletion(repeat_effect=FrozenMap({**effect, DAMAGE_SELECTED: arrangement.selected_refs[0]}))
-        return SemanticChoiceCompletion(
-            intents=(
-                self._intent(
-                    effect,
-                    arrangement,
-                    stack_ref=continuation.stack_ref,
-                ),
+        if represents_window(effect):
+            return SemanticChoiceCompletion(
+                intents=(self._intent(effect, arrangement, stack_ref=continuation.stack_ref),),
+                prepend_effects=exile_offer(looked, selected, actor=effect["_choice_actor"]),
             )
-        )
+        intent = self._intent(effect, arrangement, stack_ref=continuation.stack_ref)
+        if uses_private_hand_bottom_exile(effect):
+            from .library_play_partition import private_hand_bottom_exile_intents
+
+            return SemanticChoiceCompletion(intents=private_hand_bottom_exile_intents(intent))
+        return SemanticChoiceCompletion(intents=(intent,))
 
 
 FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS = (

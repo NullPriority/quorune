@@ -12,7 +12,7 @@ from ..game_hand_size_model import (
     require_no_maximum_for_game_instruction,
 )
 from ..replacement.immutable import FrozenMap
-from .random_selection import roll_fixed_die
+from .random_selection import publish_resolution_die_roll
 
 MECHANIC = "single-d20-draw-game-hand-size"
 CAPABILITY = "random.die.single_d20_draw"
@@ -96,8 +96,11 @@ def is_closed_controller_hand_count_draw_and_size_program(program) -> bool:
 
 def declared_die_draw_node_capabilities(effects, target_schema, mechanics, cost_schema):
     """Distinguish an absent dice shape from a declared shape that fails closed."""
+    from .announced_x_draw_replacement import uses_announced_x_draw_replacement
     from .equipped_attack_die import equipped_attack_die_declared, equipped_attack_die_node_capabilities
 
+    if any(uses_announced_x_draw_replacement(effect) for effect in effects):
+        return None
     if equipped_attack_die_declared(effects):
         return equipped_attack_die_node_capabilities(
             effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
@@ -126,6 +129,12 @@ def die_draw_hand_size_node_capabilities(*, effects, target_schema, mechanics, c
 
 
 def die_draw_hand_size_runtime_dependencies(program):
+    from .announced_x_draw_replacement import (
+        announced_x_draw_replacement_program_dependencies, uses_announced_x_draw_replacement,
+    )
+
+    if any(uses_announced_x_draw_replacement(effect) for effect in program.effects):
+        return announced_x_draw_replacement_program_dependencies(program)
     if program.provenance.get("template_id") == HAND_COUNT_TEMPLATE:
         dependencies = controller_hand_count_draw_and_size_node_capabilities(
             effects=program.effects, target_schema=program.target_schema,
@@ -159,13 +168,7 @@ def bind_die_draw(host, item, effect, *, instruction_pointer: int) -> dict[str, 
         raise ValueError("A single d20 draw requires its resolving source combat occurrence")
     controller = item.controller
     host._require_seat(controller, in_game=True)
-    result = roll_fixed_die(
-        SIDES, seed=host.state.config.seed,
-        instruction_key=f"{item.ref}|{instruction_pointer}", seat=controller,
-    )
-    host._log(
-        controller, "die.roll", f"{controller} rolled {result} on a d{SIDES}.",
-        {"player": controller, "sides": SIDES, "result": result, "stack": item.ref},
-        importance=2,
+    result = publish_resolution_die_roll(
+        host, controller=controller, stack_ref=item.ref, instruction_pointer=instruction_pointer, sides=SIDES,
     )
     return {"op": "draw", "player": controller, "count": result}

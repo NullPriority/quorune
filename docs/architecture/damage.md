@@ -90,6 +90,20 @@ Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
 
+One creature-power spell selects a creature its caster controls as the damage
+source. Resolution revalidates that sole target and reads its current power
+and source characteristics. Its batch contains every other creature and
+every active opponent. Protection and life results use the creature as the
+damage source. An illegal target or nonpositive power yields no damage.
+
+A controlled subtype entry can make the entering permanent deal damage to
+one legal target. The stack retains the original entrant as dealer, while
+the amount counts current permanents of the matching subtype controlled by
+the ability's controller. A separate flying-entry haste result follows only
+the current incarnation of its original entrant. An occurrence can qualify
+for both abilities and the ordinary trigger-order owner places them
+independently.
+
 Fixed damage to a creature that attacks or blocks uses the original
 incarnation sealed by the corresponding combat transition. The existing
 trigger owner produces one block occurrence for a creature that blocks
@@ -258,6 +272,13 @@ replacement choices, and rediscoveries after each transformation. Redirection
 substitutes a complete recipient value before the loop continues. Prevention
 then consumes the resulting event through the separate
 [prevention transaction](prevention.md).
+
+An ordinary static source can triple damage from a source its controller
+controls. The canonical source value supplies the live controller or the
+last-known controller after departure. The same replacement applies to
+player, creature, planeswalker, and battle damage after any division or
+combat assignment. The affected player chooses its order with applicable
+prevention and other replacements.
 
 A linked battlefield entry choice can bind any active player for the
 source's current damage quantity ability. The choice follows the original

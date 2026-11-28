@@ -2,8 +2,10 @@
 from enum import Enum
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+from ..rules.attack_declaration_mana import EVENT as PLAYER_ATTACK_DECLARATION
 from ..rules.nonmana_activation_copy_model import ABILITY_ACTIVATION_COPY_EVENT
 from ..day_night_model import DAY_TOGGLE_EVENT
+from ..discard_effect_origin import DISCARD_BATCH_EVENT
 from ..rules.attacking_opponent_library_exile import ATTACKED_PLAYER_OR_WALKER_EVENT
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
 from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, LAND_PLAY_EVENT, OWNED_ZONE_EXILE_EVENT
@@ -13,10 +15,13 @@ from ..shared_type_doors import DOOR_UNLOCKED_EVENT
 from ..source_sacrifice_model import UNATTACHMENT_EVENT
 from ..triggered_mana_model import LAND_MANA_TAP_EVENT, SOURCE_MANA_TAP_EVENT
 from ..opponent_library_exile_model import OPPONENT_LIBRARY_EXILE_EVENT
+from ..rules.phase_occurrence_model import PHASE_IN_EVENT
 
 
 from ..rules.creature_ability_activation import CREATURE_ABILITY_ACTIVATED
+from ..rules.gift_occurrence import GIFT_GIVEN_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT
+from ..recipient_counter_occurrences import RECIPIENT_COUNTER_EVENT
 
 
 class FixedCounterTriggerEvent(str, Enum):
@@ -38,6 +43,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_MANA_TAP = SOURCE_MANA_TAP_EVENT
     CONTROLLER_SPELL_CAST = "spell.cast"
     SOURCE_ATTACKS = "creature.attacks"
+    PLAYER_ATTACKS = PLAYER_ATTACK_DECLARATION
     DIRECT_PLAYER_ATTACK = DIRECT_PLAYER_ATTACK_EVENT
     PLAYER_OR_WALKER_ATTACKED = ATTACKED_PLAYER_OR_WALKER_EVENT
     ATTACKER_UNBLOCKED = 'creature.unblocked'
@@ -71,6 +77,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     NINJUTSU_ACTIVATED = "ability.ninjutsu.activated"
     CREATURE_ACTIVATED = CREATURE_ABILITY_ACTIVATED
+    GIFT_GIVEN = GIFT_GIVEN_EVENT
     NONMANA_ACTIVATED = ABILITY_ACTIVATION_COPY_EVENT
     SOURCE_CYCLED = "card.cycled.self"
     OWNED_ZONE_EXILE = OWNED_ZONE_EXILE_EVENT
@@ -79,7 +86,9 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'
     GRAVEYARD_SOURCE_ARRIVAL = 'object.enter_graveyard'
     CARD_DISCARDED = "card.discarded"
+    CARD_DISCARDED_BATCH = DISCARD_BATCH_EVENT
     TARGET_ANNOUNCED = 'object.became_target'
+    PERMANENT_PHASE_IN = PHASE_IN_EVENT
     PERMANENT_LEAVE = "permanent.leave"
     OPPONENT_LIBRARY_SHUFFLE = "library.shuffled"
     PERMANENT_SACRIFICED = "permanent.sacrificed"
@@ -93,6 +102,7 @@ class FixedCounterTriggerEvent(str, Enum):
     ATTACHMENT_UNATTACHED = UNATTACHMENT_EVENT
     COUNTER_PLACED = 'counter.put'
     SINGLE_COUNTER_PLACED = 'counter.single_put'
+    RECIPIENT_COUNTER_PLACED = RECIPIENT_COUNTER_EVENT
     CREATURE_EXPLOITS = 'creature.exploits'
     SOURCE_EXPLOITS = 'creature.exploits.self'
     PLAYER_SCRIED = 'player.scried'

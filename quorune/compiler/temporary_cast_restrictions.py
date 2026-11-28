@@ -3,10 +3,12 @@ from __future__ import annotations
 """Fixed this-turn prohibitions over ordinary proposed spell characteristics."""
 
 from . import regex_working_set as re
-from ..temporary_cast_rule_model import OPERATION,MECHANIC,TemporaryCastRestrictionSpec
+from ..temporary_cast_rule_model import OPERATION,MECHANIC,TemporaryCastRestrictionSpec,opponents_nonhand_until_next_turn_effect
 
 
 def temporary_cast_restriction_template(text):
+    if " ".join(text.split()).casefold() == "until your next turn, your opponents can't cast spells from anywhere other than their hands.":
+        return "temporary-opponents-nonhand-cast-prohibition-v2", (opponents_nonhand_until_next_turn_effect(),), None, (MECHANIC,)
     match=re.fullmatch(r"(?P<who>Your opponents|Players|Target player|Target opponent) can't cast (?P<kind>creature |noncreature )?spells (?:this turn|until end of turn)\.?",text.strip(),re.I)
     if match is None:return None
     who=match['who'].casefold();targeted=who.startswith('target')

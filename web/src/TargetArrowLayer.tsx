@@ -21,14 +21,16 @@ export function targetZones(view: ProjectedView): Map<string, string> {
 }
 
 function visibleBounds(node: Element): Bounds | null {
-  if (getComputedStyle(node).visibility !== "visible") return null;
+  const document = node.ownerDocument;
+  const window = document.defaultView!;
+  if (window.getComputedStyle(node).visibility !== "visible") return null;
   const box = node.getBoundingClientRect();
   let left = Math.max(0, box.left);
   let right = Math.min(window.innerWidth, box.right);
   let top = Math.max(0, box.top);
   let bottom = Math.min(window.innerHeight, box.bottom);
   for (let parent = node.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
-    const style = getComputedStyle(parent);
+    const style = window.getComputedStyle(parent);
     if (style.overflowX !== "visible") {
       const clip = parent.getBoundingClientRect();
       left = Math.max(left, clip.left);
@@ -43,12 +45,13 @@ function visibleBounds(node: Element): Bounds | null {
   return right > left && bottom > top ? { left, right, top, bottom } : null;
 }
 
-function anchor(ref: string, fallback?: string, source = false): Bounds | null {
+function anchor(document: Document, ref: string, zone?: string, seat?: string, source = false): Bounds | null {
   const id = CSS.escape(ref);
-  const selectors = [`[data-card-ref="${id}"]`, `[data-player-ref="${id}"]`];
+  const selectors = [`[data-card-ref="${id}"]`, `[data-stack-ref="${id}"]`, `[data-player-ref="${id}"]`];
   if (source) selectors.unshift(`[data-zone-offer][data-card-ref="${id}"].selected-card`);
   if (source) selectors.push(`[data-action-source="${id}"]`);
-  if (fallback) selectors.push(`[data-target-zone="${CSS.escape(fallback)}"]`);
+  if (zone) selectors.push(`[data-target-zone="${CSS.escape(zone)}"]`);
+  if (seat) selectors.push(`[data-seat-anchor="${CSS.escape(seat)}"]`);
   for (const selector of selectors) {
     for (const node of document.querySelectorAll(selector)) {
       const bounds = visibleBounds(node);
@@ -74,7 +77,7 @@ function edge(bounds: Bounds, towards: Point, padding: number): Point {
   return { x: start.x + x * scale, y: start.y + y * scale };
 }
 
-function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aiming: boolean, stackLink = false) {
+function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aiming: boolean, stackLink: boolean, viewportWidth: number, color?: string) {
   const origin = center(from);
   const destination = center(target);
   const adjacent = Math.abs(origin.y - destination.y) < 24 && Math.abs(origin.x - destination.x) < 150;
@@ -84,10 +87,10 @@ function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aimi
     : adjacent ? { x: destination.x, y: target.top - 3 } : edge(target, origin, 3);
   if (Math.hypot(to.x - start.x, to.y - start.y) < 8) return false;
   const bend = adjacent ? 40 : Math.min(66, Math.abs(to.x - start.x) * 0.16 + 12);
-  const gutter = Math.min(window.innerWidth - 4, Math.max(start.x, to.x) + 11);
+  const gutter = Math.min(viewportWidth - 4, Math.max(start.x, to.x) + 11);
   const endControl = stackLink ? { x: gutter, y: to.y }
     : { x: (start.x + to.x) / 2, y: (start.y + to.y) / 2 - bend };
-  ctx.strokeStyle = aiming || stackLink ? "#efd58d" : "#c8f3a8";
+  ctx.strokeStyle = color ?? (aiming || stackLink ? "#efd58d" : "#c8f3a8");
   ctx.fillStyle = ctx.strokeStyle;
   ctx.lineWidth = 2.4;
   ctx.lineCap = "round";
@@ -109,22 +112,28 @@ function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aimi
 }
 
 export function TargetArrowLayer({
-  sourceRef, targets, candidates, zones, stackPositions,
+  sourceRef, targets, candidates, zones, stackPositions, attackPairs, seats, host,
 }: {
   sourceRef: string;
   targets: readonly string[];
   candidates: readonly string[];
   zones: Map<string, string>;
   stackPositions: ReadonlyMap<string, number>;
+  attackPairs: readonly (readonly [string, string])[];
+  seats: ReadonlyMap<string, string>;
+  host?: HTMLElement;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const pointer = useRef<Point | null>(null);
-  const active = Boolean(sourceRef && (targets.length || candidates.length));
+  const active = Boolean(sourceRef && (targets.length || candidates.length)) || attackPairs.length > 0;
 
   useLayoutEffect(() => {
     const surface = canvas.current;
     const context = surface?.getContext("2d");
     if (!active || !surface || !context) return;
+    const document = surface.ownerDocument;
+    const window = document.defaultView!;
+    const boundsFor = (ref: string, source = false) => anchor(document, ref, zones.get(ref), seats.get(ref), source);
     const candidateZones = new Set(candidates.map((ref) => zones.get(ref)));
     const selectedZones = new Set(targets.map((ref) => zones.get(ref)));
     let frame = 0;
@@ -139,13 +148,19 @@ export function TargetArrowLayer({
       }
       context.setTransform(scale, 0, 0, scale, 0, 0);
       context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      const source = anchor(sourceRef, zones.get(sourceRef), true);
+      const source = sourceRef ? boundsFor(sourceRef, true) : null;
+      let attacks = 0;
+      for (const [attacker, defender] of attackPairs) {
+        const from = boundsFor(attacker, true);
+        const to = boundsFor(defender);
+        if (from && to && arrow(context, from, to, false, false, window.innerWidth, "#ffae87")) attacks++;
+      }
       let count = 0;
       if (source) {
         for (const target of new Set(targets)) {
-          const bounds = anchor(target, zones.get(target));
+          const bounds = boundsFor(target);
           const stackLink = stackPositions.has(sourceRef) && stackPositions.has(target);
-          if (bounds && arrow(context, source, bounds, false, stackLink)) count++;
+          if (bounds && arrow(context, source, bounds, false, stackLink, window.innerWidth)) count++;
         }
         const point = pointer.current;
         const focused = document.activeElement;
@@ -156,14 +171,15 @@ export function TargetArrowLayer({
         const zone = pointedAt?.closest("[data-target-zone]");
         const zoneId = zone?.getAttribute("data-target-zone") ?? "";
         if (candidates.includes(aimedAt) && !targets.includes(aimedAt)) {
-          const bounds = anchor(aimedAt, zones.get(aimedAt));
-          if (bounds && arrow(context, source, bounds, true)) count++;
+          const bounds = boundsFor(aimedAt);
+          if (bounds && arrow(context, source, bounds, true, false, window.innerWidth)) count++;
         } else if (zone && candidateZones.has(zoneId) && !selectedZones.has(zoneId)) {
           const bounds = visibleBounds(zone);
-          if (bounds && arrow(context, source, bounds, true)) count++;
+          if (bounds && arrow(context, source, bounds, true, false, window.innerWidth)) count++;
         }
       }
       surface.dataset.arrowCount = String(count);
+      surface.dataset.attackArrowCount = String(attacks);
     };
     function schedule() {
       if (!frame) frame = requestAnimationFrame(draw);
@@ -186,16 +202,20 @@ export function TargetArrowLayer({
     const table = document.querySelector(".table-workspace");
     const pageChanges = new MutationObserver(schedule);
     if (table) pageChanges.observe(table, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-hidden", "hidden"] });
+    const sizes = new ResizeObserver(schedule);
+    if (table) sizes.observe(table);
+    for (const board of document.querySelectorAll(".player-board, .table-sidebar")) sizes.observe(board);
     return () => {
       cancelAnimationFrame(frame);
       pageChanges.disconnect();
+      sizes.disconnect();
       window.removeEventListener("pointermove", move);
       window.removeEventListener("focusin", focus);
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
     };
-  }, [active, candidates, sourceRef, targets, zones, stackPositions]);
+  }, [active, candidates, sourceRef, targets, zones, stackPositions, attackPairs, seats, host]);
 
   return active ? createPortal(<canvas ref={canvas} className="target-arrow-layer"
-    aria-hidden="true" data-testid="target-arrow-layer" />, document.body) : null;
+    aria-hidden="true" data-testid="target-arrow-layer" />, host ?? document.body) : null;
 }

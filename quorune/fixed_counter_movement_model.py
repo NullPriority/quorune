@@ -17,6 +17,9 @@ CHOSEN_COUNTER_QUANTITIES_CAPABILITY = "counter.producer.chosen_movement_quantit
 CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED = "chosen_opponent_creature_to_controlled"
 CHOSEN_OPPONENT_COUNTER_MOVEMENT_CAPABILITY = "counter.producer.chosen_opponent_creature_movement"
 OPTIONAL_CHOSEN_CONTROLLED_CREATURES = "optional_chosen_controlled_creatures"
+OPTIONAL_ALL_SOURCE_TO_CREATURE = "optional_all_source_to_creature"
+OPTIONAL_COMBAT_ALL_COUNTER_MOVEMENT_CAPABILITY = "counter.producer.optional_combat_all_movement"
+SOURCE_HAS_COUNTERS = "source_has_counters_for_movement"
 _FIELDS = {"op", "schema_version", "form", "player", "from_ref", "to_ref"}
 
 
@@ -32,13 +35,18 @@ class FixedCounterMovementSpec:
             3: (OPTIONAL_CHOSEN_CONTROLLED_CREATURES,),
             4: (CHOSEN_CONTROLLED_PERMANENT_QUANTITIES,),
             5: (CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED,),
+            6: (OPTIONAL_ALL_SOURCE_TO_CREATURE,),
         }
         if type(self.schema_version) is not int or self.form not in valid_forms.get(self.schema_version, ()):
             raise ValueError("Unsupported fixed counter movement")
 
     @property
     def optional(self):
-        return self.form in (OPTIONAL_TARGET_TO_SOURCE, OPTIONAL_CHOSEN_CONTROLLED_CREATURES)
+        return self.form in (OPTIONAL_TARGET_TO_SOURCE, OPTIONAL_CHOSEN_CONTROLLED_CREATURES, OPTIONAL_ALL_SOURCE_TO_CREATURE)
+
+    @property
+    def moves_all_source_counters(self):
+        return self.form == OPTIONAL_ALL_SOURCE_TO_CREATURE
 
     @property
     def chooses_counter_kind(self):
@@ -52,9 +60,14 @@ class FixedCounterMovementSpec:
     @property
     def receiver_is_ability_source(self):
         return self.form != TWO_DISTINCT_TARGETS and not (
-            self.chooses_counter_kind or self.chooses_counter_quantities)
+            self.chooses_counter_kind or self.chooses_counter_quantities or self.moves_all_source_counters)
 
     def effect(self):
+        if self.moves_all_source_counters:
+            return {
+                "op": FIXED_COUNTER_MOVEMENT_OPERATION, "schema_version": self.schema_version,
+                "form": self.form, "player": "$controller", "from_ref": "$source", "to_ref": "$target.0",
+            }
         return {
             "op": FIXED_COUNTER_MOVEMENT_OPERATION, "schema_version": self.schema_version, "form": self.form,
             "player": "$controller", "from_ref": "$target.0",

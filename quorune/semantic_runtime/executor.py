@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 from .counter_removal_handlers import execute_counter_removal
 from ..rules.announced_x_player_rounds import is_zero_announced_x_player_round
@@ -57,11 +58,13 @@ from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
 from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
 from ..next_turn_attack_restriction_model import NextTurnAttackRestrictionIntent
+from ..counter_bound_attack_model import CounterBoundAttackRestrictionIntent
 from ..extra_combat_model import ScheduleExtraCombatIntent
 from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
 from ..rules.token_mill_repeat import TokenMillRepeatIntent, execute_token_mill_repeat
 from ..rules.library_bottom_results import LibraryBottomResultIntent, commit_library_bottom_creature_result
 from ..turn_skip_model import ScheduleTurnSkipIntent
+from .intents import FlipSourcePermanentIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
@@ -800,7 +803,7 @@ PlayerIntent = (
     | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | TargetCombatDamageMultiplierIntent | ScheduleNextDrawResultIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
     | ScheduleAdditionalBeginningIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
-    | NextTurnAttackRestrictionIntent
+    | NextTurnAttackRestrictionIntent | CounterBoundAttackRestrictionIntent
     | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent | TokenMillRepeatIntent | LibraryBottomResultIntent
     | VentureProgressIntent | TakeInitiativeIntent
 )
@@ -810,7 +813,7 @@ PLAYER_INTENT_TYPES = (
     GraveyardRecyclingIntent, TargetLandTypeSettingIntent, FixedSourceSacrificeIntent,
     TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, TargetCombatDamageMultiplierIntent, ScheduleNextDrawResultIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent, NoMaximumForGameIntent,
     TemporaryProtectedAttackPaymentIntent,
-    NextTurnAttackRestrictionIntent,
+    NextTurnAttackRestrictionIntent, CounterBoundAttackRestrictionIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent, TokenMillRepeatIntent, LibraryBottomResultIntent,
     VentureProgressIntent, TakeInitiativeIntent,
 )
@@ -890,6 +893,10 @@ def _execute_player_intent(
         from .game_hand_size import commit_no_maximum_for_game
 
         return intent.controller, commit_no_maximum_for_game(sink, intent).effect_id
+    if isinstance(intent, CounterBoundAttackRestrictionIntent):
+        from ..rules.counter_bound_attack import apply_counter_bound_attack_restriction
+
+        return intent.actor, apply_counter_bound_attack_restriction(sink, intent)
     if isinstance(intent, NextTurnAttackRestrictionIntent):
         from ..rules.next_turn_attack_restrictions import apply_next_turn_attack_restriction
         return intent.actor, apply_next_turn_attack_restriction(sink, intent)
@@ -920,23 +927,9 @@ def _execute_player_intent(
             reason=intent.reason,
         )
     if isinstance(intent, ImpulseAccessIntent):
-        from ..impulse_access import (
-            ImpulseAccessRequest,
-            resolve_fixed_impulse_access,
-        )
+        from ..rules.impulse_spawn_settlement import resolve_impulse_intent_with_delayed_settlement
 
-        result = resolve_fixed_impulse_access(
-            sink,
-            ImpulseAccessRequest(
-                actor=intent.actor,
-                player=intent.player,
-                count=intent.count,
-                duration=intent.duration,
-                reason=intent.reason,
-                schema_version=intent.schema_version,
-            ),
-        )
-        return intent.player, result.exiled_refs
+        return resolve_impulse_intent_with_delayed_settlement(sink, intent)
     from ..milling import mill_cards, mill_player_batch, mill_request
 
     if intent.batch_players:
@@ -1064,8 +1057,7 @@ def _execute_resolving_cast_choice(sink, intent):
         return intent.actor, None
     if isinstance(intent,DiscoverCleanupIntent):
         from ..discover_cleanup import execute_discover_cleanup
-        execute_discover_cleanup(sink,intent)
-        return intent.actor, None
+        return intent.actor, execute_discover_cleanup(sink,intent)
     if isinstance(intent, MiracleCastChoiceIntent):
         from ..drawing.miracle_casting import execute_miracle_cast_choice
         execute_miracle_cast_choice(sink, intent)
@@ -1101,7 +1093,7 @@ def _optional_result_scope(host, item, instruction):
         raise SemanticNodeError(str(exc)) from exc
 
 
-def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool:
+def _can_choose_limited_optional_result(host, item, effect: Mapping[str, Any]) -> bool:
     from ..permanent_event_state_model import optional_draw_proliferate_is_closed
 
     actor = effect['player']
@@ -1119,6 +1111,13 @@ def _can_choose_limited_optional_result(host, effect: Mapping[str, Any]) -> bool
         from .life_prohibitions import collect_life_gain_permissions
 
         return collect_life_gain_permissions(host).allows_gain(actor)
+    if operation == 'create_token':
+        from ..rules.trigger_limits import uses_enchantment_entry_copy_limit
+        from ..token_copy_runtime import enchantment_copy_available
+
+        program = host.semantics.get(item.semantic_key)
+        if program is not None and uses_enchantment_entry_copy_limit(program):
+            return enchantment_copy_available(host, item, actor, child)
     if operation == 'offer_optional_mana_payment':
         return bool(host.state.players[actor].zones['hand'])
     return True
@@ -1129,14 +1128,16 @@ def _prepare_available_optional_effect(host, item, raw_effect, effect):
     from ..combat_removal import prepare_optional_blocked_attacker_return
     from ..event_card_return import unavailable_optional_event_library_move
     from ..effect_runtime.linked_library_imprint import unavailable_optional_linked_artifact_return
-    from ..permanent_transform import prepare_optional_source_transform
+    from ..permanent_transform import prepare_optional_counter_source_flip, prepare_optional_source_transform
     from ..rules.attachment_actions import unavailable_optional_equipment_attachment
     from ..rules.graveyard_aura_entry import prepare_optional_graveyard_aura_entry
 
     if unavailable_optional_combat_removal(host, raw_effect, effect):
         return None
     try:
-        effect = prepare_optional_source_transform(host, item, raw_effect, effect)
+        effect = prepare_optional_counter_source_flip(host, item, raw_effect, effect)
+        if effect is not None:
+            effect = prepare_optional_source_transform(host, item, raw_effect, effect)
         if effect is not None:
             effect = prepare_optional_blocked_attacker_return(host, item, raw_effect, effect)
         if effect is None:
@@ -1152,15 +1153,24 @@ def _prepare_available_optional_effect(host, item, raw_effect, effect):
 
 def _is_zero_declared_result(effect, raw_effect, item):
     from ..entry_x_amount_model import is_zero_entry_x_token_batch
+    from ..rules.source_counter_attacking_tokens import uses_source_counter_attacking_tokens
 
+    if (uses_source_counter_attacking_tokens(raw_effect)
+            and type(effect.get("quantity")) is int and effect["quantity"] == 0):
+        return True
     if is_zero_announced_x_player_round(raw_effect, effect) or is_zero_entry_x_token_batch(raw_effect, effect):
         return True
     if type(effect.get("amount")) is not int or effect["amount"] != 0:
         return False
     if effect.get("op") in {"place_counters", "place_counters_on_set"}:
         from ..counter_placement_sets import uses_source_power_combat_counter_set
+        from ..query_effect_amount_model import CAST_X_AMOUNT_KIND
 
-        return uses_source_power_combat_counter_set(raw_effect)
+        raw_amount = raw_effect.get("amount")
+        return uses_source_power_combat_counter_set(raw_effect) or (
+            effect["op"] == "place_counters_on_set"
+            and isinstance(raw_amount, Mapping) and raw_amount.get("kind") == CAST_X_AMOUNT_KIND
+        )
     if effect.get("op") != "place_counters_on_targets":
         return False
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin
@@ -1177,6 +1187,10 @@ def _is_zero_declared_result(effect, raw_effect, item):
 
 
 def _bind_event_resolution_results(host, item, raw_effect):
+    from ..rules.entry_and_death_characteristics import DEATH_ENCHANTMENT_RETURN_FIELD, verify_enchantment_return_origin
+
+    if DEATH_ENCHANTMENT_RETURN_FIELD in raw_effect:
+        verify_enchantment_return_origin(host, item, raw_effect)
     from ..rules.casting.spell_text import scoped_cast_text_instruction
     from ..rules.event_player_result_shapes import bind_event_player_count_effect
     from ..rules.fractional_player_result_shapes import bind_half_library_draw
@@ -1185,25 +1199,75 @@ def _bind_event_resolution_results(host, item, raw_effect):
     from ..rules.owner_library_position_shapes import bind_draw_source_owner_top_move
     from ..rules.attack_batches import bind_attacking_opponent_token
     from ..rules.death_controller_opponents import bind_death_opponent_result
+    from ..rules.announced_token_sweep import TOKEN_SWEEP_RESULT_FIELD, validate_token_sweep_result
+
+    from ..rules.source_counter_mill_choice import bind_source_counter_mill
+    from ..rules.repeat_top_hand_life import bind_repeat_top_hand_life
+    from ..rules.recipient_counter_damage import bind_recipient_counter_damage
+    from ..rules.paid_discard_damage import bind_paid_nonland_damage
+    from ..rules.private_look_land_or_hand import bind_private_land_hand
+    from ..rules.apnap_type_return import bind_type_return
+    from ..rules.linked_landfall_play import bind_exploration_settlement
+    from ..rules.prior_qualified_cast_copy import bind_prior_cast_copy
+    from ..rules.impulse_spawn_settlement import RECEIPT_FIELD, bind_spawn_settlement
+    from ..rules.power_counted_impulse import bind_resolution as bind_power_counted_impulse
     try:
+        if TOKEN_SWEEP_RESULT_FIELD in raw_effect:
+            validate_token_sweep_result(host, item, raw_effect)
         scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
         raw_effect = bind_draw_source_owner_top_move(scoped_item, raw_effect)
         raw_effect = bind_half_library_draw(host.state, scoped_item, raw_effect)
         raw_effect = bind_event_player_count_effect(host.state, scoped_item, raw_effect)
         raw_effect = bind_upkeep_source_counter_draw(host, scoped_item, raw_effect)
         raw_effect = bind_upkeep_source_counter_sacrifice(host, scoped_item, raw_effect)
+        from ..rules.source_power_firebending import bind_source_power_firebending
+
+        raw_effect = bind_source_power_firebending(host, scoped_item, raw_effect)
         raw_effect = bind_counter_scaled_annihilator(host, scoped_item, raw_effect)
         raw_effect = bind_other_spell_draw(host.state, scoped_item, raw_effect)
         raw_effect = bind_qualified_token_creators(host, raw_effect)
+        raw_effect = bind_power_counted_impulse(host, scoped_item, raw_effect)
         if raw_effect is not None:
             raw_effect = bind_death_opponent_result(host, scoped_item, raw_effect)
             raw_effect = bind_attacking_opponent_token(host, scoped_item, raw_effect)
             from ..rules.cast_coin_transform import bind_owner_transform_resolution
 
             raw_effect = bind_owner_transform_resolution(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_source_counter_mill(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_repeat_top_hand_life(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_recipient_counter_damage(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_paid_nonland_damage(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_private_land_hand(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = bind_type_return(host, scoped_item, raw_effect)
+            if raw_effect is not None:
+                raw_effect = (bind_spawn_settlement(host, scoped_item, raw_effect) if RECEIPT_FIELD in raw_effect
+                              else bind_exploration_settlement(host, scoped_item, raw_effect))
+            if raw_effect is not None:
+                raw_effect = bind_prior_cast_copy(host, scoped_item, raw_effect)
     except ValueError as exc:
         raise SemanticNodeError(str(exc)) from exc
     return scoped_item, raw_effect
+
+
+def _bind_opponent_draw_result(host, item, raw_effect):
+    from ..drawing.transaction import begin_opponent_draw, opponent_draw_reward
+    from ..rules.opponent_draw_result import is_closed_opponent_draw_program, opponent_draw_effects
+
+    program = host.semantics.get(item.semantic_key) if item.semantic_key else None
+    opening, closing = opponent_draw_effects()
+    if (
+        program is None or program.trust_level != "trusted" or not is_closed_opponent_draw_program(program)
+        or item.kind not in {"spell", "spell_copy"} or item.context.get("currently_resolving") is not True
+        or item.targets or type(raw_effect.get("schema_version")) is not int or raw_effect not in (opening, closing)
+    ):
+        raise ValueError("The distinct opponent draw result lost its original resolving spell")
+    return begin_opponent_draw(item) if raw_effect == opening else opponent_draw_reward(item)
 
 
 def _prepare_source_bound_resolution(host, item, raw_effect, instruction_pointer):
@@ -1225,9 +1289,47 @@ def _prepare_source_bound_resolution(host, item, raw_effect, instruction_pointer
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
     from ..rad_counters import bind_rad_instruction, is_rad_instruction
+    from ..rules.controlled_creature_counter_tokens import COUNT_FIELD, bind_controlled_creature_counter_tokens
+
+    if COUNT_FIELD in raw_effect:
+        try:
+            return True, bind_controlled_creature_counter_tokens(host, item, raw_effect)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
 
     if is_rad_instruction(raw_effect):
         return True, bind_rad_instruction(host, item, raw_effect)
+    from ..rules.opponent_draw_result import OPPONENT_DRAW_RESULT_FIELD
+
+    if OPPONENT_DRAW_RESULT_FIELD in raw_effect:
+        try:
+            return True, _bind_opponent_draw_result(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD, bind_selected_discard_draw
+
+    if raw_effect.get("op") == "draw" and SELECTED_DISCARD_DRAW_FIELD in raw_effect:
+        try:
+            return True, bind_selected_discard_draw(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    from ..rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, bind_watched_combat_draw
+
+    if WATCHED_COMBAT_DRAW_FIELD in raw_effect:
+        try:
+            return True, bind_watched_combat_draw(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    from ..rules.controlled_combat_tokens import COMBAT_TOKEN_FIELD, bind_controlled_combat_token
+
+    if COMBAT_TOKEN_FIELD in raw_effect:
+        try:
+            return True, bind_controlled_combat_token(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
     from ..rules.faction_trigger_model import FACTION_RESULT_FIELD
 
     if FACTION_RESULT_FIELD in raw_effect:
@@ -1245,11 +1347,37 @@ def _prepare_source_bound_resolution(host, item, raw_effect, instruction_pointer
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
     from ..rules.die_roll_draw import ROLL_FIELD, bind_die_draw
+    from ..rules.targeted_attack_die_copy import (
+        ROLL_OPERATION, bind_targeted_attack_die_copy, is_repeat_offer, is_rolled_attacking_copy,
+        validate_attacking_copy,
+    )
+
+    if raw_effect.get("op") == ROLL_OPERATION:
+        try:
+            return True, bind_targeted_attack_die_copy(host, item, raw_effect, instruction_pointer=instruction_pointer)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if is_rolled_attacking_copy(raw_effect):
+        try:
+            validate_attacking_copy(raw_effect, item.controller)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return True, dict(raw_effect)
+    if is_repeat_offer(raw_effect):
+        # The repeat already carries its bound, opaque copiable values.
+        return True, dict(raw_effect)
 
     if ROLL_FIELD in raw_effect:
         try:
             return True, bind_die_draw(host, item, raw_effect, instruction_pointer=instruction_pointer)
         except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    from ..rules.black_devotion_library_search import BOUND_FIELD, bind_black_devotion_search
+
+    if BOUND_FIELD in raw_effect:
+        try:
+            return True, bind_black_devotion_search(host, item, raw_effect, instruction_pointer=instruction_pointer)
+        except (TypeError, ValueError, KeyError) as exc:
             raise SemanticNodeError(str(exc)) from exc
     if regeneration.is_controlled_creature_regeneration(raw_effect):
         return True, regeneration.bind_controlled_creature_regeneration(host, item, raw_effect)
@@ -1312,6 +1440,14 @@ def prepare_stack_resolution_effect(
         )
         return None
 
+    from ..rules.reanimation_followup import bind_returned_creature_counter_subjects
+
+    try:
+        raw_effect = bind_returned_creature_counter_subjects(host, raw_effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    if raw_effect is None:
+        return None
     scoped_item, raw_effect = _bind_event_resolution_results(host, item, raw_effect)
     if raw_effect is None:
         return None
@@ -1365,7 +1501,7 @@ def prepare_stack_resolution_effect(
     if ENTRY_RETURN_PAYMENT_VERSION_FIELD in raw_effect:
         effect = bind_checked_entry_return_payment(host, scoped_item, raw_effect, effect)
     if raw_effect.get('op') == 'offer_optional_effect':
-        if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
+        if optional_usage is not None and not _can_choose_limited_optional_result(host, item, effect):
             return None
         effect = _prepare_available_optional_effect(host, scoped_item, raw_effect, effect)
         if effect is None:
@@ -1404,8 +1540,11 @@ def prepare_stack_resolution_effect(
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):
             return None
+    from ..turn_skip_model import TURN_SKIP_OPERATION
+
     if (any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object'))
-        or scoped_item is not item and cast_text_instruction_has_no_target(raw_effect, effect)):
+        or (scoped_item is not item or raw_effect.get("op") == TURN_SKIP_OPERATION)
+        and cast_text_instruction_has_no_target(raw_effect, effect)):
         host._log(
             item.controller, 'effect.target.skipped',
             f'Skipped a target-dependent part of {item.ref}.',
@@ -1467,6 +1606,11 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, AddManaIntent):
             result = sink.apply_mana_intent(intent)
             results.append((intent.player, result))
+            continue
+        if isinstance(intent, FlipSourcePermanentIntent):
+            from ..permanent_transform import commit_source_flip
+
+            results.append((intent.card_ref, commit_source_flip(sink, intent)))
             continue
         if isinstance(intent, SetCardDesignationIntent):
             result = sink.set_card_designation_intent(intent)

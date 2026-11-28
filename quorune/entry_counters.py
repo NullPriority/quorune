@@ -184,6 +184,11 @@ def dynamic_entry_counter_amount(
         value = _public_maximum_entry_value(host, card, destination_controller, source)
     elif source in ENTRY_CREATURE_VALUE_SOURCES:
         value = _current_creature_entry_value(host, card, destination_controller, source)
+    elif source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER:
+        from .rules.entry_cast_information import capture_stack_cast_receipt
+
+        receipt = capture_stack_cast_receipt(host, card) if was_cast else None
+        value = int(receipt is not None and receipt.caster == destination_controller)
     elif source is DynamicEntryCounterValueSource.CAST_FROM_HAND:
         value = int(
             was_cast and item.context.get("cast_origin") == "hand"

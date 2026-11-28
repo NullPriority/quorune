@@ -8,6 +8,10 @@ EVENT_OPTIONAL_DRAW_TEMPLATE = 'fixed-defending-player-optional-draw-v1'
 
 
 def fixed_event_optional_draw_result(binding, body, *, effect_template, card_name):
+    from .source_counter_mill_templates import source_counter_mill_template
+
+    if compiled := source_counter_mill_template(binding, body, card_name=card_name):
+        return compiled, False
     from .event_creature_controller_results import dead_creature_controller_optional_draw_result
     if death := dead_creature_controller_optional_draw_result(binding, body):return death
     from ..permanent_event_state_model import any_counter_combat_damage_condition

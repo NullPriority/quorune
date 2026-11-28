@@ -41,9 +41,12 @@ def _fixed_counter_group_intent(
     effect: Mapping[str, Any],
     context: ReadOnlyHandlerContext,
 ) -> PlaceCountersIntent:
+    from ..rules.counter_marked_keep import COUNTER_NAME, KEEP_COUNTER_FIELD
+
     allowed = {
         "op",
         "cards",
+        KEEP_COUNTER_FIELD,
         "counter",
         "amount",
         "source",
@@ -67,10 +70,17 @@ def _fixed_counter_group_intent(
     if effect.get("op") != "place_counters":
         raise SemanticNodeError("Counter placement group operation is unsupported")
     raw_cards = effect.get("cards")
-    if not isinstance(raw_cards, (list, tuple)) or not 2 <= len(raw_cards) <= 3:
-        raise SemanticNodeError(
-            "Counter placement group requires two or three subject entries"
-        )
+    sealed = KEEP_COUNTER_FIELD in effect
+    if sealed and (
+        type(effect.get(KEEP_COUNTER_FIELD)) is not int or effect[KEEP_COUNTER_FIELD] != 1
+        or effect.get("counter") != COUNTER_NAME or type(effect.get("amount")) is not int or effect["amount"] != 1
+        or not isinstance(raw_cards, (list, tuple))
+        or any(type(ref) is not str or not ref for ref in raw_cards) or len(set(raw_cards)) != len(raw_cards)
+    ):
+        raise SemanticNodeError("Counter-marked retention requires its distinct literal chosen recipients")
+    maximum = len(context.query.active_seats) if sealed else 3
+    if not isinstance(raw_cards, (list, tuple)) or not 2 <= len(raw_cards) <= maximum:
+        raise SemanticNodeError("Counter placement group has an unsupported subject count")
     if any(
         value is not None and (type(value) is not str or not value)
         for value in raw_cards
@@ -242,6 +252,11 @@ class FixedCounterPlacementBatchHandler:
             uses_source_target_counter_batch,
         )
 
+        from ..rules.departure_counter_copy import departure_counter_copy_intent, uses_departure_counter_copy
+
+        if uses_departure_counter_copy(effect):
+            intent = departure_counter_copy_intent(effect, context)
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(() if intent is None else (intent,)))
         paired_source = None
         if uses_source_target_counter_batch(effect):
             try:

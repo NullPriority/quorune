@@ -309,3 +309,338 @@ class DamageTriggeredExtraCombatTests(InheritedNativeFixture, unittest.TestCase)
 
 if __name__ == "__main__":
     unittest.main()
+
+
+MORAUG = "Moraug, Fury of Akoum"
+
+
+class MoraugCompilerTests(unittest.TestCase):
+    def test_strict_descriptor_records_both_sides_and_rejects_off_event(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.extra_combat_model import (
+            MAIN_PHASE_EXTRA_COMBAT_CAPABILITY, MainPhaseCombatSchedule, MainPhaseInsertion,
+            main_phase_extra_combat_condition,
+        )
+        from quorune.rules.effect_node_capabilities import main_phase_extra_combat_program_dependencies
+        from quorune.semantic_runtime.quantified_anthems import (
+            RECIPIENT_ATTACK_ANTHEM_CAPABILITY, recipient_attack_anthem_descriptor,
+        )
+
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "moraug-source.sqlite3"
+            build_fixture_database(FIXTURES / "damage-triggered-extra-combat-cards.json", path)
+            with CardDatabase(path) as db:
+                registry = load_default_capability_registry()
+                card = db.lookup(MORAUG, fuzzy=False)
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile=PROFILE)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                report, semantics = register_card(db, registry, MORAUG)
+                self.assertTrue(report["strict_capability_ready"], report["blockers"])
+                anthem, = [p for p in semantics.programs_for_oracle(card.oracle_id) if p.event == "characteristics.evaluate"]
+                landfall, = [p for p in semantics.programs_for_oracle(card.oracle_id) if p.event == "land.enter"]
+                self.assertEqual(recipient_attack_anthem_descriptor(), dict(anthem.handlers[0]))
+                self.assertEqual(main_phase_extra_combat_condition(), landfall.event_condition)
+                expected = extra_combat_effect(ExtraCombatUntap.GRANTED_COMBAT_CREATURES)
+                self.assertEqual([expected], landfall.effects)
+                for program, withheld in ((anthem, RECIPIENT_ATTACK_ANTHEM_CAPABILITY),
+                                            (landfall, MAIN_PHASE_EXTRA_COMBAT_CAPABILITY)):
+                    dependencies = [cap for cap in program.capability_dependencies if cap != withheld]
+                    altered = replace(program, capability_dependencies=dependencies,
+                                      capability_closure=registry.closure(dependencies, profile=PROFILE).to_dict())
+                    result = bind_semantic_program_runtime(altered, capability_registry=registry, profile=PROFILE)
+                    self.assertFalse(result["strict"], result)
+                    self.assertIn("capability:undeclared_runtime_dependency:" + withheld, result["blockers"])
+                for altered in (replace(landfall, event="permanent.enter"),
+                                replace(landfall, event_condition=None),
+                                replace(landfall, coverage=[entry for entry in landfall.coverage if entry != "intervening_condition"])):
+                    self.assertRaises(ValueError, main_phase_extra_combat_program_dependencies, altered)
+                    result = bind_semantic_program_runtime(altered, capability_registry=registry, profile=PROFILE)
+                    self.assertFalse(result["strict"], result)
+                for word in ("own combat phase", "upkeep"):
+                    altered = replace(card, oracle_text=card.oracle_text.replace("your main phase", word))
+                    result = compile_oracle_card(altered, capability_registry=registry, capability_profile=PROFILE)
+                    self.assertNotEqual("exact", result.status)
+        cooked = MainPhaseCombatSchedule("postcombat_main", 1, (
+            MainPhaseInsertion("combat", "S8"), MainPhaseInsertion("beginning"), MainPhaseInsertion("combat", "S6"),
+        ))
+        self.assertEqual(cooked, MainPhaseCombatSchedule.from_dict(cooked.to_dict()))
+        with self.assertRaises(ValueError):
+            MainPhaseCombatSchedule.from_dict({**cooked.to_dict(), "schema_version": True})
+
+
+class MoraugNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import os
+
+        cls.temporary = TemporaryDirectory()
+        directory = Path(cls.temporary.name)
+        database = directory / "moraug-native.sqlite3"
+        pinned = os.environ.get("MORAUG_PINNED_DB")
+        if not pinned:
+            support = {
+                "source-attack-alone-cards.json": {
+                    "Act of Treason", "Forest", "Grizzly Bears", "Island", "Isamaru, Hound of Konda",
+                    "Plains", "Unsummon", "Vedalken Orrery",
+                },
+                "activation-restriction-material-cards.json": {"Cloudshift"},
+                "library-search-rules-cards.json": {"Evolving Wilds"},
+                "scryfall-exact-lists.json": {"Mountain"},
+                "additional-beginning-originals-cards.json": {"Sphinx of the Second Sun"},
+                "ending-turn-effect-cards.json": {"Sundial of the Infinite"},
+            }
+            pieces = [FIXTURES / "damage-triggered-extra-combat-cards.json"]
+            for filename, wanted in support.items():
+                document = json.loads((FIXTURES / filename).read_bytes())
+                document["cards"] = [row for row in document["cards"] if row["name"] in wanted]
+                assert wanted == {row["name"] for row in document["cards"]}, filename
+                identities = {row["oracle_id"] for row in document["cards"]}
+                document["rulings"] = [row for row in document.get("rulings", ()) if row["oracle_id"] in identities]
+                piece = directory / filename
+                piece.write_text(json.dumps(document), encoding="utf-8")
+                pieces.append(piece)
+            build_fixture_database(pieces, database)
+        cls.db = CardDatabase(pinned or database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Main-phase combat witness", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    @staticmethod
+    def _current(game, card):
+        return game.state.cards[card.object_id]
+
+    def _power(self, game, card):
+        return game.engine._numeric_stat(card.object_id, "power")
+
+    def _source(self, game, name=MORAUG, *, zone="battlefield", seat="A"):
+        card = self.add(game.engine, name, zone=zone, seat=seat)
+        self.assert_closed(game, card)
+        return card
+
+    def _accept(self, game, seat, payload):
+        accepted = game.act("pilot:" + seat, payload)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def _activate(self, game, seat, card):
+        self.priority(game, seat)
+        actions = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+        ref = self._current(game, card).ref
+        action, = (row["id"] for row in actions if row["id"].startswith(f"activate:{ref}:"))
+        self._accept(game, seat, {"action_id": action, "pay": "auto"})
+
+    def _play_land(self, game, land):
+        self.priority(game, "A")
+        self._accept(game, "A", {"action_id": "play-land:" + self._current(game, land).ref})
+
+    def _find_land(self, game, wilds, basic):
+        self._activate(game, "A", wilds)
+        self.assertEqual("fetch_land", game.state.stack[-1].context["builtin"])
+        self.assertIsNotNone(self.resolve(game))
+        self._accept(game, "A", {"action_id": "choose", "search_card": self._current(game, basic).ref})
+        self.assertEqual(("battlefield", "A"), (self._current(game, basic).zone, self._current(game, basic).controller))
+
+    def _landfall(self, game, moraug):
+        item, = [value for value in game.state.stack if value.source_object_id == moraug.object_id]
+        self.assertEqual(("triggered_ability", "A"), (item.kind, item.controller))
+        return item.ref
+
+    def _delay(self, game, grant):
+        from quorune.extra_combat_model import MAIN_PHASE_COMBAT_GRANT_FIELD
+
+        delayed, = [entry for entry in game.state.delayed_triggers
+                    if entry.condition.get(MAIN_PHASE_COMBAT_GRANT_FIELD) == grant]
+        return delayed
+
+    def _begin_granted(self, game, grant):
+        delayed = self._delay(game, grant)
+        self.until(game, lambda current: any(item.context.get("delayed_trigger_ref") == delayed.ref
+                                             for item in current.state.stack))
+        queue = game.state.main_phase_extra_combats
+        self.assertEqual(("combat", "beginning_combat", grant),
+                         (game.state.phase, game.state.step, queue.combat_grant))
+        item, = [item for item in game.state.stack if item.context.get("delayed_trigger_ref") == delayed.ref]
+        self.assertEqual("triggered_ability", item.kind)
+        return game.state.combat.damage_sequence_id
+
+    def _attackers(self, game, previous=None):
+        self.until(game, lambda current: current.state.pending_decision is not None
+                   and current.state.pending_decision.kind == "combat.attackers"
+                   and (previous is None or current.state.combat.damage_sequence_id != previous))
+
+    def test_actual_precombat_grants_precede_normal_combat_and_count_only_declarations(self):
+        game = self.session(4822111)
+        moraug = self._source(game)
+        bear = self.add(game.engine, "Grizzly Bears", ref="declared-attack-bear")
+        idle = self.add(game.engine, "Grizzly Bears", ref="late-copy-parent")
+        wilds = self._source(game, "Evolving Wilds", zone="hand")
+        forest = self.add(game.engine, "Forest", zone="library", ref="moraug-precombat-fetch")
+        bear.tapped = True
+        hidden = self.add(game.engine, "Unsummon", seat="D", zone="hand", ref="private-precombat-control")
+        self.prepare(game)
+        self.checkpoint(game)
+        self._play_land(game, wilds)
+        older = self._landfall(game, moraug)
+        self.resolve_top(game)
+        self._find_land(game, wilds, forest)
+        newer = self._landfall(game, moraug)
+        self.resolve_top(game)
+        self.assertTrue(self._current(game, bear).tapped)
+        queued = game.state.main_phase_extra_combats
+        self.assertEqual(("precombat_main", [newer, older]),
+                         (queued.after_phase, [entry.grant for entry in queued.pending]))
+        game = self.replay(game, load=True)
+        first = self._begin_granted(game, newer)
+        self.assertTrue(self._current(game, bear).tapped)
+        self.resolve_top(game)
+        self.assertFalse(self._current(game, bear).tapped)
+        self.attack(game, [(self._current(game, bear), "C")])
+        self.assertEqual(3, self._power(game, bear))
+        game = self.replay(game, load=True)
+        late, = game.engine.create_token(
+            "A", name="Creature put attacking", copy_of=self._current(game, idle).ref,
+            tapped=True, attacking="B", reason="Committed creature entry after declared attackers",
+        )
+        entrant = next(card for card in game.state.cards.values() if card.ref == late)
+        self.assertEqual((3, 2), (self._power(game, bear), self._power(game, entrant)))
+        self.checkpoint(game)
+
+        second = self._begin_granted(game, older)
+        self.assertNotEqual(first, second)
+        self.assertTrue(self._current(game, bear).tapped)
+        self.resolve_top(game)
+        self.attack(game, [(self._current(game, bear), "C")])
+        self.assertEqual(4, self._power(game, bear))
+        self._attackers(game, previous=second)
+        self.assertIsNone(game.state.main_phase_extra_combats)
+        self.assertTrue(self._current(game, bear).tapped)
+        self.assertEqual(4, self._power(game, bear))
+        self.assertFalse(any(item.context.get("delayed_trigger_ref") for item in game.state.stack))
+        self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_postcombat_grants_survive_departure_and_interleave_legacy_combat(self):
+        game = self.session(4822112)
+        moraug = self._source(game)
+        bloodthirster = self._source(game, BLOOD)
+        bear = self.add(game.engine, "Grizzly Bears")
+        self._source(game, "Sphinx of the Second Sun")
+        wilds = self._source(game, "Evolving Wilds", zone="hand")
+        forest = self.add(game.engine, "Forest", zone="library", ref="moraug-postcombat-fetch")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.add(game.engine, "Island", seat="B")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        postcombat_event, = [
+            event.event_id for event in game.state.events
+            if event.code == "step.begin" and event.phase == "postcombat_main"
+               and event.turn_sequence == game.state.turn_sequence
+        ]
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.additional_beginning_phases.pending)
+        self._play_land(game, wilds)
+        older = self._landfall(game, moraug)
+        self.resolve_top(game)
+        self._find_land(game, wilds, forest)
+        newer = self._landfall(game, moraug)
+        self.cast_for(game, "B", bounce, [self._current(game, moraug).ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", self._current(game, moraug).zone)
+        self.resolve_top(game)
+        self.assertEqual(["combat", "combat", "beginning"],
+                         [entry.kind for entry in game.state.main_phase_extra_combats.pending])
+        game = self.replay(game, load=True)
+
+        first = self._begin_granted(game, newer)
+        self.resolve_top(game)
+        self.attack(game, [(self._current(game, bloodthirster), "B"), (self._current(game, bear), "D")])
+        self.until(game, lambda current: self.trigger_count(current, bloodthirster) == 1)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, game.state.extra_combat_phases)
+        self._attackers(game, previous=first)
+        self.assertIsNone(game.state.main_phase_extra_combats.combat_grant)
+        self.assertTrue(self._current(game, bear).tapped)
+        self.assertTrue(self._delay(game, older).active)
+        self.assertEqual(0, game.state.extra_combat_phases)
+        legacy = game.state.combat.damage_sequence_id
+        self.attack(game, [])
+
+        last = self._begin_granted(game, older)
+        self.assertNotEqual(last, legacy)
+        self.assertTrue(self._current(game, bear).tapped)
+        self.resolve_top(game)
+        self.assertFalse(self._current(game, bear).tapped)
+        self.attack(game, [])
+        self.until(game, lambda current: current.state.phase == "beginning"
+                   and current.state.additional_beginning_phases is not None
+                   and current.state.additional_beginning_phases.active)
+        self.until(game, lambda current: current.state.phase == "ending")
+        self.assertIsNone(game.state.main_phase_extra_combats)
+        self.assertIsNone(game.state.additional_beginning_phases)
+        self.assertFalse(any(event.code == "step.begin" and event.phase == "postcombat_main"
+                             and event.event_id > postcombat_event for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_actual_attack_history_stays_with_incarnation_through_control_then_resets_on_blink(self):
+        game = self.session(4822113)
+        bear = self.add(game.engine, "Grizzly Bears", seat="B", ref="previous-controller-attacker")
+        self._source(game, "Vedalken Orrery")
+        moraug = self._source(game, zone="hand")
+        borrow = self.add(game.engine, "Act of Treason", zone="hand")
+        blink = self._source(game, "Cloudshift", zone="hand")
+        for index in range(9):
+            self.add(game.engine, "Mountain", ref=f"moraug-mountain-{index}")
+        self.add(game.engine, "Plains", ref="moraug-blink-plains")
+        self.prepare(game, actor="B", active="B")
+        initial_identity = bear.logical_object_id
+        self.checkpoint(game)
+        self._attackers(game)
+        self._accept(game, "B", {"action_id": "attack", "attackers": {bear.ref: "C"}})
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        self.cast_for(game, "A", borrow, [self._current(game, bear).ref], reserve={"W": 1})
+        self.resolve_top(game)
+        self.assertEqual(("A", initial_identity), (self._current(game, bear).controller, self._current(game, bear).logical_object_id))
+        self.assertEqual(2, self._power(game, bear))
+        self.cast_for(game, "A", moraug, reserve={"W": 1})
+        self.resolve_top(game)
+        self.assertEqual(3, self._power(game, bear))
+        self.assertEqual(1, game.state.players["A"].mana_pool["W"])
+        self.cast_for(game, "A", blink, [self._current(game, bear).ref])
+        self.resolve_top(game)
+        self.assertEqual("A", self._current(game, bear).controller)
+        self.assertNotEqual(initial_identity, self._current(game, bear).logical_object_id)
+        self.assertEqual(2, self._power(game, bear))
+        self.replay(game, load=True)
+
+    def test_actual_end_turn_discards_waiting_main_grants_and_foreign_turn_lands_do_not_trigger(self):
+        game = self.session(4822114)
+        moraug = self._source(game)
+        wilds = self._source(game, "Evolving Wilds")
+        forest = self.add(game.engine, "Forest", zone="library", ref="foreign-turn-fetch")
+        self.prepare(game, actor="A", active="B")
+        self.checkpoint(game)
+        self._find_land(game, wilds, forest)
+        self.assertEqual(0, self.trigger_count(game, moraug))
+        self.assertIsNone(game.state.main_phase_extra_combats)
+        self.replay(game, load=True)
+
+        game = self.session(4822115)
+        moraug = self._source(game)
+        wilds = self._source(game, "Evolving Wilds", zone="hand")
+        stop = self._source(game, "Sundial of the Infinite")
+        self.prepare(game, mana={"C": 1})
+        self.checkpoint(game)
+        self._play_land(game, wilds)
+        grant = self._landfall(game, moraug)
+        self.resolve_top(game)
+        self.assertTrue(self._delay(game, grant).active)
+        turn = game.state.turn_sequence
+        self._activate(game, "A", stop)
+        self.resolve_top(game)
+        self.assertIsNone(game.state.main_phase_extra_combats)
+        self.assertFalse(self._delay(game, grant).active)
+        self.assertFalse(any(event.code == "step.begin" and event.step == "beginning_combat"
+                             and event.turn_sequence == turn for event in game.state.events))
+        self.replay(game, load=True)

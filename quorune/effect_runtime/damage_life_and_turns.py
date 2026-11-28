@@ -212,6 +212,10 @@ def _apply_damage_each_opponent(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.paid_discard_damage import PAID_NONLAND_DAMAGE_FIELD
+
+    if PAID_NONLAND_DAMAGE_FIELD in effect:
+        raise GameRuleError("Paid discard damage must be authorized by its resolving spell")
     op = operation
     amount = int(effect.get("amount", 0))
     if amount < 0:
@@ -694,6 +698,21 @@ def _apply_control_next_turn(
 
 
 
+def _lock_life_until_next_turn(host, player, source):
+    from ..continuous_effect_model import ContinuousEffectDuration
+    from ..life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD
+    from ..semantic_runtime.life_prohibitions import apply_temporary_life_gain_prohibition
+
+    apply_temporary_life_gain_prohibition(host, player, {
+        "op": "life",
+        "source": source,
+        TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD: {
+            "schema_version": 3, "affected_player_relation": "controller",
+            "duration": ContinuousEffectDuration.UNTIL_NEXT_TURN.value,
+        },
+    })
+
+
 def _apply_protection_from_everything_until_next_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -703,27 +722,23 @@ def _apply_protection_from_everything_until_next_turn(
     reason: str,
 ) -> Any:
     from ..errors import GameRuleError
+    from ..rules.targeted_opponent_protection import PROTECTION_VERSION, validate_resolving_opponent_protection
 
     seat = str(effect.get("player") or actor)
     host._require_seat(seat, in_game=True)
     if effect.get("schema_version") == 2:
-        from ..continuous_effect_model import ContinuousEffectDuration
-        from ..life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD
-        from ..semantic_runtime.life_prohibitions import apply_temporary_life_gain_prohibition
-
         source = effect.get("source")
         if (type(effect["schema_version"]) is not int or effect.get("preserve_life_total") is not True
                 or seat != actor or not any(item.ref == source and item.controller == actor
                                            and item.context.get("currently_resolving") is True for item in host.state.stack)):
             raise GameRuleError("Next-turn protection requires its original resolving controller and stack object")
-        apply_temporary_life_gain_prohibition(host, seat, {
-            "op": "life",
-            "source": effect["source"],
-            TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD: {
-                "schema_version": 3, "affected_player_relation": "controller",
-                "duration": ContinuousEffectDuration.UNTIL_NEXT_TURN.value,
-            },
-        })
+        _lock_life_until_next_turn(host, seat, source)
+    elif effect.get("schema_version") == PROTECTION_VERSION:
+        try:
+            validate_resolving_opponent_protection(host, effect, actor=actor)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        _lock_life_until_next_turn(host, seat, effect["source"])
     elif "schema_version" in effect:
         from ..rules.next_personal_turn_protection import (
             ACTIVATED_PROTECTION_VERSION, validate_resolving_activated_protection, validate_resolving_cast_entry_protection,

@@ -5,7 +5,8 @@ from . import regex_working_set as re
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..creature_subtypes import canonical_creature_subtype
 from ..public_history_query_model import (
-    PublicHistoryQuerySpec, current_plus_one_counter_placement_query, current_source_counter_receipt_query,
+    PublicHistoryQuerySpec, current_creature_counter_placement_query, current_plus_one_counter_placement_query,
+    current_source_counter_receipt_query,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..continuous_conditions import (
@@ -29,6 +30,13 @@ def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),
 
 
 def _counter_placement_condition(text, *, source_pattern):
+    if re.fullmatch(r"you(?:'ve| have)? put a counter on a creature this turn", text):
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+            amount=1,
+            schema_version=8,
+            history_query=current_creature_counter_placement_query(),
+        )
     received = re.fullmatch(r"a counter was put on (?P<recipient>.+) this turn", text)
     if received is not None and source_pattern is not None and re.fullmatch(source_pattern, received['recipient'], re.I):
         return FixedPublicStateConditionSpec(

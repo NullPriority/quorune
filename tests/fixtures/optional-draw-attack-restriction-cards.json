@@ -4,6 +4,24 @@
   "source": "Pinned Scryfall Doctor data and constructed native test cards",
   "cards": [
     {
+      "oracle_id": "7798a4d9-1c1d-48e6-b9a2-ecd6aec1efa7",
+      "name": "Palantír of Orthanc",
+      "mana_cost": "{3}",
+      "type_line": "Legendary Artifact",
+      "cmc": 3.0,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Mill",
+        "Scry"
+      ],
+      "oracle_text": "At the beginning of your end step, put an influence counter on Palantír of Orthanc and scry 2. Then target opponent may have you draw a card. If that player doesn't, you mill X cards, where X is the number of influence counters on Palantír of Orthanc, and that player loses life equal to the total mana value of those cards.",
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
       "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
       "name": "The Second Doctor",
       "mana_cost": "{2}{W}{U}",
@@ -123,6 +141,12 @@
     }
   ],
   "rulings": [
+    {
+      "oracle_id": "7798a4d9-1c1d-48e6-b9a2-ecd6aec1efa7",
+      "source": "wotc",
+      "published_at": "2023-06-16",
+      "comment": "You choose a target for Palantír of Orthanc's ability when it goes on the stack. If that target is illegal as the ability tries to resolve, the ability is removed from the stack. You won't put an influence counter on Palantír of Orthanc, and you won't scry, draw, or mill."
+    },
     {
       "oracle_id": "8a6eda31-2791-4def-b9e7-3adde155a4f0",
       "published_at": "2023-10-13",

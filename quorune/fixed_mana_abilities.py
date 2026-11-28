@@ -267,6 +267,20 @@ class FixedActivatedManaAbilitySpec:
                     self.mana_cost_options, self.luck_counter_color_choice, self.exile_source_from_hand))):
             raise FixedManaAbilityError("Whole-hand mana costs require their exact sacrifice and three-mana choice")
 
+    def _validate_mana_doubling(self):
+        from .fixed_mana_results import DOUBLE_UNSPENT_MANA, double_unspent_mana_text
+
+        if self.result is None or self.result.kind != DOUBLE_UNSPENT_MANA:
+            return
+        if (not self.tap_source or self.modes or self.mana_cost["GENERIC"] != 3
+                or any(self.mana_cost[color] for color in MANA_KEYS)
+                or not double_unspent_mana_text(self.cost_text, self.effect_text)
+                or any((self.sacrifice_source, self.life_payment, self.spend_restriction,
+                        self.choices, self.activation_limit, self.activation_conditions,
+                        self.source_counter_removal_cost, self.mana_cost_options,
+                        self.luck_counter_color_choice, self.exile_source_from_hand))):
+            raise FixedManaAbilityError("Mana doubling requires its ordinary tap price and no fixed output")
+
     def __post_init__(self) -> None:
         self._validate_choices()
         if self.result is not None and not isinstance(self.result,FixedManaResultSpec):
@@ -320,7 +334,7 @@ class FixedActivatedManaAbilitySpec:
             )
         if (
             not isinstance(self.modes, tuple)
-            or not self.modes
+            or (not self.modes and (self.result is None or self.result.schema_version != 7))
             or any(not isinstance(mode, FixedManaMode) for mode in self.modes)
         ):
             raise FixedManaAbilityError(
@@ -333,6 +347,7 @@ class FixedActivatedManaAbilitySpec:
         self._validate_point_result()
         self._validate_exert_price()
         self._validate_whole_hand_mana_price()
+        self._validate_mana_doubling()
         if self.result is not None and self.result.schema_version == 3 and (
             self.cost_text != "{T}" or not self.tap_source or any(mana.values()) or len(self.modes) != 1
             or any((self.sacrifice_source, self.life_payment, self.spend_restriction, self.choices,
@@ -588,6 +603,8 @@ def fixed_mana_modes_from_effect(
     """Compile the complete fixed output clause or return ``None``."""
 
     text = " ".join(effect_text.split())
+    if text.casefold() == "add two mana in any combination of colors.":
+        return forage_mana_modes()
     if text.casefold() == "add one mana of any color.":
         return tuple(
             FixedManaMode.from_bundle({color: 1}) for color in "WUBRG"
@@ -807,6 +824,24 @@ def compile_fixed_activated_mana_ability(
 ) -> FixedActivatedManaAbilitySpec | None:
     """Lower one parsed ability when this family's entire contract closes."""
 
+    from .fixed_mana_results import DOUBLE_UNSPENT_MANA, double_unspent_mana_text
+
+    if double_unspent_mana_text(ability.cost_text, ability.effect_text):
+        if (not ability.mana_ability or not ability.compiled_cost or ability.zones != ("battlefield",)
+                or ability.sorcery_speed or ability.target_schema is not None
+                or ability.complex_symbols or ability.untap_source or ability.discard_source or ability.exile_source
+                or ability.energy_payment or ability.loyalty_delta is not None or ability.random_discard_payment
+                or ability.builtin_semantic_key is not None or ability.generic_reduction_per_legendary_creature):
+            return None
+        return FixedActivatedManaAbilitySpec(
+            ability_id=ability.ability_id, line_index=ability.line_index, oracle_line=ability.oracle_line,
+            cost_text=ability.cost_text, effect_text=ability.effect_text, mana_cost=FrozenMap(ability.mana),
+            tap_source=ability.tap_source, sacrifice_source=ability.sacrifice_source,
+            life_payment=ability.life_payment, modes=(), result=FixedManaResultSpec(DOUBLE_UNSPENT_MANA, schema_version=7),
+            spend_restriction=ability.mana_spend_restriction, choices=ability.choices,
+            activation_limit=ability.activation_limit, activation_conditions=ability.activation_conditions,
+            source_counter_removal_cost=ability.source_counter_removal_cost, mana_cost_options=ability.mana_cost_options,
+        )
     if has_forage_mana_choice(ability):
         return _compile_forage_mana_ability(ability)
     if exert := _compile_exert_mana_ability(ability):

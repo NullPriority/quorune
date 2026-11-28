@@ -8,6 +8,7 @@ from ..linked_ability_exile_model import LINKED_ABILITY_EXILE_CAPABILITY
 from ..linked_exile_return_model import (
     CONTROLLER_LIBRARY_TOP_HAND_BINDING, CONTROLLER_LIBRARY_TOP_HAND_CAPABILITY,
     CONTROLLER_LIBRARY_TOP_HAND_VERSION, controller_library_top_hand_effects,
+    CONDITIONAL_EXILE_CAST_VERSION, CONDITIONAL_EXILE_CAST_BINDING, conditional_exile_cast_target_schema,
     CONDITIONAL_EXILE_CAPABILITY, LINKED_ABILITY_BINDING_PREFIX, LINKED_ABILITY_TIMING, LINKED_EXILE_RETURN_CAPABILITY,
     LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION, LinkedExileReturnSpec, validate_linked_instruction,
     ANNOUNCED_OPPONENT_EXILE_CAPABILITY, LINKED_TRANSFORMED_RETURN_CAPABILITY,
@@ -25,6 +26,7 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..replacement.immutable import thaw_value
 from ..targets import TargetGroup
 from .activation_counter_cost import SourceCounterRemovalCost
+from .conditional_exile_cast import CAPABILITY as CONDITIONAL_EXILE_CAST_CAPABILITY
 
 
 _LINKED_PAIR = (LINKED_EXILE_RETURN_CAPABILITY, LINKED_ABILITY_EXILE_CAPABILITY)
@@ -240,6 +242,27 @@ def _linked_fading_activation_runtime_dependencies(program, *, mechanics):
 
 
 def is_closed_linked_fading_activation_program(program):
+    from .named_artifact_echo import CAPABILITY, program_dependencies
+
+    if CAPABILITY in program.capability_dependencies:
+        try:
+            return bool(program_dependencies(program))
+        except (TypeError, ValueError, KeyError):
+            return False
+    from .linked_creature_settlement import program_dependencies, uses_instruction
+
+    if uses_instruction(program):
+        try:
+            return set(program_dependencies(program)).issubset(program.capability_dependencies)
+        except (TypeError, ValueError, KeyError):
+            return False
+    from . import linked_death_upkeep
+
+    if linked_death_upkeep.uses_instruction(program):
+        try:
+            return set(linked_death_upkeep.program_dependencies(program)).issubset(program.capability_dependencies)
+        except (TypeError, ValueError, KeyError):
+            return False
     if program.event != "activate" or not any(uses_linked_fading_exile(effect) for effect in program.effects):
         return False
     try:
@@ -320,14 +343,43 @@ def _has_selected_exile_instruction(value):
     return isinstance(value, (tuple, list)) and any(_has_selected_exile_instruction(child) for child in value)
 
 
-def linked_ability_exile_runtime_dependencies(program):
-    from .effect_shape_walkers import nested_effects
+def _conditional_cast_instruction(effect):
+    spec = effect.get("spec")
+    return (effect.get("op") == LINKED_EXILE_RETURN_OPERATION and isinstance(spec, Mapping)
+            and spec.get("schema_version") == CONDITIONAL_EXILE_CAST_VERSION)
 
+
+def linked_ability_exile_runtime_dependencies(program):
+    from .named_artifact_echo import program_dependencies
+
+    if named_echo := program_dependencies(program):
+        return named_echo
+    from .linked_creature_settlement import program_dependencies, uses_instruction
+
+    if uses_instruction(program):
+        return program_dependencies(program)
+    from . import linked_death_upkeep
+
+    if linked_death_upkeep.uses_instruction(program):
+        return linked_death_upkeep.program_dependencies(program)
+    from .effect_shape_walkers import nested_effects
+    from .linked_return_subtype_counter import linked_subtype_counter_runtime_dependencies
+
+    if required := linked_subtype_counter_runtime_dependencies(program):
+        return required
     if any(uses_controller_library_top_hand(effect) for effect in nested_effects((program.effects, program.handlers))):
         return _controller_library_top_hand_runtime_dependencies(program)
     from .linked_loyalty_exile_shapes import linked_loyalty_exile_runtime_dependencies
 
     if required := linked_loyalty_exile_runtime_dependencies(program):
+        return required
+    if any(_conditional_cast_instruction(effect) for effect in nested_effects((program.effects, program.handlers))):
+        required = linked_exile_return_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (not required or program.event != "permanent.enter.self" or program.active_zone != "battlefield"
+                or program.event_condition is not None or program.cost_schema is not None or program.handlers):
+            raise ValueError("Conditional exile casting requires its complete source-entry trigger")
         return required
     if _has_selected_exile_instruction(program.effects):
         required = _selected_conditional_exile_capabilities(program.effects, program.target_schema, program.coverage)
@@ -442,7 +494,36 @@ def is_closed_controller_library_top_hand_program(program):
     return set(required).issubset(program.capability_dependencies)
 
 
+OWNED_CREATURE_END_STEP_RETURN_CAPABILITY = "zone.linked_exile_return.owned_creature_end_step"
+
+
+def owned_creature_end_step_return_target_schema():
+    from ..compiler.direct_target import permanent_target_schema
+
+    return {**permanent_target_schema(types_any=("creature",)), "source_exclusion": True, "owner_relation": "you"}
+
+
+def is_owned_creature_end_step_return(spec, target_schema):
+    return (thaw_value(target_schema) == owned_creature_end_step_return_target_schema()
+            and spec == LinkedExileReturnSpec(timing="next_end_step", controller="actor", schema_version=1))
+
+
 def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None, mechanic_ids: Iterable[str]) -> tuple[str, ...]:
+    from .graveyard_exchange_model import (
+        GRAVEYARD_EXCHANGE_CAPABILITY, GRAVEYARD_EXCHANGE_FIELD, is_exact_graveyard_exchange_sequence,
+    )
+
+    if any(GRAVEYARD_EXCHANGE_FIELD in effect for effect in effects):
+        if (target_schema is None and LINKED_EXILE_RETURN_MECHANIC in mechanic_ids
+                and is_exact_graveyard_exchange_sequence(effects)):
+            return (GRAVEYARD_EXCHANGE_CAPABILITY, LINKED_EXILE_RETURN_CAPABILITY,)
+        return ()
+    from .linked_return_subtype_counter import (
+        linked_subtype_counter_node_capabilities, uses_linked_subtype_counter,
+    )
+
+    if any(uses_linked_subtype_counter(effect) for effect in effects):
+        return linked_subtype_counter_node_capabilities(effects, target_schema, mechanic_ids)
     if any(uses_controller_library_top_hand(effect) for effect in effects):
         return controller_library_top_hand_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -463,6 +544,15 @@ def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]
         return ()
     try:
         spec = LinkedExileReturnSpec.from_dict(first["spec"])
+        if spec.schema_version == CONDITIONAL_EXILE_CAST_VERSION:
+            if (first["cards"] != "$targets" or first["binding_id"] != CONDITIONAL_EXILE_CAST_BINDING
+                    or thaw_value(target_schema) != conditional_exile_cast_target_schema()
+                    or "cr-115-targets" not in mechanics):
+                return ()
+            return (
+                LINKED_EXILE_RETURN_CAPABILITY, CONDITIONAL_EXILE_CAPABILITY,
+                "target.revalidate_resolution", CONDITIONAL_EXILE_CAST_CAPABILITY,
+            )
         if spec.selected_departure_scope is not None:
             return ()
         if spec.schema_version in LINKED_TYPE_ENTRY_COUNTER_VERSIONS:
@@ -519,6 +609,11 @@ def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]
             group = TargetGroup.from_mapping(target_schema)
             if first["cards"] != "$targets" or group.zones != ("battlefield",) or group.categories != ("permanent",) or group.max_targets not in {1, 2, 3, 4, 5, 6, 999} or group.min_targets not in {0, group.max_targets}:
                 return ()
+            if group.owner_relation != "any":
+                if "cr-115-targets" not in mechanics or not is_owned_creature_end_step_return(spec, target_schema):
+                    return ()
+                return (LINKED_EXILE_RETURN_CAPABILITY, OWNED_CREATURE_END_STEP_RETURN_CAPABILITY,
+                        "target.revalidate_resolution")
     except (TypeError, ValueError):
         return ()
     return tuple(sorted({LINKED_EXILE_RETURN_CAPABILITY,

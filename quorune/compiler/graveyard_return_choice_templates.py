@@ -5,7 +5,8 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..rules.graveyard_card_targets import GraveyardCardTargetKind
 from ..rules.graveyard_return_choices import (
     BOUNDED_BATTLEFIELD_RETURN_VERSION, GraveyardReturnSelection, OPERATION, MECHANIC,
-    mandatory_creature_or_planeswalker_return_effect, optional_tapped_land_return_effect, paired_graveyard_return_effect,
+    different_name_permanent_return_effect, mandatory_creature_or_planeswalker_return_effect,
+    optional_tapped_land_return_effect, paired_graveyard_return_effect,
 )
 
 
@@ -79,13 +80,43 @@ def _greatest_power_return_choice(text):
             ({'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()},), None, (MECHANIC,))
 
 
+def _each_graveyard_return_spell(text):
+    match = re.fullmatch(
+        r"(?P<mill>Each player mills [^.]+)\. For each player, choose a creature or planeswalker card in that player's graveyard\. "
+        r"Put those cards onto the battlefield under your control\. Then each creature you control becomes an? "
+        r"(?P<subtype>.+?) in addition to its other types\.", text, re.I,
+    )
+    if match is None:
+        return None
+    from .mill_templates import fixed_mill_effect_template
+    from ..rules.graveyard_return_choices import EACH_GRAVEYARD_RETURN_MECHANIC, each_graveyard_return_effect
+    from ..zone_object_subtype_grants import locked_creature_subtype_effect
+
+    mill = fixed_mill_effect_template(match["mill"].capitalize() + ".")
+    subtype = canonical_creature_subtype(match["subtype"])
+    if mill is None or subtype is None:
+        return None
+    _, effects, target, mechanics = mill.compiled()
+    if target is not None:
+        return None
+    return (
+        "each-graveyard-return-after-mill-v1",
+        (*effects, each_graveyard_return_effect(), locked_creature_subtype_effect(subtype)),
+        None, (*mechanics, EACH_GRAVEYARD_RETURN_MECHANIC),
+    )
+
+
 def graveyard_return_choice_template(text):
     normalized = " ".join(text.casefold().replace("’", "'").split())
+    if each := _each_graveyard_return_spell(normalized):
+        return each
     if normalized == (
         "choose a creature card in an opponent's graveyard, then that player chooses a creature card in your graveyard. "
         "you may return those cards to the battlefield under their owners' control."
     ):
         return "paired-public-graveyard-return-v1", (paired_graveyard_return_effect(),), None, (MECHANIC,)
+    if normalized == "return any number of permanent cards with different names from your graveyard to the battlefield.":
+        return "own-graveyard-different-name-permanent-return-v1", (different_name_permanent_return_effect(),), None, (MECHANIC,)
     returned = _greatest_power_return_choice(text) or _single_return_choice(text)
     if returned is not None:
         return returned

@@ -23,6 +23,21 @@ from ..rules.temporary_declaration_restrictions import (
 OPERATIONS = effect_family_contract("declaration-effects.v1").operations
 
 
+def commit_goad_snapshot_block_prohibition(host, effect, cards, *, actor, reason):
+    """Bind the snapshotted creatures independently of the goad results."""
+    try:
+        rule = create_resolution_declaration_rule_effect(
+            host, source=resolution_effect_source(host, effect), targets=cards,
+            restriction=temporary_declaration_restriction("cant_block"), expires_on_next_turn_of=actor,
+        )
+    except (TypeError, ValueError, ContinuousEffectError, ContinuousEffectStateError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    if rule is not None:
+        host._log(actor, "combat.declaration_restriction", reason,
+                  {"objects": [card.ref for card in cards], "restriction": "cant_block", "continuous_effect": rule.effect_id},
+                  importance=1, changed_objects=[card.object_id for card in cards])
+
+
 def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
     from ..rules.blocking_requirements import resolve_blocking_requirement
     try:return resolve_blocking_requirement(host,effect,actor=actor,reason=reason)

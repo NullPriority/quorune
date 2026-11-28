@@ -102,6 +102,12 @@ class CompositionCommanderReplacementTests(unittest.TestCase):
         self.cast(session,'C',spell,targets=[root.ref]);decision=H.resolve(self,session)
         self.assertEqual('replacement.order',decision.kind)
         self.assertEqual(['pilot:A'],list(session.pending_principals()))
+        projected = session.packet("pilot:A", full=True)["decision"]
+        offered = next(action for action in projected["legal_actions"] if action["id"] == "choose")
+        replacement = next(field for field in offered["form"]["fields"] if field["name"] == "replacement")
+        original = "Return to hand" if name == "Unsummon" else "Put into library"
+        self.assertEqual({"Move to command zone", original}, {option["label"] for option in replacement["options"]})
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
         self.assertEqual('battlefield',session.engine.state.cards[root.object_id].zone)
         self.assertNotIn(commander.object_id,session.engine.state.cards)
         return session,root,commander,designation

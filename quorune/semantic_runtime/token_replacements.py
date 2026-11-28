@@ -12,6 +12,7 @@ from ..replacement.operations import (
 )
 from ..creature_token_definition_replacement import (
     CREATURE_TOKEN_DEFINITION_CAPABILITY, CREATURE_TOKEN_DEFINITION_HANDLER,
+    CREATURE_TOKEN_TRIPLING_CAPABILITY, CREATURE_TOKEN_TRIPLING_HANDLER,
     PREDEFINED_TOKEN_SET_CAPABILITY, PREDEFINED_TOKEN_SET_HANDLER, PREDEFINED_TOKEN_SET_SUBTYPES,
 )
 from ..fixed_token_production import (
@@ -677,6 +678,8 @@ class TokenQuantityReplacementHandler:
         "token.creation.quantity_replacement",
     )
 
+    creature_only: bool = False
+
     def validate(self, descriptor: Mapping[str, Any]) -> int:
         exact_fields(
             descriptor,
@@ -700,21 +703,14 @@ class TokenQuantityReplacementHandler:
         condition = descriptor["condition"]
         if not isinstance(condition, Mapping):
             raise SemanticNodeError("runtime handler condition must be an object")
-        exact_fields(
-            condition,
-            {"event_controller"},
-            field="runtime handler condition",
-        )
-        if condition["event_controller"] != "source_controller":
-            raise SemanticNodeError(
-                "token quantity replacement requires "
-                "event_controller=source_controller"
-            )
+        expected = {"event_controller": "source_controller"}
+        if self.creature_only:
+            expected["created_types"] = ["creature"]
+        if thaw_value(condition) != expected:
+            raise SemanticNodeError("Token multiplication requires its closed controller and member scope")
         multiplier = descriptor["multiplier"]
-        if type(multiplier) is not int or multiplier != 2:
-            raise SemanticNodeError(
-                "token quantity replacement requires multiplier 2"
-            )
+        if type(multiplier) is not int or multiplier != (3 if self.creature_only else 2):
+            raise SemanticNodeError("Token multiplication requires its fixed positive factor")
         return multiplier
 
     def lower(
@@ -731,6 +727,9 @@ class TokenQuantityReplacementHandler:
         context: TokenCreationReplacementContext,
     ) -> ReplacementEffect:
         multiplier = self.validate(descriptor)
+        conditions = {"event_controller": {"eq": context.source_controller}}
+        if self.creature_only:
+            conditions["created_types"] = {"contains_all": ["creature"]}
         return ReplacementEffect(
             effect_id=(
                 f"{self.handler_id}:{context.source_ref}:"
@@ -739,18 +738,25 @@ class TokenQuantityReplacementHandler:
             source_id=context.source_ref,
             event_kind=self.event,
             replacement_class=ReplacementClass.OTHER,
-            conditions={
-                "event_controller": {"eq": context.source_controller},
-            },
+            conditions=conditions,
             operations=(
                 MultiplyTokenCreation(
+                    creature_only=self.creature_only,
                     factor=multiplier,
                     handler_id=self.handler_id,
                     source_ref=context.source_ref,
                 ),
             ),
-            label=f"{context.source_ref}: create twice that many tokens",
+            label=(f"{context.source_ref}: create three times that many creature tokens" if self.creature_only
+                   else f"{context.source_ref}: create twice that many tokens"),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class CreatureTokenQuantityReplacementHandler(TokenQuantityReplacementHandler):
+    handler_id: str = CREATURE_TOKEN_TRIPLING_HANDLER
+    capability_dependencies: tuple[str, ...] = (CREATURE_TOKEN_TRIPLING_CAPABILITY,)
+    creature_only: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -884,6 +890,7 @@ def default_token_creation_replacement_registry(
                 capability_dependencies=(MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY,),
             ),
             TokenQuantityReplacementHandler(),
+            CreatureTokenQuantityReplacementHandler(),
             CreatureTokenDefinitionReplacementHandler(),
             PredefinedArtifactTokenSetReplacementHandler(),
         )

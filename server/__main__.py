@@ -81,6 +81,11 @@ def main() -> None:
         help="Use engine-managed empty priority windows for new playtest games",
     )
     parser.add_argument(
+        "--full-priority-windows",
+        action="store_true",
+        help="Keep every empty priority window available in new games",
+    )
+    parser.add_argument(
         "--offline",
         action="store_true",
         help="Use the configured local card database without Scryfall update checks",
@@ -92,7 +97,9 @@ def main() -> None:
     os.environ.setdefault("MTG_WEB_DIST", str(web_root / "dist"))
     if args.offline:
         os.environ["MTG_AUTO_UPDATE_CARDS"] = "0"
-    if args.auto_pass_empty_priority:
+    if args.full_priority_windows:
+        os.environ["MTG_AUTO_PASS_EMPTY_PRIORITY"] = "0"
+    elif args.auto_pass_empty_priority:
         os.environ["MTG_AUTO_PASS_EMPTY_PRIORITY"] = "1"
     url = f"http://{args.host}:{args.port}"
     if args.open_browser:

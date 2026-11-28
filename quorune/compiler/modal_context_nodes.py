@@ -9,6 +9,7 @@ from ..event_counter_reference import attached_attack_counter_context_matches
 from .event_counter_results import entry_event_counter_result
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .modal_templates import fixed_nonrepeating_modal_template
+from .captured_counter_keyword_mode import captured_counter_keyword_mode
 
 
 _MODAL_BODY_SENTINEL = "__quorune_fixed_nonrepeating_modal_body__"
@@ -79,6 +80,46 @@ def _equipped_attack_binding(header: str, *, card_name: str):
     return binding
 
 
+def _controlled_combat_recipient_branch(header, body):
+    if not header.casefold().startswith("whenever a creature you control deals combat damage to a player, choose one "):
+        return None
+    from ..combat_damage_library_exile import combat_damage_color_cast_exile_effect
+    from ..goad_instruction import GOAD_MECHANIC
+    from ..rules.combat_damage_library_access import combat_damage_recipient_goad
+    from .impulse_access_templates import IMPULSE_ACCESS_MECHANIC_ID
+
+    printed = " ".join(body.casefold().replace("\u2019", "'").split())
+    if printed == "goad target creature that player controls.":
+        effect, target = combat_damage_recipient_goad()
+        return "combat-damage-recipient-goad-v1", (effect,), target, (GOAD_MECHANIC, "cr-115-targets")
+    if printed == (
+        "exile the top card of that player's library. until end of turn, you may cast that card "
+        "and you may spend mana as though it were mana of any color to cast that spell."
+    ):
+        return ("combat-damage-recipient-color-cast-v1", (combat_damage_color_cast_exile_effect(),),
+                None, (IMPULSE_ACCESS_MECHANIC_ID,))
+    return None
+
+
+def _bind_combat_recipient_modes(node, target_schema):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..rules.combat_damage_library_access import (
+        combat_damage_recipient_modal_schema_is_exact, controlled_combat_damage_player_condition,
+        uses_combat_damage_recipient_modes,
+    )
+
+    if node is None or not uses_combat_damage_recipient_modes(target_schema):
+        return node
+    condition = controlled_combat_damage_player_condition(node.event_condition)
+    if (node.event != "damage.dealt" or node.active_zone != "battlefield"
+            or condition is None or not combat_damage_recipient_modal_schema_is_exact(target_schema)):
+        return None
+    return replace(
+        node, event_condition=condition,
+        runtime_coverage=tuple(dict.fromkeys((*node.runtime_coverage, CURRENT_ABILITY_FRAGMENT_COVERAGE))),
+    )
+
+
 def _context_node(
     *,
     node_id: str,
@@ -104,9 +145,14 @@ def _context_node(
 
     def compile_mode(body: str):
         line, _material, span = next(mode_rows)
+        if combat := _controlled_combat_recipient_branch(rows[0][1], body):
+            return combat
         ordinary = effect_template(body, card_name=card_name)
         if ordinary[0] is not None:
             return ordinary
+        captured = captured_counter_keyword_mode(rows[0][1], body, card_name=card_name)
+        if captured is not None:
+            return captured
         if binding is not None:
             counter = entry_event_counter_result(
                 binding, body, effect_template=effect_template, card_name=card_name,
@@ -173,6 +219,7 @@ def _context_node(
             residuals=scratch_residuals,
             effect_template=modal_effect_template,
         )
+    node = _bind_combat_recipient_modes(node, target_schema)
     if node is None or not node.lowerable:
         return None
     if modal.minimum_modes == 0:

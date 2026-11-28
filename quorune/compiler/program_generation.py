@@ -1365,6 +1365,10 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
     from .nonleaf_effect_closure import direct_effect_program_is_closed, effect_program_is_closed
     from ..rules.artifact_search_exchange import artifact_search_exchange_program_dependencies
 
+    from ..rules.paired_token_creators import is_closed_paired_token_program
+
+    if is_closed_paired_token_program(program):
+        return True
     try:
         exchange_dependencies = artifact_search_exchange_program_dependencies(program)
     except ValueError:
@@ -1581,7 +1585,7 @@ def register_generated_programs(
     promote_exact_capability_declarations: bool = False,
 ) -> dict[str, Any]:
     from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
-
+    from ..meld_model import related_meld_records
     generated = 0
     skipped_existing = 0
     promoted_runtime_handlers = 0
@@ -1593,7 +1597,7 @@ def register_generated_programs(
         capability_registry=capability_registry, capability_profile=capability_profile,
     )
     cards_seen: set[str] = set()
-    for record in records:
+    for record in related_meld_records(db, records):
         if record.oracle_id in cards_seen:
             continue
         cards_seen.add(record.oracle_id)

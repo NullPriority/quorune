@@ -76,9 +76,24 @@ def _parse_compiled_activation_material(material, *, card_name, keywords):
     from .announced_reinforce_nodes import parse_reinforce_activation_material
     abilities = parse_reinforce_activation_material(material, card_name=card_name, keywords=keywords)
     return tuple(
-        compile_ability_local_mana_reduction(_compile_commander_identity_life_cost(ability), source_name=card_name)
+        _compile_source_equipment_unattach_cost(
+            compile_ability_local_mana_reduction(_compile_commander_identity_life_cost(ability), source_name=card_name)
+        )
         for ability in abilities
     )
+
+
+def _compile_source_equipment_unattach_cost(ability):
+    from ..granted_activation_model import GrantingAttachmentPayment, GrantingAttachmentPaymentKind
+    from ..util import ORDINARY_FIXED_MANA_PATTERN
+
+    if not re.fullmatch(rf"{ORDINARY_FIXED_MANA_PATTERN},\s*Unattach this Equipment", ability.cost_text, re.I):
+        return ability
+    try:
+        return replace(ability, uncompiled_costs=(),
+                       granting_attachment_payment=GrantingAttachmentPayment(GrantingAttachmentPaymentKind.UNATTACH_SOURCE))
+    except ValueError:
+        return ability
 
 
 def _compile_commander_identity_life_cost(ability: ActivatedAbility) -> ActivatedAbility:
@@ -97,6 +112,10 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    from ..granted_activation_model import GrantingAttachmentPaymentKind, SOURCE_EQUIPMENT_UNATTACH_CAPABILITY
+    if (ability.granting_attachment_payment is not None
+            and ability.granting_attachment_payment.kind is GrantingAttachmentPaymentKind.UNATTACH_SOURCE):
+        additional.append(SOURCE_EQUIPMENT_UNATTACH_CAPABILITY)
     from ..rules.forage import FORAGE_ACTIVATION_CAPABILITY, has_forage_cost
 
     if has_forage_cost(ability):
@@ -151,6 +170,9 @@ def activated_ability_cost_capabilities(
         additional.append(WATERBEND_CAPABILITY)
     if ability.energy_payment:
         additional.append('activation.energy.fixed_payment')
+    if ability.announced_energy_reanimation:
+        from ..rules.announced_energy_reanimation import CAPABILITY as ENERGY_REANIMATION_CAPABILITY
+        additional.append(ENERGY_REANIMATION_CAPABILITY)
     if ability.random_discard_payment:
         additional.append('activation.random_discard.fixed')
     if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
@@ -243,6 +265,9 @@ def activated_ability_cost(
         "choices": [choice.compact() for choice in ability.choices],
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
+    if ability.granting_attachment_payment is not None:
+        from ..granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
+        result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = ability.granting_attachment_payment.to_dict()
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
     if ability.announced_x_minimum:result['announced_x_minimum']=ability.announced_x_minimum
     if ability.loyalty_x:
@@ -251,6 +276,9 @@ def activated_ability_cost(
 
     if uses_commander_identity_life(ability) and ability.compiled_cost:
         result[ACTIVATION_COMMANDER_LIFE_FIELD] = 1
+
+    if ability.announced_energy_reanimation:
+        result["announced_energy_reanimation"] = True
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
 

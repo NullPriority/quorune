@@ -653,8 +653,12 @@ class MultiplyTokenCreation:
     source_ref: str
     schema_version: int = OPERATION_SCHEMA_VERSION
 
+    creature_only: bool = False
+
     def __post_init__(self) -> None:
         _integer(self.factor, field="token multiplier factor", minimum=2)
+        if type(self.creature_only) is not bool:
+            raise ReplacementOperationError("The optional creature-token scope must be a boolean")
         for field_name in ("handler_id", "source_ref"):
             value = getattr(self, field_name)
             if type(value) is not str or not value.strip():
@@ -669,6 +673,7 @@ class MultiplyTokenCreation:
             "factor": self.factor,
             "handler_id": self.handler_id,
             "source_ref": self.source_ref,
+            **({"creature_only": True} if self.creature_only else {}),
         }
 
 
@@ -829,6 +834,23 @@ class CreateResultDraws:
         return result
 
 
+WIN_INSTEAD_OF_EMPTY_DRAW = "win_instead_of_empty_draw"
+
+
+@dataclass(frozen=True, slots=True)
+class WinInsteadOfEmptyDraw:
+    """Replace one draw from an empty library with an instruction to win."""
+
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
+            raise ReplacementOperationError("Unsupported draw-to-win result version")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": WIN_INSTEAD_OF_EMPTY_DRAW}
+
+
 EXILE_TURN_PLAY_DRAW_RESULT = "exile_top_for_turn_play"
 
 
@@ -948,6 +970,7 @@ ReplacementOperation: TypeAlias = (
     | ReplaceDrawWithLibraryChoice
     | CreateResultDraws
     | ExileTopForTurnPlayInsteadOfDraw
+    | WinInsteadOfEmptyDraw
     | DiscardInsteadOfDraw
     | DredgeDraw
 )
@@ -991,6 +1014,7 @@ _TYPED_OPERATION_TYPES = (
     ReplaceDrawWithLibraryChoice,
     CreateResultDraws,
     ExileTopForTurnPlayInsteadOfDraw,
+    WinInsteadOfEmptyDraw,
     DiscardInsteadOfDraw,
     DredgeDraw,
 )
@@ -1140,12 +1164,14 @@ def _token_multiplier_from_dict(
     *,
     operation: str,
 ) -> MultiplyTokenCreation:
-    _exact_fields(
-        value,
-        {"op", "factor", "handler_id", "source_ref"},
-        operation=operation,
-    )
+    fields = {"op", "factor", "handler_id", "source_ref"}
+    if "creature_only" in value:
+        if value["creature_only"] is not True:
+            raise ReplacementOperationError("Creature-only multiplication must use its canonical wire value")
+        fields.add("creature_only")
+    _exact_fields(value, fields, operation=operation)
     return MultiplyTokenCreation(
+        creature_only="creature_only" in value,
         factor=_integer(
             value["factor"],
             field="token multiplier factor",
@@ -1254,6 +1280,9 @@ def _draw_operation_from_dict(value: Mapping[str, Any], operation: str) -> Repla
         return ReplaceDrawWithLibraryChoice()
     if op == "create_result_draws":
         return _result_draws_from_dict(value, operation=op)
+    if op == WIN_INSTEAD_OF_EMPTY_DRAW:
+        _exact_fields(value, {"op"}, operation=op)
+        return WinInsteadOfEmptyDraw()
     if op == EXILE_TURN_PLAY_DRAW_RESULT:
         _exact_fields(value, {"op"}, operation=op)
         return ExileTopForTurnPlayInsteadOfDraw()

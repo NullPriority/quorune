@@ -44,14 +44,53 @@ def commit_resolved_zone_movement(
     )
 
 
+def _apply_discarded_card_play(host, effect, *, actor, operation, reason):
+    from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
+    from ..impulse_access import apply_chosen_impulse_access
+    from ..impulse_access_model import ImpulseAccessDuration
+    from ..rules.discarded_card_exile import discarded_card_play_movement
+    from ..rules.library_selection import LibrarySelectionObjectIdentity
+
+    try:
+        movement = discarded_card_play_movement(effect, actor=actor)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    if movement is None:
+        return None
+    moved = _apply_move_if_in_zone(
+        host, movement, actor=actor, operation=operation, reason=reason, required_owner=actor,
+    )
+    if (moved is not None and moved.zone == "exile" and not moved.face_down and moved.is_card_object
+            and moved.zone_change_counter == movement["expected_zone_change_counter"] + 1):
+        identity = LibrarySelectionObjectIdentity(
+            object_id=moved.object_id, ref=moved.ref, logical_object_id=moved.logical_object_id,
+        )
+        apply_chosen_impulse_access(host, {
+            "op": "grant_cast_permission", "schema_version": 1, "player": actor,
+            CHOSEN_IMPULSE_GRANT_FIELD: {
+                "identity": identity.to_dict(), "duration": ImpulseAccessDuration.END_OF_TURN.value,
+            },
+        }, actor=actor, reason=reason)
+    return moved
+
+
 def apply_move_if_in_zone(
     host: Any, effect: Mapping[str, Any], *, actor: str, operation: str, reason: str,
 ) -> Any:
     from ..rules.committed_mill_cards import MILL_MOVE_FIELD, move_committed_mill_cards_to_hand
-    from ..rules.discarded_card_exile import discarded_card_exile_movement, uses_discarded_card_exile
+    from ..rules.milled_creature_land_to_hand import MILL_HAND_MOVE, move_committed_mill_subset_to_hand
+    from ..rules.discarded_card_exile import (
+        discarded_card_exile_movement,
+        uses_discarded_card_exile,
+        DISCARD_PLAY_VERSION,
+    )
 
     if MILL_MOVE_FIELD in effect:
         return move_committed_mill_cards_to_hand(host, effect, actor=actor, reason=reason)
+    if MILL_HAND_MOVE in effect:
+        return move_committed_mill_subset_to_hand(host, effect, actor=actor, reason=reason)
+    if DISCARD_PLAY_VERSION in effect:
+        return _apply_discarded_card_play(host, effect, actor=actor, operation=operation, reason=reason)
     if uses_discarded_card_exile(effect):
         try:
             movement = discarded_card_exile_movement(effect, actor=actor)

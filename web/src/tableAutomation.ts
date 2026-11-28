@@ -77,6 +77,7 @@ export const PRIORITY_STOPS = [
   { id: "end_combat", phase: "combat", label: "End of combat" },
   { id: "postcombat_main", phase: "main2", label: "Second main phase" },
   { id: "end_step", phase: "end", label: "End step" },
+  { id: "before_my_turn", phase: "end", label: "End step before my turn" },
   { id: "cleanup", phase: "end", label: "Cleanup priority" },
 ] as const;
 
@@ -85,13 +86,16 @@ export type EmptyPriorityHolds = { steps: PriorityStop[]; preserve_empty: boolea
 
 export function selectedPriorityStop(
   phase: string, step: string, firstStrike: boolean, damageStep: number, selected: readonly PriorityStop[],
+  nextIsMine = false, hasAttackers = true,
 ): string | undefined {
   if (selected.length === 0) return undefined;
+  if (step === "end_step" && nextIsMine && selected.includes("before_my_turn")) return "End step before your turn";
   const currentStep = step === "combat_damage" && firstStrike && damageStep === 1 ? "first_strike_damage" : step;
   const allCombat = phase === "combat" && selected.includes("combat");
   const option = PRIORITY_STOPS.find((stop) => stop.id === currentStep)
     ?? (phase === "combat" ? undefined : PRIORITY_STOPS.find((stop) => stop.id === phase));
-  if (option && (selected.includes(option.id) || allCombat)) return option.label;
+  if (option && (selected.includes(option.id) || allCombat)
+    && (option.id !== "declare_attackers" || hasAttackers || allCombat)) return option.label;
   return allCombat ? "Combat" : undefined;
 }
 

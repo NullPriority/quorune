@@ -142,7 +142,8 @@ def _opponent_cast_payment_views_equal(current, old):
     effect, = current.effects
     previous, = old.effects
     if (not uses_opponent_event_mana_payment(effect) or current.event != "spell.cast"
-            or previous.get("op") != "remora_tax"):
+            or previous.get("op") != "remora_tax"
+            or tuple(child.get("op") for child in effect.get("declined_effects", ())) != ("offer_draw",)):
         return False
     try:
         required = opponent_event_mana_payment_program_dependencies(current, effect)
@@ -220,3 +221,47 @@ def fixed_token_choice_results_equal(current,old):
     if not required or not set(required)<=set(current.capability_dependencies):return False
     current_results,old_results = (_fixed_token_choice_results(program) for program in (current,old))
     return current_results is not None and current_results==old_results
+
+
+def ordered_sacrifice_or_entry_subtype_supersedes_reviewed(current, old):
+    """Match the complete earlier recipes while retaining their archived keys."""
+    from ..creature_subtypes import canonical_creature_subtype
+    from ..replacement.immutable import thaw_value
+    from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_program_dependencies
+    from ..rules.reanimation_entry_subtype import FIELD, entry_subtype_reanimation_program_dependencies
+
+    if current.event_condition != old.event_condition:
+        return False
+    try:
+        if ordered_opponent_sacrifice_program_dependencies(current):
+            if len(old.effects) != 1 or old.target_schema is not None:
+                return False
+            prior = thaw_value(old.effects[0])
+            prompt = prior.pop("prompt", None)
+            return (
+                type(prompt) is str and bool(prompt) and type(prior.get("count")) is int
+                and prior == {"op": "choose_cards_apnap", "players": "opponents", "actor": "$controller",
+                              "zone": "battlefield", "card_type": "creature", "count": 3, "then": "sacrifice"}
+            )
+        if not entry_subtype_reanimation_program_dependencies(current) or len(old.effects) != 2:
+            return False
+        schema = thaw_value(old.target_schema)
+        if not isinstance(schema, Mapping) or set(schema) != {"groups"} or len(schema["groups"]) != 1:
+            return False
+        group = dict(schema["groups"][0])
+        group_id = group.pop("id", None)
+        if (type(group_id) is not str or not group_id or group.get("creature") is not True
+                or type(group.get("min")) is not int or type(group.get("max")) is not int
+                or group != {"zones": ["graveyard"], "categories": ["card"], "creature": True, "min": 1, "max": 1}):
+            return False
+        prior_move, prior_subtype = map(thaw_value, old.effects)
+        reasons = (prior_move.pop("reason", ""), prior_subtype.pop("reason", ""))
+        subtype = prior_subtype.get("type")
+        return (
+            all(type(reason) is str for reason in reasons)
+            and prior_move == {"op": "reanimate", "card": "$target.0", "controller": "$controller"}
+            and type(subtype) is str and canonical_creature_subtype(subtype) == current.effects[0][FIELD]
+            and prior_subtype == {"op": "add_type", "card": "$target.0", "type": subtype}
+        )
+    except (TypeError, ValueError, KeyError):
+        return False

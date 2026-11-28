@@ -88,11 +88,12 @@ _ABILITY_WORD = re.compile(
 _DAMAGE_QUANTITY_REPLACEMENT = re.compile(
     r"^If (?P<source>.+?) would deal "
     r"(?:(?P<damage_kind>combat|noncombat) )?damage to (?P<target>.+?), "
-    r"(?:it|that source) deals double that damage"
-    r"(?: to (?:that permanent or player|that player|that player or permanent))? "
+    r"(?:it|that source) deals (?P<factor>double|triple) that damage"
+    r"(?: to (?P<recipient>that permanent or player|that player|that player or permanent))? "
     r"instead\.?$",
     re.IGNORECASE,
 )
+CONTROLLED_SOURCE_TRIPLE_TEMPLATE = "damage-quantity-controlled-source-triple-static-v1"
 _DAMAGE_ADDITIVE_REPLACEMENT = re.compile(
     r"^If (?P<source>.+?) would deal "
     r"(?:(?P<damage_kind>combat|noncombat) )?damage to (?P<target>.+?), "
@@ -1163,6 +1164,16 @@ def static_damage_handler(
     capability = "damage.replacement.static_quantity"
     modification: dict[str, int] = {"multiplier": 2, "additional": 0}
     template_id = "damage-quantity-double-static-v1"
+    if match is not None and match["factor"].casefold() == "triple":
+        if (
+            match["source"].casefold() != "a source you control"
+            or match["target"].casefold() != "a permanent or player"
+            or match["damage_kind"] is not None
+            or (match["recipient"] or "").casefold() not in {"", "that permanent or player"}
+        ):
+            return None
+        modification["multiplier"] = 3
+        template_id = CONTROLLED_SOURCE_TRIPLE_TEMPLATE
     if match is None:
         additive = _additive_damage_handler(normalized)
         if additive is not None:

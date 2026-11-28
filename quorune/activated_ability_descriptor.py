@@ -63,7 +63,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_energy_reanimation", "variable_colored_reveal_price", "announced_x_symbols", "announced_x_minimum", "loyalty_x", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "mill_library_cost", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", SOURCE_COUNTER_PLACEMENT_FIELD, "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -100,6 +100,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("activated abilities use a closed schema")
     if value["schema_version"] != 1:
         raise ValueError("unsupported activated ability schema version")
+    if "announced_energy_reanimation" in value and value["announced_energy_reanimation"] is not True:
+        raise ValueError("The optional announced energy reanimation marker must be true")
     if 'loyalty_x' in value and value['loyalty_x'] is not True:
         raise ValueError('Optional variable loyalty marker must be true')
     if 'reconfigure' in value and value['reconfigure'] is not True:
@@ -160,7 +162,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         from .fixed_mana_results import FixedManaResultSpec
         FixedManaResultSpec.from_dict(value['fixed_mana_result'])
     if 'granting_attachment_payment' in value:
-        from .granted_activation_model import GrantingAttachmentPayment
-        if GrantingAttachmentPayment.from_dict(value['granting_attachment_payment']).granting_object is None:
+        from .granted_activation_model import GrantingAttachmentPayment, GrantingAttachmentPaymentKind
+        payment = GrantingAttachmentPayment.from_dict(value['granting_attachment_payment'])
+        if payment.kind is not GrantingAttachmentPaymentKind.UNATTACH_SOURCE and payment.granting_object is None:
             raise ValueError('Granted activation must name the Equipment incarnation')
     return value

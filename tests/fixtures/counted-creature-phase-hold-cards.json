@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Out of Time",
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. Put a time counter on this enchantment for each creature that phased out this way.\nVanishing (At the beginning of your upkeep, remove a time counter from this enchantment. When the last is removed, sacrifice it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vanishing"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "A creature phased out by Out of Time doesn't phase in during its controller's untap step as normal."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Any continuous effects with a \"for as long as\" duration, such as that of Tide Shaper, ignore phased-out objects. Any such effects will expire if their conditions are no longer met after ignoring the phased-out objects."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Any one-shot effects that are waiting \"until [this] leaves the battlefield,\" such as that of Banisher Priest, won't happen when a permanent phases out."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Choices made for permanents as they entered the battlefield are remembered when they phase in."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Each Aura and Equipment attached to a permanent that's phasing out also phases out. They will phase in with that permanent and still be attached to it. Similarly, permanents that phase out with counters phase in with those counters."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If Out of Time happens to be a creature when its enter the battlefield trigger resolves, it will phase out along with all other creatures. You'll never remove the last counter since it's phased out, so all creatures will remain phased out indefinitely."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If Out of Time leaves the battlefield before its enter the battlefield trigger resolves, creatures will untap, but they won't phase out."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If there are no creatures on the battlefield when Out of Time's triggered ability resolves, nothing phases out and Out of Time won't get any time counters. It will remain on the battlefield and won't be sacrificed, since the last time counter will never be removed."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Phasing out doesn't cause any \"leaves the battlefield\" abilities to trigger. Similarly, phasing in won't cause any \"enters the battlefield\" abilities to trigger."
+    },
+    {
+      "oracle_id": "8491de1e-dc37-4a89-b4f7-56a2c668f0fc",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "While a permanent is phased out, it's treated as though it doesn't exist. It can't be the target of spells or abilities, its static abilities have no effect on the game, its triggered abilities can't trigger, it can't attack or block, and so on."
+    }
+  ]
+}

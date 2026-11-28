@@ -10,6 +10,7 @@ SOURCE_SACRIFICE_MECHANIC = 'fixed-source-sacrifice'
 SELF_MOVE_CAPABILITY = 'zone.self_move.activated'
 FORMER_ATTACHMENT_SACRIFICE_VERSION = 2
 CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION = 3
+REFLEXIVE_SEARCH_SACRIFICE_VERSION = 4
 CAST_PARTICIPANT_FIELD = 'cast_participant'
 CAST_PARTICIPANT_BINDING = '$context.player'
 UNATTACHMENT_EVENT = 'attachment.unattached'
@@ -35,6 +36,14 @@ def cast_participant_sacrifice_draw_effect():
         CAST_PARTICIPANT_FIELD: CAST_PARTICIPANT_BINDING}
 
 
+def reflexive_search_sacrifice_effect(child):
+    from .rules.source_sacrifice_reflexive_search import FIELD
+
+    return {**fixed_source_sacrifice_effect(),
+            SOURCE_SACRIFICE_FIELD: REFLEXIVE_SEARCH_SACRIFICE_VERSION,
+            FIELD: child.to_dict()}
+
+
 def _materialized_identity(value):
     return type(value) is str and bool(value) and value == value.strip() and not value.startswith('$')
 
@@ -51,6 +60,7 @@ def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
     from_unattachment = version == FORMER_ATTACHMENT_SACRIFICE_VERSION
     draw_after_cast = version == CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION
     expected = fixed_source_sacrifice_effect()
+    reflexive_dependencies = ()
     if from_unattachment:
         expected = former_attachment_sacrifice_effect()
     elif draw_after_cast:
@@ -62,6 +72,13 @@ def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
             if not _materialized_identity(participant):
                 raise ValueError('Source sacrifice draw needs its materialized cast participant')
             expected[CAST_PARTICIPANT_FIELD] = participant
+    elif version == REFLEXIVE_SEARCH_SACRIFICE_VERSION:
+        from .rules.source_sacrifice_reflexive_search import FIELD, validate_child
+
+        if not resolved and "_replacement_selections" in effect:
+            raise ValueError("Source sacrifice cannot preselect a replacement")
+        child, reflexive_dependencies = validate_child(effect.get(FIELD))
+        expected = reflexive_search_sacrifice_effect(child)
     if from_unattachment and resolved:
         snapshot = effect.get(UNATTACHMENT_SNAPSHOT)
         if not isinstance(snapshot, Mapping):
@@ -75,7 +92,7 @@ def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
     selections = effect.get('_replacement_selections', ())
     if not isinstance(selections, (list, tuple)):
         raise ValueError('Source sacrifice replacement selections must be an array')
-    return (SOURCE_SACRIFICE_CAPABILITY, SELF_MOVE_CAPABILITY,
+    return (SOURCE_SACRIFICE_CAPABILITY, SELF_MOVE_CAPABILITY, *reflexive_dependencies,
         *((UNATTACHMENT_TRIGGER_CAPABILITY, 'trigger.placement.apnap') if from_unattachment else ()),
         *(('trigger.event.normalized_spell_cast', 'zone.draw.library_to_hand') if draw_after_cast else ()))
 
@@ -90,6 +107,7 @@ class FixedSourceSacrificeIntent:
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     cast_participant: str | None = None
+    reflexive_child: FrozenMap | None = None
 
     def __post_init__(self):
         if not all(map(_materialized_identity, (self.actor, self.source_stack_ref,
@@ -97,6 +115,10 @@ class FixedSourceSacrificeIntent:
             raise ValueError('Source sacrifice requires complete materialized source identities')
         if self.cast_participant is not None and not _materialized_identity(self.cast_participant):
             raise ValueError('Source sacrifice draw needs its materialized cast participant')
+        if self.reflexive_child is not None and (
+            not isinstance(self.reflexive_child, FrozenMap) or self.cast_participant is not None
+        ):
+            raise ValueError("Reflexive sacrifice requires its one immutable consequence")
         if not isinstance(self.replacement_selections, (list, tuple)):
             raise ValueError('Source sacrifice replacement selections must be an array')
         frozen = tuple(freeze_value(value) for value in self.replacement_selections)

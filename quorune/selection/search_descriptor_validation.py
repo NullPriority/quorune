@@ -5,6 +5,9 @@ from __future__ import annotations
 from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
+from ..public_library_piles_model import (
+    DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION, is_public_search_split, validate_public_search_split,
+)
 from ..rules.targeted_library_exile import (
     TARGET_LIBRARY_EXILE_VERSION, validate_bound_target_name_multizone_search,
 )
@@ -14,7 +17,9 @@ from ..library_search_model import (
     EXILED_TARGET_SEARCH_VERSION,
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
-    RECRUITING_LIBRARY_SEARCH_VERSION,
+    COMMITTED_LAND_SEARCH_VERSION,
+    RECRUITING_LIBRARY_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION, SubtypeGraveyardSearchSpec, is_subtype_graveyard_search,
+    SEARCHED_LAND_UNTAP_VERSION, SearchedLandUntapSearch,
     TARGET_NAME_LIBRARY_SEARCH_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
     TARGET_OPPONENT_PRIVATE_PLAY_SEARCH_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
@@ -27,7 +32,8 @@ from ..library_search_model import (
     FixedCountedLibrarySearchTemplate,
     RecruitingLibrarySearchSpec,
     TargetNameLibrarySearchSpec,
-    is_counted_library_search, validate_fixed_creature_group_search, validate_committed_attacking_exile_search,
+    is_counted_library_search, is_ordered_creature_graveyard_search,
+    validate_fixed_creature_group_search, validate_committed_attacking_exile_search,
     validate_target_player_basic_land_search,
     validate_private_search_before_random_discard,
 )
@@ -69,6 +75,21 @@ def semantic_search_actor(
 
 
 def validate_semantic_search_response(effect: Mapping[str, Any], response: Mapping[str, Any]) -> None:
+    if effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION and (
+        {"entry_pay_life", "pay_life"} & set(response)
+    ):
+        raise GameRuleError("The tapped basic-land search does not offer an entry payment")
+    if is_public_search_split(effect) and (
+        set(response) - {"action", "choice_schema", "search_cards"} or "search_cards" not in response
+    ):
+        raise GameRuleError("The public split search accepts only the issued private search choice")
+    from ..rules.affected_library_search_batch import SEARCH_BATCH_VERSION
+
+    if effect.get("schema_version") == SEARCH_BATCH_VERSION and (
+        set(response) - {"action", "action_id", "choice_schema", "search_cards"}
+        or not isinstance(response.get("search_cards", ()), (list, tuple))
+    ):
+        raise GameRuleError("Choose only the offered basic land cards or an empty selection")
     if effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION and (
         set(response) - {"action", "choice_schema", "search_cards"}
         or ("search_cards" in response and response["search_cards"] is None)
@@ -101,7 +122,28 @@ def semantic_search_destination(effect: Mapping[str, Any]) -> tuple[str, str, st
     return destination_spec, destination, position
 
 
+def _validate_search_land_untap(effect: Mapping[str, Any]) -> None:
+    retained = {
+        key: value for key, value in effect.items()
+        if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}
+    }
+    try:
+        SearchedLandUntapSearch.from_effect(retained)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
+
 def _validate_linked_and_paid_search(effect):
+    if effect.get("schema_version") == COMMITTED_LAND_SEARCH_VERSION:
+        from ..rules.committed_land_sacrifice_search import validate_resolved_land_sacrifice_search
+
+        retained = {key: value for key, value in effect.items()
+                    if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
+        try:
+            validate_resolved_land_sacrifice_search(retained)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return True
     from ..rules.paid_artifact_library_search import is_paid_artifact_search, validate_paid_artifact_search_effect
 
     from ..rules.paid_creature_library_search import is_paid_creature_search, validate_paid_creature_search
@@ -128,6 +170,10 @@ def _validate_linked_and_paid_search(effect):
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         return True
+
+    if effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION:
+        _validate_search_land_untap(effect)
+        return True
     return False
 
 
@@ -138,6 +184,14 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
 
     retained = {key: value for key, value in effect.items()
                 if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}} if moving else effect
+    if effect.get("schema_version") == COMMITTED_LAND_SEARCH_VERSION:
+        from ..rules.committed_land_sacrifice_search import verify_land_sacrifice_search
+
+        try:
+            verify_land_sacrifice_search(host, item, retained)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return effect
     if effect.get("schema_version") == CAST_X_ZONE_SEARCH_VERSION:
         from ..rules.cast_x_zone_searches import verify_resolving_cast_x_zone_search
 
@@ -186,7 +240,19 @@ def _validate_private_or_cast_x_search(effect: Mapping[str, Any]) -> bool:
 
 
 def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
+    from ..rules.affected_library_search_batch import SEARCH_BATCH_VERSION, validate_exile_land_search
+
+    if effect.get("schema_version") == SEARCH_BATCH_VERSION:
+        validate_exile_land_search(effect)
+        return
     if _validate_private_or_cast_x_search(effect):
+        return
+
+    if is_public_search_split(effect):
+        try:
+            validate_public_search_split(effect, resolved=True)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
         return
     if _validate_linked_and_paid_search(effect):
         return
@@ -291,9 +357,9 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
         except (TypeError, ValueError) as exc:
             raise GameRuleError(str(exc)) from exc
         return
-    if effect.get("schema_version") == ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION:
+    if effect.get("schema_version") in (ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION):
         try:
-            AnyNumberCreatureSubtypeSearch.from_effect({
+            (SubtypeGraveyardSearchSpec if is_subtype_graveyard_search(effect) else AnyNumberCreatureSubtypeSearch).from_effect({
                 key: value for key, value in effect.items()
                 if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}
             })
@@ -374,6 +440,10 @@ def semantic_search_choice_schema(
         },
     }
     choice_schema.update(shared_land_type_search_choice(host, effect, seat, options))
+    if is_public_search_split(effect):
+        choice_schema["example"]["search_cards"] = [option["id"] for option in options[:minimum]]
+        if effect["schema_version"] == DISTINCT_PUBLIC_SEARCH_SPLIT_VERSION:
+            choice_schema["different_names"] = True
     if combined_bound is not None:
         choice_schema[CREATURE_SUBSET_MANA_VALUE_FIELD] = combined_bound
         choice_schema["label"] = f"Search cards (total mana value {combined_bound} or less)"
@@ -382,6 +452,8 @@ def semantic_search_choice_schema(
         choice_schema.update(SearchAllocationSpec.from_effect(effect).choice_metadata())
     if effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION:
         choice_schema["order"] = "top_to_bottom"
+    if is_ordered_creature_graveyard_search(effect) or is_subtype_graveyard_search(effect):
+        choice_schema["order"] = "graveyard_top_to_bottom"
     from ..semantic_runtime.life_prohibitions import life_payment_prohibited
 
     if (entry_choice and not is_up_to_two_forest_search(effect)

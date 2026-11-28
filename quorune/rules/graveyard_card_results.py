@@ -1,11 +1,16 @@
 """Read a specific exile result and emit ordinary counter/life follow-ups."""
 from ..errors import GameRuleError
-from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec, GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES
+from ..graveyard_card_result_model import (
+    GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES,
+    GraveyardPermanentCardCounterSpec,
+    graveyard_card_counter_recipe,
+)
 from ..object_query import ObjectQueryResult
 from ..public_zone_moves import PublicZoneMoveError, exile_public_graveyard_card
 from ..semantic_runtime.graveyard_card_result_intent import GraveyardCardCounterLifeIntent
 from ..zone_transition_model import PUBLIC_ZONES
 from .committed_quantity_followups import CommittedQuantityFollowup, fixed_quantity_effect
+from .graveyard_card_targets import PublicGraveyardCardTargetKind
 
 
 def _facts(host, card):
@@ -39,13 +44,21 @@ def commit_graveyard_card_counter_life(host, intent):
     if current is None or not current.is_card_object:
         raise GameRuleError('Targeted physical card disappeared while its result was resolving')
     row = _facts(host, current) if current.zone in PUBLIC_ZONES and not current.face_down else before
-    if not intent.result.card_form.matches(types=set(row.types), subtypes=set(row.subtypes), supertypes=set(row.supertypes)):
+    permanent_card_counter = isinstance(intent.result, GraveyardPermanentCardCounterSpec)
+    if permanent_card_counter:
+        matching_type = bool(set(row.types).intersection(PublicGraveyardCardTargetKind.PERMANENT_CARD.types_any))
+    else:
+        matching_type = intent.result.card_form.matches(
+            types=set(row.types), subtypes=set(row.subtypes), supertypes=set(row.supertypes),
+        )
+    if not matching_type:
         return CommittedQuantityFollowup(())
     effects = []
     if _source_available(host, intent):
         effects.append(fixed_quantity_effect({'op': 'place_counters', 'card': '$source.zone_object',
             'counter': '+1/+1', 'amount': 1, 'source': '$source'}))
-    effects.append(fixed_quantity_effect({'op': 'life', 'player': '$controller', 'delta': 1}))
+    if not permanent_card_counter:
+        effects.append(fixed_quantity_effect({'op': 'life', 'player': '$controller', 'delta': 1}))
     return CommittedQuantityFollowup(tuple(effects))
 
 
@@ -54,8 +67,8 @@ def graveyard_card_counter_life_payload_dependencies(value):
     from ..graveyard_card_result_model import GRAVEYARD_CARD_COUNTER_LIFE_OPERATION
     if not isinstance(value, Mapping) or value.get('op') != GRAVEYARD_CARD_COUNTER_LIFE_OPERATION:
         return ()
-    GraveyardCardCounterLifeSpec.from_effect(value)
-    return GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES
+    recipe = graveyard_card_counter_recipe(value.get('result'))
+    return recipe.from_effect(value).dependencies
 
 
 def graveyard_card_counter_life_node_capabilities(*, effects, target_schema, **kwargs):
@@ -67,7 +80,6 @@ def graveyard_card_counter_life_node_capabilities(*, effects, target_schema, **k
             or FrozenMap(target_schema) != FrozenMap(expected)):
         return ()
     try:
-        GraveyardCardCounterLifeSpec.from_effect(effects[0])
+        return graveyard_card_counter_life_payload_dependencies(effects[0])
     except (ValueError, TypeError, KeyError):
         return ()
-    return GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES

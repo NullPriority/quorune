@@ -10,6 +10,9 @@ from ..replacement.immutable import FrozenMap, thaw_value
 
 COPIED_FLIP_FACES = "copiable_flip_faces"
 FLIPPED_STATUS = "flipped"
+FLIP_SOURCE_OPERATION = "flip_source_permanent"
+FLIP_SOURCE_CAPABILITY = "permanent.flip.original_source"
+COUNTER_END_STEP_FLIP_MECHANIC = "optional-counter-end-step-source-flip"
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,7 +85,9 @@ def capture_copied_flip_faces(host, model) -> CopiedFlipFaces | None:
 
     def capture(face):
         label = face["name"]
-        view = replace(model, active_face=label)
+        view = replace(model, active_face=label, annotations={
+            key: value for key, value in model.annotations.items() if key != FLIPPED_STATUS
+        })
         values = dict(host._copyable_characteristics(view))
         return {**values, COPIABLE_ORACLE_FIELD: model.oracle_id, COPIABLE_FACE_FIELD: label}
 

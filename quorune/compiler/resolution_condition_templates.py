@@ -15,6 +15,7 @@ from ..continuous_conditions import FixedPublicStateFact
 from ..counter_placement_targets import controlled_creature_counter_choice_effect
 from ..resolution_conditions import (
     GREATEST_POWER_TARGET_DISCARD_VERSION,
+    CONTROLLED_ARTIFACT_TAP_EXILE_VERSION,
     RESOLUTION_ALTERNATIVE_SCHEMA_VERSION,
     RESOLUTION_CONDITION_MECHANIC,
     RESOLUTION_CONDITION_OPERATION,
@@ -131,6 +132,22 @@ def _second_ability_draw_template(text, compile_component):
     return None
 
 
+def second_ability_scry_replacement_trigger_result(binding, body):
+    from ..ability_resolution_ordinal import second_ability_scry_replacement
+    from ..replacement.immutable import FrozenMap
+    from ..rules.ability_resolution_ordinal_shapes import OTHER_CONTROLLED_CREATURE_ENTRY
+
+    shape = (binding.event.value, binding.variant, binding.active_zone)
+    text = "scry 1. if this is the second time this ability has resolved this turn, draw a card instead."
+    if (shape != ("creature.enter", "creature:source_controller:other:any_object", "battlefield")
+            or body != binding.body or FrozenMap(binding.event_condition or {}) != OTHER_CONTROLLED_CREATURE_ENTRY
+            or " ".join(body.split()).casefold() != text):
+        return None
+    wrapper = second_ability_scry_replacement()
+    mechanics = (RESOLUTION_CONDITION_MECHANIC, *wrapper["mechanic_ids"], *wrapper["otherwise_mechanic_ids"])
+    return "second-creature-entry-draw-instead-of-scry-v1", (wrapper,), None, mechanics
+
+
 def first_ability_counter_trigger_result(binding, body, *, compile_component):
     from ..rules.ability_resolution_ordinal_shapes import (
         CONTROLLED_ARTIFACT_ENTRY, first_ability_counter_node_capabilities,
@@ -192,6 +209,10 @@ def second_ability_reveal_trigger_result(binding, body):
     return None
 
 
+def second_ability_trigger_result(binding, body):
+    return second_ability_scry_replacement_trigger_result(binding, body) or second_ability_reveal_trigger_result(binding, body)
+
+
 def third_ability_result_template(text, *, compile_component, cost_schema):
     """Lower one exact activated prefix and its third-resolution result."""
     from ..rules.ability_resolution_ordinal_shapes import (
@@ -249,14 +270,59 @@ def other_spell_draw_template(text, *, compile_component):
     return None
 
 
+CONTROLLED_ARTIFACT_TAP_EXILE_TEMPLATE = "tap-and-conditional-exile-original-creature-v1"
+_CONTROLLED_ARTIFACT_TAP_EXILE = re.compile(
+    rf"Tap target creature\. (?:Metalcraft [—-] )?(?:Then )?"
+    rf"If (?P<condition>you control (?:{FIXED_COUNT_PATTERN}) or more artifacts), exile that creature\.",
+    re.IGNORECASE,
+)
+
+
+def _controlled_artifact_tap_exile_template(text, *, source_name, compile_component):
+    match = _CONTROLLED_ARTIFACT_TAP_EXILE.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    tap = compile_component("Tap target creature.")
+    exile = compile_component("Exile target creature.")
+    condition = fixed_public_state_condition(match["condition"], source_name=source_name)
+    if tap[0] is None or exile[0] is None or tap[2] != exile[2] or condition is None:
+        return None
+    wrapper = {
+        "op": RESOLUTION_CONDITION_OPERATION,
+        "schema_version": CONTROLLED_ARTIFACT_TAP_EXILE_VERSION,
+        "player": "$controller",
+        "condition": condition.to_dict(),
+        "effects": list(exile[1]),
+        "mechanic_ids": list(exile[3]),
+        "prefix_mechanic_ids": list(tap[3]),
+    }
+    effects = (*tap[1], wrapper)
+    mechanics = tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC, *tap[3], *exile[3])))
+    from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
+
+    if not resolution_condition_node_capabilities(effects=effects, target_schema=tap[2], mechanic_ids=mechanics):
+        return None
+    return CONTROLLED_ARTIFACT_TAP_EXILE_TEMPLATE, effects, tap[2], mechanics
+
+
 def resolution_condition_template(
     text: str,
     *,
     source_name: str,
     compile_component: Callable[[str], CompiledEffectTemplate],
 ) -> CompiledEffectTemplate | None:
+    tap_exile = _controlled_artifact_tap_exile_template(
+        text, source_name=source_name, compile_component=compile_component,
+    )
+    if tap_exile is not None:
+        return tap_exile
     if blocker := _blocker_protection_template(text, source_name=source_name, compile_component=compile_component):
         return blocker
+
+    from .ferocious_keyword_append import ferocious_keyword_append_template
+
+    if ferocious := ferocious_keyword_append_template(text, source_name=source_name, compile_component=compile_component):
+        return ferocious
     normalized = re.sub(r"^[A-Z][A-Za-z' ]{0,80} — ", "", text.strip())
     if attack_discard := _ATTACK_HISTORY_DRAW_DISCARD.fullmatch(normalized):
         normalized = f"{attack_discard['draw']} If you haven't attacked this turn, discard a card."

@@ -8,6 +8,8 @@ from .target_numeric import TargetNumericCharacteristic, TargetNumericCharacteri
 from .library_search_model import FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID
 
 QUALIFIED_LIBRARY_SEARCH_CAPABILITY = "library.search.qualified_card"
+NONLEGENDARY_GRAVEYARD_SEARCH_CAPABILITY = "library.search.nonlegendary_card_to_graveyard"
+NONLEGENDARY_LIBRARY_CARD_QUERY = ObjectQuerySpec(zones=("library",), excluded_supertypes=("legendary",))
 CREATURE_KEYWORD_TOP_SEARCH_CAPABILITY = "library.search.creature_keyword_top"
 CREATURE_KEYWORD_TOP_SEARCH_KEYWORDS = ("deathtouch", "hexproof", "reach", "trample")
 QUALIFIED_LIBRARY_SEARCH_MECHANIC = "qualified-library-card-search"
@@ -50,6 +52,12 @@ class QualifiedLibrarySearchSpec:
                 or keywords
             ):
                 raise ValueError("Creature stat search requires its exact revealed hand result and inclusive bound")
+            object.__setattr__(self, "mana_values_any", ())
+            return
+        if self.destination == "graveyard":
+            if (q != NONLEGENDARY_LIBRARY_CARD_QUERY or self.reveal is not False
+                    or self.mana_value_max is not None or self.mana_values_any or keywords):
+                raise ValueError("Graveyard search requires one nonlegendary card with no separate reveal")
             object.__setattr__(self, "mana_values_any", ())
             return
         if (not (q.types_all or q.subtypes_any) or set(q.types_all) - _TYPES
@@ -141,6 +149,7 @@ class QualifiedLibrarySearchSpec:
         return (
             QUALIFIED_LIBRARY_SEARCH_CAPABILITY, FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
             *object_query_capabilities(self.query),
+            *((NONLEGENDARY_GRAVEYARD_SEARCH_CAPABILITY,) if self.destination == "graveyard" else ()),
             *((CREATURE_KEYWORD_TOP_SEARCH_CAPABILITY,) if self.keywords_any else ()),
             *((CREATURE_STAT_LIBRARY_SEARCH_CAPABILITY,) if self.stat_bound is not None else ()),
         )
@@ -150,6 +159,8 @@ class QualifiedLibrarySearchSpec:
             template = "creature-keyword-library-top-v1"
         elif self.stat_bound is not None:
             template = "creature-stat-library-card-search-v2"
+        elif self.destination == "graveyard":
+            template = "nonlegendary-library-card-to-graveyard-v1"
         else:
             template = "qualified-library-card-search-v1"
         return template, (self.effect(),), None, (

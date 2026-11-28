@@ -4,6 +4,7 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..rules.graveyard_arrival_order import GraveyardArrivalChoiceRequired
+from ..rules.batched_entry_choices import BatchEntryChoiceRequired
 
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import (
@@ -102,6 +103,7 @@ def issue_semantic_choice(
     payload: Mapping[str, Any],
     *,
     allowed_actions: Sequence[str] = ("choose",),
+    simultaneous_actors: tuple[str, ...] = (),
 ) -> None:
     from ..selection.controlled_search import is_registered_library_search, search_control_payload
 
@@ -109,12 +111,19 @@ def issue_semantic_choice(
     if is_registered_library_search(continuation.effect):
         item = next(candidate for candidate in host.state.stack if candidate.ref == continuation.stack_ref)
         scope = search_control_payload(host, item, actor, ("library",))
+    from ..rules.secret_number_choices import OPERATION as PRIVATE_NUMBER_OPERATION
+
+    is_private_number = continuation.effect.get("op") == PRIVATE_NUMBER_OPERATION
+    if bool(simultaneous_actors) != is_private_number or simultaneous_actors and tuple(allowed_actions) != ("choose",):
+        raise SemanticChoiceError("Simultaneous requests require their typed private choice authority")
+    actors = simultaneous_actors or (actor,)
     decision = host.permissions.issue(
         kind="semantic.choice",
         role=_PILOT_ROLE,
-        actors=[actor],
+        actors=list(actors),
         allowed_actions=list(allowed_actions),
-        payload_by_actor={actor: dict(payload)},
+        payload_by_actor={seat: dict(payload) for seat in actors},
+        simultaneous=is_private_number,
         continuation={**continuation.to_dict(), **scope},
     )
     decision.continuation = {**continuation.with_pending_choice(decision.decision_id).to_dict(), **scope}
@@ -157,7 +166,8 @@ def _finish_preparation(
     if concession is not None:
         payload["legal_actions"].append(concession)
         actions.append("concede")
-    issue_semantic_choice(host, continuation, actor, payload, allowed_actions=actions)
+    issue_semantic_choice(host, continuation, actor, payload, allowed_actions=actions,
+                          simultaneous_actors=preparation.request.simultaneous_actors)
 
 
 def continue_semantic_preparation(
@@ -230,15 +240,39 @@ def continue_semantic_preparation(
                 from .completed_choice import encode_preparation_after_commit,finish_choice_intent_returns
                 saved=encode_preparation_after_commit(continuation,actor,preparation,intents[index+1:],committed_results)
                 if finish_choice_intent_returns(host,waiting,saved):return False
+        except BatchEntryChoiceRequired as required:
+            from ..semantic_runtime.revealed_remainder_intent import RevealedBattlefieldMoveIntent
+            from .revealed_entry_choices import prepare_revealed_entry_choice
+
+            if not isinstance(intent, RevealedBattlefieldMoveIntent):
+                raise
+            owner, waiting_entry = prepare_revealed_entry_choice(
+                host, continuation, intent, required, index=index, count=len(intents),
+            )
+            _finish_preparation(
+                host, continuation=replace(continuation, effect=waiting_entry.continuation_effect),
+                actor=owner, preparation=waiting_entry, committed_results={},
+            )
+            return False
         except GraveyardArrivalChoiceRequired as required:
             from ..semantic_runtime.library_selection_intent import LibrarySelectionIntent
-            if isinstance(intent, LibrarySelectionIntent):
+            from ..semantic_runtime.revealed_remainder_intent import RevealedRemainderMoveIntent
+            if isinstance(intent, RevealedRemainderMoveIntent):
+                from .announced_permanent_reveal import prepare_revealed_remainder_order as prepare_order
+            elif isinstance(intent, LibrarySelectionIntent):
                 from ..private_opponent_library_cast_model import uses_damage_library_cast_selection
                 from .damage_library_cast_order import prepare_damage_library_graveyard_order
                 from .public_library_piles import prepare_public_pile_graveyard_order
 
                 prepare_order = (prepare_damage_library_graveyard_order if uses_damage_library_cast_selection(continuation.effect)
                                  else prepare_public_pile_graveyard_order)
+            elif "_committed_token_sweep" in continuation.effect:
+                from .token_sweep import prepare_token_sweep_order
+
+                prepare_order = prepare_token_sweep_order
+            elif "linked_landfall_settlement" in continuation.effect:
+                from .linked_landfall_settlement import prepare_linked_settlement_order
+                prepare_order = prepare_linked_settlement_order
             else:
                 from .discard_graveyard_order import prepare_discard_graveyard_order
 

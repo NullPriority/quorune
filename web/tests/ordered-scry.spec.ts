@@ -231,6 +231,12 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
         new RegExp(`^Choose a destination for Island, looked-at card ${index + 1} of 4$`),
       );
     }
+    await destinations.nth(1).focus();
+    const focusedPreview = host.locator(".floating-card-preview");
+    await expect(focusedPreview).toContainText("Island");
+    await expect(host.getByRole("region", { name: "Card viewer", exact: true }).getByTestId("card-inspector")).toContainText("Island");
+    await destinations.nth(2).hover();
+    await expect(focusedPreview).toContainText("Island");
     const opponentHtml = await opponent.content();
     for (const ref of refs) expect(opponentHtml).not.toContain(ref);
     await expect(opponent.getByTestId("contextual-decision")).toHaveCount(0);

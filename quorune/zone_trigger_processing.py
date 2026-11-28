@@ -2,13 +2,14 @@ from __future__ import annotations
 from .death_history_names import occurrence_death_name_fields
 
 import copy
+from collections import Counter
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from .characteristic_read_frames import characteristic_read_method
 from .model import CardInstance, StackItem
-from .discard_effect_origin import OPPONENT_SOURCE_DISCARD_EVENT, opponent_discard_origin
+from .discard_effect_origin import DISCARD_BATCH_CAPABILITY, DISCARD_BATCH_EVENT, OPPONENT_SOURCE_DISCARD_EVENT, opponent_discard_origin
 from .creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
 from .saga_progression import dispatch_saga_entry_chapters
 from .shared_creature_type_model import canonical_creature_types
@@ -131,10 +132,17 @@ def capture_departure_trigger_sources(
             "hand",
             "stack",
         }
-    sources = tuple(
-        copy.deepcopy(source)
-        for source in host._semantic_event_sources(zones=source_zones)
-    )
+    return capture_zone_trigger_snapshot(host, host._semantic_event_sources(zones=source_zones))
+
+
+@characteristic_read_method
+def capture_zone_trigger_snapshot(
+    host: ZoneTriggerProcessingHost,
+    candidates: Iterable[CardInstance],
+) -> DepartureTriggerSnapshot:
+    """Detach the sources with one consistent pre-move characteristic read."""
+
+    sources = tuple(copy.deepcopy(source) for source in candidates)
     return DepartureTriggerSnapshot(
         sources=sources,
         source_zones={source.object_id: source.zone for source in sources},
@@ -164,6 +172,7 @@ def _dispatch_graveyard_departure_lookback(host, occurrence, context, departure,
         )
 
 
+@characteristic_read_method
 def _damage_source_characteristics(host, source):
     from .rules.stack_damage_sources import capture_damage_source_characteristics
     from .rules.permanent_event_state import permanent_event_characteristics
@@ -172,12 +181,25 @@ def _damage_source_characteristics(host, source):
 
 
 
+def dispatch_committed_discard_groups(host, occurrences, *, trigger_batch):
+    """Collect one group notification for each player that actually discarded."""
+    counts = Counter(occurrence.owner for occurrence in occurrences
+        if occurrence.transition_kind is ZoneTransitionKind.DISCARD
+        and occurrence.origin == 'hand' and occurrence.destination != 'hand')
+    if not counts or not event_has_capability_subscriber(host, DISCARD_BATCH_EVENT, DISCARD_BATCH_CAPABILITY):
+        return
+    for player, count in counts.items():
+        host._dispatch_semantic_event(DISCARD_BATCH_EVENT,
+            {'previous_controller': player, 'discard_count': count}, trigger_batch=trigger_batch)
+
+
 def dispatch_committed_batch_zone_events(host, snapshots, occurrences, *, trigger_batch):
     """Dispatch each committed batch member against its sealed departure inputs."""
     from .rules.unpaid_creature_entry import capture_batch
 
     with capture_batch(host, occurrences):
         _dispatch_batch_zone_members(host, snapshots, occurrences, trigger_batch=trigger_batch)
+    dispatch_committed_discard_groups(host, occurrences, trigger_batch=trigger_batch)
 
 
 def _dispatch_batch_zone_members(host, snapshots, occurrences, *, trigger_batch):
@@ -205,6 +227,7 @@ def _dispatch_batch_zone_members(host, snapshots, occurrences, *, trigger_batch)
             read_ahead_chapter=occurrence.read_ahead_chapter,
             trigger_batch=trigger_batch,
             history_pre_recorded=True,
+            discard_batch_member=True,
             **({"putting_player": occurrence.putting_player} if occurrence.putting_player is not None else {}),
             **({"discard_effect_origin": occurrence.discard_effect_origin} if occurrence.discard_effect_origin is not None else {}),
         )
@@ -232,6 +255,20 @@ def _dispatch_opponent_source_discard(host, card, occurrence, context, trigger_b
          "discarded_logical_object_id": occurrence.current_logical_object_id},
         sources=(card,), trigger_batch=trigger_batch,
     )
+
+
+def _committed_entry_context(host, context, card, occurrence):
+    from .rules.attacking_entry_copy import capture_entry_fact
+    from .rules.unpaid_creature_entry import capture_group
+    from .tribute_entry_results import tribute_entry_context
+    from .devour import devour_entry_context
+    from .rules.entry_permanent_results import capture_tapped_entry_fact
+
+    context = capture_entry_fact(host, context, card, occurrence)
+    context = capture_group(host, context, occurrence)
+    context = {**dict(context), **tribute_entry_context(card, occurrence),
+               **devour_entry_context(card, occurrence.current_logical_object_id)}
+    return capture_tapped_entry_fact(host, context, card, occurrence)
 
 
 def dispatch_zone_change_occurrence(
@@ -268,16 +305,8 @@ def dispatch_zone_change_occurrence(
             _dispatch_graveyard_departure_lookback(host, occurrence, context, departure, pending)
         if event.kind == "card.discarded":
             _dispatch_opponent_source_discard(host, card, occurrence, context, pending)
-        if event.kind=='permanent.enter':
-            from .rules.attacking_entry_copy import capture_entry_fact
-            from .rules.unpaid_creature_entry import capture_group
-
-            context = capture_entry_fact(host, context, card, occurrence)
-            context = capture_group(host, context, occurrence)
-            from .tribute_entry_results import tribute_entry_context
-            from .devour import devour_entry_context
-            context = {**dict(context), **tribute_entry_context(card, occurrence),
-                       **devour_entry_context(card, occurrence.current_logical_object_id)}
+        if event.kind == "permanent.enter":
+            context = _committed_entry_context(host, context, card, occurrence)
         if event.kind == "creature.dies":
             from .event_card_return import death_source_exile_context
 
@@ -301,11 +330,13 @@ def dispatch_zone_change_occurrence(
         if event.kind == "permanent.leave":
             from .aura.runtime import collect_reanimating_aura_departure
             from .counter_snapshot import permanent_counter_snapshot
+            from .rules.departure_counter_copy import departure_counter_copy_context
             from .rules.departure_counter_transfer import (
                 DEPARTURE_COUNTER_SNAPSHOT_FIELD, DEPARTURE_COUNTER_TRANSFER_CAPABILITY,
             )
 
             collect_reanimating_aura_departure(host, occurrence, pending)
+            context = departure_counter_copy_context(host, event.kind, context, occurrence)
             if event_has_capability_subscriber(host, event.kind, DEPARTURE_COUNTER_TRANSFER_CAPABILITY):
                 context = {**context, DEPARTURE_COUNTER_SNAPSHOT_FIELD: dict(
                     permanent_counter_snapshot(occurrence.previous_counters or {}))}

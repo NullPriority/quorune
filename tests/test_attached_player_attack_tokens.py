@@ -62,6 +62,7 @@ class AttachedPlayerAttackTokenNativeTests(InheritedNativeFixture, unittest.Test
             ROOT / "tests/fixtures/per-opponent-attacking-token-cards.json",
             ROOT / "tests/fixtures/additional-draw-step-cards.json",
             ROOT / "tests/fixtures/curse-of-opulence-cards.json",
+            ROOT / "tests/fixtures/event-creature-controller-result-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -143,6 +144,53 @@ class AttachedPlayerAttackTokenNativeTests(InheritedNativeFixture, unittest.Test
         session = self.replay(session, load=True)
         self.assertIsNone(self.resolve(session))
         self.assertEqual({"A": 1, "B": 1}, Counter(card.controller for card in self.gold(session)))
+        self.replay(session, load=True)
+
+    def test_actual_curse_uses_each_original_creature_entry_after_departure_and_replays(self):
+        session = self.session(6030201)
+        curse = self.add(session.engine, "Trespasser's Curse", zone="hand")
+        cursed_maker = self.add(session.engine, "Raise the Alarm", seat="B", zone="hand", ref="curse-entry-maker-b")
+        other_maker = self.add(session.engine, "Raise the Alarm", seat="C", zone="hand", ref="curse-entry-maker-c")
+        destroy = self.add(session.engine, "Disenchant", seat="D", zone="hand")
+        for seat in ("B", "C", "D"):
+            for number in range(2):
+                self.add(session.engine, "Plains", seat=seat, ref=f"curse-entry-{seat}-{number}")
+        self.assert_closed(session, curse)
+        self.prepare(session, mana={"B": 1, "C": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", curse, ["B"])
+        self.resolve_top(session)
+        self.assertEqual("player:B", session.state.cards[curse.object_id].attached_to)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+
+        self.cast(session, "C", other_maker, [])
+        self.resolve_top(session)
+        self.assertEqual(0, self.trigger_count(session, curse))
+        self.cast(session, "B", cursed_maker, [])
+        self.resolve_top(session)
+        order = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("trigger.order", order["kind"])
+        triggers = [row["id"] for row in order["ctx"]["triggers"]]
+        self.assertEqual(2, len(triggers))
+        command = {"action_id": "order", "triggers": triggers}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, self.trigger_count(session, curse))
+        self.cast(session, "D", destroy, [curse.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[curse.object_id].zone)
+        self.assertEqual(2, self.trigger_count(session, curse))
+        session = self.replay(session, load=True)
+
+        self.resolve_top(session)
+        self.resolve_top(session)
+        self.assertEqual(life["A"] + 2, session.state.players["A"].life)
+        self.assertEqual(life["B"] - 2, session.state.players["B"].life)
+        self.assertEqual(life["C"], session.state.players["C"].life)
+        self.assertEqual(life["D"], session.state.players["D"].life)
         self.replay(session, load=True)
 
     def test_actual_controller_attack_creates_once_and_tapped_gold_pays_native_mana(self):

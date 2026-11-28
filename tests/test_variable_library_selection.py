@@ -1,7 +1,14 @@
 """Pinned CR609.3/701.20 count boundaries before any library inspection."""
 
 from copy import deepcopy
+import json
+import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
+
+from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.variable_library_selection_model import (
@@ -247,3 +254,196 @@ class VariableLibrarySelectionNativeTests(unittest.TestCase):
                     self.assertEqual('hand',engine.state.cards[top.object_id].zone)
                     self.assertEqual([],engine.state.players['A'].zones['library'])
                     H.replay(self,session,load=True)
+
+
+class BlockedDamageLibraryCastTests(InheritedNativeFixture, unittest.TestCase):
+    name = "Duelist's Flame"
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name)
+        base = ROOT / "tests/fixtures"
+        selected = {
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains"},
+            "event-spell-copy-cards.json": {"Grizzly Bears"},
+            "exile-cast-opponent-damage-cards.json": {"Mountain", "Wastes"},
+            "variable-library-selection-cards.json": {cls.name},
+        }
+        paths = []
+        for name, names in selected.items():
+            content = json.loads((base / name).read_bytes())
+            content["cards"] = [row for row in content["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in content["cards"]}, name
+            ids = {row["oracle_id"] for row in content["cards"]}
+            content["rulings"] = [row for row in content.get("rulings", ()) if row["oracle_id"] in ids]
+            scoped = path / name
+            scoped.write_text(json.dumps(content), encoding="utf-8")
+            paths.append(scoped)
+        db = path / "blocked-damage.sqlite3"
+        build_fixture_database(paths, db)
+        cls.db = CardDatabase(db)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Blocked combat damage library cast", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def send(self, game, seat, command, *, accepted=True):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def save_record(self, game, label):
+        from hashlib import sha256
+        from quorune.record import authoritative_state_hash, replay_record
+
+        root = os.environ.get("QUORUNE_DUELIST_RECORD_PARENT")
+        if root is None:
+            self.replay(game, load=True)
+            return
+        path = Path(root) / label
+        game.save(path)
+        report = replay_record(path, self.db, verify=True)
+        self.assertTrue(report["ok"], report)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, report["final_state_hash"])
+        path.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": sha256((path / "manifest.json").read_bytes()).hexdigest(),
+            "final_state_sha256": state_hash, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def window(self, seed):
+        game = self.session(seed)
+        spark = self.add(game.engine, self.name, zone="hand")
+        source = self.add(game.engine, "Grizzly Bears", ref="flame-attacker")
+        unblocked = self.add(game.engine, "Grizzly Bears", ref="flame-unblocked")
+        blocker_ref, = game.engine.create_token("B", name="Soldier Token", quantity=1,
+            characteristics={"type_line": "Creature — Soldier", "power": "1", "toughness": "1"})
+        outside = self.add(game.engine, "Grizzly Bears", zone="library", ref="flame-outside-window")
+        third = self.add(game.engine, "Generic Bound Plains", zone="library", ref="flame-third-land")
+        reward = self.add(game.engine, "Grizzly Bears", zone="library", ref="flame-exile-spell")
+        first = self.add(game.engine, "Generic Bound Plains", zone="library", ref="flame-first-land")
+        lands = [self.add(game.engine, name, ref=f"duelist-mana-{index}")
+                 for index, name in enumerate(("Mountain", "Mountain", "Wastes", "Wastes"))]
+        self.assert_closed(game, spark)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        self.send(game, "A", {"action_id": "attack", "attackers": {source.ref: "B", unblocked.ref: "C"}})
+        self.priority(game, "A")
+        self.send(game, "A", {"action_id": "cast:" + spark.ref, "x": 2,
+                              "targets": [source.ref], "pay": "auto"}, accepted=False)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.blockers"
+                   and current.state.pending_decision.actors == ["B"])
+        self.send(game, "B", {"action_id": "block", "blocks": {blocker_ref: source.ref}})
+        if game.state.pending_decision.kind == "combat.blockers":
+            self.send(game, "C", {"action_id": "block", "blocks": {}})
+        self.priority(game, "A")
+        offer = self.action(game, "A", spark)
+        self.assertEqual([source.ref], offer["target_schema"]["legal_refs"])
+        command = {"action_id": offer["id"], "x": 2, "pay": "auto"}
+        self.send(game, "A", {**command, "targets": [unblocked.ref]}, accepted=False)
+        self.send(game, "A", {**command, "targets": [source.ref]})
+        self.assertEqual(2, game.state.stack[-1].x_value)
+        self.assertTrue(all(game.state.cards[land.object_id].tapped for land in lands))
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.settle(game)
+        self.assertEqual(4, game.engine._numeric_stat(source.object_id, "power"))
+        self.assertIn("trample", game.engine._combat_keywords(game.state.cards[source.object_id]))
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.damage")
+        self.send(game, "A", {"a": "dmg", "assignments": [
+            {"source": source.ref, "target": blocker_ref, "amount": 1},
+            {"source": source.ref, "target": "B", "amount": 3},
+            {"source": unblocked.ref, "target": "C", "amount": 2},
+        ]})
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(37, game.state.players["B"].life)
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual([first.ref, reward.ref, third.ref], [row["id"] for row in packet["ctx"]["objects"]])
+        self.assertEqual(3, game.state.stack[-1].context["amount"])
+        for viewer in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            visible = json.dumps(game.packet(viewer, full=True))
+            for card in (first, reward, third, outside):
+                self.assertNotIn(card.ref, visible)
+        self.send(game, "B", {"action_id": "choose", "cards": [reward.ref]}, accepted=False)
+        for rejected in ([first.ref], [outside.ref], [reward.ref, third.ref], {"exile": [reward.ref], "bottom": [third.ref, first.ref]}):
+            self.send(game, "A", {"action_id": "choose", "cards": rejected}, accepted=False)
+        return game, source, reward, first, third, outside
+
+    def test_duelist_paid_x_uses_committed_damage_private_window_and_native_free_cast(self):
+        game, source, reward, first, third, outside = self.window(5091001)
+        self.save_record(game, "duelist-committed-three-card-window-game-record")
+        self.send(game, "A", {"action_id": "choose", "cards": [reward.ref]})
+        self.assertEqual("exile", game.state.cards[reward.object_id].zone)
+        self.assertEqual({first.object_id, third.object_id}, set(game.state.players["A"].zones["library"][:2]))
+        self.assertEqual(outside.object_id, game.state.players["A"].zones["library"][-1])
+        choice = game.packet("pilot:A", full=True)["decision"]
+        option, = choice["ctx"]["cast_options"]
+        self.assertEqual(reward.ref, option["card"])
+        self.save_record(game, "duelist-partition-then-free-cast-pending-game-record")
+        self.send(game, "A", {"action_id": "choose", "choice": "cast", "cast": {"cost_option": option["id"], "pay": "auto"}})
+        self.settle(game)
+        self.assertEqual("battlefield", game.state.cards[reward.object_id].zone)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        from optional_result_followup_fixture import OptionalResultFollowupFixture
+
+        OptionalResultFollowupFixture.finish_turn(self, game)
+        self.assertEqual(2, game.engine._numeric_stat(source.object_id, "power"))
+        self.assertNotIn("trample", game.engine._combat_keywords(game.state.cards[source.object_id]))
+        self.save_record(game, "duelist-free-cast-and-cleanup-game-record")
+
+    def test_duelist_empty_selection_and_declined_cast_do_not_leave_permission(self):
+        for selected in (False, True):
+            with self.subTest(selected=selected):
+                game, _, reward, first, third, outside = self.window(5091010 + int(selected))
+                self.send(game, "A", {"action_id": "choose", "cards": [reward.ref] if selected else []})
+                if selected:
+                    self.send(game, "A", {"action_id": "choose", "choice": "decline"})
+                self.settle(game)
+                count = 2 if selected else 3
+                ids = {first.object_id, third.object_id} if selected else {first.object_id, third.object_id, reward.object_id}
+                self.assertEqual(ids, set(game.state.players["A"].zones["library"][:count]))
+                self.assertEqual(outside.object_id, game.state.players["A"].zones["library"][-1])
+                self.assertEqual("exile" if selected else "library", game.state.cards[reward.object_id].zone)
+                if selected:
+                    self.priority(game, "A")
+                    self.send(game, "A", {"action_id": "cast:" + reward.ref, "pay": "auto"}, accepted=False)
+                self.save_record(game, f"duelist-{'decline' if selected else 'empty'}-game-record")
+
+    def test_duelist_complete_grant_and_damage_window_require_independent_capability(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.blocked_damage_cast import CAPABILITY, GRANT_VERSION, WINDOW_VERSION
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup(self.name, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, self.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = [program for program in semantics.programs_for_oracle(card.oracle_id)]
+        self.assertEqual({GRANT_VERSION, WINDOW_VERSION}, {program.effects[0]["schema_version"] for program in programs})
+        for program in programs:
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != CAPABILITY)
+            mutant = replace(program, capability_dependencies=dependencies,
+                             capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])
+        no_announced_x = replace(card, mana_cost="{2}{R}{R}")
+        self.assertNotEqual("exact", compile_oracle_card(no_announced_x, capability_registry=self.registry,
+                                                       capability_profile="commander_review").status)
+        for edit in (("blocked creature you control", "unblocked creature you control"),
+                     ("nonland card", "creature card"), ("a random order", "any order")):
+            altered = replace(card, oracle_text=card.oracle_text.replace(*edit))
+            ir = compile_oracle_card(altered, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)

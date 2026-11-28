@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .errors import GameRuleError
 from .model import CardInstance
+from .paid_discard_model import record_paid_discard_replacement_reveal
 from .replacement.operations import SetField
 from .self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_RESULT, RevealForOwnerLibraryShuffle
 from .zone_transition_model import (
@@ -14,6 +15,15 @@ from .zone_transition_model import (
     ZoneMovePlan,
     ZoneTransitionHost,
 )
+
+
+def validate_hidden_search_result_journal(card, destination, *, reveal_to, controller, putting_player, hidden_search_result_viewer):
+    if hidden_search_result_viewer is not None and (
+        card.zone != "library" or destination != "battlefield" or reveal_to is not None
+        or hidden_search_result_viewer != card.owner
+        or controller != card.owner or putting_player != card.owner
+    ):
+        raise GameRuleError("Hidden search journals require a selected card in the searcher's own library")
 
 
 def prepare_self_graveyard_reveals(host, prepared):
@@ -50,6 +60,7 @@ def journal_self_graveyard_reveals(host, obligations, *, physical_components=Non
     for obligation in obligations:
         for card in _self_shuffle_members(host, obligation, physical_components):
             if card.is_card_object:
+                record_paid_discard_replacement_reveal(card.logical_object_id)
                 host._log(card.owner, "card.reveal", "A card was revealed for its owner-library replacement.",
                           {"player": card.owner, "object": card.ref, "card": card.printed_name},
                           changed_objects=[card.object_id], changed_players=[card.owner])

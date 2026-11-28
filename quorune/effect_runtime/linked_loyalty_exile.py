@@ -61,6 +61,14 @@ def _linked_creature_candidates(host, item, source):
 
 
 def linked_loyalty_choice_refs(host, item, actor, effect):
+    from ..rules.linked_creature_settlement import FIELD, choice_refs
+
+    if FIELD in effect:
+        return choice_refs(host, item, actor, effect)
+    from ..rules.linked_death_upkeep import FIELD as DEATH_UPKEEP_FIELD, choice_refs as death_upkeep_refs
+
+    if DEATH_UPKEEP_FIELD in effect:
+        return death_upkeep_refs(host, item, actor, effect)
     instruction = {key: value for key, value in effect.items() if key != LINKED_LOYALTY_CHOICE_OFFERED}
     try:
         phase = validate_linked_loyalty_exile_instruction(instruction)

@@ -25,9 +25,18 @@ MAIN_PHASE_CAST_ADDITIVE_VERSION = 27
 MAIN_PHASE_CAST_PREPARATION_VERSION = 28
 MAIN_PHASE_CAST_UNTAP_VERSION = 29
 MAIN_PHASE_CAST_DISCARD_VERSION = 30
+MAIN_PHASE_OPTIONAL_EXILE_VERSION = 44
+MAIN_PHASE_OPTIONAL_EXILE_CAPABILITY = "resolution.effect.main_phase_optional_permanent_exile"
+MAIN_PHASE_OPTIONAL_EXILE_TEMPLATE = "cast-main-phase-optional-permanent-exile-v1"
+EXILE_MECHANICS = ("exile", "cr-115-targets")
+OPTIONAL_EXILE_MECHANICS = (*EXILE_MECHANICS, "fixed-optional-effect-choice")
+PRIMARY_EXILE_REF = "$target_group.target_0.0"
+BONUS_EXILE_REF = "$target_group.target_1.0"
+
+
 MAIN_PHASE_CAST_VERSIONS = {
     MAIN_PHASE_CAST_REPLACEMENT_VERSION, MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_PREPARATION_VERSION,
-    MAIN_PHASE_CAST_UNTAP_VERSION, MAIN_PHASE_CAST_DISCARD_VERSION,
+    MAIN_PHASE_CAST_UNTAP_VERSION, MAIN_PHASE_CAST_DISCARD_VERSION, MAIN_PHASE_OPTIONAL_EXILE_VERSION,
 }
 CAST_REPLACEMENT_VERSIONS = CAST_ORIGIN_REPLACEMENT_VERSIONS | MAIN_PHASE_CAST_VERSIONS
 MAIN_PHASE_CAST_CONTEXT = "main_phase_cast"
@@ -80,6 +89,13 @@ class MainPhaseCastFact:
 def is_main_phase_cast_replacement(effect):
     return (effect.get("op") == "apply_if_public_condition"
             and effect.get("schema_version") in MAIN_PHASE_CAST_VERSIONS)
+
+
+COHORT_ADDENDUM_FIELD = "creature_cohort_addendum"
+
+
+def needs_own_main_phase_cast_fact(effect):
+    return is_main_phase_cast_replacement(effect) or COHORT_ADDENDUM_FIELD in effect
 
 
 def was_cast_during_own_main_phase(item):
@@ -371,7 +387,7 @@ def validate_main_phase_cast_replacement(effect, *, bound=False):
         raise ValueError("Main-phase replacement requires its original controller and actual cast fact")
     version = effect["schema_version"]
     bonus_count = 2 if version == MAIN_PHASE_CAST_UNTAP_VERSION else int(
-        version in (MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_PREPARATION_VERSION)
+        version in (MAIN_PHASE_CAST_ADDITIVE_VERSION, MAIN_PHASE_CAST_PREPARATION_VERSION, MAIN_PHASE_OPTIONAL_EXILE_VERSION)
     )
     mechanics, base_mechanics = effect["mechanic_ids"], effect["otherwise_mechanic_ids"]
     if any(not isinstance(values, (tuple, list)) or not values
@@ -394,6 +410,10 @@ def validate_main_phase_cast_replacement(effect, *, bound=False):
         target = _main_phase_untap_target(normal, alternate, player=effect["player"], bound=bound)
     elif version == MAIN_PHASE_CAST_DISCARD_VERSION:
         target = _main_phase_discard_target(normal, alternate, player=effect["player"], bound=bound)
+    elif version == MAIN_PHASE_OPTIONAL_EXILE_VERSION:
+        target = validate_main_phase_optional_exile(normal, alternate, player=effect["player"], bound=bound)
+        if bound:
+            return condition, available_main_phase_optional_exile_effects(alternate), target
     elif len(normal) == 2:
         target = _main_phase_draw_discard_target(normal, alternate, bound=bound)
     else:
@@ -410,3 +430,54 @@ def validate_main_phase_cast_replacement(effect, *, bound=False):
                 raise ValueError("Main-phase pump requires two literal equal power/toughness bonuses to the same creature")
             target = CREATURE_TARGET
     return condition, tuple(effect["effects"]), target
+
+
+def artifact_or_enchantment_exile_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["artifact", "enchantment"], "count": 1}
+
+
+def main_phase_optional_exile_target_schema():
+    shape = artifact_or_enchantment_exile_schema()
+    shape.pop("count")
+    return {"groups": [
+        {**shape, "id": "target_0", "min": 1, "max": 1},
+        {**shape, "id": "target_1", "min": 0, "max": 1, "different_from_groups": ["target_0"]},
+    ]}
+
+
+def main_phase_exile_instruction(card):
+    return {"op": "exile_permanent", "card": card}
+
+
+def optional_exile_instruction(card, *, player="$controller"):
+    return {"op": "offer_optional_effect", "player": player, "effects": [main_phase_exile_instruction(card)]}
+
+
+def validate_main_phase_optional_exile(normal, alternate, *, player, bound):
+    if len(normal) != 1 or len(alternate) != 2:
+        raise ValueError("The main-phase exile requires exactly its original two target roles")
+    primary, = normal
+    first, optional = alternate
+    optional_children = optional.get("effects")
+    if (primary != first or not isinstance(optional_children, list) or len(optional_children) != 1
+            or not isinstance(optional_children[0], Mapping) or "card" not in primary or "card" not in optional_children[0]):
+        raise ValueError("The optional second exile must retain its original independent first exile")
+    first_ref, second_ref = primary["card"], optional_children[0]["card"]
+    if (primary != main_phase_exile_instruction(first_ref)
+            or optional != optional_exile_instruction(second_ref, player=player)):
+        raise ValueError("The conditional second target requires its exact optional exile")
+    if not bound and (first_ref, second_ref) != (PRIMARY_EXILE_REF, BONUS_EXILE_REF):
+        raise ValueError("The conditional exile must retain both originally announced target roles")
+    if bound and (
+        any(value is not None and (type(value) is not str or not value or value.startswith("$"))
+            for value in (first_ref, second_ref))
+        or first_ref is not None and first_ref == second_ref
+    ):
+        raise ValueError("Both resolved exile targets must retain distinct public object references")
+    return main_phase_optional_exile_target_schema()
+
+
+def available_main_phase_optional_exile_effects(alternate):
+    if alternate[1]["effects"][0]["card"] is None:
+        return tuple(alternate[:1])
+    return tuple(alternate)

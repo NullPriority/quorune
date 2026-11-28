@@ -10,6 +10,7 @@ from .face_queries import (
     selected_cast_card_view, face_down_library_top_cast_permission,
 )
 from .aftermath import aftermath_cast_prohibition_reason
+from .public_conditions import legendary_spell_cast_is_legal
 from .disturb_costs import (
     cast_view_zone_permission, disturb_back_cast_permission, more_than_meets_the_eye_back_face,
 )
@@ -450,8 +451,10 @@ def _combined_cast_timing_permissions(
     face_down: bool,
     include_classic: bool=True,
     include_surcharge: bool=True,
+    include_offering: bool=True,
 ) -> tuple[Any, ...]:
     from ...cast_timing import CLASSIC_FLASH_HANDLER,SURCHARGE_FLASH_HANDLER
+    from .offering_costs import offering_timing_permissions
     printed = (
         ()
         if face_down
@@ -471,6 +474,7 @@ def _combined_cast_timing_permissions(
             if face_down
             else compiled_sneak_timing_permissions(host, card)
         ),
+        *(() if face_down or not include_offering else offering_timing_permissions(host, actor, card)),
         *static_cast_timing_permissions(host, actor, card, face=face),
         *temporary_cast_timing_permissions(host, actor, card, face=face),
     )
@@ -485,13 +489,15 @@ def _static_cast_rule_state(
     face_name: str | None,
     face_down: bool,
     x_value: int | None = None,
+    x_unannounced: bool = False,
 ) -> tuple[str | None, tuple[Any, ...]]:
     rule_face = _static_rule_face(face, face_down=face_down)
     return (
         aftermath_cast_prohibition_reason(host,card)
         or (None if face_down else compiled_self_cast_restriction_reason(
             host, actor, card, face_name=face_name))
-        or static_cast_prohibition_reason(host, actor, card, face=rule_face, x_value=x_value),
+        or static_cast_prohibition_reason(host, actor, card, face=rule_face, x_value=x_value,
+                                          x_unannounced=x_unannounced, face_down=face_down),
         _combined_cast_timing_permissions(
             host,
             actor,
@@ -578,6 +584,11 @@ def _cast_program_and_cost(
         raise CastProposalError(
             "A land card cannot be cast as a spell",
             reason="land_not_spell",
+        )
+    if not legendary_spell_cast_is_legal(host, request.actor, type_line):
+        raise CastProposalError(
+            "Casting a legendary instant or sorcery requires a legendary creature or planeswalker you control",
+            reason="legendary_spell_cast_restriction",
         )
     if static_prohibition is not None:
         raise CastProposalError(
@@ -725,8 +736,8 @@ def _cast_targets_and_tap_costs(
         if aura_target_schema is not None
         else None
     )
-    from ...pawprint_modes import PAWPRINT_RESULT_MODES
-    requested_modes = selected_dict.get(PAWPRINT_RESULT_MODES, request.modes)
+    from ...pawprint_modes import PAWPRINT_RESULT_MODES, REPEATABLE_MODE_RESULT
+    requested_modes = selected_dict.get(REPEATABLE_MODE_RESULT, selected_dict.get(PAWPRINT_RESULT_MODES, request.modes))
     announced_schema = _cast_mode_selection_schema(
         host, request.actor, card, target_schema if target_schema is not None else getattr(program, "target_schema", None),
     )
@@ -735,7 +746,7 @@ def _cast_targets_and_tap_costs(
         program,
         host._normalize_target_submission(request.response().get("targets")),
         modes=list(requested_modes),
-        acting_source=spell_targeting_source(host,card), source_ref=card.ref,
+        acting_source=spell_targeting_source(host, card, reserve_graveyard_departure=True), source_ref=card.ref,
         target_schema=announced_schema,
         announcing_targets=True,
     )
@@ -968,7 +979,7 @@ def _cast_offer_payload(
             announcement_spec = _cast_mode_selection_schema(host, seat, card, target_spec)
             target_spec = preview_cast_allocation_schema(announcement_spec, raw)
             public_schema = host._public_target_schema(
-                seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref,
+                seat, target_spec, acting_source=spell_targeting_source(host, card, reserve_graveyard_departure=True), source_ref=card.ref,
                 announcing_targets=True,
             )
             if public_schema is None:
@@ -980,8 +991,8 @@ def _cast_offer_payload(
         }
         from ..optional_life_cost_model import optional_life_cost_amount
         from ...printed_mana_cost_model import printed_phyrexian_life_payment
-        from .library_top_life import library_top_life_amount
-        life_payment = optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw) + library_top_life_amount(raw)
+        from .library_top_life import mana_value_life_amount
+        life_payment = optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw) + mana_value_life_amount(raw)
         if life_payment:
             projected['additional_life']=life_payment
         if public_schema is not None:
@@ -1107,7 +1118,10 @@ def build_cast_offer(
         face=front,
         face_name=face_name,
         face_down=method_spec is not None,
+        x_unannounced=True,
     )
+    if not legendary_spell_cast_is_legal(host, seat, type_line):
+        return CastProposalResult("unavailable", "legendary_spell_cast_restriction")
     if static_prohibition is not None:
         return CastProposalResult("unavailable", static_prohibition)
     if resolving_payment is None and not cast_timing_is_legal(

@@ -58,21 +58,29 @@ from quorune.runtime import (
     GameLifecycleConflict,
     GamePersistence,
 )
-from quorune.deck import DeckDefinition, MoxfieldFetchError, is_moxfield_source
+from quorune.deck import DeckDefinition, DeckEntry, MoxfieldFetchError, is_moxfield_source
+from quorune.deck_imports import DeckImportError, public_deck_source
 from quorune.card_printing import CardPrinting
+from quorune.session import PreparedSessionRules
 
 from .store import (
+    RoomStartSpec,
     ServerStore,
     StoreConflict,
     StoreForbidden,
     StoreNotFound,
 )
 from .data import CardImageCache, IMAGE_SIZES, ManagedScryfallData
-from .deck_readiness import assess_deck, compact_deck_preflight, has_integrity_blocker, reviewed_match_snapshot
+from .deck_readiness import compact_deck_preflight, has_integrity_blocker, reviewed_match_snapshot
+from .room_rules import BROWSER_REVIEW_PROFILE, RoomRulesWarmup
 
 
-COOKIE_NAME = "commander_guest"
-CSRF_COOKIE_NAME = "commander_csrf"
+_COOKIE_PORT = os.environ.get("MTG_COOKIE_NAMESPACE", "")
+if _COOKIE_PORT and (not re.fullmatch(r"[1-9][0-9]{0,4}", _COOKIE_PORT) or int(_COOKIE_PORT) > 65535):
+    raise ValueError("MTG_COOKIE_NAMESPACE must be the public port from 1 through 65535")
+_COOKIE_SUFFIX = f"_{_COOKIE_PORT}" if _COOKIE_PORT else ""
+COOKIE_NAME = f"commander_guest{_COOKIE_SUFFIX}"
+CSRF_COOKIE_NAME = f"commander_csrf{_COOKIE_SUFFIX}"
 TAB_HEADER_NAME = "X-Commander-Tab"
 TAB_COOKIE_PREFIX = f"{COOKIE_NAME}_tab_"
 TAB_PROTOCOL_PREFIX = "commander.tab."
@@ -132,7 +140,7 @@ class ServerSettings:
             secure_cookies=os.environ.get("MTG_SECURE_COOKIES") == "1",
             build_id=_source_build_id(),
             card_image_db=Path(card_image_db) if card_image_db else None,
-            auto_pass_empty_priority=os.environ.get("MTG_AUTO_PASS_EMPTY_PRIORITY") == "1",
+            auto_pass_empty_priority=os.environ.get("MTG_AUTO_PASS_EMPTY_PRIORITY", "1") == "1",
         )
 
 
@@ -186,12 +194,22 @@ class WatchRoomRequest(StrictModel):
     invite_code: str = Field(min_length=20, max_length=64)
 
 
+class EditableDeckEntry(StrictModel):
+    name: str = Field(min_length=1, max_length=200)
+    quantity: int = Field(ge=1, le=2**31 - 1, strict=True)
+    board: Literal["commander", "mainboard", "sideboard", "companion", "maybeboard"]
+    tags: list[str] = Field(default_factory=list)
+    printing: dict[str, Any] | None = None
+
+
 class DeckRequest(StrictModel):
     name: str = Field(min_length=1, max_length=100)
     commander: str = Field(default="", max_length=200)
     decklist: str = Field(default="", max_length=100_000)
     source_url: str | None = Field(default=None, max_length=500)
     saved_deck_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
+    entries: list[EditableDeckEntry] | None = Field(default=None, min_length=1)
+    edited_deck_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{32}$")
     legality_confirmation: str | None = Field(
         default=None,
         min_length=64,
@@ -203,8 +221,10 @@ class DeckRequest(StrictModel):
     def validate_source(self) -> "DeckRequest":
         has_text = bool(self.decklist.strip())
         has_url = bool((self.source_url or "").strip())
-        if sum((has_text, has_url, self.saved_deck_id is not None)) != 1:
-            raise ValueError("Choose one deck source: a pasted list, a Moxfield link, or a saved deck")
+        if sum((has_text, has_url, self.saved_deck_id is not None, self.entries is not None)) != 1:
+            raise ValueError("Choose one deck source: a pasted list, a public link, a saved deck, or editor entries")
+        if self.edited_deck_id is not None and self.entries is None:
+            raise ValueError("An edited saved deck requires editor entries")
         if has_text and not self.commander.strip():
             raise ValueError("Text deck imports require a commander")
         return self
@@ -367,6 +387,7 @@ class ServerRuntime:
         self.settings = settings
         self.store = ServerStore(settings.database)
         self.card_db = CardDatabase(settings.card_db)
+        self.room_rules = RoomRulesWarmup(self.store, self.card_db)
         self._card_databases: dict[str, CardDatabase] = {
             str(database_fingerprint(self.card_db)["metadata_hash"]): self.card_db
         }
@@ -378,11 +399,81 @@ class ServerRuntime:
         self._load_lock = asyncio.Lock()
         self._invalid_recovery: set[str] = set()
         self._background: set[asyncio.Task[Any]] = set()
+        self._starting_games: set[asyncio.Task[GameService]] = set()
 
     def spawn(self, coroutine: Any, *, name: str) -> None:
         task = asyncio.create_task(coroutine, name=name)
         self._background.add(task)
         task.add_done_callback(self._background.discard)
+
+    async def start_game(
+        self,
+        room_id: str,
+        spec: RoomStartSpec,
+        *,
+        config: GameConfig,
+        first_player: str,
+        use_reviewed_card_data: bool,
+    ) -> CommanderSession:
+        prepared = (
+            None if use_reviewed_card_data else await self.room_rules.for_start(room_id, spec)
+        )
+        task = asyncio.create_task(asyncio.to_thread(
+            self._create_and_commit_game, room_id, spec, config, first_player,
+            use_reviewed_card_data, prepared,
+        ))
+        self._starting_games.add(task)
+        task.add_done_callback(self._starting_games.discard)
+        try:
+            service = await asyncio.shield(task)
+        except asyncio.CancelledError:
+            await asyncio.gather(task, return_exceptions=True)
+            raise
+        # A room poll can discover the committed game before this worker returns.
+        async with self._load_lock:
+            if self._game_actor(service.session.state.game_id) is None:
+                await self.manager.add(
+                    service, persistence=self.persistence, publish_command_change=self.hub.notify,
+                )
+        return service.session
+
+    def _create_and_commit_game(
+        self,
+        room_id: str,
+        spec: RoomStartSpec,
+        config: GameConfig,
+        first_player: str,
+        use_reviewed_card_data: bool,
+        prepared: PreparedSessionRules | None,
+    ) -> GameService:
+        card_db = self.card_db
+        if use_reviewed_card_data:
+            reviewed = reviewed_match_snapshot(
+                card_db, self.retained_card_databases(), spec.decks.values(),
+            )
+            if reviewed is None:
+                raise StoreConflict(
+                    "No retained card data passed the checks for every submitted deck. "
+                    "Have each player check their saved deck again."
+                )
+            card_db = reviewed
+        with _capability_validation_snapshot():
+            session = CommanderSession.create(
+                card_db, spec.decks, first_player=first_player, config=config,
+                prepared_rules=prepared,
+            )
+            # Assemble rule groups before the SQLite write transaction.
+            session.engine.semantics.card_programs()
+            service = _BrowserGameService(session, idempotency=self.idempotency)
+            self.store.commit_started_game(
+                room_id,
+                session.state.game_id,
+                str(self.records.game_directory(session.state.game_id)),
+                session.state.revision,
+                expected_roster=spec.roster,
+                save_record=lambda: self.records.save(service),
+            )
+            return service
 
     def _game_actor(self, game_id: str) -> GameActor | None:
         try:
@@ -528,6 +619,9 @@ class ServerRuntime:
             task.cancel()
         if self._background:
             await asyncio.gather(*self._background, return_exceptions=True)
+        await self.room_rules.close()
+        if self._starting_games:
+            await asyncio.gather(*self._starting_games, return_exceptions=True)
         await self.manager.close()
         for database in set(self._card_databases.values()):
             database.close()
@@ -771,7 +865,32 @@ def _register_library_routes(app: FastAPI) -> None:
             definition = runtime.store.saved_deck(guest["guest_id"], deck_id)
         except StoreNotFound as exc:
             raise _translate_store_error(exc) from exc
-        return {"deck": definition.to_dict()}
+        return {
+            "deck": definition.to_dict(),
+            "card_refs": {
+                entry.name: card.oracle_id[:8] for entry in definition.entries
+                if (card := _editor_card(runtime.card_db, entry.name)) is not None
+            },
+        }
+
+    @app.get("/api/v1/me/deck-editor/printings")
+    async def deck_editor_printings(
+        request: Request,
+        name: str = Query(min_length=1, max_length=200),
+        page: int = Query(default=1, ge=1),
+        guest: dict[str, Any] = Depends(_guest),
+        runtime: ServerRuntime = Depends(_runtime),
+    ) -> dict[str, Any]:
+        del guest  # Only signed-in guests can request a printing page.
+        card = _editor_card(runtime.card_db, name)
+        if card is None:
+            raise HTTPException(status_code=404, detail="This card name is unavailable in the current catalog")
+        images: CardImageCache = request.app.state.images
+        try:
+            options = await images.printing_options(card.oracle_id, page)
+        except (OSError, ValueError) as exc:
+            raise HTTPException(status_code=502, detail="The printing lookup is temporarily unavailable") from exc
+        return {"name": card.name, "cid": card.oracle_id[:8], **options}
 
     @app.get("/api/v1/me/games")
     def recent_games(
@@ -793,6 +912,13 @@ def _register_library_routes(app: FastAPI) -> None:
         return {"room": room, "invite_code": invite}
 
 
+def _editor_card(database: CardDatabase, name: str):
+    try:
+        return database.lookup(name, fuzzy=False)
+    except KeyError:
+        return None
+
+
 def _browser_deck_input(
     loader: DeckLoader, store: ServerStore, guest_id: str, body: DeckRequest,
 ) -> DeckDefinition:
@@ -800,9 +926,23 @@ def _browser_deck_input(
         deck = store.saved_deck(guest_id, body.saved_deck_id)
         deck.name = body.name.strip()
         deck.metadata.pop("format_legality", None)
+    elif body.entries is not None:
+        prior = store.saved_deck(guest_id, body.edited_deck_id) if body.edited_deck_id else None
+        entries = [DeckEntry.from_dict(entry.model_dump()) for entry in body.entries]
+        for entry in entries:
+            entry.name = entry.name.strip()
+            if not entry.name:
+                raise ValueError("Every editor card requires a name")
+            entry.tags = list(dict.fromkeys(tag.strip() for tag in entry.tags if tag.strip()))
+        metadata = dict(prior.metadata) if prior else {}
+        metadata.pop("format_legality", None)
+        deck = DeckDefinition(
+            body.name.strip(), entries, list(dict.fromkeys(entry.name for entry in entries if entry.board == "commander")),
+            source=prior.source if prior else "browser-editor", metadata=metadata,
+        )
     elif body.source_url:
-        if not is_moxfield_source(body.source_url.strip()):
-            raise ValueError("Enter a public Moxfield deck link")
+        if not is_moxfield_source(body.source_url.strip()) and not public_deck_source(body.source_url):
+            raise ValueError("Enter a public Moxfield, Archidekt, or TappedOut deck link")
         return loader.load(
             body.source_url.strip(), commander=body.commander.strip() or None, deck_name=body.name.strip(),
         )
@@ -981,7 +1121,9 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         runtime: ServerRuntime = Depends(_runtime),
     ) -> dict[str, Any]:
         try:
-            return {"room": runtime.store.room(room_id, guest["guest_id"])}
+            room = runtime.store.room(room_id, guest["guest_id"])
+            runtime.room_rules.schedule(room)
+            return {"room": room}
         except (StoreForbidden, StoreNotFound) as exc:
             raise _translate_store_error(exc) from exc
 
@@ -1072,7 +1214,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 runtime.card_db,
                 cache_dir=runtime.settings.game_root.parent / "deck-cache",
             )
-            deck = _browser_deck_input(loader, runtime.store, guest["guest_id"], body)
+            deck = await asyncio.to_thread(_browser_deck_input, loader, runtime.store, guest["guest_id"], body)
             issues = loader.validate_commander_deck(deck, check_legality=False)
             legality_issues = loader.commander_legality_issues(deck)
             issues.extend(
@@ -1110,7 +1252,9 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     "confirmation_fingerprint": legality_confirmation,
                     "issues": legality_issues,
                 }
-            preflight = assess_deck(runtime.card_db, deck, retained_snapshots=runtime.retained_card_databases)
+            preflight, prepared = await asyncio.to_thread(
+                runtime.room_rules.review_deck, deck, retained_snapshots=runtime.retained_card_databases,
+            )
             saved = runtime.store.save_deck(
                 guest["guest_id"],
                 room_id,
@@ -1118,6 +1262,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 fingerprint=deck_fingerprint,
                 preflight=preflight,
             )
+            runtime.room_rules.remember_deck(saved["deck_id"], prepared)
             if not has_integrity_blocker(preflight):
                 oracle_ids = [
                     runtime.card_db.lookup(name, fuzzy=False).oracle_id
@@ -1127,7 +1272,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 runtime.spawn(images.prefetch(oracle_ids), name=f"deck-image-prefetch-{room_id}")
         except (StoreForbidden, StoreNotFound, StoreConflict) as exc:
             raise _translate_store_error(exc) from exc
-        except (KeyError, ValueError, MoxfieldFetchError) as exc:
+        except (KeyError, ValueError, MoxfieldFetchError, DeckImportError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         return {
             "deck": saved,
@@ -1175,20 +1320,10 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                 first_player = random.Random(f"quorune-first-player:{start_spec.seed}").choice(tuple(start_spec.decks))
             elif first_player not in start_spec.decks:
                 raise HTTPException(status_code=422, detail="Choose an occupied starting seat in this room")
-            card_db = runtime.card_db
-            if options.use_reviewed_card_data:
-                card_db = reviewed_match_snapshot(
-                    runtime.card_db, runtime.retained_card_databases(), start_spec.decks.values(),
-                )
-                if card_db is None:
-                    raise StoreConflict(
-                        "No retained card data passed the checks for every submitted deck. "
-                        "Have each player check their saved deck again."
-                    )
             config = GameConfig(
                 seed=start_spec.seed,
                 profile=profile,
-                review_profile="commander_review",
+                review_profile=BROWSER_REVIEW_PROFILE,
                 semantic_policy="trusted_only",
                 auto_pass_empty_priority=resolved.auto_pass_empty_priority,
                 manual_active_main_phase=True,
@@ -1197,23 +1332,10 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             )
             if options.starting_life is not None:
                 config.starting_life = options.starting_life
-            with _capability_validation_snapshot():
-                session = CommanderSession.create(
-                    card_db, start_spec.decks, first_player=first_player, config=config,
-                )
-                service = _BrowserGameService(
-                    session,
-                    idempotency=runtime.idempotency,
-                )
-                runtime.store.commit_started_game(
-                    room_id,
-                    session.state.game_id,
-                    str(runtime.records.game_directory(session.state.game_id)),
-                    session.state.revision,
-                    expected_roster=start_spec.roster,
-                    save_record=lambda: runtime.records.save(service),
-                )
-            await runtime.manager.add(service, persistence=runtime.persistence, publish_command_change=runtime.hub.notify)
+            session = await runtime.start_game(
+                room_id, start_spec, config=config, first_player=first_player,
+                use_reviewed_card_data=options.use_reviewed_card_data,
+            )
         except CardProgramSourceMismatch as exc:
             raise HTTPException(status_code=409, detail={
                 "code": "card_data_review_required",
@@ -1229,20 +1351,6 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
             "state_revision": session.state.revision,
         }
 
-    async def game_principal(
-        game_id: str,
-        guest: dict[str, Any],
-        runtime: ServerRuntime,
-    ) -> str:
-        try:
-            membership = runtime.store.game_membership(
-                game_id, guest["guest_id"]
-            )
-        except (StoreForbidden, StoreNotFound) as exc:
-            raise _translate_store_error(exc) from exc
-        seat = membership["seat"]
-        return "spectator" if membership["spectator"] else f"pilot:{seat}"
-
     @app.get("/api/v1/games/{game_id}/state")
     async def game_state(
         game_id: str,
@@ -1250,15 +1358,20 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
         guest: dict[str, Any] = Depends(_guest),
         runtime: ServerRuntime = Depends(_runtime),
     ) -> dict[str, Any]:
-        principal = await game_principal(game_id, guest, runtime)
         try:
+            guest_id = guest["guest_id"]
+            membership = runtime.store.game_membership(game_id, guest_id)
+            principal = "spectator" if membership["spectator"] else f"pilot:{membership['seat']}"
             actor = await runtime.actor(game_id)
-            return {
-                "packet": await actor.observe(principal, full=full),
-                "game": await runtime.game_summary(
-                    game_id, guest["guest_id"]
-                ),
-            }
+            capture = await actor.observe(
+                principal, full=full, cursor_key=f"network:http:{principal}", include_lifecycle=True,
+            )
+            game = runtime.describe_game(game_id, guest_id, capture["lifecycle"])
+            if game["spectator"] != membership["spectator"] or game["seat"] != membership["seat"]:
+                raise StoreForbidden("Game membership changed during the observation")
+            return {"packet": capture["packet"], "game": game}
+        except (StoreForbidden, StoreNotFound) as exc:
+            raise _translate_store_error(exc) from exc
         except (KeyError, ValueError) as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 

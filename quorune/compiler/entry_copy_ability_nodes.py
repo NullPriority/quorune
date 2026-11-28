@@ -10,6 +10,16 @@ from .attached_granted_ability_nodes import attached_granted_ability_plan
 from .entry_copy_templates import entry_copy_node,entry_copy_spec
 
 
+def _controlled_enchantment_upkeep_return(spec, quoted):
+    from ..object_predicate import ObjectQuerySpec
+    from .linked_exile_return_templates import canonical_optional_enchantment_return
+
+    upkeep = "at the beginning of your upkeep, "
+    return (spec.selection == ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), controller="$controller")
+            and quoted.casefold().startswith(upkeep)
+            and canonical_optional_enchantment_return(quoted[len(upkeep):]) is not None)
+
+
 def _conditional_vanishing_copy_nodes(*, record, face_id, node_id, line, material_line, span,
         source_name, capability_registry, capability_profile):
     match = re.fullmatch(
@@ -191,7 +201,9 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
     shell=crew_shell['shell']+", except it's a Vehicle artifact and it loses all other card types" if crew_shell else match['shell']+(', except '+match['exception'] if match['exception'] else '')
     shell=re.sub(r"it isn't legendary, is an artifact in addition to its other types$","it isn't legendary and it's an artifact in addition to its other types",shell,flags=re.I)
     spec=entry_copy_spec(shell,source_name=source_name)
-    if spec is None or spec.selection.types_all!=('creature',):return None
+    if spec is None:return None
+    enchantment = _controlled_enchantment_upkeep_return(spec, quoted)
+    if spec.selection.types_all!=('creature',) and not enchantment:return None
     residuals=[];child_id=node_id+':copy-ability';children=[];fragments=[];added_keywords=()
     if keyword_match or crew_shell:
         added_keywords=('Haste',) if quoted.casefold()=='haste and dethrone' else ()
@@ -218,14 +230,16 @@ def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
                     runtime_coverage=tuple(v for v in inner.runtime_coverage if v!=CURRENT_ABILITY_FRAGMENT_COVERAGE)))
             else:return None
     else:
+        copied_name = "Copied enchantment" if enchantment else "Copied creature"
+        copied_type = "Enchantment" if enchantment else "Artifact" if spec.exception.card_types == ("artifact",) else "Creature"
         inner=compile_inner(node_id=child_id,line=quoted,material_line=material_line_for(quoted),
-            span=span,card_name='Copied creature',type_line='Artifact' if spec.exception.card_types==('artifact',) else 'Creature',keywords=(),
+            span=span,card_name=copied_name,type_line=copied_type,keywords=(),
             trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,
             capability_profile=capability_profile,residuals=residuals,
             effect_template=effect_template,trigger_effect_template=trigger_effect_template)
         if inner is None or not inner.exact or residuals:return None
         plan=attached_granted_ability_plan(node=inner,quoted_text=quoted,oracle_id=record.oracle_id,
-            face_id=face_id,source_line=span.line,card_name='Copied creature',keywords=(),node_id=child_id)
+            face_id=face_id,source_line=span.line,card_name=copied_name,keywords=(),node_id=child_id)
         if plan is None:return None
         fragments.append(plan.fragment);children.append(replace(inner,node_id=child_id,kind=plan.node_kind,text=quoted,span=span,residual_ids=()))
         compiled=(inner,)

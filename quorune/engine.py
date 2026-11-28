@@ -133,7 +133,6 @@ from .damage import (
 from .damage_results import (
     consume_deathtouch_damage_checks,
 )
-from .day_night import synchronize_day_night
 from .drawing import (
     begin_draw_batch,
     begin_draw_sequence,
@@ -286,7 +285,9 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
-from .rules.protected_attack_payments import protected_attack_payment_costs, source_controls_planeswalker
+from .rules.protected_attack_payments import (
+    declaration_mana_cost, protected_attack_payment_costs, source_controls_planeswalker,
+)
 from .cast_event_type_model import physical_card_event_context
 from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
@@ -365,9 +366,9 @@ from .semantic_runtime.values import resolve_semantic_value
 from .state_based_actions import (
     ObjectSnapshot,
     PermanentSnapshot,
-    evaluate_state_based_actions,
 )
 from .state_based_execution import (
+    WorldTimestampChanges,
     commit_game_draw,
     commit_game_win,
     synchronize_state_based_observers,
@@ -987,12 +988,13 @@ class CommanderEngine(
         zones: Iterable[str] | None = None,
         controlled_only: bool = False,
         owned_only: bool = False,
+        indexed_refs: Mapping[str, list[CardInstance]] | None = None,
     ) -> CardInstance:
         from .selection.target_query import resolve_object
 
         return resolve_object(
             self, seat, value, zones=zones,
-            controlled_only=controlled_only, owned_only=owned_only,
+            controlled_only=controlled_only, owned_only=owned_only, indexed_refs=indexed_refs,
         )
 
     def _next_active_after(self, seat: str) -> str:
@@ -1229,6 +1231,7 @@ class CommanderEngine(
         history_pre_recorded: bool = False,
         discard_effect_origin: DiscardEffectOrigin | None = None,
         putting_player: str | None = None,
+        discard_batch_member: bool = False,
     ) -> None:
         """Game Record v3 compatibility facade for normalized zone events."""
 
@@ -1254,6 +1257,7 @@ class CommanderEngine(
                 trigger_batch=trigger_batch,
                 history_pre_recorded=history_pre_recorded,
                 discard_effect_origin=discard_effect_origin,
+                discard_batch_member=discard_batch_member,
             )
         )
         origin_types, _, _ = self._type_parts(
@@ -1839,9 +1843,15 @@ class CommanderEngine(
             )
 
     def _clear_mana(self, *, reason: str) -> None:
+        from .rules.step_mana_retention import current_mana_retention
+
+        retention = current_mana_retention(self)
         for seat, player in self.state.players.items():
             clear_mana_undo_stack(player.stats)
-            lost = clear_step_mana(player, phase=self.state.phase, step=self.state.step)
+            lost = clear_step_mana(
+                player, phase=self.state.phase, step=self.state.step,
+                preserve_colors=retention.get(seat, ()), turn_sequence=self.state.turn_sequence,
+            )
             if lost:
                 self._log(seat, "mana.empty", f"{seat}'s mana pool emptied.", {"lost": lost, "reason": reason}, importance=0, changed_players=[seat])
 
@@ -1930,6 +1940,11 @@ class CommanderEngine(
                 "step": step,
                 "player": active,
             }
+            queue = self.state.main_phase_extra_combats
+            if step == "beginning_combat" and queue is not None and queue.combat_grant is not None:
+                from .extra_combat_model import MAIN_PHASE_COMBAT_GRANT_FIELD
+
+                context[MAIN_PHASE_COMBAT_GRANT_FIELD] = queue.combat_grant
             waiting_triggers = collect_trigger_items(
                 self,
                 "step.begin",
@@ -2410,8 +2425,8 @@ class CommanderEngine(
             return opponent_library_permission
         if opponent_library_permission is not None:
             return {
-                **permission, "allow_land": True, "allow_spell": True,
-                "without_mana_cost": bool(permission.get("without_mana_cost") and permission.get("allow_spell", True)),
+                **permission, "allow_land": bool(permission.get("allow_land", True) or opponent_library_permission["allow_land"]),
+                "allow_spell": True, "without_mana_cost": bool(permission.get("without_mana_cost") and permission.get("allow_spell", True)),
             }
         return permission
 
@@ -4041,6 +4056,7 @@ class CommanderEngine(
         )
         self._log(item.controller, "stack.resolve", f"Resolved {item.ref} {item.label}.", {"stack": item.ref, "effects": effects, "destination": destination, "note": note}, importance=2, changed_players=[item.controller])
         if self._stabilize():
+            self.turn_priority.defer_post_resolution()
             return
         self._grant_priority(self.state.active_player)
 
@@ -4335,7 +4351,8 @@ class CommanderEngine(
                     and not source.attacking
                 ):
                     continue
-                for variable, option in selections:
+                mana, printed_cost = declaration_mana_cost(self, source, template)
+                for variable, option in selections if mana else ():
                     costs.append(
                         self._declaration_cost(
                             cost_id=(
@@ -4345,11 +4362,11 @@ class CommanderEngine(
                             variable=variable,
                             option=option,
                             payer=payer,
-                            mana=template.mana,
+                            mana=mana,
                             source=source,
                             label=(
                                 f"{self.display_name(source.object_id)} "
-                                f"requires {template.printed_cost} for "
+                                f"requires {printed_cost} for "
                                 f"{variable} to {kind}."
                             ),
                         )
@@ -4457,7 +4474,7 @@ class CommanderEngine(
                     break
             if enchanted != predicate.enchanted:
                 return False
-        if not predicate.matches_counter_state(card.counters):
+        if not predicate.matches_public_state(card.counters, mana_value=data.get("mana_value")):
             return False
         for comparison_rule in (
             *((predicate.stat,) if predicate.stat is not None else ()),
@@ -5017,17 +5034,17 @@ class CommanderEngine(
         tuple[tuple[CardInstance, str, str], ...],
     ]:
         from .rules.next_turn_attack_restrictions import attack_declaration_targets
+        from .rules.counter_bound_attack import counter_bound_attack_options
 
-        defenders = attack_declaration_targets(
-            self, active, self._attackable_planeswalkers(active), self._attackable_battles(active),
-        )
+        planeswalkers = self._attackable_planeswalkers(active)
+        defenders = attack_declaration_targets(self, active, planeswalkers, self._attackable_battles(active))
         domains: dict[str, tuple[str, ...]] = {}
         requirements: list[DeclarationRequirement] = []
         for object_id in self.state.players[active].zones["battlefield"]:
             card = self.state.cards[object_id]
             if self._attack_declaration_error(card, active) is not None:
                 continue
-            domains[card.ref] = tuple(defenders)
+            domains[card.ref] = counter_bound_attack_options(self.state, card, defenders, planeswalkers)
             requirements.extend(
                 typed_attacker_requirements(
                     self,
@@ -5200,20 +5217,23 @@ class CommanderEngine(
         if active not in self.active_seats:
             self._advance_step()
             return
-        candidate_by_ref: dict[str, dict[str, Any]] = {}
-        for oid in self.state.players[active].zones["battlefield"]:
-            card = self.state.cards[oid]
-            data = self._effective_card_data(card)
-            if self._attack_declaration_error(card, active) is None:
-                candidate_by_ref[card.ref] = {
-                    "id": card.ref,
-                    "name": self.display_name(oid),
-                    "sick": haste.is_summoning_sick(self, card),
-                    "haste": haste.has_effective_haste(self, card),
-                }
-        problem, costs, unresolved = self._attack_declaration_components(
-            active
-        )
+        with characteristic_read_frame(self):
+            problem, costs, unresolved = self._attack_declaration_components(active)
+            candidates = []
+            if not unresolved and problem.domains:
+                cards = {card.ref: card for card in (
+                    self.state.cards[oid] for oid in self.state.players[active].zones["battlefield"]
+                )}
+                candidates = [
+                    {
+                        "id": ref,
+                        "name": self.display_name(card.object_id),
+                        "sick": haste.is_summoning_sick(self, card),
+                        "haste": haste.has_effective_haste(self, card),
+                    }
+                    for ref in problem.domains
+                    if (card := cards.get(ref)) is not None
+                ]
         if unresolved:
             source, line, category = unresolved[0]
             self._pause_for_unsupported_semantic(
@@ -5221,11 +5241,6 @@ class CommanderEngine(
                 source=source,
             )
             return
-        candidates = [
-            candidate_by_ref[ref]
-            for ref in problem.domains
-            if ref in candidate_by_ref
-        ]
         if not candidates:
             self.state.combat.attackers_declared = True
             self.state.combat.defending_players = [
@@ -5474,12 +5489,20 @@ class CommanderEngine(
         chosen: list[tuple[CardInstance, dict[str, str]]] = []
         canonical: dict[str, str] = {}
         used: set[str] = set()
+        from .selection.target_query import card_ref_index
+
+        indexed_refs = card_ref_index(self.state.cards.values()) if len(declarations) > 1 else None
+        defender_details: dict[str, dict[str, str] | None] = {}
         for value, defender in dict(declarations).items():
-            card = self._resolve_object(active, str(value), zones={"battlefield"}, controlled_only=True)
+            card = self._resolve_object(
+                active, str(value), zones={"battlefield"}, controlled_only=True, indexed_refs=indexed_refs,
+            )
             if card.object_id in used:
                 raise GameRuleError("A creature cannot be declared twice")
             defender = str(defender)
-            target_details = self._attack_target_details(active, defender)
+            if defender not in defender_details:
+                defender_details[defender] = self._attack_target_details(active, defender)
+            target_details = defender_details[defender]
             if target_details is None:
                 raise GameRuleError(f"Invalid attack defender {defender}")
             defender = target_details["target"]
@@ -5489,7 +5512,7 @@ class CommanderEngine(
             )
             if declaration_error is not None:
                 raise GameRuleError(declaration_error)
-            chosen.append((card, target_details))
+            chosen.append((card, dict(target_details)))
             canonical[card.ref] = defender
             used.add(card.object_id)
 
@@ -6148,10 +6171,9 @@ class CommanderEngine(
         )
         if self._semantic_pause_annotation() is not None:
             return True
-        if result.combat_prevention_draws:
-            from .drawing.coordinator import begin_draw_batch
+        from .rules.combat_prevention_tokens import begin_combat_prevention_aftermath
 
-            begin_draw_batch(self, result.combat_prevention_draws, continuation={"kind": "combat_damage"})
+        if begin_combat_prevention_aftermath(self, result):
             return True
         return self._stabilize()
 
@@ -6285,34 +6307,18 @@ class CommanderEngine(
             return True
         return False
 
-    def _synchronize_world_supertype_timestamps(self) -> None:
-        """Observe simultaneous gains/losses of the World supertype."""
+    def _synchronize_world_supertype_timestamps(
+        self, changes: WorldTimestampChanges,
+    ) -> None:
+        """Commit simultaneous gains and losses of the World supertype."""
 
-        from .rules.city_blessing import synchronize_citys_blessing
-        synchronize_citys_blessing(self,reason='before state-based actions')
-        synchronize_day_night(
-            self, reason="continuous day/night synchronization"
-        )
-
-        with characteristic_read_frame(self):
-            current_worlds = {
-                card.object_id for card in self.state.cards.values()
-                if card.zone == "battlefield" and self._has_world_supertype(card)
-            }
-        newly_world: list[CardInstance] = []
-        for card in self.state.cards.values():
-            if card.zone != "battlefield":
-                if card.world_supertype_timestamp is not None:
-                    card.world_supertype_timestamp = None
-                continue
-            if card.object_id in current_worlds:
-                if card.world_supertype_timestamp is None:
-                    newly_world.append(card)
-            else:
-                card.world_supertype_timestamp = None
-        if newly_world:
+        for object_id in changes.clears:
+            card = self.state.cards[object_id]
+            card.world_supertype_timestamp = None
+        if changes.gains:
             timestamp = self._next_zone_timestamp()
-            for card in newly_world:
+            for object_id in changes.gains:
+                card = self.state.cards[object_id]
                 card.world_supertype_timestamp = timestamp
 
     def _permanent_sba_snapshots(self) -> list[PermanentSnapshot]:
@@ -6457,13 +6463,11 @@ class CommanderEngine(
                 )
                 return True
 
-            if synchronize_state_based_observers(self):return True
-            sba_batch = evaluate_state_based_actions(
-                permanents=self._permanent_sba_snapshots(),
-                objects=self._object_sba_snapshots(),
-            )
+            inputs = synchronize_state_based_observers(self)
+            if inputs is None:
+                return True
             from .state_based_replacement_coordination import prepare_state_based_execution_or_choice
-            execution = prepare_state_based_execution_or_choice(self, sba_batch)
+            sba_batch, execution = prepare_state_based_execution_or_choice(self, inputs)
             if execution is None:
                 return True
             sba_batch = execution.resolved_batch or sba_batch

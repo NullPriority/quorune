@@ -93,6 +93,8 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
         data = host._effective_card_data(card)
         from .tribute_entry_results import tribute_entry_identity_context
         from .devour import devour_entry_context
+        from .rules.entry_cast_information import direct_token_entry_cast_context
+
         contexts.append({
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
@@ -109,6 +111,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
             "reason": reason,
             **tribute_entry_identity_context(card,card.logical_object_id),
             **devour_entry_context(card, card.logical_object_id),
+            **direct_token_entry_cast_context(host, card),
         })
     return tuple(contexts)
 

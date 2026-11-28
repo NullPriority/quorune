@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from ..apnap_object_payment import DECLINED_LIFE_LOSS, OTHER_PLAYER_SACRIFICE_SCOPE, object_payment_cardinalities
+from ..apnap_object_payment import (
+    DECLINED_LIFE_LOSS, ORDER_GRAVEYARD_ARRIVALS, OTHER_PLAYER_SACRIFICE_SCOPE,
+    object_payment_cardinalities,
+)
 
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -20,13 +23,16 @@ from ..power_sacrifice_model import (
 from ..public_characteristic_aggregates import greatest_power_creatures
 from ..public_quantity_reductions import public_mana_value
 from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_FIELD, counted_sacrifice_token_commit_fields
+from ..rules.ordered_opponent_creature_sacrifice import ordered_opponent_sacrifice_commit_fields
 from ..rules.any_number_sacrifice import (
     ANY_NUMBER_SACRIFICE_FIELD, any_number_sacrifice_commit_fields, any_number_sacrifice_count,
-    any_number_sacrifice_row_matches,
+    any_number_sacrifice_row_matches, zero_land_sacrifice_search,
 )
 from ..rules.target_sacrifice_toughness import TARGET_SACRIFICE_TOUGHNESS_FIELD
 from ..rules.opponent_caster_discard_payment import uses_caster_discard_payment
+from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_FIELD, selected_discard_draw_followup
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.counter_marked_keep import KEEP_COUNTER_COHORT, KEEP_COUNTER_FIELD, keep_counter_followups
 from ..rules.keep_three_sacrifice import (
     KEEP_THREE_OFFERED_FIELD, KEEP_THREE_SACRIFICE_FIELD, unkept_permanents_in_apnap_order,
 )
@@ -36,6 +42,8 @@ from .apnap_contract import (
     sacrifice_can_decline, revalidate_sacrifice_incarnations, revalidate_ordered_hand_choices,
     caster_discard_player_for_choice, validate_apnap_choice_effect,
 )
+from ..rules.shared_type_sacrifice import SHARED_TYPE_SACRIFICE
+from .shared_type_sacrifice import shared_sacrifice_followup
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
 from ..alternative_discard_model import alternative_discard_count
@@ -105,7 +113,7 @@ class ApnapChoiceOwnerMixin:
     def _choice_options(self, seat: str, effect: Mapping[str, Any]) -> list[str]:
         from ..sacrifice_prohibition_model import sacrifice_is_prohibited
 
-        sacrifice = effect.get("then") == "sacrifice"
+        sacrifice = effect.get("then") == "sacrifice" and KEEP_COUNTER_FIELD not in effect
         zone = str(effect.get("zone") or "battlefield")
         raw_predicate = effect.get("predicate")
         predicate: ObjectQuerySpec | None = None
@@ -196,7 +204,35 @@ class ApnapChoiceOwnerMixin:
             raise GameRuleError(str(exc)) from exc
 
     def _issue_apnap_choice(self, *, effect: Mapping[str, Any], continuation: Mapping[str, Any]) -> None:
+        from ..rules.fixed_opponent_land_search import uses_opponent_land_search
+        from ..rules.colored_permanent_sacrifice import uses_all_colored_sacrifice
+        from ..rules.created_token_fights import uses_created_token_fights
+        from ..rules.apnap_library_reveals import uses_library_reveal_round
+
+        if uses_library_reveal_round(effect):
+            from .apnap_library_reveals import begin_library_reveal_round
+
+            begin_library_reveal_round(self, effect, continuation)
+            return
         from ..rules.repeated_apnap_payment import is_payment_round
+
+        if uses_opponent_land_search(effect):
+            from .fixed_opponent_land_search import begin_opponent_land_search
+
+            begin_opponent_land_search(self, effect, continuation)
+            return
+
+        if uses_all_colored_sacrifice(effect):
+            from .colored_permanent_sacrifice import resolve_all_colored_permanent_sacrifice
+
+            resolve_all_colored_permanent_sacrifice(self, effect=effect, resume=continuation)
+            return
+
+        if uses_created_token_fights(effect):
+            from .created_token_fights import begin_created_token_fights
+
+            begin_created_token_fights(self, effect, continuation)
+            return
 
         if is_payment_round(effect):
             from .repeated_apnap_payment import begin_payment_round
@@ -245,12 +281,14 @@ class ApnapChoiceOwnerMixin:
             "effect": dict(effect),
             "resume": dict(continuation),
         }
-        if KEEP_THREE_SACRIFICE_FIELD in effect:
-            choice_state[KEEP_THREE_OFFERED_FIELD] = self._keep_three_candidates(effect, queue)
+        cohort = (KEEP_COUNTER_COHORT if KEEP_COUNTER_FIELD in effect else KEEP_THREE_OFFERED_FIELD
+                  if KEEP_THREE_SACRIFICE_FIELD in effect else None)
+        if cohort:
+            choice_state[cohort] = self._retention_candidates(effect, queue)
         seal_fractional_counts(self, choice_state)
         self._issue_next_apnap_choice(choice_state)
 
-    def _keep_three_candidates(self, effect, player_order):
+    def _retention_candidates(self, effect, player_order):
         return {
             seat: {
                 ref: self._resolve_object(seat, ref, zones={"battlefield"}).logical_object_id
@@ -276,7 +314,9 @@ class ApnapChoiceOwnerMixin:
             state["queue"] = queue[1:]
             self._issue_next_apnap_choice(state)
             return
-        fixed_keep_set = KEEP_THREE_SACRIFICE_FIELD in effect and len(options) == count
+        fixed_keep_set = (
+            (KEEP_THREE_SACRIFICE_FIELD in effect or KEEP_COUNTER_FIELD in effect) and len(options) == count
+        )
         if count == 0 or fixed_keep_set:
             selected = dict(state["selected"])
             selected[seat] = list(options) if fixed_keep_set else []
@@ -315,10 +355,24 @@ class ApnapChoiceOwnerMixin:
     def _complete_apnap_choice(self, decision: Any) -> None:
         seat = decision.actors[0]
         raw_continuation = decision.continuation
+        from .apnap_library_reveals import OPERATION as library_reveal_operation, complete_library_reveal_choice
         from .repeated_apnap_payment import OPERATION as repeated_payment_operation, complete_payment_round_choice
 
+        if (raw_continuation.get("selection") or {}).get("operation_id") == library_reveal_operation:
+            complete_library_reveal_choice(self, decision)
+            return
         if (raw_continuation.get("selection") or {}).get("operation_id") == repeated_payment_operation:
             complete_payment_round_choice(self, decision)
+            return
+        from .fixed_opponent_land_search import OFFER_OPERATION, complete_opponent_land_search_offer
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == OFFER_OPERATION:
+            complete_opponent_land_search_offer(self, decision)
+            return
+        from .created_token_fights import OPERATION, complete_created_token_fights
+
+        if (raw_continuation.get("selection") or {}).get("operation_id") == OPERATION:
+            complete_created_token_fights(self, decision)
             return
         legacy_state = dict(raw_continuation.get("choice_state") or {})
         legacy = SelectionContinuation(
@@ -376,9 +430,12 @@ class ApnapChoiceOwnerMixin:
             GREATEST_POWER_SACRIFICE_FIELD, CONTROLLER_SACRIFICE_LIFE_FIELD,
             ENTRY_SACRIFICE_POWER_DRAW_FIELD, ATTACK_SACRIFICE_STAT_FIELD,
             TARGET_SACRIFICE_TOUGHNESS_FIELD, COUNTED_SACRIFICE_TOKEN_FIELD, ANY_NUMBER_SACRIFICE_FIELD,
+            SHARED_TYPE_SACRIFICE,
+            ORDER_GRAVEYARD_ARRIVALS,
         ))
         if (is_typed_hand_exile(effect) or hand_top or DECLINED_LIFE_LOSS in effect or seal_sacrifice
-                or KEEP_THREE_SACRIFICE_FIELD in effect or 'scheduled_permanent_return_offered' in resume):
+                or KEEP_THREE_SACRIFICE_FIELD in effect or KEEP_COUNTER_FIELD in effect
+                or 'scheduled_permanent_return_offered' in resume):
             validate_apnap_choice_effect(self, effect, resume)
         if str(resume.get("stack_ref") or "") != str(
             selection.stack_ref or ""
@@ -502,17 +559,27 @@ class ApnapChoiceOwnerMixin:
                 if ref in selected_refs:
                     raise GameRuleError("APNAP choices contain a duplicate object")
                 selected_refs.append(ref)
-        if KEEP_THREE_SACRIFICE_FIELD in effect:
+        counter_keep = KEEP_COUNTER_FIELD in effect
+        cohort = (KEEP_COUNTER_COHORT if counter_keep else KEEP_THREE_OFFERED_FIELD
+                  if KEEP_THREE_SACRIFICE_FIELD in effect else None)
+        kept_refs = tuple(selected_refs)
+        if cohort:
             validate_apnap_choice_effect(self, effect, state["resume"])
             if player_order != self.apnap_order():
-                raise GameRuleError("Keep-three sacrifice lost its current APNAP player order")
+                raise GameRuleError("Retention choices lost their current APNAP player order")
             try:
                 selected_refs = list(unkept_permanents_in_apnap_order(
-                    player_order, state.get(KEEP_THREE_OFFERED_FIELD), state["selected"],
-                    self._keep_three_candidates(effect, player_order),
+                    player_order, state.get(cohort), state["selected"],
+                    self._retention_candidates(effect, player_order), quota=1 if counter_keep else 3,
                 ))
             except (TypeError, ValueError, KeyError) as exc:
                 raise GameRuleError(str(exc)) from exc
+        if counter_keep:
+            from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+            selected_refs = [ref for ref in selected_refs if not sacrifice_is_prohibited(
+                self.state, self._resolve_object(effect["actor"], ref, zones={"battlefield"}),
+            )]
         destination = {
             "sacrifice": "graveyard",
             "discard": "graveyard",
@@ -541,6 +608,9 @@ class ApnapChoiceOwnerMixin:
         if DECLINED_LIFE_LOSS in effect:
             validate_apnap_choice_effect(self, effect, resume)
             declining = self._declined_object_payments(state, player_order, actor)
+        order_arrivals = effect.get(ORDER_GRAVEYARD_ARRIVALS) is True or (
+            SHARED_TYPE_SACRIFICE in effect and effect["players"] == "opponents"
+        )
         semantic_frame = dict(resume.get("semantic_frame") or {})
         instruction_pointer = int(
             semantic_frame.get("instruction_pointer", 0)
@@ -581,7 +651,9 @@ class ApnapChoiceOwnerMixin:
                     ),
                     "event_code": f"choice.{then}",
                     "message": f"Applied simultaneous {then} choices.",
+                    **({ORDER_GRAVEYARD_ARRIVALS: True} if order_arrivals else {}),
                     **sacrifice_life_commit_fields(effect, state, actor=actor, selected_refs=selected_refs),
+                    **ordered_opponent_sacrifice_commit_fields(self, item, effect),
                     **counted_sacrifice_token_commit_fields(
                         effect, state, actor=actor, selected_refs=selected_refs,
                         incarnation_field=GREATEST_POWER_SACRIFICE_INCARNATIONS,
@@ -590,15 +662,28 @@ class ApnapChoiceOwnerMixin:
                         self, item, effect, state, actor=actor, selected_refs=selected_refs,
                         incarnation_field=GREATEST_POWER_SACRIFICE_INCARNATIONS,
                     ),
+                    **({ORDER_GRAVEYARD_ARRIVALS: True} if counter_keep else {}),
+                    **({SELECTED_DISCARD_DRAW_FIELD: 1} if SELECTED_DISCARD_DRAW_FIELD in effect else {}),
                     **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS], 'declining_players': declining}
                        if declining else {}),
                 }
             ]
+        placement, restriction = (), ()
+        if counter_keep:
+            identities = {ref: identity for rows in state[cohort].values() for ref, identity in rows.items()}
+            placement, restriction = keep_counter_followups(
+                kept_refs, identities, actor=actor, source=self._stack_source_ref(item) or item.ref,
+            )
         self._continue_resolution(
             stack_ref=stack_ref,
             effects=[
+                *placement,
                 *commit_effects,
+                *restriction,
                 *self._sacrifice_discard_followup(state, player_order, actor),
+                *shared_sacrifice_followup(self, effect, actor=actor, selected=selected_refs, declining=declining),
+                *selected_discard_draw_followup(self, item, effect, selected_refs),
+                *zero_land_sacrifice_search(self, item, effect, selected_refs),
                 *(dict(item) for item in resume.get("effects", [])),
             ],
             destination=resume.get("destination"),

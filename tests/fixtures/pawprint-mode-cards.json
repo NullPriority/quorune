@@ -1,6 +1,47 @@
 {
   "cards": [
     {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "name": "Mystic Confluence",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Counter target spell unless its controller pays {3}.\n• Return target creature to its owner's hand.\n• Draw a card.",
+      "type_line": "Instant",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "layout": "normal",
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 5.0,
       "color_identity": [
         "W"
@@ -50,6 +91,36 @@
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Mystic Confluence is copied, the effect that creates the copy will usually allow you to choose new targets, but you can't choose new modes."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the middle mode is chosen more than once, you choose the relative order to return the target creatures."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If you choose the first and/or second modes but all of the targets become illegal before Mystic Confluence resolves, the spell won't resolve. If you also chose the last mode once or twice, you won't draw any cards. If at least one target is still legal, the spell will resolve but will have no effect on any illegal targets."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "No matter which combination of modes you choose, you always follow the instructions in the order they are written."
+    },
+    {
+      "oracle_id": "cd11c27b-9368-4622-bc5a-2e0b993cc42b",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "No player can cast spells or activate abilities in between the modes of a resolving spell. Any abilities that trigger won't be put onto the stack until Mystic Confluence is done resolving."
+    },
     {
       "comment": "If a Season is copied, the effect that creates the copy will usually allow you to choose new targets, but you can't choose new modes.",
       "oracle_id": "8e013e51-1684-4f58-8fe1-3588b6fbb5b5",

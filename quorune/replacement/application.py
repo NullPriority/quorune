@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..rules.linked_graveyard_play import EXILE_LINK_FIELD, PRIOR_CONTROL_FIELD, checked_exile_marker
+
 from typing import Any, Iterable, Mapping, Sequence
 
 from .face_status_copy import ENTRY_COPY_HISTORY_FIELD, FACE_UP_COPY_EVENT, FACE_UP_COPY_RESULT
@@ -47,6 +49,8 @@ from .operations import (
     CreateNestedEvent,
     DiscardInsteadOfDraw,
     EXILE_TURN_PLAY_DRAW_RESULT,
+    WIN_INSTEAD_OF_EMPTY_DRAW,
+    WinInsteadOfEmptyDraw,
     ExileTopForTurnPlayInsteadOfDraw,
     DredgeDraw,
     GrantAffectedObjectKeyword,
@@ -72,7 +76,7 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_card_name", "entry_chosen_color", "entry_chosen_creature_type", "entry_chosen_faction", "entry_chosen_opponent", "entry_linked_card_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_land_discard','entry_prepared','_counter_permissions',ENTRY_COPY_HISTORY_FIELD,DAY_ENTRY_FIELD},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_card_name", "entry_chosen_color", "entry_chosen_creature_type", "entry_chosen_basic_land_type", "entry_basic_land_type_life_available", "entry_basic_land_type_life_decided", "entry_chosen_faction", "entry_chosen_jeskai_temur_faction", "entry_chosen_opponent", "entry_linked_card_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_land_discard','entry_prepared','_counter_permissions',ENTRY_COPY_HISTORY_FIELD,DAY_ENTRY_FIELD,EXILE_LINK_FIELD},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
@@ -587,9 +591,19 @@ def _apply_token_multiplier(
         "source": operation.source_ref,
         "multiplier": operation.factor,
     }
+    eligible = originals
+    if operation.creature_only:
+        from ..creature_token_definition_replacement import creation_member_is_creature
+
+        try:
+            eligible = [token for token in originals if creation_member_is_creature(token)]
+        except ValueError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
+        if not eligible:
+            raise ReplacementEffectError("Creature multiplication requires a current creature member")
     copies = []
     for _ in range(operation.factor - 1):
-        for token in originals:
+        for token in eligible:
             clone = thaw_value(token)
             clone["replacement_component"] = component
             copies.append(clone)
@@ -701,6 +715,12 @@ def _apply_sequence_operation(event, payload, operation):
 def _apply_draw_operation(event, payload, children, operation, *, effect_id) -> None:
     """Apply the typed operations that replace one draw event."""
 
+    if isinstance(operation, WinInsteadOfEmptyDraw):
+        size = payload.get("library_size")
+        if event.kind != "draw" or payload.get("is_draw") is not True or type(size) is not int or size != 0:
+            raise ReplacementEffectError("Winning instead of drawing requires one unresolved empty-library draw")
+        payload.update(is_draw=False, result_kind=WIN_INSTEAD_OF_EMPTY_DRAW)
+        return
     if isinstance(operation, ExileTopForTurnPlayInsteadOfDraw):
         if event.kind != "draw" or payload.get("is_draw") is not True:
             raise ReplacementEffectError("Exile play requires one unresolved draw")
@@ -765,6 +785,14 @@ def _apply_draw_operation(event, payload, children, operation, *, effect_id) -> 
 
 def _validate_set_field(event, payload, operation, effect_id):
     _require_field(event, operation.field, _SET_FIELDS, operation="set")
+    if operation.field == EXILE_LINK_FIELD:
+        if (event.payload.get("destination") != "graveyard" or payload.get("destination") != "exile"
+                or PRIOR_CONTROL_FIELD not in event.payload or EXILE_LINK_FIELD in payload):
+            raise ReplacementEffectError("An exile link requires its original graveyard-to-exile replacement")
+        try:
+            checked_exile_marker(operation.value, effect_id)
+        except ValueError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
     if operation.field == "direction" and (
         operation.value != _LIFE_LOSS_DIRECTION or payload.get("direction") != "gain"
         or type(payload.get("amount")) is not int or payload["amount"] <= 0
@@ -791,16 +819,21 @@ def _apply_operation(
 ) -> EntryReplacementScope | None:
     if isinstance(operation, SetField):
         _validate_set_field(event, payload, operation, effect_id)
+        from .chosen_basic_land_entry import validate_basic_land_entry_field
+
+        validate_basic_land_entry_field(event, payload, operation, effect_id)
         if operation.field=='destination' and 'commander_components' in payload and payload.get('destination')!=operation.value:
             from ..composition_commander_replacement_model import payload_commander_components,EPOCH_FIELD
             try:payload_commander_components(payload)
             except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
             payload[EPOCH_FIELD]=payload.get(EPOCH_FIELD,0)+1
-        if operation.field == "entry_chosen_faction":
+        if operation.field in {"entry_chosen_faction", "entry_chosen_jeskai_temur_faction"}:
             from ..entry_designations import ENTRY_DESIGNATION_HANDLER_ID, EntryDesignationKind, validate_designation
 
             try:
-                faction = validate_designation(EntryDesignationKind.FACTION, operation.value)
+                kind = (EntryDesignationKind.FACTION if operation.field == "entry_chosen_faction"
+                        else EntryDesignationKind.JESKAI_TEMUR_FACTION)
+                faction = validate_designation(kind, operation.value)
                 component = f"{ENTRY_DESIGNATION_HANDLER_ID}:{payload['object_ref']}:"
                 if (payload.get("destination") != "battlefield" or payload.get("origin") == "battlefield"
                         or payload.get(operation.field) is not None
@@ -924,7 +957,7 @@ def _apply_operation(
         return entry_scope
     if isinstance(operation, (ReplaceDrawWithScheduledResult, PreventDraw, DiscardInsteadOfDraw,
                               ReplaceDrawWithLibraryChoice, CreateResultDraws,
-                              ExileTopForTurnPlayInsteadOfDraw, DredgeDraw)):
+                              ExileTopForTurnPlayInsteadOfDraw, WinInsteadOfEmptyDraw, DredgeDraw)):
         _apply_draw_operation(event, payload, children, operation, effect_id=effect_id)
         return entry_scope
     raise ReplacementEffectError("Unknown typed replacement operation")

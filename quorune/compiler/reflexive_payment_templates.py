@@ -52,18 +52,36 @@ def _compile_paid_power_result(body, compile_effect):
     return template, (damage, *effects[1:]), schema, (*mechanics, SCALAR_AMOUNT_MECHANIC)
 
 
-def reflexive_payment_template(text, *, compile_effect, bound_trigger=False):
+def _compile_attack_discard_result(body, compile_effect):
+    counter = 'Put a +1/+1 counter on target attacking creature.'
+    if ' '.join(body.split()).casefold() != (counter + ' It gains trample until end of turn.').casefold():
+        return None
+    first = compile_effect(counter)
+    second = compile_effect('Target attacking creature gains trample until end of turn.')
+    if (first[0] is None or second[0] is None or first[2] is None or first[2] != second[2]
+            or len(first[1]) != 1 or len(second[1]) != 1):
+        return None
+    return ('attacking-counter-then-trample-v1', (*first[1], *second[1]), first[2],
+        tuple(dict.fromkeys((*first[3], *second[3]))))
+
+
+def reflexive_payment_template(text, *, compile_effect, bound_trigger=False, allow_attack_discard=False):
     match = re.fullmatch(r'You may (?P<cost>.+?)\. When you do, (?P<body>.+)', text.strip(), re.I)
     if match is None:
         return None
     payment = fixed_effect_payment_spec(match['cost'], allow_source_sacrifice=bound_trigger)
-    if (payment is None or bound_trigger and payment.kind not in {'mana', 'energy', 'sacrifice', 'source_sacrifice'}
+    if (payment is None or bound_trigger and payment.kind not in {'mana', 'energy', 'sacrifice', 'source_sacrifice', 'discard'}
             or re.search(r'\b(?:when you|if you do|this way)\b', match['body'], re.I)):
         return None
     selected_sacrifice = bound_trigger and payment.kind == 'sacrifice'
     paid_result = _compile_paid_power_result(match['body'], compile_effect) if selected_sacrifice else None
-    compiled = paid_result or compile_effect(match['body'])
-    if compiled[0] is None:
+    if bound_trigger and payment.kind == 'discard':
+        if not allow_attack_discard:
+            return None
+        compiled = _compile_attack_discard_result(match['body'], compile_effect)
+    else:
+        compiled = paid_result or compile_effect(match['body'])
+    if compiled is None or compiled[0] is None:
         return None
     compiled = pin_source_result_incarnation(compiled)
     effects = compiled[1]
@@ -100,7 +118,7 @@ def reflexive_payment_template(text, *, compile_effect, bound_trigger=False):
         (FIXED_EFFECT_PAYMENT_MECHANIC, REFLEXIVE_PAYMENT_MECHANIC))
 
 
-def binding_aware_reflexive_payment_template(text, *, compile_result):
+def binding_aware_reflexive_payment_template(text, *, compile_result, allow_attack_discard=False):
     requires_current_ability = False
 
     def compile_child(body):
@@ -110,5 +128,6 @@ def binding_aware_reflexive_payment_template(text, *, compile_result):
             requires_current_ability |= child_requires_current_ability
         return compiled
 
-    compiled = reflexive_payment_template(text, compile_effect=compile_child, bound_trigger=True)
+    compiled = reflexive_payment_template(text, compile_effect=compile_child, bound_trigger=True,
+        allow_attack_discard=allow_attack_discard)
     return (compiled, requires_current_ability) if compiled is not None else None

@@ -69,7 +69,7 @@ from .compiler.controlled_spell_counter_nodes import (
 )
 from .compiler.fixed_keyword_entry_nodes import fixed_keyword_entry_nodes
 from .compiler.keyword_event_effect_nodes import (
-    counter_scaled_annihilator_mechanics,
+    source_scaled_keyword_event_mechanics,
     fixed_keyword_event_effect_node,
     fixed_keyword_event_effect_mechanics,
 )
@@ -179,7 +179,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1233"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1235"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of|at end of combat)\b",
@@ -695,7 +695,7 @@ def _keyword_nodes(
     mechanics = keyword_mechanics(
         material_line,
         keywords,
-    ) or fixed_keyword_event_effect_mechanics(material_line, keywords) or counter_scaled_annihilator_mechanics(material_line, card_name)
+    ) or fixed_keyword_event_effect_mechanics(material_line, keywords) or source_scaled_keyword_event_mechanics(material_line, card_name)
     if mechanics is None:
         return ()
     if 'ravenous' in mechanics:
@@ -1006,6 +1006,20 @@ def _typed_additional_cost_face(
         material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if composed is not None:return composed
+    from .compiler.spell_additional_cost_nodes import paid_sacrifice_token_ability_nodes
+
+    token_nodes = paid_sacrifice_token_ability_nodes(
+        record=record, face_id=face_id, rows=material_rows, card_name=face_name or record.name,
+        effect_template=effect_template, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        compile_inner=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
+        grant_effect_templates=_contextual_effect_templates,
+    )
+    if token_nodes is not None:
+        return OracleFaceIR(
+            face_id=face_id, face_name=face_name, oracle_text=oracle_text,
+            nodes=token_nodes, residuals=tuple(residuals),
+        )
     node = typed_additional_cost_spell_node(
         node_id=f"{face_id}:n1",
         rows=material_rows,
@@ -1046,6 +1060,12 @@ def _activated_or_fixed_event_trigger_node(
     bargain_spec: Any = None,
     room_door_face: str | None = None,
 ) -> OracleNode | None:
+    from .compiler.linked_landfall_play_nodes import linked_landfall_play_node
+
+    linked = linked_landfall_play_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if linked is not None:
+        return linked
     from .compiler.trigger_limit_nodes import limited_trigger_node
     from .compiler.state_trigger_nodes import public_state_trigger_node
     state_trigger=public_state_trigger_node(node_id=node_id,line=line,material_line=material_line,span=span,
@@ -1211,19 +1231,15 @@ def _compile_face(
      bestow_grant_context, class_context, (printed_subtypes, saga_chapters)) = _prepare_face_source(
         record, face_id, type_line, oracle_text, check_bestow=source_attachment_relation is None
     )
-
-    if spell:
-        from .compiler.public_replacement_rows import public_replacement_material_rows
-        material_rows=public_replacement_material_rows(material_rows,oracle_text=oracle_text,source_name=face_name or record.name,
-            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template,face_name=face_name))
-        typed_face = _typed_whole_spell_face(
-            record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
-            material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template, face_name=face_name),
-            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
-            capability_profile=capability_profile, residuals=residuals,
-        )
-        if typed_face is not None:
-            return spell_lifecycle_context_owner.apply_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
+    material_rows, closed_face = spell_lifecycle_context_owner.lower_complete_face(
+        record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords,
+        oracle_text=oracle_text, material_rows=material_rows, card_types=card_types, spell=spell,
+        effect_template=contextual_effect_template, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals, context=cipher_context, compile_spell_face=_typed_whole_spell_face,
+    )
+    if closed_face is not None:
+        return closed_face
     material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,oracle_id=record.oracle_id,face_id=face_id,oracle_text=oracle_text,
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,

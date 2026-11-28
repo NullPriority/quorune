@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from dataclasses import replace
 import json,tempfile,unittest
+import os
 from pathlib import Path
 from unittest.mock import patch
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -297,3 +299,283 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
         from quorune.effect_runtime.state_and_permissions import HANDLERS
         with patch.dict(HANDLERS,{'mana':lambda *args,**kwargs:None}):
             with self.assertRaises(AssertionError):self.test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays()
+
+class PostcombatLifeLossManaTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "life-loss-mana.sqlite3"
+        build_fixture_database([ROOT / f"tests/fixtures/{name}.json" for name in (
+            "bound-effect-program-cards", "fixed-resolution-mana-cards",
+            "activation-public-state-cards", "additional-conditional-modifier-cards",
+        )], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Current-turn loss", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def test_neheb_uses_actual_opponent_life_loss_through_resolution_and_replays(self):
+        game = self.session(60311006)
+        source = self.add(game.engine, "Neheb, the Eternal")
+        lethal = self.add(game.engine, "Shock", zone="hand", ref="neheb-lethal")
+        response = self.add(game.engine, "Shock", zone="hand", ref="neheb-response")
+        gain = self.add(game.engine, "Revitalize", seat="C", zone="hand")
+        private = self.add(game.engine, "Shock", seat="D", zone="hand", ref="neheb-other-private")
+        for index in range(2):
+            self.add(game.engine, "Mountain", ref=f"neheb-red-land-{index}")
+            self.add(game.engine, "Plains", seat="C", ref=f"neheb-white-land-{index}")
+        self.assert_closed(game, source)
+        game.state.players["B"].life = 2
+        self.prepare(game)
+        self.checkpoint(game)
+        self.cast_for(game, "A", lethal, ["B"])
+        self.settle(game)
+        self.assertFalse(game.state.players["B"].in_game)
+        self.until(game, lambda current: any(item.source_object_id == source.object_id
+                                             and item.kind == "triggered_ability" for item in current.state.stack))
+        self.assertEqual("postcombat_main", game.state.phase)
+        self.assertEqual(0, game.state.players["A"].mana_pool["R"])
+        self.cast_for(game, "A", response, ["C"])
+        self.resolve_top(game)
+        self.cast_for(game, "C", gain, [])
+        self.resolve_top(game)
+        self.assertEqual(41, game.state.players["C"].life)
+        self.assertEqual(0, game.state.players["A"].mana_pool["R"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        game = self.replay(game, load=True)
+        self.settle(game)
+        self.assertEqual(4, game.state.players["A"].mana_pool["R"])
+        self.replay(game, load=True)
+
+    def test_neheb_material_shape_requires_the_own_postcombat_and_history_authority(self):
+        from quorune.rules.postcombat_life_loss_mana import CAPABILITY, effect, effect_is_closed
+
+        card = self.db.lookup("Neheb, the Eternal", fuzzy=False)
+        exact = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", exact.status, exact.material_residuals)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        row = next(item for item in raw["capabilities"] if item["id"] == CAPABILITY)
+        row.update(status="blocked", blockers=["Postcombat history authority withheld"])
+        copy = CapabilityRegistry(raw)
+        copy.mark_evidence_verified(self.registry.evidence_fingerprint)
+        withheld = compile_oracle_card(card, capability_registry=copy, capability_profile="commander_review")
+        self.assertNotEqual("exact", withheld.status)
+        self.assertIn(CAPABILITY, str(withheld.material_residuals))
+        self.assertTrue(effect_is_closed(effect("R")))
+        self.assertFalse(effect_is_closed({**effect("R"), "amount": {"kind": "postcombat_opponent_life_loss_mana_amount",
+                                                                      "schema_version": True}}))
+
+    def test_postcombat_mana_mutation_is_killed_by_the_phase_binding(self):
+        from types import SimpleNamespace
+        from quorune.rules.postcombat_life_loss_mana import CAPABILITY, condition, effect, program_dependencies
+
+        native = SimpleNamespace(effects=(effect("R"),), handlers=(), capability_dependencies=(CAPABILITY,),
+            event="step.begin", active_zone="battlefield", event_condition=condition(), target_schema=None,
+            cost_schema=None, trigger_limit=None)
+        self.assertIn(CAPABILITY, program_dependencies(native))
+        native.event_condition = {"all": native.event_condition["all"][1:]}
+        with self.assertRaisesRegex(ValueError, "exact untargeted phase"):
+            program_dependencies(native)
+
+
+class PlayerAttackCombatManaTests(InheritedNativeFixture, unittest.TestCase):
+    name = "Avatar Roku, Firebender"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        work = Path(cls.temporary.name)
+        fixtures = ROOT / "tests/fixtures"
+        sources = {
+            "fixed-resolution-mana-cards.json": {cls.name},
+            "attack-counter-unblockable-cards.json": {"Firebender Ascension"},
+            "event-spell-copy-cards.json": {"Grizzly Bears"},
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains"},
+        }
+        paths = []
+        for file, names in sources.items():
+            record = json.loads((fixtures / file).read_bytes())
+            record["cards"] = [row for row in record["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in record["cards"]}, file
+            ids = {row["oracle_id"] for row in record["cards"]}
+            record["rulings"] = [row for row in record.get("rulings", ()) if row["oracle_id"] in ids]
+            path = work / file
+            path.write_text(json.dumps(record), encoding="utf-8")
+            paths.append(path)
+        path = work / "combat-mana.sqlite3"
+        build_fixture_database(paths, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Player attack combat mana", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def send(self, game, actor, command, *, accepted=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def save_record(self, game, comment):
+        from hashlib import sha256
+        from quorune.record import replay_record
+
+        parent = os.environ.get("QUORUNE_ROKU_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        path = Path(parent) / comment
+        game.save(path)
+        verified = replay_record(path, self.db, verify=True)
+        self.assertTrue(verified["ok"], verified)
+        digest = authoritative_state_hash(game.state)
+        self.assertEqual(digest, verified["final_state_hash"])
+        path.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": sha256((path / "manifest.json").read_bytes()).hexdigest(),
+            "final_state_sha256": digest, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def begin(self, seed, actor):
+        game = self.session(seed)
+        source = self.add(game.engine, self.name)
+        first = self.add(game.engine, "Grizzly Bears", seat=actor, ref="roku-first-attacker")
+        second = self.add(game.engine, "Grizzly Bears", seat=actor, ref="roku-second-attacker")
+        private = self.add(game.engine, "Grizzly Bears", seat="D", zone="hand", ref="roku-d-private")
+        self.assert_closed(game, source)
+        self.prepare(game, active=actor, actor=actor)
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        return game, source, first, second, private
+
+    def declaration(self, game, source, *, attacker, choices):
+        from quorune.rules.attack_declaration_mana import EVENT
+
+        self.send(game, attacker, {"action_id": "attack", "attackers": choices})
+        results = [item for item in game.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(int(bool(choices)), len(results))
+        if results:
+            trigger, = results
+            self.assertEqual((EVENT, "A", attacker), (trigger.context["event"], trigger.controller, trigger.context["player"]))
+            self.assertEqual(len(choices), len(trigger.context["attack_transition"]["assignments"]))
+        return results
+
+    def red(self, game, actor="A"):
+        return game.state.players[actor].mana_pool.get("R", 0)
+
+    def test_roku_own_declaration_adds_one_bundle_and_pays_existing_activation(self):
+        game, source, first, second, _ = self.begin(5083001, "A")
+        self.declaration(game, source, attacker="A", choices={first.ref: "B", second.ref: "C"})
+        self.save_record(game, "roku-two-attackers-one-trigger-game-record")
+        self.settle(game)
+        self.assertEqual(6, self.red(game))
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = [row for row in actions if row["id"] == f"activate:{source.ref}:ab2"]
+        self.assertIn(first.ref, offer["target_schema"]["legal_refs"])
+        self.send(game, "D", {"action_id": offer["id"], "targets": [first.ref], "pay": "auto"}, accepted=False)
+        self.send(game, "A", {"action_id": offer["id"], "targets": [first.ref], "pay": "auto"})
+        self.assertEqual(3, self.red(game))
+        self.settle(game)
+        power = lambda: game.engine._numeric_stat(first.object_id, "power")
+        self.assertEqual(5, power())
+        self.until(game, lambda current: current.state.step == "end_combat")
+        self.assertEqual(3, self.red(game))
+        self.assertEqual(5, power())
+        self.until(game, lambda current: current.state.phase == "postcombat_main")
+        self.assertEqual(0, self.red(game))
+        self.assertEqual(5, power())
+        from optional_result_followup_fixture import OptionalResultFollowupFixture
+        OptionalResultFollowupFixture.finish_turn(self, game)
+        self.assertEqual(2, power())
+        self.save_record(game, "roku-combat-payment-through-cleanup-game-record")
+
+    def test_roku_opponent_attack_pays_trigger_controller_and_empty_declaration_skips(self):
+        for attack in (False, True):
+            with self.subTest(attack=attack):
+                game, source, first, second, private = self.begin(5083002 + int(attack), "B")
+                attackers = {first.ref: "A", second.ref: "C"} if attack else {}
+                self.declaration(game, source, attacker="B", choices=attackers)
+                self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+                self.settle(game)
+                self.assertEqual(6 if attack else 0, self.red(game))
+                self.assertEqual(0, self.red(game, "B"))
+                self.until(game, lambda current: current.state.step == "end_combat")
+                self.assertEqual(6 if attack else 0, self.red(game))
+                self.until(game, lambda current: current.state.phase == "postcombat_main")
+                self.assertEqual(0, self.red(game))
+                self.save_record(game, f"roku-{'opponent' if attack else 'no'}-attack-game-record")
+
+    def test_roku_exact_normal_face_and_declaration_receipt_require_typed_dependencies(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.attack_declaration_mana import CAPABILITY, EVENT
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup(self.name, fuzzy=False)
+        self.assertEqual(("normal", ()), (card.layout, card.faces))
+        report, semantics = register_card(self.db, self.registry, self.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = {program.ability_id: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        self.assertEqual({"trigger:front:n1", "ability:ab2"}, set(programs))
+        trigger = programs["trigger:front:n1"]
+        self.assertEqual((EVENT, 6, "end_of_combat"),
+                         (trigger.event, trigger.effects[0]["amount"], trigger.effects[0]["retain_until"]))
+        deps = tuple(value for value in trigger.capability_dependencies if value != CAPABILITY)
+        wrong = replace(trigger, capability_dependencies=deps,
+                        capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        admitted = bind_semantic_program_runtime(wrong, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(admitted["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", admitted["blockers"])
+        for substitution in (("a player attacks", "a creature enters attacking"),
+                             ("Until end of combat", "Until your next turn"),
+                             ("add six", "add X")):
+            changed = replace(card, oracle_text=card.oracle_text.replace(*substitution))
+            ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+
+
+    def ascension_scene(self, seed, actor):
+        game = self.session(seed)
+        source = self.add(game.engine, self.name)
+        ascension = self.add(game.engine, "Firebender Ascension")
+        ally = self.add(game.engine, "Grizzly Bears", seat=actor, ref="synergy-first-attacker")
+        extra = self.add(game.engine, "Grizzly Bears", seat=actor, ref="synergy-second-attacker")
+        for card in (source, ascension):
+            self.assert_closed(game, card)
+        self.prepare(game, active=actor, actor=actor)
+        ascension.counters["quest"] = 3
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.pending_decision.kind == "combat.attackers")
+        return game, source, ascension, ally, extra
+
+    def test_roku_attack_causes_one_ascension_trigger_and_copy_adds_a_second_bundle(self):
+        from quorune.rules.attack_trigger_copy import COPY_CONTEXT
+
+        game, source, ascension, ally, _ = self.ascension_scene(60335081, "A")
+        self.declaration(game, source, attacker="A", choices={source.ref: "B", ally.ref: "C"})
+        self.assertEqual(2, len(game.state.stack))
+        original, observer = game.state.stack
+        self.assertEqual((source.object_id, ascension.object_id), (original.source_object_id, observer.source_object_id))
+        self.assertEqual(original.stack_id, observer.context[COPY_CONTEXT]["stack_item"]["stack_id"])
+        self.assertEqual(0, self.red(game))
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(4, game.state.cards[ascension.object_id].counters["quest"])
+        self.save_record(game, "roku-ascension-causal-copy-pending-game-record")
+        self.send(game, "A", {"action_id": "choose", "choice": "apply"})
+        self.assertEqual(2, len(game.state.stack))
+        self.assertEqual([source.object_id, source.object_id], [item.source_object_id for item in game.state.stack])
+        self.settle(game)
+        self.assertEqual(12, self.red(game))
+        self.assertEqual(4, game.state.cards[ascension.object_id].counters["quest"])
+        self.save_record(game, "roku-ascension-copied-attack-mana-game-record")
+
+    def test_opponent_declaration_keeps_roku_mana_without_ascension_causation(self):
+        game, source, ascension, first, second = self.ascension_scene(60335082, "B")
+        self.declaration(game, source, attacker="B", choices={first.ref: "A", second.ref: "C"})
+        self.assertEqual([source.object_id], [item.source_object_id for item in game.state.stack])
+        self.settle(game)
+        self.assertEqual((6, 0, 3), (self.red(game), self.red(game, "B"),
+                                     game.state.cards[ascension.object_id].counters["quest"]))
+        self.save_record(game, "roku-ascension-opponent-negative-game-record")

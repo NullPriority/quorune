@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from ..announced_energy_reanimation import activation_energy_payment
 from .transform_snapshot import activation_transform_context
 
 from collections.abc import Mapping, Sequence
@@ -73,6 +75,9 @@ from ...cycling_abilities import (
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
 from .conditions import activation_condition_status
+from .equip_permissions import (
+    EQUIP_PAYMENT_FIELD, record_committed_equip_activation, selected_equip_price,
+)
 from .counter_costs import (
     commit_source_counter_removal_cost,
     SourceCounterActivationCostError,
@@ -142,7 +147,7 @@ class ActivationCommitHost(Protocol):
 
 def _revalidate_activation(
     host: ActivationCommitHost, proposal: ActivationProposal
-) -> tuple[Any, ActivatedAbility, ActivationManaCostOption | None]:
+) -> tuple[Any, ActivatedAbility, ActivationManaCostOption | None, ActivatedAbility]:
     source = host._resolve_object(
         proposal.seat,
         proposal.source_ref,
@@ -186,6 +191,8 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    original = ability
+    ability = selected_equip_price(host, proposal.seat, source, original, details.get(EQUIP_PAYMENT_FIELD))
     from .commander_identity_life import ACTIVATION_COMMANDER_LIFE_FIELD, commander_identity_life_details
 
     current_life_price = commander_identity_life_details(host, proposal.seat, ability)
@@ -254,7 +261,7 @@ def _revalidate_activation(
             "The selected ability no longer has a complex mana cost",
             reason="stale_activation_mana_cost",
         )
-    return source, ability, mana_option
+    return source, ability, mana_option, original
 
 
 def _commit_symbol_costs(
@@ -354,10 +361,11 @@ def _commit_resource_costs(
                 reason="life_cost_unpayable",
             ) from exc
     counter_changes = []
-    if ability.energy_payment:
+    energy_payment = activation_energy_payment(ability, thaw_json(proposal.details).get("announced_x"))
+    if energy_payment:
         counter_changes.append(
             CounterChange(
-                "player", proposal.seat, "energy", -ability.energy_payment
+                "player", proposal.seat, "energy", -energy_payment
             )
         )
     if loyalty_delta is not None and loyalty_delta <= 0:
@@ -632,7 +640,7 @@ def _commit_source_cost(
     source: Any,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
-    *, actor: str | None = None,
+    *, actor: str | None = None, source_incarnation: str | None = None,
 ) -> str:
     from ..whole_hand_mana import is_whole_hand_mana_ability
 
@@ -661,6 +669,10 @@ def _commit_source_cost(
         destination = "graveyard"
     elif ability.exile_source:
         destination = "exile"
+    elif ability.announced_energy_reanimation:
+        if origin != "battlefield" or source.controller != actor or source.logical_object_id != source_incarnation:
+            raise ActivationProposalError("The original controlled source is unavailable for its return cost")
+        destination = "hand"
     if destination is not None:
         raw_journal = response.get("_mana_replacement_selections") or {}
         if not isinstance(raw_journal, Mapping):
@@ -674,6 +686,13 @@ def _commit_source_cost(
             if type(event_id) is str
             and event_id.startswith("zone.change:")
         )
+        if ability.announced_energy_reanimation and zone_entries:
+            from ..activation_zone_change_costs import energy_reanimation_replacement_entries
+
+            refs, scoped = energy_reanimation_replacement_entries(response, zone_entries)
+            if refs[0] != source.ref:
+                raise ActivationProposalError("Energy reanimation return journal names the wrong source")
+            zone_entries = (scoped[source.ref],) if source.ref in scoped else ()
         if len(zone_entries) > 1 or any(
             not event_id.endswith(f":{source.ref}")
             for event_id, _selections in zone_entries
@@ -988,7 +1007,7 @@ def _log_committed_activation(host, proposal, source, item, ability, *, origin,
             "life_paid": activation_life_from_proposal(ability, proposal.details) + (
                 mana_option.life_payment if mana_option is not None else 0
             ),
-            "energy_paid": ability.energy_payment,
+            "energy_paid": activation_energy_payment(ability, thaw_json(proposal.details).get("announced_x")),
             "source_counter_cost": (
                 None
                 if ability.source_counter_removal_cost is None
@@ -1008,10 +1027,10 @@ def _commit_activation_costs_and_stack(
 ) -> bool | None:
     """Commit one revalidated activation proposal through typed state owners."""
 
-    source, ability, mana_option = _revalidate_activation(host, proposal)
+    source, ability, mana_option, original = _revalidate_activation(host, proposal)
     creature_activation = capture_creature_ability_activation(host, proposal.seat, source)
     source_logical_object_id = source.logical_object_id
-    source_was_snow = "snow" in host._type_parts(
+    source_was_snow = ability.mana_ability and "snow" in host._type_parts(
         str(host._effective_card_data(source).get("type_line") or "")
     )[2]
     program = host.semantics.get(proposal.semantic_key)
@@ -1050,7 +1069,9 @@ def _commit_activation_costs_and_stack(
     mana_source_information = capture_mana_source_information(
         host, proposal.seat, source, ability, paid_objects=paid_objects, paid_cost_fact=special_cost_context,
     )
-    origin = _commit_source_cost(host, source, ability, response, actor=proposal.seat)
+    origin = _commit_source_cost(
+        host, source, ability, response, actor=proposal.seat, source_incarnation=source_logical_object_id,
+    )
     from ...transmute import finalize_transmute_discard
     finalize_transmute_discard(host, source, transmute_context)
     source_activation_context = dict(transmute_context) or None
@@ -1104,6 +1125,7 @@ def _commit_activation_costs_and_stack(
         special_cost_context,
         source_activation_context, announcement=announcement,
     )
+    record_committed_equip_activation(host, proposal.seat, source, original, source_logical_object_id)
     begin_ninjutsu_reveal(host, source, item)
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None

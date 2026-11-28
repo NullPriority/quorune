@@ -289,3 +289,169 @@ class PawprintModeTests(InheritedNativeFixture, unittest.TestCase):
         with patch.object(PawprintModeBudget, "selection", coalesced):
             with self.assertRaises((AssertionError, ValueError)):
                 self.prove_repeat_targets()
+
+
+class ExactRepeatableModeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "repeatable-mode-choice.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "bound-effect-program-cards.json", "pawprint-mode-cards.json", "event-spell-copy-cards.json",
+            "ability-source-counter-cards.json", "announced-destruction-controller-tokens-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition("Exact repeatable modal choices", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
+        ], [commander])
+
+    accept = PawprintModeTests.accept
+    reject = PawprintModeTests.reject
+
+    def _mystic(self, seed):
+        game = self.session(seed)
+        source = self.add(game.engine, "Mystic Confluence", zone="hand")
+        self.assert_closed(game, source)
+        return game, source
+
+    def _option(self, offer, modes):
+        return next(row for row in offer["cost_options"] if row["id"] == "normal+repeatable_modes:" + ",".join(modes))
+
+    def _cast_ordered(self, game, source, modes, targets=(), *, reserve=None):
+        self.priority(game, "A")
+        offer = self.action(game, "A", source)
+        option = self._option(offer, modes)
+        groups = [group for mode in modes for group in option["target_schema"]["mode_schemas"][mode]["groups"]]
+        self.assertEqual(len(groups), len({group["id"] for group in groups}))
+        submissions = [{"group": group["id"], "ref": target} for group, target in zip(groups, targets, strict=True)]
+        command = {"action_id": offer["id"], "cost_option": option["id"], "modes": modes, "targets": submissions, "pay": "auto"}
+        if reserve:
+            command["reserve"] = reserve
+        self.reject(game, "D", command)
+        for invalid in (modes[:2], [*modes, "mode_3"], ["mode_3", "mode_3_repeat_2", "mode_3_repeat_4"]):
+            self.reject(game, "A", {**command, "modes": invalid})
+        if groups:
+            self.reject(game, "A", {**command, "targets": []})
+        self.accept(game, "A", command)
+        item = game.state.stack[-1]
+        self.assertEqual(modes, item.modes)
+        self.assertEqual(list(targets), item.targets)
+        return item
+
+    def test_mystic_compiler_requires_the_exact_repeat_descriptor_and_independent_modes(self):
+        from quorune.pawprint_modes import REPEATABLE_MODE_CAPABILITY, REPEATABLE_MODE_FIELD, FixedRepeatableModeChoices
+
+        game, source = self._mystic(75181001)
+        card = self.db.lookup(source.printed_name, fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(card, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node = ir.faces[0].nodes[0]
+            self.assertIn(REPEATABLE_MODE_CAPABILITY, node.capability_dependencies)
+            model = FixedRepeatableModeChoices.from_dict(node.cost[REPEATABLE_MODE_FIELD])
+            self.assertEqual(10, len(model.available_choices()))
+            self.assertEqual("counter_unless_pay", node.target_schema["modes"]["mode_1"]["effects"][0]["op"])
+        witness()
+        with patch("quorune.compiler.pawprint_mode_templates.fixed_repeatable_mode_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def test_mystic_exactly_three_draw_modes_use_the_ordinary_cast_price(self):
+        game, source = self._mystic(75181002)
+        self.prepare(game, mana={"C": 3, "U": 2})
+        self.checkpoint(game)
+        self._cast_ordered(game, source, ["mode_3", "mode_3_repeat_2", "mode_3_repeat_3"])
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        initial = len(game.state.players["A"].zones["hand"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(initial + 3, len(game.state.players["A"].zones["hand"]))
+        self.replay(game, load=True)
+
+    def test_mystic_each_counter_offer_uses_its_own_target_player_and_payment(self):
+        game, source = self._mystic(75181003)
+        bspell = self.add(game.engine, "Lightning Bolt", seat="B", zone="hand", ref="mystic-b-bolt")
+        cspell = self.add(game.engine, "Lightning Bolt", seat="C", zone="hand", ref="mystic-c-bolt")
+        self.prepare(game, mana={"C": 3, "U": 2})
+        for seat in "BC":
+            game.state.players[seat].mana_pool.update({"C": 3, "R": 1})
+        self.checkpoint(game)
+        self.cast(game, "B", bspell, ["A"])
+        b_ref = game.state.stack[-1].ref
+        self.cast(game, "C", cspell, ["D"])
+        c_ref = game.state.stack[-1].ref
+        self._cast_ordered(game, source, ["mode_1", "mode_1_repeat_2", "mode_3"], [b_ref, c_ref])
+        initial = len(game.state.players["A"].zones["hand"])
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["B"]), (pending.kind, pending.actors))
+        self.assertEqual("counter_unless_pay", pending.payload_by_actor["B"]["operation"])
+        game = self.replay(game, load=True)
+        pay = {"action_id": "choose", "pay": True, "plan": "auto"}
+        self.reject(game, "C", pay)
+        self.accept(game, "B", pay)
+        pending = game.state.pending_decision
+        self.assertEqual(("semantic.choice", ["C"]), (pending.kind, pending.actors))
+        self.assertEqual(initial, len(game.state.players["A"].zones["hand"]))
+        game = self.replay(game, load=True)
+        self.accept(game, "C", {"action_id": "choose", "pay": False})
+        self.assertEqual(initial + 1, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual(0, game.state.players["B"].mana_pool.get("C", 0))
+        self.assertEqual(3, game.state.players["C"].mana_pool.get("C", 0))
+        self.assertEqual("graveyard", game.state.cards[cspell.object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual((37, 40), (game.state.players["A"].life, game.state.players["D"].life))
+        self.replay(game, load=True)
+
+    def test_mystic_skips_all_modes_when_its_only_target_is_illegal(self):
+        game, source = self._mystic(75181007)
+        bear = self.add(game.engine, "Grizzly Bears", seat="B")
+        unsummon = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.prepare(game, mana={"C": 3, "U": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self._cast_ordered(game, source, ["mode_2", "mode_3", "mode_3_repeat_2"], [bear.ref])
+        before = len(game.state.players["A"].zones["hand"])
+        self.cast(game, "B", unsummon, [bear.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[bear.object_id].zone)
+        self.assertEqual(before, len(game.state.players["A"].zones["hand"]))
+        self.replay(game, load=True)
+
+    def test_mystic_copies_keep_modes_and_bounce_each_retained_legal_target(self):
+        game, source = self._mystic(75181004)
+        left = self.add(game.engine, "Grizzly Bears", seat="B", ref="mystic-bounce-first")
+        right = self.add(game.engine, "Grizzly Bears", seat="B", ref="mystic-bounce-second")
+        game.engine.change_control(right.object_id, "C", reason="Seed a borrowed creature")
+        third = self.add(game.engine, "Grizzly Bears", seat="B", ref="mystic-copy-new-bounce")
+        game.engine.change_control(third.object_id, "D", reason="Seed a distinct borrowed creature")
+        twin = self.add(game.engine, "Twincast", zone="hand")
+        self.prepare(game, mana={"C": 3, "U": 4})
+        self.checkpoint(game)
+        modes = ["mode_2", "mode_2_repeat_2", "mode_3"]
+        original = self._cast_ordered(game, source, modes, [left.ref, right.ref], reserve={"U": 2})
+        self.cast(game, "A", twin, [original.ref])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        initial = set(game.state.players["A"].zones["hand"])
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        for seat in "BCD":
+            self.assertIsNone(game.packet("pilot:" + seat, full=True)["decision"])
+        game = self.replay(game, load=True)
+        self.accept(game, "A", {"action_id": "choose", "targets": [third.ref, right.ref]})
+        copied, = [item for item in game.state.stack if item.kind == "spell_copy"]
+        self.assertEqual((modes, [third.ref, right.ref]), (copied.modes, copied.targets))
+        original_after = next(item for item in game.state.stack if item.ref == original.ref)
+        self.assertEqual((modes, [left.ref, right.ref]), (original_after.modes, original_after.targets))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        added = set(game.state.players["A"].zones["hand"]) - initial
+        self.assertEqual(2, len(added))
+        for seat in "BCD":
+            packet = str(game.packet("pilot:" + seat, full=True)["state"])
+            self.assertTrue(all(game.state.cards[oid].ref not in packet for oid in added))
+        self.assertEqual([third.object_id, right.object_id, left.object_id], game.state.players["B"].zones["hand"][-3:])
+        self.assertEqual("hand", game.state.cards[third.object_id].zone)
+        self.replay(game, load=True)

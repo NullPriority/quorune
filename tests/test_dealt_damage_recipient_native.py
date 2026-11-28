@@ -149,3 +149,134 @@ class DealtDamageRecipientNativeTests(InheritedNativeFixture,unittest.TestCase):
                 else:
                     self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, recipient.annotations)
                 self.replay(session, load=True)
+
+    def test_hunters_insight_draws_actual_player_or_planeswalker_combat_damage(self):
+        from quorune.rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD
+
+        for planeswalker in (False, True):
+            with self.subTest(planeswalker=planeswalker):
+                game = self.session(603070120 + int(planeswalker))
+                source = self.add(game.engine, "Hunter's Insight", zone="hand")
+                watched = self.add(game.engine, "Boros Swiftblade")
+                unrelated = self.add(game.engine, "Grizzly Bears")
+                self.assert_closed(game, self.add(game.engine, "Furnace of Rath"))
+                walker = self.add(game.engine, "Jace Beleren", seat="B") if planeswalker else None
+                if walker is not None:
+                    walker.counters["loyalty"] = 5
+                    walker.annotations["loyalty_initialized"] = True
+                for attacker in (watched, unrelated):
+                    attacker.acquired_control_turn_count = -1
+                self.assert_closed(game, source)
+                for object_id in tuple(game.state.players["A"].zones["hand"]):
+                    if object_id != source.object_id:
+                        game.engine.move_card(object_id, "library", position="bottom", log=False)
+                self.prepare(game, mana={"C": 2, "G": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", source, [watched.ref])
+                self.assertIsNone(self.resolve(game))
+                delayed, = game.state.delayed_triggers
+                self.assertEqual(source.object_id, delayed.source_object_id)
+                self.assertEqual(watched.logical_object_id, delayed.condition["source_logical_object_id"])
+                self.assertEqual((False, game.state.turn_sequence), (delayed.once, delayed.expires_turn_sequence))
+                self.assertTrue(delayed.condition[WATCHED_COMBAT_DRAW_FIELD])
+                game = self.replay(game, load=True)
+                before = set(game.state.players["A"].zones["hand"])
+                self.attack(game, [(watched, walker.ref if walker is not None else "B"), (unrelated, "D")])
+                self.until(game, lambda value: bool(value.state.stack)
+                           and value.state.pending_decision.kind == "priority")
+                draw, = game.state.stack
+                self.assertEqual(("A", source.object_id), (draw.controller, draw.source_object_id))
+                self.assertEqual(2, draw.context["dynamic_effects"][0]["count"])
+                game = self.replay(game, load=True)
+                self.until(game, lambda value: value.state.step == "end_combat" and not value.state.stack
+                           and value.state.pending_decision.kind == "priority")
+                drawn = set(game.state.players["A"].zones["hand"]) - before
+                self.assertEqual(4, len(drawn))
+                self.assertEqual(36, game.state.players["D"].life)
+                if walker is not None:
+                    self.assertEqual(1, game.state.cards[walker.object_id].counters["loyalty"])
+                    self.assertEqual(40, game.state.players["B"].life)
+                else:
+                    self.assertEqual(36, game.state.players["B"].life)
+                for principal in "BCD":
+                    packet = json.dumps(game.packet("pilot:" + principal, full=True))
+                    for object_id in drawn:
+                        self.assertNotIn(game.state.cards[object_id].ref, packet)
+                self.until(game, lambda value: value.state.active_player == "B" and value.state.step == "upkeep")
+                self.assertFalse(game.state.delayed_triggers[0].active)
+                self.replay(game, load=True)
+
+    def test_hunters_insight_skips_damage_to_creatures_and_a_returned_incarnation(self):
+        for blinked in (False, True):
+            with self.subTest(blinked=blinked):
+                game = self.session(603070130 + int(blinked))
+                source = self.add(game.engine, "Hunter's Insight", zone="hand")
+                watched = self.add(game.engine, "Rakdos Shred-Freak")
+                blocker = None if blinked else self.add(game.engine, "Wall of Mist", seat="B")
+                blink = self.add(game.engine, "Cloudshift", zone="hand") if blinked else None
+                self.assert_closed(game, source)
+                self.prepare(game, mana={"C": 2, "G": 1, "W": 1})
+                self.checkpoint(game)
+                self.cast_for(game, "A", source, [watched.ref], reserve={"W": 1})
+                self.assertIsNone(self.resolve(game))
+                if blink is not None:
+                    before = watched.logical_object_id
+                    self.cast(game, "A", blink, [watched.ref])
+                    self.assertIsNone(self.resolve(game))
+                    watched = game.state.cards[watched.object_id]
+                    self.assertNotEqual(before, watched.logical_object_id)
+                hand = list(game.state.players["A"].zones["hand"])
+                self.attack(game, [(watched, "B")])
+                if blocker is not None:
+                    self.until(game, lambda value: value.state.pending_decision.kind == "combat.blockers")
+                    accepted = game.act("pilot:B", {"action_id": "block", "blocks": {blocker.ref: watched.ref}})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.until(game, lambda value: value.state.step == "end_combat" and not value.state.stack
+                           and value.state.pending_decision.kind == "priority")
+                self.assertEqual(hand, game.state.players["A"].zones["hand"])
+                if blocker is not None:
+                    self.assertEqual(2, game.state.cards[blocker.object_id].marked_damage)
+                else:
+                    self.assertEqual(38, game.state.players["B"].life)
+                self.replay(game, load=True)
+
+
+class WatchedCombatDrawCompilerTests(unittest.TestCase):
+    def test_watched_combat_draw_requires_the_original_end_of_turn_source_and_recipient(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.watched_combat_draw import watched_combat_draw_amount, watched_combat_draw_effect
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("Choose target creature you control. Whenever that creature deals combat damage "
+                "to a player or planeswalker this turn, draw that many cards.")
+
+        def compile_text(text):
+            return compile_oracle_card(replace(query_record(text), type_line="Instant"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertEqual(watched_combat_draw_effect(), node.effects[0])
+            self.assertEqual("you", node.target_schema["controller_relation"])
+
+        witness()
+        with patch("quorune.compiler.delayed_draw_templates.watched_combat_damage_draw_template", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (
+            text.replace("you control", "an opponent controls"),
+            text.replace("combat damage", "damage"),
+            text.replace("planeswalker", "battle"),
+            text.replace("this turn", "next turn"),
+        ):
+            self.assertNotEqual("exact", compile_text(altered).status)
+        base = {"combat": True, "target_kind": "player", "player": "A", "target": "A", "amount": 2}
+        self.assertEqual(2, watched_combat_draw_amount(base))
+        for altered in ({"player": "B"}, {"combat": False}, {"amount": 0},
+                        {"target_kind": "permanent", "target_types": ["creature"]},
+                        {"target_kind": "permanent", "target_types": ["battle"]}):
+            self.assertIsNone(watched_combat_draw_amount({**base, **altered}))

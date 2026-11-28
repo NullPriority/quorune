@@ -20,7 +20,8 @@ from ..library_search_model import (
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_CAPABILITY,
     CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION, CreatureSubsetManaValueSearch,
     FixedCountedLibrarySearchTemplate,
-    RECRUITING_LIBRARY_SEARCH_VERSION,
+    SEARCHED_LAND_UNTAP_VERSION,
+    RECRUITING_LIBRARY_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION, is_subtype_graveyard_search,
     TARGET_NAME_LIBRARY_SEARCH_VERSION, TargetNameLibrarySearchSpec,
     TARGET_PLAYER_BASIC_LAND_SEARCH_CAPABILITY,
     TARGET_PLAYER_BASIC_LAND_SEARCH_MECHANIC,
@@ -104,6 +105,10 @@ def fixed_counted_library_search_node_capabilities(
 ) -> tuple[str, ...]:
     if FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids or len(effects) != 1:
         return ()
+    from .black_devotion_library_search import BOUND_FIELD, black_devotion_search_capabilities
+
+    if BOUND_FIELD in effects[0]:
+        return black_devotion_search_capabilities(effects[0], target_schema)
     if effects[0].get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION:
         try:
             spec = TargetNameLibrarySearchSpec.from_effect(effects[0])
@@ -113,9 +118,10 @@ def fixed_counted_library_search_node_capabilities(
     if target_schema is not None:
         return ()
     if effects[0].get("schema_version") in (
+        SEARCHED_LAND_UNTAP_VERSION,
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
         ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION,
-        CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
+        CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION, SUBTYPE_GRAVEYARD_SEARCH_VERSION,
     ):
         try:
             return counted_search_bound_dependencies(effects[0])
@@ -145,6 +151,10 @@ def fixed_counted_library_search_node_capabilities(
         template = FixedCountedLibrarySearchTemplate.from_effect(effects[0])
     except (ValueError, TypeError, KeyError):
         return ()
+    from ..library_search_model import is_ordered_creature_graveyard_search
+
+    if is_ordered_creature_graveyard_search(effects[0]):
+        return counted_search_bound_dependencies(effects[0])
     if template.up_to_two_forest_batch:
         from ..library_search_model import UP_TO_TWO_FOREST_BATCH_CAPABILITY
 
@@ -253,6 +263,20 @@ def literal_name_any_number_runtime_dependencies(program):
 def recruiting_library_search_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
 
+    ordered = tuple(effect for effect in nested_effects((program.effects, program.handlers))
+                    if is_subtype_graveyard_search(effect))
+    if ordered:
+        if ((program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+                or program.target_schema is not None or program.cost_schema is not None
+                or program.event_condition is not None or program.handlers or len(program.effects) != 1
+                or len(ordered) != 1):
+            raise ValueError("Subtype graveyard search requires the original optional source entry")
+        wrapper = program.effects[0]
+        if (set(wrapper) != {"op", "player", "effects"} or wrapper.get("op") != "offer_optional_effect"
+                or wrapper.get("player") != "$controller" or tuple(wrapper.get("effects", ())) != ordered):
+            raise ValueError("The controller must choose whether to perform the entire search")
+        return (*counted_search_bound_dependencies(ordered[0]), "effect.choice.optional_fixed",
+                "trigger.event.normalized_zone_change")
     if not any(effect.get("op") == "search" and effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION
                for effect in nested_effects((program.effects, program.handlers))):
         return ()

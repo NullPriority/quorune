@@ -1,9 +1,12 @@
 from __future__ import annotations
 from .event_counter_reference import event_counter_recipient_context
 from .rules.block_trigger_multiplicity import block_trigger_already_collected
+from .rules.opposing_end_step_advantage import FIELD as END_STEP_ADVANTAGE_FIELD, opposing_end_step_advantage_value
 from .entry_copy import copiable_oracle_id
-from .characteristic_read_frames import characteristic_read_frame
+from .characteristic_read_frames import characteristic_read_frame, characteristic_read_method
 from .evoke import is_evoked_annotation
+from .state_trigger_model import STATE_TRIGGER_EVENT
+from .triggered_mana_model import SOURCE_MANA_TAP_EVENT, source_mana_tap_observer_mismatch
 from .keyword_abilities import normalized_characteristic_keywords
 
 import copy
@@ -36,7 +39,8 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .rules.event_subscriptions import (
-    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, LAND_PLAY_EVENT, PLAYED_LAND_REFERENCE_FIELD, FixedEventSubscriptionSet,
+    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, LAND_PLAY_EVENT, LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD,
+    PLAYED_LAND_REFERENCE_FIELD, FixedEventSubscriptionSet,
     intervening_recheck_condition, public_state_intervening_actual,
     source_event_intervening_recheck,
 )
@@ -230,6 +234,12 @@ def _keyword_intervening_condition_actual(
 
 def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
+    from .fixed_counter_movement_model import SOURCE_HAS_COUNTERS
+
+    if field == SOURCE_HAS_COUNTERS:
+        from .counter_snapshot import permanent_counter_total
+
+        return True, source.zone == "battlefield" and not source.phased_out and permanent_counter_total(source.counters) > 0
     from .attack_batch_model import ATTACK_BATCH_CONDITION, DECLARED_ATTACK_POWER_FIELD
     from .land_entry_condition_model import (
         ENTRANT_LAND_ADVANTAGE_FIELD, OTHER_LAND_ARRIVAL_FIELD,
@@ -247,6 +257,8 @@ def _extended_action_condition_actual(host,condition,*,source,context):
         CAST_CREATURE_SET_COPY_CONDITION, cast_creature_set_copy_condition_value,
     )
     try:
+        if field == END_STEP_ADVANTAGE_FIELD:
+            return True, opposing_end_step_advantage_value(host, condition, context, source.controller)
         if field == ENTRANT_LAND_ADVANTAGE_FIELD:
             from .rules.event_subscriptions import entrant_land_advantage_holds
 
@@ -332,16 +344,27 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    from .rules.linked_landfall_play import EXPLORE_CONDITION_FIELD, exploration_links
+    if field == EXPLORE_CONDITION_FIELD:
+        return bool(exploration_links(host,source.object_id,source.logical_object_id))
     if field=='ravenous_entry_x_at_least':
         from .rules.ravenous import ravenous_condition_value
         try:return ravenous_condition_value(condition,source,context)
         except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
-    if field in {'unpaid_creature_entry_group_has_first_member', 'source_entry_cast_by_controller'}:
+    if field in {'unpaid_creature_entry_group_has_first_member', 'source_entry_cast_by_controller',
+                 'entrant_cast_by_controller_from_nonhand'}:
         from .rules.entry_cast_information import entry_condition_actual
 
         return entry_condition_actual(host, field, condition, source=source, context=context)
     handled,actual=_extended_action_condition_actual(host,condition,source=source,context=context)
     if handled:return actual
+    from .rules.opponent_off_turn_draw import OFF_TURN_DRAW_FIELD, off_turn_draw_holds
+
+    if field == OFF_TURN_DRAW_FIELD:
+        try:
+            return off_turn_draw_holds(host.state, context)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
     if field == "counter_names":
         names = context.get(field)
         if (not isinstance(names, Sequence) or isinstance(names, (str, bytes))
@@ -389,25 +412,11 @@ def _semantic_condition_actual(
                 str(host._effective_card_data(object_id).get("type_line") or "")
             )[0]
         )
-    if field == "source_controller_controls_highest_artifact_mana_value":
-        controlled_values: list[float] = []
-        all_values: list[float] = []
-        for active_seat in host.active_seats:
-            for object_id in host.state.players[active_seat].zones["battlefield"]:
-                permanent = host.state.cards[object_id]
-                if permanent.phased_out:
-                    continue
-                data = host._effective_card_data(permanent)
-                types, _, _ = host._type_parts(str(data.get("type_line") or ""))
-                if "artifact" not in types:
-                    continue
-                value = float(data.get("mana_value") or 0)
-                all_values.append(value)
-                if permanent.controller == source.controller:
-                    controlled_values.append(value)
-        return bool(
-            controlled_values and max(controlled_values) == max(all_values)
-        )
+    if field == LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD:
+        # Historical serialized reviewed programs retain this field.
+        from .continuous_conditions import greatest_artifact_mana_value_condition
+
+        return host._fixed_public_state_condition_holds(source, greatest_artifact_mana_value_condition())
     if field in {EVOLVE_EVENT_CONDITION_FIELD, RENOWN_EVENT_CONDITION_FIELD,INCREMENT_CONDITION_FIELD,
                  'soulbond_self_entry_available', 'soulbond_other_entry_available'}:
         return _keyword_intervening_condition_actual(
@@ -460,8 +469,24 @@ def _semantic_condition_actual(
         return host._effective_card_data(source).get("name")
     if field in ("source_attachment_target_ref", "source_attached_player", "source_attachment_controller"):
         return _source_attachment_condition_actual(host, field, condition, source)
+    from .rules.named_artifact_echo import CONDITION as NAMED_ARTIFACT_ECHO, condition_holds as named_echo_holds
+
+    if field == NAMED_ARTIFACT_ECHO:
+        try:
+            return named_echo_holds(host, condition, source, context)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if field == "source_controller_is_active_player":
         return source.controller == host.state.active_player
+    from .extra_combat_model import (
+        MAIN_PHASE_EXTRA_COMBAT_CONDITION_FIELD, main_phase_extra_combat_condition, own_main_phase_for_combat,
+    )
+
+    if field == MAIN_PHASE_EXTRA_COMBAT_CONDITION_FIELD:
+        expected = main_phase_extra_combat_condition()["all"][1]
+        if dict(condition) != expected or condition.get("value") is not True:
+            raise GameRuleError("Main-phase combat needs its exact own-main condition")
+        return own_main_phase_for_combat(host.state, source.controller)
     return context.get(field)
 
 
@@ -626,6 +651,11 @@ def semantic_intervening_condition_matches(
 ) -> bool:
     """Recheck one intervening-if program at its trigger-owner boundary."""
 
+    from .rules.linked_landfall_play import EXPLORE_SETTLE_CAPABILITY, exploration_links
+
+    if EXPLORE_SETTLE_CAPABILITY in program.capability_dependencies:
+        return bool(exploration_links(host,source_object_id or getattr(source,"object_id",None),
+                                      context.get("source_logical_object_id")))
     source_event_result = source_event_intervening_recheck(
         host, program, context=context, controller=controller, source_object_id=source_object_id,
     )
@@ -691,6 +721,11 @@ def semantic_event_matches(
     *,
     source_zone: str | None = None,
 ) -> bool:
+    if context.get("artifact_mana_tap_only") is True:
+        from .rules.artifact_mana_tap_control import MECHANIC, SOURCE_MANA_TAP_EVENT
+
+        if event != SOURCE_MANA_TAP_EVENT or MECHANIC not in program.coverage:
+            return False
     event_matches, self_event, event_condition = _selected_event_subscription(
         program,
         event,
@@ -806,6 +841,7 @@ def trigger_multiplier_participations(
     )
 
 
+@characteristic_read_method
 def applicable_trigger_multipliers(
     host: TriggerDiscoveryHost,
     *,
@@ -1015,7 +1051,7 @@ def _semantic_trigger_context(
             if _condition_mentions_field(
                 selected_condition,
                 FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
-            )
+            ) or _condition_mentions_field(selected_condition, END_STEP_ADVANTAGE_FIELD)
             else {}
         ),
         **(
@@ -1024,10 +1060,14 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    from .rules.departure_counter_copy import DEPARTURE_COUNTER_COPY_MECHANIC, DEPARTURE_COUNTERS, DEPARTURE_HAS_COUNTERS
     from .rules.departure_counter_transfer import DEPARTURE_COUNTER_SNAPSHOT_FIELD, DEPARTURE_COUNTER_TRANSFER_COVERAGE
 
     if DEPARTURE_COUNTER_TRANSFER_COVERAGE not in program.coverage:
         stack_context.pop(DEPARTURE_COUNTER_SNAPSHOT_FIELD, None)
+    if DEPARTURE_COUNTER_COPY_MECHANIC not in program.coverage:
+        stack_context.pop(DEPARTURE_COUNTERS, None)
+        stack_context.pop(DEPARTURE_HAS_COUNTERS, None)
     if 'cipher_grant' in program.provenance:
         stack_context['cipher_grant'] = copy.deepcopy(program.provenance['cipher_grant'])
     from .rules.state_triggers import state_trigger_context
@@ -1346,9 +1386,11 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     from .rules.controlled_destruction_source_counters import creature_role_trigger_context
     from .reflexive_trigger_model import bound_reflexive_has_targets
     from .relative_power_target import bind_relative_mana_value_trigger_schema
+    from .rules.artifact_graveyard_departure import bind_departure_artifact_return_target
     from .target_source import BOUND_TARGETING_SOURCE_VERSION, capture_targeting_source, TARGETING_SOURCE_CONTEXT
     try:
         stack_context.update(creature_role_trigger_context(program.target_schema, host, source))
+        stack_context.update(bind_departure_artifact_return_target(program, context))
         stack_context.update(bind_relative_mana_value_trigger_schema(
             host, source, program.target_schema,
             death_context=context if event == "creature.dies" else None,
@@ -1376,26 +1418,33 @@ def _new_semantic_trigger_item(host, *, source, program, event, context, active_
     )
 
 
-def _source_may_observe_event(source, event, programs):
-    """Reject only sources with neither a subscription nor a shared keyword path."""
+def _source_may_observe_event(source, event, programs, *, context=None):
+    """Retain sources with shared keywords or a potentially matching subscription."""
     if (event == 'spell.cast' or is_evoked_annotation(source.annotations.get('evoked'))
             or source.annotations.get('fixed_blitz_designation') is not None):
         return True
-    return any(
-        program.trust_level == 'unresolved' or program.event_condition is not None
-        or not isinstance(program.event, str) or program.event.removesuffix('.self') == event
-        for program, _ in programs
-    )
+    if context is not None and any(program.event == STATE_TRIGGER_EVENT for program, _ in programs): context = None
+    for program, _ in programs:
+        if program.trust_level == "unresolved" or not isinstance(program.event, str):
+            return True
+        try:
+            matched, _, condition = _selected_event_subscription(program, event)
+            if matched and not source_mana_tap_observer_mismatch(source, program, event, condition, context):
+                return True
+        except (TypeError, ValueError, KeyError):
+            # Leave malformed subscription handling with the normal trigger owner.
+            return True
+    return False
 
 
-def _iter_event_observers(host, sources, event, read_programs):
+def _iter_event_observers(host, sources, event, read_programs, *, context=None, prevents=None):
     if event in {"card.drawn", "card.second_draw", DRAW_EXCEPT_FIRST_OWN_STEP_EVENT}:
         # Draw observers are read from the same committed state before any
         # trigger usage, pending control duration, or stack writes.
         with characteristic_read_frame(host):
             observations = [(source, read_programs(source)) for source in sources]
         for source, (active_zone, characteristics, programs) in observations:
-            if _source_may_observe_event(source, event, programs):
+            if _source_may_observe_event(source, event, programs) and not (prevents and prevents(source, active_zone, characteristics)):
                 yield source, (active_zone, characteristics, programs)
         return
 
@@ -1404,12 +1453,14 @@ def _iter_event_observers(host, sources, event, read_programs):
         with characteristic_read_frame(host):
             for source in remaining:
                 active_zone, characteristics, programs = read_programs(source)
-                if _source_may_observe_event(source, event, programs):
+                if _source_may_observe_event(source, event, programs, context=context):
+                    prevented = prevents is not None and prevents(source, active_zone, characteristics)
                     break
             else:
                 return
-        # Processing an observer can change trigger usage or source markers.
-        yield source, (active_zone, characteristics, programs)
+        # Prevention is read-only. Processing the observer can change trigger usage or source markers.
+        if not prevented:
+            yield source, (active_zone, characteristics, programs)
 
 
 def dispatch_semantic_event(
@@ -1440,13 +1491,11 @@ def dispatch_semantic_event(
         return _event_programs_for_source(
             host,source,event,source_zones=source_zones,source_characteristics=source_characteristics)
 
-    source_programs = _iter_event_observers(host, participation_sources, event, read_programs)
+    interest_context = discovery_context if event == SOURCE_MANA_TAP_EVENT and source_characteristics is None and source_zones is None else None
+    from .rules.trigger_participation_runtime import bind_trigger_observer_prevention
+    prevents = bind_trigger_observer_prevention(host, event, context, participation_sources, source_characteristics)
+    source_programs = _iter_event_observers(host, participation_sources, event, read_programs, context=interest_context, prevents=prevents)
     for source, (active_zone, characteristics, programs) in source_programs:
-        from .rules.trigger_participation_runtime import typed_trigger_participations
-        _extra,prevented=typed_trigger_participations(host,source=source,controller=source.controller,event=event,context=context,
-            sources=participation_sources,source_characteristics=source_characteristics,
-            ability_characteristics=characteristics,active_zone=active_zone)
-        if prevented:continue
         evoke_item = _shared_evoke_trigger_item(host, source, event, context, characteristics=characteristics)
         if evoke_item is not None:
             triggered.append(evoke_item)

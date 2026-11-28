@@ -58,6 +58,14 @@ def _activation_cost_clause(
 
 def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
     cost_clause, another = _activation_cost_clause(cost_text)
+    if cost_clause.casefold() == "sacrifice two other artifacts and/or creatures":
+        predicate = replace(controlled_permanent_predicate(), types_any=("artifact", "creature"))
+        return {
+            "operation": SACRIFICE_ONE_COST,
+            "predicate": predicate.to_dict(),
+            "another": True,
+            "count": 2,
+        }
     union_match = _COLORED_OR_ARTIFACT_CREATURE_COST.fullmatch(cost_clause)
     if union_match is not None:
         union = colored_or_artifact_creature_sacrifice(_COLOR_WORDS[union_match['color'].casefold()])

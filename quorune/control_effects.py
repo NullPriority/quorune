@@ -46,6 +46,7 @@ _ORIGIN_PREFIX = "control-origin:"
 _EFFECT_PREFIX = "control-effect:"
 _DURATIONS = {
     ContinuousEffectDuration.UNTIL_END_OF_TURN,
+    ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN,
     ContinuousEffectDuration.ZONE_OBJECT,
     *(duration for duration in ContinuousEffectDuration if duration.source_bound),
 }
@@ -398,6 +399,7 @@ def _control_effect(
     duration_source: ContinuousObjectIdentity | None = None,
     duration_controller: str | None = None,
     duration_history: SourceContinuitySnapshot | None = None,
+    controller_cleanup_turn: int | None = None,
 ) -> ContinuousEffect:
     return ContinuousEffect(
         effect_id=effect_id, source_id=source_id, layer=Layer.CONTROL,
@@ -407,6 +409,7 @@ def _control_effect(
         applies=ObjectQuerySpec(zones=("battlefield",)), locked_objects=identities,
         duration_source=duration_source, duration_controller=duration_controller,
         duration_history=duration_history,
+        controller_cleanup_turn=controller_cleanup_turn,
     )
 
 
@@ -496,6 +499,8 @@ def gain_control_of_assignments(
         duration_source=(ContinuousObjectIdentity(source_card.object_id,source_card.logical_object_id) if source_card is not None else None),
         duration_controller=actor if duration.requires_source_controller else None,
         duration_history=source_card.source_continuity.snapshot() if source_card is not None else None,
+        controller_cleanup_turn=(host.state.players[controller].turns_begun + 1
+                                 if duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN else None),
     ) for controller,affected in grouped.items())
     effect_ids=tuple(_EFFECT_PREFIX+host._next_ref('CE') for _prototype in prototypes)
     timestamp=host._next_zone_timestamp()
@@ -809,6 +814,12 @@ def execute_single_control_intent(host: Any, intent: Any):
         return gain_control_of_stack_spell(
             host, stack_ref=intent.object_ref, actor=intent.actor, source=intent.source, reason=intent.reason,
         )
+    identity = getattr(intent, "recipient_identity", None)
+    if identity is not None:
+        card = host.state.cards.get(identity.object_id)
+        if (card is None or card.ref != intent.object_ref or card.zone != "battlefield" or card.phased_out
+                or card.logical_object_id != identity.logical_object_id):
+            return ()
     return gain_control_of_refs(
         host, actor=intent.actor, object_refs=(intent.object_ref,),
         controller=intent.controller, duration=intent.duration,

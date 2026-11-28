@@ -15,6 +15,7 @@ from .counter_placement import (
     validate_counter_placement_commit,
 )
 from .damage_modifier_state import (
+    CreateTokensPreventionAftermath,
     DealDamagePreventionAftermath,
     GainLifePreventionAftermath,
     PlaceCountersPreventionAftermath,
@@ -261,6 +262,8 @@ def prevention_aftermath_requests(
     for application in applications:
         _, controller, aftermath_effects = sources[application.effect_id]
         for index, aftermath in enumerate(aftermath_effects):
+            if isinstance(aftermath, CreateTokensPreventionAftermath):
+                continue
             damage_amount = application.prevented_amount
             if isinstance(aftermath, PlaceCountersPreventionAftermath) and aftermath.counts_unpreventable:
                 damage_amount += application.unpreventable_amount
@@ -758,8 +761,8 @@ def commit_prevention_aftermath(
                 damage_event_ids=instruction.damage_event_ids,
             )
         )
-    from .counter_placement_events import capture_counter_placement_occurrences
-    counter_occurrences=() if prepared.counter_plan is None else capture_counter_placement_occurrences(
+    from .counter_placement_events import capture_counter_damage_occurrences
+    counter_occurrences=() if prepared.counter_plan is None else capture_counter_damage_occurrences(
         host,prepared.counter_plan.prepared.events,reason="damage prevention aftermath")
     return PreventionAftermathResult(
         events=tuple(events),

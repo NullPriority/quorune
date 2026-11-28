@@ -11,6 +11,7 @@ from ..named_search_model import LiteralNameBattlefieldSearchSpec
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..library_search_model import (
+    SearchedLandUntapSearch,
     AnyNumberCreatureSubtypeSearch,
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
@@ -475,6 +476,28 @@ def creature_subset_mana_value_search_template(text: str):
     )
 
 
+def optional_subtype_graveyard_search_template(text):
+    match = re.fullmatch(
+        r"You may search your library for any number of (?P<subtype>[^,.]+) cards, "
+        r"put them into your graveyard, then shuffle\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subtype = canonical_creature_subtype(match["subtype"])
+    if subtype is None:
+        return None
+    from ..library_search_model import SubtypeGraveyardSearchSpec
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+    return FixedOptionalEffectTemplate(
+        component_template_id="creature-subtype-library-graveyard-search-v37",
+        _component_effects=(SubtypeGraveyardSearchSpec(subtype).effect(),),
+        _target_schema=None,
+        mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID),
+    ).compiled()
+
+
 def recruiting_library_search_template(text):
     match = re.fullmatch(
         r"Search your library for any number of (?P<subtype>[^,.]+) cards, "
@@ -526,6 +549,24 @@ def fixed_creature_group_library_search_template(text):
             (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,))
 
 
+def qualified_instant_library_cast_template(text: str):
+    from ..mana_value_limit import ManaValueLimitSpec
+    from ..rules.qualified_library_cast import MECHANIC, QualifiedLibraryCastSpec
+
+    pattern = (
+        r"Search your library for a (?P<first>white|blue|black|red|green) or "
+        r"(?P<second>white|blue|black|red|green) instant card with mana value "
+        r"(?P<maximum>0|[1-9][0-9]*) or less and cast that card without paying its mana cost\. Then shuffle\."
+    )
+    match = re.fullmatch(pattern, " ".join(text.split()), re.I)
+    if match is None or match["first"].casefold() == match["second"].casefold():
+        return None
+    symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+    colors = tuple(sorted(symbols[match[group].casefold()] for group in ("first", "second")))
+    spec = QualifiedLibraryCastSpec(ManaValueLimitSpec(int(match["maximum"])), colors)
+    return ("fixed-qualified-library-cast-v1", (spec.effect(),), None, (MECHANIC,))
+
+
 def target_player_basic_land_search_template(text: str):
     """Lower the complete activated target-player search result."""
     if not _TARGET_PLAYER_BASIC_LAND_SEARCH.fullmatch(" ".join(text.split())):
@@ -539,13 +580,34 @@ def target_player_basic_land_search_template(text: str):
     )
 
 
+@dataclass(frozen=True, slots=True)
+class FixedOpponentLandSearchTemplate:
+    def compiled(self):
+        from ..rules.fixed_opponent_land_search import MECHANIC, opponent_land_search_effect
+
+        return "fixed-opponent-land-search-v1", (opponent_land_search_effect(),), None, (MECHANIC,)
+
+
 def fixed_library_search_effect_template(
     text: str,
 ) -> (FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate
-      | TargetNameLibrarySearchSpec | LiteralNameBattlefieldSearchSpec | AnyNumberCreatureSubtypeSearch | None):
+      | TargetNameLibrarySearchSpec | LiteralNameBattlefieldSearchSpec | AnyNumberCreatureSubtypeSearch
+      | FixedOpponentLandSearchTemplate | SearchedLandUntapSearch | None):
     """Lower one fixed restrictive library search directly to the battlefield."""
 
     normalized = " ".join(text.strip().split())
+    if normalized.casefold().removeprefix("tempting offer — ") == (
+        "search your library for a land card and put it onto the battlefield. "
+        "each opponent may search their library for a land card and put it onto the battlefield. "
+        "for each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. "
+        "then each player who searched a library this way shuffles."
+    ):
+        return FixedOpponentLandSearchTemplate()
+    if normalized.casefold() == (
+        "search your library for a basic land card, put it onto the battlefield tapped, then shuffle. "
+        "then if you control four or more lands, untap that land."
+    ):
+        return SearchedLandUntapSearch()
     if literal := _literal_name_battlefield_search_template(normalized):
         return literal
     typed_any_number = re.fullmatch(

@@ -41,7 +41,31 @@ _RANDOM_OPPONENT_CREATURE_DAMAGE = re.compile(
 )
 
 
-def _optional_entry_phase_out(body):
+def _battlefield_departure_entry_phase_out(body):
+    text = " ".join(body.split()).casefold()
+    if text == ("untap all creatures, then those creatures phase out until this enchantment leaves the battlefield. "
+                "put a time counter on this enchantment for each creature that phased out this way."):
+        from ..phasing_model import PHASE_OUT_MECHANIC, creature_set_phase_hold_effect
+        from ..rules.counted_creature_phase_hold import COUNTED_CREATURE_PHASE_HOLD_MECHANIC
+
+        return ("entry-untap-counted-creature-phase-hold-v1", (creature_set_phase_hold_effect(),),
+                None, (PHASE_OUT_MECHANIC, COUNTED_CREATURE_PHASE_HOLD_MECHANIC), None)
+    if text != ("target creature phases out until this enchantment leaves the battlefield. "
+                "tap that creature as it phases in this way."):
+        return None
+    from ..phasing_model import PHASE_OUT_MECHANIC, battlefield_phase_out_effect
+    from ..replacement.immutable import thaw_value
+    from ..rules.battlefield_phase_hold import BATTLEFIELD_PHASE_HOLD_MECHANIC, BATTLEFIELD_PHASE_HOLD_SCHEMA
+
+    return ("entry-phase-out-until-source-departs-v1", (battlefield_phase_out_effect(),),
+            thaw_value(BATTLEFIELD_PHASE_HOLD_SCHEMA), (PHASE_OUT_MECHANIC, BATTLEFIELD_PHASE_HOLD_MECHANIC, "cr-115-targets"), None)
+
+
+def _optional_entry_target_effect(body):
+    from .airbend_templates import entry_targeted_airbend_template
+
+    if airbend := entry_targeted_airbend_template(body):
+        return airbend
     if " ".join(body.split()).casefold() != "up to one target creature phases out.":
         return None
     from ..phasing_model import PHASE_OUT_MECHANIC, optional_entry_phase_out_effect, optional_entry_phase_out_schema
@@ -64,6 +88,28 @@ def source_death_hand_return_template(body):
 
 
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if event_phrase == "dies" and re.fullmatch(
+        r"you may pay any amount of \{r\}\. when you do, it deals that much damage to any target\.",
+        " ".join(body.casefold().split()),
+    ):
+        from ..rules.departing_x_reflexive import RED_DEATH_MECHANIC, RED_DEATH_VERSION, instruction
+
+        return "death-variable-red-reflexive-damage-v1", (instruction(RED_DEATH_VERSION),), None, (RED_DEATH_MECHANIC,), None
+    if event_phrase == "leaves the battlefield" and re.fullmatch(
+        r"you may pay \{x\}\. when you do, (?:he|she|it|this creature) deals x damage to target player\.",
+        " ".join(body.casefold().split()),
+    ):
+        from ..rules.departing_x_reflexive import MECHANIC, instruction
+
+        return "departure-x-reflexive-player-damage-v1", (instruction(),), None, (MECHANIC,), None
+    if event_phrase == "enters" and " ".join(body.casefold().split()) == (
+        "you draw a card and target opponent may draw a card."
+    ):
+        from ..rules.target_entry_draw import target_entry_draw_effects, target_entry_draw_schema
+
+        return ("fixed-source-entry-then-target-opponent-draw-v1", target_entry_draw_effects(),
+                target_entry_draw_schema(),
+                ("cr-121-drawing-a-card", "cr-115-targets", "fixed-event-player-optional-draw"), None)
     if event_phrase == "enters" and " ".join(body.casefold().split()) == (
         "search your library for a card, exile it face down, then shuffle. "
         "for as long as that card remains exiled, you may play it."
@@ -72,13 +118,16 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
 
         return ("entry-private-search-play-v1", (private_search_play_effect(),), None,
                 (PRIVATE_SEARCH_PLAY_MECHANIC,), None)
-    if event_phrase == "enters" and (phasing := _optional_entry_phase_out(body)) is not None:
+    if event_phrase == "enters" and (phasing := _battlefield_departure_entry_phase_out(body) or _optional_entry_target_effect(body)) is not None:
         return phasing
     if event_phrase == "dies":
         from .library_search_templates import creature_subset_mana_value_search_template
+        from ..rules.revival_return import revival_death_result
 
         if delayed_hand := source_death_hand_return_template(body):
             return delayed_hand
+        if revival := revival_death_result(body):
+            return revival
         if search := creature_subset_mana_value_search_template(body):
             return (*search, None)
         random_damage = _RANDOM_OPPONENT_CREATURE_DAMAGE.fullmatch(body.strip())
@@ -122,18 +171,24 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         from .collective_source_damage_templates import collective_source_damage_entry_template
         from .protected_attack_payment_templates import next_turn_attack_payment_template
         from .library_search_templates import (
-            optional_literal_name_any_number_search_template, recruiting_library_search_template,
+            optional_literal_name_any_number_search_template, optional_subtype_graveyard_search_template,
+            recruiting_library_search_template,
         )
         from .variable_library_selection_templates import devotion_library_win_template
 
         from .qualified_library_search_templates import creature_stat_library_search_template
 
         if condition is None:
+            from ..rules.black_devotion_library_search import black_devotion_search_result
+
+            if devotion_search := black_devotion_search_result(body):
+                return (*devotion_search, None)
             if devotion_win := devotion_library_win_template(body):
                 return (*devotion_win, None)
             library_search = (
                 creature_stat_library_search_template(body)
                 or optional_literal_name_any_number_search_template(body)
+                or optional_subtype_graveyard_search_template(body)
                 or recruiting_library_search_template(body)
             )
             if library_search is not None:

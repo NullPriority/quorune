@@ -36,7 +36,7 @@ from ..targets import TargetGroup
 from ..public_zone_moves import (
     GRAVEYARD_LIBRARY_TARGET_FIELD, STACK_SPELL_EXILE_FIELD, StackSpellExileScope, StackSpellExileSpec,
 )
-from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
+from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS, wrap_gift_reanimation
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
 from .linked_zone_movement import apply_move_if_in_zone, commit_resolved_zone_movement
@@ -120,9 +120,14 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         from .cast_spell_suspend import apply_cast_spell_suspend
 
         return apply_cast_spell_suspend(host, effect, actor=actor, reason=reason)
-    from ..rules.opponent_spell_or_permanent_return import ENTRY_FIELD, FIELD as OPPONENT_RETURN_FIELD
+    from ..rules.opponent_spell_or_permanent_return import (
+        ENTRY_FIELD,
+        FIELD as OPPONENT_RETURN_FIELD,
+        SPELL_FIELD,
+        COPY_RETURN_FIELD,
+    )
 
-    if op == "move" and (OPPONENT_RETURN_FIELD in effect or ENTRY_FIELD in effect):
+    if op == "move" and {OPPONENT_RETURN_FIELD, ENTRY_FIELD, SPELL_FIELD, COPY_RETURN_FIELD}.intersection(effect):
         from .opponent_spell_or_permanent_return import apply_opponent_spell_or_permanent_return
 
         return apply_opponent_spell_or_permanent_return(host, effect, actor=actor, reason=reason)
@@ -804,6 +809,10 @@ def _apply_mill(
     reason: str,
 ) -> Any:
     del operation
+    from ..rules.source_counter_mill_choice import COMMIT_FIELD, commit_source_counter_mill
+
+    if COMMIT_FIELD in effect:
+        return commit_source_counter_mill(host, effect, actor=actor, reason=reason)
     if "scope" in effect:
         from ..milling import mill_player_batch, mill_request
         from ..query_effect_amount_model import OPPONENT_HAND_MILL_KIND, OpponentHandMillCount
@@ -961,6 +970,10 @@ def _apply_exile_all(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.airbend import apply_airbend_creature_set, uses_airbend_creature_set
+
+    if uses_airbend_creature_set(effect):
+        return apply_airbend_creature_set(host, effect, actor=actor, reason=reason)
     specification = dict(effect.get("filter") or {})
     specification.setdefault("zones", ["battlefield"])
     specification.setdefault("categories", ["permanent"])
@@ -1122,9 +1135,19 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.combat_keyword_share import VERSION as COMBAT_KEYWORD_SHARE_VERSION
     from ..rules.same_name_creature_modifiers import SAME_NAME_STAT_VERSION_FIELD, resolve_same_name_creature_stats
     from ..rules.target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION
+    from .combat_keyword_share import apply_combat_keyword_share
 
+    if COMBAT_KEYWORD_SHARE_VERSION in effect:
+        return apply_combat_keyword_share(host, effect, actor=actor)
+    from ..rules.counter_snapshot_protection import FIELD as COUNTER_SNAPSHOT_FIELD
+
+    if COUNTER_SNAPSHOT_FIELD in effect:
+        from .counter_snapshot_protection import apply_counter_snapshot_protection
+
+        return apply_counter_snapshot_protection(host, effect, actor=actor, reason=reason)
     if TARGET_PLAYER_STAT_UNTAP_VERSION in effect:
         return _apply_target_player_stats_then_untap(host, effect, actor=actor, reason=reason)
     if SAME_NAME_STAT_VERSION_FIELD in effect:
@@ -1569,7 +1592,7 @@ HANDLERS = {
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'move_if_in_zone': apply_move_if_in_zone,
     'pump_controlled_creatures': _apply_pump_controlled_creatures,
-    REANIMATE_OPERATION: _apply_reanimate,
+    REANIMATE_OPERATION: wrap_gift_reanimation(_apply_reanimate),
     'reveal_top_permanent': _apply_reveal_top_permanent,
     'sacrifice': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'shuffle_graveyard_bottom_random': _apply_shuffle_graveyard_bottom_random,

@@ -6,7 +6,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
 from ..discover_model import (DISCOVER_CAPABILITY, DISCOVER_CAST_OPERATION, EXILE_CAST_CHOICE_OPERATIONS,
-    EXILE_CAST_FINISH_OPERATIONS, ExileCastProgress,DiscoverCastIntent,DiscoverCleanupIntent,discover_options_fingerprint,
+    EXILE_CAST_FINISH_OPERATIONS, ExileCastProgress, DiscoverCastIntent, DiscoverCleanupIntent,
+    RecordedDiscoverCard, discover_options_fingerprint,
     discover_zone_counter,require_current_discover_cards)
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.zone_move_intent import ZoneMoveIntent
@@ -53,6 +54,10 @@ def _progress(effect, actor, query, *, stack_ref, stack_controller, finishing=Fa
     if not finishing and progress.candidate is None:
         raise SemanticChoiceError('Discover casting requires its final discovered card')
     require_current_discover_cards(progress,query,actor=actor,include_candidate=not finishing)
+    if progress.recorded_card is not None and progress.exiled and (not finishing or progress.candidate is None):
+        last = query.object(progress.exiled[-1].ref, zones=('exile',))
+        if last is None or RecordedDiscoverCard.from_public_value(last.mana_value) != progress.recorded_card:
+            raise SemanticChoiceError('Discover lost the recorded mana value of its last exile')
     return progress
 
 
@@ -80,7 +85,8 @@ class DiscoverCastChoiceHandler:
         if finishing:
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 preparation_intents=(DiscoverCleanupIntent(context.actor,context.stack_ref,progress),),
-                auto_continue=AutoContinue(reason='The Discover procedure completed; resume the enclosing instruction.'))
+                auto_continue=AutoContinue(reason='The Discover procedure completed; resume the enclosing instruction.',
+                    committed_effects_from_result=0 if progress.recorded_card is not None else None))
         if self.operation not in EXILE_CAST_CHOICE_OPERATIONS:
             raise SemanticChoiceError('Unknown resolving exile-cast choice operation')
         options=tuple(context.query.authorized_cast_options())

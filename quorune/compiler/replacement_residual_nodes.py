@@ -26,6 +26,22 @@ def _balanced_reminder_delimiters(line):
     return depth==0
 
 
+def _owned_damage_result_replacement(material_line, *, spell, compile_effect, source_name):
+    normalized = material_line.casefold()
+    if spell and "excess damage is dealt" in normalized:
+        from ..creature_power_damage_model import TRAMPLE_BITE_CAPABILITY
+        from ..rules.creature_power_damage_capability_shapes import fixed_creature_power_damage_node_capabilities
+
+        _, effects, schema, mechanics = compile_effect(material_line, card_name=source_name)
+        return TRAMPLE_BITE_CAPABILITY in fixed_creature_power_damage_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics,
+        )
+    if "would die this turn, exile it instead." not in normalized:
+        return False
+    body = material_line if spell else material_line.partition(": ")[2]
+    return bool(body and DAMAGE_DEATH_EXILE_MECHANIC in compile_effect(body, card_name=source_name)[3])
+
+
 def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
         spell,permanent,record,oracle_text,compile_effect,residuals):
     if not _REPLACEMENT_MARKERS.search(material_line):
@@ -36,6 +52,16 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=bool(record.faces)):
         return None
+    if spell and material_line.casefold().startswith("draw x cards."):
+        from ..rules.announced_x_draw_replacement import TEMPLATE
+        from .declared_effect_amounts import declared_spell_effect_compiler
+
+        declared = declared_spell_effect_compiler(
+            record, is_spell=True, oracle_text=oracle_text, compile_effect=compile_effect,
+        )
+        template = declared(material_line, card_name=source_name)[0]
+        if template is not None and TEMPLATE in template.split("+"):
+            return None
     if spell and "damage that would reduce your life total" in material_line.casefold():
         from ..rules.turn_match_outcome_protection import TURN_OUTCOME_TEMPLATE
         from .damage_permission_templates import turn_damage_prevention_template
@@ -121,10 +147,8 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
 
         if next_draw_replacement_template(body) is not None:
             return None
-    if 'would die this turn, exile it instead.' in material_line.casefold():
-        body = material_line if spell else material_line.partition(': ')[2]
-        if body and DAMAGE_DEATH_EXILE_MECHANIC in compile_effect(body, card_name=source_name)[3]:
-            return None
+    if _owned_damage_result_replacement(material_line, spell=spell, compile_effect=compile_effect, source_name=source_name):
+        return None
     residual_id=append_residual(residuals,kind='replacement_effect',text=line,span=span,
         reason='replacement/prevention ordering is not compiled',blockers=(
             'replacement applicability','affected-player ordering',

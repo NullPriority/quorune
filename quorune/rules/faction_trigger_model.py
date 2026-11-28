@@ -8,13 +8,15 @@ from ..attack_batch_model import (
     DIRECT_PLAYER_ATTACK_EVENT,
     direct_player_attack_condition,
 )
-from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, ENTRY_FACTION_CAPABILITY
+from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, ENTRY_FACTION_CAPABILITY, ENTRY_MARDU_JESKAI_CAPABILITY
 
 
 FACTION_RESULT_FIELD = "faction_result"
 FACTION_CONDITION_FIELD = "source_annotation.chosen_faction"
 FACTION_DRAW_CAPABILITY = "zone.draw.opponents_committed_followup"
 FACTION_RAD_CAPABILITY = "counter.producer.declared_attack_rad"
+FACTION_UPKEEP_TOKEN_CAPABILITY = "trigger.condition.jeskai_upkeep_token"
+FACTION_ATTACK_MULTIPLIER_CAPABILITY = "trigger.participation.mardu_attack_multiplier"
 FACTION_AFTER_DRAW_ACTION = "count_faction_draw"
 FACTION_DRAW_OBSERVER_FIELD = "faction_draw_observer"
 FACTION_DRAW_RECEIPT_FIELD = "_faction_draw_receipt"
@@ -49,7 +51,7 @@ class CountFactionDraw:
 
 
 def faction_event(choice):
-    if choice == "Brotherhood":
+    if choice in {"Brotherhood", "Jeskai"}:
         return "step.begin"
     if choice == "Enclave":
         return DIRECT_PLAYER_ATTACK_EVENT
@@ -58,7 +60,7 @@ def faction_event(choice):
 
 def faction_condition(choice):
     faction = {"field": FACTION_CONDITION_FIELD, "op": "eq", "value": choice}
-    if choice == "Brotherhood":
+    if choice in {"Brotherhood", "Jeskai"}:
         return {"all": [
             {"field": "player", "op": "eq", "value": "$source.controller"},
             {"field": "step", "op": "eq", "value": "upkeep"},
@@ -70,6 +72,10 @@ def faction_condition(choice):
 
 
 def faction_effects(choice):
+    if choice == "Jeskai":
+        from ..fixed_token_production import temporary_haste_lifelink_goblin_effect
+
+        return (temporary_haste_lifelink_goblin_effect(),)
     if choice == "Brotherhood":
         return tuple({"op": op, "schema_version": 1, FACTION_RESULT_FIELD: role} for op, role in _BROTHERHOOD_DRAW_EFFECTS)
     if choice == "Enclave":
@@ -88,6 +94,13 @@ def validate_faction_instruction(effect):
 
 
 def faction_branch_capabilities(choice):
+    if choice == "Jeskai":
+        from .token_creation_capability_shapes import created_token_haste_closure
+
+        token, = faction_effects(choice)
+        return (ENTRY_DESIGNATION_CAPABILITY, ENTRY_MARDU_JESKAI_CAPABILITY,
+                FACTION_UPKEEP_TOKEN_CAPABILITY, "trigger.effect.fixed_event", "trigger.placement.apnap",
+                *created_token_haste_closure(token)[0])
     common = (ENTRY_DESIGNATION_CAPABILITY, ENTRY_FACTION_CAPABILITY, "trigger.placement.apnap")
     if choice == "Brotherhood":
         return (*common, FACTION_DRAW_CAPABILITY, "zone.draw.library_to_hand", "trigger.effect.fixed_event")

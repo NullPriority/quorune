@@ -89,6 +89,10 @@ class AffectedPermanentSetSpec:
             raise AffectedPermanentSetError(
                 "Affected permanent source exclusion must be boolean"
             )
+        if (self.mana_value_filter is not None and self.mana_value_filter.uses_cast_spell_mana_value
+                and (self.query != ObjectQuerySpec(zones=("battlefield",))
+                     or self.controller_relation is not PermanentControllerRelation.ANY or self.exclude_source)):
+            raise AffectedPermanentSetError("A committed spell value selects all matching battlefield permanents")
         if self.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
             _nonempty(
                 self.target_controller,

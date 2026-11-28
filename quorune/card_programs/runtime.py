@@ -186,6 +186,13 @@ class _FixedPublicStateSnapshotResolver:
             return maximum_opponent_creature_count(
                 self.state, source.controller, public_object_resolver=self._public_object,
             ) if source is not None else None
+        if condition.fact is FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT:
+            from ..public_characteristic_aggregates import current_greatest_artifact_mana_value_control
+
+            result = current_greatest_artifact_mana_value_control(
+                self.state, source.controller, self._public_object,
+            )
+            return int(result) if result is not None else None
         if condition.fact in GREATEST_CREATURE_POWER_FACTS:
             return self._greatest_creature_power_result(source, condition)
         if condition.aggregate is not None:
@@ -257,6 +264,11 @@ class _FixedPublicStateSnapshotResolver:
             return committed_token_count(self.state, source.controller)
         if fact is FixedPublicStateFact.SOURCE_RENOWNED:
             return int(source.zone == 'battlefield' and not source.phased_out and source.renowned)
+        if fact is FixedPublicStateFact.SOURCE_JESKAI_TEMUR_TEMUR_CHOSEN:
+            from ..entry_designations import EntryDesignationKind
+
+            return int(source.zone == "battlefield" and not source.phased_out
+                       and source.annotations.get(EntryDesignationKind.JESKAI_TEMUR_FACTION.annotation) == "Temur")
         if fact is FixedPublicStateFact.SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER:
             from ..rules.impending import has_paid_impending_time_counter
 
@@ -300,8 +312,9 @@ class _FixedPublicStateSnapshotResolver:
         if self.public_object_resolver is None:
             return None
         rows = tuple(
-            self._public_object(self.state.cards[object_id])
+            self._public_object(card)
             for object_id in self.state.players[source.controller].zones["graveyard"]
+            if (card := self.state.cards[object_id]).is_card_object
         )
         if any(row is None for row in rows):
             return None
@@ -340,6 +353,9 @@ class _FixedPublicStateSnapshotResolver:
             return sum(event.actor==controller for event in events('crime_committed'))
         if fact is FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN:
             return sum(event.actor == controller for event in events("creature_attacked"))
+        if fact is FixedPublicStateFact.CONTROLLER_DISTINCT_CREATURES_ATTACKED_THIS_TURN:
+            return len({event.object_incarnation for event in events("creature_attacked")
+                        if event.actor == controller and event.object_incarnation is not None})
         if fact is FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN:
             if history.departure_history_version != 1:
                 return None
@@ -1019,6 +1035,13 @@ def _continuous_component_source_context(
     """Prepare the typed current-source facts used by one registered component."""
     from ..entry_designations import LINKED_COLOR_PROTECTION_HANDLER_ID
     from ..soulbond_model import SOULBOND_GRANT_HANDLER
+    from ..semantic_runtime.quantified_anthems import recipient_attack_history_facts
+
+    from ..linked_card_type import PROTECTION_HANDLER, bound_card_type
+
+    linked_card_type = (
+        bound_card_type(source, program.key) if descriptor.get("handler_id") == PROTECTION_HANDLER else None
+    )
     linked_color = None
     if descriptor.get("handler_id") == LINKED_COLOR_PROTECTION_HANDLER_ID:
         from ..rules.chosen_color_target_shapes import current_linked_entry_color
@@ -1061,13 +1084,15 @@ def _continuous_component_source_context(
         source_designations=FrozenMap({
             key: value
             for key, value in (getattr(source, "annotations", {}) or {}).items()
-            if key in {"chosen_color", "chosen_creature_type"}
+            if key in {"chosen_color", "chosen_creature_type", "chosen_basic_land_type"}
         }),
         public_state=public_state,
         resolved_quantity=resolved_quantity,
+        recipient_attack_counts=recipient_attack_history_facts(state, descriptor),
         paired_object=paired_object,
         linked_player=linked_player,
         linked_color=linked_color,
+        linked_card_type=linked_card_type,
         linked_characteristic_cards=linked_characteristic_cards,
         linked_ability_pair=linked_ability_pair,
         source_commander_colors=source_commander_colors,

@@ -1,7 +1,10 @@
 from __future__ import annotations
 from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
+from .qualified_zone_event_bindings import ATTACHED_PLAYER_CREATURE_ENTRY_VARIANT
 from .designation_event_bindings import DESIGNATION_EVENT_VARIANTS
+from ..rules.phase_occurrence_model import PHASE_IN_TOKEN_VARIANT, SPELL_TARGET_PHASE_OUT_VARIANT
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
+from ..event_card_return import OTHER_LEGENDARY_HAND_RETURN_VARIANT
 from ..rules.enchanted_departure_events import ENCHANTED_DEPARTURE_VARIANT
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_VARIANTS
 from ..dungeon_progress import DUNGEON_COMPLETION_TRIGGER_VARIANT
@@ -16,10 +19,14 @@ ATTACHED_CREATURE_ATTACK_VARIANTS = frozenset({"enchanted_creature_attacks", "eq
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_attacks_unblocked',
+        PHASE_IN_TOKEN_VARIANT,
+        SPELL_TARGET_PHASE_OUT_VARIANT,
         "source_transforms_into",
+        OTHER_LEGENDARY_HAND_RETURN_VARIANT,
         "controlled_permanent_transforms_into",
         DAMAGE_PERMANENT_VARIANT,
         *DIRECT_PLAYER_ATTACK_VARIANTS,
+        ATTACHED_PLAYER_CREATURE_ENTRY_VARIANT,
         "controlled_face_down_permanent_enters",
         "controller_turns_up_permanent",
         "controlled_permanent_turned_face_up",

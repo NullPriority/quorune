@@ -174,6 +174,10 @@ def mana_modes_for_ability(
     ability: ActivatedAbility,
 ) -> tuple[ManaMode, ...]:
     """Return the output modes for one selected activated mana ability."""
+    from .fixed_mana_results import doubles_unspent_mana
+
+    if doubles_unspent_mana(ability):
+        return (ManaMode(normalize_mana_bundle(None), double_unspent=True),)
 
     from .artifact_hand_mana_model import is_artifact_hand_mana
     if is_artifact_hand_mana(ability):
@@ -416,8 +420,9 @@ def typed_mana_modes_for_abilities(
 
 def has_ordinary_mana_mode_price(ability: ActivatedAbility) -> bool:
     from .rules.exert_mana import is_exert_mana
+    from .fixed_mana_results import doubles_unspent_mana
 
-    if is_exert_mana(ability):
+    if is_exert_mana(ability) or doubles_unspent_mana(ability):
         return True
     spec = ability.color_set_mana_output
     return (chosen_subtype_mana_output(ability) is not None
@@ -459,7 +464,7 @@ def payable_mana_modes(
             for color in "WUBRGC"
             if int(mode.bundle.get(color, 0))
         )
-        if key or mode.artifact_hand_mana is not None:
+        if key or mode.artifact_hand_mana is not None or mode.double_unspent:
             result.setdefault((key, mode.price.key if mode.price else None, mode.tap_mana_multipliers,
                                mode.artifact_hand_mana,
                                mode.restriction if is_source_bound_cast_mana(mode.restriction) else None), mode)
@@ -476,6 +481,14 @@ def mana_output_for_ability(
     source_information=None,
 ) -> dict[str, int]:
     """Validate the submitted output against the advertised mode set."""
+    from .fixed_mana_results import doubles_unspent_mana
+
+    if doubles_unspent_mana(ability):
+        output = normalize_mana_bundle(host.state.players[seat].mana_pool)
+        if ("mana_output" in response and normalize_mana_bundle(response["mana_output"]) != output
+                or response.get("mana_choice")):
+            raise GameRuleError("Mana doubling output must match the unspent pool after payment")
+        return output
 
     if public_quantity_output(ability) is not None:
         return select_public_quantity_mana(host, seat, source, ability, response,

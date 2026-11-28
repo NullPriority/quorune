@@ -153,6 +153,10 @@ def life_payment_prohibited(host, player: str) -> bool:
 
 
 def life_permissions_for_choice(host, effect):
+    from ..library_order_model import uses_paid_private_top_cycle
+
+    if uses_paid_private_top_cycle(effect):
+        return collect_life_gain_permissions(host)
     upkeep_gives_life = (
         effect.get("op") == "offer_optional_mana_payment"
         and effect.get("schema_version") == 10

@@ -1,5 +1,6 @@
 """The original Fetch Quest selects from the public results of its own Mill."""
 
+from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import json
@@ -36,6 +37,7 @@ class CommittedMillBattlefieldTests(InheritedNativeFixture, unittest.TestCase):
             "activation-result-views-cards.json": {"Llanowar Elves"},
             "any-number-target-cards.json": {"Pacifism"},
             "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains"},
+            "committed-milled-creature-tokens-cards.json": {"Rest in Peace"},
         }
         fixtures = [fixture_dir / "mill-committed-battlefield-cards.json"]
         for filename, names in support.items():
@@ -195,4 +197,185 @@ class CommittedMillBattlefieldTests(InheritedNativeFixture, unittest.TestCase):
         self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in cards))
         self.assertEqual("graveyard", game.state.cards[preexisting.object_id].zone)
         self.assertEqual("exile", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+
+    def begin_ripples(self, game, *, active="A", first=True, mana=1):
+        from quorune.engine import TURN_STEPS
+
+        if mana:
+            self.add(game.engine, "Generic Bound Plains", seat=active, ref="ripples-payment-land")
+        self.prepare(game, actor=active, active=active)
+        engine = game.engine
+        engine.permissions.invalidate_current()
+        game.state.pending_decision = None
+        requested = ("precombat_main", "main") if first else ("postcombat_main", "main")
+        phase = TURN_STEPS.index(requested)
+        game.state.phase_index = phase - 1
+        game.state.phase, game.state.step = TURN_STEPS[phase - 1]
+        engine._grant_priority(active)
+        engine.pump()
+        self.checkpoint(game)
+        self.until(game, lambda current: current.state.phase == requested[0] and current.state.step == requested[1])
+
+    def test_ripples_pays_after_first_main_mill_selects_only_its_public_cards_and_replays(self):
+        game = self.session(50501001)
+        game.state.config.semantic_policy = "trusted_only"
+        ripples = self.add(game.engine, "Ripples of Undeath")
+        rest = self.add(game.engine, "Rest in Peace", seat="C")
+        unrelated = self.add(game.engine, "Forest", zone="exile", ref="ripples-old-exile")
+        private = self.add(game.engine, "Counterspell", seat="D", zone="hand", ref="ripples-private")
+        cards = self.arrange_mill(game, ["Llanowar Elves", "Lightning Bolt", "Forest", "Sol Ring"])
+        for card in (ripples, rest):
+            self.assert_closed(game, card)
+        self.begin_ripples(game)
+        trigger, = game.state.stack
+        self.assertEqual(ripples.object_id, trigger.source_object_id)
+        self.assertEqual([], trigger.targets)
+        life = game.state.players["A"].life
+
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        self.assertEqual(["exile"] * 3 + ["library"], [game.state.cards[card.object_id].zone for card in cards])
+        self.assertEqual(life, game.state.players["A"].life)
+        self.assertFalse(game.state.cards["fixture:ripples-payment-land"].tapped)
+        game = self.replay(game, load=True)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:D", {"action_id": "choose", "pay": True}).ok)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "pay": 1}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        payment = game.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(payment.ok, payment.summary)
+        self.assertEqual(life - 3, game.state.players["A"].life)
+        self.assertTrue(game.state.cards["fixture:ripples-payment-land"].tapped)
+        game = self.replay(game, load=True)
+        offered = json.dumps(game.packet("pilot:A", full=True)["decision"]["ctx"])
+        self.assertTrue(all(card.ref in offered for card in cards[:3]))
+        self.assertNotIn(unrelated.ref, offered)
+        self.assertNotIn(cards[3].ref, offered)
+        self.assertNotIn(private.ref, offered)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id": "choose", "card": unrelated.ref}).ok)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "card": cards[0].ref}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        selected = game.act("pilot:A", {"action_id": "choose", "card": cards[1].ref})
+        self.assertTrue(selected.ok, selected.summary)
+        self.assertEqual("hand", game.state.cards[cards[1].object_id].zone)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "exile" for card in (cards[0], cards[2], unrelated)))
+        self.replay(game, load=True)
+
+    def test_ripples_decline_unpayable_and_empty_mill_keep_their_own_boundaries(self):
+        for case in ("decline", "life_missing", "mana_missing", "empty"):
+            with self.subTest(case=case):
+                game = self.session(50501002 + len(case))
+                game.state.config.semantic_policy = "trusted_only"
+                self.add(game.engine, "Ripples of Undeath")
+                cards = self.arrange_mill(game, ["Forest", "Sol Ring", "Counterspell"])
+                actor = game.state.players["A"]
+                if case == "life_missing":
+                    actor.life = 2
+                if case == "empty":
+                    for object_id in tuple(actor.zones["library"]):
+                        game.engine.move_card(object_id, "graveyard", log=False)
+                mana = 0 if case == "mana_missing" else 1
+                self.begin_ripples(game, mana=mana)
+                life = actor.life
+                pending = self.resolve(game)
+                if case in ("decline", "empty"):
+                    self.assertEqual("semantic.choice", pending.kind)
+                    result = game.act("pilot:A", {"action_id": "choose", "pay": case == "empty"})
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.assertIsNone(pending)
+                self.assertFalse(game.state.stack)
+                actor = game.state.players["A"]
+                self.assertEqual(life - (3 if case == "empty" else 0), actor.life)
+                if mana:
+                    self.assertEqual(case == "empty", game.state.cards["fixture:ripples-payment-land"].tapped)
+                self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in cards))
+                self.replay(game, load=True)
+
+    def test_ripples_does_not_trigger_on_opponent_first_main_or_own_second_main(self):
+        for active, first in (("B", True), ("A", False)):
+            with self.subTest(active=active, first=first):
+                game = self.session(50501013 + int(first))
+                game.state.config.semantic_policy = "trusted_only"
+                self.add(game.engine, "Ripples of Undeath")
+                before = len(game.state.players["A"].zones["library"])
+                self.begin_ripples(game, active=active, first=first)
+                self.assertFalse(game.state.stack)
+                self.assertEqual(before, len(game.state.players["A"].zones["library"]))
+                self.replay(game, load=True)
+
+    def test_ripples_exact_phase_price_and_mill_result_shape_fail_closed(self):
+        from dataclasses import replace
+        from test_fixed_public_alternative_costs import card_record
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.mill_paid_hand_return import MILL_PAID_HAND_CAPABILITY
+        from test_controller_creature_keyword_absence import register_card
+
+        text = ("At the beginning of your first main phase, mill three cards. Then you may pay "
+                "{1} and 3 life. If you do, put a card from among those cards into your hand.")
+        base = card_record(text, type_line="Enchantment", keywords=("Mill",))
+        profile = "commander_review"
+        def compile_source(source=base):
+            return compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+
+        ir = compile_source()
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        for changed in (text.replace("{1}", "{X}"), text.replace("3 life", "0 life"),
+                        text.replace("those cards", "cards in your graveyard"), text.replace("three", "100")):
+            self.assertNotEqual("exact", compile_source(replace(base, oracle_text=changed)).status)
+        with patch("quorune.compiler.mill_templates.committed_mill_card_template", return_value=None):
+            self.assertNotEqual("exact", compile_source().status)
+
+        name = "Ripples of Undeath"
+        report, semantics = register_card(self.db, self.registry, name)
+        self.assertTrue(report["strict_capability_ready"], report)
+        program, = semantics.programs_for_oracle(self.db.lookup(name).oracle_id)
+        broken_condition = deepcopy(program.event_condition)
+        broken_condition["all"][-1]["value"] = "postcombat_main"
+        invalid = bind_semantic_program_runtime(replace(program, event_condition=broken_condition),
+                                               capability_registry=self.registry, profile=profile)
+        self.assertFalse(invalid["strict"], invalid)
+        required = tuple(cap for cap in program.capability_dependencies if cap != MILL_PAID_HAND_CAPABILITY)
+        invalid = bind_semantic_program_runtime(
+            replace(program, capability_dependencies=required,
+                    capability_closure=self.registry.closure(required, profile=profile).to_dict()),
+            capability_registry=self.registry, profile=profile,
+        )
+        self.assertIn("capability:undeclared_runtime_dependency:" + MILL_PAID_HAND_CAPABILITY, invalid["blockers"])
+
+
+    def test_ripples_short_mill_allows_exact_life_payment_before_state_based_loss(self):
+        game = self.session(50501031)
+        game.state.config.semantic_policy = "trusted_only"
+        self.add(game.engine, "Ripples of Undeath")
+        card, = self.arrange_mill(game, ["Forest"])
+        actor = game.state.players["A"]
+        for object_id in tuple(actor.zones["library"]):
+            if object_id != card.object_id:
+                game.engine.move_card(object_id, "graveyard", log=False)
+        actor.life = 3
+        self.begin_ripples(game)
+        pending = self.resolve(game)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.assertEqual("graveyard", game.state.cards[card.object_id].zone)
+        payment = game.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(payment.ok, payment.summary)
+        actor = game.state.players["A"]
+        self.assertEqual(0, actor.life)
+        self.assertTrue(actor.in_game)
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        game = self.replay(game, load=True)
+        moved = game.act("pilot:A", {"action_id": "choose", "card": card.ref})
+        self.assertTrue(moved.ok, moved.summary)
+        self.assertFalse(game.state.players["A"].in_game)
+        to_hand = next(event.event_id for event in game.state.events if event.code == "zone.move"
+                       and card.object_id in event.changed_objects and event.details["to"] == "hand")
+        elimination = next(event.event_id for event in game.state.events if event.code == "player.eliminated"
+                           and event.actor == "A")
+        self.assertLess(to_hand, elimination)
+        self.assertEqual("outside", game.state.cards[card.object_id].zone)
         self.replay(game, load=True)

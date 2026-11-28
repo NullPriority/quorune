@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Hanweir Battlements",
+      "oracle_id": "0e735ba6-7fd1-4d12-b20c-21525dc1e2b5",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "{T}: Add {C}.\n{R}, {T}: Target creature gains haste until end of turn.\n{3}{R}{R}, {T}: If you both own and control this land and a creature named Hanweir Garrison, exile them, then meld them into Hanweir, the Writhing Township.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Meld"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "meld",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Hanweir Garrison",
+      "oracle_id": "7cb29569-48e1-4782-9906-fad155ebfafe",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Whenever this creature attacks, create two 1/1 red Human creature tokens that are tapped and attacking.\n(Melds with Hanweir Battlements.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "meld",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Hanweir, the Writhing Township",
+      "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
+      "mana_cost": "",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Eldrazi Ooze",
+      "oracle_text": "Trample, haste\nWhenever Hanweir attacks, create two 3/2 colorless Eldrazi Horror creature tokens that are tapped and attacking.",
+      "power": "7",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "meld",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0e735ba6-7fd1-4d12-b20c-21525dc1e2b5",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "For more information on meld cards, see the Eldritch Moon mechanics article (https://magic.wizards.com/en/articles/archive/feature/eldritch-moon-mechanics-2016-06-27)."
+    },
+    {
+      "oracle_id": "0e735ba6-7fd1-4d12-b20c-21525dc1e2b5",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Although the tokens created by the triggered ability are attacking, they were never declared as attacking creatures (for the purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "0e735ba6-7fd1-4d12-b20c-21525dc1e2b5",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If another ability of a source you control triggers when attackers are declared, such as that of Hamlet Captain, you may have it resolve before or after that of Hanweir Garrison (or Hanweir, the Writhing Township). If that ability has targets, it won’t be able to target the tokens."
+    },
+    {
+      "oracle_id": "0e735ba6-7fd1-4d12-b20c-21525dc1e2b5",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You choose which player, planeswalker, or battle each token is attacking as you create the tokens. It doesn’t have to be the same one that Hanweir Garrison (or Hanweir, the Writhing Township) is attacking, and the tokens don’t both have to attack the same player, planeswalker, or battle."
+    },
+    {
+      "oracle_id": "7cb29569-48e1-4782-9906-fad155ebfafe",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "For more information on meld cards, see the Eldritch Moon mechanics article (https://magic.wizards.com/en/articles/archive/feature/eldritch-moon-mechanics-2016-06-27)."
+    },
+    {
+      "oracle_id": "7cb29569-48e1-4782-9906-fad155ebfafe",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Although the tokens created by the triggered ability are attacking, they were never declared as attacking creatures (for the purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "7cb29569-48e1-4782-9906-fad155ebfafe",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If another ability of a source you control triggers when attackers are declared, such as that of Hamlet Captain, you may have it resolve before or after that of Hanweir Garrison (or Hanweir, the Writhing Township). If that ability has targets, it won’t be able to target the tokens."
+    },
+    {
+      "oracle_id": "7cb29569-48e1-4782-9906-fad155ebfafe",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You choose which player, planeswalker, or battle each token is attacking as you create the tokens. It doesn’t have to be the same one that Hanweir Garrison (or Hanweir, the Writhing Township) is attacking, and the tokens don’t both have to attack the same player, planeswalker, or battle."
+    },
+    {
+      "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
+      "published_at": "2016-07-13",
+      "source": "wotc",
+      "comment": "For more information on meld cards, see the Eldritch Moon mechanics article (https://magic.wizards.com/en/articles/archive/feature/eldritch-moon-mechanics-2016-06-27)."
+    },
+    {
+      "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Although the tokens created by the triggered ability are attacking, they were never declared as attacking creatures (for the purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If another ability of a source you control triggers when attackers are declared, such as that of Hamlet Captain, you may have it resolve before or after that of Hanweir Garrison (or Hanweir, the Writhing Township). If that ability has targets, it won’t be able to target the tokens."
+    },
+    {
+      "oracle_id": "f4905c40-003e-4992-b8d7-3f07ba09c686",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You choose which player, planeswalker, or battle each token is attacking as you create the tokens. It doesn’t have to be the same one that Hanweir Garrison (or Hanweir, the Writhing Township) is attacking, and the tokens don’t both have to attack the same player, planeswalker, or battle."
+    }
+  ]
+}

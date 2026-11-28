@@ -180,6 +180,29 @@ def _limit_cast_cost_option_x(options, maximum):
     return tuple(remaining)
 
 
+def _restrict_cast_cost_option_x_parity(options, permissions):
+    if permissions is None or all(permissions):
+        return options
+    if not any(permissions):
+        return ()
+    parity = 0 if permissions[0] else 1
+    result = []
+    for option in options:
+        value = option.to_dict()
+        bounds = value.get("choice_schema", {}).get("x")
+        if bounds is None:
+            if permissions[0]:
+                result.append(option)
+            continue
+        minimum = bounds["minimum"] + (parity - bounds["minimum"]) % 2
+        maximum = bounds["maximum"] - (bounds["maximum"] - parity) % 2
+        if minimum > maximum:
+            continue
+        bounds.update(minimum=minimum, maximum=maximum, default=minimum, step=2)
+        result.append(CastCostOption.from_dict(value))
+    return tuple(result)
+
+
 def build_cast_cost_options(
     host: CastCostHost,
     seat: str,
@@ -199,13 +222,19 @@ def build_cast_cost_options(
     """Offer the selected face's payable choices under its current zone permission."""
     from .costs import _cast_cost_options_for_submission
     from .source_placement import casting_affordability_host
-    from ...semantic_runtime.static_cast_rules import static_cast_maximum_x
+    from ...semantic_runtime.static_cast_rules import opponent_cast_x_permissions, static_cast_maximum_x
     from ..player_capped_land_reveal import source_limited_cast_x
 
     submission = dict(response or {})
     face = {"type_line": cast_type_line} if cast_type_line is not None else None
     maximum = source_limited_cast_x(host, program, static_cast_maximum_x(host, seat, card, face=face))
     if maximum is not None and int(submission.get("x") or 0) > maximum:
+        return ()
+    permissions = opponent_cast_x_permissions(
+        host, seat, card, face=face, face_down=cast_type_line is not None and suppress_source_costs,
+    )
+    if permissions is not None and (not any(permissions) or
+            submission.get("x") is not None and not permissions[int(submission["x"]) % 2]):
         return ()
     host = casting_affordability_host(host, card)
     price = partial(_cast_cost_options_for_submission, host, seat, card, program,
@@ -217,7 +246,9 @@ def build_cast_cost_options(
         announced_x = announcement.get("x")
         if maximum is not None and announced_x is not None and int(announced_x) > maximum:
             return ()
-        return _limit_cast_cost_option_x(price(announcement, **options), maximum)
+        return _restrict_cast_cost_option_x_parity(
+            _limit_cast_cost_option_x(price(announcement, **options), maximum), permissions,
+        )
 
     if resolving_library_authority and (card.zone!='library' or not force_without_mana_cost or not ignore_timing):
         raise ValueError('Resolving library authority requires its explicit free resolution cast')
@@ -226,10 +257,19 @@ def build_cast_cost_options(
         life_price_options = _library_top_life_variants(
             host, seat, card, submission, build, face_down=suppress_source_costs,
         )
+    if card.zone == "exile" and alternative_base is None and not force_without_mana_cost and not ignore_timing:
+        from ...semantic_runtime.linked_graveyard_exile_play import controller_linked_graveyard_exile_permissions
+        from .linked_exile_life import has_separate_exile_cast_authority, linked_exile_life_variants
+
+        if controller_linked_graveyard_exile_permissions(host, seat, card):
+            linked = linked_exile_life_variants(host, seat, card, submission, build, face_down=suppress_source_costs)
+            ordinary = build(submission, minimum_library_x=0) if has_separate_exile_cast_authority(host, seat, card) else ()
+            return (*ordinary, *linked)
     minimum = 0 if resolving_library_authority else _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
     if not (hint and minimum and submission.get('x') is None):
         return (*build(submission, minimum_library_x=minimum), *life_price_options)
-    static = build({**submission, 'x': minimum}, minimum_library_x=minimum, source_grant_only=False)
+    preview_x = minimum + int(permissions is not None and not permissions[minimum % 2])
+    static = build({**submission, 'x': preview_x}, minimum_library_x=minimum, source_grant_only=False)
     from .turn_cast_grants import current_turn_cast_grants
 
     if not current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line):
@@ -284,6 +324,12 @@ def validate_library_top_cast_commit(host, seat, card, option, response, *, face
         if TURN_CAST_GRANT_FIELD in option:
             raise ValueError("A library-top life price may only use its own source")
         validate_library_top_life_price(host, seat, card, option, response, face_down=face_down)
+        return
+    from .linked_exile_life import LINKED_EXILE_LIFE_PRICE_FIELD, validate_linked_exile_life_price
+    if LINKED_EXILE_LIFE_PRICE_FIELD in option:
+        if TURN_CAST_GRANT_FIELD in option:
+            raise ValueError("A linked-exile life price may only use its own source")
+        validate_linked_exile_life_price(host, seat, card, option, response, face_down=face_down)
         return
     if card.zone != 'library' or TURN_CAST_GRANT_FIELD in option:
         return

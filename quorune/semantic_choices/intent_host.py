@@ -260,6 +260,7 @@ class SemanticChoiceIntentHostMixin:
             return resolve_destruction_set(
                 self,
                 actor=intent.actor,
+                ordered_exclusion=intent.ordered_exclusion,
                 followup=intent.followup,
                 spec=intent.spec,
                 reason=intent.reason,
@@ -348,7 +349,9 @@ class SemanticChoiceIntentHostMixin:
             "chosen_name": ("card.name.chosen", "card_name"),
             "chosen_color": ("color.chosen", "color"),
             "chosen_creature_type": ("creature_type.chosen", "creature_type"),
+            "chosen_basic_land_type": ("land_type.chosen", "basic_land_type"),
             "chosen_faction": ("faction.chosen", "faction"),
+            "chosen_jeskai_temur_faction": ("faction.chosen", "faction"),
             "last_noted_mana_type": ("mana.type.noted", "mana_type"),
         }[annotation_key]
         self._log(
@@ -499,6 +502,24 @@ class SemanticChoiceIntentHostMixin:
                 reason=intent.reason, semantic_events=True, putting_player=intent.actor,
                 replacement_selections=replacement_selections)
             return card.ref if card.zone == 'battlefield' and card.face_down else ''
+        from ..semantic_runtime.entry_enchantment_return_intent import EntryEnchantmentReturnIntent
+
+        if isinstance(intent, EntryEnchantmentReturnIntent):
+            from ..rules.entry_enchantment_setting import EntryEnchantmentSetting
+            from ..zone_transitions import ZoneTransitionOwner
+
+            if not card.is_card_object or card.is_token or card.owner != intent.new_controller:
+                return ""
+            moved = ZoneTransitionOwner(self).move_card(
+                card.object_id, "battlefield", controller=card.owner, tapped=tapped, reason=intent.reason,
+                semantic_events=True, putting_player=intent.actor, replacement_selections=replacement_selections,
+                resolution_entry_enchantment=EntryEnchantmentSetting(intent.entry_source_ref),
+            )
+            return moved.ref if moved.zone == "battlefield" else ""
+        if intent.transformed_entry:
+            from ..linked_exile_return import return_tapped_transformed_graveyard_card
+
+            return return_tapped_transformed_graveyard_card(self, card, intent, replacement_selections)
         if intent.effect_entry_counters:
             prepared_replacement = prepare_zone_change_replacement(
                 self,
@@ -719,9 +740,9 @@ class SemanticChoiceIntentHostMixin:
         ):
             raise GameRuleError("A controller's public top reveal has one exact actor and card")
         if type(intent.retain_public_top_visibility) is not bool or (
-            intent.retain_public_top_visibility and not intent.announce_public_top
+            intent.retain_public_top_visibility and not (intent.announce_public_top or intent.announce_public_prefix)
         ):
-            raise GameRuleError("Only one announced public top card can stay revealed")
+            raise GameRuleError("Only an announced public library reveal can stay revealed")
         if public_top_name is not None and (not intent.public or len(intent.refs_top_first) != 1):
             raise GameRuleError("A public top-card announcement requires one public reveal")
         if type(intent.announce_public_prefix) is not bool or intent.announce_public_prefix and (
@@ -742,7 +763,8 @@ class SemanticChoiceIntentHostMixin:
         if intent.announce_public_prefix:
             from .library_selection_intent_commit import announce_public_library_prefix
 
-            return announce_public_library_prefix(self, intent, tuple(reversed(library[-len(refs):])))
+            if not intent.retain_public_top_visibility:
+                return announce_public_library_prefix(self, intent, tuple(reversed(library[-len(refs):])))
         if intent.announce_public_top:
             card = self.state.cards[library[-1]]
             if card.object_kind != "card":
@@ -764,6 +786,8 @@ class SemanticChoiceIntentHostMixin:
                     set(card.revealed_to).union(viewers)
                 )
             object_ids.append(card.object_id)
+        if intent.announce_public_prefix:
+            return announce_public_library_prefix(self, intent, tuple(object_ids))
         if public_top_name is not None:
             self._log(
                 intent.actor, "library.top.reveal", f"{intent.player} revealed {public_top_name}.",
@@ -927,6 +951,21 @@ class SemanticChoiceIntentHostMixin:
             raise GameRuleError(
                 "Can only reorder the exact known cards currently on top"
             )
+        if type(intent.shuffle_remainder) is not bool:
+            raise GameRuleError("Private top ordering needs a typed shuffle instruction")
+        if intent.shuffle_remainder:
+            if intent.actor != intent.player or intent.viewer != intent.player or not 1 <= len(ids) <= 5:
+                raise GameRuleError("Shuffle and restore requires the controller's exact looked group")
+            from ..zone_transitions import ZoneTransitionOwner
+
+            ZoneTransitionOwner(self).shuffle_library(
+                intent.player, reason=intent.reason, excluded_object_ids=tuple(ids),
+            )
+            if len(ids) > 1:
+                for object_id in ids:
+                    card = self.state.cards[object_id]
+                    card.known_to = [intent.viewer]
+                    card.revealed_to = []
         for object_id in ids:
             library.remove(object_id)
         library.extend(reversed(ids))
@@ -998,7 +1037,8 @@ class SemanticChoiceIntentHostMixin:
                           for ref in intent.object_refs)
             if intent.recipient_identity is not None and (
                     cards[0].logical_object_id != intent.recipient_identity
-                    or cards[0].controller != intent.actor or cards[0].phased_out):
+                    or not intent.source_departure and cards[0].controller != intent.actor
+                    or cards[0].phased_out):
                 return ()
             results = place_counters(
                 self,

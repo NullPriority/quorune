@@ -1,6 +1,7 @@
 """Original land mana damage waits for ordinary priority even during payment."""
 
 from dataclasses import replace
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -445,3 +446,218 @@ class OrdinarySourceManaTapDamageTests(InheritedNativeFixture, unittest.TestCase
             with self.assertRaises(AssertionError):
                 self.test_actual_druid_as_a_forest_shares_ordinary_placement_with_manabarbs()
         omitted.assert_called_once()
+
+
+from optional_result_followup_fixture import OptionalResultFollowupFixture
+
+
+NABBER = "Treasure Nabber"
+
+
+class ArtifactManaTapControlNativeTests(InheritedNativeFixture, unittest.TestCase):
+    actions = OrdinaryLandManaTapDamageTests.actions
+    activate = OrdinaryLandManaTapDamageTests.activate
+    finish_turn = OptionalResultFollowupFixture.finish_turn
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixture_root = ROOT / "tests" / "fixtures"
+        support = {
+            "ordinary-source-mana-tap-damage-cards.json": {NABBER},
+            "ordinary-land-mana-tap-damage-cards.json": {"Plains", "Sol Ring", "Icy Manipulator", "Isamaru, Hound of Konda"},
+            "destroy-original-controller-tokens-cards.json": {"Leaden Myr"},
+            "activation-restriction-material-cards.json": {"Cloudshift"},
+        }
+        files = []
+        for filename, names in support.items():
+            doc = json.loads((fixture_root / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in ids]
+            part = folder / filename
+            part.write_text(json.dumps(doc), encoding="utf-8")
+            files.append(part)
+        path = folder / "artifact-mana-tap-control.sqlite3"
+        build_fixture_database(files, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Opposing artifact mana control", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def nabber(self, game, seat):
+        card = self.add(game.engine, NABBER, seat=seat, ref=f"nabber-{seat}")
+        self.assert_closed(game, card)
+        return card
+
+    @staticmethod
+    def triggers(game):
+        from quorune.rules.artifact_mana_tap_control import ARTIFACT_TAP_FACT
+
+        return [item for item in game.state.stack if item.context.get(ARTIFACT_TAP_FACT) is True]
+
+    @staticmethod
+    def grants(game):
+        from quorune.rules.artifact_mana_tap_control import DURATION
+
+        return [effect for effect in game.state.continuous_effects or () if effect.duration is DURATION]
+
+    def test_overlapping_turns_restore_older_control_at_each_acquiring_controllers_cleanup(self):
+        game = self.session(10612961)
+        self.nabber(game, "B")
+        self.nabber(game, "C")
+        ring = self.add(game.engine, "Sol Ring", ref="overlapping-original-ring")
+        private = self.add(game.engine, "Plains", seat="D", zone="hand", ref="nabber-d-private")
+        self.assert_closed(game, ring)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "A", ring)
+        self.assertEqual(2, game.state.players["A"].mana_pool["C"])
+        triggers = self.triggers(game)
+        self.assertEqual(["B", "C"], [item.controller for item in triggers])
+        self.assertTrue(all(not item.targets and item.context["player"] == "A" for item in triggers))
+        self.resolve_top(game)
+        self.assertEqual("C", game.state.cards[ring.object_id].controller)
+        self.assertTrue(game.state.cards[ring.object_id].tapped)
+        self.resolve_top(game)
+        self.assertEqual("B", game.state.cards[ring.object_id].controller)
+        self.assertTrue(game.state.cards[ring.object_id].tapped)
+        self.assertEqual({"B", "C"}, {effect.operations[0].value for effect in self.grants(game)})
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:B", full=True)))
+        game = self.replay(game, load=True)
+        self.finish_turn(game)
+        self.assertEqual(("B", "B"), (game.state.active_player, game.state.cards[ring.object_id].controller))
+        self.until(game, lambda g: g.state.step == "end_step")
+        self.assertEqual("B", game.state.cards[ring.object_id].controller)
+        self.finish_turn(game)
+        self.assertEqual(("C", "C"), (game.state.active_player, game.state.cards[ring.object_id].controller))
+        self.assertEqual(["C"], [effect.operations[0].value for effect in self.grants(game)])
+        self.finish_turn(game)
+        self.assertEqual(("D", "A"), (game.state.active_player, game.state.cards[ring.object_id].controller))
+        self.assertFalse(self.grants(game))
+        self.replay(game, load=True)
+
+    def test_current_turn_control_survives_cleanup_and_nonmana_taps_stay_unobserved(self):
+        from quorune.continuous_effect_model import ContinuousEffect
+
+        game = self.session(10612962)
+        self.nabber(game, "A")
+        ring = self.add(game.engine, "Sol Ring", seat="B", ref="nabber-opponent-ring")
+        tapper = self.add(game.engine, "Icy Manipulator", seat="B", ref="nabber-nonmana-tapper")
+        land = self.add(game.engine, "Plains", ref="nabber-nonmana-target")
+        game.state.players["B"].mana_pool["C"] = 1
+        self.assert_closed(game, tapper)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "B", tapper, targets=[land.ref], pay="manual", payment={"C": 1})
+        self.assertFalse(self.triggers(game))
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(game.state.cards[tapper.object_id].tapped)
+        self.assertTrue(game.state.cards[land.object_id].tapped)
+        self.assertFalse(self.triggers(game))
+        self.activate(game, "B", ring)
+        self.assertEqual(2, game.state.players["B"].mana_pool["C"])
+        trigger, = self.triggers(game)
+        self.assertEqual(("A", "B", []), (trigger.controller, trigger.context["player"], trigger.targets))
+        self.assertIsNone(self.resolve(game))
+        effect, = self.grants(game)
+        self.assertEqual(game.state.players["A"].turns_begun + 1, effect.controller_cleanup_turn)
+        self.assertEqual(effect, ContinuousEffect.from_dict(effect.to_dict()))
+        for payload in ({**effect.to_dict(), "controller_cleanup_turn": True},
+                        {**effect.to_dict(), "duration": "until_end_of_turn"}):
+            with self.assertRaises(ValueError):
+                ContinuousEffect.from_dict(payload)
+        self.finish_turn(game)
+        self.assertEqual(("B", "A"), (game.state.active_player, game.state.cards[ring.object_id].controller))
+        self.assertEqual([effect], self.grants(game))
+        self.replay(game, load=True)
+
+    def test_blinked_artifact_does_not_receive_the_old_mana_tap_control(self):
+        game = self.session(10612963)
+        self.nabber(game, "A")
+        source = self.add(game.engine, "Leaden Myr", seat="B", ref="nabber-blink-artifact")
+        source.acquired_control_turn_count = -1
+        blink = self.add(game.engine, "Cloudshift", seat="B", zone="hand")
+        game.state.players["B"].mana_pool["W"] = 1
+        for card in (source, blink):
+            self.assert_closed(game, card)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "B", source)
+        trigger, = self.triggers(game)
+        original = game.state.cards[source.object_id].logical_object_id
+        self.assertEqual(original, trigger.context["card_object_identity"])
+        self.cast_for(game, "B", blink, [source.ref])
+        self.resolve_top(game)
+        self.assertNotEqual(original, game.state.cards[source.object_id].logical_object_id)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("B", game.state.cards[source.object_id].controller)
+        self.assertFalse(self.grants(game))
+        self.replay(game, load=True)
+
+    def test_sacrificed_treasure_still_has_the_mana_tap_occurrence_without_a_control_result(self):
+        from quorune.compiler.token_templates import fixed_token_creation_effect_template
+
+        game = self.session(10612964)
+        self.nabber(game, "A")
+        definition = fixed_token_creation_effect_template("Create a Treasure token.").effect
+        ref, = game.engine.create_token("B", name=definition["name"], quantity=1, characteristics=definition["characteristics"])
+        token = next(card for card in game.state.cards.values() if card.ref == ref)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.activate(game, "B", token, mana_output={"G": 1}, pay="auto")
+        self.assertEqual(1, game.state.players["B"].mana_pool["G"])
+        self.assertFalse(any(card.ref == ref and card.zone == "battlefield" for card in game.state.cards.values()))
+        trigger, = self.triggers(game)
+        self.assertEqual(("A", ref, token.object_id), (trigger.controller, trigger.context["card"], trigger.context["mana_source_object_id"]))
+        self.assertTrue(trigger.context["artifact_mana_tap_only"])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(self.grants(game))
+        self.replay(game, load=True)
+
+    def test_exact_artifact_activation_scope_and_cleanup_receipt_require_independent_authority(self):
+        from quorune.rules.artifact_mana_tap_control import CLEANUP_CONTROL_CAPABILITY, EVENT_CAPABILITY, FIELD
+
+        card = self.db.lookup(NABBER, fuzzy=False)
+        oracle = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        node, = oracle.faces[0].nodes
+        self.assertIsNone(node.target_schema)
+        self.assertEqual((0, len(card.oracle_text)), (node.span.start, node.span.end))
+        for old, new in (("an opponent", "a player"), ("an artifact", "a spell"), ("for mana", "during combat"),
+                         ("the end of your next turn", "your next turn")):
+            altered = compile_oracle_card(replace(card, oracle_text=card.oracle_text.replace(old, new)), capability_registry=self.registry)
+            self.assertNotEqual("exact", altered.status)
+        game = self.session(10612965)
+        source = self.nabber(game, "A")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        for cap in (EVENT_CAPABILITY, CLEANUP_CONTROL_CAPABILITY):
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            mutated = replace(program, capability_dependencies=deps,
+                              capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutated, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{cap}", binding["blockers"])
+        effect, = program.effects
+        malformed = replace(program, effects=({**effect, FIELD: True},))
+        self.assertFalse(bind_semantic_program_runtime(malformed, capability_registry=self.registry, profile="commander_review")["strict"])
+
+    def test_arbiter_cannot_supply_reserved_artifact_tap_control(self):
+        from quorune.errors import GameRuleError
+        from quorune.rules.artifact_mana_tap_control import DURATION, FIELD
+        from quorune.stack_resolution import arbiter_resolution_effects
+
+        reserved = {"op": "gain_control", "controller": "A", "card": "P0001", "duration": DURATION.value,
+                    FIELD: {"object_id": "original", "logical_object_id": "original@1"}}
+        nested = {"op": "offer_optional_effect", "player": "A", "effects": [reserved]}
+        for effect in (reserved, nested):
+            with self.subTest(op=effect["op"]):
+                with self.assertRaisesRegex(GameRuleError, "requires a bound card program"):
+                    arbiter_resolution_effects([effect])
+        ordinary = {"op": "gain_control", "controller": "A", "card": "P0001", "duration": "until_end_of_turn"}
+        self.assertEqual([ordinary], arbiter_resolution_effects([ordinary]))

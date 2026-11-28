@@ -7,11 +7,23 @@ PER_PLAYER_TARGET_CAPABILITY='target.set.one_per_player'
 PER_PLAYER_TARGET_MECHANIC='fixed-per-player-target-set'
 
 
+def paired_controller_return_template(text):
+    from .fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+
+    if " ".join(text.casefold().replace("’", "'").split()) != (
+        "choose two target creatures controlled by different players. return those creatures to their owners' hands."
+    ):
+        return None
+    template = fixed_homogeneous_target_set_effect_template("Return two target creatures to their owners' hands.")
+    template_id, effects, schema, mechanics = template.compiled()
+    return template_id + "-distinct-controllers", effects, {**schema, "distinct_controllers": True}, mechanics
+
+
 def per_player_target_set_template(text):
     from .fixed_control_templates import targeted_control_set_template
 
-    if control := targeted_control_set_template(text, per_opponent=True):
-        return control
+    if compiled := (paired_controller_return_template(text) or targeted_control_set_template(text, per_opponent=True)):
+        return compiled
     match=re.fullmatch(r'For each (?P<players>opponent|player), (?P<body>.+)',text.strip(),re.I)
     if match is None:return None
     body=match['body'];qualifiers=tuple(re.finditer(r'\bthat (?P<who>player|opponent) controls\b',body,re.I))

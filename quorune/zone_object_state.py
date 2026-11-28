@@ -17,6 +17,7 @@ from .impending_model import PAID_IMPENDING_FIELD
 from .stack_resolution_authority_model import COPIED_SPELL_ENTRY_AUTHORITY_VERSION
 from .multikicker_model import MULTIKICKER_FIELD, validate_multikicker_fact
 from .flashback import FLASHBACK_CAST_ANNOTATION
+from .harmonize import ANNOTATION as HARMONIZE_ANNOTATION
 from .cast_lifecycles import (
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
@@ -175,6 +176,15 @@ def mark_card_flashed_back(card: CardInstance) -> None:
     card.annotations[FLASHBACK_CAST_ANNOTATION] = True
 
 
+def mark_card_harmonized(card: CardInstance) -> None:
+    if (
+        not isinstance(card, CardInstance) or card.zone != "stack" or card.object_kind != "card"
+        or card.annotations.get(HARMONIZE_ANNOTATION) is not None
+    ):
+        raise ZoneObjectStateError("The physical harmonized spell designation is malformed")
+    card.annotations[HARMONIZE_ANNOTATION] = True
+
+
 def mark_card_fixed_cast_lifecycle(
     card: CardInstance,
     spec: FixedCastLifecycleSpec,
@@ -198,6 +208,14 @@ def mark_card_fixed_cast_lifecycle(
     ):
         raise ZoneObjectStateError("Fixed cast-lifecycle stack state is malformed")
     card.annotations[FIXED_CAST_LIFECYCLE_STACK_ANNOTATION] = spec.to_dict()
+
+
+def mark_airbend_exile_permission(card: CardInstance) -> None:
+    from .rules.airbend import AirbendCastPermission, PERMISSION_FIELD
+
+    if card.zone != "exile" or not card.is_card_object or card.face_down or PERMISSION_FIELD in card.annotations:
+        raise ZoneObjectStateError("Airbend cast permission requires one face-up arriving card")
+    card.annotations[PERMISSION_FIELD] = AirbendCastPermission(card.owner, card.logical_object_id).to_dict()
 
 
 def mark_fixed_zone_cast_designation(

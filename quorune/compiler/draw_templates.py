@@ -4,6 +4,7 @@ from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
+from ..rules.opponent_draw_result import OPPONENT_DRAW_MECHANIC, opponent_draw_effects
 from ..drawing.step_exemption import (
     DRAW_STEP_EXEMPT_DISCARD_CAPABILITY,
     DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
@@ -20,6 +21,14 @@ from ..rules.mana_contribution_draw import (
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .ir_model import OracleNode, OracleResidual, SourceSpan
+
+
+def distinct_opponent_draw_template(text):
+    if re.fullmatch(r"Each opponent draws a card, then you draw a card for each opponent "
+                    r"who drew a card this way\.", " ".join(text.split()), re.I) is None:
+        return None
+    return ("distinct-opponent-draw-result-v1", opponent_draw_effects(), None,
+            (OPPONENT_DRAW_MECHANIC,))
 
 
 DrawEffectTemplate = tuple[
@@ -359,6 +368,14 @@ def static_draw_result_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str | tuple[str, ...]] | None:
     """Recognize the represented individual draw-result replacements."""
+
+    if re.fullmatch(
+        r"If you would draw a card while your library has no cards in it, you win the game instead\.?",
+        " ".join(text.split()), re.IGNORECASE,
+    ):
+        from ..semantic_runtime.draw_empty_library_win import DEPENDENCIES, empty_library_win_descriptor
+
+        return "draw-result-controller-empty-library-win-v1", empty_library_win_descriptor(), DEPENDENCIES
 
     if " ".join(text.casefold().split()) == (
         "if you would draw a card, you may instead choose land or nonland and reveal cards "

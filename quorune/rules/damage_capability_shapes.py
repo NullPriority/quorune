@@ -267,9 +267,12 @@ def _fixed_set_damage_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...] | None:
+    from .aggregated_arrival_damage import artifact_arrival_damage_capabilities, uses_artifact_arrival_damage
     from .defending_creature_damage import defending_creature_damage_capabilities, is_defending_creature_damage
     from .random_opponent_damage import RANDOM_OPPONENT_DAMAGE_FIELD, random_opponent_damage_capabilities
 
+    if uses_artifact_arrival_damage(effect):
+        return artifact_arrival_damage_capabilities(effect, target_schema, mechanics)
     if RANDOM_OPPONENT_DAMAGE_FIELD in effect:
         return random_opponent_damage_capabilities(effect, target_schema)
     if DEALT_LIFE_GAIN_FIELD in effect:
@@ -655,6 +658,10 @@ def fixed_damage_node_capabilities(
     from .random_activation_target import (
         RANDOM_ACTIVATION_TARGET_CAPABILITY, RANDOM_ACTIVATION_TARGET_FIELD, ordinary_random_activation_damage,
     )
+    from .announced_three_target_damage import FIELD as SPELL_X_TARGET_FIELD, node_dependencies as spell_x_target_dependencies
+
+    if SPELL_X_TARGET_FIELD in effect:
+        return spell_x_target_dependencies(effect, target_schema)
     if RANDOM_ACTIVATION_TARGET_FIELD in effect:
         if target_schema != _FIXED_DAMAGE_TARGET_SCHEMAS["any_target"] or type(target_schema["count"]) is not int:
             return ()
@@ -677,6 +684,10 @@ def fixed_damage_node_capabilities(
     if 'fixed_target_controller_damage' in effect:
         from .fixed_dual_damage import fixed_dual_damage_node_capabilities
         return fixed_dual_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from .announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD, scaled_announced_target_damage_node_capabilities
+
+    if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in effect:
+        return scaled_announced_target_damage_node_capabilities(effects, target_schema, mechanics)
     if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
         return _announced_damage_capabilities(effect, target_schema, mechanics)
     if DAMAGE_DEATH_EXILE_FIELD in effect:

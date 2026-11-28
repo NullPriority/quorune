@@ -339,6 +339,12 @@ def _catalog_ability_for_program(
         if program.target_schema is not None
         else ability.target_schema
     )
+    from ..library_search_model import SEARCHED_LAND_UNTAP_VERSION
+
+    uses_versioned_land_search = any(
+        effect.get("op") == "search" and effect.get("schema_version") == SEARCHED_LAND_UNTAP_VERSION
+        for effect in program.effects
+    )
     return replace(
         ability,
         zones=(
@@ -348,7 +354,7 @@ def _catalog_ability_for_program(
         ),
         target_schema=target_schema,
         library_search_types=(
-            () if TARGET_CONTROLLER_INFORMATION_MECHANIC in program.coverage
+            () if uses_versioned_land_search or TARGET_CONTROLLER_INFORMATION_MECHANIC in program.coverage
             else ability.library_search_types
         ),
         builtin_semantic_key=(
@@ -453,9 +459,11 @@ def _catalog_provenance(
 ) -> Mapping[str, Any]:
     from ..rules.forage import has_forage_cost
     from ..paid_activation_card_types import has_bounded_sacrifice
+    from ..granted_activation_model import has_source_equipment_unattach
 
     if (not has_forage_cost(ability) and not has_bounded_sacrifice(ability)
-            and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None):
+            and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None
+            and not has_source_equipment_unattach(ability)):
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}

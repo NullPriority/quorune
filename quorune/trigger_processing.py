@@ -116,11 +116,15 @@ class TriggerProcessingOwner:
             referred_object_ids=list(referred_object_ids),
         )
         self.state.delayed_triggers.append(trigger)
+        from .rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD
+
+        public_condition = ({WATCHED_COMBAT_DRAW_FIELD: 1} if WATCHED_COMBAT_DRAW_FIELD in condition
+                            else dict(condition))
         self.host._log(
             controller,
             "trigger.delayed.created",
             f"Created delayed trigger {trigger.ref}: {label}.",
-            {"trigger": trigger.ref, "condition": dict(condition)},
+            {"trigger": trigger.ref, "condition": public_condition},
             importance=1,
         )
         return trigger
@@ -139,6 +143,16 @@ class TriggerProcessingOwner:
         ):
             trigger.active = False
             return False
+        from .rules.impulse_spawn_settlement import IF_ANY_FIELD, spawn_end_step_matches
+
+        if IF_ANY_FIELD in trigger.condition:
+            try:
+                result = spawn_end_step_matches(self.host, trigger, context)
+            except (TypeError, ValueError, KeyError) as exc:
+                raise GameRuleError(str(exc)) from exc
+            if result is False:
+                trigger.active = False
+            return result is True
         from .rules.source_bound_delayed_return import SOURCE_BOUND_NEXT_END_STEP, source_bound_end_step_result
 
         if SOURCE_BOUND_NEXT_END_STEP in trigger.condition:
@@ -223,6 +237,15 @@ class TriggerProcessingOwner:
             if event_context is None:
                 raise ValueError("Next-cast copy requires its committed spell occurrence")
             bind_next_cast_copy_occurrence(self.host, trigger, item, event_context)
+        from .rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, watched_combat_draw_amount
+
+        if WATCHED_COMBAT_DRAW_FIELD in trigger.condition:
+            amount = watched_combat_draw_amount(event_context or {})
+            if amount is None:
+                raise ValueError("A watched damage trigger requires positive committed combat damage")
+            item.context["dynamic_effects"] = [
+                {"op": "draw", "player": trigger.controller, "count": amount, "private": True},
+            ]
         return item
 
     def issue_trigger_order(
@@ -715,6 +738,12 @@ def begin_pending_trigger_batch(host: TriggerProcessingHost) -> bool:
     return False
 
 
+def replace_waiting_delayed_trigger(host, index, trigger):
+    if host.state.delayed_triggers[index].trigger_id != trigger.trigger_id:
+        raise ValueError("A waiting delayed trigger must retain its identity")
+    host.state.delayed_triggers[index] = trigger
+
+
 def start_delayed_trigger_batch(
     host: TriggerProcessingHost,
     triggers: Sequence[DelayedTrigger],
@@ -973,6 +1002,58 @@ def matching_delayed_triggers(
     return TriggerProcessingOwner(host).matching_delayed_triggers(
         event_kind, context
     )
+
+
+def collect_watched_combat_draw_triggers(host, context, trigger_batch):
+    from .rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD, watched_combat_draw_amount
+
+    if watched_combat_draw_amount(context) is None:
+        return
+    owner = TriggerProcessingOwner(host)
+    marked = {**context, WATCHED_COMBAT_DRAW_FIELD: 1}
+    trigger_batch.extend(
+        owner.materialize_delayed_trigger(trigger, event_context=context)
+        for trigger in host.state.delayed_triggers
+        if WATCHED_COMBAT_DRAW_FIELD in trigger.condition and owner.trigger_matches(trigger, "damage.dealt", marked)
+    )
+
+
+def expire_watched_combat_draw_triggers(host: TriggerProcessingHost) -> None:
+    from .rules.watched_combat_draw import WATCHED_COMBAT_DRAW_FIELD
+
+    for trigger in host.state.delayed_triggers:
+        if (trigger.active and WATCHED_COMBAT_DRAW_FIELD in trigger.condition
+                and trigger.expires_turn_sequence < host.state.turn_sequence):
+            trigger.active = False
+
+
+def collect_controlled_combat_token_triggers(host, events, trigger_batch):
+    from .rules.controlled_combat_tokens import COMBAT_TOKEN_FIELD
+
+    watches = tuple(trigger for trigger in host.state.delayed_triggers
+                    if trigger.active and COMBAT_TOKEN_FIELD in trigger.condition)
+    if not watches:
+        return
+    owner = TriggerProcessingOwner(host)
+    for event in events:
+        if (not event.was_dealt or not event.combat or event.target_kind != "player"
+                or "creature" not in event.source_types or event.source_controller not in host.active_seats):
+            continue
+        context = {**event.semantic_context(), COMBAT_TOKEN_FIELD: 1}
+        trigger_batch.extend(
+            owner.materialize_delayed_trigger(trigger)
+            for trigger in watches
+            if owner.trigger_matches(trigger, "damage.dealt", context)
+        )
+
+
+def expire_controlled_combat_token_triggers(host: TriggerProcessingHost) -> None:
+    from .rules.controlled_combat_tokens import COMBAT_TOKEN_FIELD
+
+    for trigger in host.state.delayed_triggers:
+        if (trigger.active and COMBAT_TOKEN_FIELD in trigger.condition
+                and trigger.expires_turn_sequence < host.state.turn_sequence):
+            trigger.active = False
 
 
 def expire_next_cast_copy_triggers(host: TriggerProcessingHost) -> None:

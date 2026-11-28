@@ -2,21 +2,27 @@
 
 from dataclasses import dataclass
 
-from ..pawprint_modes import PAWPRINT_FIELD, PAWPRINT_MECHANIC, PawprintModeBudget
+from ..pawprint_modes import (
+    PAWPRINT_FIELD, PAWPRINT_MECHANIC, PawprintModeBudget,
+    REPEATABLE_MODE_FIELD, REPEATABLE_MODE_MECHANIC, FixedRepeatableModeChoices,
+)
 from .modal_templates import FixedNonrepeatingModalTemplate, fixed_nonrepeating_modal_template
 
 
 @dataclass(frozen=True, slots=True)
-class FixedPawprintTemplate:
+class FixedRepeatableModalTemplate:
     body: FixedNonrepeatingModalTemplate
-    budget: PawprintModeBudget
+    budget: PawprintModeBudget | FixedRepeatableModeChoices
 
     @property
     def cost_schema(self):
-        return {PAWPRINT_FIELD: self.budget.to_dict()}
+        field = REPEATABLE_MODE_FIELD if isinstance(self.budget, FixedRepeatableModeChoices) else PAWPRINT_FIELD
+        return {field: self.budget.to_dict()}
 
     def compiled(self):
         template, effects, schema, mechanics = self.body.compiled()
+        if isinstance(self.budget, FixedRepeatableModeChoices):
+            return f"fixed-repeatable-mode-{template}", effects, schema, (*mechanics, REPEATABLE_MODE_MECHANIC)
         return f"fixed-pawprint-{template}", effects, schema, (*mechanics, PAWPRINT_MECHANIC)
 
 
@@ -35,4 +41,15 @@ def fixed_pawprint_mode_template(material_rows, *, compile_effect):
     body = fixed_nonrepeating_modal_template(rows, compile_effect=compile_effect)
     if body is None or body.context_prefix:
         return None
-    return FixedPawprintTemplate(body, PawprintModeBudget())
+    return FixedRepeatableModalTemplate(body, PawprintModeBudget())
+
+
+def fixed_repeatable_mode_template(material_rows, *, compile_effect):
+    if len(material_rows) != 4:
+        return None
+    raw, header, span = material_rows[0]
+    if header.casefold() != "choose three. you may choose the same mode more than once.":
+        return None
+    rows = ((raw, "Choose one or more —", span), *material_rows[1:])
+    body = fixed_nonrepeating_modal_template(rows, compile_effect=compile_effect)
+    return FixedRepeatableModalTemplate(body, FixedRepeatableModeChoices()) if body is not None and not body.context_prefix else None

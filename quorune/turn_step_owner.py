@@ -8,6 +8,9 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from .additional_beginning_model import AdditionalBeginningPhases
+from .extra_combat_model import (
+    MAIN_PHASE_COMBAT_GRANT_FIELD, MainPhaseCombatSchedule, MainPhaseInsertion, own_main_phase_for_combat,
+)
 from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
@@ -37,8 +40,10 @@ from .turn_priority_model import (
 )
 from .trigger_processing import (
     clear_pending_trigger_batches,
+    expire_controlled_combat_token_triggers,
     expire_next_cast_copy_triggers,
     expire_target_death_return_triggers,
+    expire_watched_combat_draw_triggers,
     matching_delayed_triggers,
 )
 from .util import unique_preserving_order
@@ -211,6 +216,10 @@ class TurnStepOwner:
         if self.state.phase != "combat" or self.state.current_turn is None:
             raise GameRuleError("An extra combat requires a current combat phase")
 
+    def in_current_own_combat(self, actor: str) -> bool:
+        return (self.state.current_turn is not None and self.state.phase == "combat"
+                and self.state.active_player == actor)
+
     def schedule_extra_combat(self, actor: str, *, source: str) -> None:
         self._host._require_seat(actor, in_game=True)
         self.require_current_combat()
@@ -224,6 +233,39 @@ class TurnStepOwner:
             importance=2,
         )
 
+    def schedule_main_phase_combat(self, actor: str, *, source: str, grant: str, follow_with_main: bool = False) -> None:
+        self._host._require_seat(actor, in_game=True)
+        phase_owner = self.state.active_player if follow_with_main else actor
+        if not own_main_phase_for_combat(self.state, phase_owner):
+            raise GameRuleError("The granted combat must follow the resolving controller's main phase")
+        staged = (MainPhaseInsertion("combat", grant),)
+        if follow_with_main:
+            staged += (MainPhaseInsertion("main"),)
+        queue = self.state.main_phase_extra_combats
+        if queue is None:
+            beginning = self.state.additional_beginning_phases if self.state.phase == "postcombat_main" else None
+            earlier = (MainPhaseInsertion("beginning"),) * beginning.pending if beginning is not None else ()
+            self.state.main_phase_extra_combats = MainPhaseCombatSchedule(
+                self.state.phase, self.state.turn_sequence, (*staged, *earlier),
+            )
+        else:
+            self._require_current_main_insertion(queue)
+            self.state.main_phase_extra_combats = replace(queue, pending=(*staged, *queue.pending))
+        self._host._log(
+            actor, "combat.extra.scheduled",
+            ("An additional combat and main phase will follow this main phase." if follow_with_main
+             else "An additional combat phase will follow this main phase."),
+            {"source": source, "grant": grant, "after_phase": self.state.phase,
+             **({"main_phase_count": 1} if follow_with_main else {})},
+            importance=2,
+        )
+
+    def _require_current_main_insertion(self, queue: MainPhaseCombatSchedule) -> None:
+        expected = "postcombat_main" if queue.engaged and queue.reached_added_main else queue.after_phase
+        if (queue.turn_sequence != self.state.turn_sequence or self.state.phase != expected
+                or queue.engaged and not queue.reached_added_main):
+            raise StateInvariantError("The scheduled phases belong to a different main-phase boundary")
+
     def schedule_additional_beginning(self, player: str, *, source: str) -> None:
         if (
             self.state.active_player != player
@@ -231,6 +273,12 @@ class TurnStepOwner:
             or type(source) is not str or not source
         ):
             raise GameRuleError("An additional beginning phase must follow the current postcombat main")
+        queue = self.state.main_phase_extra_combats
+        if queue is not None:
+            self._require_current_main_insertion(queue)
+            self.state.main_phase_extra_combats = replace(
+                queue, pending=(MainPhaseInsertion("beginning"), *queue.pending),
+            )
         self.state.additional_beginning_phases = (
             self.state.additional_beginning_phases.queue_one()
             if self.state.additional_beginning_phases is not None else AdditionalBeginningPhases(1)
@@ -243,7 +291,14 @@ class TurnStepOwner:
         )
 
     def _next_start_or_end_index(self, phase: str, step: str) -> int:
+        queue = self.state.main_phase_extra_combats
         extra = self.state.additional_beginning_phases
+        if queue is not None and (
+            (phase, step) == (queue.after_phase, "main")
+            or queue.engaged and queue.reached_added_main and (phase, step) == ("postcombat_main", "main")
+            or queue.engaged and extra is not None and extra.active and (phase, step) == ("beginning", "draw")
+        ):
+            return self._next_main_phase_insertion()
         if extra is not None and (
             (phase, step) == ("postcombat_main", "main")
             or (extra.active and (phase, step) == ("beginning", "draw"))
@@ -255,13 +310,59 @@ class TurnStepOwner:
             return TURN_STEPS.index(("ending", "end_step"))
         return self.state.phase_index + 1
 
-    def _phase_index_after_combat(self) -> int:
-        if self.state.extra_combat_phases == 0:
+    def _next_main_phase_insertion(self) -> int:
+        queue = self.state.main_phase_extra_combats
+        if queue is None or queue.turn_sequence != self.state.turn_sequence:
+            raise StateInvariantError("The main-phase insertion lost its original turn")
+        extra = self.state.additional_beginning_phases
+        if extra is not None and extra.active:
+            extra = AdditionalBeginningPhases(extra.pending) if extra.pending else None
+            self.state.additional_beginning_phases = extra
+        if not queue.pending:
+            self.state.main_phase_extra_combats = None
+            if queue.after_phase == "precombat_main":
+                return _COMBAT_START_INDEX
+            return TURN_STEPS.index(("ending", "end_step"))
+        first, *remaining = queue.pending
+        self.state.main_phase_extra_combats = replace(
+            queue, pending=tuple(remaining), engaged=True, combat_grant=first.grant,
+            reached_added_main=queue.reached_added_main or first.kind == "main",
+        )
+        if first.kind == "combat":
+            return _COMBAT_START_INDEX
+        if first.kind == "main":
+            self.state.inserted_main_phase_count += 1
             return _COMBAT_END_INDEX
-        # All queued phases are the same ordinary combat. The new occurrence
-        # receives its own identity from the existing start-of-combat owner.
-        self.state.extra_combat_phases -= 1
-        return _COMBAT_START_INDEX
+        if extra is None or not extra.pending:
+            raise StateInvariantError("The additional beginning phase lost its canonical queue")
+        self.state.additional_beginning_phases = extra.begin_next()
+        return TURN_STEPS.index(("beginning", "untap"))
+
+    def _cancel_main_combat_delays(self, grants: set[str]) -> None:
+        for trigger in self.state.delayed_triggers:
+            if trigger.active and trigger.condition.get(MAIN_PHASE_COMBAT_GRANT_FIELD) in grants:
+                trigger.active = False
+
+    def _clear_main_phase_combats(self) -> None:
+        queue = self.state.main_phase_extra_combats
+        if queue is not None:
+            grants = {entry.grant for entry in queue.pending if entry.grant is not None}
+            if queue.combat_grant is not None:
+                grants.add(queue.combat_grant)
+            self._cancel_main_combat_delays(grants)
+            self.state.main_phase_extra_combats = None
+
+    def _phase_index_after_combat(self) -> int:
+        queue = self.state.main_phase_extra_combats
+        if queue is not None and queue.engaged and queue.combat_grant is not None:
+            self._cancel_main_combat_delays({queue.combat_grant})
+            self.state.main_phase_extra_combats = replace(queue, combat_grant=None)
+        if self.state.extra_combat_phases:
+            self.state.extra_combat_phases -= 1
+            return _COMBAT_START_INDEX
+        if queue is not None and queue.engaged:
+            return self._next_main_phase_insertion()
+        return _COMBAT_END_INDEX
 
     def schedule_skip(self, seat: str, spec: TurnSkipSpec) -> ScheduledTurnSkip | None:
         self._host._require_seat(seat, in_game=True)
@@ -358,7 +459,9 @@ class TurnStepOwner:
         mark_departed_phasing_returns(self.state, previous, entry.player)
         self.state.last_normal_turn_player = entry.player
 
-    def _first_unskipped_turn(self, entry: TurnEntry) -> TurnEntry:
+    def _first_unskipped_turn(self, entry: TurnEntry, *, boundary_replacement=None) -> TurnEntry | None:
+        from .turn_skip_replacements import apply_turn_start_skip_replacement
+
         while True:
             if entry.skip_steps:
                 raise GameRuleError(
@@ -368,6 +471,16 @@ class TurnStepOwner:
             if player is None:
                 raise StateInvariantError(f"Turn entry names unknown player {entry.player!r}")
             if player.in_game:
+                if entry.extra:
+                    skipped = apply_turn_start_skip_replacement(
+                        self._host, entry, selection=boundary_replacement,
+                    )
+                    if skipped is None:
+                        return None
+                    boundary_replacement = None
+                    if skipped:
+                        entry = self.select_next_turn()
+                        continue
                 grant = self._whole_turn_skip(entry.player)
                 if grant is None:
                     return entry
@@ -404,8 +517,10 @@ class TurnStepOwner:
             created_sequence=self.state.turn_sequence,
         )
 
-    def begin_turn(self, entry: TurnEntry) -> None:
-        entry = self._first_unskipped_turn(entry)
+    def begin_turn(self, entry: TurnEntry, *, boundary_replacement=None) -> None:
+        entry = self._first_unskipped_turn(entry, boundary_replacement=boundary_replacement)
+        if entry is None:
+            return
 
         previous_active_player = (
             self.state.current_turn.player
@@ -423,8 +538,10 @@ class TurnStepOwner:
         self.state.reset_upkeep_completion()
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
+        expire_controlled_combat_token_triggers(self._host)
         expire_next_cast_copy_triggers(self._host)
         expire_target_death_return_triggers(self._host)
+        expire_watched_combat_draw_triggers(self._host)
         self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(
@@ -466,6 +583,8 @@ class TurnStepOwner:
         player.yield_policy = YieldPolicy()
         self.state.combat = self.state.combat.fresh()
         self.state.extra_combat_phases = 0
+        self._clear_main_phase_combats()
+        self.state.inserted_main_phase_count = 0
         self.state.additional_beginning_phases = None
         self.state.phase_index = 0
         self.state.priority_player = None
@@ -840,6 +959,7 @@ class TurnStepOwner:
         if self.state.phase == "combat":
             self._host._finish_combat_phase()
         self.state.extra_combat_phases = 0
+        self._clear_main_phase_combats()
         self.state.additional_beginning_phases = None
         self.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
         return True
@@ -877,6 +997,7 @@ class TurnStepOwner:
         if not check_state_actions:
             self.state.combat = self.state.combat.fresh()
             self.state.extra_combat_phases = 0
+            self._clear_main_phase_combats()
             self.state.additional_beginning_phases = None
         self._host._log(
             actor,

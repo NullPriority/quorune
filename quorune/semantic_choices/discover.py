@@ -8,7 +8,8 @@ from ..discover_model import (
     DISCOVER_CAPABILITY, DISCOVER_OPERATION, DISCOVER_STEP_OPERATION, NONLAND_SCAN_OPERATION, NONLAND_SCAN_STEP_OPERATION,
     QUALIFIED_SCAN_CAPABILITY, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_STEP_OPERATION,
     QUALIFIED_SCAN_CAST_OPERATION, QUALIFIED_SCAN_FINISH_OPERATION,
-    ExileCastProgress, discover_spell_qualifies, discover_zone_counter,
+    DISCOVER_TREASURE_DIFFERENCE_VERSION, ExileCastProgress, RecordedDiscoverCard,
+    discover_spell_qualifies, discover_zone_counter,
     require_current_discover_cards, validate_discover_effect, validate_nonland_scan_effect, validate_qualified_scan_effect,
 )
 from ..replacement.immutable import FrozenMap
@@ -52,7 +53,9 @@ def _after_pending(progress,pending,query,actor):
         candidate = 'land' not in row.types and (
             progress.amount is None or discover_spell_qualifies(progress.amount, mana_value=row.mana_value)
         )
-    return replace(progress, exiled=(*progress.exiled, _identity(row)), candidate_ref=row.ref if candidate else None)
+    recorded = RecordedDiscoverCard.from_public_value(row.mana_value) if progress.recorded_card is not None else None
+    return replace(progress, exiled=(*progress.exiled, _identity(row)),
+                   candidate_ref=row.ref if candidate else None, recorded_card=recorded)
 
 
 def _scan(effect,context,progress):
@@ -117,7 +120,8 @@ class DiscoverScanHandler:
                 raise SemanticChoiceError('Discover requires the resolving controller')
             if self.operation==DISCOVER_OPERATION:
                 validate_discover_effect(effect,resolved=True)
-                progress = ExileCastProgress(effect['amount'], (), None)
+                recorded = RecordedDiscoverCard() if effect['schema_version'] == DISCOVER_TREASURE_DIFFERENCE_VERSION else None
+                progress = ExileCastProgress(effect['amount'], (), None, recorded_card=recorded)
             elif self.operation == NONLAND_SCAN_OPERATION:
                 validate_nonland_scan_effect(effect, resolved=True)
                 progress = ExileCastProgress(None, (), None)

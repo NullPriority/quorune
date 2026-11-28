@@ -117,9 +117,11 @@ def first_exile_cascade_runtime_dependencies(program):
     return (*handler.capability_dependencies, FIRST_EXILE_CASCADE_CAPABILITY, SPELL_ORIGIN_HISTORY_CAPABILITY)
 
 
-def _current_grants(host, seat):
+def current_battlefield_keyword_grants(host, seat, handler, *, include_copies=False):
+    """Read live complete grant components from the proper face and controller."""
+    from ..entry_copy import copiable_oracle_id
+
     keys = host._effective_static_component_key_map()
-    handler = BattlefieldCascadeGrantHandler()
     for source in host._semantic_event_sources(zones={"battlefield"}):
         if source.zone != "battlefield" or source.phased_out or source.controller != seat:
             continue
@@ -129,8 +131,9 @@ def _current_grants(host, seat):
         record = host.card_record(source)
         if record is None:
             continue
+        oracle_id = copiable_oracle_id(source) if include_copies else record.oracle_id
         for program in host.semantics.runtime_handler_programs_for_oracle(
-            record.oracle_id, active_zone="battlefield", event=CASCADE_GRANT_EVENT,
+            oracle_id, active_zone="battlefield", event=handler.event,
         ):
             if (program.key not in current or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
                     or not program_matches_face(record, program, source)
@@ -140,6 +143,10 @@ def _current_grants(host, seat):
             for index, descriptor in enumerate(program.handlers):
                 if descriptor.get("handler_id") == handler.handler_id:
                     yield source, f"{program.key}:{index}", handler.validate(descriptor)
+
+
+def _current_grants(host, seat):
+    return current_battlefield_keyword_grants(host, seat, BattlefieldCascadeGrantHandler())
 
 
 def _cascade_operations(instances):

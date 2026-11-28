@@ -4,6 +4,7 @@ from . import regex_working_set as re
 from typing import Iterable
 
 from .ir_model import SourceSpan
+from ..characteristic_evaluation import type_parts
 
 
 _ORDINARY_SAGA_RULES_REMINDER = re.compile(
@@ -21,6 +22,11 @@ _MELD_PARTNER_REMINDER = re.compile(
 _DRYAD_ARBOR_REMINDER = (
     "(This land isn't a spell, it's affected by summoning sickness, and it "
     'has "{T}: Add {G}.")'
+)
+_LEGENDARY_SPELL_REMINDER = re.compile(
+    r"\(You may cast a legendary (?P<spell>instant|sorcery) only if you control "
+    r"a legendary creature or planeswalker\.\)",
+    re.IGNORECASE,
 )
 _HYBRID_MANA_REMINDER = re.compile(
     r"\(\{(?P<first>[WUBRGC])/(?P<second>[WUBRGC])\} can be paid with "
@@ -129,12 +135,19 @@ def is_nonexecuting_standalone_reminder(
     transform: bool = False,
     meld: bool = False,
     dryad_arbor: bool = False,
+    type_line: str = "",
+    legendary_sorcery: bool = False,
 ) -> bool:
     """Recognize reminders whose authority is already carried structurally."""
+    from ..rules.legendary_sorcery import REMINDER
 
     stripped = text.strip()
     if not is_standalone_parenthetical_reminder(stripped):
         return False
+    legendary = _LEGENDARY_SPELL_REMINDER.fullmatch(stripped)
+    if legendary is not None:
+        types, _, supertypes = type_parts(type_line)
+        return "legendary" in supertypes and legendary["spell"].casefold() in types
     return bool(
         _HYBRID_MANA_REMINDER.fullmatch(stripped)
         or _PHYREXIAN_MANA_REMINDER.fullmatch(stripped)
@@ -144,6 +157,7 @@ def is_nonexecuting_standalone_reminder(
         or (transform and _TRANSFORM_REMINDER.fullmatch(stripped))
         or (meld and is_passive_meld_partner_reminder(stripped))
         or (dryad_arbor and stripped == _DRYAD_ARBOR_REMINDER)
+        or (legendary_sorcery and stripped.casefold() == REMINDER)
     )
 
 
@@ -156,6 +170,9 @@ def material_source_lines(
 ) -> Iterable[tuple[str, str, SourceSpan]]:
     """Yield source-spanned material rows, skipping recognized reminders."""
 
+    from ..rules.legendary_sorcery import is_legendary_sorcery
+
+    legendary_sorcery = is_legendary_sorcery(type_line)
     for line, span in source_lines(text):
         material_line = without_parenthetical_reminder(line)
         if (
@@ -164,6 +181,8 @@ def material_source_lines(
                 line,
                 transform=layout == "transform",
                 meld=layout == "meld",
+                type_line=type_line,
+                legendary_sorcery=legendary_sorcery,
                 dryad_arbor=(
                     "land creature" in type_line.replace("—", " ").casefold()
                     and "forest dryad" in type_line.casefold()

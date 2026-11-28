@@ -24,6 +24,7 @@ from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .draw_step_discard import DrawStepExemptDiscardHandler
 from .draw_exile_play import HANDLER_ID as DRAW_EXILE_PLAY_HANDLER_ID, DrawExilePlayReplacementHandler
+from .draw_empty_library_win import HANDLER_ID as EMPTY_LIBRARY_WIN_HANDLER_ID, EmptyLibraryWinDrawReplacementHandler
 from .draw_step_redirect import DrawStepExemptRedirectHandler
 from .temporary_draw_redirect import collect_temporary_draw_redirects
 from ..drawing.scheduled_draw_results import collect_scheduled_draw_replacements
@@ -579,6 +580,7 @@ def default_draw_replacement_registry() -> DrawReplacementRegistry:
             DrawInstructionMultiplierHandler(),
             DrawResultMultiplierHandler(),
             DrawExilePlayReplacementHandler(),
+            EmptyLibraryWinDrawReplacementHandler(),
             DrawResultMultiplierHandler(
                 handler_id=EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
                 capability_dependencies=(EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY,),
@@ -672,14 +674,14 @@ def collect_draw_replacement_effects(
                     continue
                 if handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID and host.state.players[player].zones["hand"]:
                     continue
-                if handler_id == LIBRARY_CHOICE_DRAW_HANDLER_ID:
+                if handler_id in {LIBRARY_CHOICE_DRAW_HANDLER_ID, EMPTY_LIBRARY_WIN_HANDLER_ID}:
                     from ..card_programs.admission import program_has_complete_card_program_admission
 
                     if not program_has_complete_card_program_admission(program):
                         continue
                 if handler_id in _DRAW_STEP_EXEMPT_HANDLERS or handler_id in {
                     EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID, DRAW_EXILE_PLAY_HANDLER_ID,
-                    LIBRARY_CHOICE_DRAW_HANDLER_ID,
+                    LIBRARY_CHOICE_DRAW_HANDLER_ID, EMPTY_LIBRARY_WIN_HANDLER_ID,
                 }:
                     if component_map is None:
                         component_map = host._effective_static_component_key_map()

@@ -248,6 +248,10 @@ An ordinary battlefield activation can schedule control of one target player
 during that player's next actual turn. The typed result requires the exact
 player target and lifetime scope before the activation catalog can admit it.
 
+A battlefield departure trigger can bind an owned artifact target to the
+departing permanent's sealed last-known mana value. Each committed move supplies
+its own ceiling. Trigger placement and resolution use the same strict bound.
+
 An activated ability that adds mana and instructs a draw uses the stack
 under CR 605.1a.
 

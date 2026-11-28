@@ -161,6 +161,10 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .airbend import TARGETED_FIELD, airbend_node_capabilities
+
+    if any(TARGETED_FIELD in effect for effect in effects):
+        return airbend_node_capabilities(effects, target_schema, None)
     from .announced_destruction_controller_tokens import (
         announced_destruction_controller_token_dependencies, uses_announced_destruction_controller_tokens,
     )

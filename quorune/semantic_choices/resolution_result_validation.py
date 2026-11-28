@@ -33,6 +33,15 @@ def validate_resolution_result_children(effect, effects, otherwise, context):
     from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
     from .optional_effect import _represented_effect, _represented_targeted_player_discard
 
+    from ..cast_origin_replacement import MAIN_PHASE_OPTIONAL_EXILE_VERSION
+
+    if effect.get("schema_version") == MAIN_PHASE_OPTIONAL_EXILE_VERSION:
+        for child in (*effects, *otherwise):
+            exile = child["effects"][0] if child["op"] == "offer_optional_effect" else child
+            if exile["card"] is not None:
+                _represented_effect(exile, actor=context.actor, query=context.query)
+        return
+
     for children, mechanics in ((effects, effect['mechanic_ids']), (otherwise, effect.get('otherwise_mechanic_ids', ()))):
         for child in children:
             try:

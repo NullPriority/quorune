@@ -41,9 +41,11 @@ def controller_top_exile_activation_dependencies(effects, target_schema, active_
 def controller_top_exile_runtime_dependencies(program):
     # Legacy Ingest is a triggered occurrence with a different player operand.
     # Inspect effect data as well as declarations so omission cannot bypass binding.
+    from .linked_landfall_play import EXPLORE_EXILE_FIELD
+
     carries_result = any(
         effect.get("op") == _TOP_EXILE_OPERATION
-        and (program.event == "activate" or effect.get("player") == "$controller")
+        and (program.event == "activate" or (effect.get("player") == "$controller" and EXPLORE_EXILE_FIELD not in effect))
         for effect in nested_effects((program.effects, program.handlers))
     )
     if not carries_result and CONTROLLER_TOP_EXILE_CAPABILITY not in program.capability_dependencies:

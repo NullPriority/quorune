@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass,field
 
-from ..continuous_effect_model import ContinuousEffectDuration
+from ..continuous_effect_model import ContinuousEffectDuration, ContinuousObjectIdentity
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
 from ..owner_control_model import OwnerControlSpec
@@ -12,13 +12,14 @@ from ..recipient_control_model import two_controller_creature_transfer_query
 from ..source_continuity import SourceContinuitySnapshot
 
 
-def _validate_control(actor, controller, duration, source, reason):
+def _validate_control(actor, controller, duration, source, reason, *, allow_next_cleanup=False):
     if any(type(value) is not str or not value for value in (actor, controller, reason)):
         raise ValueError("Control intents require an actor, controller and reason")
     if actor != controller:
         raise ValueError("This control family is acquired by the resolving controller")
     if not isinstance(duration, ContinuousEffectDuration) or not (
         duration.source_bound or duration in {duration.UNTIL_END_OF_TURN, duration.ZONE_OBJECT}
+        or allow_next_cleanup and duration is duration.UNTIL_END_OF_NEXT_TURN
     ):
         raise ValueError("Control intent duration is unsupported")
     if not isinstance(source, ResolutionEffectSource):
@@ -35,9 +36,14 @@ class GainControlIntent:
     reason: str
     history_snapshot: SourceContinuitySnapshot | None = None
     resolution_timestamp: int | None = None
+    recipient_identity: ContinuousObjectIdentity | None = None
 
     def __post_init__(self) -> None:
-        _validate_control(self.actor, self.controller, self.duration, self.source, self.reason)
+        _validate_control(self.actor, self.controller, self.duration, self.source, self.reason, allow_next_cleanup=True)
+        if (self.duration is ContinuousEffectDuration.UNTIL_END_OF_NEXT_TURN) != (self.recipient_identity is not None):
+            raise ValueError("Next-turn cleanup control requires its exact original recipient")
+        if self.recipient_identity is not None and not isinstance(self.recipient_identity, ContinuousObjectIdentity):
+            raise ValueError("An original control recipient requires its typed incarnation")
         if type(self.object_ref) is not str or not self.object_ref:
             raise ValueError("Control intents require one public permanent reference")
         if self.history_snapshot is not None and not isinstance(self.history_snapshot, SourceContinuitySnapshot):

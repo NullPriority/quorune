@@ -39,6 +39,9 @@ CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
 GREATEST_POWER_TARGET_DISCARD_VERSION = 19
 MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION = 33
 OTHER_BLUE_PERMANENT_DRAW_VERSION = 38
+CONTROLLED_ARTIFACT_TAP_EXILE_VERSION = 39
+CONTROLLED_ARTIFACT_TAP_MECHANICS = ("tap-and-untap", "cr-115-targets")
+CONTROLLED_ARTIFACT_EXILE_MECHANICS = ("exile", "cr-115-targets")
 MONARCH_KNIGHT_DAMAGE_MECHANICS = ("declared-effect-amount", "cr-120-damage", "public-query-effect-amount")
 MONARCH_KNIGHT_PREFIX_MECHANICS = ("cr-111-tokens",)
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
@@ -399,6 +402,38 @@ def _validate_other_blue_permanent_draw(effect):
     return FixedPublicStateConditionSpec.from_dict(effect["condition"]), tuple(effect["effects"])
 
 
+def _validate_controlled_artifact_tap_exile(effect):
+    """Decode the guarded exile of the previously announced creature."""
+    fields = {"op", "schema_version", "player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids"}
+    if (set(effect) != fields or type(effect.get("schema_version")) is not int
+            or effect["op"] != RESOLUTION_CONDITION_OPERATION
+            or type(effect["player"]) is not str or not effect["player"]
+            or not isinstance(effect["mechanic_ids"], (list, tuple))
+            or tuple(effect["mechanic_ids"]) != CONTROLLED_ARTIFACT_EXILE_MECHANICS
+            or not isinstance(effect["prefix_mechanic_ids"], (list, tuple))
+            or tuple(effect["prefix_mechanic_ids"]) != CONTROLLED_ARTIFACT_TAP_MECHANICS):
+        raise ValueError("Conditional exile requires its tap prefix and resolving controller")
+    condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
+    quantity = CharacteristicQuantitySpec(
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",)),
+    )
+    if (condition.kind is not FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+            or not 1 <= condition.amount <= 10 or condition.quantity != quantity
+            or condition.schema_version != 2):
+        raise ValueError("Conditional exile requires one bounded current artifact count")
+    children = effect["effects"]
+    if not isinstance(children, (list, tuple)) or len(children) != 1 or not isinstance(children[0], Mapping):
+        raise ValueError("Conditional exile requires one guarded result")
+    card = children[0].get("card")
+    if type(card) is not str or not card or children[0] != {"op": "exile_permanent", "card": card}:
+        raise ValueError("Conditional exile requires the original creature target")
+    symbolic = effect["player"] == "$controller"
+    if (symbolic and card != "$target.0") or (not symbolic and card.startswith("$")):
+        raise ValueError("Conditional exile requires the original creature target")
+    return condition, tuple(children)
+
+
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition | CastOriginCondition, tuple[Mapping[str, Any], ...]]:
@@ -411,6 +446,8 @@ def validate_resolution_condition_instruction(
 
         return validate_blocker_protection_condition(effect)
 
+    if effect.get("schema_version") == CONTROLLED_ARTIFACT_TAP_EXILE_VERSION:
+        return _validate_controlled_artifact_tap_exile(effect)
     if is_other_blue_permanent_draw(effect):
         return _validate_other_blue_permanent_draw(effect)
     if effect.get("schema_version") in {MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION, MONARCH_COUNTER_DOUBLING_VERSION}:

@@ -257,7 +257,10 @@ def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,
     tap_zone = fixed_color_tap_zone_costs(costs)
     try: ordered_pair = fixed_discard_sacrifice_order(option, costs)
     except ValueError: return False, None
+    from ...public_alternative_costs import is_life_and_blue_hand_exile_price_option
+
     if (len(costs) != 1 and not fixed_life_zone_costs(costs)
+        and not is_life_and_blue_hand_exile_price_option(option, costs)
         and not distinct_kicker_zone_costs(option, costs) and not tap_zone and not ordered_pair):
         return False, None
     if tap_zone:

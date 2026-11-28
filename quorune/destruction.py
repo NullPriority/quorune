@@ -4,6 +4,7 @@ from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Any, Mapping, Protocol, Sequence
 
+from .ordered_incarnation_exclusion import OrderedIncarnationExclusion
 from .counter_state import (
     CounterChange,
     CounterStateError,
@@ -674,7 +675,7 @@ def _canonical_companion_changes(
     return tuple(result)
 
 
-def _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_replacements):
+def _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_replacements, ordered_arrivals):
     from .damage_results import clear_damage_for_permanents
 
     staged = _uses_effect_replacement_stages(host, plan.cause)
@@ -684,18 +685,20 @@ def _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_re
         (entry.object_id, entry.logical_object_id)
         for entry in plan.entries if entry.object_id in plan.damage_clear_object_ids
     )
-    if not staged or not changes:
+    if (not staged and ordered_arrivals is None) or not changes:
         clear_damage_for_permanents(host, damage_clears)
         damage_clears = ()
     if not changes:
         return ()
     selections = tuple(thaw_value(value) for value in plan.replacement_selections)
-    if prepared_replacements is not None or damage_clears:
+    if prepared_replacements is not None or damage_clears or ordered_arrivals is not None:
         from .zone_transitions import ZoneTransitionOwner
 
         return ZoneTransitionOwner(host).move_cards_simultaneously(
             changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
             prepared_replacements=prepared_replacements, damage_clears=damage_clears,
+            require_graveyard_order=ordered_arrivals is not None,
+            graveyard_orders=ordered_arrivals.orders if ordered_arrivals is not None else None,
             replacement_selections=selections if prepared_replacements is None else (),
         )
     return host._move_cards_simultaneously(
@@ -719,6 +722,7 @@ def commit_destruction_plan(
     companion_transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     prepared_zone_replacements: Mapping[str, PreparedZoneChange] | None = None,
     record_graveyard_outcomes: bool = False,
+    ordered_arrivals: OrderedIncarnationExclusion | None = None,
 ) -> DestructionResult:
     """Commit one preflighted destruction family through canonical owners."""
 
@@ -749,7 +753,9 @@ def commit_destruction_plan(
         )
     if prepared_zone_replacements is not None and set(prepared_zone_replacements) != {object_id for object_id,_ in changes}:
         raise DestructionError('Prepared destruction zone plans do not cover the complete batch')
-    moved = _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_zone_replacements)
+    moved = _commit_destruction_moves(
+        host, plan, changes, transition_kinds, prepared_zone_replacements, ordered_arrivals,
+    )
     died = _committed_graveyard_deaths(plan, moved) if record_graveyard_outcomes else ()
     apply_counter_changes(host, plan.shield_counter_plan)
 

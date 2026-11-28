@@ -2,6 +2,8 @@
 
 from collections.abc import Mapping
 
+from ..apnap_object_payment import ORDER_GRAVEYARD_ARRIVALS
+
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_matches_query
 from ..private_hand_entry_model import (
@@ -12,6 +14,9 @@ from .committed_quantity_followups import (
     CommittedQuantityFollowup, fixed_followup_capabilities, fixed_quantity_effect, quantity_followup_from_count,
 )
 from .effect_shape_walkers import nested_effects
+from .committed_land_sacrifice_search import (
+    COMMITTED_LAND_SEARCH_CAPABILITY, commit_land_sacrifice_search, validate_land_sacrifice_search_recipe,
+)
 from .committed_sacrifice_damage import (
     COMMITTED_SACRIFICE_DAMAGE_CAPABILITY, capture_committed_sacrifice_damage_target,
     committed_sacrifice_damage_dependencies, committed_sacrifice_damage_domain_matches,
@@ -53,7 +58,7 @@ def any_number_sacrifice_count(count):
 
 
 def _result_version(followup):
-    return {"mana": 2, "damage": 3, PRIVATE_HAND_COLLECTION_OPERATION: 4}.get(followup["op"], 1)
+    return {"mana": 2, "damage": 3, PRIVATE_HAND_COLLECTION_OPERATION: 4, "search": 5}.get(followup["op"], 1)
 
 
 def any_number_sacrifice_effect(domain, followup, *, actor="$controller", excluded="$source.zone_object"):
@@ -76,6 +81,9 @@ def any_number_sacrifice_followup(value, *, actor="$controller"):
         raise ValueError("Any-number sacrifice needs its resolving controller's fixed result")
     if value.get("op") == "damage":
         return committed_sacrifice_damage_recipe_parts(value, actor=actor)
+    if value.get("op") == "search":
+        validate_land_sacrifice_search_recipe(value, actor=actor)
+        return FrozenMap({**value, "player": "$controller"})
     if value.get("op") == PRIVATE_HAND_COLLECTION_OPERATION:
         spec = decode_private_hand_collection(value, actor=actor)
         if not spec.one_of_each:
@@ -109,7 +117,7 @@ def any_number_sacrifice_parts(effect, *, actor="$controller", excluded="$source
     if not any_number_sacrifice_count(effect.get("count")):
         raise ValueError("Any-number sacrifice must preserve its zero-inclusive selection")
     damage_domain = domain in {"mountains", "creatures"}
-    if ((followup["op"] == "mana") != (domain == "lands")
+    if ((followup["op"] in {"mana", "search"}) != (domain == "lands")
             or (followup["op"] == "damage") != damage_domain
             or damage_domain and not committed_sacrifice_damage_domain_matches(domain, followup)
             or followup["op"] == "life" and domain != "permanents"
@@ -139,7 +147,10 @@ def any_number_sacrifice_commit_fields(host, item, effect, state, *, actor, sele
     }
     if followup["op"] == "damage":
         payload["target"] = capture_committed_sacrifice_damage_target(host, item)
-    return {ANY_NUMBER_SACRIFICE_FIELD: payload}
+    return {
+        ANY_NUMBER_SACRIFICE_FIELD: payload,
+        **({ORDER_GRAVEYARD_ARRIVALS: True} if followup["op"] == "search" else {}),
+    }
 
 
 def any_number_sacrifice_commit_parts(payload, refs, *, actor):
@@ -149,7 +160,7 @@ def any_number_sacrifice_commit_parts(payload, refs, *, actor):
     expected = {"schema_version", "followup", "selected_incarnations"}
     if version == 3:
         expected.add("target")
-    if version not in (1, 2, 3, 4) or set(payload) != expected or version == 4 and len(refs) != 1:
+    if version not in (1, 2, 3, 4, 5) or set(payload) != expected or version == 4 and len(refs) != 1:
         raise ValueError("Committed any-number sacrifices require their exact revision and follow-up")
     selected = payload["selected_incarnations"]
     if (not refs or not isinstance(selected, Mapping) or set(selected) != set(refs)
@@ -171,7 +182,10 @@ def _source_mana_instruction(recipe):
     return FrozenMap({**recipe, "source": "$source"})
 
 
-def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None):
+def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None, committed_members=()):
+    if followup["op"] == "search":
+        item = next((entry for entry in host.state.stack if entry.context.get("currently_resolving") is True), None)
+        return CommittedQuantityFollowup((commit_land_sacrifice_search(host, item, committed_members),))
     if followup["op"] == PRIVATE_HAND_COLLECTION_OPERATION:
         if type(count) is not int or count not in (0, 1):
             raise ValueError("A mandatory creature sacrifice produces at most one committed result")
@@ -181,6 +195,16 @@ def resolve_any_number_sacrifice_followup(host, followup, count, *, target=None)
     if followup["op"] == "mana":
         followup = _source_mana_instruction(followup)
     return quantity_followup_from_count(followup, count)
+
+
+def zero_land_sacrifice_search(host, item, effect, selected_refs):
+    marker = effect.get(ANY_NUMBER_SACRIFICE_FIELD)
+    if selected_refs or not isinstance(marker, Mapping) or marker.get("schema_version") != 5:
+        return ()
+    _, followup = any_number_sacrifice_parts(effect, actor=item.controller)
+    if followup["op"] != "search":
+        return ()
+    return (commit_land_sacrifice_search(host, item, ()),)
 
 
 def _land_sacrifice_mana_dependencies(recipe):
@@ -211,7 +235,10 @@ def any_number_sacrifice_capabilities(effect, target_schema):
     else:
         if target_schema is not None:
             raise ValueError("Any-number sacrifice has no target outside its exact damage result")
-        followup = _land_sacrifice_mana_dependencies(result) if domain == "lands" else fixed_followup_capabilities(result)
+        if result["op"] == "search":
+            followup = (COMMITTED_LAND_SEARCH_CAPABILITY, "library.search.fixed_counted")
+        else:
+            followup = _land_sacrifice_mana_dependencies(result) if domain == "lands" else fixed_followup_capabilities(result)
     return (ANY_NUMBER_SACRIFICE_CAPABILITY, "choice.affected_player.fixed_sacrifice",
             "zone.change.destination_replacement", *followup,
             *(("trigger.event.normalized_zone_change", "trigger.placement.apnap") if domain in _SELF_ENTRY_DOMAINS else ()))
@@ -222,6 +249,7 @@ def any_number_sacrifice_runtime_dependencies(program):
     marked = tuple(effect for effect in nested_effects(effects) if ANY_NUMBER_SACRIFICE_FIELD in effect)
     authorities = {
         ANY_NUMBER_SACRIFICE_CAPABILITY, COMMITTED_LAND_SACRIFICE_MANA_CAPABILITY, COMMITTED_SACRIFICE_DAMAGE_CAPABILITY,
+        COMMITTED_LAND_SEARCH_CAPABILITY,
     }
     if COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY in program.capability_dependencies:
         if ((program.event, program.active_zone) != ("resolve", "stack")
@@ -236,7 +264,9 @@ def any_number_sacrifice_runtime_dependencies(program):
     domain, result = any_number_sacrifice_parts(marked[0])
     if COMMITTED_SACRIFICE_DAMAGE_CAPABILITY in program.capability_dependencies and result["op"] != "damage":
         raise ValueError("Committed sacrifice damage must retain the original stock target result")
-    if COMMITTED_LAND_SACRIFICE_MANA_CAPABILITY in program.capability_dependencies and domain != "lands":
+    if COMMITTED_LAND_SEARCH_CAPABILITY in program.capability_dependencies and result["op"] != "search":
+        raise ValueError("Committed land search must retain the original search follow-up")
+    if COMMITTED_LAND_SACRIFICE_MANA_CAPABILITY in program.capability_dependencies and result["op"] != "mana":
         raise ValueError("Committed colorless mana must retain its land sacrifice domain")
     source = ("permanent.enter.self", "battlefield") if domain in _SELF_ENTRY_DOMAINS else ("resolve", "stack")
     if (program.event, program.active_zone) != source or program.event_condition is not None:

@@ -93,27 +93,56 @@ def _damage_life_result(body, card_name, source_context, compile_fixed):
 
 
 def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_payment: EffectCompiler):
+    from .controller_graveyard_mana_templates import controller_graveyard_mana_target_template
+    from .private_look_land_or_hand_templates import private_look_land_or_hand_template
     from .exile_until_same_name_templates import exile_until_same_name_template
+    from .draw_templates import distinct_opponent_draw_template
+    from .discard_result_templates import selected_opponent_discard_draw_template
+    from .delayed_draw_templates import watched_combat_damage_draw_template
+    from .token_templates import announced_token_sweep_template
+    from ..rules.apnap_type_return import TYPE_RETURN_MECHANIC, type_return_effect
+
+    if " ".join(text.split()).casefold() == (
+        "each player chooses a creature type. each player returns all creature cards of a type chosen this way "
+        "from their graveyard to the battlefield."
+    ):
+        return "apnap-chosen-creature-type-return-v1", (type_return_effect(),), None, (TYPE_RETURN_MECHANIC,)
+    from .own_combat_modal_templates import conditional_own_combat_untap_template
+    from .delayed_draw_templates import controlled_player_damage_token_template
     from .owned_commander_amount import owned_commander_amount_template
     from .resolution_condition_templates import other_spell_draw_template
-    from .targeted_discard_spell_copy import targeted_discard_spell_copy_template
+    from .targeted_discard_spell_copy import targeted_discard_spell_copy_template, targeted_return_spell_copy_template
     from .token_creation_reflexive_templates import token_creation_reflexive_template
     from .targeted_turn_target_prohibition import targeted_turn_prohibition_template
 
     return (
-        exile_until_same_name_template(text)
+        controller_graveyard_mana_target_template(text)
+        or private_look_land_or_hand_template(text)
+        or exile_until_same_name_template(text)
+        or distinct_opponent_draw_template(text)
+        or selected_opponent_discard_draw_template(text)
+        or watched_combat_damage_draw_template(text)
+        or announced_token_sweep_template(text)
+        or conditional_own_combat_untap_template(text)
+        or controlled_player_damage_token_template(text)
         or targeted_turn_prohibition_template(text)
         or other_spell_draw_template(text, compile_component=compile_atomic)
         or owned_commander_amount_template(text)
         or token_creation_reflexive_template(text, compile_effect=compile_payment)
         or targeted_discard_spell_copy_template(text)
+        or targeted_return_spell_copy_template(text)
     )
 
 
 def _whole_contextual_effect_template(text):
     from ..temporary_graveyard_escape import targeted_escape_template
 
-    return fixed_end_turn_effect_template(text) or targeted_escape_template(text)
+    from .reveal_until_library_selection_templates import chosen_name_reveal_template
+
+    from .scheduled_turn_skip_templates import target_player_untap_skip_tap_template
+
+    return (fixed_end_turn_effect_template(text) or targeted_escape_template(text)
+            or chosen_name_reveal_template(text) or target_player_untap_skip_tap_template(text))
 
 
 def reviewed_contextual_effect_template(
@@ -127,7 +156,9 @@ def reviewed_contextual_effect_template(
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
     # These instructions own the complete resolving operation.
-    whole = _whole_contextual_effect_template(text)
+    from .reanimation_templates import returned_creature_counters_template
+
+    whole = returned_creature_counters_template(text) or _whole_contextual_effect_template(text)
     if whole is not None:
         return whole
 
@@ -287,6 +318,10 @@ def reviewed_effect_template_composition(
     from .permanent_resolution_choices import permanent_resolution_choice_template
     from .mill_templates import committed_mill_card_template
 
+    from .proliferate_templates import counter_snapshot_proliferate_template
+
+    if snapshot := counter_snapshot_proliferate_template(text):
+        return snapshot
     if chosen_permanent := permanent_resolution_choice_template(text):
         return chosen_permanent
     if committed_mill := committed_mill_card_template(text):
@@ -345,6 +380,7 @@ def _has_committed_followup(text):
     return (
         "destroyed this way" in text or "died this way" in text or "dies this way" in text or "exiled this way" in text
         or "permanent put into a graveyard this way, its controller creates" in text
+        or "the controller of each of those artifacts gains life" in text
         or "if that land was nonbasic, untap this creature" in text
         or text.startswith("exile all attacking creatures target player controls.")
     )

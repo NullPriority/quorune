@@ -182,7 +182,11 @@ def event_counter_threshold_program_dependencies(program):
 def initial_event_counter_threshold(effects, *, source=None, current=None):
     from .combat_point_counters import initial_point_counter_observation, uses_point_game_loss
 
+    from .attack_trigger_copy import initial_counter_observation, uses_quest_copy
+
     for effect in effects:
+        if uses_quest_copy(effect):
+            return initial_counter_observation(source, current)
         if uses_point_game_loss(effect):
             return initial_point_counter_observation(source, current)
         if effect.get("op") == EVENT_COUNTER_THRESHOLD_OPERATION:
@@ -239,7 +243,12 @@ def event_counter_threshold_count(host, item):
 def pin_event_counter_threshold_departures(host, cards, *, error_type=ValueError):
     from .combat_point_counters import POINT_COUNTER_OBSERVATION, point_counter_observation
 
+    from .attack_trigger_copy import QUEST_CONTEXT, quest_observation
+
     cards = tuple(cards)
+    pin_counter_observation_departures(
+        host, cards, context_field=QUEST_CONTEXT, read_observation=quest_observation, error_type=error_type,
+    )
     pin_counter_observation_departures(
         host, cards, context_field=POINT_COUNTER_OBSERVATION,
         read_observation=point_counter_observation, error_type=error_type,

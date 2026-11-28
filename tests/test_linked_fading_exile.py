@@ -38,6 +38,10 @@ class LinkedFadingExileTests(InheritedNativeFixture, unittest.TestCase):
             fixtures / "bound-effect-program-cards.json",
             fixtures / "fading-cards.json",
             fixtures / "linked-fading-exile-cards.json",
+            fixtures / "announced-x-activation-cards.json",
+            fixtures / "mana-tapped-land-next-untap-cards.json",
+            fixtures / "static-land-animation-cards.json",
+            fixtures / "activation-public-state-cards.json",
         ], database)
         cls.db = CardDatabase(database)
         cls.registry = load_default_capability_registry()
@@ -71,6 +75,130 @@ class LinkedFadingExileTests(InheritedNativeFixture, unittest.TestCase):
     def _assert_zone(self, game, zone, *cards):
         for card in cards:
             self.assertEqual(zone, game.state.cards[card.object_id].zone, card.ref)
+
+    def _farm_action(self, game, farm, action, target=None, *, succeeds=True):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        matches = [row for row in actions if row["id"].startswith("activate:" + farm.ref + ":")]
+        description = {"mana": "Add {C}", "exile": "Exile target creature", "return": "Return a creature card"}[action]
+        selected, = [row for row in matches if description in row["label"]]
+        command = {"action_id": selected["id"], "pay": "auto"}
+        if target is not None:
+            command["targets"] = [target]
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:A", command)
+        self.assertEqual(succeeds, result.ok, result.summary)
+        if not succeeds:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _untap_farm(self, game, untap, farm):
+        self.cast(game, "A", untap, [farm.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.cards[farm.object_id].tapped)
+
+    def test_farm_sacrifices_original_source_and_returns_chosen_creature_then_the_rest(self):
+        game = self.session(607_233_01)
+        farm = self.add(game.engine, "Northampton Farm")
+        other = self.add(game.engine, "Northampton Farm", ref="other-farm")
+        first = self.add(game.engine, self.body, ref="farm-first")
+        second = self.add(game.engine, self.body, ref="farm-second")
+        invalid = self.add(game.engine, self.body, seat="B", ref="farm-other-owner")
+        outside = self.add(game.engine, self.body, zone="exile", ref="farm-unlinked")
+        untaps = [self.add(game.engine, "Burst of Energy", zone="hand", ref=f"farm-untap-{n}") for n in range(3)]
+        game.engine.change_control(first.object_id, "B", reason="B controls A's creature")
+        game.engine.change_control(invalid.object_id, "A", reason="A controls B's creature")
+        self.assert_closed(game, farm)
+        self.prepare(game, mana={"C": 10, "W": 3})
+        self.checkpoint(game)
+        before = game.state.players["A"].mana_pool["C"]
+        self._farm_action(game, farm, "mana")
+        self.assertEqual(before + 1, game.state.players["A"].mana_pool["C"])
+        self._untap_farm(game, untaps[0], farm)
+        self._farm_action(game, farm, "exile", invalid.ref, succeeds=False)
+        for index, target in enumerate((first, second), 1):
+            self._farm_action(game, farm, "exile", target.ref)
+            self.assertIsNone(self.resolve(game))
+            self._untap_farm(game, untaps[index], farm)
+        self._assert_zone(game, "exile", first, second, outside)
+        original = game.state.cards[farm.object_id].logical_object_id
+        self._farm_action(game, farm, "return")
+        self.assertEqual("graveyard", game.state.cards[farm.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[other.object_id].zone)
+        self.assertEqual(original, game.state.stack[-1].context["source_logical_object_id"])
+        decision = self.resolve(game)
+        self.assertEqual("semantic.choice", decision.kind)
+        choices = game.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]
+        self.assertEqual({first.ref, second.ref}, {row["id"] for row in choices})
+        game = self.replay(game, load=True)
+        choice = game.act("pilot:A", {"action_id": "choose", "card": first.ref})
+        self.assertTrue(choice.ok, choice.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("battlefield", "A"), (game.state.cards[first.object_id].zone, game.state.cards[first.object_id].controller))
+        self.assertIn(second.object_id, game.state.players["A"].zones["hand"])
+        self._assert_zone(game, "exile", outside)
+        self.replay(game, load=True)
+
+    def test_farm_reentered_source_does_not_recover_earlier_linked_cards(self):
+        game = self.session(607_233_02)
+        farm = self.add(game.engine, "Northampton Farm")
+        land = self.add(game.engine, self.land)
+        old = self.add(game.engine, self.body, ref="farm-old-source-link")
+        blink = self.add(game.engine, "Ghostly Flicker", zone="hand")
+        self.prepare(game, mana={"C": 6, "U": 1})
+        self.checkpoint(game)
+        original = farm.logical_object_id
+        self._farm_action(game, farm, "exile", old.ref)
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "A", blink, [farm.ref, land.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertNotEqual(original, game.state.cards[farm.object_id].logical_object_id)
+        self._farm_action(game, farm, "return")
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "graveyard", farm)
+        self._assert_zone(game, "exile", old)
+        self.replay(game, load=True)
+
+    def test_farm_without_a_creature_card_still_returns_the_original_land_to_hand(self):
+        game = self.session(607_233_04)
+        farm = self.add(game.engine, "Northampton Farm")
+        canopy = self.add(game.engine, "Living Lands")
+        forest = self.add(game.engine, "Forest")
+        untap = self.add(game.engine, "Burst of Energy", zone="hand")
+        self.assert_closed(game, canopy)
+        self.prepare(game, mana={"C": 4, "W": 1})
+        self.checkpoint(game)
+        self._farm_action(game, farm, "exile", forest.ref)
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "exile", forest)
+        self._untap_farm(game, untap, farm)
+        self._farm_action(game, farm, "return")
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "graveyard", farm)
+        self._assert_zone(game, "hand", forest)
+        self.replay(game, load=True)
+
+    def test_farm_exiled_token_never_becomes_a_returnable_card(self):
+        game = self.session(607_233_03)
+        farm = self.add(game.engine, "Northampton Farm")
+        make = self.add(game.engine, "Raise the Alarm", zone="hand")
+        untap = self.add(game.engine, "Burst of Energy", zone="hand")
+        self.prepare(game, mana={"C": 6, "W": 3})
+        self.checkpoint(game)
+        self.cast(game, "A", make)
+        self.assertIsNone(self.resolve(game))
+        tokens = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(2, len(tokens))
+        token = tokens[0]
+        self._farm_action(game, farm, "exile", token.ref)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(any(token.object_id in player.zones["exile"] for player in game.state.players.values()))
+        self._untap_farm(game, untap, farm)
+        self._farm_action(game, farm, "return")
+        self.assertIsNone(self.resolve(game))
+        self._assert_zone(game, "graveyard", farm)
+        self.assertFalse(any(token.object_id in player.zones["hand"] or token.object_id in player.zones["battlefield"]
+                             for player in game.state.players.values()))
+        self.replay(game, load=True)
 
     def test_linked_fading_land_returns_only_its_original_owner_batch(self):
         game = self.session(607_232_01)

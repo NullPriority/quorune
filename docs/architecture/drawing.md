@@ -30,6 +30,13 @@ actually reach exile during the current turn. A short library contributes its
 remaining cards. The replaced occurrence emits no draw, including when the
 library is empty. The coordinator continues any remaining draws individually.
 
+A mandatory battlefield replacement can turn its controller's individual
+empty-library draw into an instruction to win the game. The replacement
+removes the draw even when a restriction bars the win. A successful win
+ends the game before any queued draws or remaining spell instructions.
+The ordinary draw permission check and affected-player ordering still govern
+whether the replacement can apply.
+
 `drawing/miracle_model.py` defines the staged fixed-mana declaration and
 distinct prospective-library and revealed-hand values. A committed draw
 changes the logical object identity. The drawer records draw provenance and
@@ -119,6 +126,10 @@ hand-size rule for that controller. Cleanup reads it alongside current static
 hand-size rules, even after the creature changes control or leaves. Dice
 modifiers, replacement rolls, and abilities that consume a roll occurrence
 remain outside this compiled scope.
+
+Public die results use the resolving stack reference and instruction position
+as their deterministic key. A later roll at that same instruction adds its
+ordinal to the key. The first roll keeps the established key and event fields.
 
 A fixed draw and keyword grant samples its controlled countered creatures
 once as the draw instruction begins. The sampled count feeds ordinary draw

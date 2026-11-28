@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
-from .turn_history_model import PERMANENT_COUNTER_RECEIVED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT, TurnHistoryEvent
+from .turn_history_model import (
+    CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT, CREATURE_COUNTER_PLACEMENT_EVENT, PERMANENT_COUNTER_RECEIVED_EVENT,
+    PLUS_ONE_COUNTERS_PLACED_EVENT, TurnHistoryEvent,
+)
 
 from .counter_placement_event_model import counter_quantity_provenance_version
 from .counter_state import (
@@ -244,7 +247,9 @@ def _placement_history_for_commit(host, rows):
     history = getattr(host.state, "turn_history", None)
     plus_one = getattr(history, "plus_one_counter_placement_history_version", None) == 1
     receipts = getattr(history, "permanent_counter_receipt_history_version", None) == 1
-    if not (plus_one or receipts):
+    controlled = getattr(history, "controlled_creature_counter_history_version", None) == 1
+    creature_placements = getattr(history, "creature_counter_placement_history_version", None) == 1
+    if not (plus_one or receipts or controlled or creature_placements):
         return None, ()
     turn = host.state.turn_sequence
     if history.turn_sequence != turn:
@@ -259,17 +264,36 @@ def _placement_history_for_commit(host, rows):
         if receipts and incarnation not in received:
             facts.append(TurnHistoryEvent(PERMANENT_COUNTER_RECEIVED_EVENT, object_incarnation=incarnation))
             received.add(incarnation)
-        if not plus_one or row.counter_name != "+1/+1":
+        is_plus_one = row.counter_name == "+1/+1" and (plus_one or controlled)
+        if not (is_plus_one or creature_placements):
             continue
         try:
             types = payload.get("target_types")
             if not isinstance(types, (list, tuple)):
                 raise ValueError("Counter placement history lost the recipient's typed characteristics")
-            facts.append(TurnHistoryEvent(
-                PLUS_ONE_COUNTERS_PLACED_EVENT, actor=payload.get("placing_player"),
-                object_incarnation=incarnation,
-                types=tuple(types), amount=row.amount,
-            ))
+            actor = payload.get("placing_player")
+            creature = "creature" in types
+            if creature_placements and creature:
+                facts.append(TurnHistoryEvent(
+                    CREATURE_COUNTER_PLACEMENT_EVENT, actor=actor, object_incarnation=incarnation,
+                    types=tuple(types), amount=row.amount,
+                ))
+            if not is_plus_one:
+                continue
+            if plus_one:
+                facts.append(TurnHistoryEvent(
+                    PLUS_ONE_COUNTERS_PLACED_EVENT, actor=actor, object_incarnation=incarnation,
+                    types=tuple(types), amount=row.amount,
+                ))
+            if controlled and creature:
+                controller = payload.get("target_controller")
+                if type(controller) is not str or not controller:
+                    raise ValueError("Counter placement history lost the recipient's controller")
+                if controller == actor:
+                    facts.append(TurnHistoryEvent(
+                        CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT, actor=actor, object_incarnation=incarnation,
+                        types=tuple(types), amount=row.amount,
+                    ))
         except (TypeError, ValueError) as exc:
             raise CounterPlacementError(str(exc)) from exc
     return (turn, tuple(facts)) if facts else (None, ())
@@ -722,6 +746,8 @@ def validate_counter_placement_commit(
             raise CounterPlacementError("Counter placement history changed before commit")
         versions = {
             PLUS_ONE_COUNTERS_PLACED_EVENT: history.plus_one_counter_placement_history_version,
+            CONTROLLED_CREATURE_COUNTER_HISTORY_EVENT: history.controlled_creature_counter_history_version,
+            CREATURE_COUNTER_PLACEMENT_EVENT: history.creature_counter_placement_history_version,
             PERMANENT_COUNTER_RECEIVED_EVENT: history.permanent_counter_receipt_history_version,
         }
         if any(versions.get(fact.kind) != 1 for fact in plan.placement_history):

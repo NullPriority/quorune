@@ -130,6 +130,30 @@ def committed_milled_creature_token_template(text):
 
 def committed_mill_card_template(text):
     normalized = " ".join(text.split()).casefold()
+    paid = re.fullmatch(
+        rf"mill (?P<count>{_MILL_COUNT_PATTERN}) (?P<card_word>cards?)\. then you may pay "
+        r"\{(?P<generic>[1-9][0-9]?)\} and (?P<life>[1-9][0-9]?) life\. "
+        r"if you do, put a card from among those cards into your hand\.",
+        normalized,
+    )
+    if paid is not None:
+        from ..rules.mill_paid_hand_return import MillPaidHandReturn
+
+        try:
+            result = MillPaidHandReturn(_mill_count(paid["count"]), int(paid["generic"]), int(paid["life"]))
+        except ValueError:
+            return None
+        if (result.count == 1) != (paid["card_word"] == "card"):
+            return None
+        return "mill-committed-paid-one-card-to-hand-v1", (result.effect(),), None, (MILL_MECHANIC_ID,)
+    if normalized == (
+        "mill four cards. you may put up to two creature and/or land cards "
+        "from among the milled cards into your hand."
+    ):
+        from ..rules.milled_creature_land_to_hand import MillCreatureLandToHand
+
+        return ("mill-committed-creature-land-hand-choice-v1", (MillCreatureLandToHand().effect(),),
+                None, (MILL_MECHANIC_ID,))
     if normalized == (
         "mill seven cards. then put all cards that have an adventure "
         "from among the milled cards into your hand."

@@ -12,6 +12,7 @@ from ..flashback import (
     FLASHBACK_HANDLER_ID,
     FLASHBACK_RUNTIME_EVENT,
 )
+from ..harmonize import DEPENDENCIES, EVENT, HANDLER_ID, HarmonizeSpec, harmonize_handler_descriptor
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -67,15 +68,39 @@ class FixedManaFlashbackHandler:
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True, slots=True)
+class HarmonizeCastHandler:
+    handler_id: str = HANDLER_ID
+    schema_version: int = 1
+    family: str = "casting.harmonize.fixed_announced_x"
+    event: str = EVENT
+    rule_references: tuple[str, ...] = ("107.3a", "601.2b", "601.2f", "702.180a", "702.180b")
+    capability_dependencies: tuple[str, ...] = DEPENDENCIES
+
+    def validate(self, descriptor):
+        try:
+            spec = HarmonizeSpec.from_dict(descriptor["harmonize"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if (dict(descriptor) != harmonize_handler_descriptor(spec)
+                or type(descriptor["schema_version"]) is not int
+                or descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True):
+            raise SemanticNodeError("Harmonize requires its exact current graveyard cast descriptor")
+        return spec
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
 class FixedManaFlashbackRegistry(
-    RuntimeComponentRegistry[object, FixedManaFlashbackSpec]
+    RuntimeComponentRegistry[object, FixedManaFlashbackSpec | HarmonizeSpec]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_flashback_registry() -> FixedManaFlashbackRegistry:
-    registry = FixedManaFlashbackRegistry((FixedManaFlashbackHandler(),))
+    registry = FixedManaFlashbackRegistry((FixedManaFlashbackHandler(), HarmonizeCastHandler()))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

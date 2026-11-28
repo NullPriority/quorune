@@ -10,18 +10,25 @@ from ..public_library_piles_model import (
     PILE_NAMES,
     PILE_OPERATION,
     PILE_RULES,
+    PUBLIC_SEARCH_SPLIT_CAPTURE,
     PublicLibraryPileSpec,
     PublicLibraryPileState,
     RevealedPileCard,
+    SEARCHED_PILE_VERSIONS,
+    SearchedLibraryPileState,
+    searched_pile_effect,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_partition import partition_refs
 from ..rules.library_selection import LibrarySelectionArrangement, LibrarySelectionObjectIdentity
-from ..semantic_runtime.intents import LibrarySelectionIntent, RecordChoiceIntent, RevealLibraryCardsIntent
+from ..semantic_runtime.intents import (
+    LibrarySelectionIntent, RecordChoiceIntent, RevealLibraryCardsIntent, ShuffleLibraryIntent,
+)
 from .intent_replacement import serialized_replacement_selections
 from .model import (
     AutoContinue,
     LibraryPartitionChoice,
+    ObjectChoice,
     OrderingChoice,
     ScalarChoice,
     SemanticChoiceCompletion,
@@ -168,8 +175,177 @@ def _commit(state):
     )
 
 
+def _searched_state(effect):
+    state = SearchedLibraryPileState.from_dict(effect[_STATE])
+    expected = searched_pile_effect(state)
+    if state.stage == "order_graveyard":
+        expected[_ORDER] = thaw_value(effect[_ORDER])
+    if type(effect.get("schema_version")) is not int or thaw_value(effect) != expected:
+        raise SemanticChoiceError("Searched public choices require their complete retained payload")
+    return state
+
+
+def scoped_searched_pile_refs(host, item, actor, effect):
+    if effect.get("op") != PILE_OPERATION or effect.get("schema_version") not in SEARCHED_PILE_VERSIONS:
+        return ()
+    state = _searched_state(effect)
+    if (item is None or item.context.get("currently_resolving") is not True
+            or item.ref != state.stack_ref or item.controller != state.controller or actor != state.actor):
+        raise SemanticChoiceError("Searched public references require the authorized resolving player")
+    if state.stage == "choose_card" and state.target in host.active_seats and (
+        actor != state.target or tuple(item.targets) != (state.target,)
+    ):
+        raise SemanticChoiceError("The current targeted opponent must receive the searched public choice")
+    captured = SearchedLibraryPileState.from_dict(item.context[PUBLIC_SEARCH_SPLIT_CAPTURE])
+    if (captured.stack_ref != item.ref or captured.controller != state.controller
+            or captured.target != state.target or captured.looked != state.looked
+            or captured.schema_version != state.schema_version):
+        raise SemanticChoiceError("The public choice no longer refers to the captured search")
+    if state.stage == "shuffle":
+        return ()
+    for result in state.looked:
+        identity = result.identity
+        current = host.state.cards.get(identity.object_id)
+        if (current is None or current.owner != state.controller or current.zone != "library"
+                or current.ref != identity.ref or current.logical_object_id != identity.logical_object_id
+                or actor not in current.revealed_to):
+            raise SemanticChoiceError("The searched card is no longer a revealed library incarnation")
+    return state.refs
+
+
+def _bind_searched_state(effect, query, controller, stack_ref):
+    state = _searched_state(effect)
+    stack = query.stack_object(stack_ref)
+    target_present = state.target in query.active_seats
+    if (state.controller != controller or controller not in query.active_seats or state.stack_ref != stack_ref
+            or stack is None or stack.controller != controller or stack.label != state.label
+            or target_present and tuple(stack.targets) != (state.target,)
+            or state.stage == "choose_opponent" and target_present
+            or state.stage == "choose_card" and (
+                state.chooser not in _opponents(query, controller) or target_present and state.chooser != state.target
+            )):
+        raise SemanticChoiceError("Searched public choices lost their resolving source or chooser")
+    if state.stage != "shuffle":
+        for card in state.looked:
+            identity = card.identity
+            row = query.object(identity.ref, zones=("library",))
+            if (row is None or row.owner != controller or row.object_id != identity.object_id
+                    or row.logical_object_id != identity.logical_object_id or row.printed_name != card.name
+                    or not row.known_to_actor):
+                raise SemanticChoiceError("The searched library card lost its original public incarnation")
+    return state
+
+
+def _searched_request(state, query, orders=None):
+    context = FrozenMap({
+        "stack": state.stack_ref, "operation": PILE_OPERATION, "stage": state.stage,
+        "objects": _public_cards(state),
+    })
+    if state.stage == "choose_opponent":
+        return SemanticChoiceRequest(
+            ("Choose another opponent to select two of the revealed cards." if state.chooses_for_graveyard
+             else "Choose another opponent to select one of the revealed cards."),
+            ScalarChoice("opponent", _opponents(query, state.controller)), context,
+        )
+    if state.stage == "choose_card":
+        if state.chooses_for_graveyard:
+            return SemanticChoiceRequest(
+                "Choose two revealed cards to put into the searching player's graveyard.",
+                ObjectChoice("cards", state.refs, ("library",), minimum=2, maximum=2), context,
+            )
+        return SemanticChoiceRequest(
+            "Choose one revealed card to put into the searching player's hand.",
+            ObjectChoice("cards", state.refs, ("library",)), context,
+        )
+    if state.stage == "order_graveyard" and orders is not None and orders.current_group is not None:
+        return SemanticChoiceRequest(
+            "Order the cards entering your graveyard from top to bottom.",
+            OrderingChoice(field_name="graveyard_order", legal_refs=orders.current_group.refs,
+                           schema_extras=FrozenMap({"order": "graveyard_top_to_bottom"})), context,
+        )
+    raise SemanticChoiceError("The searched public choice has no valid decision stage")
+
+
+def _prepare_searched_pile(effect, context):
+    state = _bind_searched_state(effect, context.query, context.stack_controller, context.stack_ref)
+    if context.actor != state.actor:
+        raise SemanticChoiceError("The searched public choice belongs to a different player")
+    saved = FrozenMap(effect)
+    if state.stage == "commit":
+        return SemanticChoicePreparation(
+            None, saved, preparation_intents=(_commit(state),),
+            auto_continue=AutoContinue(
+                reason=("Move the revealed cards to their assigned destinations" if state.chooses_for_graveyard
+                        else "Move the chosen card and the remainder"),
+                prepend_effects=(FrozenMap(searched_pile_effect(replace(state, stage="shuffle"))),),
+            ),
+        )
+    if state.stage == "shuffle":
+        return SemanticChoicePreparation(
+            None, saved, preparation_intents=(ShuffleLibraryIntent(state.controller, state.controller, state.label),),
+            auto_continue=AutoContinue(reason="Shuffle the searched library"),
+        )
+    orders = _retained_order(effect, state)[0] if state.stage == "order_graveyard" else None
+    return SemanticChoicePreparation(_searched_request(state, context.query, orders), saved)
+
+
+def _complete_searched_pile(continuation, response, query):
+    effect = continuation.effect
+    state = _bind_searched_state(effect, query, continuation.semantic_frame.controller, continuation.stack_ref)
+    field = {"choose_opponent": "opponent", "choose_card": "cards", "order_graveyard": "graveyard_order"}.get(state.stage)
+    if (field is None or set(response) - {"action", "action_id", "choice_schema"} != {field}
+            or response.get("action", "choose") != "choose" or response.get("action_id", "choose") != "choose"):
+        raise SemanticChoiceError("Provide the currently authorized searched public choice")
+    if state.stage == "choose_opponent":
+        chooser = response[field]
+        if chooser not in _opponents(query, state.controller):
+            raise SemanticChoiceError("A replacement chooser must be a current opponent")
+        updated = replace(state, chooser=chooser, stage="choose_card")
+    elif state.stage == "choose_card":
+        selected = partition_refs(response[field], field="cards")
+        if state.chooses_for_graveyard:
+            if len(selected) != 2 or any(ref not in state.refs for ref in selected):
+                raise SemanticChoiceError("Choose exactly two distinct revealed searched cards")
+            updated = replace(state, chosen=tuple(selected), stage="commit")
+            return SemanticChoiceCompletion(repeat_effect=FrozenMap(searched_pile_effect(updated)))
+        if len(selected) != 1 or selected[0] not in state.refs:
+            raise SemanticChoiceError("Choose exactly one revealed searched card")
+        updated = replace(state, chosen=selected[0], stage="commit")
+    else:
+        orders, selections = _retained_order(effect, state)
+        issued = _searched_request(state, query, orders).choice.choice_schema()
+        if "choice_schema" in response and FrozenMap(response["choice_schema"]) != FrozenMap(issued):
+            raise SemanticChoiceError("The searched placement order changed its issued schema")
+        order = partition_refs(response[field], field="graveyard_order")
+        accepted = orders.submit(state.controller, tuple(reversed(order)))
+        return SemanticChoiceCompletion(
+            intents=(replace(_commit(state), replacement_selections=selections, graveyard_orders=accepted),),
+            repeat_effect=FrozenMap(searched_pile_effect(replace(state, stage="shuffle"))),
+        )
+    return SemanticChoiceCompletion(repeat_effect=FrozenMap(searched_pile_effect(updated)))
+
+
+def _prepare_searched_graveyard_order(continuation, intent, required, *, index, count):
+    effect = continuation.effect
+    state = _searched_state(effect)
+    if (index != 0 or count != 1 or state.stage != "commit" or _ORDER in effect
+            or state.stack_ref != continuation.stack_ref or state.controller != continuation.semantic_frame.controller
+            or replace(intent, replacement_selections=()) != _commit(state)):
+        raise SemanticChoiceError("The searched order must belong to its original public placement")
+    waiting = replace(state, stage="order_graveyard")
+    saved = FrozenMap({
+        **searched_pile_effect(waiting),
+        _ORDER: {"orders": required.orders.to_dict(),
+                 "replacement_selections": serialized_replacement_selections(intent.replacement_selections)},
+    })
+    orders, _ = _retained_order(saved, waiting)
+    return state.controller, SemanticChoicePreparation(_searched_request(waiting, None, orders), saved)
+
+
 def prepare_public_pile_graveyard_order(_host, continuation, intent, required, *, index, count):
     effect = continuation.effect
+    if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+        return _prepare_searched_graveyard_order(continuation, intent, required, index=index, count=count)
     spec = _spec(effect)
     state = PublicLibraryPileState.from_dict(effect[_STATE])
     if (
@@ -212,6 +388,8 @@ class PublicLibraryPilesHandler:
             raise SemanticChoiceError(str(exc)) from exc
 
     def _prepare(self, effect, context):
+        if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+            return _prepare_searched_pile(effect, context)
         spec = _spec(effect)
         if spec.player != context.actor:
             raise SemanticChoiceError("A public pile choice requires its currently authorized actor")
@@ -272,6 +450,8 @@ class PublicLibraryPilesHandler:
 
     def _complete(self, continuation, response, query):
         effect = continuation.effect
+        if effect.get("schema_version") in SEARCHED_PILE_VERSIONS:
+            return _complete_searched_pile(continuation, response, query)
         spec = _spec(effect)
         state = _bind(effect, spec, query, continuation.semantic_frame.controller, continuation.stack_ref)
         field = _RESPONSE_FIELD[state.stage]

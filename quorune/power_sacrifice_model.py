@@ -34,8 +34,11 @@ class GreatestPowerSacrificeSpec:
     lost_life_only: bool = False
     target_player: str | None = None
     mana_value: bool = False
+    opponent_only: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.opponent_only) is not bool or self.opponent_only and self.target_player is None:
+            raise ValueError("A greatest-power opponent form needs its announced target")
         if type(self.mana_value) is not bool or self.mana_value and (
             self.lost_life_only or self.target_player is not None
         ):
@@ -51,7 +54,8 @@ class GreatestPowerSacrificeSpec:
     def target_schema(self) -> dict[str, Any] | None:
         if self.target_player is None:
             return None
-        return {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
+        return {"zones": ["player"], "categories": ["player"],
+                "player_relation": "opponent" if self.opponent_only else "any", "count": 1}
 
     @property
     def predicate(self) -> ObjectQuerySpec:
@@ -76,7 +80,8 @@ class GreatestPowerSacrificeSpec:
             value[GREATEST_POWER_SACRIFICE_FIELD] = {"schema_version": 3, "metric": "mana_value"}
         if self.target_player is not None:
             value.update(players=[self.target_player], target=self.target_player)
-            value[GREATEST_POWER_SACRIFICE_FIELD] = {"schema_version": 2, "gain_life": True}
+            value[GREATEST_POWER_SACRIFICE_FIELD] = ({"schema_version": 4, "target_opponent_only": True}
+                if self.opponent_only else {"schema_version": 2, "gain_life": True})
         return value
 
     @classmethod
@@ -88,13 +93,15 @@ class GreatestPowerSacrificeSpec:
             raise ValueError("Greatest-power sacrifice requires its exact descriptor version")
         if raw["schema_version"] == 1 and set(raw) == {"schema_version", "lost_life_only"}:
             spec = cls(raw["lost_life_only"])
-        elif raw["schema_version"] == 2 and set(raw) == {"schema_version", "gain_life"} and raw["gain_life"] is True:
+        elif (raw["schema_version"] == 2 and set(raw) == {"schema_version", "gain_life"} and raw["gain_life"] is True
+              or raw["schema_version"] == 4 and set(raw) == {"schema_version", "target_opponent_only"}
+              and raw["target_opponent_only"] is True):
             target = effect.get("target")
             if (type(target) is not str or not target
                     or actor == "$controller" and target != "$target.0"
                     or actor != "$controller" and (actor.startswith("$") or target.startswith("$"))):
                 raise ValueError("Greatest-power sacrifice requires its announced affected player")
-            spec = cls(target_player=target)
+            spec = cls(target_player=target, opponent_only=raw["schema_version"] == 4)
         elif thaw_value(raw) == {"schema_version": 3, "metric": "mana_value"}:
             spec = cls(mana_value=True)
         else:

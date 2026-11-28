@@ -106,10 +106,10 @@ def optional_life_payment_affordable(host, seat, option, response):
     from ...life_state import LifeStateError, prepare_life_payment
     from ...printed_mana_cost_model import printed_phyrexian_life_payment
     from ..casting_additional_cost_groups import fixed_life_payment_additional_cost, announced_x_life_additional_cost
-    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD, library_top_life_amount
+    from .library_top_life import mana_value_life_amount, mana_value_life_price_field
 
     printed = printed_phyrexian_life_payment(option)
-    amount = optional_life_cost_amount(option) + printed + library_top_life_amount(option)
+    amount = optional_life_cost_amount(option) + printed + mana_value_life_amount(option)
     if not amount:
         return True
     for raw in option.get('additional_costs', ()):
@@ -121,7 +121,7 @@ def optional_life_payment_affordable(host, seat, option, response):
             amount += declared.amount_for(option.get('announced_additional_x'))
         elif raw.get('kind') == 'life_x':
             amount += int(response.get('x', 0))
-    if printed or LIBRARY_TOP_LIFE_PRICE_FIELD in option:
+    if printed or mana_value_life_price_field(option) is not None:
         try:
             prepare_life_payment(host, seat, amount)
         except LifeStateError:

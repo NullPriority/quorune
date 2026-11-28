@@ -23,6 +23,13 @@ class ObjectIdentityQuery(Protocol):
     def display_name(self, object_id: str) -> str: ...
 
 
+def card_ref_index(cards: Iterable[CardInstance]) -> dict[str, list[CardInstance]]:
+    refs: dict[str, list[CardInstance]] = {}
+    for card in cards:
+        refs.setdefault(card.ref.casefold(), []).append(card)
+    return refs
+
+
 def resolve_object(
     host: ObjectIdentityQuery,
     seat: str,
@@ -31,6 +38,7 @@ def resolve_object(
     zones: Iterable[str] | None = None,
     controlled_only: bool = False,
     owned_only: bool = False,
+    indexed_refs: Mapping[str, list[CardInstance]] | None = None,
 ) -> Any:
     """Resolve explicit identities before evaluating the fallback name query."""
     host._require_seat(seat)
@@ -39,7 +47,7 @@ def resolve_object(
         candidates = [host.state.cards[value]]
     else:
         normalized = value.casefold().strip()
-        candidates = [
+        candidates = indexed_refs.get(normalized, []) if indexed_refs is not None else [
             card for card in host.state.cards.values()
             if card.ref.casefold() == normalized
         ]

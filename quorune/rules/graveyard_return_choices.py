@@ -8,7 +8,11 @@ from ..public_zone_moves import (
     PublicZoneMoveSetSpec, PublicZoneOrigin, PublicZoneDestination,
     PublicZoneRelationAxis, PublicZoneSeatRelation, snapshot_public_zone_move_set,
     PublicBattlefieldController, PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION,
-    PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION,
+    PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION, PUBLIC_EACH_GRAVEYARD_CHOSEN_RETURN_VERSION,
+)
+from .different_name_graveyard_return import (
+    CAPABILITY as DIFFERENT_NAME_RETURN_CAPABILITY, CHOSEN_MOVE_VERSION as DIFFERENT_NAME_MOVE_VERSION,
+    PERMANENT_QUERY, PERMANENT_TYPES, SELECTION_VERSION as DIFFERENT_NAME_SELECTION_VERSION,
 )
 from .graveyard_card_targets import GraveyardCardTargetKind
 
@@ -21,6 +25,64 @@ TAPPED_LAND_RETURN_VERSION = 6
 TAPPED_LAND_RETURN_CAPABILITY = 'zone.return.own_graveyard_tapped_land_choice'
 RETURN_PAIR_FIELD = "graveyard_return_pair"
 PAIRED_RETURN_CAPABILITIES = (CAPABILITY, "zone.move.fixed_public_set", "attachment.aura.typed_restriction")
+EACH_GRAVEYARD_RETURN_FIELD = "each_graveyard_return_version"
+EACH_GRAVEYARD_RETURN_MECHANIC = "each-graveyard-return-after-mill"
+EACH_GRAVEYARD_RETURN_CAPABILITY = "zone.reanimate.each_graveyard_choice"
+EACH_GRAVEYARD_RETURN_QUERY = ObjectQuerySpec(
+    zones=("graveyard",), types_any=("creature", "planeswalker"), token=False,
+)
+
+
+def each_graveyard_return_effect():
+    return {"op": "choose_option", "player": "$controller", EACH_GRAVEYARD_RETURN_FIELD: 1}
+
+
+def is_each_graveyard_return(effect):
+    return isinstance(effect, Mapping) and effect.get("op") == "choose_option" and EACH_GRAVEYARD_RETURN_FIELD in effect
+
+
+def each_graveyard_return_move(cards, *, stack_ref):
+    spec = PublicZoneMoveSetSpec(
+        query=EACH_GRAVEYARD_RETURN_QUERY,
+        origin=PublicZoneOrigin.GRAVEYARD, destination=PublicZoneDestination.BATTLEFIELD,
+        relation_axis=PublicZoneRelationAxis.OWNER, seat_relation=PublicZoneSeatRelation.ANY,
+        battlefield_controller=PublicBattlefieldController.ACTOR,
+        schema_version=PUBLIC_EACH_GRAVEYARD_CHOSEN_RETURN_VERSION, chosen_cards=cards,
+    )
+    return {"op": "move_public_zone_set", "source": stack_ref, "set": spec.to_dict()}
+
+
+def uses_each_graveyard_return_stage(effect):
+    return is_each_graveyard_return(effect) or (
+        isinstance(effect, Mapping) and effect.get("op") == "add_subtype" and "schema_version" in effect
+    )
+
+
+def _each_graveyard_return_spell_dependencies(effects, target_schema, mechanics):
+    from ..zone_object_subtype_grants import LOCKED_CREATURE_SUBTYPE_CAPABILITY, locked_creature_subtype_from_effect
+    from .mill_capability_shapes import fixed_mill_node_capabilities
+
+    if len(effects) != 3 or target_schema is not None or EACH_GRAVEYARD_RETURN_MECHANIC not in mechanics:
+        return ()
+    mill, choose, subtype = effects
+    if (
+        set(mill) != {"op", "scope", "count"} or mill.get("op") != "mill"
+        or mill.get("scope") != "all_active_players"
+        or choose != each_graveyard_return_effect() or type(choose[EACH_GRAVEYARD_RETURN_FIELD]) is not int
+    ):
+        return ()
+    try:
+        locked_creature_subtype_from_effect(subtype)
+    except (TypeError, ValueError):
+        return ()
+    mill_capabilities = fixed_mill_node_capabilities(effects=(mill,), target_schema=None, mechanic_ids=mechanics)
+    if not mill_capabilities:
+        return ()
+    return (*mill_capabilities, EACH_GRAVEYARD_RETURN_CAPABILITY, "zone.move.fixed_public_set",
+            LOCKED_CREATURE_SUBTYPE_CAPABILITY)
+DIFFERENT_NAME_RETURN_CAPABILITIES = (
+    *PAIRED_RETURN_CAPABILITIES, DIFFERENT_NAME_RETURN_CAPABILITY, "zone.change.destination_replacement",
+)
 
 
 def paired_graveyard_return_effect():
@@ -53,6 +115,17 @@ def chosen_tapped_land_move(card):
     return {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}
 
 
+def chosen_different_name_permanent_move(cards):
+    spec = PublicZoneMoveSetSpec(
+        query=PERMANENT_QUERY,
+        origin=PublicZoneOrigin.GRAVEYARD, destination=PublicZoneDestination.BATTLEFIELD,
+        relation_axis=PublicZoneRelationAxis.OWNER, seat_relation=PublicZoneSeatRelation.ACTOR,
+        battlefield_controller=PublicBattlefieldController.OWNER,
+        schema_version=DIFFERENT_NAME_MOVE_VERSION, chosen_cards=cards,
+    )
+    return {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}
+
+
 GREATEST_POWER_CAPABILITY = 'quantity_expression.public_characteristic_aggregate'
 QUALIFIED_CHOICE_CAPABILITY = 'zone.return.own_graveyard_subtype_qualified_choice'
 _CREATURE_OR_PLANESWALKER = ('creature', 'planeswalker')
@@ -63,6 +136,7 @@ _DISJOINT_RETURN_VERSIONS = frozenset({
     _RETAINED_MANDATORY_CREATURE_OR_PLANESWALKER_VERSION,
     MANDATORY_CREATURE_OR_PLANESWALKER_VERSION,
     TAPPED_LAND_RETURN_VERSION,
+    DIFFERENT_NAME_SELECTION_VERSION,
 })
 _PUBLIC_FIELDS = frozenset({'op', 'player', 'selection'})
 _CHOICE_FIELDS = frozenset({'_choice_actor', '_legal_refs', '_legal_logical_ids', '_stack_label'})
@@ -106,7 +180,14 @@ class GraveyardReturnSelection:
 
     @property
     def returns_to_battlefield(self) -> bool:
-        return self.bounded_battlefield_return or self.returns_tapped_land
+        return self.bounded_battlefield_return or self.returns_tapped_land or self.different_name_permanents
+
+    @property
+    def different_name_permanents(self) -> bool:
+        return (
+            self.schema_version == DIFFERENT_NAME_SELECTION_VERSION and self.types_any == PERMANENT_TYPES
+            and self.excluded_creature_subtype is None and self.mana_value_max is None
+        )
 
     @property
     def returns_tapped_land(self) -> bool:
@@ -204,6 +285,17 @@ def optional_tapped_land_return_effect():
     return {'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()}
 
 
+def different_name_permanent_return_effect():
+    selection = GraveyardReturnSelection(PERMANENT_TYPES, schema_version=DIFFERENT_NAME_SELECTION_VERSION)
+    return {'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()}
+
+
+def uses_different_name_graveyard_return(effect):
+    selection = effect.get("selection")
+    return (effect.get("op") == OPERATION and isinstance(selection, Mapping)
+            and selection.get("schema_version") == DIFFERENT_NAME_SELECTION_VERSION)
+
+
 def validate_return_choice(effect, *, actor=None, continuation=False):
     fields = _PUBLIC_FIELDS | _CHOICE_FIELDS if continuation else _PUBLIC_FIELDS
     if (not isinstance(effect, Mapping) or set(effect) != fields or effect.get('op') != OPERATION
@@ -227,6 +319,8 @@ def graveyard_return_candidates(host, actor, effect):
 
 
 def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechanic_ids, **kwargs):
+    if any(uses_each_graveyard_return_stage(effect) for effect in effects):
+        return _each_graveyard_return_spell_dependencies(effects, target_schema, mechanic_ids)
     if MECHANIC not in mechanic_ids or target_schema is not None or len(effects) != 1:
         return ()
     if is_paired_graveyard_return(effects[0]):
@@ -239,6 +333,8 @@ def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechani
         selection = validate_return_choice(effects[0])
     except (TypeError, ValueError):
         return ()
+    if selection.different_name_permanents:
+        return DIFFERENT_NAME_RETURN_CAPABILITIES
     if selection.returns_tapped_land:
         return (CAPABILITY, TAPPED_LAND_RETURN_CAPABILITY, 'zone.move.fixed_public_set')
     if selection.bounded_battlefield_return:
@@ -250,7 +346,22 @@ def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechani
     return (CAPABILITY,)
 
 
+def each_graveyard_return_spell_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(uses_each_graveyard_return_stage(value) for value in nested_effects((program.effects, program.handlers))):
+        return ()
+    required = _each_graveyard_return_spell_dependencies(program.effects, program.target_schema, program.coverage)
+    if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.cost_schema is not None):
+        raise ValueError("Graveyard selection requires its whole resolving spell and both companion stages")
+    return required
+
+
 def graveyard_return_choice_runtime_dependencies(program):
+    if required := each_graveyard_return_spell_runtime_dependencies(program):
+        return required
+
     def walk(value):
         if isinstance(value, Mapping):
             if is_paired_graveyard_return(value):
@@ -275,6 +386,14 @@ def graveyard_return_choice_runtime_dependencies(program):
                     raise ValueError('Graveyard choice lacks a closed owned instruction')
                 if TAPPED_LAND_RETURN_CAPABILITY in required:
                     _require_surveil_then_land_return(program)
+                if DIFFERENT_NAME_RETURN_CAPABILITY in required and (
+                    (program.event, program.active_zone) != ("resolve", "stack")
+                    or not program.ability_id.startswith("spell:")
+                    or tuple(program.effects) != (value,) or program.handlers
+                    or program.target_schema is not None or program.event_condition is not None
+                    or program.cost_schema is not None or program.trigger_limit is not None
+                ):
+                    raise ValueError("Different-name permanent return requires one untargeted resolving spell instruction")
                 return set(required)
             return {cap for child in value.values() for cap in walk(child)}
         if isinstance(value, (tuple, list)):

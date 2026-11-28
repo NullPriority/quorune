@@ -15,6 +15,22 @@ REVEAL_UNTIL_CAPABILITY = 'library.select.reveal_until_controller'
 REVEAL_UNTIL_REFLEXIVE_VERSION = 2
 REVEAL_UNTIL_REFLEXIVE_CAPABILITY = 'trigger.reflexive.revealed_creature_mana_value_counters'
 PLAYER_CAPPED_LAND_REVEAL_VERSION = 3
+CHOSEN_NAME_REVEAL_VERSION = 4
+CHOSEN_NAME_REVEAL_CAPABILITY = "library.select.chosen_name_after_top_exile"
+
+
+def chosen_name_reveal_effect(*, player="$controller", exile_count):
+    if type(exile_count) is not int or exile_count < 1:
+        raise ValueError("A named reveal requires a positive fixed initial exile count")
+    return {"op": REVEAL_UNTIL_OPERATION, "schema_version": CHOSEN_NAME_REVEAL_VERSION,
+            "player": player, "exile_count": exile_count}
+
+
+def validate_chosen_name_reveal(effect, *, player="$controller"):
+    expected = chosen_name_reveal_effect(player=player, exile_count=effect.get("exile_count"))
+    if type(effect.get("schema_version")) is not int or effect != expected:
+        raise ValueError("A named reveal requires the closed initial exile and its resolving player")
+
 PLAYER_CAPPED_LAND_REVEAL_CAPABILITY = 'library.select.player_capped_announced_land_reveal'
 _FIELDS = {'op','schema_version','player','stop_count','predicate_groups','selection',
     'selected_destination','entry_tapped','remainder_destination','remainder_order'}
@@ -89,7 +105,7 @@ def validate_reveal_until_selection(effect):
     return predicates, required
 
 
-def read_reveal_until_prefix(query, *, player, predicates, stop_count):
+def read_reveal_until_prefix(query, *, player, predicates=(), stop_count, matches_row=None):
     """Return current card rows and their matches through the stopping card."""
     rows, matches = [], []
     seen = set()
@@ -100,7 +116,8 @@ def read_reveal_until_prefix(query, *, player, predicates, stop_count):
             raise ValueError('Reveal-until requires unique current owned physical library cards')
         seen.add(row.object_id)
         rows.append(row)
-        if any(object_matches_query(row, predicate) for predicate in predicates):
+        if (matches_row(row) if matches_row is not None else
+                any(object_matches_query(row, predicate) for predicate in predicates)):
             matches.append(ref)
         if len(matches) == stop_count:
             break
@@ -128,5 +145,8 @@ def reveal_until_partition(effect, query):
 
 def reveal_until_selection_payload_dependencies(value):
     if not isinstance(value,Mapping) or value.get('op')!=REVEAL_UNTIL_OPERATION:return ()
+    if value.get("schema_version") == CHOSEN_NAME_REVEAL_VERSION:
+        validate_chosen_name_reveal(value)
+        return (REVEAL_UNTIL_CAPABILITY, "library.select.fixed_controller", CHOSEN_NAME_REVEAL_CAPABILITY)
     _, required = validate_reveal_until_selection(value)
     return (REVEAL_UNTIL_CAPABILITY,*required)

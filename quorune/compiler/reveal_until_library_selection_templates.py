@@ -6,7 +6,8 @@ from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..reveal_until_library_selection_model import (
-    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_MECHANIC,REVEAL_UNTIL_REFLEXIVE_VERSION,validate_reveal_until_selection,
+    REVEAL_UNTIL_OPERATION, REVEAL_UNTIL_MECHANIC, REVEAL_UNTIL_REFLEXIVE_VERSION,
+    chosen_name_reveal_effect, validate_reveal_until_selection,
 )
 from .fixed_library_selection_templates import _selector_alternatives, _term_predicates
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
@@ -21,6 +22,26 @@ _REFLEXIVE_RESULT = re.compile(
     r'(?P<partition>.+\.) When you reveal a creature card this way, put X \+1/\+1 counters '
     r'on target creature you control, where X is the mana value of that card\.', re.I,
 )
+
+
+_CHOSEN_NAME_REVEAL = re.compile(
+    r"Choose a card name\. Exile the top "
+    rf"(?P<count>{FIXED_COUNT_PATTERN}) cards of your library, then reveal cards "
+    r"from the top of your library until you reveal a card with the chosen name\. "
+    r"Put that card into your hand and exile all other cards revealed this way\.",
+    re.I,
+)
+
+
+def chosen_name_reveal_template(text):
+    match = _CHOSEN_NAME_REVEAL.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    count = fixed_number(match["count"])
+    if count < 1:
+        return None
+    return ("reveal-until-library-selection-v4", (chosen_name_reveal_effect(exile_count=count),),
+            None, (REVEAL_UNTIL_MECHANIC,))
 
 
 def reveal_until_library_selection_effect_template(text, *, allow_reflexive=False):

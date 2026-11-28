@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { asList, asRecord, CardTile } from "./CardSurface";
+import { asList, asRecord, cardName, CardTile } from "./CardSurface";
 import { projectedChoiceCards } from "./CardChoiceGrid";
 import { ChoiceFormView } from "./ChoiceForm";
 import { choiceCompatibilityErrors, executableChoices, initialChoices, orderedPartitionNames, validateChoices, type ChoiceValues } from "./choices";
@@ -7,6 +7,7 @@ import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
 import { decisionDetail, decisionHeading } from "./tablePresentation";
 import { SeatLabel } from "./SeatLabel";
+import { ManaText } from "./ManaText";
 
 const TRIGGER_RESPONSE_PREFIX = "quorune:trigger-response:";
 
@@ -23,13 +24,14 @@ export function contextualDecisionAction(view: ProjectedView): LegalAction | und
 }
 
 export function ContextualDecision({
-  action, view, disabled, submitting, labelFor, onSubmit,
+  action, view, disabled, submitting, labelFor, onSubmit, onInspect,
 }: {
   action: LegalAction;
   view: ProjectedView;
   disabled: boolean;
   submitting: boolean;
   labelFor: (ref: string) => string;
+  onInspect?: (card: JsonValue) => void;
   onSubmit: (action: LegalAction, choices: ChoiceValues) => void;
 }) {
   const decision = view.decision!;
@@ -38,11 +40,18 @@ export function ContextualDecision({
   const [errors, setErrors] = useState<string[]>([]);
   const [minimized, setMinimized] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [reviewLandEntry, setReviewLandEntry] = useState(false);
   const automated = useRef(false);
   const compatibilityErrors = choiceCompatibilityErrors(form, values);
   const displayedErrors = compatibilityErrors.length ? compatibilityErrors : errors;
   const commitDisabled = disabled || compatibilityErrors.length > 0;
   const context = asRecord(decision.ctx.presentation);
+  const isFetch = decision.kind === "search.fetch";
+  const land = isFetch ? asList(decision.ctx.preview_cards).find((card) => asRecord(card).id === values.search_card) : undefined;
+  const landEntryLife = Number(asRecord(land).entry_life ?? 0);
+  const payer = asRecord(asRecord(view.state.players)[decision.actor ?? ""]);
+  const checkingLandEntry = reviewLandEntry && Boolean(land) && landEntryLife > 0;
+  const displayedForm = isFetch ? { ...form, fields: form.fields.filter((candidate) => candidate.name !== "entry_pay_life") } : form;
   const isAttack = decision.kind === "combat.attackers";
   const isCombat = isAttack || decision.kind === "combat.blockers";
   const field = form.fields[0];
@@ -66,10 +75,13 @@ export function ContextualDecision({
   const namedDecision = ["state.legend", "battle.enter_protector", "state.battle_protector"].includes(decision.kind);
   const source = typeof context.source === "string" ? context.source
     : namedDecision && typeof decision.ctx.name === "string" ? decision.ctx.name : "";
-  const title = isCombat ? isAttack ? "Declare attackers" : "Declare blockers" : String(context.title ?? decisionHeading(decision));
+  const title = checkingLandEntry && land ? `How should ${cardName(land)} enter?`
+    : isCombat ? isAttack ? "Declare attackers" : "Select blockers" : String(context.title ?? decisionHeading(decision));
   const detail = isCombat
     ? isAttack ? "Choose a creature, then its defender." : `Defending seat ${decision.actor}. Assign each blocker to an incoming attacker.`
-    : String(context.detail ?? decisionDetail(decision));
+    : checkingLandEntry ? "" : decision.kind === "trigger.order"
+      ? "Your top trigger resolves first within your group. Drag or use the arrows to reorder. Players add their groups in turn order, starting with the active player."
+      : String(context.detail ?? decisionDetail(decision));
   function commit(next: ChoiceValues) {
     if (minimized) return;
     const problems = validateChoices(form, next);
@@ -97,41 +109,48 @@ export function ContextualDecision({
   const scryGroups = singleScry ? orderedPartitionNames(field) : [];
   const isSearchWithoutSelection = decision.kind === "semantic.search"
     && Number(field?.minimum) === 0 && Array.isArray(values.search_cards) && values.search_cards.length === 0;
+  function submitCurrentChoice() {
+    if (isFetch && landEntryLife > 0) {
+      setReviewLandEntry(true);
+      return;
+    }
+    commit(values);
+  }
 
-  return <form className={`contextual-decision${isCombat ? " combat-decision" : ""}${binary || isOptional ? " compact-decision" : ""}`}
+  return <form className={`contextual-decision${isCombat ? " combat-decision" : ""}${binary || isOptional ? " compact-decision" : ""}${checkingLandEntry && !minimized ? " land-entry-decision" : ""}${decision.kind === "trigger.order" ? " trigger-order-decision" : ""}`}
     data-testid="contextual-decision" aria-label={title}
-    onSubmit={(event) => { event.preventDefault(); commit(values); }}>
+    onSubmit={(event) => { event.preventDefault(); if (!checkingLandEntry) submitCurrentChoice(); }}>
     <header>
       <div className="decision-context">
         <SeatLabel seat={decision.actor} />
         {source && source !== title && <span>{source}</span>}
       </div>
-      <h2>{title}</h2>
-      {detail && detail !== title && <p>{detail}</p>}
+      <h2><ManaText text={title} /></h2>
+      {detail && detail !== title && <p><ManaText text={detail} /></p>}
     </header>
     {!minimized && singleScry && <div className="scry-preview">
-      {scryCard ? <CardTile value={scryCard} view={view} compact /> : <strong>{String(option.label ?? labelFor(scryRef))}</strong>}
+      {scryCard ? <CardTile value={scryCard} view={view} compact onInspect={onInspect} /> : <strong>{String(option.label ?? labelFor(scryRef))}</strong>}
     </div>}
-    {!minimized && !isOptional && !singleScry && !binary && <div className="contextual-fields">
-      <ChoiceFormView form={form} values={values} onChange={save} labelFor={labelFor} view={view} />
+    {!minimized && checkingLandEntry && land && <div className="land-entry-card">
+      <CardTile value={land} view={view} compact showPrintedCost={false} />
+    </div>}
+    {!minimized && !checkingLandEntry && !isOptional && !singleScry && !binary && <div className="contextual-fields">
+      <ChoiceFormView form={displayedForm} values={values} onChange={save} labelFor={labelFor} view={view} onInspect={onInspect} />
     </div>}
     {displayedErrors.length > 0 && <p className="choice-warning" role="alert">{displayedErrors.join(" ")}</p>}
     <footer>
       {!minimized && binary && <>
-        <button type="submit" data-testid="submit-choice" disabled={commitDisabled || typeof values[String(field.name)] !== "boolean"}>
-          {submitting ? "Submitting…" : "Confirm"}
-        </button>
         <div className="binary-choice" role="radiogroup" aria-label={String(field.label ?? field.name)}>
           {radioOptions.map((value) => <label key={String(value)}>
             <input type="radio" name={String(field.name)} checked={values[String(field.name)] === value} disabled={disabled}
-              onChange={() => save({ ...values, [String(field.name)]: value })} />{value ? "Yes" : "No"}
+              onChange={() => save({ ...values, [String(field.name)]: value })} />
+            {field.name === "pay" ? value ? "Pay" : "Decline" : value ? "Yes" : "No"}
           </label>)}
         </div>
+        <button type="submit" data-testid="submit-choice" disabled={commitDisabled || typeof values[String(field.name)] !== "boolean"}>
+          {submitting ? "Submitting…" : "Confirm"}
+        </button>
       </>}
-      {!isCombat && <button type="button" className="secondary-button" aria-expanded={!minimized}
-        disabled={submitting} onClick={() => setMinimized(!minimized)}>
-        {minimized ? "Show choice" : "Minimize choice"}
-      </button>}
       {!minimized && chooseOptions.map((option) =>
         <button key={String(option.value)} data-testid={`decision-${option.value}`} type="button"
           className={option.value === "decline" ? "secondary-button" : ""}
@@ -144,9 +163,22 @@ export function ContextualDecision({
             [name, name === group ? [scryRef] : []])) })}>
           {index === 0 ? "Top" : "Bottom"}
         </button>)}
-      {!minimized && !isOptional && !singleScry && !binary && <button type="submit" data-testid="submit-choice" disabled={commitDisabled}>
-        {submitting ? "Submitting…" : isCombat ? (isAttack ? "Confirm attackers" : "Confirm blockers")
-          : isSearchWithoutSelection ? "Find no card" : String(context.accept ?? form.submit_label ?? "Confirm selection")}
+      {!minimized && checkingLandEntry && <>
+        <button type="button" disabled={commitDisabled || Number(payer.life) < landEntryLife}
+          onClick={() => commit({ ...values, entry_pay_life: true })}>Pay {landEntryLife} life · Enter untapped</button>
+        <button type="button" className="secondary-button" disabled={commitDisabled}
+          onClick={() => commit({ ...values, entry_pay_life: false })}>Enter tapped</button>
+        <button type="button" className="link-button" disabled={submitting} onClick={() => setReviewLandEntry(false)}>Choose another land</button>
+      </>}
+      {!minimized && !checkingLandEntry && !isOptional && !singleScry && !binary && <button type="submit" data-testid="submit-choice" disabled={commitDisabled}>
+        {submitting ? "Submitting…" : isCombat ? (isAttack ? "Confirm attackers" : Object.keys(asRecord(values.blocks)).length ? "Confirm blockers" : "Confirm no blockers")
+          : isFetch && !values.search_card ? "Find no land"
+            : isSearchWithoutSelection ? "Find no card"
+              : decision.kind === "trigger.order" ? "Confirm order" : String(context.accept ?? form.submit_label ?? "Confirm selection")}
+      </button>}
+      {!isCombat && <button type="button" className="secondary-button minimize-decision" aria-expanded={!minimized}
+        disabled={submitting} onClick={() => setMinimized(!minimized)}>
+        {minimized ? "Show choice" : "Minimize choice"}
       </button>}
       {submitting && (singleScry || isOptional) && <small role="status">Submitting…</small>}
       {!minimized && preferenceKey && optionalValues.length > 1 && <label className="remember-choice">

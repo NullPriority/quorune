@@ -146,11 +146,21 @@ class ContinuousEffectSourceContext:
     counter_placement_recipients: tuple[ContinuousObjectIdentity, ...] = ()
     linked_player: str | None = None
     linked_color: str | None = None
+    linked_card_type: str | None = None
     linked_characteristic_cards: tuple = ()
     linked_ability_pair: str | None = None
     source_commander_colors: tuple[str, ...] | None = None
+    recipient_attack_counts: tuple[tuple[ContinuousObjectIdentity, int], ...] | None = None
 
     def __post_init__(self) -> None:
+        facts = self.recipient_attack_counts
+        if facts is not None and (
+            type(facts) is not tuple
+            or any(type(row) is not tuple or len(row) != 2 or not isinstance(row[0], ContinuousObjectIdentity)
+                   or type(row[1]) is not int or row[1] < 1 for row in facts)
+            or len({identity for identity, _ in facts}) != len(facts)
+        ):
+            raise SemanticNodeError("Attack counts require positive values and unique recipient incarnations")
         counterparts = self.current_block_counterparts
         if (type(counterparts) is not tuple
                 or any(not isinstance(identity, ContinuousObjectIdentity) for identity in counterparts)
@@ -880,6 +890,29 @@ class FixedQueryAbilityGrantHandler:
         )
 
 
+def _ordinary_fixed_query_keywords(abilities, fragments, condition, predicate):
+    expected_triggered = tuple(
+        triggered[1] for ability in abilities
+        if (triggered := triggered_keyword_grant(ability)) is not None
+    )
+    actual_triggered = tuple(
+        ability_fragment_to_dict(fragment) for fragment in fragments
+        if not isinstance(fragment, (WardSpec, ProtectionSpec))
+    )
+    ward = tuple(fragment for fragment in fragments if isinstance(fragment, WardSpec))
+    ward_labels = tuple(fragment.fixed_query_grant_label for fragment in ward)
+    printed_ward = tuple(ability for ability in abilities if ability.startswith(("Ward {", "Ward—Pay ")))
+    if actual_triggered != expected_triggered or None in ward_labels or printed_ward != ward_labels:
+        raise SemanticNodeError("Keyword grant fragments must exactly match their typed keyword labels")
+    if any(fragment.life_payment is not None for fragment in ward):
+        creatures = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        if (len(ward) != 1 or abilities != ward_labels or condition["target_controller"] != "source_controller"
+                or condition["exclude_source"] is not True or predicate != creatures):
+            raise SemanticNodeError("Quoted life Ward is a single grant to the controller's other creatures")
+    return tuple(ability for ability in abilities if ability != "Protection" and ability not in ward_labels
+                 and triggered_keyword_grant(ability) is None)
+
+
 @dataclass(frozen=True, slots=True)
 class FixedQueryKeywordGrantHandler:
     """Grant a closed keyword set to a live queried object set."""
@@ -996,26 +1029,7 @@ class FixedQueryKeywordGrantHandler:
             raise SemanticNodeError(
                 "fixed query keyword grant fragments are malformed"
             ) from exc
-        expected_triggered = tuple(
-            triggered[1] for ability in abilities
-            if (triggered := triggered_keyword_grant(ability)) is not None
-        )
-        actual_triggered = tuple(
-            ability_fragment_to_dict(fragment) for fragment in fragments
-            if not isinstance(fragment, (WardSpec, ProtectionSpec))
-        )
-        if actual_triggered != expected_triggered or any(
-            isinstance(fragment, WardSpec) and fragment.generic_cost is None
-            for fragment in fragments
-        ):
-            raise SemanticNodeError('Keyword grant fragments must exactly match their typed keyword labels')
-        ward_labels = tuple(
-            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments if isinstance(fragment, WardSpec)
-        )
-        ordinary = tuple(
-            ability for ability in abilities if ability != 'Protection'
-            and not ability.startswith("Ward {") and triggered_keyword_grant(ability) is None
-        )
+        ordinary = _ordinary_fixed_query_keywords(abilities, fragments, condition, predicate)
         protection = tuple(fragment for fragment in fragments if isinstance(fragment, ProtectionSpec))
         if protection:
             if descriptor['schema_version'] != 2 or abilities != ('Protection',) or len(protection) != len(fragments):
@@ -1027,10 +1041,6 @@ class FixedQueryKeywordGrantHandler:
         if (
             not abilities
             or len(set(abilities)) != len(abilities)
-            or tuple(
-                ability for ability in abilities if ability.startswith("Ward {")
-            )
-            != ward_labels
             or any(
                 ability not in FIXED_CHARACTERISTIC_KEYWORDS
                 for ability in ordinary

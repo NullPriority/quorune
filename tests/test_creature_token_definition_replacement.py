@@ -264,3 +264,240 @@ class CreatureTokenDefinitionReplacementTests(InheritedNativeFixture, unittest.T
         with patch("quorune.replacement.application._apply_creature_token_definition"):
             with self.assertRaisesRegex(AssertionError, "Angel Token"):
                 self.test_real_creating_effect_and_later_clue_keep_only_their_independent_instructions()
+
+
+
+
+class OjerTaqNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "ojer-taq.sqlite3"
+        inputs = ROOT / "tests/fixtures"
+        build_fixture_database([
+            inputs / "bound-effect-program-cards.json",
+            inputs / "death-keyword-absence-cards.json",
+            inputs / "additional-token-definition-cards.json",
+            inputs / "ojer-taq-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Creature tripling and transforming entry", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def actual_source(self, game, seat="A"):
+        card = self.add(game.engine, "Ojer Taq, Deepest Foundation // Temple of Civilization", seat=seat)
+        card.active_face = "Ojer Taq, Deepest Foundation"
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, card)
+        return card
+
+    def test_ojer_copies_only_creature_creation_members_and_native_tokens_replay(self):
+        from types import SimpleNamespace
+        from quorune.replacement.application import _apply_token_multiplier
+        from quorune.replacement.operations import MultiplyTokenCreation
+        from quorune.creature_token_definition_replacement import CREATURE_TOKEN_TRIPLING_HANDLER
+
+        mixed = {"tokens": [
+            {"name": "Soldier", "characteristics": {"type_line": "Token Creature — Soldier"}, "quantity": 1},
+            {"name": "Food", "characteristics": {"type_line": "Token Artifact — Food"}, "quantity": 1},
+        ]}
+        operation = MultiplyTokenCreation(3, CREATURE_TOKEN_TRIPLING_HANDLER, "source", creature_only=True)
+        _apply_token_multiplier(SimpleNamespace(kind="token.create"), mixed, operation)
+        self.assertEqual(["Soldier", "Food", "Soldier", "Soldier"], [row["name"] for row in mixed["tokens"]])
+        from unittest.mock import patch
+        with patch("quorune.creature_token_definition_replacement.creation_member_is_creature", return_value=True):
+            changed = {"tokens": mixed["tokens"][:2]}
+            _apply_token_multiplier(SimpleNamespace(kind="token.create"), changed, operation)
+        self.assertNotEqual(["Soldier", "Food", "Soldier", "Soldier"], [row["name"] for row in changed["tokens"]])
+        with self.assertRaises(ValueError):
+            MultiplyTokenCreation(3, CREATURE_TOKEN_TRIPLING_HANDLER, "source", creature_only=1)
+
+        game = self.session(61416060)
+        self.actual_source(game)
+        own = self.add(game.engine, "Raise the Alarm", zone="hand")
+        foreign = self.add(game.engine, "Raise the Alarm", seat="B", zone="hand", ref="opponent-token-spell")
+        self.prepare(game, mana={"C": 1, "W": 1})
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", own)
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.cast(game, "B", foreign)
+        self.resolve_top(game)
+        tokens = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(6, sum(card.controller == "A" for card in tokens))
+        self.assertEqual(2, sum(card.controller == "B" for card in tokens))
+        self.replay(game, load=True)
+
+    def test_ojer_tapped_transformed_return_uses_exact_physical_owner_and_replays(self):
+        game = self.session(712140601)
+        source = self.actual_source(game, seat="B")
+        game.engine.change_control(source.object_id, "A", reason="A controlled the source at its death")
+        creature = self.add(game.engine, "Grizzly Bears")
+        removal = self.add(game.engine, "Murder", zone="hand")
+        self.assert_closed(game, removal)
+        self.prepare(game, mana={"C": 1, "B": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", removal, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[creature.object_id].zone)
+        original, = [item for item in game.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual("A", original.controller)
+        from unittest.mock import patch
+        mutant = self.replay(game, load=True)
+        with patch("quorune.linked_exile_return.transformed_return_face", return_value=None):
+            self.resolve_top(mutant)
+        self.assertEqual("graveyard", mutant.state.cards[source.object_id].zone)
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        returned = game.state.cards[source.object_id]
+        self.assertEqual(("battlefield", "B", "Temple of Civilization", True),
+                         (returned.zone, returned.controller, returned.active_face, returned.tapped))
+        self.assertIn("land", game.engine._type_parts(game.engine._effective_card_data(returned)["type_line"])[0])
+        self.replay(game, load=True)
+
+    def set_ojer_front(self, card):
+        card.active_face = self.db.by_oracle_id(card.oracle_id).faces[0]["name"]
+
+    def test_ojer_transformed_entry_replacement_uses_owner_and_replays_both_orders(self):
+        import json
+
+        for offset, first_is_maze in enumerate((True, False)):
+            with self.subTest(first_is_maze=first_is_maze):
+                game = self.session(712140620 + offset)
+                source = self.actual_source(game, seat="B")
+                self.set_ojer_front(source)
+                game.engine.change_control(source.object_id, "A", reason="Replacement owner witness")
+                maze = self.add(game.engine, "Root Maze", seat="C")
+                spelunking = self.add(game.engine, "Spelunking", seat="B")
+                kill = self.add(game.engine, "Murder", zone="hand", ref="ojer-first-death")
+                for card in (maze, spelunking, kill):
+                    self.assert_closed(game, card)
+                self.prepare(game, mana={"C": 2, "B": 2})
+                self.checkpoint(game)
+                self.cast(game, "A", kill, [source.ref])
+                self.resolve_top(game)
+                grave = game.state.cards[source.object_id]
+                self.assertEqual("graveyard", grave.zone)
+                incarnation = grave.logical_object_id
+                zone_changes = grave.zone_change_counter
+                decision = self.resolve(game)
+                self.assertIsNotNone(decision)
+                self.assertEqual("replacement.order", decision.kind)
+                self.assertEqual(["pilot:B"], list(game.pending_principals()))
+                self.assertEqual(("graveyard", incarnation),
+                                 (game.state.cards[source.object_id].zone,
+                                  game.state.cards[source.object_id].logical_object_id))
+                self.assertIn('"transformed_entry": true', json.dumps(decision.continuation))
+                game = self.replay(game, load=True)
+                options = game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                self.assertEqual({maze.ref, spelunking.ref}, {row["source"] for row in options})
+                selected = maze if first_is_maze else spelunking
+                choice = next(row["id"] for row in options if row["source"] == selected.ref)
+                command = {"action_id": "choose", "replacement": choice}
+                before = authoritative_state_hash(game.state)
+                self.assertFalse(game.act("pilot:A", command).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                result = game.act("pilot:B", command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(game))
+                entered = game.state.cards[source.object_id]
+                self.assertEqual(("battlefield", "B", "Temple of Civilization", not first_is_maze),
+                                 (entered.zone, entered.controller, entered.active_face, entered.tapped))
+                self.assertEqual(zone_changes + 1, entered.zone_change_counter)
+                self.replay(game, load=True)
+
+    def test_ojer_original_death_cannot_return_a_later_graveyard_incarnation(self):
+        game = self.session(712140631)
+        source = self.actual_source(game, seat="B")
+        self.set_ojer_front(source)
+        game.engine.change_control(source.object_id, "A", reason="Original death controller")
+        kill = self.add(game.engine, "Murder", zone="hand", ref="ojer-first-death")
+        murder = self.add(game.engine, "Murder", zone="hand")
+        orrery = self.add(game.engine, "Vedalken Orrery", seat="B")
+        return_spell = self.add(game.engine, "Reanimate", seat="B", zone="hand")
+        counter = self.add(game.engine, "Stifle", seat="B", zone="hand")
+        for card in (kill, murder, orrery, return_spell, counter):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 3, "B": 4})
+        game.state.players["B"].mana_pool.update({"B": 1, "U": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", kill, [source.ref])
+        self.resolve_top(game)
+        old, = (item for item in game.state.stack if item.source_object_id == source.object_id)
+        departed = game.state.cards[source.object_id]
+        old_incarnation = departed.logical_object_id
+        self.assertEqual(("graveyard", departed.zone_change_counter),
+                         (departed.zone, old.context["card_zone_change_counter"]))
+        self.cast(game, "B", return_spell, [source.ref])
+        self.resolve_top(game)
+        returned = game.state.cards[source.object_id]
+        self.assertEqual(("battlefield", "Ojer Taq, Deepest Foundation"),
+                         (returned.zone, returned.active_face))
+        self.cast(game, "A", murder, [returned.ref])
+        self.resolve_top(game)
+        new, = (item for item in game.state.stack if item.source_object_id == source.object_id and item.ref != old.ref)
+        self.cast(game, "B", counter, [new.ref])
+        self.resolve_top(game)
+        later = game.state.cards[source.object_id]
+        self.assertEqual("graveyard", later.zone)
+        self.assertNotEqual(old_incarnation, later.logical_object_id)
+        self.assertEqual([old.ref], [item.ref for item in game.state.stack])
+        incarnation = later.logical_object_id
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        remaining = game.state.cards[source.object_id]
+        self.assertEqual(("graveyard", incarnation, None),
+                         (remaining.zone, remaining.logical_object_id, remaining.active_face))
+        self.replay(game, load=True)
+
+    def test_temple_transform_is_sorcery_speed_after_three_actual_declarations(self):
+        from quorune.semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+
+        for count in (2, 3):
+            with self.subTest(count=count):
+                game = self.session(5081060 + count)
+                land = self.actual_source(game)
+                land.active_face = "Temple of Civilization"
+                land.transform_count = 1
+                attackers = [self.add(game.engine, "Grizzly Bears", ref=f"ojer-attacker-{index}")
+                             for index in range(count)]
+                for creature in attackers:
+                    creature.acquired_control_turn_count = -1
+                for index in range(3):
+                    self.add(game.engine, "Generic Bound Plains", ref=f"ojer-payment-land-{index}")
+                self.prepare(game)
+                self.checkpoint(game)
+                programs = game.engine.semantics.runtime_handler_programs_for_oracle(
+                    land.oracle_id, active_zone="battlefield", event="activate",
+                )
+                ability, = [ability for program in programs if any(effect.get("op") == "transform" for effect in program.effects)
+                            for ability in activated_abilities_from_descriptors(program.handlers)]
+                self.assertTrue(ability.sorcery_speed)
+                action = f"activate:{land.ref}:{ability.ability_id}"
+
+                def offers():
+                    self.priority(game, "A")
+                    return {row["id"] for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]}
+
+                self.assertNotIn(action, offers())
+                self.attack(game, [(creature, "B") for creature in attackers])
+                self.until(game, lambda current: current.state.phase == "postcombat_main")
+                if count == 2:
+                    self.assertNotIn(action, offers())
+                else:
+                    self.assertIn(action, offers())
+                    original = game.state.cards[land.object_id].logical_object_id
+                    result = game.act("pilot:A", {"action_id": action, "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    game = self.replay(game, load=True)
+                    self.resolve_top(game)
+                    transformed = game.state.cards[land.object_id]
+                    self.assertEqual((original, "Ojer Taq, Deepest Foundation"),
+                                     (transformed.logical_object_id, transformed.active_face))
+                    self.assertTrue(transformed.tapped)
+                self.replay(game, load=True)

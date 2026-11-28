@@ -46,6 +46,21 @@ _VARIABLE_RECIPIENTS = {
 VARIABLE_DAMAGE_TEMPLATE_ID = "damage-announced-allocation-v2"
 
 
+def scaled_announced_target_damage_template(text: str, *, source_name: str):
+    match = re.fullmatch(r"(?P<source>.+?) deals five times X damage to each of up to X targets\.?",
+                         " ".join(text.split()), re.IGNORECASE)
+    if match is None:
+        return None
+    direct = fixed_damage_effect_template(f"{match['source']} deals 5 damage to any target.", card_name=source_name)
+    if not isinstance(direct, FixedDamageEffectTemplate) or direct.target_schema is None:
+        return None
+    from ..rules.announced_x_damage_sets import scaled_announced_target_damage_effect, scaled_announced_target_damage_schema
+    from .announced_target_sets import ANNOUNCED_TARGET_SET_MECHANIC
+
+    return ("damage-fivefold-x-each-of-up-to-x-targets-v1", (scaled_announced_target_damage_effect(),),
+            scaled_announced_target_damage_schema(), (*direct.mechanics, ANNOUNCED_TARGET_SET_MECHANIC))
+
+
 def fixed_announced_damage_template(text: str, *, card_name: str, allow_source_pronoun: bool = False):
     match = _DIVIDED_DAMAGE.fullmatch(text.strip())
     if match is None:

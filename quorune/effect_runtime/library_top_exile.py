@@ -9,6 +9,10 @@ from ..rules.linked_color_cast_exile import LINKED_COLOR_TOP_EXILE, LinkedColorC
 
 
 def apply_exile_top_library_card(host, effect, *, actor, operation, reason):
+    from ..rules.linked_landfall_play import EXPLORE_EXILE_FIELD, apply_exploration_exile
+
+    if EXPLORE_EXILE_FIELD in effect:
+        return apply_exploration_exile(host,effect,actor=actor,reason=reason)
     if LINKED_COLOR_TOP_EXILE in effect:
         return apply_linked_color_cast_exile(host, effect, actor=actor, reason=reason)
     if set(effect) not in (

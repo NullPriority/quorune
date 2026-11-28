@@ -133,6 +133,29 @@ class FixedOptionalEffectTemplate:
         )
 
 
+def optional_landfall_life_loss_counter_result(binding, body, *, card_name):
+    from ..rules.landfall_life_loss_counters import (
+        LAND_CONDITION, MECHANICS,
+        optional_loss_source_counters_effect, target_player_schema,
+    )
+    from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("land.enter", "controlled_land", "battlefield")
+            or LAND_CONDITION != binding.event_condition or body != binding.body):
+        return None
+    match = re.fullmatch(
+        r"You may have target player lose 3 life\. If you do, put three \+1/\+1 counters on (?P<source>.+)\.",
+        body, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    reference = match["source"]
+    if not (source_self_permanent_type(reference) or SourceReferenceSpec(card_name).matches(reference)):
+        return None
+    return ("optional-landfall-target-life-loss-source-counter-v1", (optional_loss_source_counters_effect(),),
+            target_player_schema(), MECHANICS), False
+
+
 def optional_targeted_control_trigger_result(binding, body):
     from ..rules.optional_targeted_control import (
         OPTIONAL_TARGETED_CONTROL_MECHANICS, optional_targeted_control_condition_matches,

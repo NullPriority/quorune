@@ -126,6 +126,17 @@ def _select_value_field(field, value, legal_values, context):
     return field
 
 
+def _integer_field(field, value, context):
+    if value.get("step") == 2:
+        legal = range(value["minimum"], value["maximum"] + 1, 2)
+        return _select_value_field(field, value, legal, context)
+    field["control"] = "integer"
+    for key in ("minimum", "maximum", "default"):
+        if value.get(key) is not None:
+            field[key] = int(value[key])
+    return field
+
+
 def _field(
     name: str,
     descriptor: Any,
@@ -216,14 +227,7 @@ def _field(
             )
         return field
     if value_type == "integer":
-        field["control"] = "integer"
-        if value.get("minimum") is not None:
-            field["minimum"] = int(value["minimum"])
-        if value.get("maximum") is not None:
-            field["maximum"] = int(value["maximum"])
-        if value.get("default") is not None:
-            field["default"] = int(value["default"])
-        return field
+        return _integer_field(field, value, context)
     if value_type in {"card_name", "creature_type", "string"}:
         field["control"] = "text"
         if value.get("max_length") is not None:
@@ -661,6 +665,38 @@ def _activation_cost_field(
     }
 
 
+def _mana_pool_field(rows):
+    from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
+
+    return {"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",
+            "control": "mana_pool_payment", "required": False, "rows": copy.deepcopy(rows)}
+
+
+def _equip_payment_variants(action, context):
+    from .rules.activation.equip_permissions import EQUIP_PAYMENT_FIELD, EQUIP_PAYMENT_OPTIONS
+
+    rows = _rows(action.get(EQUIP_PAYMENT_OPTIONS))
+    variants = _variant_form(rows, context)
+    if variants is None:
+        return None
+    variants.update(field=EQUIP_PAYMENT_FIELD, label="Equip price")
+    pool_rows = context.get("mana_pool_rows")
+    for row, option in zip(rows, variants["options"], strict=True):
+        cost = _activation_cost_field({**row, "action": "activate"}, context)
+        if cost is not None and not any(field["name"] == "cost_cards" for field in option["fields"]):
+            option["fields"].append(cost)
+        branches = _rows(row.get("cost_options"))
+        if branches:
+            option["fields"].append({
+                "name": "cost_option", "label": "Mana payment", "control": "select",
+                "required": True, "default": branches[0]["id"],
+                "options": [{"value": branch["id"], "label": branch["label"]} for branch in branches],
+            })
+        if pool_rows and (branches or row.get("cost_summary", {}).get("m")):
+            option["fields"].append(_mana_pool_field(pool_rows))
+    return variants
+
+
 def build_action_form(
     action: Mapping[str, Any],
     *,
@@ -676,11 +712,12 @@ def build_action_form(
     """
 
     fields = _schema_fields(action.get("choice_schema"), context)
-    if not any(field["name"] == "cost_cards" for field in fields):
+    equip_variants = _equip_payment_variants(action, context) if action.get("action") == "activate" else None
+    if equip_variants is None and not any(field["name"] == "cost_cards" for field in fields):
         cost_field = _activation_cost_field(action, context)
         if cost_field is not None:
             fields.append(cost_field)
-    variants = _variant_form(action.get("cost_options"), context)
+    variants = equip_variants or _variant_form(action.get("cost_options"), context)
     if decision_kind=='choice.apnap' and 'discard_options' in context:
         variants=_variant_form(context['discard_options'],context)
         if variants is not None:variants.update(field='discard_mode',label='Discard option')
@@ -715,11 +752,8 @@ def build_action_form(
         and context.get("operation") == MANA_CONTRIBUTION_DRAW_OPERATION
         and action.get("id") == "choose"
     )
-    if pool_rows and (priority_payment or contribution_payment):
-        from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
-
-        fields.append({"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",
-            "control": "mana_pool_payment", "required": False, "rows": copy.deepcopy(pool_rows)})
+    if pool_rows and (priority_payment and equip_variants is None or contribution_payment):
+        fields.append(_mana_pool_field(pool_rows))
     if not fields and variants is None:
         return None
     result: dict[str, Any] = {

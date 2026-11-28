@@ -473,8 +473,18 @@ class PreparedZoneChange:
     entry_chosen_card_name: str | None = None
 
     @property
+    def entry_chosen_basic_land_type(self) -> str | None:
+        return (None if self.event is None or self.destination != "battlefield"
+                else self.event.payload.get("entry_chosen_basic_land_type"))
+
+    @property
     def entry_chosen_faction(self) -> str | None:
         return None if self.event is None else self.event.payload.get("entry_chosen_faction")
+
+    @property
+    def entry_chosen_jeskai_temur_faction(self) -> str | None:
+        return (None if self.event is None
+                else self.event.payload.get("entry_chosen_jeskai_temur_faction"))
 
     def __post_init__(self) -> None:
         sacrifices=tuple(self.devour_sacrifices)
@@ -596,7 +606,9 @@ class PreparedZoneChange:
         for kind, value in (
             (EntryDesignationKind.COLOR, self.entry_chosen_color),
             (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type),
+            (EntryDesignationKind.BASIC_LAND_TYPE, self.entry_chosen_basic_land_type),
             (EntryDesignationKind.FACTION, self.entry_chosen_faction),
+            (EntryDesignationKind.JESKAI_TEMUR_FACTION, self.entry_chosen_jeskai_temur_faction),
         ):
             if value is not None:
                 try:

@@ -46,4 +46,13 @@ def fixed_ward_spec(text: str) -> WardSpec | None:
     return WardSpec(sacrifice_scope=scope) if scope is not None else None
 
 
-__all__ = ["fixed_ward_spec"]
+def quoted_fixed_life_ward_spec(text: str) -> WardSpec | None:
+    """Parse the quoted keyword as an ability instance, with a closed life cost."""
+    match = re.fullmatch(r'"(?P<ward>Ward[^"]+\.)"', text.strip(), re.I)
+    if match is None:
+        return None
+    spec = fixed_ward_spec(match["ward"])
+    return spec if spec is not None and spec.life_payment is not None else None
+
+
+__all__ = ["fixed_ward_spec", "quoted_fixed_life_ward_spec"]

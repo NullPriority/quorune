@@ -348,6 +348,8 @@ TOKEN_COPY_BATCH_CAPABILITY = "token.creation.current_battlefield_copy_batch"
 ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY = "token.creation.announced_opponent_copy_batch"
 ANNOUNCED_HASTY_COPY_BATCH_CAPABILITY = "token.creation.announced_hasty_copy_batch"
 TOKEN_COPY_BATCH_MECHANIC = "current-battlefield-token-copy-batch"
+CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY = "token.creation.current_entered_chosen_type_copy_batch"
+CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE = "create-chosen-entry-token-copy-batch-v1"
 
 
 class TokenCopyBatchKind(str, Enum):
@@ -357,6 +359,7 @@ class TokenCopyBatchKind(str, Enum):
     CONTROLLER_ARTIFACT_CREATURES = "controller_artifact_creatures"
     ANNOUNCED_OPPONENT_CREATURES = "announced_opponent_creatures"
     ANNOUNCED_HASTY_COPIES = "announced_hasty_copies"
+    CONTROLLER_ENTERED_CHOSEN_TOKENS = "controller_entered_chosen_tokens"
 
 
 @dataclass(frozen=True, slots=True)
@@ -368,13 +371,18 @@ class TokenCopyBatchSpec:
 
     def __post_init__(self) -> None:
         version = {TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES: 2,
-                   TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES: 3}.get(self.kind, 1)
+                   TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES: 3,
+                   TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS: 4}.get(self.kind, 1)
         if not isinstance(self.kind, TokenCopyBatchKind) or type(self.schema_version) is not int or self.schema_version != version:
             raise TokenCopyRecipeError("Token copy batch kind and version are closed")
 
     @property
     def uses_announced_models(self) -> bool:
         return self.kind in {TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES, TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES}
+
+    @property
+    def uses_chosen_entry_models(self) -> bool:
+        return self.kind is TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS
 
     @property
     def targets_player(self) -> bool:
@@ -403,6 +411,11 @@ class TokenCopyBatchSpec:
         from .fixed_token_production import FIXED_TOKEN_COPY_CAPABILITY_ID
 
         result = (TOKEN_COPY_BATCH_CAPABILITY, FIXED_TOKEN_COPY_CAPABILITY_ID)
+        if self.uses_chosen_entry_models:
+            from .entry_designations import ENTRY_DESIGNATION_CAPABILITY
+
+            return (*result, CHOSEN_ENTRY_TOKEN_COPY_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
+                    "trigger.effect.fixed_event", "trigger.placement.apnap")
         if self.uses_announced_models:
             from .target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
 
@@ -420,9 +433,16 @@ class TokenCopyBatchSpec:
             return TokenCopyExceptionSpec(add_keywords=("Haste",))
         return TokenCopyExceptionSpec(remove_legendary=self.kind is TokenCopyBatchKind.CONTROLLER_NONTOKEN_CREATURES)
 
-    def model_query(self, player: str):
-        from .object_predicate import ObjectQuerySpec
+    def model_query(self, player: str, *, chosen_type: str | None = None):
+        from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 
+        if self.uses_chosen_entry_models:
+            from .entry_designations import EntryDesignationKind, validate_designation
+
+            subtype = validate_designation(EntryDesignationKind.CREATURE_TYPE, chosen_type)
+            return ObjectQuerySpec(zones=("battlefield",), controller=player, token=True,
+                                   subtypes_all=(subtype,),
+                                   state_predicate=PermanentStatePredicateSpec(entered_this_turn=True))
         if self.uses_announced_models:
             raise TokenCopyRecipeError("Announced copy models require their revalidated target slots")
         if self.kind is TokenCopyBatchKind.CONTROLLER_ARTIFACT_CREATURES:
@@ -433,8 +453,12 @@ class TokenCopyBatchSpec:
                                token=None if self.targets_player else False)
 
     def to_effect(self) -> dict[str, Any]:
-        return {"op": "create_token_batch", "controller": "$controller",
-                TOKEN_COPY_BATCH_FIELD: {"schema_version": self.schema_version, "kind": self.kind.value}}
+        descriptor = {"schema_version": self.schema_version, "kind": self.kind.value}
+        if self.uses_chosen_entry_models:
+            from .entry_designations import CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
+
+            descriptor["predicate"] = CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
+        return {"op": "create_token_batch", "controller": "$controller", TOKEN_COPY_BATCH_FIELD: descriptor}
 
     @classmethod
     def from_effect(cls, effect: Mapping[str, Any], *, actor: str | None = None) -> "TokenCopyBatchSpec":
@@ -445,13 +469,24 @@ class TokenCopyBatchSpec:
                 or effect["controller"] != ("$controller" if actor is None else actor)):
             raise TokenCopyRecipeError("Token copy batch requires a closed creation instruction and its controller")
         descriptor = effect[TOKEN_COPY_BATCH_FIELD]
-        if not isinstance(descriptor, Mapping) or set(descriptor) != {"schema_version", "kind"}:
+        if not isinstance(descriptor, Mapping):
             raise TokenCopyRecipeError("Token copy batch requires a complete versioned model selection")
         try:
-            kind = TokenCopyBatchKind(descriptor["kind"])
-        except (TypeError, ValueError) as exc:
+            spec = cls(TokenCopyBatchKind(descriptor["kind"]), descriptor["schema_version"])
+        except (KeyError, TypeError, ValueError) as exc:
             raise TokenCopyRecipeError("Token copy batch model selection is unknown") from exc
-        return cls(kind, descriptor["schema_version"])
+        if thaw_value(descriptor) != spec.to_effect()[TOKEN_COPY_BATCH_FIELD]:
+            raise TokenCopyRecipeError("Token copy batch requires its exact versioned model selection")
+        return spec
+
+
+def uses_chosen_entry_token_copy(effect):
+    """Identify the chosen-entry batch, including a malformed version/kind pair."""
+    descriptor = effect.get(TOKEN_COPY_BATCH_FIELD) if isinstance(effect, Mapping) else None
+    return isinstance(descriptor, Mapping) and (
+        descriptor.get("schema_version") == 4
+        or descriptor.get("kind") == TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS.value
+    )
 
 
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:

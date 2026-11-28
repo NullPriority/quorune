@@ -10,7 +10,7 @@ from ..fixed_counter_movement_model import (
     OPTIONAL_CHOSEN_CONTROLLED_CREATURES,
 )
 from ..replacement.immutable import FrozenMap
-from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, MoveCounterSetIntent
 from .graft import can_move_plus_one_counter
 from .counter_movement_quantities import (
     QUANTITIES_FIELDS, complete_counter_movement_quantities, prepare_counter_movement_quantities,
@@ -44,10 +44,11 @@ def _pin_movement(effect, spec, context):
     source = context.query.object(source_ref, zones=("battlefield",))
     recipient = context.query.object(recipient_ref, zones=("battlefield",))
     if (source is None or recipient is None
-            or spec.receiver_is_ability_source and recipient.logical_object_id != context.source_logical_object_id):
+            or spec.receiver_is_ability_source and recipient.logical_object_id != context.source_logical_object_id
+            or spec.moves_all_source_counters and source.logical_object_id != context.source_logical_object_id):
         return None
     pinned = FrozenMap({**effect, "from_identity": source.logical_object_id, "to_identity": recipient.logical_object_id})
-    return pinned if (spec.chooses_counter_kind or spec.chooses_counter_quantities
+    return pinned if (spec.chooses_counter_kind or spec.chooses_counter_quantities or spec.moves_all_source_counters
                       or can_move_plus_one_counter(pinned, context.query)) else None
 
 
@@ -107,6 +108,60 @@ def _complete_chosen_movement(continuation, response, query, *, optional):
     return SemanticChoiceCompletion(intents=(_intent(pinned, continuation.stack_ref, counter_name=kind),))
 
 
+def _all_source_counter_quantities(effect, query):
+    donor = query.object(effect["from_ref"], zones=("battlefield",))
+    recipient = query.object(effect["to_ref"], zones=("battlefield",))
+    if (donor is None or recipient is None or donor.object_id == recipient.object_id
+            or donor.phased_out or recipient.phased_out or "creature" not in recipient.types
+            or donor.logical_object_id != effect["from_identity"]
+            or recipient.logical_object_id != effect["to_identity"]):
+        return ()
+    try:
+        return tuple(sorted(permanent_counter_snapshot(donor.counters).items()))
+    except ValueError as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
+def _prepare_all_source_movement(effect, pinned, context):
+    quantities = _all_source_counter_quantities(pinned, context.query) if pinned is not None else ()
+    if not any(context.query.counter_placement_allowed(pinned["to_ref"], name, amount)
+               for name, amount in quantities):
+        return SemanticChoicePreparation(
+            request=None, continuation_effect=FrozenMap(pinned or effect),
+            auto_continue=AutoContinue("The original objects cannot move their counters"),
+        )
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt=f"Move all counters from {pinned['from_ref']} onto {pinned['to_ref']}?",
+            choice=ScalarChoice(field_name="choice", legal_values=("move", "decline")),
+            public_context=FrozenMap({"stack": context.stack_ref, "operation": FIXED_COUNTER_MOVEMENT_OPERATION,
+                                      "source": pinned["from_ref"], "recipient": pinned["to_ref"]}),
+        ),
+        continuation_effect=pinned,
+    )
+
+
+def _complete_all_source_movement(continuation, response, query):
+    pinned = continuation.effect
+    choice = response.get("choice")
+    actor = continuation.semantic_frame.controller
+    stack = query.stack_object(continuation.stack_ref)
+    if (set(response) - ((_CHOSEN_RESPONSE_FIELDS - {"counter_kind"}) | {"choice"})
+            or type(choice) is not str or choice not in {"move", "decline"}
+            or stack is None or stack.controller != actor
+            or any(type(pinned.get(field)) is not str or not pinned[field] for field in _IDENTITIES)):
+        raise SemanticChoiceError("Choose whether to move all counters from the original source")
+    quantities = _all_source_counter_quantities(pinned, query)
+    if choice == "decline" or not quantities:
+        return SemanticChoiceCompletion()
+    return SemanticChoiceCompletion(intents=(MoveCounterSetIntent(
+        actor=actor, from_ref=pinned["from_ref"], from_identity=pinned["from_identity"],
+        to_ref=pinned["to_ref"], to_identity=pinned["to_identity"], amounts=FrozenMap(dict(quantities)),
+        reason="Move all counters from the original permanent", source_ref=continuation.stack_ref,
+        all_to_creature=True,
+    ),))
+
+
 def _intent(effect, stack_ref, *, counter_name="+1/+1"):
     return MoveCountersIntent(
         actor=effect["player"], from_ref=effect["from_ref"], from_identity=effect["from_identity"],
@@ -145,6 +200,10 @@ class FixedCounterMovementHandler:
             return prepare_counter_movement_quantities(effect, pinned, context)
         if any(key in effect for key in QUANTITIES_FIELDS):
             raise SemanticChoiceError("Only chosen quantities use a counter selection sequence")
+        if spec.moves_all_source_counters:
+            if resuming:
+                raise SemanticChoiceError("An all-counter movement resumes from its sealed choice")
+            return _prepare_all_source_movement(effect, pinned, context)
         if spec.chooses_counter_kind:
             if resuming:
                 raise SemanticChoiceError("Chosen counter movement resumes from its sealed choice")
@@ -179,6 +238,10 @@ class FixedCounterMovementHandler:
             return complete_counter_movement_quantities(continuation, response, query)
         if any(key in pinned for key in QUANTITIES_FIELDS):
             raise SemanticChoiceError("Only chosen quantities use a counter selection sequence")
+        if spec.moves_all_source_counters:
+            if _OFFERED_KINDS in pinned:
+                raise SemanticChoiceError("An all-counter movement cannot offer individual kinds")
+            return _complete_all_source_movement(continuation, response, query)
         if spec.chooses_counter_kind:
             return _complete_chosen_movement(continuation, response, query, optional=spec.optional)
         if _OFFERED_KINDS in pinned:

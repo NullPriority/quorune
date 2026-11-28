@@ -87,8 +87,13 @@ class ManaMode:
     base_fundable: bool = True
     tap_mana_multipliers: tuple[tuple[str, int], ...] = ()
     artifact_hand_mana: str | None = None
+    double_unspent: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.double_unspent) is not bool or self.double_unspent and (
+            self.restriction or self.requires_choice or not self.tap_source or self.side_effects
+        ):
+            raise ValueError("Unspent mana doubling needs one ordinary unrestricted tap mode")
         if type(self.tap_source) is not bool:
             raise ValueError('Mana mode tap cost must be Boolean')
         if self.artifact_hand_mana is not None and (
@@ -143,6 +148,8 @@ class ManaMode:
             payload["fx"] = list(self.side_effects)
         if self.requires_choice:
             payload["choice"] = True
+        if self.double_unspent:
+            payload["double_unspent"] = True
         if self.artifact_hand_mana is not None:
             from .artifact_hand_mana_model import ARTIFACT_HAND_MANA_STEP
 

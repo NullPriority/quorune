@@ -9,9 +9,15 @@ from ..rules.fixed_stat_multipliers import is_fixed_stat_multiplier
 
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
+    from ..rules.captured_counter_keyword_grant import CAPTURED_COUNTER_KEYWORD_GRANT_FIELD
     from ..rules.captured_draw_keyword_grant import CAPTURED_DRAW_KEYWORD_GRANT_FIELD
+    from ..rules.main_phase_creature_cohort import COHORT_GRANT_FIELD
 
-    if CAPTURED_DRAW_KEYWORD_GRANT_FIELD in effect:
+    if COHORT_GRANT_FIELD in effect:
+        from .creature_cohort_grant import apply_creature_cohort_grant
+
+        return True, apply_creature_cohort_grant(host, effect, actor=actor, reason=reason)
+    if {CAPTURED_DRAW_KEYWORD_GRANT_FIELD, CAPTURED_COUNTER_KEYWORD_GRANT_FIELD}.intersection(effect):
         from .captured_draw_keyword_grant import apply_captured_draw_keyword_grant
 
         return True, apply_captured_draw_keyword_grant(host, effect, actor=actor, reason=reason)
@@ -40,7 +46,9 @@ def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     if version == 10:
         from ..rules.block_capacity_effect import apply_temporary_block_capacity
         return True, apply_temporary_block_capacity(host, effect, actor=actor, reason=reason)
-    if version in {7, 8, 9}:
+    from ..rules.blocked_damage_cast import GRANT_VERSION
+
+    if version in {7, 8, 9, GRANT_VERSION}:
         from .temporary_ability_bundle import apply_temporary_ability_bundle
         return True,apply_temporary_ability_bundle(host,effect,actor=actor,reason=reason)
     if version==6:

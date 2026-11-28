@@ -15,7 +15,9 @@ def decode_counter_movement_identity(value):
     if isinstance(value, Mapping):
         if set(value) == fields:
             return MoveCountersIntent(**value).identity()
-        if set(value) == fields - {"counter_name", "amount"} | {"amounts"}:
+        set_fields = fields - {"counter_name", "amount"} | {"amounts"}
+        if set(value) == set_fields or (set(value) == set_fields | {"all_to_creature"}
+                                        and value["all_to_creature"] is True):
             return MoveCounterSetIntent(**value).identity()
     raise ValueError("Counter movement continuation identity is malformed")
 
@@ -69,6 +71,8 @@ class MoveCounterSetIntent:
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
+    all_to_creature: bool = False
+
     def __post_init__(self) -> None:
         from .intents import _freeze_replacement_selections
         if any(type(value) is not str or not value for value in
@@ -76,6 +80,8 @@ class MoveCounterSetIntent:
             raise ValueError("Counter movement requires pinned nonempty identities")
         if self.source_ref is not None and (type(self.source_ref) is not str or not self.source_ref):
             raise ValueError("Counter movement source reference must be nonempty")
+        if type(self.all_to_creature) is not bool:
+            raise ValueError("Counter movement destination mode must be explicit")
         amounts = permanent_counter_snapshot(self.amounts)
         if not amounts or amounts != self.amounts:
             raise ValueError("Counter movement requires a nonempty set of positive canonical amounts")
@@ -88,6 +94,7 @@ class MoveCounterSetIntent:
             "actor": self.actor, "from_ref": self.from_ref, "from_identity": self.from_identity,
             "to_ref": self.to_ref, "to_identity": self.to_identity, "amounts": dict(self.amounts),
             "reason": self.reason, "source_ref": self.source_ref,
+            **({"all_to_creature": True} if self.all_to_creature else {}),
         }
 
 

@@ -6,6 +6,9 @@ from collections.abc import Mapping
 COMBAT_DAMAGE_EXILE_VERSION = 7
 COMBAT_DAMAGE_EXILE_COUNT = 2
 COMBAT_DAMAGE_CAST_EXILE_VERSION = 8
+COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION = 11
+COMBAT_DAMAGE_COLOR_CAST_EXILE_CAPABILITY = "zone.impulse_access.combat_damage_recipient_color_cast"
+COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD = "combat_damage_color_cast_incarnation"
 COMBAT_DAMAGE_CAST_EXILE_CAPABILITY = "zone.impulse_access.combat_damage_recipient_cast"
 COMBAT_DAMAGE_EXILE_CAPABILITY = "zone.impulse_access.combat_damage_recipient_free"
 
@@ -28,6 +31,29 @@ def is_combat_damage_exile(effect):
 
 def combat_damage_cast_exile_effect():
     return {**combat_damage_exile_effect(), "schema_version": COMBAT_DAMAGE_CAST_EXILE_VERSION, "count": 1}
+
+
+def combat_damage_color_cast_exile_effect():
+    return {**combat_damage_cast_exile_effect(), "schema_version": COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION}
+
+
+def is_combat_damage_color_cast_exile(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == "fixed_impulse_access"
+            and type(effect.get("schema_version")) is int
+            and effect["schema_version"] == COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION)
+
+
+def validate_combat_damage_color_cast_exile(effect, *, actor=None):
+    expected = combat_damage_color_cast_exile_effect()
+    if not is_combat_damage_color_cast_exile(effect) or type(effect.get("count")) is not int:
+        raise ValueError("Color-mana combat access requires its exact top-one instruction")
+    if actor is not None:
+        supplier = effect.get("player")
+        if any(type(seat) is not str or not seat or seat.startswith("$") for seat in (actor, supplier)):
+            raise ValueError("Color-mana combat access requires its controller and actual damaged player")
+        expected["player"] = supplier
+    if effect != expected:
+        raise ValueError("Color-mana combat access requires the exact damaged player and current turn")
 
 
 def is_combat_damage_cast_exile(effect):

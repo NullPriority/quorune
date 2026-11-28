@@ -44,7 +44,11 @@ class AshiokNightmareWeaverTests(InheritedNativeFixture, unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()
         path = Path(cls.temporary.name) / "ashiok-nightmare-weaver.sqlite3"
-        build_fixture_database(ROOT / "tests/fixtures/ashiok-nightmare-weaver-cards.json", path)
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / name for name in (
+            "ashiok-nightmare-weaver-cards.json", "fixed-mixed-zone-exile-cards.json", "activation-public-state-cards.json",
+            "damage-linked-graveyard-outcome-cards.json", "conditional-exile-cards.json",
+        )], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         commander = "Rograkh, Son of Rohgahh"
@@ -139,6 +143,111 @@ class AshiokNightmareWeaverTests(InheritedNativeFixture, unittest.TestCase):
                           for card in (hidden, artifact)),
         )
         return hidden, artifact
+
+    def _crystal_scenario(self, seed):
+        game = self.session(seed)
+        for player in game.state.players.values():
+            for object_id in tuple(player.zones["hand"][3:]):
+                game.engine.move_card(object_id, "library", log=False)
+        source = self.add(game.engine, "Chaos Shrine's Black Crystal", seat="B")
+        first = self.add(game.engine, "Shock", seat="A", zone="hand", ref="crystal-first-shock")
+        self.assert_closed(game, source)
+        return game, source, first
+
+    def _crystal_upkeep_choice(self, game, source):
+        self.until(game, lambda state: state.state.active_player == "B" and state.state.step == "upkeep"
+                   and any(item.source_object_id == source.object_id for item in state.state.stack))
+        decision = self.resolve(game)
+        self.assertEqual("semantic.choice", decision.kind)
+        return game.packet("pilot:B", full=True)["decision"]["ctx"]["objects"]
+
+    def test_crystal_returns_only_its_linked_death_under_its_controller_with_finality(self):
+        game, source, shock = self._crystal_scenario(607_234_01)
+        borrowed = self.add(game.engine, "Grizzly Bears", seat="C", ref="crystal-borrowed-creature")
+        unrelated = self.add(game.engine, "Grizzly Bears", seat="B", zone="exile", ref="crystal-unrelated")
+        again = self.add(game.engine, "Shock", seat="A", zone="hand", ref="crystal-finality-shock")
+        self.add(game.engine, "Mountain", ref="crystal-second-mana")
+        self.add(game.engine, "Mountain", ref="crystal-reserve-mana")
+        game.engine.change_control(borrowed.object_id, "B", reason="B controls C's creature")
+        self.prepare_main(game, "A", mana={"R": 1})
+        self.cast(game, "A", shock, [borrowed.ref])
+        self.resolve_top(game)
+        current = game.state.cards[borrowed.object_id]
+        self.assertEqual(("graveyard", "C"), (current.zone, current.owner))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[borrowed.object_id].zone)
+        offered = self._crystal_upkeep_choice(game, source)
+        self.assertEqual([borrowed.ref], [row["id"] for row in offered])
+        game = self.replay(game, load=True)
+        self.assert_rejected(game, "B", {"action_id": "choose", "objects": [unrelated.ref]})
+        self.act_ok(game, "B", {"action_id": "choose", "objects": [borrowed.ref]})
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[borrowed.object_id]
+        self.assertEqual(("battlefield", "C", "B", {"finality": 1}), (current.zone, current.owner, current.controller, current.counters))
+        self.cast(game, "A", again, [current.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[borrowed.object_id].zone)
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_crystal_declines_the_optional_linked_upkeep_return(self):
+        game, source, shock = self._crystal_scenario(607_234_02)
+        creature = self.add(game.engine, "Grizzly Bears", seat="B", ref="crystal-decline")
+        self.prepare_main(game, "A", mana={"R": 1})
+        self.cast(game, "A", shock, [creature.ref])
+        self.assertIsNone(self.resolve(game))
+        offered = self._crystal_upkeep_choice(game, source)
+        self.assertEqual([creature.ref], [row["id"] for row in offered])
+        game = self.replay(game, load=True)
+        self.act_ok(game, "B", {"action_id": "choose", "objects": []})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("exile", game.state.cards[creature.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_crystal_ignores_a_token_and_a_creature_controlled_elsewhere(self):
+        game, source, shock = self._crystal_scenario(607_234_03)
+        outside = self.add(game.engine, "Grizzly Bears", seat="C", ref="crystal-outside-controller")
+        make = self.add(game.engine, "Raise the Alarm", seat="B", zone="hand")
+        again = self.add(game.engine, "Shock", seat="A", zone="hand", ref="crystal-token-shock")
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.prepare_main(game, "A", mana={"R": 2})
+        self.cast(game, "A", shock, [outside.ref])
+        self.resolve_top(game)
+        self.assertFalse(game.state.stack)
+        self.assertEqual("graveyard", game.state.cards[outside.object_id].zone)
+        self.cast(game, "B", make)
+        self.assertIsNone(self.resolve(game))
+        tokens = [card for card in game.state.cards.values() if card.is_token and card.controller == "B"]
+        self.assertEqual(2, len(tokens))
+        token = tokens[0]
+        self.cast(game, "A", again, [token.ref])
+        self.resolve_top(game)
+        self.assertFalse(any(item.source_object_id == source.object_id for item in game.state.stack))
+        self.assertFalse(any(token.object_id in player.zones["exile"] for player in game.state.players.values()))
+        self.replay(game, load=True)
+
+    def test_crystal_ignores_the_same_physical_card_in_a_new_graveyard_incarnation(self):
+        game, source, shock = self._crystal_scenario(607_234_04)
+        creature = self.add(game.engine, "Grizzly Bears", seat="B", ref="crystal-stale-death")
+        exile = self.add(game.engine, "Cremate", zone="hand")
+        restore = self.add(game.engine, "Pull from Eternity", zone="hand")
+        self.prepare_main(game, "A", mana={"R": 1, "B": 1, "W": 1})
+        self.cast(game, "A", shock, [creature.ref])
+        self.resolve_top(game)
+        self.assertEqual(source.object_id, game.state.stack[-1].source_object_id)
+        original = game.state.cards[creature.object_id].logical_object_id
+        self.cast(game, "A", exile, [creature.ref])
+        self.resolve_top(game)
+        self.cast(game, "A", restore, [creature.ref])
+        self.resolve_top(game)
+        current = game.state.cards[creature.object_id]
+        self.assertEqual("graveyard", current.zone)
+        self.assertNotEqual(original, current.logical_object_id)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[creature.object_id].zone)
+        self.replay(game, load=True)
 
     def test_plus_two_exiles_opponent_top_three_and_consumes_turn_loyalty(self):
         game = self.session(8406070301)

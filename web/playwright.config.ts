@@ -72,6 +72,7 @@ export default defineConfig({
         ...process.env,
         MTG_CARD_DB: process.env.MTG_CARD_DB ?? "data/test-ci.sqlite3",
         MTG_SERVER_DATA: serverData,
+        MTG_AUTO_PASS_EMPTY_PRIORITY: process.env.MTG_AUTO_PASS_EMPTY_PRIORITY ?? "0",
         MTG_E2E_SERVER_PORT: String(serverPort),
         MTG_E2E_WEB_PORT: String(webPort),
       },

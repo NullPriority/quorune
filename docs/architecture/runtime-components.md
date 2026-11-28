@@ -39,6 +39,13 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+A creature exile result can give each former controller a private basic-land
+search counted from the actual exile arrivals. The search owner seals each
+initial library window and collects the finds in APNAP order. The chosen
+lands from all searches enter tapped in one zone transaction before the
+instructed libraries are shuffled. The targeted and untargeted spell views
+retain their own legality and share this search and entry owner.
+
 An attached Equipment planeswalker uses its current reciprocal creature
 attachment for two independent decisions. Its live static ability removes it
 from the normal attack destination offer and commit validator. An attack that
@@ -1623,6 +1630,24 @@ base. The shared affordability, target validation and payment owners enforce
 that binding; resolution retains printed mode order and ordinary copy behavior.
 Variable prices and incomplete mode bodies remain residual.
 
+### Fixed Tiered mode costs
+
+The version-two Tiered price map closes one required printed mode and its
+additional mana vector. The shared priced-mode owner attaches that vector to
+each ordinary or alternative base before modifiers and payment. It offers
+only the selected mode's targets. A free base still pays the selected
+addition, and resolution and spell copies consume the original mode.
+
+A conditional additional-combat branch untaps the resolving controller's
+creatures in any phase. It queues another combat only during that controller's
+current combat. The queued phase follows directly without adding a main phase.
+
+A delayed combat-to-opponent branch binds its target to the resolving spell
+and the current turn. The committed damage owner discovers one trigger per
+controlled creature that actually deals combat damage to that opponent.
+Each trigger creates one tapped Treasure. This event-time creature test is
+independent of a separate resolution-locked characteristic modifier.
+
 ### Fixed Entwine mode costs
 
 `EntwineModeCost` binds one fixed additional mana vector to every mode of a
@@ -1635,6 +1660,15 @@ cost reductions and payment. Choosing all modes adds the Entwine price once,
 including when a typed permission waives the base mana cost. Resolution uses
 printed order, so later modes observe the results of earlier ones. The same
 public mode and cost-option fields serve offers and accepted commands.
+
+### Creature-subtype Offering
+
+A printed Offering declaration adds a casting branch tied to one currently
+controlled permanent of the declared subtype. The caster chooses its
+incarnation before paying. The mana cost of that permanent reduces the total
+through the existing casting price owner. The Offering branch grants ordinary
+instant timing and pays a typed sacrifice as part of the cast. The ordinary
+printed price remains available in an ordinary casting window.
 
 ### Fixed mana Emerge alternatives
 

@@ -44,24 +44,24 @@ def decode_captured_draw_keyword_instruction(effect, *, player="$controller"):
     return ObjectQuerySpec.from_dict(effect["query"])
 
 
-def retained_keyword_grant_effect(*, player, identities):
+def retained_keyword_grant_effect(*, player, identities, field=CAPTURED_DRAW_KEYWORD_GRANT_FIELD, version=1):
     return {
         "op": CHARACTERISTIC_OPERATION,
-        CAPTURED_DRAW_KEYWORD_GRANT_FIELD: {
-            "schema_version": 1, "player": player,
+        field: {
+            "schema_version": version, "player": player,
             "identities": [identity.to_dict() for identity in identities],
         },
     }
 
 
-def decode_retained_keyword_grant(effect, *, player):
-    fields = {"op", CAPTURED_DRAW_KEYWORD_GRANT_FIELD, "_runtime_source"}
+def decode_retained_keyword_grant(effect, *, player, field=CAPTURED_DRAW_KEYWORD_GRANT_FIELD, version=1):
+    fields = {"op", field, "_runtime_source"}
     if (not isinstance(effect, Mapping) or set(effect) - {"reason"} != fields
             or effect["op"] != CHARACTERISTIC_OPERATION):
         raise ValueError("Captured keyword grant requires its exact resolved instruction")
-    payload = effect[CAPTURED_DRAW_KEYWORD_GRANT_FIELD]
+    payload = effect[field]
     if (not isinstance(payload, Mapping) or set(payload) != {"schema_version", "player", "identities"}
-            or type(payload["schema_version"]) is not int or payload["schema_version"] != 1
+            or type(payload["schema_version"]) is not int or payload["schema_version"] != version
             or payload["player"] != player or not isinstance(payload["identities"], (list, tuple))
             or not payload["identities"]):
         raise ValueError("Captured keyword grant requires the original controller and subjects")

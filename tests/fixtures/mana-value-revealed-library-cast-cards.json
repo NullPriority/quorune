@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and ruling subset",
+  "cards": [
+    {
+      "name": "Sunbird's Invocation",
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever you cast a spell from your hand, reveal the top X cards of your library, where X is that spell's mana value. You may cast a spell with mana value X or less from among cards revealed this way without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "name": "Heat Ray",
+      "oracle_id": "76ec76b9-da0f-4b9d-ad0a-d734052a5f2b",
+      "mana_cost": "{X}{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Heat Ray deals X damage to target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Casting Sunbird's Invocation won't cause its own ability to trigger."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For spells with {X} in their mana costs, use the value chosen for X to determine the spell's mana value."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a revealed card in your library has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If the spell's mana value is 0, you do nothing as the ability of Sunbird's Invocation resolves."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Costly Plunder, those must be paid to cast the card."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If you cast one of the revealed cards, you do so as part of the resolution of the triggered ability. You can't wait to cast it later in the turn. Timing permissions based on the card's type are ignored, but other restrictions (such as \"Cast [this card] only during combat\") are not."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "The ability of Sunbird's Invocation resolves before the spell that caused it to trigger. It will resolve even if that spell is countered. If you cast a spell as part of the resolution of the ability, that spell resolves before the spell that caused the ability to trigger."
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "The mana value of a split card, such as cards with aftermath from the Amonkhet block, is based on the combined mana cost of its two halves. The mana value of the resulting spell is based only on the half you cast."
+    }
+  ]
+}

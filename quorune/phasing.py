@@ -132,7 +132,8 @@ def plan_untap_phasing(host, active: str) -> PhasingPlan:
                 parent = _host_incarnation(battlefield, record.attached_object)
                 if parent is not None:
                     incoming_children.setdefault(parent.object_id, []).append(card.object_id)
-            elif ((record.return_seat == active or record.departed_ready)
+            elif (record.battlefield_departure_hold is None
+                  and (record.return_seat == active or record.departed_ready)
                   and not _source_control_prevents_phase_in(state, record)):
                 incoming.add(card.object_id)
         elif card.controller == active:
@@ -166,7 +167,7 @@ def _restore_phase_attachment(host, card, record):
         detach_object(cards, card, players=players)
 
 
-def _commit_phasing(host, transitions):
+def _commit_phasing(host, transitions, *, tapped_returns=frozenset()):
     affected = []
     for transition in transitions:
         card = _host_incarnation(host.state.cards, transition.object)
@@ -188,6 +189,7 @@ def _commit_phasing(host, transitions):
     from .rules.entrant_power_branch import pin_entrant_power_departures
     from .rules.entrant_name_absence import pin_entrant_names_before_departure
     from .rules.entry_control_exchange import pin_entry_exchange_departures
+    from .continuous_effect_state import expire_counter_bound_attack_restrictions
 
     outgoing = tuple(card for card, transition in affected if transition.out)
     pin_entry_type_return_departures(host, outgoing, error_type=ValueError)
@@ -204,8 +206,15 @@ def _commit_phasing(host, transitions):
     for card, transition in affected:
         card.phased_out = transition.out
         card.phasing_record = transition.record if transition.out else None
+        if transition.out:
+            expire_counter_bound_attack_restrictions(host.state, card)
     for card, transition in affected:
         if not transition.out:
+            if card.object_id in tapped_returns:
+                from .tap_state import set_permanent_tapped
+
+                set_permanent_tapped(host, card.ref, actor=card.controller, tapped=True,
+                    reason="phased in tapped", logical_object_id=card.logical_object_id, log=False, semantic_events=False)
             _restore_phase_attachment(host, card, transition.record)
         record_source_transition(host, card, previous_phased_out=not transition.out)
     from .soulbond_state import end_pairs_containing
@@ -216,19 +225,21 @@ def _commit_phasing(host, transitions):
     return tuple(affected)
 
 
-def commit_untap_phasing(host, plan: PhasingPlan) -> None:
+def commit_untap_phasing(host, plan: PhasingPlan) -> tuple[ContinuousObjectIdentity, ...]:
     if plan.unsupported is not None or plan.active != host.state.active_player:
         raise ValueError("Phasing requires one represented current untap plan")
     affected = _commit_phasing(host, plan.transitions)
     if not affected:
-        return
+        return ()
     host._log(plan.active, "untap.phasing", "Permanents phased in and out.",
         {"in": [card.ref for card, transition in affected if not transition.out],
          "out": [card.ref for card, transition in affected if transition.out]},
         importance=1, changed_objects=[card.object_id for card, _ in affected])
+    return tuple(transition.object for _, transition in affected if not transition.out)
 
 
-def phase_out_permanents(host, identities: tuple[ContinuousObjectIdentity, ...], *, actor: str, reason: str):
+def phase_out_permanents(host, identities: tuple[ContinuousObjectIdentity, ...], *, actor: str, reason: str,
+                         departure_hold: ContinuousObjectIdentity | None = None, linked_phase_in_tapped: bool = True):
     from .phasing_model import phasing_lifecycle_version
 
     if phasing_lifecycle_version(host.state.phasing_lifecycle_version) is None:
@@ -243,6 +254,12 @@ def phase_out_permanents(host, identities: tuple[ContinuousObjectIdentity, ...],
     if not direct:
         return ()
     outgoing = _outgoing_phasing(host, battlefield, direct)
+    if departure_hold is not None:
+        for oid in direct:
+            transition = outgoing[oid]
+            if not transition.record.indirect:
+                outgoing[oid] = replace(transition, record=replace(transition.record,
+                    battlefield_departure_hold=departure_hold, linked_phase_in_tapped=linked_phase_in_tapped))
     ordered = sorted(outgoing, key=lambda oid: (battlefield[oid].ref, oid))
     affected = _commit_phasing(host, tuple(outgoing[oid] for oid in ordered))
     for permanent, _transition in affected:
@@ -284,37 +301,67 @@ def _capture_source_control_restriction(host, effect, *, actor, subject):
     return SourceControlPhaseInRestriction(identity, actor, active) if active is not None else None
 
 
+def _phase_out_controlled_set(host, *, controller, actor, reason, types=(), excluded_types=()):
+    from .affected_permanents import (
+        AffectedPermanentSetError, AffectedPermanentSetSpec, PermanentControllerRelation,
+        select_affected_permanents,
+    )
+    from .errors import GameRuleError
+    from .object_predicate import ObjectQuerySpec
+
+    spec = AffectedPermanentSetSpec(ObjectQuerySpec(zones=("battlefield",), types_all=types, excluded_types=excluded_types),
+                                    PermanentControllerRelation.ACTOR)
+    try:
+        permanents = select_affected_permanents(
+            host.affected_permanent_object_rows(controller), spec, actor=controller,
+            active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
+        )
+    except AffectedPermanentSetError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return phase_out_permanents(host, tuple(_identity(card) for card in permanents), actor=actor, reason=reason)
+
+
 def apply_phase_out_effect(host, effect, *, actor, operation, reason):
     from .continuous_effect_state import ResolutionEffectSource
     from .errors import GameRuleError
     from .phasing_model import (
         CONTROLLED_LAND_PHASE_OUT_SUBJECT, CONTROLLED_PERMANENT_PHASE_OUT_SUBJECT,
-        PHASE_OUT_TARGET_SET_SUBJECT, PROLIFERATE_PHASE_OUT_SUBJECT, validate_phase_out_effect,
+        BATTLEFIELD_PHASE_OUT_SUBJECT, CREATURE_SET_PHASE_HOLD_SUBJECT, PHASE_OUT_TARGET_SET_SUBJECT, PROLIFERATE_PHASE_OUT_SUBJECT,
+        SPELL_TARGET_PHASE_OUT_SUBJECT, TARGET_PLAYER_NONLAND_PHASE_OUT_SUBJECT, validate_phase_out_effect,
     )
     from .rules.proliferate_phase_out import phase_out_selected_counter_recipients
 
     subject = validate_phase_out_effect(effect, runtime=True)
+    from .rules.battlefield_phase_hold import battlefield_phase_hold_ticket
+
+    if subject == BATTLEFIELD_PHASE_OUT_SUBJECT:
+        ticket = battlefield_phase_hold_ticket(host, effect, actor=actor)
+        if ticket is None:
+            return None
+        target, source = ticket
+        result = phase_out_permanents(host, (_identity(target),), actor=actor, reason=reason, departure_hold=source)
+        return result[0] if result else None
+    if subject == CREATURE_SET_PHASE_HOLD_SUBJECT:
+        from .rules.counted_creature_phase_hold import apply_counted_creature_phase_hold
+
+        return apply_counted_creature_phase_hold(host, effect, actor=actor, reason=reason)
+    if subject == SPELL_TARGET_PHASE_OUT_SUBJECT:
+        from .rules.phase_occurrence_events import phase_out_original_spell_target
+
+        return phase_out_original_spell_target(host, actor=actor, reason=reason)
     if subject == PROLIFERATE_PHASE_OUT_SUBJECT:
         return phase_out_selected_counter_recipients(host, effect, actor=actor, reason=reason)
     if subject in {CONTROLLED_LAND_PHASE_OUT_SUBJECT, CONTROLLED_PERMANENT_PHASE_OUT_SUBJECT}:
-        from .affected_permanents import (
-            AffectedPermanentSetError, AffectedPermanentSetSpec, PermanentControllerRelation,
-            select_affected_permanents,
-        )
-        from .object_predicate import ObjectQuerySpec
-
         types = ("land",) if subject == CONTROLLED_LAND_PHASE_OUT_SUBJECT else ()
-        spec = AffectedPermanentSetSpec(ObjectQuerySpec(zones=("battlefield",), types_all=types),
-                                        PermanentControllerRelation.ACTOR)
+        return _phase_out_controlled_set(host, controller=actor, actor=actor, reason=reason, types=types)
+    if subject == TARGET_PLAYER_NONLAND_PHASE_OUT_SUBJECT:
+        from .rules.targeted_opponent_protection import validate_resolving_opponent_protection
+
         try:
-            permanents = select_affected_permanents(
-                host.affected_permanent_object_rows(actor), spec, actor=actor,
-                active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
-            )
-        except AffectedPermanentSetError as exc:
+            controller = validate_resolving_opponent_protection(host, effect, actor=actor)
+        except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
-        identities = tuple(ContinuousObjectIdentity(card.object_id, card.logical_object_id) for card in permanents)
-        return phase_out_permanents(host, identities, actor=actor, reason=reason)
+        return _phase_out_controlled_set(host, controller=controller, actor=actor, reason=reason, excluded_types=("land",))
     if subject == PHASE_OUT_TARGET_SET_SUBJECT:
         targets = []
         for reference in effect["cards"]:
@@ -342,6 +389,40 @@ def apply_phase_out_effect(host, effect, *, actor, operation, reason):
     return result
 
 
+def return_held_phasing_after_departures(host, departures):
+    """Release all roots for the same actual battlefield-departure batch."""
+    if not departures or getattr(host.state, "phasing_lifecycle_version", None) is None:
+        return
+    battlefield = _battlefield(host.state)
+    from .conditional_exile_model import conditional_source_remains
+    from .rules.phase_occurrence_events import collect_phase_in_triggers
+    from .trigger_processing import enqueue_trigger_batch
+
+    roots, children = set(), {}
+    for oid, card in battlefield.items():
+        record = card.phasing_record
+        if not card.phased_out or record is None:
+            continue
+        if record.battlefield_departure_hold in departures and not conditional_source_remains(
+            record.battlefield_departure_hold, battlefield,
+        ):
+            roots.add(oid)
+        if record.indirect:
+            attached = _host_incarnation(battlefield, record.attached_object)
+            if attached is not None:
+                children.setdefault(attached.object_id, []).append(oid)
+    resulting = _expand_groups(roots, children)
+    transitions = tuple(PhaseTransition(_identity(battlefield[oid]), battlefield[oid].phasing_record, False)
+                        for oid in sorted(resulting, key=lambda oid: (battlefield[oid].ref, oid)))
+    tapped = frozenset(oid for oid in roots if battlefield[oid].phasing_record.linked_phase_in_tapped)
+    affected = _commit_phasing(host, transitions, tapped_returns=tapped)
+    if not affected:
+        return
+    host._log(None, "permanent.phase_in", "Held permanents phased in after their source left.",
+        {"in": [card.ref for card, _ in affected]}, importance=1, changed_objects=[card.object_id for card, _ in affected])
+    enqueue_trigger_batch(host, collect_phase_in_triggers(host, tuple(t.object for _, t in affected)))
+
+
 def mark_departed_phasing_returns(state: GameState, previous_normal: str | None, next_normal: str) -> None:
     """Cross departed seats only in the ordinary turn rotation."""
     if not state.eliminated_players or previous_normal is None or state.phasing_lifecycle_version is None:
@@ -360,5 +441,6 @@ def mark_departed_phasing_returns(state: GameState, previous_normal: str | None,
         return
     for card in state.cards.values():
         record = card.phasing_record
-        if record is not None and not record.indirect and record.return_seat in skipped and not record.departed_ready:
+        if (record is not None and not record.indirect and record.battlefield_departure_hold is None
+                and record.return_seat in skipped and not record.departed_ready):
             card.phasing_record = replace(record, departed_ready=True)

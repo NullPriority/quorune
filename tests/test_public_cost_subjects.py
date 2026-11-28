@@ -129,6 +129,29 @@ class PublicCostSubjectRuntimeTests(unittest.TestCase):
             if row['id'] == 'cast:' + current.ref)
         return next(option['requirements'] for option in action['cost_options'] if option['id'] == 'normal')
 
+    def test_cast_price_collects_public_cost_adjustments_once(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.rules.casting import static_modifiers
+
+        host = object()
+        card = SimpleNamespace(oracle_id="price-fixture")
+        option = {"requirements": {"GENERIC": 3}}
+        adjustments = (
+            SimpleNamespace(generic_adjustment=2, generic_reduction=0),
+            SimpleNamespace(generic_adjustment=-1, generic_reduction=1),
+        )
+        with (
+            patch.object(static_modifiers, "active_fixed_spell_cost_reductions", return_value=adjustments) as collect,
+            patch.object(static_modifiers, "compiled_self_spell_cost_reduction_specs", return_value=()),
+            patch("quorune.rules.casting.declared_cost_reductions.apply_declared_cost_reductions"),
+        ):
+            static_modifiers.apply_cast_static_reductions(host, "A", card, option, program=None)
+        collect.assert_called_once_with(host, "A", card, cast_type_line=None, face_down_method=None)
+        self.assertEqual({"GENERIC": 4}, option["requirements"])
+        self.assertEqual([{"kind": "fixed_query", "count": 2}], option["cost_increases"])
+        self.assertEqual([{"kind": "fixed_query", "count": 1}], option["cost_reductions"])
+
     def test_actual_witherbloom_grants_stack_and_follow_live_providers(self):
         from quorune.rules.casting.static_modifiers import fixed_generic_reduction
 

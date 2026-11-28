@@ -62,6 +62,129 @@ class RevealedTopCardManaValueTests(InheritedNativeFixture, unittest.TestCase):
                     )
                     self.assertNotEqual("exact", ir.status)
 
+    def _ad_nauseam_start(self, game, source):
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 3, "B": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source, [])
+
+    def _ad_nauseam_choice(self, game, choice):
+        before = authoritative_state_hash(game.state)
+        payload = {"action_id": "choose", "choice": choice}
+        self.assertFalse(game.act("pilot:B", payload).ok)
+        self.assertFalse(game.act("pilot:A", {**payload, "choice": "unoffered"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", payload)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_ad_nauseam_reveals_and_moves_each_chosen_top_before_offering_the_next_iteration(self):
+        game = self.session(20203101)
+        source = self.add(game.engine, "Ad Nauseam", zone="hand")
+        hidden = self.add(game.engine, "Swamp", zone="library", ref="nauseam-unrevealed")
+        second = self.add(game.engine, "Fire // Ice", zone="library", ref="nauseam-split-value")
+        first = self.add(game.engine, "Feral Hydra", zone="library", ref="nauseam-x-value")
+        self._ad_nauseam_start(game, source)
+        life = game.state.players["A"].life
+        cursor = len(game.state.events)
+        original = game.state.stack[-1].ref
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        self.assertEqual(original, game.state.stack[-1].ref)
+        self.assertEqual(life - 1, game.state.players["A"].life)
+        self.assertEqual("hand", game.state.cards[first.object_id].zone)
+        self.assertEqual("library", game.state.cards[second.object_id].zone)
+        for principal in ("pilot:B", "pilot:C", "spectator"):
+            packet = game.packet(principal, full=True)
+            self.assertIsNone(packet["decision"])
+            encoded = json.dumps(packet)
+            if principal.startswith("pilot:"):
+                self.assertIn(first.ref, encoded)
+            self.assertNotIn(second.ref, encoded)
+            self.assertNotIn(hidden.ref, encoded)
+        codes = [event.code for event in game.state.events[cursor:]
+                 if event.code in {"library.look", "library.selection", "effect.life", "card.draw"}]
+        self.assertEqual(["library.look", "library.selection", "effect.life"], codes)
+        game = self.replay(game, load=True)
+        cursor = len(game.state.events)
+        self._ad_nauseam_choice(game, "repeat")
+        self.assertEqual(original, game.state.stack[-1].ref)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        self.assertEqual(life - 5, game.state.players["A"].life)
+        self.assertEqual("hand", game.state.cards[second.object_id].zone)
+        self.assertIn(second.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:B", full=True)))
+        codes = [event.code for event in game.state.events[cursor:]
+                 if event.code in {"library.look", "library.selection", "effect.life", "card.draw"}]
+        self.assertEqual(["library.look", "library.selection", "effect.life"], codes)
+        game = self.replay(game, load=True)
+        self._ad_nauseam_choice(game, "stop")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("library", game.state.cards[hidden.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_ad_nauseam_with_an_empty_library_or_last_zero_cost_card_finishes(self):
+        for with_land in (False, True):
+            with self.subTest(with_land=with_land):
+                game = self.session(20203102 + with_land)
+                source = self.add(game.engine, "Ad Nauseam", zone="hand")
+                for oid in tuple(game.state.players["A"].zones["library"]):
+                    game.engine.move_card(oid, "exile", log=False, semantic_events=False)
+                land = self.add(game.engine, "Swamp", zone="library", ref="nauseam-last-land") if with_land else None
+                self._ad_nauseam_start(game, source)
+                life = game.state.players["A"].life
+                cursor = len(game.state.events)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(life, game.state.players["A"].life)
+                self.assertEqual([], game.state.players["A"].zones["library"])
+                if land is not None:
+                    self.assertEqual("hand", game.state.cards[land.object_id].zone)
+                codes = [event.code for event in game.state.events[cursor:]]
+                self.assertEqual(int(with_land), codes.count("library.look"))
+                self.assertNotIn("card.draw", codes)
+                self.assertNotIn("effect.life", codes)
+                self.replay(game, load=True)
+
+    def test_ad_nauseam_can_continue_at_negative_life_until_the_spell_finishes(self):
+        game = self.session(20203106)
+        source = self.add(game.engine, "Ad Nauseam", zone="hand")
+        next_card = self.add(game.engine, "Feral Hydra", zone="library", ref="nauseam-negative-second")
+        self.add(game.engine, "Fire // Ice", zone="library", ref="nauseam-negative-first")
+        game.state.players["A"].life = 1
+        self._ad_nauseam_start(game, source)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(-3, game.state.players["A"].life)
+        self.assertTrue(game.state.players["A"].in_game)
+        game = self.replay(game, load=True)
+        self._ad_nauseam_choice(game, "repeat")
+        self.assertEqual("hand", game.state.cards[next_card.object_id].zone)
+        self.assertEqual(-4, game.state.players["A"].life)
+        self.assertTrue(game.state.players["A"].in_game)
+        self._ad_nauseam_choice(game, "stop")
+        self.assertFalse(game.state.players["A"].in_game)
+        self.replay(game, load=True)
+
+    def test_ad_nauseam_exact_lowering_requires_the_printed_public_transfer_and_repeat(self):
+        from unittest.mock import patch
+
+        from quorune.rules.repeat_top_hand_life import REPEAT_TOP_HAND_LIFE_FIELD
+        record = self.db.lookup("Ad Nauseam", fuzzy=False)
+        def witness():
+            ir = compile_oracle_card(record, capability_registry=self.registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            effect = ir.faces[0].nodes[0].effects[0]
+            self.assertEqual({"schema_version": 1, "stage": "start"}, effect[REPEAT_TOP_HAND_LIFE_FIELD])
+        witness()
+        with patch("quorune.compiler.fixed_library_selection_templates.RevealedTopHandLifeEffectTemplate.compiled",
+                   return_value=(None, (), None, ())):
+            with self.assertRaises(AssertionError):
+                witness()
+        for text in (record.oracle_text.replace("Reveal", "Look at"),
+                     record.oracle_text.replace("mana value", "power"),
+                     record.oracle_text.replace("any number of times", "exactly three times")):
+            ir = compile_oracle_card(replace(record, oracle_text=text), capability_registry=self.registry)
+            self.assertNotEqual("exact", ir.status)
+
     def wait_for_upkeep(self, game, sources):
         def triggered(current):
             return all(self.trigger_count(current, card) == 1 for card in sources)

@@ -37,6 +37,11 @@ _MANA_LIFE_TOKEN_BODY = re.compile(
     rf'(?:Create|Each player creates) a colorless artifact token named (?P<name>{_MANA_LIFE_TOKEN_NAME})'
     rf' with ["“]{re.escape(TOKEN_MANA_LIFE_ABILITY)}["”]\.?', re.IGNORECASE,
 )
+TREASURE_TOKEN_CHARACTERISTICS = MappingProxyType({
+    "type_line": "Token Artifact — Treasure",
+    "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+    "activated_ability_profile": "tap_sac_any_color_mana_v1",
+})
 FOOD_TOKEN_CHARACTERISTICS = MappingProxyType({
     "type_line": "Token Artifact — Food",
     "display_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
@@ -69,6 +74,7 @@ class FixedTokenCreatorScope(str, Enum):
     EACH_PLAYER = "each_player"
     EACH_OPPONENT = "each_opponent"
     CONTROLLER_AND_TARGET_OPPONENT = "controller_and_target_opponent"
+    CONTROLLER_AND_CHOSEN_OPPONENT = "controller_and_chosen_opponent"
 
 
 def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorScope:
@@ -76,6 +82,8 @@ def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorSco
     fields = {"op", "scope", "controller", "token"}
     if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT:
         fields.add("target")
+    elif scope is FixedTokenCreatorScope.CONTROLLER_AND_CHOSEN_OPPONENT:
+        fields.add("opponent")
     if (set(effect) != fields or effect["op"] != FIXED_DISTRIBUTED_TOKEN_OPERATION
             or not isinstance(effect["token"], Mapping)):
         raise FixedTokenProductionError("Distributed token creation has a closed effect shape")
@@ -84,6 +92,24 @@ def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorSco
 
 CREATED_TOKEN_HASTE_FIELD = "created_token_haste_version"
 CREATED_TOKEN_HASTE_CAPABILITY = "token.creation.fixed_temporary_haste"
+CREATED_TOKEN_HASTE_LIFELINK_CAPABILITY = "token.creation.fixed_temporary_haste_lifelink"
+
+
+def temporary_haste_lifelink_goblin_effect():
+    return {
+        "op": "create_token", "controller": "$controller", "name": "Goblin Token", "quantity": 1,
+        "characteristics": {
+            "type_line": "Token Creature — Goblin", TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
+            "colors": ["R"], "power": "1", "toughness": "1",
+        },
+        CREATED_TOKEN_HASTE_FIELD: 2,
+    }
+
+
+def created_token_keyword_grant(version):
+    if type(version) is not int or version not in {1, 2}:
+        raise ValueError("Created-token keywords require a supported version")
+    return ("Haste",) if version == 1 else ("Haste", "Lifelink")
 
 
 def fixed_token_effect_shape_is_closed(

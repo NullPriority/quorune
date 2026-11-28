@@ -47,15 +47,16 @@ class LibraryTopLifePrice:
             raise ValueError("The recorded library-top life price is malformed")
         return cls(**value)
 
-    def cost_option(self, *, printed_x: bool) -> dict[str, Any]:
+    def cost_option(self, *, printed_x: bool, field=LIBRARY_TOP_LIFE_PRICE_FIELD, zone="the library") -> dict[str, Any]:
         authority = self.to_dict()
         identity = sha256(stable_json(authority).encode("utf-8")).hexdigest()[:24]
+        prefix = "library-top-life" if field == LIBRARY_TOP_LIFE_PRICE_FIELD else "linked-exile-life"
         return {
-            "id": f"library-top-life:{identity}",
+            "id": f"{prefix}:{identity}",
             "kind": "alternate",
-            "label": f"Pay {self.life} life to cast from the library",
+            "label": f"Pay {self.life} life to cast from {zone}",
             "requirements": {},
-            LIBRARY_TOP_LIFE_PRICE_FIELD: authority,
+            field: authority,
             **({"x_value_policy": "zero"} if printed_x else {}),
         }
 
@@ -95,7 +96,16 @@ def validate_library_top_life_price(host, seat, card, option, response, *, face_
     return price
 
 
-def library_top_life_amount(option: Mapping[str, Any]) -> int:
-    if LIBRARY_TOP_LIFE_PRICE_FIELD not in option:
-        return 0
-    return LibraryTopLifePrice.from_dict(option[LIBRARY_TOP_LIFE_PRICE_FIELD]).life
+def mana_value_life_price_field(option: Mapping[str, Any]) -> str | None:
+    from .linked_exile_life import LINKED_EXILE_LIFE_PRICE_FIELD
+
+    fields = (LIBRARY_TOP_LIFE_PRICE_FIELD, LINKED_EXILE_LIFE_PRICE_FIELD)
+    present = [field for field in fields if field in option]
+    if len(present) > 1:
+        raise ValueError("A spell can have only one life-priced alternative")
+    return present[0] if present else None
+
+
+def mana_value_life_amount(option: Mapping[str, Any]) -> int:
+    field = mana_value_life_price_field(option)
+    return LibraryTopLifePrice.from_dict(option[field]).life if field else 0

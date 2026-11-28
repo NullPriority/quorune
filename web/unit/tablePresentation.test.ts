@@ -2,9 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { LegalAction } from "../src/generated/protocol.ts";
 
-import { actionTitle, activationCostLabel, cardActionCost, decisionDetail, isMandatorySelection, needsActivationConfirmation, phyrexianCastCostLabels, presentTurn, publicEventSummary, summarizeTableActivity, visibleActionLabel } from "../src/tablePresentation.ts";
+import { actionTitle, activationCostLabel, cardActionCost, decisionDetail, isMandatorySelection, needsActivationConfirmation, orderedTableSeats, phyrexianCastCostLabels, presentTurn, publicEventSummary, summarizeTableActivity, visibleActionLabel } from "../src/tablePresentation.ts";
 
 const pass = { id: "pass", action: "pass", label: "Pass priority" };
+
+test("table seating rotates from the viewer independently of the starting player", () => {
+  assert.deepEqual(orderedTableSeats(["D", "A", "B", "C"], "A"), ["B", "C", "D", "A"]);
+  assert.deepEqual(orderedTableSeats(["D", "A", "B", "C"], "C"), ["D", "A", "B", "C"]);
+  assert.deepEqual(orderedTableSeats(["D", "A", "B"], "B"), ["D", "A", "B"]);
+  assert.deepEqual(orderedTableSeats(["D", "A", "B", "C"], ""), ["A", "B", "C", "D"]);
+});
 
 test("public events use names and counts in plain language", () => {
   assert.equal(publicEventSummary({ code: "stack.cast", summary: "B cast S5 Negate." }), "Cast Negate.");

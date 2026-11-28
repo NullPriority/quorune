@@ -47,6 +47,9 @@ DISCARD_EFFECT_ORIGIN_VERSION = 1
 DISCARD_EFFECT_ORIGIN_VERSION_FIELD = "discard_effect_origin_version"
 BOUND_DISCARD_EFFECT_ORIGIN = "_discard_effect_origin"
 OPPONENT_SOURCE_DISCARD_EVENT = "card.discarded.opponent_effect"
+DISCARD_BATCH_EVENT = 'card.discarded.batch'
+DISCARD_BATCH_CAPABILITY = 'trigger.event.normalized_discard_batch'
+DISCARD_BATCH_VARIANT = 'controller_discards_one_or_more_cards'
 PUBLIC_DISCARD_DESTINATION_SCOPE = "public_discard_destination"
 
 

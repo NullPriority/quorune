@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import re
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
@@ -9,6 +10,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from scripts.build_test_database import build_fixture_database
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_model import (
@@ -205,7 +207,7 @@ class FixedPublicAlternativeCostCompilerTests(unittest.TestCase):
             "You may pay {X} rather than pay this spell's mana cost.",
             "You may pay {W/U} rather than pay this spell's mana cost.",
             "If an opponent searched their library this turn, you may pay {0} rather than pay this spell's mana cost.",
-            "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.",
+            "You may pay 2 life and exile a blue card from your hand rather than pay this spell's mana cost.",
         )
         for text in unsupported:
             with self.subTest(text=text):
@@ -289,6 +291,83 @@ class FixedPublicAlternativeCostCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
         self.assertNotEqual("exact", blocked.status)
+
+
+    def test_closed_life_and_blue_hand_exile_requires_both_binding_dependencies(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.public_alternative_costs import (
+            LIFE_AND_BLUE_HAND_EXILE_PRICE_CAPABILITIES,
+            LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION,
+            is_life_and_blue_hand_exile_price_option,
+        )
+        from quorune.rules.graveyard_cast_costs import paid_graveyard_runtime_dependencies
+        from quorune.semantics import SemanticProgram
+
+        text = (
+            "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost."
+            "\nCounter target spell."
+        )
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        price, result = ir.faces[0].nodes
+        self.assertEqual(text.splitlines()[0], text[price.span.start:price.span.end])
+        self.assertEqual(["spell"], result.target_schema["categories"])
+        descriptor, = price.handlers
+        self.assertEqual(1, descriptor["schema_version"])
+        spec = FixedPublicAlternativeCostSpec.from_dict(descriptor["alternative_cost"])
+        self.assertEqual(LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION, spec.schema_version)
+        self.assertEqual((1, ("U",)), (spec.additional_costs[0]["amount"],
+                                      spec.additional_costs[1]["predicate"]["colors_all"]))
+        self.assertFalse(any(dict(spec.mana_requirements).values()))
+        self.assertEqual("always", spec.condition.kind.value)
+        self.assertTrue(set(LIFE_AND_BLUE_HAND_EXILE_PRICE_CAPABILITIES) <= set(price.capability_dependencies))
+
+        profile = "commander_review"
+        dependencies = list(price.capability_dependencies)
+        values = dict(key="typed:combined-blue-price", label="Combined printed price", ability_id="static:front:n1",
+                      active_zone="all", event="cast.cost", handlers=[descriptor], coverage=list(price.runtime_coverage))
+        program = SemanticProgram(
+            **values, capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile=profile).to_dict(),
+        )
+        self.assertTrue(bind_semantic_program_runtime(program, capability_registry=self.registry, profile=profile)["strict"])
+        for withheld in LIFE_AND_BLUE_HAND_EXILE_PRICE_CAPABILITIES:
+            reduced = [cap for cap in dependencies if cap != withheld]
+            incomplete = SemanticProgram(
+                **values, capability_dependencies=reduced,
+                capability_closure=self.registry.closure(reduced, profile=profile).to_dict(),
+            )
+            outcome = bind_semantic_program_runtime(incomplete, capability_registry=self.registry, profile=profile)
+            self.assertFalse(outcome["strict"], outcome)
+            self.assertIn("capability:undeclared_runtime_dependency:" + withheld, outcome["blockers"])
+        with self.assertRaises(ValueError):
+            paid_graveyard_runtime_dependencies(SimpleNamespace(
+                effects=[], handlers=[], cost_schema={"additional_costs": spec.to_dict()["additional_costs"]},
+            ))
+        for changed in ({**descriptor, "event": "wrong"}, {**descriptor, "schema_version": True},
+                        {**descriptor, "unknown": True}):
+            self.assertRaises(ValueError, paid_graveyard_runtime_dependencies,
+                              SimpleNamespace(effects=[], handlers=[changed], cost_schema=None))
+        body = spec.to_dict()
+        option = spec.cast_cost_option()
+        self.assertTrue(is_life_and_blue_hand_exile_price_option(option, body["additional_costs"]))
+        self.assertFalse(is_life_and_blue_hand_exile_price_option(
+            {**option, "id": "normal"}, body["additional_costs"],
+        ))
+        self.assertFalse(is_life_and_blue_hand_exile_price_option(
+            option, [{**body["additional_costs"][0], "amount": True}, body["additional_costs"][1]],
+        ))
+        for payments in (
+            body["additional_costs"][:1],
+            list(reversed(body["additional_costs"])),
+            [{**body["additional_costs"][0], "amount": True}, body["additional_costs"][1]],
+            [{**body["additional_costs"][0], "amount": 2}, body["additional_costs"][1]],
+        ):
+            with self.assertRaises(FixedPublicAlternativeCostError):
+                FixedPublicAlternativeCostSpec.from_dict({**body, "additional_costs": payments})
+        with patch("quorune.compiler.fixed_public_alternative_costs._LIFE_AND_BLUE_HAND_EXILE",
+                   re.compile("omitted for the focused mutation")):
+            self.assertNotEqual("exact", self.compile(text).status)
 
 
 class FixedPublicAlternativeCostConditionTests(unittest.TestCase):
@@ -812,3 +891,165 @@ class FixedPublicAlternativeCostRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ForceOfWillNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import os
+
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        pinned = os.environ.get("FORCE_OF_WILL_PINNED_DB")
+        database = Path(cls.temporary.name) / "force-of-will.sqlite3"
+        if not pinned:
+            build_fixture_database(
+                tuple(ROOT / "tests/fixtures" / name for name in (
+                    "fixed-public-alternative-costs.json", "gonti-native-cards.json",
+                    "life-total-prohibition-cards.json", "nonmodal-face-mana-value-cards.json",
+                )),
+                database,
+            )
+        cls.db = CardDatabase(pinned or database)
+        cls.registry = load_default_capability_registry()
+        commander = "Isamaru, Hound of Konda"
+        cls.deck = DeckDefinition(
+            "Printed counterspell price witness",
+            [DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30)],
+            [commander],
+        )
+
+    def _window(self, seed, *, active="B", normal_mana=False, barred_life=False, uncounterable=False):
+        game = self.session(seed)
+        engine = game.engine
+        force = self.add(engine, "Force of Will", zone="hand")
+        blue = self.add(engine, "Opt", zone="hand", ref="blue-owned-payment")
+        other = self.add(engine, "Sol Ring", zone="hand", ref="colorless-owned-card")
+        foreign = self.add(engine, "Opt", seat="B", zone="hand", ref="blue-foreign-card")
+        target = self.add(engine, "Abrupt Decay" if uncounterable else "Lightning Bolt", seat="B", zone="hand")
+        for spell in (force, target):
+            self.assert_closed(game, spell)
+        if uncounterable:
+            permanent = self.add(engine, "Sol Ring", seat="C", ref="decay-target")
+            targets = [permanent.ref]
+            game.state.players["B"].mana_pool.update({"B": 1, "G": 1})
+        else:
+            targets = ["C"]
+            game.state.players["B"].mana_pool["R"] = 1
+        if barred_life:
+            source = self.add(engine, "Platinum Emperion", ref="source-of-life-prohibition")
+            self.assert_closed(game, source)
+        if normal_mana:
+            game.state.players["A"].mana_pool.update({"C": 3, "U": 2})
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, active=active, actor=active)
+        self.checkpoint(game)
+        self.cast_for(game, "B", target, targets)
+        self.priority(game, "A")
+        return game, force, blue, other, foreign, target
+
+    @staticmethod
+    def _spell(game, card):
+        item, = [value for value in game.state.stack if value.card_object_id == card.object_id]
+        return item
+
+    @staticmethod
+    def _current(game, card):
+        return game.state.cards[card.object_id]
+
+    def _quote(self, game, force, blue, target, *, alternate):
+        action = self.action(game, "A", self._current(game, force))
+        if alternate:
+            option, = [row for row in action["cost_options"] if row["id"] != "normal"]
+            self.assertEqual([self._current(game, blue).ref], option["choice_schema"]["exile_cards"]["legal_refs"])
+        else:
+            option, = [row for row in action["cost_options"] if row["id"] == "normal"]
+        return {"action_id": action["id"], "cost_option": option["id"], "pay": "auto",
+                "targets": [self._spell(game, target).ref],
+                **({"exile_cards": [self._current(game, blue).ref]} if alternate else {})}
+
+    def _reject(self, game, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:A", command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _submit(self, game, force, command, *, expected_mana):
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        item = self._spell(game, force)
+        self.assertEqual(("A", "hand", expected_mana),
+                         (item.controller, item.context["cast_origin"], item.context["mana_spent_total"]))
+        self.assertEqual(5, game.engine.card_record(self._current(game, force)).mana_value)
+        return item
+
+    def test_force_of_will_casts_for_three_blue_blue_or_its_full_price_on_either_turn(self):
+        for i, (ordinary, active) in enumerate(((True, "A"), (False, "A"), (False, "B"))):
+            with self.subTest(ordinary=ordinary, active=active):
+                game, force, blue, other, foreign, target = self._window(
+                    6013030 + i, active=active, normal_mana=ordinary,
+                )
+                life = game.state.players["A"].life
+                command = self._quote(game, force, blue, target, alternate=not ordinary)
+                self.assertNotIn(blue.ref, json.dumps(game.packet("pilot:C", full=True)))
+                if not ordinary:
+                    for invalid in (force.ref, other.ref, foreign.ref):
+                        self._reject(game, {**command, "exile_cards": [invalid]})
+                self._reject(game, {**command, "targets": ["C"]})
+                self._submit(game, force, command, expected_mana=5 if ordinary else 0)
+                self.assertEqual(life if ordinary else life - 1, game.state.players["A"].life)
+                self.assertEqual("hand" if ordinary else "exile", self._current(game, blue).zone)
+                if not ordinary:
+                    self.assertFalse(self._current(game, blue).face_down)
+                self.resolve_top(game)
+                self.assertEqual("graveyard", self._current(game, target).zone)
+                self.assertEqual("graveyard", self._current(game, force).zone)
+                self.replay(game, load=True)
+
+    def test_force_of_will_stale_pitch_and_prohibited_life_keep_the_price_atomic(self):
+        from quorune.rules.casting import commit
+
+        game, force, blue, other, foreign, target = self._window(6013035)
+        life = game.state.players["A"].life
+        command = self._quote(game, force, blue, target, alternate=True)
+        validated = commit._fixed_zone_change_commit_entries
+        after_life = []
+
+        def stale_pitch(host, proposal, response, selected_option, selected):
+            after_life.append(host.state.players["A"].life)
+            host.move_card(blue.object_id, "graveyard", reason="stale payment fixture", log=False)
+            return validated(host, proposal, response, selected_option, selected)
+
+        with patch.object(commit, "_fixed_zone_change_commit_entries", side_effect=stale_pitch):
+            self._reject(game, command)
+        self.assertEqual([life - 1], after_life)
+        self.assertEqual(life, game.state.players["A"].life)
+        self.assertEqual("hand", self._current(game, blue).zone)
+        self._submit(game, force, command, expected_mana=0)
+        self.resolve_top(game)
+        self.replay(game, load=True)
+
+        game, force, blue, other, foreign, target = self._window(6013036, barred_life=True)
+        life = game.state.players["A"].life
+        self._reject(game, {"action_id": "cast:" + force.ref, "cost_option": "plain-alternative-ab1",
+                            "pay": "auto", "targets": [self._spell(game, target).ref],
+                            "exile_cards": [blue.ref]})
+        self.assertEqual(life, game.state.players["A"].life)
+        self.assertEqual("hand", self._current(game, blue).zone)
+        self.replay(game, load=True)
+
+    def test_force_of_will_can_target_an_uncounterable_spell_and_still_pays_both_costs(self):
+        game, force, blue, other, foreign, target = self._window(6013037, uncounterable=True)
+        life = game.state.players["A"].life
+        command = self._quote(game, force, blue, target, alternate=True)
+        self._submit(game, force, command, expected_mana=0)
+        self.assertEqual(life - 1, game.state.players["A"].life)
+        self.assertEqual("exile", self._current(game, blue).zone)
+        self.resolve_top(game)
+        self.assertEqual("graveyard", self._current(game, force).zone)
+        self.assertEqual("stack", self._current(game, target).zone)
+        self.resolve_top(game)
+        self.assertEqual("graveyard", self._current(game, target).zone)
+        self.replay(game, load=True)

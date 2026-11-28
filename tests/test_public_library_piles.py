@@ -42,6 +42,9 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
             [
                 FIXTURES / "bound-effect-program-cards.json",
                 FIXTURES / "public-library-piles-cards.json",
+                FIXTURES / "library-search-rules-cards.json",
+                FIXTURES / "opening-hand-battlefield-cards.json",
+                FIXTURES / "targeted-spell-control-cards.json",
             ],
             path,
         )
@@ -122,7 +125,7 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual("public_library_piles", ctx["operation"])
         self.assertEqual(stage, ctx["stage"])
         actions = ctx["legal_actions"]
-        selected_opponent = actor != game.state.stack[-1].controller and stage in {"divide", "choose_pile"}
+        selected_opponent = actor != game.state.stack[-1].controller and stage in {"divide", "choose_pile", "choose_card"}
         expected_ids = ["choose", "concede"] if selected_opponent else ["choose"]
         self.assertEqual(expected_ids, [action["id"] for action in actions])
         schema = actions[0]["choice_schema"]
@@ -185,6 +188,367 @@ class PublicLibraryPilesNativeTests(InheritedNativeFixture, unittest.TestCase):
         for oid in expected_graveyard:
             self.assertEqual("graveyard", game.state.cards[oid].zone)
             self.assertEqual("A", game.state.cards[oid].owner)
+
+    def intuition_search(self, game, actor, count):
+        self.assertEqual("semantic.search", self.resolve(game).kind)
+        self.assertEqual([actor], list(game.state.pending_decision.actors))
+        data = game.packet("pilot:" + actor, full=True)["decision"]
+        schema = data["legal_actions"][0]["choice_schema"]
+        self.assertEqual((count, count, False), (
+            schema["minimum"], schema["maximum"], schema["rules_may_fail_to_find"],
+        ))
+        return schema
+
+    def start_intuition(self, game, spell, *, target="C"):
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 2, "U": 1})
+        self.checkpoint(game)
+        self.reject(game, "A", {"action_id": "cast:" + spell.ref, "targets": ["A"], "pay": "auto"})
+        self.cast(game, "A", spell, [target])
+        self.assertEqual([target], list(game.state.stack[-1].targets))
+
+    def _gifts_scene(self, seed, names=("Plains", "Island", "Forest", "Grizzly Bears", "Mindlock Orb")):
+        game, spell, _, _, private = self.scene(seed, count=0, spell_name="Gifts Ungiven")
+        cards = [
+            self.add(game.engine, name, zone="library", ref=f"gifts-card-{index}")
+            for index, name in reversed(tuple(enumerate(names)))
+        ][::-1]
+        for card in cards:
+            card.known_to = []
+            card.revealed_to = []
+        return game, spell, cards, private
+
+    def _start_gifts(self, game, spell, target):
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 3, "U": 1})
+        self.checkpoint(game)
+        self.reject(game, "A", {"action_id": "cast:" + spell.ref, "targets": ["A"], "pay": "auto"})
+        self.cast(game, "A", spell, [target])
+        self.assertEqual([target], list(game.state.stack[-1].targets))
+
+    def _gifts_search(self, game, maximum=4):
+        self.assertEqual("semantic.search", self.resolve(game).kind)
+        self.assertEqual(["A"], list(game.state.pending_decision.actors))
+        schema = game.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+        self.assertEqual((0, maximum), (schema["minimum"], schema["maximum"]))
+        self.assertIs(schema["different_names"], True)
+        return schema
+
+    def _gifts_order_arrivals(self, game, chosen):
+        schema = self.stage(game, "A", "order_graveyard", "graveyard_order")
+        self.assertEqual({card.ref for card in chosen}, set(schema["legal_refs"]))
+        self.submit(game, "A", graveyard_order=[card.ref for card in reversed(chosen)])
+        self.settle(game)
+
+    def test_actual_gifts_private_distinct_search_and_targeted_two_card_choice_replay(self):
+        names = ("Plains", "Island", "Forest", "Grizzly Bears", "Mindlock Orb", "Plains")
+        for count in (3, 4):
+            target = "C" if count == 3 else "D"
+            with self.subTest(count=count, target=target):
+                game, spell, cards, private = self._gifts_scene(7012390 + count, names)
+                initial_shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+                self._start_gifts(game, spell, target)
+                schema = self._gifts_search(game)
+                self.assertEqual({card.ref for card in cards}, set(schema["legal_refs"]))
+                for viewer in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+                    packet = game.packet(viewer, full=True)
+                    self.assertIsNone(packet["decision"])
+                    for card in cards:
+                        self.assertNotIn(card.ref, json.dumps(packet))
+                for actor, subjects in (
+                    ("A", cards[:5]), ("A", [cards[0], cards[5]]),
+                    ("A", [cards[1], cards[1]]), (target, cards[:count]),
+                ):
+                    self.reject(game, actor, {"action_id": "choose", "search_cards": [card.ref for card in subjects]})
+                selected = cards[:count]
+                game = self.replay(game, load=True)
+                self.submit(game, "A", search_cards=[card.ref for card in selected])
+                decision = self.stage(game, target, "choose_card", "cards")
+                self.assertEqual((2, 2), (decision["minimum"], decision["maximum"]))
+                self.assertEqual({card.ref for card in selected}, set(decision["legal_refs"]))
+                event, = (event for event in game.state.events if event.code == "library.search.reveal")
+                self.assertEqual({card.ref for card in selected}, set(event.details["objects"]))
+                for viewer in ("pilot:A", "pilot:B", "pilot:C", "pilot:D", "spectator"):
+                    packet = game.packet(viewer, full=True, cursor_key="gifts-reveal-audit:" + viewer)
+                    self.assertEqual(viewer == "pilot:" + target, packet["decision"] is not None)
+                    rendered = json.dumps(packet)
+                    self.assertTrue(all(card.ref not in rendered for card in cards[count:]))
+                    if viewer != "pilot:D":
+                        self.assertNotIn(private.ref, rendered)
+                    self.assertTrue(any(row["c"] == "library.search.reveal" for row in packet.get("events", ())))
+                chosen = [selected[0], selected[-1]]
+                self.reject(game, "B", {"action_id": "choose", "cards": [card.ref for card in chosen]})
+                for subjects in (selected[:1], selected[:3], [selected[0], cards[-1]], [selected[0], selected[0]]):
+                    self.reject(game, target, {"action_id": "choose", "cards": [card.ref for card in subjects]})
+                game = self.replay(game, load=True)
+                self.submit(game, target, cards=[card.ref for card in chosen])
+                self.assertEqual(initial_shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+                self._gifts_order_arrivals(game, chosen)
+                self.assert_destinations(game, selected, [card.object_id for card in selected[1:-1]],
+                                         [card.object_id for card in chosen])
+                self.assertEqual(initial_shuffles + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertEqual({card.object_id for card in cards[count:]},
+                                 set(game.state.players["A"].zones["library"]))
+                self.replay(game, load=True)
+
+    def test_actual_gifts_zero_one_and_two_results_bypass_the_opponent_choice(self):
+        for count in range(3):
+            with self.subTest(count=count):
+                game, spell, cards, _ = self._gifts_scene(7012400 + count)
+                self._start_gifts(game, spell, "C")
+                before = game.state.players["A"].stats.get("shuffle_count", 0)
+                self._gifts_search(game)
+                selected = cards[:count]
+                self.submit(game, "A", search_cards=[card.ref for card in selected])
+                if count == 2:
+                    self.assertIsNone(game.packet("pilot:C", full=True)["decision"])
+                    game = self.replay(game, load=True)
+                    self._gifts_order_arrivals(game, selected)
+                else:
+                    self.settle(game)
+                self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in selected))
+                self.assertEqual({card.object_id for card in cards[count:]},
+                                 set(game.state.players["A"].zones["library"]))
+                self.assertEqual(before + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.replay(game, load=True)
+
+    def test_actual_gifts_constrained_and_denied_searches_keep_the_public_result_bound(self):
+        for prohibited in (False, True):
+            with self.subTest(prohibited=prohibited):
+                game, spell, cards, _ = self._gifts_scene(7012410 + prohibited)
+                restriction = self.add(game.engine, "Mindlock Orb" if prohibited else "Aven Mindcensor", seat="D")
+                self.assert_closed(game, restriction)
+                self._start_gifts(game, spell, "B")
+                before = game.state.players["A"].stats.get("shuffle_count", 0)
+                if prohibited:
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual({card.object_id for card in cards}, set(game.state.players["A"].zones["library"]))
+                    self.assertTrue(any(event.code == "library.search.prohibited" for event in game.state.events))
+                    self.assertFalse(any(event.code == "library.search.reveal" for event in game.state.events))
+                else:
+                    schema = self._gifts_search(game)
+                    self.assertEqual({card.ref for card in cards[:4]}, set(schema["legal_refs"]))
+                    self.reject(game, "A", {"action_id": "choose", "search_cards": [cards[-1].ref]})
+                    self.submit(game, "A", search_cards=[card.ref for card in cards[:4]])
+                    self.stage(game, "B", "choose_card", "cards")
+                    self.submit(game, "B", cards=[card.ref for card in cards[:2]])
+                    self._gifts_order_arrivals(game, cards[:2])
+                    self.assert_destinations(game, cards[:4], [card.object_id for card in cards[2:4]],
+                                             [card.object_id for card in cards[:2]])
+                    self.assertEqual([cards[-1].object_id], game.state.players["A"].zones["library"])
+                self.assertEqual(before + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.replay(game, load=True)
+
+    def test_actual_gifts_target_departure_respects_the_resolution_boundary(self):
+        for during in (False, True):
+            with self.subTest(during=during):
+                game, spell, cards, _ = self._gifts_scene(7012420 + during)
+                self._start_gifts(game, spell, "B")
+                before = game.state.players["A"].stats.get("shuffle_count", 0)
+                if during:
+                    self._gifts_search(game)
+                    self.submit(game, "A", search_cards=[card.ref for card in cards[:3]])
+                    self.stage(game, "B", "choose_card", "cards")
+                else:
+                    self.priority(game, "B")
+                accepted = game.act("pilot:B", {"action_id": "concede", "confirm_concede": True})
+                self.assertTrue(accepted.ok, accepted.summary)
+                if during:
+                    choice = self.stage(game, "A", "choose_opponent", "opponent")
+                    self.assertEqual({"C", "D"}, set(choice["legal_values"]))
+                    self.reject(game, "A", {"action_id": "choose", "opponent": "B"})
+                    game = self.replay(game, load=True)
+                    self.submit(game, "A", opponent="D")
+                    schema = self.stage(game, "D", "choose_card", "cards")
+                    self.assertEqual((2, 2), (schema["minimum"], schema["maximum"]))
+                    self.submit(game, "D", cards=[card.ref for card in cards[1:3]])
+                    self._gifts_order_arrivals(game, cards[1:3])
+                    self.assert_destinations(game, cards[:3], [cards[0].object_id],
+                                             [card.object_id for card in cards[1:3]])
+                else:
+                    self.assertIsNone(self.resolve(game))
+                    self.assertTrue(all(game.state.cards[card.object_id].zone == "library" for card in cards))
+                    self.assertFalse(any(event.code == "library.search.reveal" for event in game.state.events))
+                self.settle(game)
+                self.assertEqual(before + int(during), game.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_actual_intuition_private_search_and_targeted_public_choice_replay(self):
+        game, spell, cards, hidden, private = self.scene(7012301, neighbor=True, spell_name="Intuition")
+        initial_shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+        self.start_intuition(game, spell)
+        schema = self.intuition_search(game, "A", 3)
+        self.assertEqual({card.ref for card in (*cards, hidden)}, set(schema["legal_refs"]))
+        selected = (cards[0], cards[3], cards[4])
+        selected_refs = [card.ref for card in selected]
+        for viewer in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            serialized = json.dumps(game.packet(viewer, full=True))
+            for card in (*cards, hidden):
+                self.assertNotIn(card.ref, serialized)
+        self.reject(game, "A", {"action_id": "choose", "search_cards": selected_refs[:2]})
+        self.reject(game, "A", {"action_id": "choose", "search_cards": [selected_refs[0]] * 3})
+        self.reject(game, "C", {"action_id": "choose", "search_cards": selected_refs})
+        game = self.replay(game, load=True)
+        self.submit(game, "A", search_cards=selected_refs)
+
+        chosen = self.stage(game, "C", "choose_card", "cards")
+        self.assertEqual(set(selected_refs), set(chosen["legal_refs"]))
+        for viewer in ("pilot:A", "pilot:B", "pilot:C", "pilot:D", "spectator"):
+            packet = game.packet(viewer, full=True, cursor_key="intuition-reveal-audit:" + viewer)
+            serialized = json.dumps(packet)
+            self.assertNotIn(hidden.ref, serialized)
+            if viewer != "pilot:D":
+                self.assertNotIn(private.ref, serialized)
+            for card in cards[1:3]:
+                self.assertNotIn(card.ref, serialized)
+            reveals = [row for row in packet.get("events", []) if row["c"] == "library.search.reveal"]
+            self.assertEqual(1, len(reveals))
+            for card in selected:
+                self.assertIn(card.printed_name, reveals[0]["s"])
+        event, = (event for event in game.state.events if event.code == "library.search.reveal")
+        self.assertEqual(set(selected_refs), set(event.details["objects"]))
+        self.reject(game, "B", {"action_id": "choose", "cards": [selected_refs[0]]})
+        self.reject(game, "C", {"action_id": "choose", "cards": [hidden.ref]})
+        self.reject(game, "C", {"action_id": "choose", "cards": selected_refs[:2]})
+        self.assertEqual(initial_shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+
+        game = self.replay(game, load=True)
+        self.submit(game, "C", cards=[selected_refs[1]])
+        order = self.stage(game, "A", "order_graveyard", "graveyard_order")
+        self.assertEqual({selected_refs[2], selected_refs[0]}, set(order["legal_refs"]))
+        self.assertEqual(initial_shuffles, game.state.players["A"].stats.get("shuffle_count", 0))
+        self.submit(game, "A", graveyard_order=[selected_refs[2], selected_refs[0]])
+        self.settle(game)
+        self.assertEqual("hand", game.state.cards[selected[1].object_id].zone)
+        graveyard = game.state.players["A"].zones["graveyard"]
+        self.assertGreater(graveyard.index(selected[2].object_id), graveyard.index(selected[0].object_id))
+        self.assertEqual(initial_shuffles + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+        self.assertEqual({hidden.object_id, cards[1].object_id, cards[2].object_id},
+                         set(game.state.players["A"].zones["library"]))
+        self.replay(game, load=True)
+
+    def test_actual_intuition_short_and_empty_library_still_shuffles_once(self):
+        for count in range(3):
+            with self.subTest(count=count):
+                game, spell, cards, _, _ = self.scene(7012310 + count, count=count, spell_name="Intuition")
+                self.start_intuition(game, spell)
+                before = game.state.players["A"].stats.get("shuffle_count", 0)
+                schema = self.intuition_search(game, "A", count)
+                self.assertEqual({card.ref for card in cards}, set(schema["legal_refs"]))
+                self.submit(game, "A", search_cards=[card.ref for card in cards])
+                if cards:
+                    self.stage(game, "C", "choose_card", "cards")
+                    self.submit(game, "C", cards=[cards[-1].ref])
+                    self.assertEqual("hand", game.state.cards[cards[-1].object_id].zone)
+                    self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in cards[:-1]))
+                self.settle(game)
+                self.assertEqual(before + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertFalse(game.state.players["A"].zones["library"])
+                self.replay(game, load=True)
+
+    def test_actual_intuition_respects_search_prohibition_and_top_four_replacement(self):
+        for prohibited in (False, True):
+            with self.subTest(prohibited=prohibited):
+                game, spell, cards, hidden, _ = self.scene(7012320 + prohibited, neighbor=True, spell_name="Intuition")
+                self.add(game.engine, "Mindlock Orb" if prohibited else "Aven Mindcensor", seat="D")
+                self.start_intuition(game, spell, target="B")
+                initial_shuffles = game.state.players["A"].stats.get("shuffle_count", 0)
+                if prohibited:
+                    self.assertIsNone(self.resolve(game))
+                    self.assertEqual({card.object_id for card in (*cards, hidden)},
+                                     set(game.state.players["A"].zones["library"]))
+                    self.assertTrue(any(event.code == "library.search.prohibited" for event in game.state.events))
+                    self.assertFalse(any(event.code == "library.search" for event in game.state.events))
+                else:
+                    schema = self.intuition_search(game, "A", 3)
+                    self.assertEqual({card.ref for card in cards[:4]}, set(schema["legal_refs"]))
+                    self.reject(game, "A", {"action_id": "choose", "search_cards": [cards[0].ref, cards[1].ref, hidden.ref]})
+                    self.submit(game, "A", search_cards=[card.ref for card in cards[:3]])
+                    self.stage(game, "B", "choose_card", "cards")
+                    self.submit(game, "B", cards=[cards[0].ref])
+                    self.stage(game, "A", "order_graveyard", "graveyard_order")
+                    self.submit(game, "A", graveyard_order=[cards[1].ref, cards[2].ref])
+                    self.settle(game)
+                    self.assertEqual({cards[3].object_id, cards[4].object_id, hidden.object_id},
+                                     set(game.state.players["A"].zones["library"]))
+                self.assertEqual(initial_shuffles + 1, game.state.players["A"].stats.get("shuffle_count", 0))
+                self.replay(game, load=True)
+
+    def test_actual_intuition_target_departure_before_resolution_and_during_choice(self):
+        for during in (False, True):
+            with self.subTest(during=during):
+                game, spell, cards, _, _ = self.scene(7012330 + during, count=1, spell_name="Intuition")
+                self.start_intuition(game, spell, target="B")
+                before = game.state.players["A"].stats.get("shuffle_count", 0)
+                if during:
+                    self.intuition_search(game, "A", 1)
+                    self.submit(game, "A", search_cards=[cards[0].ref])
+                    self.stage(game, "B", "choose_card", "cards")
+                else:
+                    self.priority(game, "B")
+                accepted = game.act("pilot:B", {"action_id": "concede", "confirm_concede": True})
+                self.assertTrue(accepted.ok, accepted.summary)
+                if during:
+                    choice = self.stage(game, "A", "choose_opponent", "opponent")
+                    self.assertEqual({"C", "D"}, set(choice["legal_values"]))
+                    self.reject(game, "A", {"action_id": "choose", "opponent": "B"})
+                    game = self.replay(game, load=True)
+                    self.submit(game, "A", opponent="D")
+                    self.stage(game, "D", "choose_card", "cards")
+                    self.submit(game, "D", cards=[cards[0].ref])
+                else:
+                    self.assertIsNone(self.resolve(game))
+                self.settle(game)
+                self.assertEqual("hand" if during else "library", game.state.cards[cards[0].object_id].zone)
+                self.assertEqual(before + int(during), game.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_actual_intuition_uses_current_spell_controller_library_after_control_change(self):
+        game, spell, old_cards, _, _ = self.scene(7012340, count=3, spell_name="Intuition")
+        takeover = self.add(game.engine, "Aethersnatch", seat="D", zone="hand")
+        selected = [self.add(game.engine, "Generic Bound Body", seat="D", zone="library",
+                             ref=f"new-controller-library-card-{i}") for i in range(3)]
+        for card in selected:
+            card.known_to = []
+            card.revealed_to = []
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 2, "U": 1})
+        game.state.players["D"].mana_pool.update({"C": 4, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", spell, ["C"])
+        original = game.state.stack[-1].ref
+        self.cast(game, "D", takeover, [original])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.submit(game, "D")
+        original_item, = game.state.stack
+        self.assertEqual(("D", ["C"]), (original_item.controller, original_item.targets))
+        schema = self.intuition_search(game, "D", 3)
+        self.assertTrue({card.ref for card in selected} <= set(schema["legal_refs"]))
+        self.assertTrue({card.ref for card in old_cards}.isdisjoint(schema["legal_refs"]))
+        self.submit(game, "D", search_cards=[card.ref for card in selected])
+        self.stage(game, "C", "choose_card", "cards")
+        self.submit(game, "C", cards=[selected[0].ref])
+        self.stage(game, "D", "order_graveyard", "graveyard_order")
+        self.submit(game, "D", graveyard_order=[selected[1].ref, selected[2].ref])
+        self.settle(game)
+        self.assertIn(selected[0].object_id, game.state.players["D"].zones["hand"])
+        for card in selected[1:]:
+            self.assertIn(card.object_id, game.state.players["D"].zones["graveyard"])
+        self.assertEqual({card.object_id for card in old_cards}, set(game.state.players["A"].zones["library"]))
+        self.assertIn(spell.object_id, game.state.players["A"].zones["graveyard"])
+        self.replay(game, load=True)
+
+    def test_actual_intuition_has_no_cast_offer_with_no_legal_opponent(self):
+        game, spell, _, _, _ = self.scene(7012341, count=1, spell_name="Intuition")
+        for seat in "BCD":
+            self.add(game.engine, "Leyline of Sanctity", seat=seat, ref=f"intuition-protected-{seat}")
+        self.prepare(game, mana={"C": 2, "U": 1})
+        self.checkpoint(game)
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertNotIn("cast:" + spell.ref, {action["id"] for action in actions})
+        self.reject(game, "A", {"action_id": "cast:" + spell.ref, "targets": ["B"], "pay": "auto"})
 
     def test_four_player_cast_reveal_divide_select_and_owner_order_replay(self):
         game, spell, cards, hidden, private = self.scene(4043001, neighbor=True)

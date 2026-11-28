@@ -144,6 +144,115 @@ class VictimizeTests(InheritedNativeFixture, unittest.TestCase):
                    return_value=None):
             self.assertNotEqual("exact", compile_oracle_card(card, **options).status)
 
+    def test_amulet_self_entry_untaps_itself_only_if_it_entered_tapped(self):
+        for tapped in (False, True):
+            with self.subTest(tapped=tapped):
+                game = self.session(7315351 + int(tapped))
+                source = self.add(game.engine, "Amulet of Vigor", zone="hand")
+                if tapped:
+                    self.assert_closed(game, self.add(game.engine, "Orb of Dreams", seat="B"))
+                self.assert_closed(game, source)
+                self.prepare(game, mana={"C": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", source)
+                self.resolve_top(game)
+                entering = game.state.cards[source.object_id]
+                self.assertEqual(tapped, entering.tapped)
+                self.assertEqual(int(tapped), len(game.state.stack))
+                if tapped:
+                    trigger, = game.state.stack
+                    self.assertEqual(source.object_id, trigger.source_object_id)
+                    self.assertFalse(trigger.targets)
+                    self.assertEqual(entering.logical_object_id, trigger.context["card_object_identity"])
+                    game = self.replay(game, load=True)
+                    self.assertIsNone(self.resolve(game))
+                    self.assertFalse(game.state.cards[source.object_id].tapped)
+                self.replay(game, load=True)
+
+    def test_amulet_triggers_for_each_tapped_arrival_and_untaps_only_original_incarnation(self):
+        game = self.session(7315353)
+        amulet = self.add(game.engine, "Amulet of Vigor")
+        spell = self.add(game.engine, "Victimize", zone="hand")
+        blink = self.add(game.engine, "Cloudshift", zone="hand")
+        icy = self.add(game.engine, "Icy Manipulator")
+        first = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="amulet-first")
+        other = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="amulet-other")
+        victim = self.add(game.engine, "Grizzly Bears", ref="amulet-victim")
+        for card in (amulet, spell, blink, icy):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 3, "B": 1, "W": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell, [first.ref, other.ref], reserve={"C": 1, "W": 1})
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        paid = game.act("pilot:A", {"action_id": "choose", "cards": [victim.ref]})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual("trigger.order", game.state.pending_decision.kind)
+        self.assertTrue(all(game.state.cards[card.object_id].tapped for card in (first, other)))
+        old = game.state.cards[first.object_id].logical_object_id
+        game = self.replay(game, load=True)
+        offered = game.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+        ordered = game.act("pilot:A", {"action_id": "order", "triggers": [row["id"] for row in offered]})
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertCountEqual([first.ref, other.ref], [item.context["card"] for item in game.state.stack])
+        self.assertTrue(all(not item.targets for item in game.state.stack))
+        self.cast(game, "A", blink, [first.ref])
+        self.resolve_top(game)
+        changed = game.state.cards[first.object_id]
+        self.assertNotEqual(old, changed.logical_object_id)
+        self.assertFalse(changed.tapped)
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = [row for row in actions if row["id"].startswith(f"activate:{icy.ref}:")]
+        tapped = game.act("pilot:A", {"action_id": action["id"], "targets": [first.ref], "pay": "auto"})
+        self.assertTrue(tapped.ok, tapped.summary)
+        self.resolve_top(game)
+        self.assertTrue(game.state.cards[first.object_id].tapped)
+        self.assertEqual(2, len(game.state.stack))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(game.state.cards[first.object_id].tapped)
+        self.assertFalse(game.state.cards[other.object_id].tapped)
+        self.replay(game, load=True)
+
+
+class TappedEntryUntapCompilerTests(unittest.TestCase):
+    def test_tapped_entry_trigger_and_untap_require_the_original_controller_and_occurrence(self):
+        from quorune.rules.entry_permanent_results import (
+            entry_permanent_result_binding, tapped_entry_untap_condition,
+        )
+        from test_qualified_zone_event_queries import query_record
+
+        text = "Whenever a permanent you control enters tapped, untap it."
+
+        def compile_text(source):
+            return compile_oracle_card(replace(query_record(source), type_line="Artifact"),
+                                       capability_registry=load_default_capability_registry())
+
+        def witness():
+            ir = compile_text(text)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertEqual("permanent.enter", node.event)
+            self.assertEqual(tapped_entry_untap_condition(), node.event_condition)
+            self.assertEqual({"op": "untap", "card": "$event.entry_object"}, node.effects[0])
+            self.assertIsNone(node.target_schema)
+
+        witness()
+        malformed = tapped_entry_untap_condition()
+        malformed["all"][1]["value"] = 1
+        self.assertFalse(entry_permanent_result_binding("permanent.enter", malformed, "untap"))
+        with patch("quorune.compiler.tap_state_event_bindings.tapped_entry_untap_binding", return_value=None):
+            with self.assertRaises(AssertionError):
+                witness()
+        for altered in (
+            text.replace("you control", "an opponent controls"),
+            text.replace("enters tapped", "becomes tapped"),
+            text.replace("untap it", "untap another permanent"),
+        ):
+            ir = compile_text(altered)
+            self.assertTrue(all(node.event != "permanent.enter" or not node.exact for node in ir.faces[0].nodes))
+
+
 class DarettiArtifactResolutionTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):

@@ -1218,9 +1218,14 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             live = LiveBattlefieldQuantitySpec.from_dict(value)
             own = (*own, *live.capability_dependencies)
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
-        from .continuous_conditions import greatest_creature_power_condition_dependencies
+        from .continuous_conditions import (
+            greatest_artifact_mana_value_condition_dependencies, greatest_creature_power_condition_dependencies,
+        )
         from .initiative_model import dungeon_status_dependencies
-        own = (*own, *dungeon_status_dependencies(value), *greatest_creature_power_condition_dependencies(value))
+        own = (
+            *own, *dungeon_status_dependencies(value), *greatest_creature_power_condition_dependencies(value),
+            *greatest_artifact_mana_value_condition_dependencies(value),
+        )
         if (value.get('kind')=='controller_has_citys_blessing'
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')

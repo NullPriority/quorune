@@ -125,6 +125,25 @@ def _token_copy_batch_template(text: str) -> FixedTokenCreationTemplate | None:
     )
 
 
+def chosen_entry_token_copy_trigger_template(binding, body: str) -> FixedTokenCreationTemplate | None:
+    from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+    from ..token_copy_recipes import (
+        CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE, TOKEN_COPY_BATCH_MECHANIC, TokenCopyBatchKind, TokenCopyBatchSpec,
+    )
+
+    if ((binding.event.value, binding.active_zone) != ("step.begin", "battlefield")
+            or not is_controller_end_step_schedule(binding.event_condition)
+            or " ".join(body.casefold().split()) !=
+            "for each token you control of the chosen type that entered this turn, create a token that's a copy of it."):
+        return None
+    spec = TokenCopyBatchSpec(TokenCopyBatchKind.CONTROLLER_ENTERED_CHOSEN_TOKENS, schema_version=4)
+    return FixedTokenCreationTemplate(
+        template_id=CHOSEN_ENTRY_TOKEN_COPY_TEMPLATE, effect=spec.to_effect(), target_schema=None,
+        mechanics=(TOKEN_COPY_BATCH_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+                   "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"),
+    )
+
+
 def _occurrence_controller_copy_template(text: str) -> FixedTokenCreationTemplate | None:
     if text.casefold() != "that creature's controller creates a token that's a copy of that creature.":
         return None

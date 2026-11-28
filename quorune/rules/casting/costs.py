@@ -35,6 +35,7 @@ from .multikicker_costs import with_multikicker_cost_schema
 from .replicate_costs import with_replicate_cost_schema
 from .base_cost_options import _flashback_base_options, _zone_cast_base_options, initial_cast_base_authority
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
+from .offering_costs import offering_cost_variants, reduce_offering_cast_total, finalize_offering_selection
 from .disturb_costs import disturb_base_options
 from ...impending_model import IMPENDING_CAST_OPTION, IMPENDING_MECHANIC, IMPENDING_PRICE_FIELD
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
@@ -499,6 +500,10 @@ def _initial_options(
         suppress_source_costs=suppress_source_costs or alternative_base is not None,
         resolving_exile_authority=resolving_exile_authority,
     )
+    from .harmonize_costs import harmonize_base_options
+
+    base.extend(harmonize_base_options(host, seat, card, response, hint=hint,
+        enabled=not (cast_without_mana or force_without_mana_cost or suppress_source_costs or alternative_base is not None)))
     if separately_payable:
         from ...opponent_library_exile import separately_payable_exile_cast_base_options
         base.extend(separately_payable_exile_cast_base_options(
@@ -559,13 +564,16 @@ def _initial_options(
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
     from .kicked_modal_costs import with_kicked_modal_mode_cost_options
     expanded = with_kicked_modal_mode_cost_options(program, schema, expanded)
-    from .escalate_tap_costs import with_escalate_tap_mode_cost_options
-    expanded = with_escalate_tap_mode_cost_options(program, schema, expanded, response, hint=hint)
+    from .escalate_tap_costs import with_escalate_mode_cost_options
+    expanded = with_escalate_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .pawprint_costs import with_pawprint_mode_cost_options
     expanded = with_pawprint_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .option_expansion import expand_optional_resource_costs
     expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
         mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line, declared_schema=program.cost_schema if program else None)
+    from .gift_card_costs import expand_gift_card_costs
+
+    expanded = expand_gift_card_costs(host, seat, program, expanded, suppress_source_costs=suppress_source_costs)
     from .aftermath import with_aftermath_stack_context
     from .assist_costs import ASSIST_OPTION_FIELD
     if schema.get("compiled_assist") is True:
@@ -1186,8 +1194,12 @@ def _apply_additional_costs(
         if life_cost is not None:
             from ..random_discard_additional_cost import fixed_life_random_costs
             from ..fixed_payment_groups import fixed_life_zone_costs
+            from ...public_alternative_costs import is_life_and_blue_hand_exile_price_option
+
             if len(mandatory_costs) != 1 and not (
-                    fixed_life_random_costs(mandatory_costs) or fixed_life_zone_costs(mandatory_costs)):
+                fixed_life_random_costs(mandatory_costs) or fixed_life_zone_costs(mandatory_costs)
+                or is_life_and_blue_hand_exile_price_option(option, mandatory_costs)
+            ):
                 return False
             from ...life_state import available_life_for_payment
 
@@ -1300,6 +1312,7 @@ def _finalize_option(
         cast_type_line=cast_type_line,
     )
     reduce_emerge_total(host, seat, card, option)
+    reduce_offering_cast_total(host, seat, card, option)
     from ...semantic_runtime.cast_costs import active_spell_mana_floor, apply_final_spell_mana_floor
 
     apply_final_spell_mana_floor(option, active_spell_mana_floor(host))
@@ -1368,8 +1381,10 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         return None
     elif (has_x or kicker_x is not None) and x_value_policy is None:
         minimum_x = max(option.get('library_top_minimum_x', 0), int(kicker_x is not None))
+        from ...harmonize import FINGERPRINT as HARMONIZE_FINGERPRINT, harmonize_generic_reduction
         from .affordable_x import quoted_printed_x_price
-        quoted_price = quoted_printed_x_price(host, card, option, response) if hint or kicker_x is not None else None
+        quoted_price = (quoted_printed_x_price(host, card, option, response)
+                        if hint or kicker_x is not None or HARMONIZE_FINGERPRINT in option else None)
         maximum = _maximum_affordable_x_with_mechanics(
             host,
             seat,
@@ -1379,7 +1394,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             spend_context=spend_context,
             minimum=minimum_x,
             reserved_cards=reserved_cards,
-            targeted_cost=target_cost_for_x_preview(option), generic_credit=option.get(HAND_CREDIT_AMOUNT, 0),
+            targeted_cost=target_cost_for_x_preview(option),
+            generic_credit=option.get(HAND_CREDIT_AMOUNT, 0) + harmonize_generic_reduction(option),
             reserved_credit_sources=hand_credit_reserved_ids(option),
             quoted_price=quoted_price,
         )
@@ -1403,6 +1419,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     ):
         return None
     if not finalize_emerge_selection(host, seat, card, option, response, choice_schema, hint=hint):
+        return None
+    if not finalize_offering_selection(host, seat, card, option, response, choice_schema, hint=hint):
         return None
     from .optional_life_costs import optional_life_payment_affordable
     if not optional_life_payment_affordable(host,seat,option,response):
@@ -1463,6 +1481,8 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     from .surcharge_flash_costs import mana_surcharge_flash_variants
     expanded=mana_surcharge_flash_variants(host,seat,card,expanded,
         suppress_source_costs=suppress_source_costs,ignore_timing=ignore_timing)
+    expanded = offering_cost_variants(host, seat, card, expanded,
+        suppress_source_costs=suppress_source_costs, ignore_timing=ignore_timing)
     from ..death_cast_permissions import with_qualified_death_choices
     expanded=with_qualified_death_choices(host,seat,card,expanded,force_without_mana_cost=force_without_mana_cost)
     from .turn_cast_grants import with_turn_cast_grant_choices
@@ -1476,8 +1496,9 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     from .announced_mana_value_targets import bind_announced_target_cost_option, quote_announced_mana_value_target
     allocation = variable_damage_allocation(target_schema)
     announced_mana_value = has_announced_mana_value_limit(target_schema)
+    from ..announced_x_modal import uses_announced_x_modal
     if not has_x and isinstance(target_schema, Mapping) and (
-            "count_parameter" in target_schema or announced_mana_value
+            "count_parameter" in target_schema or announced_mana_value or uses_announced_x_modal(target_schema)
             or allocation is not None and allocation.quantity is None):
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:

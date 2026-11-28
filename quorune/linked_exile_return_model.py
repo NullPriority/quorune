@@ -32,6 +32,17 @@ LINKED_CREATURE_ENTRY_COUNTER_VERSION = 13
 LINKED_PUBLIC_ALL_CREATURES_END_STEP_VERSION = 14
 CONTROLLER_LIBRARY_TOP_HAND_VERSION = 15
 LINKED_TRANSFORMED_OWNER_RETURN_VERSION = 16
+LINKED_RETURN_SUBTYPE_COUNTER_VERSION = 17
+LINKED_RETURN_SUBTYPE_COUNTER_PHASE = "post_return_counter"
+CONDITIONAL_EXILE_CAST_VERSION = 20
+CONDITIONAL_EXILE_CAST_BINDING = "blink:conditional-exile-cast-incarnation"
+
+
+def conditional_exile_cast_target_schema():
+    return {
+        "zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+        "types_any": ["artifact", "creature"], "source_exclusion": True,
+    }
 CONTROLLER_LIBRARY_TOP_HAND_CAPABILITY = "zone.linked_exile_return.private_library_top_to_hand"
 CONTROLLER_LIBRARY_TOP_HAND_BINDING = "blink:controller-library-top-to-hand"
 LINKED_TYPE_ENTRY_COUNTER_VERSIONS = (LINKED_TYPE_ENTRY_COUNTERS_VERSION, LINKED_CREATURE_ENTRY_COUNTER_VERSION)
@@ -94,26 +105,41 @@ def is_exiled_target_search_return(effect: Mapping[str, Any]) -> bool:
 
 def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
     """Validate one phase before mutable state is made available."""
+    from .meld_model import uses_meld_pair, validate_meld_pair_instruction
+
+    if uses_meld_pair(effect):
+        validate_meld_pair_instruction(effect)
+        return
     if not isinstance(effect, Mapping):
         raise ValueError("Linked exile/return instruction must be an object")
+    from .rules.graveyard_exchange_model import GRAVEYARD_EXCHANGE_FIELD, validate_graveyard_exchange_phase
+
+    if GRAVEYARD_EXCHANGE_FIELD in effect:
+        validate_graveyard_exchange_phase(effect)
+        return
     phase = effect.get("phase")
     allowed = {"op", "phase", "binding_id", "spec", "_replacement_selections"}
     if phase == "exile":
         allowed.add("cards")
     spec = LinkedExileReturnSpec.from_dict(effect.get("spec"))
     linked_ability = spec.timing == LINKED_ABILITY_TIMING
+    phases = {"exile", "return"}
+    if spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION:
+        phases.add(LINKED_RETURN_SUBTYPE_COUNTER_PHASE)
     if phase == "return" and (
         (linked_ability and spec.fading_scope is not LinkedFadingScope.OPPONENT_HAND)
         or is_exiled_target_search_return(effect)
     ):
         allowed.add("_aura_target_refs")
-    if effect.get("op") != LINKED_EXILE_RETURN_OPERATION or phase not in {"exile", "return"} or set(effect) - allowed or not {"op", "phase", "binding_id", "spec"}.issubset(effect):
+    if effect.get("op") != LINKED_EXILE_RETURN_OPERATION or phase not in phases or set(effect) - allowed or not {"op", "phase", "binding_id", "spec"}.issubset(effect):
         raise ValueError("Linked exile/return instruction has a closed schema")
     binding = effect["binding_id"]
     if linked_ability:
         validate_linked_ability_binding(binding)
     elif type(binding) is not str or not binding.startswith("blink:"):
         raise ValueError("Linked exile/return binding identity is malformed")
+    if spec.schema_version == CONDITIONAL_EXILE_CAST_VERSION and binding != CONDITIONAL_EXILE_CAST_BINDING:
+        raise ValueError("Conditional cast access requires its original exile and return pair")
     if spec.schema_version == CONTROLLER_LIBRARY_TOP_HAND_VERSION:
         if binding != CONTROLLER_LIBRARY_TOP_HAND_BINDING or (
             phase == "exile" and (type(effect.get("cards")) is not str or not effect["cards"])
@@ -221,7 +247,10 @@ class LinkedExileReturnSpec:
             1, 2, 3, 4, SAME_NAME_CONDITIONAL_EXILE_VERSION, ANNOUNCED_OPPONENT_EXILE_VERSION,
             LINKED_BATCH_DEPARTURE_RETURN_VERSION, LINKED_FADING_EXILE_VERSION,
             *LINKED_PUBLIC_SET_VERSIONS, SELECTED_CONDITIONAL_EXILE_VERSION, *LINKED_TYPE_ENTRY_COUNTER_VERSIONS,
-            CONTROLLER_LIBRARY_TOP_HAND_VERSION, LINKED_TRANSFORMED_OWNER_RETURN_VERSION,
+            CONTROLLER_LIBRARY_TOP_HAND_VERSION,
+            LINKED_TRANSFORMED_OWNER_RETURN_VERSION,
+            LINKED_RETURN_SUBTYPE_COUNTER_VERSION,
+            CONDITIONAL_EXILE_CAST_VERSION,
         }:
             raise ValueError("Unsupported linked exile/return schema")
         if type(self.transformed) is not bool:
@@ -242,6 +271,15 @@ class LinkedExileReturnSpec:
             ):
                 raise ValueError("Private library exile requires the controller's next end step and own hand")
             version = CONTROLLER_LIBRARY_TOP_HAND_VERSION
+        elif self.schema_version == CONDITIONAL_EXILE_CAST_VERSION:
+            if (self.timing != "source_departure" or self.controller != "owner" or self.tapped
+                    or self.entry_counters or self.keywords or self.transformed or self.announced_opponents
+                    or any(scope is not None for scope in (
+                        self.public_end_step_scope, self.batch_departure_scope, self.fading_scope,
+                        self.same_name_scope, self.selected_departure_scope,
+                    ))):
+                raise ValueError("Conditional exile cast requires the exact source-departure owner return")
+            version = CONDITIONAL_EXILE_CAST_VERSION
         elif self.schema_version in LINKED_TYPE_ENTRY_COUNTER_VERSIONS:
             if (
                 self.timing != "next_end_step" or self.controller != "owner" or self.tapped
@@ -253,6 +291,17 @@ class LinkedExileReturnSpec:
             ):
                 raise ValueError("Prospective entry counters require the exact delayed owner return")
             version = self.schema_version
+        elif self.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION:
+            if (
+                self.timing != "immediate" or self.controller != "owner" or self.tapped
+                or self.entry_counters or self.keywords or self.transformed or self.announced_opponents
+                or any(scope is not None for scope in (
+                    self.public_end_step_scope, self.batch_departure_scope, self.fading_scope,
+                    self.same_name_scope, self.selected_departure_scope,
+                ))
+            ):
+                raise ValueError("Post-return counters require an ordinary immediate owner return")
+            version = LINKED_RETURN_SUBTYPE_COUNTER_VERSION
         elif self.selected_departure_scope is not None:
             if (
                 not isinstance(self.selected_departure_scope, SelectedConditionalExileScope)

@@ -13,6 +13,7 @@ from ..semantic_runtime.action_permissions import (
     ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES,
     SOURCE_LOYALTY_INSTANT_CAPABILITY,
     SOURCE_LOYALTY_INSTANT_HANDLERS,
+    EQUIP_ACTION_PERMISSION_HANDLERS,
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
     ADDITIONAL_LAND_PLAY_HANDLER_ID,
     SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,
@@ -355,6 +356,16 @@ def _self_loyalty_instant_handler(text, *, source_name):
     )
 
 
+_EQUIP_PERMISSIONS = {
+    "during your turn, you may activate equip abilities any time you could cast an instant":
+        ActionPermissionKind.ACTIVATE_EQUIP_AT_INSTANT,
+    "as long as it's your turn, you may activate equip abilities any time you could cast an instant":
+        ActionPermissionKind.ACTIVATE_EQUIP_AT_INSTANT,
+    "you may pay {0} rather than pay the equip cost of the first equip ability you activate during each of your turns":
+        ActionPermissionKind.FIRST_EQUIP_ZERO,
+}
+
+
 def static_action_permission_handler(
     text: str,
     *,
@@ -363,6 +374,10 @@ def static_action_permission_handler(
     """Lower one closed controller/public action-permission sentence."""
 
     normalized = text.strip()
+    equip = _EQUIP_PERMISSIONS.get(" ".join(normalized.casefold().replace("’", "'").split()).removesuffix("."))
+    if equip is not None:
+        handler, capability, _rules = EQUIP_ACTION_PERMISSION_HANDLERS[equip]
+        return equip.value.replace("_", "-") + "-v1", _descriptor(handler_id=handler, permission=equip), capability
     if loyalty := _self_loyalty_instant_handler(normalized, source_name=source_name):
         return loyalty
     if mana_rule := (_tap_mana_production_handler(normalized) or _static_mana_spending_handler(normalized)):

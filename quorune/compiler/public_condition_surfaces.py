@@ -43,7 +43,7 @@ def fixed_condition_subject_extension(text: str, *, noncreature_subtypes: Collec
         if subtype in LAND_SUBTYPES:
             return ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
                 subtypes_all=(subtype,)),bool(land['other'])
-    match = re.fullmatch(r'(?P<other>other )?(?P<quality>colorless|nonbasic|snow|nontoken '
+    match = re.fullmatch(r'(?P<other>other )?(?P<quality>colorless|basic|nonbasic|snow|nontoken '
         r'(?:white|blue|black|red|green)) (?P<kind>artifact|battle|creature|enchantment|land|permanent|planeswalker)s?',
         text, re.I)
     if match is None:
@@ -52,11 +52,13 @@ def fixed_condition_subject_extension(text: str, *, noncreature_subtypes: Collec
     fields: dict[str, Any] = {'zones': ('battlefield',), 'types_all': () if kind == 'permanent' else (kind,)}
     if quality == 'colorless':
         fields['colorless'] = True
-    elif quality in {'nonbasic','snow'}:
-        if kind != 'land':
+    elif quality in {"basic", "nonbasic", "snow"}:
+        if kind != "land":
             return None
-        fields['excluded_supertypes' if quality=='nonbasic' else 'supertypes_all'] = (
-            'basic' if quality=='nonbasic' else 'snow',)
+        if quality == "nonbasic":
+            fields["excluded_supertypes"] = ("basic",)
+        else:
+            fields["supertypes_all"] = (quality,)
     else:
         fields.update(token=False, colors_all=({'white':'W','blue':'U','black':'B','red':'R','green':'G'}[
             quality.removeprefix('nontoken ')],))

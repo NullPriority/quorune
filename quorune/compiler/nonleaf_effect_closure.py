@@ -35,13 +35,34 @@ def _is_closed_variable_library_selection_program(program):
 
 def direct_effect_program_is_closed(program):
     """Recognize direct effect owners before composing instructions."""
-    from ..rules.paid_sacrifice_copy import is_closed_paid_sacrifice_copy_program
-    if is_closed_paid_sacrifice_copy_program(program):
+    from ..rules.gift_card_spells import is_closed_gift_card_spell
+    from ..rules.main_phase_creature_cohort import is_closed_creature_cohort_addendum_program
+    from ..rules.gift_fish_spells import is_closed_gift_fish_spell
+    from ..rules.all_player_turn_rules import is_closed_turn_land_mana_trigger_program
+    from ..rules.apnap_library_reveals import is_closed_library_reveal_round_program
+    if is_closed_library_reveal_round_program(program):
         return True
+    from ..rules.announced_x_draw_replacement import is_closed_announced_x_draw_replacement
+    if is_closed_announced_x_draw_replacement(program):
+        return True
+    from ..rules.gift_counter_spells import is_closed_gift_counter_spell
+    from ..rules.gift_graveyard_spells import is_closed as is_closed_gift_graveyard_spell
+    from ..rules.paid_sacrifice_copy import is_closed_paid_sacrifice_copy_program
+    if (is_closed_paid_sacrifice_copy_program(program)
+            or is_closed_gift_card_spell(program)
+            or is_closed_creature_cohort_addendum_program(program)
+            or is_closed_gift_fish_spell(program)
+            or is_closed_turn_land_mana_trigger_program(program)
+            or is_closed_gift_counter_spell(program) or is_closed_gift_graveyard_spell(program)):
+        return True
+    from ..rules.fixed_opponent_land_search import opponent_land_search_program_dependencies
+    from ..rules.created_token_fights import created_token_fight_program_dependencies
     from ..rules.repeated_apnap_payment import payment_round_program_dependencies
 
     try:
-        if payment_round_program_dependencies(program):
+        if (opponent_land_search_program_dependencies(program)
+                or payment_round_program_dependencies(program)
+                or created_token_fight_program_dependencies(program)):
             return True
     except (TypeError, ValueError, KeyError):
         pass
@@ -54,8 +75,10 @@ def direct_effect_program_is_closed(program):
     from ..rules.paid_artifact_library_search import is_closed_paid_artifact_search_program
     from ..rules.loyalty_attachment import is_closed_loyalty_attachment_program
     from ..rules.paid_creature_library_search import is_closed_paid_creature_search_program
+    from ..rules.qualified_library_cast import is_closed_qualified_library_cast_program
     if (is_closed_paid_artifact_search_program(program) or is_closed_paid_creature_search_program(program)
-            or is_closed_cast_x_zone_search_program(program) or is_closed_loyalty_attachment_program(program)):
+            or is_closed_cast_x_zone_search_program(program) or is_closed_loyalty_attachment_program(program)
+            or is_closed_qualified_library_cast_program(program)):
         return True
     if (is_closed_named_zone_search_program(program) or generated_commander_return_is_closed(program)
             or is_closed_void_counter_play_program(program) or is_closed_target_graveyard_escape_program(program)
@@ -232,6 +255,9 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if any(fixed_variant_program_is_closed(program,kind) for kind in SpellTextVariantKind):return True
     from ..rules.event_outcome_shapes import event_outcome_program_is_closed
     if event_outcome_program_is_closed(program): return True
+    from ..rules.announced_three_target_damage import is_closed_announced_target_damage_program
+    if is_closed_announced_target_damage_program(program):
+        return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
     from ..rules.linked_exile_activations import is_closed_linked_exile_activation_program

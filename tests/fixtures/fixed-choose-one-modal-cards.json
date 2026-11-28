@@ -1,6 +1,49 @@
 {
   "cards": [
     {
+      "oracle_id": "0f264e5b-264e-4e97-9a8d-8ae1d6a286ce",
+      "name": "Drown in the Loch",
+      "mana_cost": "{U}{B}",
+      "cmc": 2.0,
+      "oracle_text": "Choose one —\n• Counter target spell with mana value less than or equal to the number of cards in its controller's graveyard.\n• Destroy target creature with mana value less than or equal to the number of cards in its controller's graveyard.",
+      "type_line": "Instant",
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "layout": "normal",
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 5.0,
       "color_identity": ["R"],
       "colors": ["R"],
@@ -21,7 +64,20 @@
     }
   ],
   "fixture_kind": "focused_fixed_choose_one_modal_cards",
-  "rulings": [],
+  "rulings": [
+    {
+      "oracle_id": "0f264e5b-264e-4e97-9a8d-8ae1d6a286ce",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "For spells with {X} in their mana costs, use the value chosen for X to determine the spell's mana value."
+    },
+    {
+      "oracle_id": "0f264e5b-264e-4e97-9a8d-8ae1d6a286ce",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If a creature on the battlefield has {X} in its mana cost, X is considered to be 0."
+    }
+  ],
   "schema_version": 1,
   "source": "Pinned Scryfall witness for focused compiler/runtime tests"
 }

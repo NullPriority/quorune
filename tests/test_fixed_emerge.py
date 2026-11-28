@@ -329,3 +329,147 @@ class FixedEmergeRuntimeTests(unittest.TestCase):
         for viewer in 'ABD':
             self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
         self.replay(session,load=True)
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+PATRON = "Patron of the Kitsune"
+
+
+class OfferingNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        directory = ROOT / "tests/fixtures"
+        database = Path(cls.temporary.name) / "offering.sqlite3"
+        build_fixture_database([
+            directory / name for name in (
+                "bound-effect-program-cards.json", "fixed-emerge-cards.json",
+                "temporary-target-interaction-cards.json", "life-gain-counted-result-cards.json",
+                "additional-conditional-modifier-cards.json",
+            )
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Offering", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def test_patron_exact_source_and_offering_mana_reduction_boundaries(self):
+        from quorune.offering_model import (
+            OFFERING_CAPABILITY, OFFERING_HANDLER, offering_reduction_vectors, reduce_offering_total,
+        )
+        from quorune.semantic_runtime.offering import OfferingCostHandler
+
+        profile = "commander_review"
+        card = self.db.lookup(PATRON, fuzzy=False)
+        opts = {"capability_registry": self.registry, "capability_profile": profile}
+        ir = compile_oracle_card(card, **opts)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertEqual(2, len(ir.faces[0].nodes))
+        node, = [node for node in ir.faces[0].nodes if node.event == "cast.cost"]
+        self.assertIn(OFFERING_CAPABILITY, node.capability_dependencies)
+        handler, = node.handlers
+        self.assertEqual(OFFERING_HANDLER, handler["handler_id"])
+        self.assertEqual("fox", OfferingCostHandler().validate(handler).subtype)
+        program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(), **opts)
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        for text in ("NotASubtype offering", "Fox offering\nRabbit offering", "Fox offering once each turn"):
+            narrowed = compile_oracle_card(replace(card, oracle_text=text), **opts)
+            self.assertTrue(narrowed.material_residuals, text)
+        with mock.patch("quorune.compiler.offering_nodes.offering_static_node", return_value=None):
+            omitted = compile_oracle_card(card, **opts)
+        self.assertTrue(omitted.material_residuals)
+
+        total = mana_cost_to_vector("{4}{W}{W}")[0]
+        for printed, expected in [
+            ("", ("{4}{W}{W}",)), ("{W}{W}{W}", ("{3}",)),
+            ("{R}{W}", ("{3}{W}",)), ("{C}{C}", ("{2}{W}{W}",)),
+            ("{2/W}", ("{2}{W}{W}", "{4}{W}")),
+            ("{W/P}{S}", ("{3}{W}",)), ("{1}{X}", ("{3}{W}{W}",)),
+        ]:
+            with self.subTest(printed=printed):
+                remaining = [reduce_offering_total(total, credit) for credit in offering_reduction_vectors(printed)]
+                self.assertCountEqual([mana_cost_to_vector(cost)[0] for cost in expected], remaining)
+        for malformed in ("{Q}", "{1} trailing cost", "W", "{2/P}"):
+            with self.assertRaises(ValueError):
+                offering_reduction_vectors(malformed)
+
+    def cast_options(self, game, actor, source):
+        self.priority(game, actor)
+        actions = game.packet("pilot:" + actor, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row["cost_options"] for row in actions if row["id"] == "cast:" + source.ref)
+
+    def reject_offer(self, game, actor, command):
+        from quorune.record import authoritative_state_hash
+
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + actor, command)
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_patron_off_turn_offering_locks_color_reduction_and_precedes_counter_response(self):
+        game = self.session(70248001)
+        source = self.add(game.engine, PATRON, zone="hand")
+        twin = self.add(game.engine, "Eight-and-a-Half-Tails", ref="two-white-fox")
+        mixed = self.add(game.engine, "Golden-Tail Disciple", ref="generic-and-white-fox")
+        foreign = self.add(game.engine, "Golden-Tail Disciple", seat="B", ref="foreign-fox")
+        other = self.add(game.engine, "Memnite", ref="not-a-fox")
+        draw_spell = self.add(game.engine, "Divination", seat="B", zone="hand")
+        counter = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+        tax = self.add(game.engine, "Sphere of Resistance")
+        for card in (source, draw_spell, counter, tax):
+            self.assert_closed(game, card)
+        self.prepare(game, actor="B", active="B", mana={"U": 8, "C": 20})
+        game.state.players["A"].mana_pool.update({"W": 4, "C": 20})
+        self.checkpoint(game)
+        self.cast_for(game, "B", draw_spell)
+        options = self.cast_options(game, "A", source)
+        self.assertEqual(2, len(options), options)
+        paid_twin, = [row for row in options if ":" + twin.ref + ":" in row["id"]]
+        paid_mixed, = [row for row in options if ":" + mixed.ref + ":" in row["id"]]
+        self.assertEqual(mana_cost_to_vector("{5}")[0], paid_twin["requirements"])
+        self.assertEqual(mana_cost_to_vector("{3}{W}")[0], paid_mixed["requirements"])
+        action = "cast:" + source.ref
+        command = {"action_id": action, "cost_option": paid_twin["id"],
+                   "sacrifice_cards": [twin.ref], "reserve": {"W": 4}, "pay": "auto"}
+        self.reject_offer(game, "D", command)
+        self.reject_offer(game, "A", {"action_id": action, "cost_option": "normal", "pay": "auto"})
+        for wrong in ([], [mixed.ref], [foreign.ref], [other.ref], [twin.ref, mixed.ref]):
+            self.reject_offer(game, "A", {**command, "sacrifice_cards": wrong})
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", game.state.cards[twin.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[mixed.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[foreign.object_id].zone)
+        self.assertEqual(4, game.state.players["A"].mana_pool["W"])
+        self.assertEqual(15, game.state.players["A"].mana_pool["C"])
+        self.assertEqual("stack", game.state.cards[source.object_id].zone)
+        stacked, = [item for item in game.state.stack if item.card_object_id == source.object_id]
+        game = self.replay(game, load=True)
+        self.cast_for(game, "B", counter, [stacked.ref])
+        self.resolve_top(game)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("graveyard", game.state.cards[twin.object_id].zone)
+        self.assertEqual(15, game.state.players["A"].mana_pool["C"])
+        self.resolve(game)
+        self.replay(game, load=True)
+
+    def test_patron_normal_main_phase_cast_keeps_the_fox(self):
+        game = self.session(70248002)
+        source = self.add(game.engine, PATRON, zone="hand")
+        fox = self.add(game.engine, "Golden-Tail Disciple")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"W": 2, "C": 4})
+        self.checkpoint(game)
+        price, = [row for row in self.cast_options(game, "A", source) if row["id"] == "normal"]
+        self.assertEqual(mana_cost_to_vector("{4}{W}{W}")[0], price["requirements"])
+        response = game.act("pilot:A", {"action_id": "cast:" + source.ref, "cost_option": "normal", "pay": "auto"})
+        self.assertTrue(response.ok, response.summary)
+        self.resolve(game)
+        self.assertEqual("battlefield", game.state.cards[source.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[fox.object_id].zone)
+        self.replay(game, load=True)

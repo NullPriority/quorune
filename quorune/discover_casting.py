@@ -2,11 +2,13 @@ from __future__ import annotations
 
 """Current resolving-cast permission over canonical exile casting and zones."""
 
-from .discover_model import (ExileCastProgress, discover_spell_qualifies, discover_options_fingerprint,
+from .discover_model import (DISCOVER_TREASURE_DIFFERENCE_CAPABILITY, ExileCastProgress,
+    discover_spell_qualifies, discover_options_fingerprint,
     QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_STEP_OPERATION, validate_qualified_scan_effect)
 from .errors import GameRuleError,StateInvariantError
-from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
-    RESOLVING_TOP_PLAY_SCOPE, fixed_top_exile_result_rows, validate_fixed_top_exile)
+from .fixed_top_exile import (CHOSEN_IMPULSE_SCOPES, OPPONENT_CHOSEN_IMPULSE_SCOPE,
+    FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
+    DAMAGE_WINDOW_CAST_SCOPE, RESOLVING_TOP_PLAY_SCOPE, fixed_top_exile_result_rows, validate_fixed_top_exile)
 from .land_exile_source_return_model import LAND_EXILE_RETURN_SCOPE
 from .rules.bargain_search import was_search_spell_bargained
 from .targeted_exile_land_entry import TARGETED_EXILE_LAND_ENTRY_SCOPE, uses_targeted_exile_land_entry
@@ -19,15 +21,18 @@ from .rules.resolving_cast_payments import commit_resolving_exile_cast
 
 def resolving_exile_library_refs(host, *, actor, effect):
     """Expose the bounded supplied identities solely to the server's scan snapshot."""
+    from .rules.elected_nonland_exile import ELECTED_NONLAND_EXILE_SCOPE
+
     operation = effect.get('op')
     if operation == FIXED_TOP_EXILE_OPERATION:
         scope = validate_fixed_top_exile(effect, resolved=True)
         if effect["player"] != actor:
             raise StateInvariantError("The fixed top exile controller changed")
-        supplied = {"cast_event_library", LAND_EXILE_RETURN_SCOPE, TARGETED_EXILE_LAND_ENTRY_SCOPE}
-        owners = host.active_seats if scope == "each_library" else (
+        supplied = {"cast_event_library", LAND_EXILE_RETURN_SCOPE, TARGETED_EXILE_LAND_ENTRY_SCOPE,
+                    OPPONENT_CHOSEN_IMPULSE_SCOPE}
+        owners = host.active_seats if scope in {"each_library", ELECTED_NONLAND_EXILE_SCOPE} else (
             (effect["supplier"],) if scope in supplied else ())
-        count = effect["count"] if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE else 1
+        count = effect["count"] if scope in {TARGETED_EXILE_LAND_ENTRY_SCOPE, OPPONENT_CHOSEN_IMPULSE_SCOPE} else 1
         if any(owner not in host.state.players for owner in owners):
             raise StateInvariantError("Fixed top exile names an unknown supplying player")
         return {owner: [host.state.cards[key].ref for key in host.state.players[owner].zones["library"][-count:]]
@@ -69,6 +74,8 @@ def require_discover_resolution(host, *, actor, stack_ref, progress=None):
     if scan is None:
         if item.controller != actor:
             raise GameRuleError('The current Discover resolution changed')
+        if progress is not None:
+            _require_discover_treasure_source(host, item, progress)
         return item
     from .rules.stack_counter_name_scan import counter_name_scan_node_capabilities
 
@@ -82,6 +89,24 @@ def require_discover_resolution(host, *, actor, stack_ref, progress=None):
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     return item
+
+
+def _require_discover_treasure_source(host, item, progress):
+    from .rules.discover_capability_shapes import validate_discover_treasure_program
+
+    program = host.semantics.get(item.semantic_key)
+    requires_result = program is not None and DISCOVER_TREASURE_DIFFERENCE_CAPABILITY in program.capability_dependencies
+    if requires_result != (progress.recorded_card is not None):
+        raise GameRuleError('The Discover continuation changed its recorded-result scope')
+    if not requires_result:
+        return
+    if item.kind not in {'spell', 'spell_copy'} or not host.semantic_program_is_current_trusted(program):
+        raise GameRuleError('The recorded Discover result lost its original trusted spell')
+    try:
+        if validate_discover_treasure_program(program) != progress.amount:
+            raise ValueError('The recorded Discover result changed its printed threshold')
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
 
 
 def require_discover_exile(host,progress,*,actor,include_candidate=True):
@@ -152,10 +177,19 @@ def discover_cast_options(host,*,item,actor,effect):
 def fixed_top_exile_cast_options(host, *, item, actor, effect):
     if item is None:
         return ()
+    from .rules.elected_nonland_exile import ELECTION_FIELD, is_nonland_election_offer, validate_nonland_election_offer
+
+    election = is_nonland_election_offer(effect)
+    if election:
+        offered = {key: value for key, value in effect.items() if key not in {"_stack_ref", "_options_fingerprint"}}
+        if validate_nonland_election_offer(offered)[0] != "cast":
+            return ()
     require_discover_resolution(host, actor=actor, stack_ref=item.ref)
     if uses_targeted_exile_land_entry(effect.get("instruction")):
         return ()
     fields = {"op", "instruction", "results"}
+    if election:
+        fields.add(ELECTION_FIELD)
     if (set(effect) not in (fields, fields | {"_stack_ref", "_options_fingerprint"})
             or effect.get("_stack_ref", item.ref) != item.ref
             or effect.get("op") != FIXED_TOP_EXILE_OFFER_OPERATION):
@@ -166,7 +200,14 @@ def fixed_top_exile_cast_options(host, *, item, actor, effect):
     if instruction["player"] != actor:
         raise GameRuleError("Fixed top exile casting controller changed")
     scope = instruction["scope"]
-    if scope in {CHOSEN_IMPULSE_SCOPE, LAND_EXILE_RETURN_SCOPE}:
+    if scope == DAMAGE_WINDOW_CAST_SCOPE:
+        from .rules.blocked_damage_cast import resolving_window
+
+        try:
+            resolving_window(host, stack_ref=item.ref, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if scope in CHOSEN_IMPULSE_SCOPES or scope == LAND_EXILE_RETURN_SCOPE:
         return ()
     payment = "paid" if scope in {"controller_library", RESOLVING_TOP_PLAY_SCOPE} else "free"
     options = []

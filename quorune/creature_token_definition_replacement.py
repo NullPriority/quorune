@@ -15,6 +15,8 @@ from .standard_token_abilities import (
 
 CREATURE_TOKEN_DEFINITION_HANDLER = "replacement.token.creature-definition.v1"
 CREATURE_TOKEN_DEFINITION_CAPABILITY = "token.creation.replace_creature_definition"
+CREATURE_TOKEN_TRIPLING_HANDLER = "replacement.token.creature-quantity.v1"
+CREATURE_TOKEN_TRIPLING_CAPABILITY = "token.creation.creature_quantity_replacement"
 CREATION_TYPE_LINE = "_creation_type_line"
 PREDEFINED_TOKEN_SET_HANDLER = "replacement.token.predefined-artifact-set.v1"
 PREDEFINED_TOKEN_SET_CAPABILITY = "token.creation.replace_predefined_artifact_set"
@@ -45,6 +47,10 @@ def _creation_type_line(spec: Mapping[str, Any]) -> str:
     if type(value) is not str:
         raise ValueError("Token creation requires a captured type line")
     return value
+
+
+def creation_member_is_creature(spec: Mapping[str, Any]) -> bool:
+    return "creature" in type_parts(_creation_type_line(spec))[0]
 
 
 def replace_creature_token_definitions(

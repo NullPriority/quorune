@@ -12,6 +12,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face
+from ..characteristic_read_frames import characteristic_read_method
 from ..continuous_conditions import (
     FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
 )
@@ -40,6 +41,8 @@ ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID = (
     "permission.action.activate-controlled-creature-as-haste.v1"
 )
 SOURCE_LOYALTY_INSTANT_CAPABILITY = "activation.permission.self_loyalty_instant"
+EQUIP_INSTANT_CAPABILITY = "activation.permission.own_turn_equip_instant"
+FIRST_EQUIP_ZERO_CAPABILITY = "activation.price.first_equip_zero"
 LIBRARY_TOP_VISIBILITY_HANDLER_ID = (
     "permission.action.library-top-visibility.v1"
 )
@@ -76,8 +79,11 @@ class ActionPermissionKind(StrEnum):
     )
     ACTIVATE_SOURCE_LOYALTY_AT_INSTANT = "activate_source_loyalty_at_instant"
     ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT = "activate_entered_source_loyalty_at_instant"
+    ACTIVATE_EQUIP_AT_INSTANT = "activate_equip_at_instant"
+    FIRST_EQUIP_ZERO = "first_equip_zero"
     LIBRARY_TOP_VISIBILITY = "library_top_visibility"
     LIBRARY_TOP_ACTION = "library_top_action"
+    LINKED_GRAVEYARD_EXILE_PLAY = "linked_graveyard_exile_play"
     ADDITIONAL_LAND_PLAY = "additional_land_play"
     LIBRARY_SEARCH_RULE = 'library_search_rule'
 
@@ -85,6 +91,18 @@ class ActionPermissionKind(StrEnum):
 SOURCE_LOYALTY_INSTANT_HANDLERS = {
     ActionPermissionKind.ACTIVATE_SOURCE_LOYALTY_AT_INSTANT: "permission.action.self-loyalty-instant.v1",
     ActionPermissionKind.ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT: "permission.action.entered-self-loyalty-instant.v1",
+}
+
+
+EQUIP_ACTION_PERMISSION_HANDLERS = {
+    ActionPermissionKind.ACTIVATE_EQUIP_AT_INSTANT: (
+        "permission.action.own-turn-equip-instant.v1", EQUIP_INSTANT_CAPABILITY,
+        ("101.1", "117.1b", "602.5d", "611.3a", "702.6a"),
+    ),
+    ActionPermissionKind.FIRST_EQUIP_ZERO: (
+        "permission.action.first-equip-zero.v1", FIRST_EQUIP_ZERO_CAPABILITY,
+        ("118.9", "601.2f", "602.2b", "611.3a", "702.6a"),
+    ),
 }
 
 
@@ -170,6 +188,7 @@ class StaticActionPermission:
     library_top_qualifier: LibraryTopQualifier | None = None
     minimum_spell_mana_value: int | None = None
     top_spell_price: LibraryTopSpellPrice | None = None
+    linked_exile_ability_pair: str | None = None
 
     def __post_init__(self):
         if self.kind is ActionPermissionKind.LIBRARY_SEARCH_RULE and not isinstance(self.library_search_rule,LibrarySearchRuleSpec):
@@ -590,6 +609,7 @@ class ActionPermissionRegistry(
 def default_action_permission_registry() -> ActionPermissionRegistry:
     from .library_search_rules import LibrarySearchRuleHandler, SEARCH_CONTROL_CAPABILITY, SEARCH_CONTROL_HANDLER
     from .hand_visibility import StaticHandVisibilityHandler
+    from .linked_graveyard_exile_play import LinkedGraveyardPlayPermissionHandler
     from .mana_spending import (
         TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY, mana_spending_handlers, tap_mana_multiplier_handlers,
     )
@@ -604,6 +624,14 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             )
             for permission, handler_id in SOURCE_LOYALTY_INSTANT_HANDLERS.items()
         )
+    equip_handlers = tuple(
+        StaticActionPermissionHandler(
+            handler_id=handler_id, permission=permission, rule_references=rules,
+            capability_dependencies=(capability,),
+        )
+        for permission, (handler_id, capability, rules) in EQUIP_ACTION_PERMISSION_HANDLERS.items()
+        if capabilities.capability(capability) is not None
+    )
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
@@ -612,9 +640,11 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
                 rule_references=("611.3b", "616.1", "701.23a", "701.23b", "701.23f", "723.4", "723.5"),
                 capability_dependencies=(SEARCH_CONTROL_CAPABILITY,)),
             StaticHandVisibilityHandler(),
+            LinkedGraveyardPlayPermissionHandler(),
             *mana_spending_handlers(),
             *(tap_mana_multiplier_handlers() if capabilities.capability(TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY) is not None else ()),
             *loyalty_handlers,
+            *equip_handlers,
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandLuckPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
@@ -680,6 +710,7 @@ class ActionPermissionHost(Protocol):
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
+@characteristic_read_method
 def controller_action_permissions(
     host: ActionPermissionHost,
     player: str,

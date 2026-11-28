@@ -199,7 +199,10 @@ def dispatch_life_loss_records(
 
 def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
     """Bind the committed draw and life results used by a typed program."""
-    required = first_life_gain_runtime_dependencies(program, subscriptions)
+    from .rules.opponent_off_turn_draw import opponent_off_turn_draw_dependencies
+
+    required = (*first_life_gain_runtime_dependencies(program, subscriptions),
+                *opponent_off_turn_draw_dependencies(program))
     if subscriptions is not None and subscriptions.subscription_for(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT) is not None:
         return (*required, "trigger.event.normalized_card_draw")
     if program.event == "card.second_draw" and program.provenance.get("template_id") in {

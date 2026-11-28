@@ -1,9 +1,11 @@
 """An actual own-main-phase cast adds an exact result after its ordinary effect."""
 
 from dataclasses import replace
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -22,7 +24,15 @@ class FixedMainPhaseAddendumResultTests(InheritedNativeFixture, unittest.TestCas
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()
         path = Path(cls.temporary.name) / "fixed-main-phase-addendum-results.sqlite3"
-        build_fixture_database([ROOT / "tests/fixtures/fixed-main-phase-addendum-results-cards.json"], path)
+        support = json.loads((ROOT / "tests/fixtures/cumulative-alternative-mana-upkeep-cards.json").read_bytes())
+        names = {"Solemnity", "Branching Evolution", "Hardened Scales"}
+        support["cards"] = [card for card in support["cards"] if card["name"] in names]
+        assert {card["name"] for card in support["cards"]} == names
+        ids = {card["oracle_id"] for card in support["cards"]}
+        support["rulings"] = [row for row in support.get("rulings", ()) if row["oracle_id"] in ids]
+        support_path = path.with_name("solemnity.json")
+        support_path.write_text(json.dumps(support), encoding="utf-8")
+        build_fixture_database([ROOT / "tests/fixtures/fixed-main-phase-addendum-results-cards.json", support_path], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Exact Addendum result", [
@@ -133,3 +143,150 @@ class FixedMainPhaseAddendumResultTests(InheritedNativeFixture, unittest.TestCas
                 self.assertEqual(actor == "A", "flying" in
                                  game.engine._combat_keywords(game.state.cards[creature.object_id]))
                 self.replay(game, load=True)
+
+
+    def test_formation_main_phase_binds_one_creature_cohort_and_copy_keeps_only_indestructible(self):
+        game = self.session(60131001)
+        spell = self.add(game.engine, "Unbreakable Formation", zone="hand")
+        copy = self.add(game.engine, "Twincast", seat="B", zone="hand")
+        own = tuple(self.add(game.engine, "Grizzly Bears", ref=f"formation-own-{i}") for i in range(4))
+        opponent = self.add(game.engine, "Grizzly Bears", seat="B", ref="formation-copy-controller")
+        phase_out = self.add(game.engine, "Grizzly Bears", ref="formation-phased-out")
+        phase_out.phased_out = True
+        land = self.add(game.engine, "Plains", ref="formation-noncreature")
+        late = self.add(game.engine, "Grizzly Bears", zone="hand", ref="formation-late")
+        private = self.add(game.engine, "Unsummon", seat="C", zone="hand", ref="formation-private")
+        for card in (spell, copy):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 3, "W": 1, "G": 1})
+        game.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(game)
+
+        self.cast_for(game, "A", spell)
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertFalse(any("indestructible" in game.engine._combat_keywords(card) for card in own))
+        self.cast_for(game, "B", copy, [game.state.stack[-1].ref])
+        self.resolve_top(game)
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        current = game.state.cards[opponent.object_id]
+        self.assertIn("indestructible", game.engine._combat_keywords(current))
+        self.assertNotIn("vigilance", game.engine._combat_keywords(current))
+        self.assertEqual(0, current.counters.get("+1/+1", 0))
+        start = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        for card in own:
+            current = game.state.cards[card.object_id]
+            self.assertEqual(1, current.counters.get("+1/+1"))
+            self.assertTrue({"indestructible", "vigilance"} <= game.engine._combat_keywords(current))
+        for card in (land, phase_out):
+            current = game.state.cards[card.object_id]
+            self.assertEqual(0, current.counters.get("+1/+1", 0))
+            self.assertFalse({"indestructible", "vigilance"} & game.engine._combat_keywords(current))
+        grants = [event.details for event in game.state.events[start:] if event.code == "effect.mass_modify"]
+        self.assertEqual([["Indestructible"], ["Vigilance"]], [row["keywords"] for row in grants])
+        self.assertEqual({card.ref for card in own}, set(grants[0]["objects"]))
+        self.assertEqual(grants[0]["objects"], grants[1]["objects"])
+        for seat in "ABD":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.cast_for(game, "A", late)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[late.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertFalse({"indestructible", "vigilance"} & game.engine._combat_keywords(current))
+        turn = game.state.turn_sequence
+        self.until(game, lambda current: current.state.turn_sequence > turn)
+        for card in own:
+            current = game.state.cards[card.object_id]
+            self.assertEqual(1, current.counters.get("+1/+1"))
+            self.assertFalse({"indestructible", "vigilance"} & game.engine._combat_keywords(current))
+        self.replay(game, load=True)
+
+    def test_formation_addendum_uses_cast_phase_and_vigilance_survives_counter_prohibition(self):
+        for own_main in (True, False):
+            with self.subTest(own_main=own_main):
+                game = self.session(60131010 + int(own_main))
+                spell = self.add(game.engine, "Unbreakable Formation", zone="hand")
+                body = self.add(game.engine, "Grizzly Bears")
+                prohibition = self.add(game.engine, "Solemnity", seat="C")
+                self.assert_closed(game, prohibition)
+                self.prepare(game, active="A" if own_main else "B", mana={"C": 2, "W": 1})
+                self.checkpoint(game)
+                self.cast_for(game, "A", spell)
+                self.assertIsNone(self.resolve(game))
+                current = game.state.cards[body.object_id]
+                self.assertEqual(0, current.counters.get("+1/+1", 0))
+                self.assertIn("indestructible", game.engine._combat_keywords(current))
+                self.assertEqual(own_main, "vigilance" in game.engine._combat_keywords(current))
+                self.replay(game, load=True)
+
+    def test_formation_wrong_cast_history_and_forged_cohort_descriptor_fail_closed(self):
+        from test_fixed_public_alternative_costs import card_record
+        from quorune.rules.main_phase_creature_cohort import COHORT_ADDENDUM_CAPABILITY, COHORT_ADDENDUM_FIELD
+
+        oracle = ("Creatures you control gain indestructible until end of turn.\n"
+                  "Addendum — If you cast this spell during your main phase, put a +1/+1 counter "
+                  "on each of those creatures and they gain vigilance until end of turn.")
+        record = card_record(oracle, type_line="Instant", keywords=("Addendum",))
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+
+        def witness():
+            actual = compile_oracle_card(record, **options)
+            self.assertEqual("exact", actual.status, actual.material_residuals)
+
+        witness()
+        for changed in (oracle.replace("your main phase", "your upkeep"),
+                        oracle.replace("those creatures", "all creatures"),
+                        oracle.replace("gain vigilance", "gain haste")):
+            self.assertNotEqual("exact", compile_oracle_card(replace(record, oracle_text=changed), **options).status)
+        with patch("quorune.compiler.creature_cohort_addendum.creature_cohort_addendum_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, **options).status)
+
+        report, semantics = register_card(self.db, self.registry, "Unbreakable Formation")
+        self.assertTrue(report["strict_capability_ready"], report)
+        spell, = semantics.programs_for_oracle(self.db.lookup("Unbreakable Formation").oracle_id)
+        effect, = spell.effects
+        for changed in ({**effect, COHORT_ADDENDUM_FIELD: True}, {**effect, "members": []}):
+            actual = bind_semantic_program_runtime(replace(spell, effects=[changed]),
+                                                  capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(actual["strict"], actual)
+        deps = tuple(cap for cap in spell.capability_dependencies if cap != COHORT_ADDENDUM_CAPABILITY)
+        unbound = replace(spell, capability_dependencies=deps, capability_closure=self.registry.closure(
+            deps, profile="commander_review").to_dict())
+        actual = bind_semantic_program_runtime(unbound, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + COHORT_ADDENDUM_CAPABILITY, actual["blockers"])
+
+
+    def test_formation_pending_counter_replacement_preserves_the_same_later_keyword_grant(self):
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(60131022)
+        spell = self.add(game.engine, "Unbreakable Formation", zone="hand")
+        creature = self.add(game.engine, "Grizzly Bears")
+        evolution = self.add(game.engine, "Branching Evolution")
+        scales = self.add(game.engine, "Hardened Scales")
+        for card in (spell, evolution, scales):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 2, "W": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        pending = self.resolve(game)
+        self.assertEqual(("replacement.order", ["A"]), (pending.kind, pending.actors))
+        current = game.state.cards[creature.object_id]
+        self.assertIn("indestructible", game.engine._combat_keywords(current))
+        self.assertNotIn("vigilance", game.engine._combat_keywords(current))
+        self.assertEqual(0, current.counters.get("+1/+1", 0))
+        game = self.replay(game, load=True)
+        options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        selected = next(row["id"] for row in options if row["source"] == evolution.ref)
+        command = {"action_id": "choose", "replacement": selected}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[creature.object_id]
+        self.assertEqual(3, current.counters.get("+1/+1"))
+        self.assertTrue({"indestructible", "vigilance"} <= game.engine._combat_keywords(current))
+        self.replay(game, load=True)

@@ -27,6 +27,7 @@ from .ability_fragments import (
     ability_fragment_from_dict,
     ability_fragment_to_dict,
     canonical_ability_fragments,
+    toxic_specs,
 )
 from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
@@ -117,6 +118,14 @@ class ContinuousEvaluation:
     inapplicable_effects: tuple[str, ...]
 
 
+def _live_query_keywords(condition: ObjectQuerySpec, state: CharacteristicState) -> tuple[str, ...]:
+    keywords = tuple(sorted(value.casefold() for value in state.abilities))
+    if "toxic" not in condition.keywords_all and "toxic" not in condition.keywords_none:
+        return keywords
+    ordinary = tuple(value for value in keywords if value != "toxic")
+    return (*ordinary, "toxic") if toxic_specs(state.ability_fragments) else ordinary
+
+
 def _matches(
     condition: ObjectQuerySpec,
     state: CharacteristicState,
@@ -137,9 +146,7 @@ def _matches(
             sorted(value.casefold() for value in state.supertypes)
         ),
         colors=tuple(sorted(value.upper() for value in state.colors)),
-        keywords=tuple(
-            sorted(value.casefold() for value in state.abilities)
-        ),
+        keywords=_live_query_keywords(condition, state),
         mana_value=int(state.mana_value),
         token=bool(context.get("token", False)),
         commander=bool(context.get("commander",False)),
@@ -656,6 +663,7 @@ def evaluate_continuous_effects(
             ContinuousEffectRelation.SOURCE_CONTROLLED_AURA_RECIPIENT,
             ContinuousEffectRelation.SOURCE_BLOCK_COUNTERPART_OBJECT,
             ContinuousEffectRelation.SOURCE_COUNTER_PLACEMENT_RECIPIENT,
+            ContinuousEffectRelation.SOURCE_ATTACK_HISTORY_RECIPIENT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(

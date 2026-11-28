@@ -6,6 +6,7 @@ from typing import Any, Mapping, TypeAlias
 
 from .damage_prevention_scope import DamageModifierError, DamagePreventionScope, _exact_fields, _strings
 from .damage_source import DamageError, DamageSourceSnapshot
+from .replacement.immutable import FrozenMap, thaw_value
 from .object_predicate import (
     ObjectQueryError,
     ObjectQuerySpec,
@@ -858,10 +859,39 @@ class DealDamagePreventionAftermath:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class CreateTokensPreventionAftermath:
+    """A fixed ordinary creature recipe, once for each actually prevented point."""
+
+    name: str
+    characteristics: FrozenMap
+
+    def __post_init__(self):
+        if type(self.name) is not str or not self.name or not isinstance(self.characteristics, Mapping):
+            raise DamageModifierError("Token aftermath requires a fixed creature definition")
+        type_line = self.characteristics.get("type_line")
+        if type(type_line) is not str or not type_line.startswith("Token Creature"):
+            raise DamageModifierError("Token aftermath accepts only ordinary creature tokens")
+        object.__setattr__(self, "characteristics", FrozenMap(self.characteristics))
+
+    def to_dict(self):
+        return {"kind": "create_tokens", "schema_version": 1, "name": self.name,
+                "characteristics": thaw_value(self.characteristics)}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"kind", "schema_version", "name", "characteristics"}
+                or value["kind"] != "create_tokens" or type(value["schema_version"]) is not int
+                or value["schema_version"] != 1):
+            raise DamageModifierError("Token aftermath has a closed versioned recipe")
+        return cls(value["name"], value["characteristics"])
+
+
 PreventionAftermath: TypeAlias = (
     GainLifePreventionAftermath
     | PlaceCountersPreventionAftermath
     | DealDamagePreventionAftermath
+    | CreateTokensPreventionAftermath
 )
 
 
@@ -871,6 +901,8 @@ def prevention_aftermath_from_dict(
     if not isinstance(value, Mapping):
         raise DamageModifierError("Prevention aftermath must be an object")
     kind = value.get("kind")
+    if kind == "create_tokens":
+        return CreateTokensPreventionAftermath.from_dict(value)
     if kind == "gain_life":
         _exact_fields(
             value,
@@ -1036,6 +1068,7 @@ class DamagePreventionShield:
                     GainLifePreventionAftermath,
                     PlaceCountersPreventionAftermath,
                     DealDamagePreventionAftermath,
+                    CreateTokensPreventionAftermath,
                 ),
             )
             for value in aftermath
@@ -1043,6 +1076,14 @@ class DamagePreventionShield:
             raise DamageModifierError(
                 "A prevention shield aftermath must use typed values"
             )
+        if any(isinstance(value, CreateTokensPreventionAftermath) for value in aftermath) and (
+            len(aftermath) != 1 or self.subject.kind != "player" or self.subject.ref != self.controller
+            or self.mode is not PreventionMode.ALL or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
+            or self.damage_kind is not PreventionDamageKind.COMBAT or self.recipient_kind is not PreventionRecipientKind.ANY
+            or self.scope != DamagePreventionScope() or self.chosen_source is not None
+            or self.application_group_id is not None or self.triggered_ability is not None
+        ):
+            raise DamageModifierError("Token aftermath requires the original combat-player shield")
         object.__setattr__(self, "aftermath", aftermath)
         if self.tracks_unpreventable_amount and (
             len(aftermath) != 1 or self.mode != PreventionMode.ALL

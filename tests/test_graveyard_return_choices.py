@@ -4,14 +4,17 @@ from copy import deepcopy
 from dataclasses import replace
 import inspect
 import json
+import os
 from pathlib import Path
 import tempfile
 import textwrap
 from types import SimpleNamespace
 import unittest
+from inherited_composition_fixture import InheritedNativeFixture
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.object_query import ObjectQueryResult
 from quorune.replacement.immutable import FrozenMap
 from quorune.rules.graveyard_return_choices import (
@@ -658,3 +661,357 @@ class TakenumaNativeTests(unittest.TestCase):
                 for card in (source, *milled):
                     self.assertEqual(zone, session.state.cards[card.object_id].zone)
                 self.replay(session)
+
+
+class EachGraveyardReturnNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import json
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "bound-effect-program-cards.json": {
+                "Generic Bound Commander", "Generic Bound Plains", "Generic Bound Growth", "Grizzly Bears", "Unsummon",
+            },
+            "attached-destruction-set-cards.json": {"Doomed Traveler"},
+            "counted-library-search-cards.json": {"Jace Beleren"},
+            "each-graveyard-mill-return-cards.json": {"Breach the Multiverse"},
+        }
+        pieces = []
+        for filename, names in support.items():
+            data = json.loads((ROOT / "tests/fixtures" / filename).read_bytes())
+            data["cards"] = [row for row in data["cards"] if row["name"] in names]
+            assert {row["name"] for row in data["cards"]} == names, filename
+            ids = {row["oracle_id"] for row in data["cards"]}
+            data["rulings"] = [row for row in data.get("rulings", ()) if row["oracle_id"] in ids]
+            piece = folder / filename
+            piece.write_text(json.dumps(data), encoding="utf-8")
+            pieces.append(piece)
+        database = folder / "each-graveyard-return.sqlite3"
+        build_fixture_database(pieces, database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Milling and public entry", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def test_breach_compiles_all_three_closed_stages_in_printed_order(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from test_bound_effect_programs import record
+
+        material = (
+            "Each player mills ten cards. For each player, choose a creature or planeswalker card in that player's graveyard. "
+            "Put those cards onto the battlefield under your control. Then each creature you control becomes a Phyrexian "
+            "in addition to its other types."
+        )
+        ir = compile_oracle_card(record(material, "Sorcery"), capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(material, node.text)
+        self.assertIsNone(node.target_schema)
+        self.assertEqual(("mill", "choose_option", "add_subtype"), tuple(effect["op"] for effect in node.effects))
+        for text in (material.replace("under your control", "under their owners' control"),
+                     material.replace("in addition to its other types", "until end of turn")):
+            self.assertNotEqual("exact", compile_oracle_card(record(text, "Sorcery"),
+                                                           capability_registry=self.registry).status)
+
+    def _breach_world(self, *, eligible, seed):
+        game = self.session(seed)
+        breach = self.add(game.engine, "Breach the Multiverse", zone="hand")
+        existing = self.add(game.engine, "Grizzly Bears", ref="breach-existing")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="breach-private")
+        selected = ()
+        alternative = None
+        if eligible:
+            own = self.add(game.engine, "Grizzly Bears", zone="graveyard", ref="breach-own-old")
+            foreign = self.add(game.engine, "Grizzly Bears", seat="C", zone="graveyard", ref="breach-foreign-old")
+            fresh = self.add(game.engine, "Jace Beleren", seat="B", zone="library", ref="breach-fresh-walker")
+            alternative = self.add(game.engine, "Doomed Traveler", zone="library", ref="breach-alternative")
+            self.assertEqual(fresh.object_id, game.state.players["B"].zones["library"][-1])
+            selected = (own, fresh, foreign)
+        self.assert_closed(game, breach)
+        self.prepare(game, mana={"C": 12, "B": 4, "G": 2})
+        self.checkpoint(game)
+        before = {seat: len(game.state.players[seat].zones["library"]) for seat in "ABCD"}
+        self.cast(game, "A", breach)
+        decision = self.resolve(game)
+        for seat, total in before.items():
+            self.assertEqual(total - 10, len(game.state.players[seat].zones["library"]))
+        return game, decision, selected, alternative, existing, private
+
+    def _choose_return(self, game, selected, alternative):
+        from quorune.record import authoritative_state_hash
+
+        decision = game.packet("pilot:A", full=True)["decision"]
+        groups = decision["ctx"]["graveyard_groups"]
+        self.assertEqual({"A", "B", "C"}, set(groups))
+        self.assertIn(alternative.ref, groups["A"])
+        self.assertIn(selected[1].ref, groups["B"])
+        before = authoritative_state_hash(game.state)
+        command = {"action_id": "choose", "cards": [card.ref for card in selected]}
+        invalid = {"action_id": "choose", "cards": [selected[0].ref, alternative.ref, selected[1].ref]}
+        self.assertFalse(game.act("pilot:A", invalid).ok)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(game))
+
+    def test_actual_breach_mills_then_chooses_and_reanimates_one_card_per_graveyard(self):
+        import json
+
+        game, decision, selected, alternative, existing, private = self._breach_world(eligible=True, seed=7011301)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual(["pilot:A"], game.pending_principals())
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "graveyard" for card in selected))
+        game = self.replay(game, load=True)
+        self._choose_return(game, selected, alternative)
+
+        cards = tuple(game.state.cards[card.object_id] for card in selected)
+        self.assertTrue(all(card.zone == "battlefield" and card.controller == "A" for card in cards))
+        self.assertEqual(("A", "B", "C"), tuple(card.owner for card in cards))
+        self.assertEqual(1, len({card.zone_timestamp for card in cards}))
+        self.assertEqual("graveyard", game.state.cards[alternative.object_id].zone)
+        for card in (cards[0], cards[2], game.state.cards[existing.object_id]):
+            self.assertIn("phyrexian", game.engine._effective_type_parts(card)[1])
+        self.assertNotIn("phyrexian", game.engine._effective_type_parts(cards[1])[1])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_breach_locks_the_creature_only_subtype_even_without_a_return(self):
+        from dataclasses import replace
+        from quorune.continuous_effect_model import ContinuousEffectDuration, ContinuousOperation
+        from quorune.continuous_effects import CharacteristicState, evaluate_continuous_effects
+        from quorune.object_predicate import ObjectQuerySpec
+
+        game, decision, _, _, existing, _ = self._breach_world(eligible=False, seed=6110201)
+        self.assertIsNone(decision)
+        self.assertIn("phyrexian", game.engine._effective_type_parts(existing)[1])
+        grant, = [effect for effect in game.state.continuous_effects
+                  if effect.duration is ContinuousEffectDuration.ZONE_OBJECT]
+        context = {"zone": "battlefield", "object_id": existing.object_id,
+                   "logical_object_id": existing.logical_object_id}
+        noncreature = evaluate_continuous_effects(CharacteristicState("Bear", card_types={"Artifact"}), [grant],
+                                                 context=context)
+        creature = evaluate_continuous_effects(CharacteristicState("Bear", card_types={"Creature"}), [grant],
+                                               context=context)
+        self.assertNotIn("Phyrexian", noncreature.characteristics["subtypes"])
+        self.assertIn("Phyrexian", creature.characteristics["subtypes"])
+        later_animation = replace(
+            grant, effect_id="later-animation", timestamp=grant.timestamp + 1,
+            applies=ObjectQuerySpec(zones=("battlefield",)),
+            operations=(ContinuousOperation("add_types", ("Creature",), field="card_types"),),
+        )
+        animated = evaluate_continuous_effects(
+            CharacteristicState("Bear", card_types={"Artifact"}), [grant, later_animation], context=context,
+        )
+        self.assertIn("Phyrexian", animated.characteristics["subtypes"])
+        self.assertLess(animated.applied_effects.index("later-animation"), animated.applied_effects.index(grant.effect_id))
+        after_return = evaluate_continuous_effects(CharacteristicState("Bear", card_types={"Creature"}), [grant],
+            context={**context, "logical_object_id": existing.object_id + "@99"})
+        self.assertNotIn("Phyrexian", after_return.characteristics["subtypes"])
+        self.replay(game, load=True)
+
+    def test_breach_after_mill_return_and_subtype_omission_mutants_are_killed(self):
+        from unittest.mock import patch
+        from quorune import zone_object_subtype_grants
+        from quorune.rules import graveyard_return_choices
+
+        real_move = graveyard_return_choices.each_graveyard_return_move
+        game, _, selected, alternative, _, _ = self._breach_world(eligible=True, seed=7011302)
+        with patch.object(graveyard_return_choices, "each_graveyard_return_move",
+                          lambda cards, **kwargs: real_move(cards[:-1], **kwargs)):
+            self._choose_return(game, selected, alternative)
+        self.assertEqual("graveyard", game.state.cards[selected[-1].object_id].zone)
+        with self.assertRaises(AssertionError):
+            self.assertEqual("battlefield", game.state.cards[selected[-1].object_id].zone)
+        with patch.object(zone_object_subtype_grants, "commit_controlled_creature_subtype_addition", return_value=()):
+            omitted, _, _, _, existing, _ = self._breach_world(eligible=False, seed=6110202)
+        self.assertNotIn("phyrexian", omitted.engine._effective_type_parts(existing)[1])
+        with self.assertRaises(AssertionError):
+            self.assertIn("phyrexian", omitted.engine._effective_type_parts(existing)[1])
+
+
+class DifferentNameGraveyardReturnTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "different-name-graveyard-return.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([fixtures / "bound-effect-program-cards.json",
+                                fixtures / "graveyard-salvage-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Different-name return", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def start_ultimatum(self, game, spell):
+        self.prepare(game, mana={"W": 2, "B": 3, "G": 2})
+        self.assert_closed(game, spell)
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertFalse(game.state.stack[-1].targets)
+        return self.resolve(game)
+
+    def save_replay(self, game, name):
+        from hashlib import file_digest
+        from quorune.record import authoritative_state_hash, replay_record
+
+        parent = os.environ.get("QUORUNE_DIFFERENT_NAME_RETURN_RECORD_PARENT")
+        if parent is None:
+            self.replay(game, load=True)
+            return
+        destination = Path(parent) / name
+        game.save(destination)
+        result = replay_record(destination, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, result["final_state_hash"])
+        with (destination / "manifest.json").open("rb") as handle:
+            manifest_hash = file_digest(handle, "sha256").hexdigest()
+        destination.with_suffix(".receipt.json").write_text(
+            json.dumps({"manifest_sha256": manifest_hash, "final_state_sha256": state_hash,
+                        "commands": len(game.commands)}, indent=2) + "\n", encoding="utf-8",
+        )
+
+    def test_actual_ultimatum_chooses_distinct_front_names_then_returns_one_group(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(44001577)
+        engine = game.engine
+        spell = self.add(engine, "Eerie Ultimatum", zone="hand")
+        forest = self.add(engine, "Forest", zone="graveyard", ref="ultimatum-first-forest")
+        duplicate = self.add(engine, "Forest", zone="graveyard", ref="ultimatum-second-forest")
+        bear = self.add(engine, "Grizzly Bears", zone="graveyard")
+        aura = self.add(engine, "Pacifism", zone="graveyard")
+        modal = self.add(engine, "Tangled Florahedron", zone="graveyard")
+        sorcery = self.add(engine, "Bala Ged Recovery", zone="graveyard")
+        foreign = self.add(engine, "Generic Bound Plains", seat="D", zone="graveyard")
+        existing = self.add(engine, "Grizzly Bears", seat="B", ref="ultimatum-existing-bear")
+        subject = (forest, duplicate, bear, aura, modal)
+        preceding = {card.object_id: card.logical_object_id for card in subject}
+        pending = self.start_ultimatum(game, spell)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        owner = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual(OPERATION, owner["ctx"]["operation"])
+        cards = {row["id"]: row["name"] for row in owner["ctx"]["objects"]}
+        self.assertEqual({card.ref for card in subject}, set(cards))
+        self.assertEqual("Tangled Florahedron", cards[modal.ref])
+        self.assertIn("subset_maxima", json.dumps(owner))
+        self.assertNotIn(sorcery.ref, cards)
+        self.assertNotIn(foreign.ref, cards)
+        self.save_replay(game, "eerie-ultimatum-pending-game-record")
+        before = authoritative_state_hash(game.state)
+        for principal, refs in (("A", [forest.ref, duplicate.ref]), ("A", [sorcery.ref]),
+                                ("A", [foreign.ref]), ("B", [forest.ref])):
+            result = game.act("pilot:" + principal, {"action_id": "choose", "cards": refs})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        selected = (forest, bear, aura, modal)
+        result = game.act("pilot:A", {"action_id": "choose", "cards": [card.ref for card in selected]})
+        self.assertTrue(result.ok, result.summary)
+        pending = game.state.pending_decision
+        self.assertEqual(("aura.entry", ["A"]), (pending.kind, pending.actors))
+        self.assertEqual(["graveyard"] * len(selected),
+                         [game.state.cards[card.object_id].zone for card in selected])
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:A", {"action_id": "choose", "aura_target": bear.ref})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.save_replay(game, "eerie-ultimatum-aura-pending-game-record")
+        observe = ZoneTransitionOwner._publish_simultaneous_zone_batch
+        batches = []
+
+        def record_batch(owner, snapshots, *args, **kwargs):
+            batch = {card.object_id for card, _ in snapshots if card.object_id in preceding}
+            if batch:
+                batches.append(batch)
+            return observe(owner, snapshots, *args, **kwargs)
+
+        with patch.object(ZoneTransitionOwner, "_publish_simultaneous_zone_batch", record_batch):
+            result = game.act("pilot:A", {"action_id": "choose", "aura_target": existing.ref})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([{card.object_id for card in selected}], batches)
+        returned = [game.state.cards[card.object_id] for card in selected]
+        self.assertEqual({("battlefield", "A")}, {(card.zone, card.controller) for card in returned})
+        self.assertEqual(1, len({card.zone_timestamp for card in returned if card.object_id != aura.object_id}))
+        self.assertTrue(all(card.logical_object_id != preceding[card.object_id] for card in returned))
+        self.assertEqual(existing.object_id, game.state.cards[aura.object_id].attached_to)
+        self.assertEqual("Tangled Florahedron", game.state.cards[modal.object_id].active_face)
+        self.assertEqual(["graveyard"] * 4, [game.state.cards[card.object_id].zone
+                         for card in (spell, duplicate, sorcery, foreign)])
+        self.save_replay(game, "eerie-ultimatum-batch-game-record")
+
+    def test_actual_ultimatum_empty_decline_and_aura_with_no_existing_subject(self):
+        for index, scenario in enumerate(("empty", "decline", "aura")):
+            with self.subTest(scenario=scenario):
+                game = self.session(44001578 + index)
+                spell = self.add(game.engine, "Eerie Ultimatum", zone="hand")
+                if scenario != "empty":
+                    bear = self.add(game.engine, "Grizzly Bears", zone="graveyard")
+                if scenario == "aura":
+                    aura = self.add(game.engine, "Pacifism", zone="graveyard")
+                pending = self.start_ultimatum(game, spell)
+                if scenario == "empty":
+                    self.assertNotEqual("semantic.choice", getattr(pending, "kind", None))
+                else:
+                    self.assertEqual("semantic.choice", pending.kind)
+                    choices = [bear.ref, aura.ref] if scenario == "aura" else []
+                    result = game.act("pilot:A", {"action_id": "choose", "cards": choices})
+                    self.assertTrue(result.ok, result.summary)
+                    if scenario == "aura":
+                        self.assertEqual("battlefield", game.state.cards[bear.object_id].zone)
+                        self.assertEqual("graveyard", game.state.cards[aura.object_id].zone)
+                    else:
+                        self.assertEqual("graveyard", game.state.cards[bear.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.save_replay(game, f"eerie-ultimatum-{scenario}-game-record")
+
+    def test_ultimatum_whole_binding_requires_the_original_distinct_name_instruction(self):
+        from test_controller_creature_keyword_absence import register_card
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.different_name_graveyard_return import CAPABILITY as DISTINCT_NAMES
+
+        profile = "commander_review"
+        card = self.db.lookup("Eerie Ultimatum", fuzzy=False)
+        binding, registry = register_card(self.db, self.registry, card.name)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        program, = registry.programs_for_oracle(card.oracle_id)
+        deps = tuple(value for value in program.capability_dependencies if value != DISTINCT_NAMES)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile=profile).to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=profile)
+        self.assertFalse(result["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{DISTINCT_NAMES}", result["blockers"])
+        changed = replace(program, event="step.begin")
+        self.assertFalse(bind_semantic_program_runtime(
+            changed, capability_registry=self.registry, profile=profile,
+        )["strict"])
+        for text in (card.oracle_text.replace("different names", "the same name"),
+                     card.oracle_text.replace("permanent cards", "permanent cards with mana value 2 or less"),
+                     card.oracle_text.replace("your graveyard", "each graveyard")):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile=profile,
+            ).status)
+        with patch("quorune.compiler.graveyard_return_choice_templates.different_name_permanent_return_effect",
+                   return_value={"op": OPERATION, "player": "$controller", "selection": {"schema_version": 99}}):
+            self.assertNotEqual("exact", compile_oracle_card(
+                card, capability_registry=self.registry, capability_profile=profile,
+            ).status)

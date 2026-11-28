@@ -10,7 +10,9 @@ from ..public_alternative_costs import (
     FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
     FIXED_PUBLIC_ALTERNATIVE_COST_EVENT,
     FIXED_PUBLIC_ALTERNATIVE_COST_MECHANIC,
+    LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION,
     FixedPublicAlternativeCostKind,
+    life_and_blue_hand_exile_price_payload_dependencies,
     fixed_public_alternative_cost_handler_descriptor,
 )
 from ..rules.capabilities import CapabilityRegistry
@@ -32,10 +34,17 @@ def _compiled(spec: Any) -> tuple[str, dict[str, Any], tuple[str, ...]]:
     from ..rules.casting_additional_cost_groups import (
         fixed_life_payment_additional_cost_node_capabilities,selected_zone_cost_payload_dependencies,
     )
+    descriptor = fixed_public_alternative_cost_handler_descriptor(spec)
+    if spec.schema_version == LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION:
+        return (
+            "fixed-public-alternative-cost-life-and-blue-hand-exile-v3",
+            descriptor,
+            (FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY, *life_and_blue_hand_exile_price_payload_dependencies(descriptor)),
+        )
     costs={'additional_costs':[thaw_value(cost) for cost in spec.additional_costs]}
     return (
         f"fixed-public-alternative-cost-{spec.kind.value}-v1",
-        fixed_public_alternative_cost_handler_descriptor(spec),
+        descriptor,
         (FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
             *spec.condition.capability_dependencies,
             *selected_zone_cost_payload_dependencies(costs),

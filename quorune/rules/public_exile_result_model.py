@@ -21,6 +21,7 @@ ATTACKING_CREATURE_EXILE_QUERY = ObjectQuerySpec(
     zones=("battlefield",), types_all=("creature",), state_predicate=PermanentStatePredicateSpec(attacking=True),
 )
 _ATTACKING_SEARCH = FrozenMap({"kind": "affected_player_basic_land_search"})
+_CONTROLLER_LAND_SEARCH = FrozenMap({"kind": "former_controller_basic_land_search"})
 
 _SCOPES = (
     ObjectQuerySpec(zones=("graveyard",), token=False),
@@ -36,8 +37,16 @@ class PublicExileFollowup:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise ValueError("Unknown public exile follow-up version")
+        if self.schema_version == 3:
+            from .affected_library_search_batch import EXILE_SEARCH_QUERY
+
+            if (self.query != EXILE_SEARCH_QUERY or not isinstance(self.effect, Mapping)
+                    or FrozenMap(self.effect) != _CONTROLLER_LAND_SEARCH):
+                raise ValueError("Controller land search requires its exact creature-exile follow-up")
+            object.__setattr__(self, "effect", _CONTROLLER_LAND_SEARCH)
+            return
         if self.schema_version == 2:
             if self.query != ATTACKING_CREATURE_EXILE_QUERY or not isinstance(self.effect, Mapping) or FrozenMap(self.effect) != _ATTACKING_SEARCH:
                 raise ValueError("Attacking creature exile requires its exact optional affected-player search")
@@ -56,6 +65,13 @@ class PublicExileFollowup:
             PublicZoneRelationAxis, PublicZoneSeatRelation,
         )
 
+        if self.schema_version == 3:
+            if spec != PublicZoneMoveSetSpec(
+                query=self.query, origin=PublicZoneOrigin.BATTLEFIELD, destination=PublicZoneDestination.EXILE,
+                seat_relation=PublicZoneSeatRelation.OPPONENTS,
+            ):
+                raise ValueError("Controller compensation requires the original opposing creature set")
+            return
         if self.schema_version == 2:
             if not isinstance(spec, PublicZoneMoveSetSpec) or spec != PublicZoneMoveSetSpec(
                 query=ATTACKING_CREATURE_EXILE_QUERY, origin=PublicZoneOrigin.BATTLEFIELD,
@@ -87,6 +103,10 @@ class PublicExileFollowup:
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == 3:
+            from .affected_library_search_batch import exile_land_search_dependencies
+
+            return exile_land_search_dependencies()
         if self.schema_version == 2:
             return (ATTACKING_EXILE_SEARCH_CAPABILITY, "effect.choice.optional_fixed", "library.search.fixed_counted",
                     "zone.entry.tapped_state", "target.revalidate_resolution")
@@ -100,7 +120,7 @@ class PublicExileFollowup:
         if (
             not isinstance(value, Mapping)
             or set(value) != {"schema_version", "query", "effect"}
-            or type(value["schema_version"]) is not int or value["schema_version"] not in {1, 2}
+            or type(value["schema_version"]) is not int or value["schema_version"] not in {1, 2, 3}
         ):
             raise ValueError("Public exile follow-up descriptor is malformed")
         return cls(ObjectQuerySpec.from_dict(value["query"]), value["effect"], value["schema_version"])
@@ -108,6 +128,12 @@ class PublicExileFollowup:
     @classmethod
     def attacking_creature_search(cls):
         return cls(ATTACKING_CREATURE_EXILE_QUERY, _ATTACKING_SEARCH, schema_version=2)
+
+    @classmethod
+    def controller_land_search(cls):
+        from .affected_library_search_batch import EXILE_SEARCH_QUERY
+
+        return cls(EXILE_SEARCH_QUERY, _CONTROLLER_LAND_SEARCH, schema_version=3)
 
     def from_committed_count(self, count: int, *, target_player: str | None = None) -> CommittedQuantityFollowup:
         if self.schema_version == 2:

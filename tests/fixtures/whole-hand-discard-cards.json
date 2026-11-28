@@ -1,5 +1,5 @@
 {
-  "cards": [
+  "cards": [{"oracle_id":"5ac65688-0a74-4dc4-b6cb-12bdf8aed01e","name":"Myojin of Night's Reach","mana_cost":"{5}{B}{B}{B}","type_line":"Legendary Creature — Spirit","oracle_text":"Myojin of Night's Reach enters with a divinity counter on it if you cast it from your hand.\nMyojin of Night's Reach has indestructible as long as it has a divinity counter on it.\nRemove a divinity counter from Myojin of Night's Reach: Each opponent discards their hand.","power":"5","toughness":"2","loyalty":null,"defense":null,"colors":["B"],"color_identity":["B"],"keywords":[],"produced_mana":[],"layout":"normal","released_at":"2024-11-15","legalities":{"alchemy":"legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"not_legal","vintage":"legal"},"cmc":8.0},
     {
       "cmc": 8.0,
       "color_identity": [
@@ -383,7 +383,7 @@
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
-  "rulings": [
+  "rulings": [{"oracle_id":"5ac65688-0a74-4dc4-b6cb-12bdf8aed01e","published_at":"2024-11-08","source":"wotc","comment":"In a Commander game where this card is your commander, casting it from the command zone does not count as casting it from your hand."},
     {
       "comment": "An ability that triggers when a player casts a spell resolves before the spell that caused it to trigger. It resolves even if that spell is countered or otherwise leaves the stack without resolving.",
       "oracle_id": "01a7e0ce-c98f-4cf2-aba3-360aa0a9b9a7",

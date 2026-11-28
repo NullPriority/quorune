@@ -8,6 +8,8 @@ from enum import StrEnum
 import re
 from typing import Literal
 
+from .basic_land_types import BASIC_LAND_MANA
+from .basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .util import normalize_card_name, stable_json
 
@@ -17,6 +19,9 @@ ENTRY_DESIGNATION_HANDLER_ID = "replacement.zone.entry-designation.v1"
 ENTRY_DESIGNATION_CAPABILITY = "zone.entry.public_designation"
 ENTRY_FACTION_CAPABILITY = "zone.entry.faction_designation"
 ENTRY_FACTIONS = ("Brotherhood", "Enclave")
+ENTRY_MARDU_JESKAI_CAPABILITY = "zone.entry.mardu_jeskai_designation"
+MARDU_JESKAI_FACTIONS = ("Mardu", "Jeskai")
+ENTRY_JESKAI_TEMUR_CAPABILITY = "zone.entry.jeskai_temur_designation"
 ENTRY_OPPONENT_HANDLER_ID = "replacement.zone.linked-entry-opponent.v1"
 ENTRY_OPPONENT_FIELD = "entry_chosen_opponent"
 LINKED_ENTRY_OPPONENT_FIELD = "linked_entry_opponent"
@@ -64,7 +69,17 @@ COUNTED_CREATURE_TYPE_ENTRY_CAPABILITY = "zone.entry.chosen_creature_type_counte
 SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID = "replacement.zone.entry-self-chosen-subtype.v5"
 SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID = "continuous.characteristics.self-chosen-subtype.v1"
 SELF_CHOSEN_SUBTYPE_CAPABILITY = "continuous.characteristics.self_chosen_creature_type_addition"
+BASIC_LAND_ENTRY_HANDLER_ID = "replacement.zone.entry-chosen-basic-land-type.v1"
+CHOSEN_BASIC_LAND_HANDLER_ID = "continuous.characteristics.chosen-basic-land-type.v1"
+BASIC_LAND_ENTRY_CAPABILITY = "zone.entry.linked_basic_land_type"
+BASIC_LAND_ENTRY_CAPABILITIES = (
+    BASIC_LAND_ENTRY_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
+    BASIC_TYPE_SETTING_CAPABILITY, "zone.entry.tapped_state",
+)
+BASIC_LAND_ENTRY_LIFE_FIELD = "entry_basic_land_type_life_available"
+BASIC_LAND_ENTRY_PAID_FIELD = "entry_basic_land_type_life_decided"
 ENTRY_DESIGNATION_HANDLER_IDS = (
+    BASIC_LAND_ENTRY_HANDLER_ID,
     ENTRY_DESIGNATION_HANDLER_ID, EXCLUDED_COLOR_ENTRY_HANDLER_ID,
     LIMITED_CREATURE_TYPE_ENTRY_HANDLER_ID, COUNTED_CREATURE_TYPE_ENTRY_HANDLER_ID,
     SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID,
@@ -79,14 +94,23 @@ CONDITIONAL_CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.cond
 class EntryDesignationKind(StrEnum):
     COLOR = "color"
     CREATURE_TYPE = "creature_type"
+    BASIC_LAND_TYPE = "basic_land_type"
     FACTION = "faction"
+    MARDU_JESKAI_FACTION = "mardu_jeskai_faction"
+    JESKAI_TEMUR_FACTION = "jeskai_temur_faction"
 
     @property
-    def annotation(self) -> Literal["chosen_color", "chosen_creature_type", "chosen_faction"]:
+    def annotation(self) -> Literal[
+        "chosen_color", "chosen_creature_type", "chosen_faction", "chosen_jeskai_temur_faction",
+        "chosen_basic_land_type",
+    ]:
         return {
             self.COLOR: "chosen_color",
             self.CREATURE_TYPE: "chosen_creature_type",
+            self.BASIC_LAND_TYPE: "chosen_basic_land_type",
             self.FACTION: "chosen_faction",
+            self.MARDU_JESKAI_FACTION: "chosen_faction",
+            self.JESKAI_TEMUR_FACTION: "chosen_jeskai_temur_faction",
         }[self]
 
     @property
@@ -95,8 +119,14 @@ class EntryDesignationKind(StrEnum):
 
     @property
     def values(self) -> tuple[str, ...]:
+        if self is self.BASIC_LAND_TYPE:
+            return tuple(BASIC_LAND_MANA)
         if self is self.FACTION:
             return ENTRY_FACTIONS
+        if self is self.MARDU_JESKAI_FACTION:
+            return MARDU_JESKAI_FACTIONS
+        if self is self.JESKAI_TEMUR_FACTION:
+            return ("Jeskai", "Temur")
         return tuple("WUBRG") if self is self.COLOR else tuple(sorted(CREATURE_SUBTYPES))
 
 
@@ -192,8 +222,18 @@ def validate_designation(kind: EntryDesignationKind, value: object) -> str:
         if value not in tuple("WUBRG"):
             raise ValueError("A chosen color must be one WUBRG color")
     elif kind is EntryDesignationKind.FACTION:
-        if value not in ENTRY_FACTIONS:
-            raise ValueError("A chosen faction must be Brotherhood or Enclave")
+        # The shared stored field distinguishes both exact entry option sets by value.
+        if value not in (*ENTRY_FACTIONS, *MARDU_JESKAI_FACTIONS):
+            raise ValueError("A stored faction must be in one of the supported entry option sets")
+    elif kind is EntryDesignationKind.MARDU_JESKAI_FACTION:
+        if value not in MARDU_JESKAI_FACTIONS:
+            raise ValueError("This entry choice requires Mardu or Jeskai")
+    elif kind is EntryDesignationKind.JESKAI_TEMUR_FACTION:
+        if value not in kind.values:
+            raise ValueError("This faction choice must be Jeskai or Temur")
+    elif kind is EntryDesignationKind.BASIC_LAND_TYPE:
+        if value not in BASIC_LAND_MANA:
+            raise ValueError("A chosen basic land type must use the pinned vocabulary")
     elif canonical_creature_subtype(value) != value:
         raise ValueError("A chosen creature type must use the pinned vocabulary")
     return value

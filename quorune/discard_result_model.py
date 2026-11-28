@@ -12,6 +12,8 @@ DISCARD_RESULT_MECHANIC = 'whole-hand-discard-result'
 EVENT_PLAYER_DISCARD_RESULT_CAPABILITY = 'zone.discard.event_player_whole_hand_result'
 EVENT_PLAYER_DISCARD_RESULT_VERSION = 3
 SELECTED_LAND_DISCARD_RESULT_VERSION = 4
+ORDERED_OPPONENTS_DISCARD_VERSION = 7
+ORDERED_OPPONENTS_DISCARD_CAPABILITY = "zone.discard.ordered_opponents_whole_hand"
 SELECTED_LAND_DISCARD_FIELD = '_selected_lands'
 DISCARD_GRAVEYARD_ORDER_FIELD = "_graveyard_arrival_order"
 DAMAGE_RECIPIENT_REFERENCE = '$context.target'
@@ -37,7 +39,24 @@ def validate_variable_subset_discard_draw(effect):
         raise ValueError('Variable-subset discard/draw requires a closed schema-three hand bound and offset')
 
 
+def ordered_opponents_discard_effect():
+    return {"op": DISCARD_RESULT_OPERATION, "schema_version": ORDERED_OPPONENTS_DISCARD_VERSION,
+            "actor": "$controller", "players": "opponents", "reduction": "none", "offset": 0}
+
+
+def is_ordered_opponents_discard(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == DISCARD_RESULT_OPERATION
+            and effect.get("schema_version") == ORDERED_OPPONENTS_DISCARD_VERSION)
+
+
 def validate_discard_draw(effect):
+    if is_ordered_opponents_discard(effect):
+        actor = effect.get("actor")
+        if (type(actor) is not str or not actor or type(effect["schema_version"]) is not int
+                or type(effect.get("offset")) is not int
+                or FrozenMap(effect) != FrozenMap({**ordered_opponents_discard_effect(), "actor": actor})):
+            raise ValueError("Ordered opponents discard requires its complete no-draw instruction")
+        return
     fields = {'op', 'schema_version', 'actor', 'players', 'reduction', 'offset'}
     if isinstance(effect, Mapping) and effect.get('schema_version') == SELECTED_LAND_DISCARD_RESULT_VERSION:
         if SELECTED_LAND_DISCARD_FIELD in effect:

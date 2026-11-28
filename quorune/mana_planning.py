@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Ordered source selection when a compiled mana mode has a mana price."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Callable
 
 from .mana import MANA_COLORS, ManaMode, ManaSource
@@ -72,11 +72,13 @@ def _pool_after_step(pool, source, mode, payment, allows, departed):
     next_pool = PlanningManaPool.capture(pool)
     if mode.price is not None:
         spend_mana(next_pool, payment, snow_payment=None, restriction_allows=allows, spend_context=mode.price.spend_context)
+    if mode.double_unspent:
+        mode = replace(mode, bundle=dict(next_pool.mana_pool))
     add_mana(next_pool, mode.production_output(departed), snow=source.snow, restriction=mode.restriction or None)
     for output in mode.triggered_mana:
         if output.survives(departed):
             add_mana(next_pool, output.bundle.bundle, snow=output.snow)
-    return next_pool
+    return next_pool, mode
 
 
 def _ordered_mode_allowed(mode, contexts, allows, allow_conditional):
@@ -130,14 +132,21 @@ def ordered_mana_selection(
         if key in failed:
             return None
         optimistic = _optimistic_pool(pool.mana_pool, (capacities[index] for index in remaining))
+        for index in remaining:
+            doubles = [mode for mode in groups[index][1] if mode.double_unspent]
+            if doubles:
+                from math import prod
+
+                factor = 1 + max(prod(value for _, value in mode.tap_mana_multipliers) for mode in doubles)
+                optimistic = {color: amount * factor for color, amount in optimistic.items()}
         if can_pay(optimistic, optimistic):
             for index in sorted(remaining):
                 source, modes = groups[index]
                 for mode in modes:
                     for payment in available_mode_payments(mode, pool, allows):
-                        next_pool = _pool_after_step(pool, source, mode, payment, allows, departed)
+                        next_pool, resolved_mode = _pool_after_step(pool, source, mode, payment, allows, departed)
                         next_departed = departed | {source.object_id} if mode.consumes_source else departed
-                        selected = visit(next_pool, remaining - {index}, (*steps, (source, mode, payment)), next_departed)
+                        selected = visit(next_pool, remaining - {index}, (*steps, (source, resolved_mode, payment)), next_departed)
                         if selected is not None:
                             return selected
         failed.add(key)

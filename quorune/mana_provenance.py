@@ -547,22 +547,34 @@ def lose_all_unspent_mana(player: Any) -> dict[str, int]:
     return {color: amount for color, amount in pool.items() if amount}
 
 
+TURN_POOL_COLOR_STAT = "retain_red_through_turn"
+
+
 def clear_step_mana(
     player: Any,
     *,
     phase: str,
     step: str,
+    preserve_colors: Sequence[str] = (),
+    turn_sequence: int | None = None,
 ) -> dict[str, int]:
-    """Clear the pool while retaining unexpired combat and turn mana lots."""
+    """Clear the pool except for mana retained by duration or current static rules."""
 
     pool = normalize_mana_bundle(player.mana_pool)
     preserve_combat = phase == "combat" and step != "end_combat"
     preserve_turn = (phase, step) != ("ending", "cleanup")
-    kept_lots = tuple(
-        lot
-        for lot in mana_provenance_lots(player)
-        if (preserve_combat and lot.retention == "end_of_combat") or (preserve_turn and lot.retention == "end_of_turn")
-    )
+    retained_red = player.stats.get(TURN_POOL_COLOR_STAT)
+    if type(retained_red) is int and retained_red == turn_sequence and preserve_turn:
+        if "R" not in preserve_colors:
+            preserve_colors = (*preserve_colors, "R")
+    else:
+        player.stats.pop(TURN_POOL_COLOR_STAT, None)
+    kept_lots = []
+    for lot in mana_provenance_lots(player):
+        if (preserve_combat and lot.retention == "end_of_combat") or (preserve_turn and lot.retention == "end_of_turn"):
+            kept_lots.append(lot)
+        elif bundle := tuple(pair for pair in lot.bundle if pair[0] in preserve_colors):
+            kept_lots.append(replace(lot,bundle=bundle,retention=None))
     kept = normalize_mana_bundle(None)
     for lot in kept_lots:
         for color, amount in lot.bundle:
@@ -571,6 +583,8 @@ def clear_step_mana(
         raise ManaProvenanceError(
             "retained mana provenance exceeds the authoritative pool"
         )
+    for color in preserve_colors:
+        kept[color] = pool[color]
     lost = {
         color: pool[color] - kept[color]
         for color in _COLORS

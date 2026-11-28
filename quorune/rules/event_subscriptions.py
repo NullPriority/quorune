@@ -10,7 +10,8 @@ from ..cast_event_type_model import PHYSICAL_CARD_EVENT_FIELD
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
-    FixedPublicStateConditionSpec,
+    GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY, FixedPublicStateConditionSpec, FixedPublicStateFact,
+    greatest_artifact_mana_value_condition, greatest_artifact_mana_value_condition_dependencies,
 )
 from ..controller_creature_keyword_absence import (
     CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE, ControllerCreatureKeywordAbsence,
@@ -33,6 +34,8 @@ from ..scheduled_player import (
 )
 from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_participant_schedule
 
+
+LEGACY_GREATEST_ARTIFACT_MANA_VALUE_FIELD = "source_controller_controls_highest_artifact_mana_value"
 
 CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY = "trigger.event.controller_food_sacrifice_group"
 CONTROLLER_FOOD_SACRIFICE_GROUP_VARIANT = "controller_sacrifices_food"
@@ -100,6 +103,49 @@ _GRAVEYARD_CREATURE_TRANSITION_CAPABILITIES = (
     GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY, "trigger.subscription.fixed_multi_event",
     "trigger.placement.apnap", "trigger.effect.fixed_event",
 )
+
+
+OPPONENT_ATTACK_DRAW_CAST_TEMPLATE = "fixed-counter-opponent-attack-draw-cast-v1"
+OPPONENT_ATTACK_DRAW_CAST_VARIANT = "opponent_attacks_or_draws_or_casts_second"
+OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES = (
+    "trigger.subscription.fixed_multi_event",
+    "trigger.event.direct_player_attack",
+    "trigger.event.normalized_card_draw",
+    "trigger.event.normalized_spell_cast",
+)
+
+
+def opponent_attack_draw_cast_condition():
+    from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
+
+    return fixed_event_subscription_condition((
+        FixedEventSubscription(DIRECT_PLAYER_ATTACK_EVENT,
+                               direct_player_attack_condition("opponent_attacks_controller_with_two")),
+        FixedEventSubscription("card.second_draw", {"field": "player", "op": "ne", "value": "$source.controller"}),
+        FixedEventSubscription("spell.cast", {"all": [
+            {"field": "controller", "op": "ne", "value": "$source.controller"},
+            {"field": "caster_spell_number", "op": "eq", "value": 2},
+        ]}),
+    ))
+
+
+def opponent_attack_draw_cast_runtime_dependencies(program, subscriptions):
+    from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+
+    expected = opponent_attack_draw_cast_condition()
+    canonical = stable_json(thaw_value(program.event_condition)) == stable_json(expected)
+    template = OPPONENT_ATTACK_DRAW_CAST_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if not canonical and template not in str(program.provenance.get("template_id") or ""):
+        return ()
+    if (not canonical or subscriptions is None
+            or (program.event, program.active_zone) != (DIRECT_PLAYER_ATTACK_EVENT, "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or program.trigger_limit is not None
+            or stable_json(thaw_value(program.effects)) != stable_json([
+                {"op": "draw", "player": "$controller", "count": 1, "private": True},
+            ])):
+        raise ValueError("The opponent event draw requires all three exact public subscriptions")
+    return OPPONENT_ATTACK_DRAW_CAST_DEPENDENCIES
 
 
 class EventSubscriptionError(ValueError):
@@ -481,6 +527,41 @@ def upkeep_hand_runtime_dependencies(program) -> tuple[str, ...]:
     return ('trigger.condition.fixed_public_state', SCHEDULED_PLAYER_CAPABILITY, UPKEEP_HAND_COUNT_CAPABILITY)
 
 
+def _greatest_artifact_upkeep_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:
+    leaves = tuple(_public_state_leaves(condition))
+    if not any(isinstance(leaf.get("condition"), Mapping)
+               and leaf["condition"].get("fact") == FixedPublicStateFact.CONTROLS_A_GREATEST_MANA_VALUE_ARTIFACT
+               for leaf in leaves):
+        return None
+    from .cumulative_object_upkeep import CONTROLLER_UPKEEP
+
+    expected = {
+        "field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, "op": "truthy", "value": True,
+        "condition": greatest_artifact_mana_value_condition().to_dict(),
+    }
+    if (stable_json(condition) != stable_json({"all": [CONTROLLER_UPKEEP, expected]})
+            or len(leaves) != 1 or leaves[0]["value"] is not True):
+        raise EventSubscriptionError("Greatest artifact mana value requires its closed controller upkeep")
+    return leaves[0]
+
+
+def greatest_artifact_upkeep_runtime_dependencies(program) -> tuple[str, ...]:
+    leaf = _greatest_artifact_upkeep_leaf(program.event_condition)
+    if leaf is None:
+        if GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY in program.capability_dependencies:
+            raise EventSubscriptionError("The greatest artifact capability requires its typed predicate")
+        return ()
+    if ((program.event, program.active_zone) != ("step.begin", "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or program.destination is not None or program.trigger_limit is not None or program.requires_arbiter
+            or not {"intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE} <= set(program.coverage)
+            or stable_json(program.effects) != stable_json(({
+                "op": "draw", "player": "$controller", "count": 1, "private": True,
+            },))):
+        raise EventSubscriptionError("Greatest artifact upkeep requires one untargeted controller draw")
+    return greatest_artifact_mana_value_condition_dependencies(leaf["condition"])
+
+
 def _controller_keyword_absence_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:
     leaves = tuple(_public_state_leaves(condition))
     if not any(is_controller_creature_keyword_absence(leaf.get("condition")) for leaf in leaves):
@@ -728,6 +809,25 @@ def entrant_land_advantage_runtime_dependencies(program):
             "trigger.placement.apnap", "zone.change.destination_replacement", "zone.move.fixed_private_hand_choice")
 
 
+def _recheck_greatest_artifact_upkeep(host, program, context, controller) -> bool:
+    from ..public_characteristic_aggregates import current_greatest_artifact_mana_value_control
+
+    greatest_artifact_upkeep_runtime_dependencies(program)
+    observer = context.get("intervening_condition_controller")
+    copy_from = context.get("copied_from_stack")
+    if (context.get("event") != "step.begin" or context.get("step") != "upkeep"
+            or type(observer) is not str or observer not in host.state.players or context.get("player") != observer
+            or type(controller) is not str or controller not in host.state.players
+            or ("copied_from_stack" in context and (type(copy_from) is not str or not copy_from))
+            or (copy_from is None and controller != observer)):
+        raise EventSubscriptionError("Greatest artifact recheck lost its original upkeep or resolving controller")
+    # Occurrence facts stay sealed to the original upkeep, including for copies.
+    # 'You' in the resolving condition belongs to the controller of this stack item.
+    return current_greatest_artifact_mana_value_control(
+        host.state, controller, host._public_object_query_result,
+    ) is True
+
+
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
     from ..other_spell_history_model import OTHER_SPELL_CAST_MECHANIC
@@ -744,9 +844,27 @@ def source_event_intervening_recheck(host, program, *, context, controller, sour
         DEPARTURE_COUNTER_TRANSFER_COVERAGE, departure_counter_condition_holds,
     )
 
+    from .opponent_off_turn_draw import OFF_TURN_DRAW_CAPABILITY, off_turn_draw_holds
+
+    from .opposing_end_step_advantage import COVERAGE as END_STEP_ADVANTAGE, recheck_opposing_end_step_advantage
     try:
+        if GREATEST_ARTIFACT_MANA_VALUE_CAPABILITY in program.capability_dependencies:
+            return _recheck_greatest_artifact_upkeep(host, program, context, controller)
+        if OFF_TURN_DRAW_CAPABILITY in program.capability_dependencies:
+            if context.get("event") != "card.drawn":
+                raise ValueError("An off-turn draw recheck lost its committed occurrence")
+            return off_turn_draw_holds(host.state, context)
+        if END_STEP_ADVANTAGE in program.coverage:
+            return recheck_opposing_end_step_advantage(host, program, context, controller)
         if DEPARTURE_COUNTER_TRANSFER_COVERAGE in program.coverage:
             return departure_counter_condition_holds(context, controller)
+        from ..extra_combat_model import MAIN_PHASE_EXTRA_COMBAT_MECHANIC, own_main_phase_for_combat
+        from .effect_node_capabilities import main_phase_extra_combat_program_dependencies
+
+        if MAIN_PHASE_EXTRA_COMBAT_MECHANIC in program.coverage:
+            if context.get("event") != "land.enter" or not main_phase_extra_combat_program_dependencies(program):
+                raise ValueError("Main-phase combat recheck lost its original landfall trigger")
+            return own_main_phase_for_combat(host.state, controller)
         if ENTRANT_LAND_ADVANTAGE_COVERAGE in program.coverage:
             if context.get("event") != OTHER_LAND_ARRIVAL_EVENT:
                 raise ValueError("The land advantage recheck lost its normalized event")
@@ -815,6 +933,13 @@ def source_event_intervening_recheck(host, program, *, context, controller, sour
             return info.amount >= 5
         except (ValueError, TypeError) as exc:
             raise GameRuleError(str(exc)) from exc
+    if "cast_from_nonhand_entry_intervening" in program.coverage:
+        from .entry_cast_information import nonhand_entrant_was_cast_by
+
+        try:
+            return nonhand_entrant_was_cast_by(host, context, controller=controller)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if 'source_entry_cast_intervening' in program.coverage:
         from .entry_cast_information import source_entry_cast_value
         from ..source_entry_cast_information import validate_source_entry_cast_condition
@@ -823,7 +948,7 @@ def source_event_intervening_recheck(host, program, *, context, controller, sour
             validate_source_entry_cast_condition(program.event_condition)
             return source_entry_cast_value(host, context, controller=controller,
                 source=ContinuousObjectIdentity(source_object_id, context.get('source_logical_object_id')),
-                origin=program.event_condition.get('origin'))
+                origin=program.event_condition.get('origin'), any_caster=program.event_condition.get('caster')=='any')
         except (ValueError, TypeError) as exc:
             raise GameRuleError(str(exc)) from exc
     return None

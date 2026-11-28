@@ -386,6 +386,13 @@ not gain Flashback self-replacement priority, get copied to a spell copy, or
 remain on a later incarnation. A tapped-entry follow-up participates before
 entry rather than tapping the resulting permanent afterward.
 
+A fixed one-X Harmonize method offers its own graveyard price. Its optional
+tap quote binds one current controlled untapped creature. The ordinary cost
+owner reduces generic mana by its nonnegative power and keeps the colored
+requirements and the announced X. The physical original gains a paid
+departure designation that exiles it when it leaves the stack. A spell copy
+carries the announced X and has its own ordinary departure.
+
 Version-three source grants can require the current graveyard incarnation to
 have arrived from its controller's library this turn or to have been actually
 milled this turn. Those are distinct journal facts. A shared land-or-permanent
@@ -524,6 +531,15 @@ Nested optional, conditional, payment and modal carriers fail runtime admission
 until their timestamp suspension has a represented continuation.
 
 
+## Turn-scoped trigger modes
+
+An ordinary controller discard or qualifying controlled creature entry can
+offer one unused untargeted mode at trigger placement. Each matching
+occurrence keeps its own trigger. The ledger records the chosen mode for
+its source incarnation and ability in the current turn before resolution.
+An exhausted occurrence supplies no selectable mode. A new turn or source
+incarnation supplies a fresh set.
+
 ## Paid Kicker and modal choices
 
 The ordinary casting option keeps the one-mode limit. The already priced
@@ -537,14 +553,19 @@ membership and characteristics during resolution. A creature modified by an
 earlier mode contributes its updated power. An empty group or a negative
 greatest power produces zero life gain.
 
-## Escalate and creature tap payments
+## Escalate casting costs
 
 The Escalate casting option binds the chosen modes and their target groups.
-Each mode after the first adds one controlled untapped creature to the
-ordinary fixed tap payment. The payer can select a creature that entered
-this turn. The payment reserves distinct creature incarnations and keeps
-those creatures out of the mana payment. The spell resolves its selected
-modes in printed order through their existing effect owners.
+A fixed creature tap price reserves one distinct controlled untapped creature
+for each mode after the first. The payer can select a creature that entered
+this turn. The reservation keeps those creatures out of the mana payment.
+
+A fixed mana price adds its canonical mana vector for each mode after the
+first. The ordinary cost owner adds that amount to the selected base before
+applying total-cost modifiers, including when the base is free. Both price
+forms resolve their selected modes in printed order through the same effect
+owners. Temporary keyword grants use the original target incarnation. When
+an earlier instruction moves that target to another zone, the grant skips it.
 
 ## Pawprint mode selections
 
@@ -569,3 +590,8 @@ creature set advances to the next selected mode.
 The artifact-or-enchantment choice runs during resolution. Each selected
 instance offers its own type choice and sends the current matching
 permanents to simultaneous destruction.
+
+An any-player attack declaration can coalesce its per-creature occurrences
+into one trigger. A separately declared target still uses current combat
+legality at placement and resolution. An optional result belongs to the
+trigger controller and keeps the announced attacker as its target.

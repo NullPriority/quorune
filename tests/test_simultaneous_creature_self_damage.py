@@ -40,11 +40,11 @@ class SimultaneousCreatureSelfDamageTests(InheritedNativeFixture, unittest.TestC
         cls.temporary = TemporaryDirectory()
         folder = Path(cls.temporary.name)
         support = {
-            "activation-public-state-cards.json": {"Disfigure", "Giant Growth", "Grizzly Bears"},
+            "activation-public-state-cards.json": {"Disfigure", "Giant Growth", "Grizzly Bears", "Unsummon"},
             "announced-x-public-damage-set-cards.json": {"Furnace of Rath", "Dictate of the Twin Gods"},
             "creature-power-multiple-cards.json": {"Vampire Nighthawk"},
             "damage-death-exile-cards.json": {"Wall of Omens"},
-            "prepared-power-damage-cards.json": {"Justice Strike"},
+            "prepared-power-damage-cards.json": {"Justice Strike", "White Knight"},
             "bound-effect-program-cards.json": {"Generic Bound Plains", "Generic Bound Growth"},
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
         }
@@ -263,5 +263,351 @@ class SimultaneousCreatureSelfDamageTests(InheritedNativeFixture, unittest.TestC
         self.assertTrue(targeted["strict_capability_ready"], targeted["blockers"])
 
 
+
+    def test_ignition_native_live_power_other_creatures_opponents_lifelink_and_replay(self):
+        game = self.session(12020001)
+        spell = self.add(game.engine, "Chandra's Ignition", zone="hand")
+        source = self.add(game.engine, "Vampire Nighthawk", ref="ignition-source")
+        ally = self.add(game.engine, "Grizzly Bears", ref="ignition-ally")
+        foreign = self.add(game.engine, "Wall of Omens", seat="C", ref="ignition-foreign")
+        protected = self.add(game.engine, "White Knight", seat="B", ref="ignition-protected")
+        land = self.add(game.engine, "Generic Bound Plains", seat="D", ref="ignition-land")
+        boost = self.add(game.engine, "Giant Growth", seat="C", zone="hand", ref="ignition-boost")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="ignition-private")
+        for card in (spell, source, protected):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"C": 3, "R": 2})
+        game.state.players["C"].mana_pool["G"] = 1
+        self.checkpoint(game)
+
+        offer = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"] == "cast:" + spell.ref)
+        before = authoritative_state_hash(game.state)
+        wrong = {"action_id": offer["id"], "targets": [foreign.ref], "pay": "auto"}
+        self.assertFalse(game.act("pilot:A", wrong).ok)
+        self.assertFalse(game.act("pilot:B", {**wrong, "targets": [source.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast_for(game, "A", spell, [source.ref])
+        self.cast_for(game, "C", boost, [source.ref])
+        self.resolve_top(game)
+        self.assertEqual(5, game.engine._numeric_stat(source.object_id, "power"))
+        game = self.replay(game, load=True)
+        life = {seat: player.life for seat, player in game.state.players.items()}
+        with self.damage_events(game, (ally, foreign)) as events:
+            self.assertIsNone(self.resolve(game))
+        self.assertEqual(5, len(events))
+        self.assertEqual(1, len({event["event_id"] for event, _ in events}))
+        for event, marks in events:
+            self.assertEqual((5, 5), marks)
+            self.assertEqual(source.object_id, event["source_object_id"])
+            self.assertEqual("A", event["source_controller"])
+            self.assertEqual(5, event["amount"])
+            self.assertFalse(event["combat"])
+        self.assertEqual(life["A"] + 25, game.state.players["A"].life)
+        for seat in "BCD":
+            self.assertEqual(life[seat] - 5, game.state.players[seat].life)
+        for card in (source, protected, land):
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+            self.assertEqual(0, game.state.cards[card.object_id].marked_damage)
+        for card in (ally, foreign):
+            self.assertEqual("graveyard", game.state.cards[card.object_id].zone)
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_ignition_illegal_source_whole_spell_fails_and_zero_power_deals_nothing(self):
+        for remove_target in (True, False):
+            with self.subTest(remove_target=remove_target):
+                game = self.session(12020002 + int(remove_target))
+                spell = self.add(game.engine, "Chandra's Ignition", zone="hand")
+                source = self.add(game.engine, "Grizzly Bears" if remove_target else "Wall of Omens")
+                other = self.add(game.engine, "Vampire Nighthawk", seat="B")
+                bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                self.prepare(game, mana={"C": 3, "R": 2})
+                game.state.players["B"].mana_pool["U"] = 1
+                self.checkpoint(game)
+                life = {seat: player.life for seat, player in game.state.players.items()}
+                self.cast_for(game, "A", spell, [source.ref])
+                if remove_target:
+                    self.cast_for(game, "B", bounce, [source.ref])
+                    self.resolve_top(game)
+                with self.damage_events(game, (source, other)) as events:
+                    self.assertIsNone(self.resolve(game))
+                self.assertEqual([], events)
+                self.assertEqual(life, {seat: player.life for seat, player in game.state.players.items()})
+                self.assertEqual("battlefield", game.state.cards[other.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_ignition_runtime_ownership_rejects_bad_target_domains_and_missing_authority(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.creature_power_damage_model import TARGET_POWER_DAMAGE_COHORT_CAPABILITY
+
+        card = self.db.lookup("Chandra's Ignition", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, card.name)
+        self.assertTrue(report["strict_capability_ready"], report)
+        spell, = semantics.programs_for_oracle(card.oracle_id)
+        schema = deepcopy(spell.target_schema)
+        schema["groups"][0]["controller_relation"] = "any"
+        invalid = bind_semantic_program_runtime(replace(spell, target_schema=schema),
+                                               capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(invalid["strict"], invalid)
+        effect, = spell.effects
+        for changed in ({**effect, "schema_version": 8.0}, {**effect, "source": "$source"},
+                        {**effect, "target": "$target.1"}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                typed_result_amount_runtime_dependencies(changed)
+        capabilities = tuple(cap for cap in spell.capability_dependencies if cap != TARGET_POWER_DAMAGE_COHORT_CAPABILITY)
+        missing = replace(spell, capability_dependencies=capabilities,
+                          capability_closure=self.registry.closure(capabilities, profile=PROFILE).to_dict())
+        result = bind_semantic_program_runtime(missing, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(result["strict"], result)
+        self.assertIn("capability:undeclared_runtime_dependency:" + TARGET_POWER_DAMAGE_COHORT_CAPABILITY, result["blockers"])
+
+    def test_ignition_closed_grammar_and_producer_omission_mutation(self):
+        from test_fixed_public_alternative_costs import card_record
+        from quorune.creature_power_damage_model import TARGET_POWER_DAMAGE_COHORT_KIND
+
+        text = (
+            "Target creature you control deals damage equal to its power to each other creature and each opponent."
+        )
+        for changed in (text.replace("you control ", ""), text.replace("each other", "each"),
+                        text.replace("each opponent", "each player"), text.replace("its power", "twice its power")):
+            with self.subTest(changed=changed):
+                self.assertIsNone(creature_power_damage_templates.fixed_creature_power_damage_effect_template(
+                    changed, card_name="Target-power fixture",
+                ))
+
+        def witness():
+            ir = compile_oracle_card(card_record(text, type_line="Sorcery"),
+                                     capability_registry=self.registry, capability_profile=PROFILE)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            self.assertEqual(TARGET_POWER_DAMAGE_COHORT_KIND, node.effects[0]["kind"])
+
+        witness()
+        with patch.object(creature_power_damage_templates, "target_power_damage_cohort_effect",
+                          return_value={"op": "unrepresented"}):
+            with self.assertRaises(AssertionError):
+                witness()
+
 if __name__ == "__main__":
     unittest.main()
+
+
+PREDATION_ORACLE = (
+    "For each creature your opponents control, create a 4/4 green Phyrexian Beast creature token. "
+    "Each of those tokens fights a different one of those creatures."
+)
+
+
+class CreatedTokenFightNativeTests(InheritedNativeFixture, unittest.TestCase):
+    damage_events = SimultaneousCreatureSelfDamageTests.damage_events
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "bound-effect-program-cards.json": {
+                "Generic Bound Commander", "Generic Bound Plains", "Generic Bound Body", "Generic Bound Growth",
+            },
+            "creature-power-multiple-cards.json": {"Vampire Nighthawk"},
+            "recipient-control-cards.json": {"Serra Ascendant"},
+            "attacking-token-result-cards.json": {"Parallel Lives"},
+            "announced-populate-cards.json": {"Soul Warden"},
+            "announced-x-public-damage-set-cards.json": {"Furnace of Rath", "Dictate of the Twin Gods"},
+        }
+        parts = [FIXTURES / "simultaneous-creature-self-damage-cards.json"]
+        for name, names in support.items():
+            document = json.loads((FIXTURES / name).read_bytes())
+            document["cards"] = [card for card in document["cards"] if card["name"] in names]
+            assert names == {card["name"] for card in document["cards"]}, name
+            ids = {card["oracle_id"] for card in document["cards"]}
+            document["rulings"] = [ruling for ruling in document.get("rulings", ()) if ruling["oracle_id"] in ids]
+            part = folder / name
+            part.write_text(json.dumps(document), encoding="utf-8")
+            parts.append(part)
+        path = folder / "created-token-fights.sqlite3"
+        build_fixture_database(parts, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Created token fights", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 25),
+        ], ["Generic Bound Commander"])
+
+    def start(self, game):
+        source = self.add(game.engine, "Ezuri's Predation", zone="hand", ref="predation-spell")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 5, "G": 3})
+        self.checkpoint(game)
+        self.cast(game, "A", source)
+        self.assertEqual([], game.state.stack[-1].targets)
+        return source
+
+    @staticmethod
+    def beasts(game):
+        return [card for card in game.state.cards.values()
+                if card.zone == "battlefield" and card.is_token and card.printed_name == "Phyrexian Beast Token"]
+
+    def reject(self, game, seat, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_predation_pairs_original_tokens_in_one_fight_batch(self):
+        game = self.session(7011401)
+        engine = game.engine
+        multiplier = self.add(engine, "Parallel Lives", ref="predation-doubler")
+        observer = self.add(engine, "Soul Warden", ref="predation-entry-observer")
+        nighthawk = self.add(engine, "Vampire Nighthawk", seat="B", ref="predation-lifelink")
+        ascendant = self.add(engine, "Serra Ascendant", seat="B", ref="predation-threshold")
+        third = self.add(engine, "Generic Bound Body", seat="C", ref="predation-other")
+        own = self.add(engine, "Generic Bound Body", ref="predation-own")
+        private = self.add(engine, "Generic Bound Growth", seat="D", zone="hand", ref="predation-private")
+        game.state.players["B"].life = 29
+        for card in (multiplier, observer, ascendant):
+            self.assert_closed(game, card)
+        self.assertEqual(1, engine._numeric_stat(ascendant.object_id, "power"))
+        source = self.start(game)
+        outcome = self.resolve(game)
+        self.assertIsNotNone(outcome)
+        self.assertEqual("choice.apnap", outcome.kind)
+        self.assertEqual([source.object_id], [item.card_object_id for item in game.state.stack])
+        self.assertEqual(40, game.state.players["A"].life)
+        self.assertEqual(6, len(self.beasts(game)))
+        self.assertTrue(all(card.marked_damage == 0 for card in (nighthawk, ascendant, third)))
+        context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        fighters = context["fighters"]
+        self.assertEqual(3, len(fighters))
+        self.assertEqual({nighthawk.ref, ascendant.ref, third.ref}, set(context["opponents"]))
+        self.assertNotIn(own.ref, context["opponents"])
+        self.assertNotIn(private.ref, json.dumps(context))
+        extras = [card for card in self.beasts(game) if card.ref not in fighters]
+        self.assertEqual(3, len(extras))
+        pairs = dict(zip(fighters, (nighthawk.ref, ascendant.ref, third.ref), strict=True))
+        command = {"action_id": "choose", "fight_pairs": pairs}
+        game = self.replay(game, load=True)
+        self.reject(game, "B", command)
+        self.reject(game, "A", {"action_id": "choose", "fight_pairs": dict.fromkeys(fighters, nighthawk.ref)})
+        self.reject(game, "A", {"action_id": "choose", "fight_pairs": {**pairs, fighters[-1]: own.ref}})
+        self.reject(game, "A", {"action_id": "choose", "fight_pairs": {extras[0].ref: nighthawk.ref,
+                             fighters[1]: ascendant.ref, fighters[2]: third.ref}})
+        watched = [nighthawk, ascendant, third]
+        watched.extend(next(card for card in self.beasts(game) if card.ref == ref) for ref in fighters)
+        with self.damage_events(game, watched) as events:
+            result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(6, len(events))
+        self.assertEqual(1, len({event["event_id"] for event, _marks in events}))
+        self.assertTrue(all(not event["combat"] for event, _marks in events))
+        self.assertTrue(all(marks == (4, 4, 4, 2, 1, 2) for _event, marks in events))
+        self.assertEqual(32, game.state.players["B"].life)
+        self.assertEqual(6, game.engine._numeric_stat(ascendant.object_id, "power"))
+        self.assertEqual("battlefield", game.state.cards[ascendant.object_id].zone)
+        for extra in extras:
+            self.assertEqual(0, game.state.cards[extra.object_id].marked_damage)
+        self.assertEqual("trigger.order", game.state.pending_decision.kind)
+        ctx = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        refs = [row["id"] for row in ctx["triggers"]]
+        self.assertEqual(6, len(refs))
+        ordered = game.act("pilot:A", {"action_id": "order", "triggers": refs})
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(46, game.state.players["A"].life)
+        self.replay(game, load=True)
+
+    def test_predation_empty_scope_has_no_creation_or_choice(self):
+        game = self.session(7011402)
+        self.add(game.engine, "Generic Bound Body", ref="predation-own-only")
+        self.start(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(self.beasts(game))
+        self.replay(game, load=True)
+
+    def test_predation_commits_the_only_pair(self):
+        game = self.session(7011405)
+        opponent = self.add(game.engine, "Generic Bound Body", seat="B")
+        self.start(game)
+        with self.damage_events(game, (opponent,)) as events:
+            self.assertIsNone(self.resolve(game))
+        beast, = self.beasts(game)
+        self.assertEqual(2, beast.marked_damage)
+        self.assertEqual(4, game.state.cards[opponent.object_id].marked_damage)
+        self.assertEqual(2, len(events))
+        self.assertEqual(1, len({event["event_id"] for event, _marks in events}))
+        self.replay(game, load=True)
+
+    def test_predation_retains_pairs_across_damage_replacement_choices(self):
+        game = self.session(7011404)
+        left = self.add(game.engine, "Generic Bound Body", seat="B", ref="predation-left")
+        right = self.add(game.engine, "Generic Bound Body", seat="C", ref="predation-right")
+        for name, seat in (("Furnace of Rath", "C"), ("Dictate of the Twin Gods", "D")):
+            self.assert_closed(game, self.add(game.engine, name, seat=seat))
+        self.start(game)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        fighters = self.beasts(game)
+        self.assertEqual(2, len(fighters))
+        pairs = dict(zip((card.ref for card in fighters), (left.ref, right.ref), strict=True))
+        chosen = game.act("pilot:A", {"action_id": "choose", "fight_pairs": pairs})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual("replacement.order", game.state.pending_decision.kind)
+        game = self.replay(game, load=True)
+        watched = [left, right, *fighters]
+        actors = []
+        with self.damage_events(game, watched) as events:
+            for _ in watched:
+                decision = game.state.pending_decision
+                self.assertEqual("replacement.order", decision.kind)
+                seat, = decision.actors
+                actors.append(seat)
+                self.assertEqual([], events)
+                self.assertEqual(2, len(self.beasts(game)))
+                self.assertTrue(all(game.state.cards[card.object_id].marked_damage == 0 for card in watched))
+                options = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["options"]
+                self.assertEqual(2, len(options))
+                command = {"action_id": "choose", "replacement": options[0]["id"]}
+                self.reject(game, "D", command)
+                chosen = game.act("pilot:" + seat, command)
+                self.assertTrue(chosen.ok, chosen.summary)
+            self.assertIsNone(self.resolve(game))
+        self.assertCountEqual(["A", "A", "B", "C"], actors)
+        self.assertEqual(4, len(events))
+        self.assertEqual(1, len({event["event_id"] for event, _marks in events}))
+        self.assertTrue(all(marks == (16, 16, 8, 8) for _event, marks in events))
+        self.replay(game, load=True)
+
+    def test_predation_strict_shape_and_runtime_withdrawal(self):
+        from dataclasses import replace
+        from test_granted_skulk import record
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.created_token_fights import CAPABILITY, created_token_fight_node_capabilities
+
+        source = record(PREDATION_ORACLE, "Sorcery")
+        ir = compile_oracle_card(source, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(PREDATION_ORACLE)), (node.span.start, node.span.end))
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        effect, = node.effects
+        for variant in ({**effect, "created_token_fights": True}, {**effect, "token": {"name": "Treasure"}},
+                        {**effect, "players": "all"}):
+            self.assertEqual((), created_token_fight_node_capabilities((variant,), None, None))
+        self.assertEqual((), created_token_fight_node_capabilities(node.effects, {"count": 1}, None))
+        for text in (
+            PREDATION_ORACLE.replace("your opponents control", "you control"),
+            PREDATION_ORACLE.replace("a different one of", "each of"),
+            PREDATION_ORACLE.replace("a 4/4", "two 4/4"),
+        ):
+            altered = compile_oracle_card(replace(source, oracle_text=text), capability_registry=self.registry)
+            self.assertNotIn(CAPABILITY, {cap for face in altered.faces for row in face.nodes for cap in row.capability_dependencies})
+        game = self.session(7011403)
+        spell = self.add(game.engine, "Ezuri's Predation", zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(spell.oracle_id)
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile=PROFILE).to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", binding["blockers"])

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ...zone_trigger_events import ZoneTransitionKind
+from ...paid_discard_model import observe_paid_discard_reveal
 from ..action_proposals import CastProposal
 from ..casting_additional_costs import (
     AdditionalCostError,
@@ -64,8 +65,12 @@ def _resolve_fixed_zone_change_additional_cost(
         granted_group = granted_escape_zone_costs(selected_option, raw_costs)
     except (AdditionalCostError, TypeError, ValueError) as exc:
         raise CastProposalError(str(exc), reason="additional_cost_malformed") from exc
+    from ...public_alternative_costs import is_life_and_blue_hand_exile_price_option
+
     if cost is None or (len(raw_costs) != 1 and cost_position not in dict(granted_group)
-            and not fixed_life_zone_costs(raw_costs) and not distinct_kicker_zone_costs(selected_option,raw_costs)
+            and not fixed_life_zone_costs(raw_costs)
+            and not is_life_and_blue_hand_exile_price_option(selected_option, raw_costs)
+            and not distinct_kicker_zone_costs(selected_option,raw_costs)
             and not fixed_color_tap_zone_costs(raw_costs)
             and not fixed_discard_sacrifice_order(selected_option, raw_costs)):
         raise CastProposalError(
@@ -182,14 +187,16 @@ def commit_card_cost_changes(
             if kind == "sacrifice"
             else ZoneTransitionKind.ORDINARY
         )
-        host.move_card(
-            paid.object_id,
-            destination,
-            reason=f"{card.printed_name} {kind} cost",
-            semantic_events=False,
-            replacement_selections=replacement_selections,
-            transition_kind=transition_kind,
-        )
+        reveals = result.paid_discard_reveals if kind == "discard" else None
+        with observe_paid_discard_reveal(logical_id, reveals):
+            host.move_card(
+                paid.object_id,
+                destination,
+                reason=f"{card.printed_name} {kind} cost",
+                semantic_events=False,
+                replacement_selections=replacement_selections,
+                transition_kind=transition_kind,
+            )
         result.paid_refs.append(paid.ref)
         result.deferred_events.append(
             (

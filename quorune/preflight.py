@@ -7,8 +7,8 @@ from pathlib import Path
 import re
 from typing import Any
 
-from .abilities import parse_activated_abilities
 from .carddb import CardDatabase, CardRecord
+from .compiler.chosen_basic_land_entry import basic_land_entry_choice_handler
 from .compiler.entry_state_templates import static_entry_state_handler
 from .compiler.preflight_keyword_coverage import static_lines_without_keyword_owners
 from .compiler.program_generation import rulings_source_hash
@@ -108,7 +108,7 @@ _MATERIAL_KEYWORDS = {
 }
 
 
-def _without_parenthetical_reminder(text: str) -> str:
+def _without_parenthetical_reminder(text: str, *, preserve_offsets: bool = False) -> str:
     """Remove balanced parenthetical reminder text from Oracle text.
 
     Reminder text frequently contains colons, trigger words, and token mana
@@ -120,14 +120,15 @@ def _without_parenthetical_reminder(text: str) -> str:
     result: list[str] = []
     depth = 0
     for character in text:
+        reminder = character == "(" or depth > 0
         if character == "(":
             depth += 1
-            continue
-        if character == ")" and depth:
+        elif character == ")" and depth:
             depth -= 1
-            continue
-        if depth == 0:
+        if not reminder:
             result.append(character)
+        elif preserve_offsets:
+            result.append("\n" if character == "\n" else " ")
     return "".join(result)
 
 
@@ -167,7 +168,8 @@ def _material_oracle_text(record: CardRecord) -> str:
 
 def _printed_activated_abilities(record: CardRecord) -> tuple[Any, ...]:
     from .compiler.activated_ability_catalog import specialize_compiled_activation_costs
-    return specialize_compiled_activation_costs(parse_activated_abilities(
+    from .compiler.activated_costs import parse_compiled_activated_abilities
+    return specialize_compiled_activation_costs(parse_compiled_activated_abilities(
         card_name=record.name,
         oracle_text=_without_quoted_granted_text(
             _material_oracle_text(record)
@@ -339,7 +341,7 @@ def _generic_land_status(record: CardRecord, trusted_programs=(), source_lines=(
     compiled_entry = any(
         static_entry_state_handler(line, source_name=record.name) is not None
         for line in _printed_static_lines(record)
-    )
+    ) or any(basic_land_entry_choice_handler(line) is not None for line in source_lines)
     unresolved: list[str] = []
     supported = (
         not oracle
@@ -350,7 +352,7 @@ def _generic_land_status(record: CardRecord, trusted_programs=(), source_lines=(
     uncovered_material = "\n".join(
         line.casefold() for line in _material_oracle_text(record).splitlines()
         if line.strip() not in covered_trigger_lines
-    ) if covered_trigger_lines else oracle
+    )
     if any(marker in uncovered_material for marker in ("when ", "whenever ", "return a land you control")):
         unresolved.append("triggered_ability")
     if "as " in oracle and "enters" in oracle and not supported:
@@ -443,8 +445,9 @@ def _trusted_activated_ability_is_covered(
     ability: Any,
     trusted_programs: list[Any],
     trusted_ids: set[str],
+    bound_activation_lines: set[str],
 ) -> bool:
-    if f"ability:{ability.ability_id}" in trusted_ids:
+    if f"ability:{ability.ability_id}" in trusted_ids or ability.oracle_line in bound_activation_lines:
         return True
     from .rules.equip_preflight_coverage import trusted_equip_keyword_covers
     if trusted_equip_keyword_covers(ability,trusted_programs):return True
@@ -461,6 +464,19 @@ def _trusted_activated_ability_is_covered(
     )
 
 
+def _unique_bound_activation_lines(abilities, activation_lines):
+    # Legacy activation IDs use flattened line numbers across faces. A unique
+    # printed activation can instead be matched to its strictly bound native span.
+    printed_lines = Counter(ability.oracle_line for ability in abilities)
+    # The legacy parser excludes separately compiled quoted granted abilities.
+    activation_lines = {_without_quoted_granted_text(line).strip() for line in activation_lines}
+    return {
+        ability.oracle_line for ability in abilities
+        if printed_lines[ability.oracle_line] == 1
+        and ability.oracle_line in activation_lines
+    }
+
+
 def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_registry, profile):
     """Recognize only exact current source spans with bound native execution."""
     from .card_programs.binding import bind_semantic_program_runtime
@@ -469,6 +485,7 @@ def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_r
     ranges={face.face_id:[] for face in oracle_ir.faces}
     covered_occurrences=set()
     all_occurrences=set()
+    activation_lines=set()
     for face in oracle_ir.faces:
         all_occurrences.update((face.face_id,line.strip()) for line in
             _without_parenthetical_reminder(face.oracle_text).splitlines() if line.strip())
@@ -484,20 +501,34 @@ def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_r
                 continue
             ranges[face.face_id].append((node.span.start,node.span.end))
             text=face.oracle_text[node.span.start:node.span.end]
-            covered_occurrences.update((face.face_id,line.strip()) for line in
-                _without_parenthetical_reminder(text).splitlines() if line.strip())
+            source_lines={line.strip() for line in
+                _without_parenthetical_reminder(text).splitlines() if line.strip()}
+            covered_occurrences.update((face.face_id,line) for line in source_lines)
+            if node.kind == "activated_ability":
+                activation_lines.update(source_lines)
     lines={line for _,line in all_occurrences if
         all((face,line) in covered_occurrences for face,value in all_occurrences if value==line)}
     keywords=set()
+    material_text = {face.face_id: _without_parenthetical_reminder(face.oracle_text, preserve_offsets=True)
+                     for face in oracle_ir.faces}
     for keyword in record.keywords:
-        pattern=(PRINTED_CYCLING_KEYWORD_PATTERN if keyword.casefold() == 'cycling'
-                 else re.compile(r'\b'+re.escape(keyword)+r's?\b',re.I))
+        if keyword.casefold() == "cycling":
+            pattern = PRINTED_CYCLING_KEYWORD_PATTERN
+        elif keyword.casefold() == "transform":
+            pattern = re.compile(r"\btransform(?:s|ed)?\b", re.I)
+        else:
+            pattern = re.compile(r'\b'+re.escape(keyword)+r's?\b', re.I)
         matches=[(face.face_id,match) for face in oracle_ir.faces
             for match in pattern.finditer(face.oracle_text)]
+        if keyword.casefold() == "transform":
+            material_matches = [(face.face_id, match) for face in oracle_ir.faces
+                                for match in pattern.finditer(material_text[face.face_id])]
+            # A bound Disturb instruction can describe its back-face cast in reminder text.
+            matches = material_matches or matches
         if matches and all(any(start<=match.start() and match.end()<=end
                 for start,end in ranges[face_id]) for face_id,match in matches):
             keywords.add(keyword.casefold())
-    return lines,keywords
+    return lines, keywords, lines & activation_lines
 
 
 def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability_registry, capability_profile):
@@ -506,7 +537,7 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
     legacy_coverage={value for program in trusted_programs
         if not str(program.provenance.get('authored_by','')).startswith('oracle-ir-v')
         for value in program.coverage}
-    source_lines,source_keywords=_trusted_generated_source_coverage(record,oracle_ir,trusted_programs,
+    source_lines,source_keywords,activation_lines=_trusted_generated_source_coverage(record,oracle_ir,trusted_programs,
         capability_registry or load_default_capability_registry(),capability_profile)
     replacement_lines={line.strip() for line in _material_oracle_text(record).splitlines()
         if 'instead' in line.casefold()}
@@ -555,7 +586,7 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
                 'you may cast that card','you may play lands from','you may play it this turn')))
     ):
         unresolved.append("zone_permission")
-    return tuple(unresolved),frozenset(legacy_coverage),source_lines
+    return tuple(unresolved), frozenset(legacy_coverage), source_lines, activation_lines
 
 
 def card_semantic_status(
@@ -613,11 +644,6 @@ def card_semantic_status(
         else:
             unresolved.append("cast_cost")
     abilities = _printed_activated_abilities(record)
-    unresolved.extend(
-        "activated_ability"
-        for ability in abilities
-        if not ability.compiled_cost and not ability.mana_ability
-    )
     oracle = _material_oracle_text(record).casefold()
     trigger_lines = _printed_trigger_lines(record)
     trusted_event_programs = [
@@ -632,7 +658,7 @@ def card_semantic_status(
         for program in trusted_programs
         for value in program.coverage
     }
-    material_unresolved,legacy_coverage,source_lines=_unresolved_source_materials(
+    material_unresolved,legacy_coverage,source_lines,activation_lines=_unresolved_source_materials(
         record,oracle_ir,trusted_programs,capability_registry,capability_profile)
     unresolved.extend(material_unresolved)
     generic_status = "none"
@@ -644,6 +670,13 @@ def card_semantic_status(
         for program in trusted_programs
         if program.ability_id.startswith("ability:")
     }
+    bound_activation_lines = _unique_bound_activation_lines(abilities, activation_lines)
+    unresolved.extend(
+        "activated_ability"
+        for ability in abilities
+        if not ability.compiled_cost and not ability.mana_ability
+        and ability.oracle_line not in bound_activation_lines
+    )
 
     for ability in abilities:
         if ability.mana_ability:
@@ -671,7 +704,7 @@ def card_semantic_status(
         )
         if (
             not builtin_fetch
-            and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids)
+            and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids, bound_activation_lines)
         ):
             unresolved.append(f"activated_ability:{ability.ability_id}")
     trusted_spell_program = any(
@@ -931,6 +964,7 @@ def semantic_preflight(
     force_refresh: bool = False,
     capability_profile: str = "commander_review",
     collect_source_diagnostics: bool = False,
+    checked_card_programs: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     registry = registry or SemanticRegistry()
     capability_registry = load_default_capability_registry()
@@ -1016,6 +1050,8 @@ def semantic_preflight(
             if row["card_program_runtime_binding"] is not None
         )
     )
+    if checked_card_programs is not None:
+        checked_card_programs.update(card_programs)
     return {
         "schema_version": PREFLIGHT_SCHEMA_VERSION,
         "deck": deck.name,

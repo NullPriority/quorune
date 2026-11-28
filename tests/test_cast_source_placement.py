@@ -56,6 +56,129 @@ class CastSourcePlacementTests(fixtures.StateTriggerFixture,unittest.TestCase):
                 else:
                     self.assertIsNotNone(offered);result=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary);self.assertTrue(session.state.cards[source.object_id].tapped);self.assertEqual(0,sum(session.state.players['A'].mana_pool.values()));self.settle(session);self.assertEqual('battlefield',session.state.cards[spell.object_id].zone);self.replay(session,load=True)
 
+    def test_x_quote_reuses_only_one_prospective_caster_and_spend_context(self):
+        from unittest.mock import patch
+        from quorune.engine import CommanderEngine
+        from quorune.mana import ManaMode, ManaSource
+        from quorune.rules.casting import affordable_x, costs
+        from quorune.rules.casting.source_placement import casting_affordability_host, quote_cast_affordability
+
+        session = self.session(612651041)
+        spell = self.add(session.engine, "Leatherback Baloth", zone="hand")
+        self.prepare(session)
+        host = casting_affordability_host(session.engine, spell)
+        first = ManaSource("plain", "A:plain", "Plain", (ManaMode({"G": 1}),))
+        snow = ManaSource("snow", "A:snow", "Snow", (ManaMode({"G": 1}),), snow=True)
+        reserve_snow = type("Reserved", (), {"object_id": snow.object_id})()
+        discoveries = []
+
+        def discover(read_host, seat, *, spend_context=None):
+            prospective = read_host.state.cards[spell.object_id]
+            self.assertEqual((prospective.zone, prospective.controller), ("stack", seat))
+            self.assertNotIn(spell.object_id, read_host.state.players[spell.owner].zones["hand"])
+            discoveries.append((seat, spend_context))
+            return [first, snow] if spend_context == "creature_spell" else [first]
+
+        def select_at_x(_host, _seat, option, *_args, **_kwargs):
+            selected = (reserve_snow,) if option["requirements"]["GENERIC"] >= 2 else ()
+            return {}, selected
+
+        def maximum():
+            return affordable_x._maximum_affordable_x_with_mechanics(
+                host, "A", spell, None, (), spend_context="creature_spell", limit=3,
+                quoted_price=({"requirements": {"GENERIC": 0}}, 1),
+            )
+
+        def uncached(cast_host, seat, spend_context):
+            return lambda requirements, **kwargs: cast_host._cost_is_affordable(
+                seat, requirements, spend_context=spend_context, **kwargs,
+            )
+
+        before = authoritative_state_hash(session.state)
+        with patch.object(CommanderEngine, "available_mana_sources", discover), patch.object(
+            costs, "_apply_payment_mechanics", select_at_x,
+        ):
+            self.assertEqual(maximum(), 1)
+            self.assertEqual(discoveries, [("A", "creature_spell")])
+            discoveries.clear()
+            with patch("quorune.rules.casting.source_placement.quote_cast_affordability", uncached):
+                self.assertEqual(maximum(), 1)
+            self.assertEqual(discoveries, [("A", "creature_spell")] * 3)
+
+            discoveries.clear()
+            spell_quote = quote_cast_affordability(host, "A", "creature_spell")
+            other_quote = quote_cast_affordability(host, "B", "noncreature_spell")
+            self.assertTrue(spell_quote({}, snow_required=1))
+            self.assertFalse(spell_quote({}, snow_required=1, exclude_sources={"snow"}))
+            self.assertFalse(other_quote({}, snow_required=1))
+            self.assertEqual(discoveries, [("A", "creature_spell"), ("B", "noncreature_spell")])
+        self.assertEqual(authoritative_state_hash(session.state), before)
+
+    def test_payment_options_share_only_the_exact_cast_quote_in_one_read_frame(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.characteristic_read_frames import characteristic_read_frame
+        from quorune.engine import CommanderEngine
+        from quorune.mana import ManaMode, ManaSource
+        from quorune.rules.casting.source_placement import casting_affordability_host
+
+        session = self.session(612651042)
+        first = self.add(session.engine, "Leatherback Baloth", zone="hand")
+        second = self.add(session.engine, "Shock", zone="hand")
+        self.prepare(session)
+        front = replace(first, active_face='Quote front')
+        back = replace(first, active_face='Quote back')
+        front_quote = casting_affordability_host(session.engine, front)
+        back_quote = casting_affordability_host(session.engine, back)
+        second_quote = casting_affordability_host(session.engine, second)
+        snow = ManaSource("snow", "A:snow", "Snow", (ManaMode({"G": 1}),), snow=True)
+        discoveries = []
+
+        def discover(read_host, payer, *, spend_context=None):
+            items = tuple(card for card in (first, second) if read_host.state.cards[card.object_id].zone == "stack")
+            self.assertEqual(1, len(items))
+            source, = items
+            selected = read_host.state.cards[source.object_id]
+            self.assertEqual(payer, selected.controller)
+            self.assertNotIn(source.object_id, read_host.state.players[source.owner].zones["hand"])
+            discoveries.append((source.object_id, selected.active_face, payer, spend_context))
+            can_use_snow = (source is first and selected.active_face == front.active_face
+                            and payer == "A" and spend_context == "creature_spell")
+            return [snow] if can_use_snow else []
+
+        anchor = authoritative_state_hash(session.state)
+        with patch.object(CommanderEngine, "available_mana_sources", discover):
+            with characteristic_read_frame(session.engine):
+                self.assertTrue(front_quote._cost_is_affordable("A", {}, spend_context="creature_spell", snow_required=1))
+                self.assertFalse(front_quote._cost_is_affordable(
+                    "A", {}, spend_context="creature_spell", snow_required=1, exclude_sources={snow.object_id},
+                ))
+                # A detached face still has the same physical ID, payer, and spend context.
+                self.assertFalse(back_quote._cost_is_affordable(
+                    "A", {}, spend_context="creature_spell", snow_required=1,
+                ))
+                self.assertFalse(back_quote._cost_is_affordable(
+                    "A", {}, spend_context="creature_spell", snow_required=1,
+                ))
+                self.assertTrue(front_quote._cost_is_affordable(
+                    "A", {}, spend_context="creature_spell", snow_required=1,
+                ))
+                self.assertFalse(second_quote._cost_is_affordable(
+                    "A", {}, spend_context="creature_spell", snow_required=1,
+                ))
+                self.assertFalse(front_quote._cost_is_affordable("B", {}, spend_context="creature_spell", snow_required=1))
+                self.assertFalse(front_quote._cost_is_affordable("A", {}, spend_context="noncreature_spell", snow_required=1))
+            self.assertTrue(front_quote._cost_is_affordable("A", {}, spend_context="creature_spell", snow_required=1))
+        self.assertEqual([
+            (first.object_id, front.active_face, "A", "creature_spell"),
+            (first.object_id, back.active_face, "A", "creature_spell"),
+            (second.object_id, second.active_face, "A", "creature_spell"),
+            (first.object_id, front.active_face, "B", "creature_spell"),
+            (first.object_id, front.active_face, "A", "noncreature_spell"),
+            (first.object_id, front.active_face, "A", "creature_spell"),
+        ], discoveries)
+        self.assertEqual(anchor, authoritative_state_hash(session.state))
+
     def test_marker_roundtrip_rejects_boolean_and_legacy_absence_keeps_old_payload(self):
         session = self.session(612651001)
         raw = session.state.to_dict()

@@ -247,8 +247,27 @@ def target_controller_library_reveal_template(text):
             target_controller_library_target(), ("destroy", "cr-115-targets"))
 
 
+def affected_artifact_life_template(text):
+    normalized = " ".join(text.split()).casefold().replace("’", "'")
+    expected = ("destroy all artifacts. they can't be regenerated. "
+                "the controller of each of those artifacts gains life equal to its mana value.")
+    if normalized != expected:
+        return None
+    from .destruction_templates import mass_destruction_effect_template
+
+    destruction = mass_destruction_effect_template("Destroy all artifacts. They can't be regenerated.")
+    if destruction is None:
+        return None
+    _, effects, schema, mechanics = destruction.compiled()
+    followup = DestructionFollowup.affected_artifact_life()
+    return ("affected-artifact-controller-mana-value-life-v1",
+            ({**effects[0], "followup": followup.to_dict()},), schema, (*mechanics, DESTRUCTION_RESULT_MECHANIC))
+
+
 def destruction_followup_template(text, *, compile_literal):
     normalized = text.strip()
+    if life := affected_artifact_life_template(normalized):
+        return life
     if copies := _destroyed_creature_half_copy_template(normalized, compile_literal=compile_literal):
         return copies
     if untap := _nonbasic_target_untap(normalized, compile_literal):

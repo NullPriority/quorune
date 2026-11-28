@@ -9,7 +9,7 @@ from ..compiled_cast_lifecycles import compiled_mayhem_permission, compiled_fixe
 from ..cast_lifecycles import FixedCastLifecycleKind
 from .self_graveyard_discard import compiled_self_graveyard_discard_specs
 from ..compiled_flashback import (
-    compiled_fixed_mana_flashback_spec,
+    compiled_fixed_mana_flashback_spec, compiled_harmonize_spec,
     compiled_ordinary_zone_cast_permission,
 )
 from ..semantic_runtime.action_permissions import (
@@ -20,9 +20,16 @@ from ..semantic_runtime.action_permissions import (
 )
 
 
+def _has_linked_graveyard_exile_permission(host, seat, card):
+    from ..semantic_runtime.linked_graveyard_exile_play import controller_linked_graveyard_exile_permissions
+    return bool(controller_linked_graveyard_exile_permissions(host, seat, card))
+
+
 def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True) -> bool:
     permission = host._temporary_play_permission(seat, card)
     if permission is not None and bool(permission.get("allow_land", True)):
+        return True
+    if _has_linked_graveyard_exile_permission(host, seat, card):
         return True
     if card.owner != seat:
         return False
@@ -48,9 +55,12 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_so
 
 
 def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True,
-    include_qualified_death: bool = True) -> bool:
+    include_qualified_death: bool = True, include_linked_exile: bool = True) -> bool:
+    from .airbend import current_airbend_cast_permission
     from .casting.escape_grants import compiled_granted_escape_permission
     from .graveyard_cast_costs import compiled_paid_graveyard_specs
+    if include_source_grants and include_linked_exile and _has_linked_graveyard_exile_permission(host, seat, card):
+        return True
     if compiled_paid_graveyard_specs(host, seat, card):
         return True
     if compiled_self_graveyard_discard_specs(host,seat,card):
@@ -68,9 +78,11 @@ def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_so
         (
             card.owner == seat
             and card.zone == "graveyard"
-            and compiled_fixed_mana_flashback_spec(host, card) is not None
+            and (compiled_fixed_mana_flashback_spec(host, card) is not None
+                 or compiled_harmonize_spec(host, card) is not None)
         )
         or compiled_fixed_zone_cast_permission(host, seat, card)
+        or current_airbend_cast_permission(card, seat) is not None
         or (include_source_grants and compiled_granted_escape_permission(host, seat, card))
     )
 

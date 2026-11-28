@@ -127,18 +127,26 @@ def cast_spell_token_copy_payload_dependencies(value: Any) -> tuple[str, ...]:
 
 
 def created_token_haste_closure(effect):
-    from ..fixed_token_production import CREATED_TOKEN_HASTE_CAPABILITY, CREATED_TOKEN_HASTE_FIELD
+    from ..fixed_token_production import (
+        CREATED_TOKEN_HASTE_CAPABILITY, CREATED_TOKEN_HASTE_FIELD, CREATED_TOKEN_HASTE_LIFELINK_CAPABILITY,
+        created_token_keyword_grant, temporary_haste_lifelink_goblin_effect,
+    )
+    from ..replacement.immutable import FrozenMap
 
     if not isinstance(effect, Mapping) or type(effect.get(CREATED_TOKEN_HASTE_FIELD)) is not int:
         raise ValueError("Created-token haste requires its explicit instruction version")
+    keywords = created_token_keyword_grant(effect[CREATED_TOKEN_HASTE_FIELD])
     base = {key: value for key, value in effect.items() if key != CREATED_TOKEN_HASTE_FIELD}
-    if effect[CREATED_TOKEN_HASTE_FIELD] != 1 or not fixed_token_effect_shape_is_closed(base):
-        raise ValueError("Created-token haste requires one fixed ordinary token creation")
+    if not fixed_token_effect_shape_is_closed(base) or (
+        len(keywords) == 2 and FrozenMap(effect) != FrozenMap(temporary_haste_lifelink_goblin_effect())
+    ):
+        raise ValueError("Created-token keywords require their closed creature token instruction")
     creation = _fixed_creature_effect_closure(base)
     if creation is None:
         raise ValueError("Created-token haste requires a closed creature token definition")
     required, mechanics = creation
-    return (*required, CREATED_TOKEN_HASTE_CAPABILITY, "continuous.resolution.fixed_keyword_zone_object"), mechanics
+    capability = CREATED_TOKEN_HASTE_CAPABILITY if len(keywords) == 1 else CREATED_TOKEN_HASTE_LIFELINK_CAPABILITY
+    return (*required, capability, "continuous.resolution.fixed_keyword_zone_object"), mechanics
 
 
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
@@ -842,6 +850,8 @@ def _distributed_token_creation_closure(
     effect: Mapping[str, Any],
 ) -> tuple[FixedTokenCreatorScope, tuple[str, ...], set[str]]:
     scope = fixed_token_creator_scope(effect)
+    if scope is FixedTokenCreatorScope.CONTROLLER_AND_CHOSEN_OPPONENT:
+        raise FixedTokenProductionError("A chosen creator requires the resolving choice owner")
     targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
     if effect["controller"] != "$controller" or targeted and effect["target"] != "$target.0":
         raise FixedTokenProductionError("Distributed token creation requires bound creators")
@@ -861,6 +871,16 @@ def distributed_token_creation_payload_dependencies(effect: Mapping[str, Any]) -
 
     if uses_qualified_token_creators(effect):
         effect = project_qualified_token_creators(effect)
+    token = effect.get("token")
+    if isinstance(token, Mapping) and isinstance(token.get("quantity"), Mapping):
+        from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+        amount = ScalarEffectAmountSpec.from_dict(token["quantity"])
+        if (effect.get("scope") != FixedTokenCreatorScope.EACH_PLAYER.value
+                or amount.origin is not ScalarAmountOrigin.SOURCE or amount.counter_name is None
+                or amount.binding_id is None or amount.coefficient != 1):
+            raise FixedTokenProductionError("Distributed token quantity requires a shared source counter amount")
+        effect = {**effect, "token": {**token, "quantity": 2}}
     return _distributed_token_creation_closure(effect)[1]
 
 
@@ -972,6 +992,26 @@ def _copy_batch_capabilities(effect, target_schema, mechanics):
     return spec.capability_dependencies
 
 
+def chosen_entry_token_copy_program_dependencies(program):
+    from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+    from ..token_copy_recipes import uses_chosen_entry_token_copy
+    from .effect_shape_walkers import nested_effects
+
+    if not any(uses_chosen_entry_token_copy(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if (len(program.effects) != 1
+            or (program.event, program.active_zone) != ("step.begin", "battlefield")
+            or not is_controller_end_step_schedule(program.event_condition)
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or program.destination is not None or program.trigger_limit is not None or program.requires_arbiter
+            or not program.ability_id.startswith("trigger:")):
+        raise TokenCopyRecipeError("Chosen-type token copies require the original controller end-step program")
+    spec = TokenCopyBatchSpec.from_effect(program.effects[0])
+    if not spec.uses_chosen_entry_models:
+        raise TokenCopyRecipeError("Chosen-type token copies require the closed same-turn token query")
+    return spec.capability_dependencies
+
+
 def source_bound_populate_capabilities(effect):
     from ..fixed_token_production import source_bound_populate_effect
     from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
@@ -1021,6 +1061,10 @@ def fixed_token_creation_node_capabilities(
         return role_token_node_capabilities(effects=effects, target_schema=target_schema, mechanics=set(mechanic_ids))
     """Recognize a compiler-owned fixed token creation instruction."""
 
+    from .controlled_creature_counter_tokens import COUNT_FIELD, controlled_creature_counter_token_capabilities
+
+    if len(effects) == 1 and COUNT_FIELD in effects[0]:
+        return controlled_creature_counter_token_capabilities(effects[0], target_schema, mechanic_ids)
     from .created_token_cleanup_shapes import created_token_cleanup_node_capabilities
     cleanup = created_token_cleanup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if cleanup:
@@ -1267,7 +1311,10 @@ def token_creation_component_mechanics(effects, parent_mechanics):
             and isinstance(characteristics, Mapping) and characteristics.get('ability_fragments')):
         closure = _fixed_token_effect_closure(effect)
         if closure is not None:
-            mechanics.update(set(closure[1])-{TYPED_TOKEN_ABILITY_MECHANIC_ID})
+            # A validated definition supplies canonical names for numeric keywords.
+            mechanics = set(closure[1]) - {TYPED_TOKEN_ABILITY_MECHANIC_ID}
+            if "target" in effect and "cr-115-targets" in parent_mechanics:
+                mechanics.add("cr-115-targets")
             if TYPED_TOKEN_ABILITY_MECHANIC_ID in parent_mechanics and TYPED_TOKEN_ABILITY_CAPABILITY_ID in closure[0]:
                 mechanics.add(TYPED_TOKEN_ABILITY_MECHANIC_ID)
     try:

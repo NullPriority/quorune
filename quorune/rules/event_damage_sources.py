@@ -44,6 +44,9 @@ def event_damage_source_node_capabilities(*, effects, target_schema, mechanic_id
             return ()
         amount = effect.get('amount')
         if isinstance(amount, Mapping):
+            from .qualified_entry_effects import entry_subtype_damage_capabilities
+            if entry := entry_subtype_damage_capabilities(effect, target_schema):
+                return entry
             from ..scalar_effect_amount_model import ScalarEffectAmountSpec, ScalarAmountOrigin
             scalar = ScalarEffectAmountSpec.from_dict(amount)
             if scalar.origin is not ScalarAmountOrigin.EVENT_AMOUNT or reference.event not in {'damage.received', 'combat.damage.received'}:
@@ -74,6 +77,10 @@ def event_damage_source_runtime_dependencies(program):
         mechanic_ids=('cr-120-damage', *(('cr-115-targets',) if program.target_schema is not None else ())))
     if not required:
         raise ValueError('Event dealer damage result is outside its closed owner')
+    from .qualified_entry_effects import entry_subtype_damage_subtype, validate_entry_subtype_damage_program
+
+    if subtype := entry_subtype_damage_subtype(effect):
+        validate_entry_subtype_damage_program(program, leaves, subtype)
     return required
 
 

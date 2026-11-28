@@ -4,6 +4,7 @@ from dataclasses import replace
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -17,10 +18,40 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.permissions import PermissionDenied
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.random_selection import publish_resolution_die_roll, roll_fixed_die
 from scripts.build_test_database import build_fixture_database
 
 SOURCE = "Generic Storm Reckoner"
 PROFILE = "commander_review"
+
+
+class PublicResolutionDieRollTests(unittest.TestCase):
+    def test_public_roll_ordinals_preserve_first_face_and_replay_order(self):
+        events = []
+        seed = 4611
+        host = SimpleNamespace(
+            state=SimpleNamespace(config=SimpleNamespace(seed=seed)),
+            _log=lambda *event, **metadata: events.append((event, metadata)),
+        )
+        scope = dict(controller="A", stack_ref="S17", instruction_pointer=2, sides=20)
+        expected_keys = ("S17|2", "S17|2|roll:2", "S17|2|roll:3")
+        expected_faces = [roll_fixed_die(20, seed=seed, instruction_key=key, seat="A") for key in expected_keys]
+        with patch("quorune.rules.random_selection.roll_fixed_die", wraps=roll_fixed_die) as roll:
+            faces = [publish_resolution_die_roll(host, **scope, roll_ordinal=index) for index in (1, 2, 3)]
+        self.assertEqual(expected_faces, faces)
+        self.assertEqual(list(expected_keys), [call.kwargs["instruction_key"] for call in roll.call_args_list])
+        self.assertEqual([
+            (("A", "die.roll", f"A rolled {face} on a d20.",
+              {"player": "A", "sides": 20, "result": face, "stack": "S17"}), {"importance": 2})
+            for face in faces
+        ], events)
+        events.clear()
+        self.assertEqual(faces[1], publish_resolution_die_roll(host, **scope, roll_ordinal=2))
+        self.assertEqual(1, len(events))
+        for value in (0, True, -1):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                publish_resolution_die_roll(host, **scope, roll_ordinal=value)
+        self.assertEqual(1, len(events))
 
 
 class SingleD20DrawTests(InheritedNativeFixture, unittest.TestCase):
@@ -56,6 +87,134 @@ class SingleD20DrawTests(InheritedNativeFixture, unittest.TestCase):
 
     def roll_events(self, game):
         return tuple(event for event in game.state.events if event.code == "die.roll")
+
+    def test_delina_complete_table_and_child_share_closed_source_provenance(self):
+        from quorune.rules.targeted_attack_die_copy import CLEANUP_TEMPLATE, ROLL_TEMPLATE
+
+        card = self.db.lookup("Delina, Wild Mage", fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        parent, child = ir.faces[0].nodes
+        self.assertEqual((ROLL_TEMPLATE, CLEANUP_TEMPLATE), (parent.template_id, child.template_id))
+        self.assertEqual(card.oracle_text, parent.text)
+        self.assertEqual("At end of combat, exile this token.", child.text)
+        self.assertEqual("you", parent.target_schema["controller_relation"])
+        for altered in (
+            card.oracle_text.replace("15—20", "16—20"),
+            card.oracle_text.replace("You may roll again.", "Roll again."),
+            card.oracle_text.replace("exile this token", "sacrifice this token"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(
+                replace(card, oracle_text=altered), capability_registry=self.registry, capability_profile=PROFILE,
+            ).status)
+
+    def test_delina_missing_intrinsic_trigger_mutation_leaves_the_whole_table_residual(self):
+        card = self.db.lookup("Delina, Wild Mage", fuzzy=False)
+        with patch("quorune.compiler.targeted_attack_die_copy.attached_granted_ability_plan", return_value=None):
+            ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertNotEqual("exact", ir.status)
+        self.assertEqual(3, len(ir.material_residuals))
+
+    def delina_attack(self, seed, *, bounce=False):
+        game = self.session(seed)
+        source = self.add(game.engine, "Delina, Wild Mage")
+        original = self.add(game.engine, "Isamaru, Hound of Konda", ref="delina-controlled-legend")
+        foreign = self.add(game.engine, "Isamaru, Hound of Konda", seat="B", ref="delina-opposing-legend")
+        if bounce:
+            self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="delina-target-bounce")
+            self.add(game.engine, "Island", seat="B", ref="delina-bounce-mana")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={})
+        self.checkpoint(game)
+        self.attack(game, [(source, "D")])
+        pending = game.state.pending_decision
+        self.assertEqual(("semantic.target", ["A"]), (pending.kind, pending.actors))
+        self.assertFalse(self.roll_events(game))
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:A", {"action_id": "choose", "targets": [foreign.ref]})
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", {"action_id": "choose", "targets": [original.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        return game, source, original
+
+    def choose_delina_token_destination(self, game, seat):
+        context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("choose_fixed_attacking_token_destinations", context["operation"])
+        self.assertIn(seat, context["destinations"])
+        command = {"action_id": "choose", "attacking": {"attacking:0": seat}}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_delina_native_repeats_after_token_and_exiles_both_as_intrinsic_triggers(self):
+        game, _, original = self.delina_attack(706005)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertGreaterEqual(self.roll_events(game)[0].details["result"], 15)
+        self.choose_delina_token_destination(game, "C")
+        first, = (card for card in game.state.cards.values() if card.zone == "battlefield" and card.is_token)
+        self.assertEqual(1, len(self.roll_events(game)))
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        self.assertEqual("offer_optional_effect", game.packet("pilot:A", full=True)["decision"]["ctx"]["operation"])
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, len(self.roll_events(game)))
+        self.choose_delina_token_destination(game, "B")
+        if self.roll_events(game)[-1].details["result"] >= 15:
+            decline = game.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+            self.assertTrue(decline.ok, decline.summary)
+        tokens = [card for card in game.state.cards.values() if card.zone == "battlefield" and card.is_token]
+        self.assertEqual(2, len(tokens))
+        self.assertTrue(all(token.tapped and token.attacking for token in tokens))
+        self.assertEqual({"B", "C"}, {game.state.combat.attackers[token.object_id] for token in tokens})
+        self.assertTrue(all("Legendary" not in game.engine._effective_card_data(token)["type_line"] for token in tokens))
+        self.assertIn(first.object_id, {token.object_id for token in tokens})
+        self.assertEqual(original.oracle_id, tokens[0].oracle_id)
+        for token in tokens:
+            grant = game.engine._effective_card_data(token)["ability_fragments"]
+            self.assertIn("At end of combat, exile this token.", json.dumps(grant))
+        self.until(game, lambda current: current.state.step == "end_combat"
+                   and all(current.state.cards.get(token.object_id) is None
+                           or current.state.cards[token.object_id].zone != "battlefield" for token in tokens))
+        self.assertEqual("battlefield", game.state.cards[original.object_id].zone)
+        self.assertEqual(2, len(self.roll_events(game)))
+        self.replay(game, load=True)
+
+    def test_delina_native_high_roll_can_decline_after_one_token(self):
+        game, _, _ = self.delina_attack(706005)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertGreaterEqual(self.roll_events(game)[0].details["result"], 15)
+        self.choose_delina_token_destination(game, "B")
+        result = game.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(self.roll_events(game)))
+        self.assertEqual(1, sum(card.is_token and card.zone == "battlefield" for card in game.state.cards.values()))
+        self.replay(game, load=True)
+
+    def test_delina_losing_the_announced_target_stops_the_roll_and_copy(self):
+        game, _, original = self.delina_attack(706005, bounce=True)
+        bounce = next(card for card in game.state.cards.values() if card.ref == "delina-target-bounce")
+        self.cast_for(game, "B", bounce, [original.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[original.object_id].zone)
+        self.assertFalse(self.roll_events(game))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+        self.replay(game, load=True)
+
+    def test_delina_low_roll_creates_the_same_token_without_a_repeat_offer(self):
+        game, _, _ = self.delina_attack(706006)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        roll, = self.roll_events(game)
+        self.assertEqual(14, roll.details["result"])
+        self.choose_delina_token_destination(game, "B")
+        self.assertNotEqual("semantic.choice", game.state.pending_decision.kind)
+        token, = (card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        self.assertTrue(token.tapped)
+        self.assertEqual("B", game.state.combat.attackers[token.object_id])
+        self.replay(game, load=True)
 
     def attack_for_trigger(self, game, source, defender="D"):
         self.attack(game, [(source, defender)])

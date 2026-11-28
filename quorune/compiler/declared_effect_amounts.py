@@ -25,7 +25,7 @@ from ..entry_x_amount_model import (
 )
 from ..replacement.immutable import thaw_value
 from ..shared_type_doors import ROOM_DOOR_AMOUNT_KIND, RoomDoorQuantity
-from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
+from ..fixed_token_production import FIXED_DISTRIBUTED_TOKEN_OPERATION, SEQUENTIAL_INVESTIGATE_OPERATION
 from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_VERSION
 from ..library_search_model import counted_search_bound_dependencies, counted_search_mana_value_slot
 
@@ -69,12 +69,15 @@ _RESULT_FIELDS = {
     "modify_all_matching_permanents_until_end_of_turn": ("power", "toughness"),
     "apply_source_characteristics_until_end_of_turn": ("power", "toughness"),
     "place_counters": ("amount",),
+    "place_counters_on_set": ("amount",),
 }
 
 
 def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_targets: bool = False) -> bool:
     return path in tuple((field,) for field in _RESULT_FIELDS.get(operation, ())) or (
         operation == "create_token" and path in {("characteristics", "power"), ("characteristics", "toughness")}
+    ) or (
+        operation == FIXED_DISTRIBUTED_TOKEN_OPERATION and path == ("token", "quantity")
     ) or (
         operation == "search" and counted_search_mana_value_slot(path)
     ) or (
@@ -150,7 +153,9 @@ def declared_effect_amount_template(
                 FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects",
             )
         from .announced_target_sets import announced_target_set_effect_template
-        target_set = announced_target_set_effect_template(normalized)
+        from .announced_damage_templates import scaled_announced_target_damage_template
+        target_set = (scaled_announced_target_damage_template(normalized, source_name=source_name)
+                      or announced_target_set_effect_template(normalized))
         if target_set is not None:
             return target_set
         graveyard_return = _announced_graveyard_set_template(normalized, compile_fixed)
@@ -207,8 +212,10 @@ def declared_effect_amount_template(
         n, m = _signed_number(a), _signed_number(b)
         if n not in {-6, -4, -2, 2, 4, 6} or m != n * 3 // 2 or type(a) is not type(b):
             raise PublicQueryAmountError("X result did not preserve its bounded signed coefficient")
-        replaced += 1
         coefficient = n // 2
+        if operation == "place_counters_on_set" and (quantity is not None or coefficient != 1):
+            raise PublicQueryAmountError("An affected counter set requires its unscaled announced X")
+        replaced += 1
         return (
             PublicQueryAmountSpec(quantity=quantity, coefficient=coefficient, schema_version=2, binding_id=binding_id).to_dict()
             if quantity is not None else CastXAmountSpec(
@@ -281,8 +288,12 @@ def _bargain_declaration_available(record, text):
     return printed_bargain_spec(record) is not None
 
 
-def _announced_player_round_spell_compiler(fallback):
-    def compile_player_rounds(text, **context):
+def _announced_x_spell_compiler(fallback):
+    from .announced_x_draw_replacement import announced_x_draw_replacement_template
+
+    def compile_announced_x(text, **context):
+        if draw_branch := announced_x_draw_replacement_template(text):
+            return draw_branch
         if _ANNOUNCED_PLAYER_ROUNDS.fullmatch(" ".join(text.strip().split())) is not None:
             from ..rules.announced_x_player_rounds import announced_x_player_round_effects
             from ..rules.fixed_player_rounds import FIXED_PLAYER_ROUNDS_TEXT
@@ -298,7 +309,7 @@ def _announced_player_round_spell_compiler(fallback):
                             (DECLARED_EFFECT_AMOUNT_MECHANIC, *mechanics))
         return fallback(text, **context)
 
-    return compile_player_rounds
+    return compile_announced_x
 
 
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
@@ -322,6 +333,13 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     if not available and 'X' not in symbols and is_spell and not record.faces and re.search(r'\bX\b',oracle_text,re.I):
         available=_additional_price_declares_x(oracle_text)
     from .cast_x_search_templates import cast_x_zone_search_template
+    from .announced_permanent_reveal_templates import announced_permanent_reveal_template
+
+    if available and symbols.count("X") == 1 and announced_permanent_reveal_template(oracle_text):
+        def compile_permanent_reveal(text, **context):
+            return announced_permanent_reveal_template(text) or compile_effect(text, **context)
+
+        return compile_permanent_reveal
 
     if available and symbols.count("X") == 1:
         repeated = re.fullmatch(
@@ -351,7 +369,15 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
     if available and symbols.count("X") == 1:
-        selected = _announced_player_round_spell_compiler(selected)
+        from .legendary_sorcery_damage import legendary_sorcery_damage_compiler
+
+        selected = legendary_sorcery_damage_compiler(selected, record=record, source_name=face_name or record.name)
+        from .paired_token_creator_templates import paired_token_spell_compiler
+
+        selected = _announced_x_spell_compiler(selected)
+        from .bounded_hand_cast_templates import announced_x_damage_hand_cast_spell_compiler
+        selected = announced_x_damage_hand_cast_spell_compiler(selected)
+        selected = paired_token_spell_compiler(selected)
     if is_spell and not record.faces and symbols.count("X") == 1:
         from .announced_mana_value_target import announced_target_spell_compiler
         selected = announced_target_spell_compiler(selected)
@@ -553,6 +579,8 @@ def declared_amount_shape_context(
                     raise PublicQueryAmountError("A Room door amount requires its fixed token stats")
             if operation == "move_public_zone_set" and spec != CastXAmountSpec():
                 raise PublicQueryAmountError("The graveyard return ceiling requires the spell's announced X")
+            if operation == "place_counters_on_set" and spec != CastXAmountSpec():
+                raise PublicQueryAmountError("An affected counter set requires its unscaled announced X")
             count += 1
             result = 2 * spec.coefficient
             return str(result) if path in {("characteristics","power"),("characteristics","toughness")} else result

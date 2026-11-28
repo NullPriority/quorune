@@ -41,6 +41,20 @@ _HISTORY = {
     "the number of creatures that died this turn": "creatures_died",
     "the number of creatures that entered under your control this turn": "creatures_entered",
 }
+_DRAW_COUNTED_TRAMPLE = re.compile(
+    r"Until end of turn, target creature gains trample and gets \+1/\+0 "
+    r"for each card you['’]ve drawn this turn\.",
+    re.IGNORECASE,
+)
+
+
+def _normalize_draw_counted_trample(text: str) -> str:
+    if _DRAW_COUNTED_TRAMPLE.fullmatch(text):
+        return (
+            "Target creature gets +X/+0 and gains trample until end of turn, "
+            "where X is the number of cards you've drawn this turn."
+        )
+    return text
 
 
 def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
@@ -188,7 +202,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         source_name=source_name, compile_fixed=compile_fixed, event=event, source_event=source_event)
     if cleanup is not None:return cleanup
     from .target_hand_amount_templates import normalized_target_hand_damage
-    normalized = normalized_target_hand_damage(text.strip(),source_name)
+    normalized = normalized_target_hand_damage(_normalize_draw_counted_trample(text.strip()), source_name)
     if event == "spell.cast" and (counter_amount := re.fullmatch(
         r"Put a number of (?P<counter>[A-Za-z0-9+/-]+) counters equal to "
         r"(?P<value>that spell['’]s mana value) on (?P<receiver>[^.]+?)\.?",
@@ -321,8 +335,46 @@ def _nontoken_creature_entry_food_template(text, binding, compile_fixed):
             None, (*mechanics, SCALAR_AMOUNT_MECHANIC))
 
 
+def _opponent_turn_threshold_end_step(text, binding, compile_fixed):
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            != ("step.begin", "each end step", "battlefield")
+            or not re.fullmatch(
+                r"Draw a card for each opponent who drew two or more cards this turn, then "
+                r"create a Treasure token for each opponent who had two or more lands enter "
+                r"the battlefield under their control this turn[.]",
+                " ".join(text.split()), re.I,
+            )):
+        return None
+
+    from ..public_history_query_model import opponent_event_threshold_query
+    from ..rules.fixed_effect_clause_shapes import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+
+    effects = []
+    mechanics = [SCALAR_AMOUNT_MECHANIC, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC]
+    for clause, operation, field, land_entries in (
+        ("Draw a card.", "draw", "count", False),
+        ("Create a Treasure token.", "create_token", "quantity", True),
+    ):
+        base, result, targets, leaves = compile_fixed(clause)
+        if base is None or targets is not None or len(result) != 1 or result[0].get("op") != operation:
+            return None
+        amount = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.HISTORY_COUNT, schema_version=10,
+            history_count=opponent_event_threshold_query(land_entries=land_entries),
+        )
+        effects.append({**result[0], field: amount.to_dict()})
+        mechanics.extend(leaves)
+    return "end-step-opponent-draw-and-land-thresholds-v1", tuple(effects), None, tuple(mechanics)
+
+
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
+    if thresholds := _opponent_turn_threshold_end_step(text, binding, compile_fixed):
+        return thresholds
+    from .mana_value_destruction import cast_mana_value_destruction_template
+
+    if destruction := cast_mana_value_destruction_template(binding, text):
+        return destruction
     if food := _nontoken_creature_entry_food_template(text, binding, compile_fixed):
         return food
     from ..counter_placement_sets import (

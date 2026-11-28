@@ -5,13 +5,19 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
-from .combat_damage_library_exile import COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_EXILE_VERSION
+from .combat_damage_library_exile import (
+    COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION,
+    COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD, COMBAT_DAMAGE_EXILE_VERSION,
+)
 from .errors import GameRuleError
 from .fractional_quantity_model import HalfQuantitySpec
 from .impulse_access_model import (
+    SPAWN_SETTLEMENT_IMPULSE_VERSION, SPAWN_IMPULSE_INCARNATION_FIELD,
+    POWER_COUNTED_IMPULSE_VERSION, POWER_COUNTED_IMPULSE_INCARNATION_FIELD,
     ImpulseAccessDuration,
     SHUFFLED_TOP_FREE_PLAY_VERSION,
     TOP_FREE_INSTANT_SORCERY_VERSION,
+    TemporaryCastPermissionError,
     TemporaryCastPermissionGrant,
     impulse_access_count_is_legal,
     impulse_access_request_count_is_legal,
@@ -59,6 +65,7 @@ class ImpulseAccessRequest:
     def beneficiary(self) -> str:
         if self.schema_version in {
             OPPONENT_TOP_EXILE_VERSION, COMBAT_DAMAGE_EXILE_VERSION, COMBAT_DAMAGE_CAST_EXILE_VERSION,
+            COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION,
         }:
             return self.actor
         return self.player
@@ -201,7 +208,9 @@ def _play_permission(
         "player": request.beneficiary,
         "zone": "exile",
         "without_mana_cost": free_play,
-        "allow_land": not spell_types_only and request.schema_version != COMBAT_DAMAGE_CAST_EXILE_VERSION,
+        "allow_land": not spell_types_only and request.schema_version not in {
+            COMBAT_DAMAGE_CAST_EXILE_VERSION, COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION,
+        },
         "allow_spell": True,
         "duration": request.duration.value,
         "granted_turn_sequence": host.state.turn_sequence,
@@ -242,11 +251,19 @@ def commit_fixed_impulse_access(
     for card in moved:
         if card.zone != "exile":
             continue
-        if permission is not None:
+        color_cast = plan.request.schema_version == COMBAT_DAMAGE_COLOR_CAST_EXILE_VERSION
+        incarnation_field = {
+            SPAWN_SETTLEMENT_IMPULSE_VERSION: SPAWN_IMPULSE_INCARNATION_FIELD,
+            POWER_COUNTED_IMPULSE_VERSION: POWER_COUNTED_IMPULSE_INCARNATION_FIELD,
+        }.get(plan.request.schema_version)
+        needs_visible_incarnation = color_cast or incarnation_field is not None
+        if permission is not None and (not needs_visible_incarnation or not card.face_down):
             card.annotations["temporary_play_permission"] = {
+                **({incarnation_field: card.logical_object_id} if incarnation_field else {}),
                 **permission,
                 **({"instant_sorcery_incarnation": card.logical_object_id}
                    if plan.request.schema_version == TOP_FREE_INSTANT_SORCERY_VERSION else {}),
+                **({COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD: card.logical_object_id} if color_cast else {}),
             }
         exiled.append(card)
     changed_players = [plan.request.player]
@@ -280,6 +297,13 @@ def commit_fixed_impulse_access(
     )
 
 
+def link_power_counted_play_permissions(cards, trigger):
+    for card in cards:
+        permission = card.annotations.get("temporary_play_permission")
+        if isinstance(permission, dict) and permission.get(POWER_COUNTED_IMPULSE_INCARNATION_FIELD) == card.logical_object_id:
+            permission["power_counted_impulse_event"] = trigger.ref
+
+
 def resolve_fixed_impulse_access(
     host: ImpulseAccessHost,
     request: ImpulseAccessRequest,
@@ -291,24 +315,57 @@ def resolve_fixed_impulse_access(
 
 
 def apply_chosen_impulse_access(host, effect, *, actor, reason):
-    from .fixed_top_exile import chosen_impulse_grant
+    from .fixed_top_exile import chosen_impulse_grant, chosen_opponent_impulse_grant
+    from .opponent_library_exile import grant_chosen_bounded_opponent_play
 
+    opponent = type(effect.get("schema_version")) is int and effect["schema_version"] == 2
+    instruction = {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}}
     try:
-        identity, duration = chosen_impulse_grant(
-            {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}}, actor=actor,
-        )
+        if opponent:
+            identity, supplier = chosen_opponent_impulse_grant(instruction, actor=actor)
+            duration = ImpulseAccessDuration.END_OF_NEXT_TURN
+        else:
+            identity, duration = chosen_impulse_grant(instruction, actor=actor)
+            supplier = actor
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
     host._require_seat(actor, in_game=True)
     card = host.state.cards.get(identity.object_id)
-    if (card is None or card.zone != "exile" or card.ref != identity.ref or card.owner != actor
+    if (card is None or card.zone != "exile" or card.ref != identity.ref or card.owner != supplier
             or card.logical_object_id != identity.logical_object_id or not card.is_card_object or card.face_down):
         raise GameRuleError("Chosen impulse access requires its current exiled card")
-    card.annotations["temporary_play_permission"] = _play_permission(host, ImpulseAccessRequest(actor, actor, 1, duration, reason))
+    if opponent:
+        grant_chosen_bounded_opponent_play(host, card, actor)
+    else:
+        card.annotations["temporary_play_permission"] = _play_permission(host, ImpulseAccessRequest(actor, actor, 1, duration, reason))
     host._log(actor, "permission.play", f"{actor} may play the chosen exiled card.",
               {"player": actor, "object": card.ref, "duration": duration.value, "reason": reason},
               importance=2, changed_objects=[card.object_id], changed_players=[actor])
     return card.ref
+
+
+def grant_linked_normal_play(host, *, card, actor):
+    """Allow normal play of one actual public exile incarnation until used."""
+    if actor not in host.active_seats or card.zone != "exile" or card.face_down or not card.is_card_object:
+        raise GameRuleError("Linked normal play requires its public physical exile card")
+    card.annotations["temporary_play_permission"] = {
+        "player": actor, "zone": "exile", "allow_land": True, "allow_spell": True,
+        "without_mana_cost": False, "duration": ImpulseAccessDuration.UNTIL_USED.value,
+        "not_before_turn_sequence": host.state.turn_sequence,
+        "linked_play_incarnation": card.logical_object_id,
+    }
+
+
+OWNED_NEXT_TURN_EXILE_INCARNATION = "owned_next_turn_exile_incarnation"
+
+
+def grant_owned_next_turn_exile_play(host, *, card, actor):
+    if card.owner != actor or card.zone != "exile" or card.face_down or not card.is_card_object:
+        raise GameRuleError("Next-turn play requires a public current owned exile incarnation")
+    request = ImpulseAccessRequest(actor, actor, 1, ImpulseAccessDuration.END_OF_NEXT_TURN, "Owned exile play")
+    card.annotations["temporary_play_permission"] = {
+        **_play_permission(host, request), OWNED_NEXT_TURN_EXILE_INCARNATION: card.logical_object_id,
+    }
 
 
 def grant_temporary_cast_permission(
@@ -377,6 +434,61 @@ def grant_temporary_cast_permission(
         changed_players=[grant.player],
     )
     return card.ref
+
+
+def apply_single_card_cast_permission(
+    host, effect: Mapping[str, Any], *, actor: str, reason: str
+) -> str:
+    """Validate the selected card and commit its ordinary typed cast grant."""
+    card = host._resolve_object(
+        actor,
+        str(effect["card"]),
+        zones={str(effect.get("zone") or "graveyard")},
+        owned_only=bool(effect.get("owned_only", True)),
+    )
+    allowed_types = {
+        str(value).casefold()
+        for value in effect.get("types_any", [])
+    }
+    card_types, _, _ = host._type_parts(
+        str(
+            host._effective_card_data(card).get("type_line")
+            or ""
+        )
+    )
+    if allowed_types and not allowed_types.intersection(
+        card_types
+    ):
+        raise GameRuleError(
+            "The selected card does not satisfy the cast permission"
+        )
+    duration = effect.get("duration")
+    if duration not in {None, "until_used"}:
+        raise GameRuleError("Cast-permission duration is unsupported")
+    try:
+        grant = TemporaryCastPermissionGrant(
+            player=actor,
+            duration=(
+                ImpulseAccessDuration.UNTIL_USED
+                if duration == "until_used"
+                else ImpulseAccessDuration.END_OF_TURN
+            ),
+            not_before_turn_sequence=effect.get(
+                "not_before_turn_sequence"
+            ),
+            without_mana_cost=bool(
+                effect.get("without_mana_cost", False)
+            ),
+            source=str(effect.get("source") or ""),
+        )
+    except TemporaryCastPermissionError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return grant_temporary_cast_permission(
+        host,
+        card=card,
+        grant=grant,
+        reason=reason,
+    )
 
 
 def grant_void_counter_play_permission(host, effect, *, actor, reason):
@@ -482,6 +594,35 @@ def temporary_play_permission_is_current(
         or str(permission.get("zone") or "") != card.zone
     ):
         return False
+    if SPAWN_IMPULSE_INCARNATION_FIELD in permission and (
+        permission[SPAWN_IMPULSE_INCARNATION_FIELD] != card.logical_object_id
+        or card.zone != "exile" or card.face_down or not card.is_card_object
+        or permission.get("allow_land") is not True or permission.get("allow_spell") is not True
+        or permission.get("without_mana_cost") is not False
+        or permission.get("duration") != ImpulseAccessDuration.END_OF_TURN.value
+    ):
+        return False
+    if POWER_COUNTED_IMPULSE_INCARNATION_FIELD in permission:
+        end_step_ref = permission.get("power_counted_impulse_event")
+        return (
+            permission[POWER_COUNTED_IMPULSE_INCARNATION_FIELD] == card.logical_object_id
+            and card.zone == "exile" and not card.face_down and card.is_card_object
+            and permission.get("allow_land") is True and permission.get("allow_spell") is True
+            and permission.get("without_mana_cost") is False
+            and permission.get("duration") == ImpulseAccessDuration.NEXT_END_STEP.value
+            and type(end_step_ref) is str and any(
+                trigger.active and trigger.ref == end_step_ref and trigger.controller == seat
+                and card.object_id in trigger.referred_object_ids for trigger in state.delayed_triggers
+            )
+        )
+    if OWNED_NEXT_TURN_EXILE_INCARNATION in permission and (
+        permission[OWNED_NEXT_TURN_EXILE_INCARNATION] != card.logical_object_id
+        or card.owner != seat or card.zone != "exile" or card.face_down or not card.is_card_object
+        or permission.get("allow_land") is not True or permission.get("allow_spell") is not True
+        or permission.get("without_mana_cost") is not False
+        or permission.get("duration") != ImpulseAccessDuration.END_OF_NEXT_TURN.value
+    ):
+        return False
     if "instant_sorcery_incarnation" in permission and (
         permission["instant_sorcery_incarnation"] != card.logical_object_id
         or card.zone != "exile" or card.face_down or permission.get("allow_land") is not False
@@ -491,6 +632,14 @@ def temporary_play_permission_is_current(
     ):
         return False
     duration = permission.get("duration")
+    if COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD in permission and (
+        permission[COMBAT_DAMAGE_COLOR_CAST_INCARNATION_FIELD] != card.logical_object_id
+        or card.zone != "exile" or card.face_down or not card.is_card_object
+        or permission.get("allow_land") is not False or permission.get("allow_spell") is not True
+        or permission.get("without_mana_cost") is not False
+        or duration != ImpulseAccessDuration.END_OF_TURN.value
+    ):
+        return False
     from .private_opponent_library_cast_model import (
         PRIVATE_OPPONENT_LIBRARY_CAST_DURATION, private_opponent_library_cast_is_current,
     )
@@ -504,6 +653,10 @@ def temporary_play_permission_is_current(
             and turn_sequence == state.turn_sequence
         )
     if duration == ImpulseAccessDuration.UNTIL_USED.value:
+        if "linked_play_incarnation" in permission and (
+            permission["linked_play_incarnation"] != card.logical_object_id or card.zone != "exile" or card.face_down
+        ):
+            return False
         not_before = permission.get("not_before_turn_sequence")
         return (
             type(not_before) is int

@@ -557,7 +557,8 @@ def activation_restriction_spec(text: str, *, source_name: str | None = None) ->
     query = _public_query_condition(normalized)
     if query is None and normalized.startswith('if '):
         from .compiler.public_state_queries import fixed_public_state_condition
-        shared=fixed_public_state_condition(normalized[3:],source_name=source_name or 'Source')
+        clauses = normalized[3:].replace(" or if ", " or ")
+        shared = fixed_public_state_condition(clauses, source_name=source_name or "Source")
         if shared is not None:return ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.FIXED_PUBLIC_STATE,public_state=shared),))
     return (
         ActivationRestrictionSpec(conditions=(query,))

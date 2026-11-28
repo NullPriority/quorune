@@ -227,6 +227,139 @@ class LibrarySearchRuleTests(unittest.TestCase):
         self.assertNotEqual(before,tuple(session.state.players['A'].zones['library']))
         self.replay(session)
 
+    def _fabled_search_scene(self, seed, other_lands, *, prohibited=False):
+        session = self.session(seed)
+        source = self.add(session.engine, "Fabled Passage", ref="fabled-source")
+        found = self.add(session.engine, "Forest", zone="library", ref="fabled-found")
+        nonbasic = self.add(session.engine, "Tropical Island", zone="library", ref="fabled-nonbasic")
+        existing = [
+            self.add(session.engine, "Plains", ref=f"existing-fabled-{index}")
+            for index in range(other_lands)
+        ]
+        existing[0].tapped = True
+        self.add(session.engine, "Plains", seat="B", ref="fabled-opposing-land")
+        if prohibited:
+            self.add(session.engine, "Mindlock Orb")
+        self.prepare(session)
+        self.checkpoint(session)
+        return session, source, found, nonbasic, existing[0]
+
+    def test_fabled_passage_uses_post_entry_land_count_and_only_untaps_its_result(self):
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        for other_lands in (2, 3):
+            with self.subTest(other_lands=other_lands):
+                session, source, found, nonbasic, existing = self._fabled_search_scene(
+                    761050 + other_lands, other_lands,
+                )
+                self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+                self.activate(session, source)
+                self.assertEqual("graveyard", source.zone)
+                self.assertNotEqual("fetch_land", session.state.stack[-1].context.get("builtin"))
+                self.assertIsNotNone(self.resolve(session))
+                self.assertIn(found.ref, {row["id"] for row in self.search_options(session, "A")})
+                self.assertNotIn(nonbasic.ref, {row["id"] for row in self.search_options(session, "A")})
+                for viewer in "BCD":
+                    self.assertNotIn(found.ref, json.dumps(session.packet("pilot:" + viewer, full=True)))
+                self.reject(session, {"action_id": "choose", "search_cards": [found.ref]}, principal="pilot:B")
+                self.reject(session, {"action_id": "choose", "search_cards": [nonbasic.ref]})
+                self.reject(session, {"action_id": "choose", "search_cards": [found.ref], "entry_pay_life": True})
+                session = self.replay(session, load=True)
+                original_move = ZoneTransitionOwner.move_card
+                original_shuffle = session.engine.shuffle_library
+                reached = []
+
+                def move(owner, object_id, destination, **kwargs):
+                    result = original_move(owner, object_id, destination, **kwargs)
+                    if object_id == found.object_id:
+                        reached.append(("entry", result.zone, result.tapped))
+                    return result
+
+                def shuffle(seat, **kwargs):
+                    current = session.state.cards[found.object_id]
+                    reached.append(("shuffle", current.zone, current.tapped))
+                    return original_shuffle(seat, **kwargs)
+
+                with patch.object(ZoneTransitionOwner, "move_card", move), patch.object(
+                    session.engine, "shuffle_library", shuffle
+                ):
+                    self.select_search(session, "A", [found.ref])
+                self.assertEqual([("entry", "battlefield", True), ("shuffle", "battlefield", True)], reached)
+                result = session.state.cards[found.object_id]
+                self.assertEqual(("battlefield", "A", other_lands == 2), (result.zone, result.controller, result.tapped))
+                self.assertTrue(session.state.cards[existing.object_id].tapped)
+                self.replay(session)
+
+    def test_fabled_passage_preserves_fail_to_find_and_prohibited_search_shuffles(self):
+        for prohibited in (False, True):
+            with self.subTest(prohibited=prohibited):
+                session, source, found, _, existing = self._fabled_search_scene(
+                    761056 + prohibited, 4, prohibited=prohibited,
+                )
+                before = session.state.players["A"].stats.get("shuffle_count", 0)
+                self.activate(session, source)
+                self.assertEqual("graveyard", source.zone)
+                if prohibited:
+                    self.assertIsNone(self.resolve(session))
+                else:
+                    self.assertIsNotNone(self.resolve(session))
+                    self.select_search(session, "A", [])
+                self.assertEqual(before + 1, session.state.players["A"].stats.get("shuffle_count", 0))
+                self.assertEqual("library", session.state.cards[found.object_id].zone)
+                self.assertTrue(session.state.cards[existing.object_id].tapped)
+                self.replay(session)
+
+    def test_fabled_passage_obeys_destination_replacement_and_keeps_hidden_results_private(self):
+        from quorune.replacement_effects import ReplacementClass, ReplacementEffect
+        from quorune.semantic_runtime import zone_replacements
+
+        collect = zone_replacements.collect_zone_change_replacement_effects
+        for index, destination in enumerate(("exile", "hand")):
+            with self.subTest(destination=destination):
+                session, source, found, _, existing = self._fabled_search_scene(761084 + index, 4)
+                replacement = ReplacementEffect(
+                    effect_id="fabled-test-library-entry-replacement",
+                    source_id=existing.ref,
+                    event_kind="zone.change",
+                    replacement_class=ReplacementClass.OTHER,
+                    conditions={
+                        "origin": {"eq": "library"},
+                        "destination": {"eq": "battlefield"},
+                        "object_kind": {"eq": "card"},
+                    },
+                    operations=({"op": "set", "field": "destination", "value": destination},),
+                    label=f"Replace library-to-battlefield movement with {destination}",
+                )
+
+                def fixture_provider(host, **kwargs):
+                    return (*collect(host, **kwargs), replacement)
+
+                before = session.state.players["A"].stats.get("shuffle_count", 0)
+                with patch.object(zone_replacements, "collect_zone_change_replacement_effects", fixture_provider):
+                    self.activate(session, source)
+                    self.assertIsNotNone(self.resolve(session))
+                    self.select_search(session, "A", [found.ref])
+                    self.assertEqual(destination, session.state.cards[found.object_id].zone)
+                    self.assertTrue(session.state.cards[existing.object_id].tapped)
+                    self.assertEqual(before + 1, session.state.players["A"].stats.get("shuffle_count", 0))
+                    if destination == "hand":
+                        for principal in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+                            packet = session.packet(principal, full=True)
+                            self.assertNotIn(found.ref, json.dumps(packet))
+                            self.assertNotIn('"Forest"', json.dumps(packet))
+                        player = session.packet("pilot:A", full=True)
+                        self.assertTrue(any(
+                            row["c"] == "replacement.apply" and found.ref in row["s"]
+                            for row in player["events"]
+                        ))
+                    else:
+                        public = session.packet("spectator", full=True)
+                        self.assertTrue(any(
+                            row["c"] == "replacement.apply" and found.ref in row["s"]
+                            for row in public["events"]
+                        ))
+                    self.replay(session)
+
     def test_prohibition_does_not_filter_nonlibrary_search_queries(self):
         session=self.session(761039);self.add(session.engine,'Mindlock Orb')
         card=self.add(session.engine,'Generic Bound Body',zone='graveyard')
@@ -251,6 +384,27 @@ class LibrarySearchRuleTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         card = session.state.cards[result.object_id]
         self.assertEqual(("battlefield", "A", True), (card.zone, card.controller, card.tapped))
+        self.replay(session)
+
+    def test_legacy_unmarked_fetch_keeps_its_saved_entry_semantics_and_replays(self):
+        session = self.session(761086)
+        source = self.add(session.engine, "Evolving Wilds")
+        found = self.add(session.engine, "Forest", zone="library", ref="fabled-legacy-fetch-result")
+        session.state.fetch_entry_placement_version = None
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertNotIn("fetch_entry_placement_version", session.state.to_dict())
+        self.activate(session, source)
+        self.assertEqual("fetch_land", session.state.stack[-1].context.get("builtin"))
+        self.assertNotIn("fetch_entry_tapped", session.state.stack[-1].context)
+        self.assertIsNotNone(self.resolve(session))
+        self.assertEqual("search.fetch", session.state.pending_decision.kind)
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "search_card": found.ref})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        card = session.state.cards[found.object_id]
+        self.assertEqual(("battlefield", "A", False), (card.zone, card.controller, card.tapped))
         self.replay(session)
 
     def test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited(self):

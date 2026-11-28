@@ -479,6 +479,8 @@ class DeckLoader:
         deck_name: str | None = None,
         force_refresh: bool = False,
     ) -> DeckDefinition:
+        from .deck_imports import fetch_public_deck, public_deck_source
+
         source_str = str(source)
         if is_moxfield_source(source_str):
             deck = fetch_moxfield_deck(
@@ -486,6 +488,8 @@ class DeckLoader:
                 cache_dir=self.cache_dir,
                 force_refresh=force_refresh,
             )
+        elif public_deck_source(source_str):
+            deck = fetch_public_deck(source_str, cache_dir=self.cache_dir, force_refresh=force_refresh)
         else:
             path = Path(source)
             if not path.exists():

@@ -12,7 +12,9 @@ from .counter_names import normalized_counter_name
 from .creature_subtypes import canonical_creature_subtype
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .multikicker_model import FixedManaMultikickerSpec
-from .public_history_query_model import NONTOKEN_CREATURE_ENTRY_QUERY_VERSION, PublicHistoryQuerySpec
+from .public_history_query_model import (
+    NONTOKEN_CREATURE_ENTRY_QUERY_VERSION, PublicHistoryQuerySpec,
+)
 from .upkeep_hand_difference_model import UpkeepHandDifferenceSpec,UPKEEP_HAND_DIFFERENCE_CAPABILITY
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
@@ -108,10 +110,15 @@ class ScalarEffectAmountSpec:
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
             raise PublicQueryAmountError("History counts require their explicit scalar version")
         if self.schema_version == 10:
-            if (not isinstance(self.history_count, PublicHistoryQuerySpec)
-                or (self.history_count.event not in {"creature_died", "permanent_died"}
-                    and self.history_count.schema_version != NONTOKEN_CREATURE_ENTRY_QUERY_VERSION)
-                or self.history_count.reduction != "count"):
+            query = self.history_count
+            if not isinstance(query, PublicHistoryQuerySpec):
+                raise PublicQueryAmountError("The scalar result requires a typed history count")
+            if query.is_opponent_threshold_query:
+                if self.coefficient != 1 or self.binding_id is not None:
+                    raise PublicQueryAmountError("An opponent threshold must be current and unscaled")
+            elif ((query.event not in {"creature_died", "permanent_died"}
+                    and query.schema_version != NONTOKEN_CREATURE_ENTRY_QUERY_VERSION)
+                    or query.reduction != "count"):
                 raise PublicQueryAmountError("The scalar result requires a typed history count")
         elif self.history_count is not None:
             raise PublicQueryAmountError("This scalar origin cannot carry a history count")

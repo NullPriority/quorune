@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests",
+  "cards": [
+    {
+      "name": "Keeper of the Accord",
+      "oracle_id": "49b9a3ac-d245-431a-bf40-64d1b8dc2b91",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "At the beginning of each opponent's end step, if that player controls more creatures than you, create a 1/1 white Soldier creature token.\nAt the beginning of each opponent's end step, if that player controls more lands than you, you may search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "49b9a3ac-d245-431a-bf40-64d1b8dc2b91",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both triggered abilities trigger at the same time. You may put them on the stack in either order."
+    },
+    {
+      "oracle_id": "49b9a3ac-d245-431a-bf40-64d1b8dc2b91",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If the opponent doesn't control more creatures than you as their end step begins, the first ability won't trigger. The same is true for lands and the second ability. Each of those abilities will check again when it tries to resolve. If the opponent no longer controls more creatures (or lands) than you, the ability won't resolve and will have no effect."
+    }
+  ]
+}

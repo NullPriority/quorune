@@ -6,7 +6,9 @@ from ..errors import GameRuleError
 from ..object_predicate import ObjectQuerySpec
 from ..replacement import ReplacementChoiceRequired
 from ..replacement.immutable import FrozenMap, thaw_value
-from ..rules.repeated_apnap_payment import payment_round_effect, payment_round_program_dependencies
+from ..rules.repeated_apnap_payment import (
+    FIELD, FIXED_DISCARD_VERSION, payment_round_descriptor, payment_round_program_dependencies,
+)
 from .model import SelectionContinuation, SelectionContract, SelectionModelError, decode_selection_continuation
 
 
@@ -18,6 +20,14 @@ _SACRIFICE_QUERY = ObjectQuerySpec(zones=("battlefield",), excluded_types=("land
 _DISCARD_QUERY = ObjectQuerySpec(zones=("hand",))
 
 
+def _fixed_discard(effect):
+    return effect.get(FIELD) == FIXED_DISCARD_VERSION
+
+
+def _count(effect, item):
+    return effect["fixed_rounds"] if _fixed_discard(effect) else item.x_value
+
+
 def require_resolving_payment_item(host, resume, effect):
     from .repeated_payment_physical_order import FIELD as PHYSICAL_ORDER
 
@@ -25,19 +35,18 @@ def require_resolving_payment_item(host, resume, effect):
     if item is None or item.ref != resume.get("stack_ref"):
         raise GameRuleError("Repeated payment requires the original stack object")
     host._validate_semantic_frame(resume["semantic_frame"], item)
-    from ..rules.repeated_apnap_payment import FIELD
-
     program = host.semantics.get(item.semantic_key)
     expected = {key: value for key, value in effect.items() if key not in {_ROUND, _CHOICES, _REPLACEMENTS, PHYSICAL_ORDER}}
     try:
-        if (item.kind not in {"spell", "spell_copy"} or item.context.get("currently_resolving") is not True
-                or type(item.x_value) is not int or item.x_value < 0
-                or type(expected.get(FIELD)) is not int
-                or FrozenMap(expected) != FrozenMap(payment_round_effect(effect.get("declined_life_loss")))
+        payment_round_descriptor(expected)
+        fixed = _fixed_discard(expected)
+        kinds = {"activated_ability"} if fixed else {"spell", "spell_copy"}
+        if (item.kind not in kinds or item.context.get("currently_resolving") is not True
+                or (not fixed and (type(item.x_value) is not int or item.x_value < 0))
                 or program is None or not host.semantic_program_is_current_trusted(program)
                 or not payment_round_program_dependencies(program)
                 or FrozenMap(expected) != FrozenMap(program.effects[0])):
-            raise ValueError("Repeated payment changed its original spell, count, or cost alternatives")
+            raise ValueError("Repeated payment changed its original resolving instruction or choice domain")
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     return item
@@ -45,8 +54,8 @@ def require_resolving_payment_item(host, resume, effect):
 
 def _round(effect, item):
     index = effect.get(_ROUND, 0)
-    if type(index) is not int or not 0 <= index < item.x_value:
-        raise GameRuleError("Repeated payment round is outside its announced count")
+    if type(index) is not int or not 0 <= index < _count(effect, item):
+        raise GameRuleError("Repeated payment round is outside its committed count")
     return index
 
 
@@ -57,9 +66,10 @@ def _continue(host, resume, effects, *, advance=False):
     )
 
 
-def _options(host, seat):
-    sacrifices = host._choice_options(seat, {"zone": "battlefield", "then": "sacrifice",
-                                              "predicate": _SACRIFICE_QUERY.to_dict()})
+def _options(host, seat, *, discard_only=False):
+    sacrifices = [] if discard_only else host._choice_options(
+        seat, {"zone": "battlefield", "then": "sacrifice", "predicate": _SACRIFICE_QUERY.to_dict()},
+    )
     discards = host._choice_options(seat, {"zone": "hand", "then": "discard",
                                            "predicate": _DISCARD_QUERY.to_dict()})
     return {"sacrifice": sacrifices, "discard": discards}
@@ -69,12 +79,14 @@ def _order(host, item):
     return [seat for seat in host.apnap_order() if seat != item.controller]
 
 
-def _check_prefix(host, item, selected, *, complete):
+def _check_prefix(host, item, effect, selected, *, complete):
     order = _order(host, item)
     if not isinstance(selected, (list, tuple)) or (complete and len(selected) != len(order)):
         raise GameRuleError("Repeated payment is missing one or more opponents")
     if any(not isinstance(row, Mapping) or set(row) != {"seat", "mode", "ref", "identity"} for row in selected):
         raise GameRuleError("Repeated payment has a malformed choice")
+    if _fixed_discard(effect) and any(row["mode"] not in ("discard", "life") for row in selected):
+        raise GameRuleError("This loyalty result permits only a discard or life loss")
     if [row["seat"] for row in selected] != order[:len(selected)]:
         raise GameRuleError("Repeated payment choices changed their APNAP order")
     return order
@@ -96,14 +108,18 @@ def _validate_choice(host, row):
 
 
 def _issue(host, item, effect, resume, selected):
-    order = _check_prefix(host, item, selected, complete=False)
+    order = _check_prefix(host, item, effect, selected, complete=False)
     if len(selected) == len(order):
         commit = {**effect, _CHOICES: list(selected)}
         _continue(host, resume, (commit, *resume["effects"]))
         return
     seat = order[len(selected)]
-    options = _options(host, seat)
+    discard_only = _fixed_discard(effect)
+    options = _options(host, seat, discard_only=discard_only)
     refs = (*options["sacrifice"], *options["discard"])
+    if discard_only and not refs:
+        _issue(host, item, effect, resume, (*selected, {"seat": seat, "mode": "life", "ref": None, "identity": None}))
+        return
     selection = SelectionContinuation(
         contract=SelectionContract.NONTARGET_CHOICE, operation_id=OPERATION,
         actor=seat, state_revision=host.state.revision, stack_ref=item.ref,
@@ -115,10 +131,11 @@ def _issue(host, item, effect, resume, selected):
     host.permissions.issue(
         kind="choice.apnap", role="pilot", actors=[seat], allowed_actions=["choose"],
         payload_by_actor={seat: {
-            "prompt": f"Sacrifice a nonland permanent, discard a card, or lose {loss} life.",
+            "prompt": (f"Discard a card or lose {loss} life." if discard_only
+                       else f"Sacrifice a nonland permanent, discard a card, or lose {loss} life."),
             "count": 1, "minimum": 0, "options": list(refs), "declined_life_loss": loss,
             "sacrifice_options": options["sacrifice"], "private_discard_options": options["discard"],
-            "round": _round(effect, item) + 1, "rounds": item.x_value,
+            "round": _round(effect, item) + 1, "rounds": _count(effect, item),
             "prior_payment_modes": {row["seat"]: row["mode"] for row in selected},
             "prior_public_choices": {row["seat"]: [row["ref"]] for row in selected if row["mode"] == "sacrifice"},
         }},
@@ -138,8 +155,8 @@ def complete_payment_round_choice(host, decision):
     seat, = decision.actors
     effect, resume, selected = (payload[key] for key in ("effect", "resume", "selected"))
     item = require_resolving_payment_item(host, resume, effect)
-    order = _check_prefix(host, item, selected, complete=False)
-    options = _options(host, seat)
+    order = _check_prefix(host, item, effect, selected, complete=False)
+    options = _options(host, seat, discard_only=_fixed_discard(effect))
     refs = (*options["sacrifice"], *options["discard"])
     if (selection.actor != seat or selection.state_revision != decision.created_revision
             or selection.stack_ref != item.ref or selection.source_ref != host._stack_source_ref(item)
@@ -214,7 +231,8 @@ def _commit(host, item, effect, selected, index, resume):
 
 def begin_payment_round(host, effect, resume):
     item = require_resolving_payment_item(host, resume, effect)
-    if not item.x_value or not _order(host, item):
+    count = _count(effect, item)
+    if not count or not _order(host, item):
         _continue(host, resume, resume["effects"], advance=True)
         return
     index = _round(effect, item)
@@ -222,7 +240,7 @@ def begin_payment_round(host, effect, resume):
         _issue(host, item, effect, resume, ())
         return
     selected = effect[_CHOICES]
-    _check_prefix(host, item, selected, complete=True)
+    _check_prefix(host, item, effect, selected, complete=True)
     try:
         if not _commit(host, item, effect, selected, index, resume):
             return
@@ -235,7 +253,8 @@ def begin_payment_round(host, effect, resume):
             instruction_pointer=resume["semantic_frame"]["instruction_pointer"], required=required,
         )
         return
-    if index + 1 < item.x_value:
-        begin_payment_round(host, {**payment_round_effect(effect["declined_life_loss"]), _ROUND: index + 1}, resume)
+    if index + 1 < count:
+        descriptor = host.semantics.get(item.semantic_key).effects[0]
+        begin_payment_round(host, {**descriptor, _ROUND: index + 1}, resume)
         return
     _continue(host, resume, resume["effects"], advance=True)

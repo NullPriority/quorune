@@ -13,6 +13,10 @@ from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 
 
 REANIMATION_FOLLOWUP_CAPABILITY = "zone.reanimate.fixed_haste_and_departure"
+RETURNED_CREATURE_COUNTER_CAPABILITY = "zone.reanimate.returned_creature_counters"
+RETURNED_CREATURE_COUNTER_MECHANIC = "returned-creature-counters"
+RETURNED_CREATURE_COUNTER_VERSION = 3
+RETURNED_CREATURE_COUNTER_SUBJECTS = "returned_creature_counter_subjects"
 REANIMATION_FOLLOWUP_MECHANIC = "fixed-target-reanimation-haste-and-departure"
 REANIMATION_FOLLOWUP_VERSION = 4
 REANIMATION_EXILE_REPLACEMENT_VERSION = 5
@@ -188,6 +192,61 @@ def linked_departure_exile_replacements(state):
             operations=(SetField("destination", "exile"),), label="Exile the returned permanent instead")
 
 
+def uses_returned_creature_counters(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == "reanimate_targets"
+            and effect.get("schema_version") == RETURNED_CREATURE_COUNTER_VERSION)
+
+
+def returned_creature_counter_followup(host, moved, origins, *, source_ref):
+    """Bind the next instruction to the committed battlefield incarnations."""
+    from ..characteristic_evaluation import type_parts
+    from ..replacement.immutable import FrozenMap
+    from .committed_quantity_followups import CommittedQuantityFollowup
+
+    targets = tuple(
+        ContinuousObjectIdentity(card.object_id, card.logical_object_id).to_dict()
+        for card in moved if card.zone == "battlefield" and card.object_id in origins
+        and card.logical_object_id != origins[card.object_id]
+        and "creature" in type_parts(str(host._effective_card_data(card).get("type_line") or ""))[0]
+    )
+    if not targets:
+        return CommittedQuantityFollowup(())
+    return CommittedQuantityFollowup((FrozenMap({
+        "op": "place_counters_on_targets", "cards": (), "maximum_targets": 2,
+        "counter": "+1/+1", "amount": 1, "source": source_ref, RETURNED_CREATURE_COUNTER_SUBJECTS: targets,
+    }),))
+
+
+def bind_returned_creature_counter_subjects(host, effect):
+    if RETURNED_CREATURE_COUNTER_SUBJECTS not in effect:
+        return effect
+    from ..characteristic_evaluation import type_parts
+    from ..replacement.immutable import FrozenMap
+
+    expected = {
+        "op": "place_counters_on_targets", "cards": [], "maximum_targets": 2,
+        "counter": "+1/+1", "amount": 1, "source": effect.get("source"),
+    }
+    leaf = {key: value for key, value in effect.items() if key != RETURNED_CREATURE_COUNTER_SUBJECTS}
+    raw = effect[RETURNED_CREATURE_COUNTER_SUBJECTS]
+    if (FrozenMap(leaf) != FrozenMap(expected)
+            or type(leaf["maximum_targets"]) is not int or type(leaf["amount"]) is not int
+            or type(leaf["source"]) is not str or not leaf["source"]
+            or not isinstance(raw, (tuple, list)) or not 1 <= len(raw) <= 2):
+        raise ValueError("Returned creature counters require their exact committed instruction")
+    subjects = tuple(ContinuousObjectIdentity.from_dict(value) for value in raw)
+    if len({value.object_id for value in subjects}) != len(subjects):
+        raise ValueError("Returned creature counters require distinct incarnations")
+    refs = []
+    for subject in subjects:
+        card = host.state.cards.get(subject.object_id)
+        if (card is not None and card.zone == "battlefield" and not card.phased_out
+                and card.logical_object_id == subject.logical_object_id
+                and "creature" in type_parts(str(host._effective_card_data(card).get("type_line") or ""))[0]):
+            refs.append(card.ref)
+    return {**leaf, "cards": refs} if refs else None
+
+
 def reanimation_entry_handler(effect):
     """Select an entry variant with its own subject-binding authority."""
     from .opposing_death_delayed_return import reanimation_death_occurrence_owner
@@ -198,8 +257,16 @@ def reanimation_entry_handler(effect):
         apply_granted_self_death_return, is_granted_self_death_return,
     )
 
+    from .reanimation_entry_subtype import apply_entry_subtype_reanimation, uses_entry_subtype_reanimation
+
+    if uses_entry_subtype_reanimation(effect):
+        return apply_entry_subtype_reanimation
+    from .revival_return import apply_revival_return, is_revival_return
+
     if is_granted_self_death_return(effect):
         return apply_granted_self_death_return
+    if is_revival_return(effect):
+        return apply_revival_return
     if is_granted_death_role_return(effect):
         return apply_granted_death_role_return
     if is_ordered_graveyard_reanimation(effect):
@@ -250,3 +317,25 @@ def commit_battlefield_entry_followup(
     schedule_delayed_trigger(host, controller=actor, label=label, event_kind="step.begin", condition=condition,
         stack_template={"label": label, "context": {"dynamic_effects": effects}},
         source_object_id=source.object_id, source_logical_object_id=source.logical_object_id, once=True)
+
+
+
+def wrap_gift_reanimation(reanimate):
+    """Capture a committed return for the independent Gift copy instruction."""
+    from ..errors import GameRuleError
+    from . import gift_graveyard_spells as gift
+
+    def apply(host, effect, *, actor, operation, reason):
+        if gift.RETURN_RECEIPT_FIELD not in effect:
+            return reanimate(host, effect, actor=actor, operation=operation, reason=reason)
+        try:
+            card = host._resolve_object(actor, effect["card"], zones={"graveyard"})
+            binding = gift.prepare_gift_return_capture(host, effect, actor, card)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        plain = {key: value for key, value in effect.items() if key != gift.RETURN_RECEIPT_FIELD}
+        entered = reanimate(host, plain, actor=actor, operation=operation, reason=reason)
+        gift.commit_gift_return_capture(binding, entered)
+        return entered
+
+    return apply

@@ -188,6 +188,12 @@ def replacement_choice(
             for operation in effect.operations
         ))
     ])
+    from .chosen_basic_land_entry import is_basic_land_payment, pending_basic_land_payment
+
+    if pending_basic_land_payment(event):
+        applicable = [effect for effect in applicable if is_basic_land_payment(effect)]
+        if not applicable:
+            raise ReplacementEffectError("A chosen basic land type lost its entry payment decision")
     if not applicable:
         return None
     selected_class = min(effect.replacement_class for effect in applicable)

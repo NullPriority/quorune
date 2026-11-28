@@ -2,16 +2,19 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Protocol, Sequence
 
 from ..cast_timing import type_line_has_card_type
 from ..rules.faction_trigger_model import (
     CountFactionDraw, FACTION_DRAW_OBSERVER_FIELD, FACTION_DRAW_RECEIPT_FIELD,
 )
+from ..rules.opponent_draw_result import (
+    ObserveOpponentDraw, OPPONENT_DRAW_OBSERVER_FIELD, OPPONENT_DRAW_RECEIPT_FIELD,
+)
 from ..model import CardInstance, GameState
 from ..next_draw_replacement_model import ResolvedNextDrawReplacement
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
-from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT
+from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT, WIN_INSTEAD_OF_EMPTY_DRAW
 from ..turn_history_model import DRAWN_HAND_CARD_EVENT
 from ..zone_trigger_events import ZoneTransitionKind
 from .captured_hand import CaptureDrawnHandCard
@@ -28,6 +31,9 @@ from .model import (
 )
 from .miracle_model import MiracleDrawOpportunity, MIRACLE_TRIGGER_EVENT
 
+if TYPE_CHECKING:
+    from ..semantic_runtime.intents import WinGameIntent
+
 
 _DREDGE_KIND = "dredge"
 _DREDGE_REASON_PREFIX = "Dredge "
@@ -41,6 +47,8 @@ class DrawCommitHost(Protocol):
     state: GameState
 
     def apnap_order(self) -> list[str]: ...
+
+    def player_outcome_intent(self, intent: WinGameIntent) -> None: ...
 
     def card_record(self, card: CardInstance) -> Any: ...
 
@@ -92,6 +100,7 @@ class DrawCommitResult:
         if self.kind not in {
             "draw",
             EXILE_TURN_PLAY_DRAW_RESULT,
+            WIN_INSTEAD_OF_EMPTY_DRAW,
             "empty",
             "prevented",
             "prohibited",
@@ -206,6 +215,57 @@ def faction_draw_reward(item):
     if count == 0:
         return None
     return {"op": "draw", "player": item.controller, "count": count, "private": True}
+
+
+def _opponent_draw_receipt(item, observer):
+    receipt = item.context.get(OPPONENT_DRAW_RECEIPT_FIELD)
+    identity = {**observer.to_dict(), "schema_version": 1}
+    if (
+        not isinstance(receipt, Mapping) or set(receipt) != {*identity, "players"}
+        or type(receipt["schema_version"]) is not int
+        or any(receipt[key] != value for key, value in identity.items())
+        or item.ref != observer.stack_ref or item.controller != observer.controller
+        or item.kind not in {"spell", "spell_copy"} or item.context.get("currently_resolving") is not True
+    ):
+        raise ValueError("The opponent draw receipt lost its originating instruction")
+    players = receipt["players"]
+    if (
+        not isinstance(players, (tuple, list))
+        or any(type(player) is not str or not player or player == observer.controller for player in players)
+        or list(players) != sorted(set(players))
+    ):
+        raise ValueError("The opponent draw receipt requires distinct ordered opponents")
+    return players
+
+
+def begin_opponent_draw(item):
+    observer = ObserveOpponentDraw(item.ref, item.controller)
+    if OPPONENT_DRAW_RECEIPT_FIELD in item.context:
+        raise ValueError("The opponent draw result was already started")
+    item.context[OPPONENT_DRAW_RECEIPT_FIELD] = {
+        **observer.to_dict(), "schema_version": 1, "players": [],
+    }
+    return {"op": "draw_each_player", "scope": "controller_opponents", "count": 1,
+            "private": True, OPPONENT_DRAW_OBSERVER_FIELD: observer.to_dict()}
+
+
+def record_opponent_draw(state, observer, player):
+    item = next((item for item in state.stack if item.ref == observer.stack_ref), None)
+    if item is None or player not in state.players:
+        raise ValueError("The actual draw lost its resolving spell or drawing player")
+    players = _opponent_draw_receipt(item, observer)
+    if player != observer.controller and player not in players:
+        item.context[OPPONENT_DRAW_RECEIPT_FIELD] = {
+            **item.context[OPPONENT_DRAW_RECEIPT_FIELD], "players": sorted((*players, player)),
+        }
+
+
+def opponent_draw_reward(item):
+    players = _opponent_draw_receipt(item, ObserveOpponentDraw(item.ref, item.controller))
+    del item.context[OPPONENT_DRAW_RECEIPT_FIELD]
+    if players:
+        return {"op": "draw", "player": item.controller, "count": len(players), "private": True}
+    return None
 
 
 def _record_draw(
@@ -370,6 +430,12 @@ def _apply_drawn_card_actions(
         if isinstance(action, CountFactionDraw):
             try:
                 record_faction_draw(host.state, action)
+            except ValueError as exc:
+                raise DrawError(str(exc)) from exc
+            continue
+        if isinstance(action, ObserveOpponentDraw):
+            try:
+                record_opponent_draw(host.state, action, resolution.player)
             except ValueError as exc:
                 raise DrawError(str(exc)) from exc
             continue
@@ -623,6 +689,16 @@ def commit_prepared_draw_result(
             raise DrawError("Miracle reveal lost its complete current draw opportunity")
     if resolution.kind == "draw":
         return _commit_ordinary_draw(host, prepared, miracle=miracle)
+    if resolution.kind == WIN_INSTEAD_OF_EMPTY_DRAW:
+        from ..semantic_runtime.intents import WinGameIntent
+
+        host._log(
+            resolution.player, "card.draw.replaced.win_game",
+            "An empty-library draw was replaced with a game-win instruction.",
+            {_REASON_FIELD: resolution.reason}, importance=2, changed_players=[resolution.player],
+        )
+        host.player_outcome_intent(WinGameIntent(actor=resolution.player, player=resolution.player))
+        return DrawCommitResult(kind=WIN_INSTEAD_OF_EMPTY_DRAW, player=resolution.player)
     if resolution.kind == EXILE_TURN_PLAY_DRAW_RESULT:
         from ..impulse_access import ImpulseAccessRequest, resolve_fixed_impulse_access
         from ..impulse_access_model import ImpulseAccessDuration

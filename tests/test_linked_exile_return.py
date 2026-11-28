@@ -1068,3 +1068,177 @@ class LinkedExileReturnActionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+FLUX_INSTRUCTION = (
+    "Exile target creature you control, then return that card to the battlefield under its owner's control. "
+    "If it's a Spirit, put a +1/+1 counter on it."
+)
+
+
+class EssenceFluxNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "essence-flux.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / path for path in (
+            "bound-effect-program-cards.json", "linked-exile-return-cards.json",
+            "linked-exile-and-life-cards.json", "shared-type-library-cards.json", "fixed-disturb-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Returned subtype witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 25),
+        ], ["Generic Bound Commander"])
+
+    @staticmethod
+    def subtype(game, card):
+        from quorune.characteristic_evaluation import type_parts
+
+        return type_parts(game.engine._effective_card_data(card)["type_line"])[1]
+
+    def flux(self, game, target, *, forbidden=None, resolve=True):
+        source = self.add(game.engine, "Essence Flux", zone="hand", ref="flux-spell")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"U": 1})
+        offer = next(row for row in game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                     if row["id"] == f"cast:{source.ref}")
+        self.assertIn(target.ref, offer["target_schema"]["legal_refs"])
+        self.checkpoint(game)
+        if forbidden is not None:
+            before = authoritative_state_hash(game.state)
+            self.assertNotIn(forbidden.ref, offer["target_schema"]["legal_refs"])
+            result = game.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "targets": [forbidden.ref]})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast(game, "A", source, [target.ref])
+        if resolve:
+            return self.resolve(game)
+        return None
+
+    def test_flux_uses_the_returned_controller_and_current_spirit_subtype(self):
+        for nexus_seat, expected in (("A", 0), ("B", 1)):
+            with self.subTest(nexus=nexus_seat):
+                game = self.session(4007001 + expected)
+                target = self.add(game.engine, "Generic Bound Body", seat="B", ref="flux-borrowed-target")
+                enemy = self.add(game.engine, "Generic Bound Body", seat="C", ref="flux-forbidden")
+                self.add(game.engine, "Maskwood Nexus", seat=nexus_seat, ref="flux-type-source")
+                game.engine.change_control(target.object_id, "A", reason="borrowed creature fixture")
+                target.counters["+1/+1"] = 3
+                self.assertEqual(nexus_seat == "A", "spirit" in self.subtype(game, target))
+                old = target.logical_object_id
+                self.assertIsNone(self.flux(game, target, forbidden=enemy))
+                returned = game.state.cards[target.object_id]
+                self.assertEqual(("B", "battlefield", 2), (returned.controller, returned.zone, returned.zone_change_counter))
+                self.assertNotEqual(old, returned.logical_object_id)
+                self.assertEqual(bool(expected), "spirit" in self.subtype(game, returned))
+                self.assertEqual(expected, returned.counters.get("+1/+1", 0))
+                self.replay(game, load=True)
+
+    def test_flux_ignores_token_and_transformed_departure_characteristics(self):
+        game = self.session(4007004)
+        target = self.add(game.engine, "Dennick, Pious Apprentice // Dennick, Pious Apparition", ref="flux-back-face")
+        target.active_face = "Dennick, Pious Apparition"
+        self.assertIn("spirit", self.subtype(game, target))
+        self.assertIsNone(self.flux(game, target))
+        returned = game.state.cards[target.object_id]
+        self.assertEqual("battlefield", returned.zone)
+        self.assertEqual(2, returned.zone_change_counter)
+        self.assertIn("human", self.subtype(game, returned))
+        self.assertNotIn("spirit", self.subtype(game, returned))
+        self.assertNotIn("+1/+1", returned.counters)
+        self.replay(game, load=True)
+
+        game = self.session(4007005)
+        token_ref, = game.engine.create_token("A", name="Flux Spirit token", characteristics={
+            "type_line": "Creature — Spirit", "power": "1", "toughness": "1", "colors": ["W"],
+        })
+        token = game.engine._resolve_object("A", token_ref, zones={"battlefield"})
+        self.assertIsNone(self.flux(game, token))
+        self.assertNotIn(token.object_id, game.state.players["A"].zones["battlefield"])
+        residual = game.state.cards.get(token.object_id)
+        if residual is not None:
+            self.assertNotIn("+1/+1", residual.counters)
+        self.replay(game, load=True)
+
+        game = self.session(4007006)
+        target = self.add(game.engine, "Generic Bound Body", ref="flux-stale-target")
+        bounce = self.add(game.engine, "Generic Blink Bounce", seat="B", zone="hand", ref="flux-response")
+        game.state.players["B"].mana_pool["W"] = 1
+        self.flux(game, target, resolve=False)
+        self.cast(game, "B", bounce, [target.ref])
+        self.assertIsNone(self.resolve(game))
+        stale = game.state.cards[target.object_id]
+        self.assertEqual(("hand", 1), (stale.zone, stale.zone_change_counter))
+        self.assertNotIn("+1/+1", stale.counters)
+        self.replay(game, load=True)
+
+    def test_flux_counter_replacement_order_resumes_after_committed_return(self):
+        game = self.session(4007008)
+        engine = game.engine
+        target = self.add(engine, "Generic Bound Body", seat="B", ref="flux-replacement-subject")
+        self.add(engine, "Maskwood Nexus", seat="B", ref="flux-replacement-spirit")
+        self.add(engine, "Generic Blink Counter Doubler", seat="B", ref="flux-double")
+        self.add(engine, "Generic Blink Counter Addition", seat="B", ref="flux-plus")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="flux-private")
+        engine.change_control(target.object_id, "A", reason="borrowed creature fixture")
+        original = target.logical_object_id
+        decision = self.flux(game, target)
+        self.assertIsNotNone(decision)
+        self.assertEqual("replacement.order", decision.kind)
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        returned = game.state.cards[target.object_id]
+        self.assertEqual(("battlefield", "B", 2), (returned.zone, returned.controller, returned.zone_change_counter))
+        identity = returned.logical_object_id
+        self.assertNotEqual(original, identity)
+        self.assertNotIn("+1/+1", returned.counters)
+        game = self.replay(game, load=True)
+        option = next(row["id"] for row in game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                      if "flux-plus" in row["id"])
+        command = {"action_id": "choose", "replacement": option}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:B", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        returned = game.state.cards[target.object_id]
+        self.assertEqual((identity, 2, 4), (returned.logical_object_id, returned.zone_change_counter, returned.counters["+1/+1"]))
+        for seat in "ABD":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_flux_strict_shape_and_rider_dependency_withdrawal(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.linked_return_subtype_counter import LINKED_RETURN_SUBTYPE_COUNTER_CAPABILITY as capability
+
+        ir = compile_oracle_card(record(FLUX_INSTRUCTION), capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(FLUX_INSTRUCTION)), (node.span.start, node.span.end))
+        self.assertEqual(["exile", "return", "post_return_counter"], [row["phase"] for row in node.effects])
+        self.assertIn(capability, node.capability_dependencies)
+        for effects, target in (
+            (tuple(node.effects[:-1]), node.target_schema),
+            ((node.effects[0], node.effects[2], node.effects[1]), node.target_schema),
+            (node.effects, {**node.target_schema, "controller_relation": "opponent"}),
+        ):
+            self.assertEqual((), linked_exile_return_node_capabilities(
+                effects=effects, target_schema=target, mechanic_ids=node.mechanics,
+            ))
+        for text in (
+            FLUX_INSTRUCTION.replace("a Spirit", "a Zombie"),
+            FLUX_INSTRUCTION.replace("a +1/+1 counter", "two +1/+1 counters"),
+            FLUX_INSTRUCTION.replace("under its owner's control", "under your control"),
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=self.registry).status)
+        game = self.session(4007010)
+        source = self.add(game.engine, "Essence Flux", zone="hand")
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(game.engine.semantic_program_is_current_trusted(program))
+        deps = tuple(value for value in program.capability_dependencies if value != capability)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", binding["blockers"])

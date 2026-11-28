@@ -48,6 +48,16 @@ def event_player_discard_result_template(binding, body):
             None, (DISCARD_RESULT_MECHANIC,))
 
 
+def selected_opponent_discard_draw_template(text):
+    from ..rules.selected_discard_draw import SELECTED_DISCARD_DRAW_MECHANIC, selected_discard_draw_choice
+
+    if re.fullmatch(r"Each (?:other player|opponent) discards a card\. "
+                    r"You draw a card for each card discarded this way\.", " ".join(text.split()), re.I) is None:
+        return None
+    return ("selected-opponent-discard-draw-v1", (selected_discard_draw_choice(),),
+            None, (SELECTED_DISCARD_DRAW_MECHANIC,))
+
+
 def discard_result_draw_template(text):
     body = ' '.join(text.strip().split())
     variable = re.fullmatch(r'(?:You )?discard any number of cards, then draw that many cards(?P<extra> plus one)?\.', body, re.I)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import os
 from copy import deepcopy
 from dataclasses import replace
 import tempfile
@@ -305,3 +306,380 @@ class TemporaryCastRestrictionTests(unittest.TestCase):
                  'test_emitted_cast_restriction_requires_its_owner_independently_at_runtime')):
             with patch(owner,omission):
                 with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+from optional_result_followup_fixture import OptionalResultFollowupFixture
+
+
+AVATAR_WRATH = "Avatar's Wrath"
+
+
+APPA = "Appa, Steadfast Guardian"
+
+
+class AirbendCastRestrictionNativeTests(InheritedNativeFixture, unittest.TestCase):
+    finish_turn = OptionalResultFollowupFixture.finish_turn
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        support = {
+            "temporary-cast-restriction-cards.json": {AVATAR_WRATH, APPA},
+            "event-spell-copy-cards.json": {"Ambush Viper", "Grizzly Bears"},
+            "activation-restriction-material-cards.json": {"Unsummon", "Island"},
+            "ability-source-counter-cards.json": {"Vedalken Orrery"},
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains"},
+            "awaken-cards.json": {"Dryad Arbor"},
+        }
+        fixtures = []
+        for filename, names in support.items():
+            doc = json.loads((ROOT / "tests" / "fixtures" / filename).read_bytes())
+            doc["cards"] = [row for row in doc["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in doc["cards"]}, filename
+            ids = {row["oracle_id"] for row in doc["cards"]}
+            doc["rulings"] = [row for row in doc.get("rulings", ()) if row["oracle_id"] in ids]
+            part = folder / filename
+            part.write_text(json.dumps(doc), encoding="utf-8")
+            fixtures.append(part)
+        path = folder / "airbend-wrath.sqlite3"
+        build_fixture_database(fixtures, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Airbend and next-turn rule", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def source(self, game):
+        card = self.add(game.engine, AVATAR_WRATH, zone="hand", ref="wrath-original-spell")
+        self.assert_closed(game, card)
+        return card
+
+    def next_turn(self, game, expected):
+        self.finish_turn(game)
+        self.assertEqual(expected, game.state.active_player)
+
+    def test_actual_airbend_keeps_target_and_exile_grant_waits_for_original_controllers_next_turn(self):
+        from quorune.rules.airbend import airbend_cast_option, current_airbend_cast_permission
+        from quorune.rules.casting.proposal import build_cast_offer
+        from quorune.rules.temporary_cast_restrictions import active_temporary_cast_restrictions
+
+        game = self.session(7016501)
+        source = self.source(game)
+        flash = self.add(game.engine, "Vedalken Orrery")
+        saved = self.add(game.engine, "Grizzly Bears", ref="wrath-saved-creature")
+        airbent = self.add(game.engine, "Ambush Viper", seat="B", ref="wrath-b-owned-a-controlled")
+        hand_spell = self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="wrath-b-hand-cast")
+        private = self.add(game.engine, "Grizzly Bears", seat="C", zone="hand", ref="wrath-c-private-card")
+        game.engine.change_control(airbent.object_id, "A")
+        self.assert_closed(game, flash)
+        self.assert_closed(game, airbent)
+        self.assert_closed(game, hand_spell)
+        for index in range(4):
+            self.add(game.engine, "Generic Bound Plains", ref=f"wrath-white-mana-{index}")
+        for index in range(3):
+            self.add(game.engine, "Island", seat="B", ref=f"wrath-b-island-{index}")
+        self.prepare(game)
+        self.checkpoint(game)
+        self.next_turn(game, "B")
+        self.until(game, lambda g: g.state.phase == "precombat_main")
+        self.cast_for(game, "A", source, [saved.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[saved.object_id].zone)
+        self.assertEqual("exile", game.state.cards[source.object_id].zone)
+        current = game.state.cards[airbent.object_id]
+        self.assertEqual("exile", current.zone)
+        permission = current_airbend_cast_permission(current, "B")
+        self.assertEqual(current.logical_object_id, permission.logical_object_id)
+        self.assertIsNone(current_airbend_cast_permission(current, "A"))
+        restriction, = active_temporary_cast_restrictions(game.engine, "B")
+        self.assertEqual(("A", "A", "until_next_turn"), (restriction.controller, restriction.expires_on_next_turn_of, restriction.duration.value))
+        self.assertIsNone(build_cast_offer(game.engine, "B", current).offer)
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:B", full=True)))
+        self.priority(game, "B")
+        before = authoritative_state_hash(game.state)
+        bad = game.act("pilot:B", {"action_id": "cast:" + current.ref, "cost_option": "airbend", "pay": "auto"})
+        self.assertFalse(bad.ok, bad.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast_for(game, "B", hand_spell, [saved.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[saved.object_id].zone)
+        game = self.replay(game, load=True)
+        for seat in "CD":
+            self.next_turn(game, seat)
+            self.assertTrue(active_temporary_cast_restrictions(game.engine, "B"))
+        self.next_turn(game, "A")
+        self.assertFalse(active_temporary_cast_restrictions(game.engine, "B"))
+        self.priority(game, "B")
+        current = game.state.cards[airbent.object_id]
+        quotes = build_cast_offer(game.engine, "B", current).offer.to_dict()["cost_options"]
+        quote, = quotes
+        self.assertEqual(("airbend", "alternate"), (quote["id"], quote["kind"]))
+        self.assertEqual("zero", airbend_cast_option(current, "B")["x_value_policy"])
+        self.assertEqual({"GENERIC": 2}, {key: amount for key, amount in quote["requirements"].items() if amount})
+        bad = game.act("pilot:B", {"action_id": "cast:" + current.ref, "cost_option": "normal", "pay": "auto"})
+        self.assertFalse(bad.ok, bad.summary)
+        chosen = game.act("pilot:B", {"action_id": "cast:" + current.ref, "cost_option": "airbend", "pay": "auto"})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual("stack", game.state.cards[airbent.object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        landed = game.state.cards[airbent.object_id]
+        self.assertEqual(("battlefield", "B"), (landed.zone, landed.controller))
+        self.assertIsNone(current_airbend_cast_permission(landed, "B"))
+        self.replay(game, load=True)
+
+    def test_intentionally_empty_target_airbends_every_creature_and_never_play_lands_or_tokens(self):
+        from quorune.rules.airbend import AIRBEND_EVENT, current_airbend_cast_permission
+        from quorune.rules.casting.proposal import build_cast_offer
+        from quorune.rules.temporary_cast_restrictions import active_temporary_cast_restrictions
+        from quorune.rules.zone_action_permissions import compiled_land_play_permission
+
+        game = self.session(7016502)
+        source = self.source(game)
+        owner_card = self.add(game.engine, "Grizzly Bears", ref="wrath-empty-own")
+        other_card = self.add(game.engine, "Grizzly Bears", seat="B", ref="wrath-empty-opponent")
+        dryad = self.add(game.engine, "Dryad Arbor", ref="wrath-land-creature")
+        land = self.add(game.engine, "Generic Bound Plains", ref="wrath-noncreature-land")
+        token_ref, = game.engine.create_token("C", name="Soldier Token", quantity=1,
+            characteristics={"type_line": "Creature — Soldier", "power": "1", "toughness": "1"})
+        self.prepare(game, mana={"C": 2, "W": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source, [])
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "exile" for card in (source, owner_card, other_card, dryad)))
+        self.assertEqual("battlefield", game.state.cards[land.object_id].zone)
+        self.assertIsNone(current_airbend_cast_permission(game.state.cards[source.object_id], "A"))
+        self.assertIsNotNone(current_airbend_cast_permission(game.state.cards[owner_card.object_id], "A"))
+        self.assertFalse(compiled_land_play_permission(game.engine, "A", game.state.cards[dryad.object_id]))
+        self.assertIsNone(build_cast_offer(game.engine, "A", game.state.cards[dryad.object_id]).offer)
+        self.assertFalse(any(card.ref == token_ref and card.zone in {"battlefield", "exile"} for card in game.state.cards.values()))
+        event, = (row for row in game.state.events if row.code == AIRBEND_EVENT)
+        self.assertEqual({owner_card.ref, other_card.ref, dryad.ref, token_ref}, set(event.details["objects"]))
+        self.assertTrue(active_temporary_cast_restrictions(game.engine, "D"))
+        self.replay(game, load=True)
+
+    def test_illegal_sole_target_skips_airbend_cast_restriction_and_terminal_exile(self):
+        from quorune.rules.airbend import AIRBEND_EVENT, current_airbend_cast_permission
+        from quorune.rules.temporary_cast_restrictions import active_temporary_cast_restrictions
+
+        game = self.session(7016503)
+        source = self.source(game)
+        target = self.add(game.engine, "Grizzly Bears", seat="B", ref="wrath-sole-target")
+        other = self.add(game.engine, "Ambush Viper", seat="C", ref="wrath-unmoved")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        game.state.players["B"].mana_pool["U"] = 1
+        self.prepare(game, mana={"C": 2, "W": 2})
+        self.checkpoint(game)
+        self.cast_for(game, "A", source, [target.ref])
+        self.cast_for(game, "B", bounce, [target.ref])
+        self.resolve_top(game)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[target.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[other.object_id].zone)
+        self.assertIsNone(current_airbend_cast_permission(game.state.cards[other.object_id], "C"))
+        self.assertFalse(any(row.code == AIRBEND_EVENT for row in game.state.events))
+        self.assertFalse(active_temporary_cast_restrictions(game.engine, "B"))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_airbend_whole_span_and_independent_permission_duration_and_terminal_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.airbend import CAPABILITY, CAST_CAPABILITY, airbend_node_capabilities
+        from quorune.rules.spell_self_exile import SELF_EXILE
+        from quorune.temporary_cast_rule_model import NEXT_TURN_NONHAND_CAPABILITY
+
+        card = self.db.lookup(AVATAR_WRATH, fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(card.oracle_text)), (node.span.start, node.span.end))
+        required = {CAPABILITY, CAST_CAPABILITY, NEXT_TURN_NONHAND_CAPABILITY, SELF_EXILE.capability}
+        self.assertTrue(required <= set(node.capability_dependencies))
+        self.assertEqual((), airbend_node_capabilities(tuple(reversed(node.effects)), node.target_schema, None))
+        for original, changed in (("Choose up to one target", "Choose one target"),
+                                  ("Until your next turn", "Until end of turn"),
+                                  ("airbend all other creatures", "airbend all other nonland creatures")):
+            text = card.oracle_text.replace(original, changed)
+            self.assertNotEqual("exact", compile_oracle_card(replace(card, oracle_text=text), capability_registry=self.registry).status)
+        game = self.session(7016504)
+        original = self.source(game)
+        program, = game.engine.semantics.programs_for_oracle(original.oracle_id)
+        self.assertEqual("exile", program.destination)
+        for cap in required:
+            deps = tuple(value for value in program.capability_dependencies if value != cap)
+            mutant = replace(program, capability_dependencies=deps,
+                             capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+            binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertIn(f"capability:undeclared_runtime_dependency:{cap}", binding["blockers"])
+
+
+    def _appa_enter(self, game, card):
+        self.assert_closed(game, card)
+        self.cast_for(game, "A", card)
+        decision = self.resolve(game)
+        self.assertEqual(("semantic.target", ("A",)), (decision.kind, tuple(decision.actors)))
+        offer, = [row for row in game.packet("pilot:A", full=True)["decision"]["legal_actions"] if row["id"] == "choose"]
+        return offer["target_schema"]
+
+    def _appa_send(self, game, seat, command, *, accepted=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def _appa_record(self, game, comment):
+        from hashlib import sha256
+        from quorune.record import replay_record
+
+        folder = os.environ.get("QUORUNE_APPA_RECORD_PARENT")
+        if folder is None:
+            self.replay(game, load=True)
+            return
+        record = Path(folder) / comment
+        game.save(record)
+        replay = replay_record(record, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, replay["final_state_hash"])
+        record.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": sha256((record / "manifest.json").read_bytes()).hexdigest(),
+            "final_state_sha256": state_hash, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def _appa_allies(self, game):
+        return [card for card in game.state.cards.values()
+                if card.zone == "battlefield" and not card.is_card_object
+                and "Ally" in game.engine._effective_card_data(card)["type_line"]]
+
+    def _appa_cast_exile(self, game, seat, card):
+        self.priority(game, seat)
+        target = game.state.cards[card.object_id]
+        offer = self.action(game, seat, target)
+        option, = offer["cost_options"]
+        self.assertEqual(("airbend", "alternate"), (option["id"], option["kind"]))
+        self.assertEqual({"GENERIC": 2}, {symbol: size for symbol, size in option["requirements"].items() if size})
+        self._appa_send(game, seat, {"action_id": offer["id"], "cost_option": "airbend", "pay": "auto"})
+        cast = next(item for item in game.state.stack if item.card_object_id == target.object_id)
+        self.assertEqual("exile", cast.context["cast_origin"])
+
+    def test_appa_locks_any_number_airbends_legal_arrivals_and_tracks_real_exile_casts(self):
+        from quorune.rules.airbend import AIRBEND_EVENT, current_airbend_cast_permission
+
+        game = self.session(70165101)
+        appa = self.add(game.engine, APPA, zone="hand")
+        own = self.add(game.engine, "Grizzly Bears", ref="appa-own-bear")
+        other = self.add(game.engine, "Grizzly Bears", seat="C", ref="appa-other-seat")
+        departed = self.add(game.engine, "Grizzly Bears", ref="appa-departing")
+        artifact = self.add(game.engine, "Vedalken Orrery", ref="appa-artifact")
+        borrowed = self.add(game.engine, "Ambush Viper", seat="B", ref="appa-borrowed-viper")
+        land = self.add(game.engine, "Dryad Arbor", ref="appa-land-creature")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand", ref="appa-hand-response")
+        game.engine.change_control(borrowed.object_id, "A")
+        token_ref, = game.engine.create_token("A", name="Soldier Token", quantity=1,
+            characteristics={"type_line": "Creature — Soldier", "power": "1", "toughness": "1"})
+        self.prepare(game, mana={"C": 4, "W": 2})
+        game.state.players["B"].mana_pool.update({"C": 2, "U": 1})
+        self.checkpoint(game)
+        targets = self._appa_enter(game, appa)
+        for principal in ("pilot:B", "pilot:C", "pilot:D", "spectator"):
+            self.assertIsNone(game.packet(principal, full=True)["decision"])
+        self.assertEqual({own.ref, departed.ref, artifact.ref, borrowed.ref, token_ref}, set(targets["legal_refs"]))
+        for seat, items in (("B", [own.ref]), ("A", [own.ref, own.ref]), ("A", [appa.ref]),
+                            ("A", [other.ref]), ("A", [land.ref])):
+            self._appa_send(game, seat, {"action_id": "choose", "targets": items}, accepted=False)
+        self._appa_record(game, "appa-target-choice-pending-game-record")
+        self._appa_send(game, "A", {"action_id": "choose", "targets": [
+            own.ref, artifact.ref, borrowed.ref, token_ref, departed.ref]})
+        self.cast_for(game, "B", bounce, [departed.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[departed.object_id].zone)
+        self.assertFalse(self._appa_allies(game))
+        self._appa_record(game, "appa-partial-targets-pending-game-record")
+        self.settle(game)
+        event, = [row for row in game.state.events if row.code == AIRBEND_EVENT]
+        self.assertEqual({own.ref, artifact.ref, borrowed.ref, token_ref}, set(event.details["objects"]))
+        self.assertFalse(any(card.ref == token_ref and card.zone in {"battlefield", "exile"} for card in game.state.cards.values()))
+        for original, seat in ((own, "A"), (artifact, "A"), (borrowed, "B")):
+            current = game.state.cards[original.object_id]
+            self.assertEqual("exile", current.zone)
+            permission = current_airbend_cast_permission(current, seat)
+            self.assertEqual(current.logical_object_id, permission.logical_object_id)
+            self.assertIsNone(current_airbend_cast_permission(current, "D"))
+        self.assertIsNone(current_airbend_cast_permission(game.state.cards[borrowed.object_id], "A"))
+        self.assertEqual("battlefield", game.state.cards[appa.object_id].zone)
+        self.assertFalse(self._appa_allies(game))
+        self.priority(game, "A")
+        self._appa_send(game, "A", {"action_id": "cast:" + game.state.cards[borrowed.object_id].ref,
+                                  "cost_option": "airbend", "pay": "auto"}, accepted=False)
+        self._appa_cast_exile(game, "B", borrowed)
+        self.settle(game)
+        self.assertFalse(self._appa_allies(game))
+        self.assertEqual("B", game.state.cards[borrowed.object_id].controller)
+        self._appa_cast_exile(game, "A", own)
+        self._appa_record(game, "appa-own-exile-cast-pending-game-record")
+        self.settle(game)
+        ally, = self._appa_allies(game)
+        actual = game.engine._effective_card_data(ally)
+        self.assertEqual(("A", 1, 1, ["W"]), (ally.controller, int(actual["power"]),
+                                              int(actual["toughness"]), actual["colors"]))
+        self.assertEqual(("battlefield", "A"), (game.state.cards[own.object_id].zone, game.state.cards[own.object_id].controller))
+        self.assertIsNone(current_airbend_cast_permission(game.state.cards[own.object_id], "A"))
+        self._appa_record(game, "appa-exile-cast-ally-resolved-game-record")
+
+    def test_appa_flash_and_empty_choice_are_distinct_from_illegal_sole_target(self):
+        from quorune.rules.airbend import AIRBEND_EVENT
+
+        for choose in (False, True):
+            with self.subTest(choose=choose):
+                game = self.session(70165102 + int(choose))
+                appa = self.add(game.engine, APPA, zone="hand")
+                candidate = self.add(game.engine, "Grizzly Bears", ref="appa-one-candidate")
+                still = self.add(game.engine, "Grizzly Bears", ref="appa-unselected")
+                bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                self.prepare(game, mana={"C": 2, "W": 2}, active="B", actor="A")
+                game.state.players["B"].mana_pool["U"] = 1
+                self.checkpoint(game)
+                self.assertEqual({candidate.ref, still.ref}, set(self._appa_enter(game, appa)["legal_refs"]))
+                self._appa_send(game, "A", {"action_id": "choose", "targets": [candidate.ref] if choose else []})
+                if choose:
+                    self.cast_for(game, "B", bounce, [candidate.ref])
+                    self.resolve_top(game)
+                self.settle(game)
+                self.assertEqual("hand" if choose else "battlefield", game.state.cards[candidate.object_id].zone)
+                self.assertEqual("battlefield", game.state.cards[still.object_id].zone)
+                self.assertFalse(any(row.code == AIRBEND_EVENT for row in game.state.events))
+                self.assertEqual(choose, any(row.code == "target.illegal" for row in game.state.events))
+                self._appa_record(game, f"appa-{'sole-illegal' if choose else 'empty'}-game-record")
+
+    def test_appa_exact_target_type_controller_and_self_entry_require_all_dependencies(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.airbend import TARGETED_CAPABILITY, airbend_targeted_nonland_schema
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup(APPA, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, APPA)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        entry, = [program for program in semantics.programs_for_oracle(card.oracle_id) if program.event == "permanent.enter.self"]
+        self.assertEqual(airbend_targeted_nonland_schema(), entry.target_schema)
+        deps = tuple(cap for cap in entry.capability_dependencies if cap != TARGETED_CAPABILITY)
+        mutant = replace(entry, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{TARGETED_CAPABILITY}", binding["blockers"])
+        for wrong in (replace(entry, event="permanent.leave.self"),
+                      replace(entry, target_schema={**entry.target_schema, "source_exclusion": False}),
+                      replace(entry, target_schema={**entry.target_schema, "controller_relation": "opponent"})):
+            report = bind_semantic_program_runtime(wrong, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(report["strict"], report)
+        for wrong in ("other target lands you control", "other target nonland permanents an opponent controls",
+                      "target nonland permanents you control"):
+            changed = replace(card, oracle_text=card.oracle_text.replace("other target nonland permanents you control", wrong))
+            ir = compile_oracle_card(changed, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)

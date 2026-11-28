@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { api } from "./api";
 import { executableChoices, initialChoices, record, restoreCastChoices, validateChoices, type ChoiceValues } from "./choices";
 import type { CommandEnvelope, LegalAction } from "./generated/protocol";
 import type { MoveFeedback } from "./GameMenu";
 import type { ProjectedView } from "./protocol";
 import { actionTitle } from "./tablePresentation";
+import type { ObservedTableAction } from "./useTableLoop";
 
 type Draft = {
   decisionId: string;
@@ -20,12 +21,13 @@ type Submission =
   | { kind: "uncertain"; envelope: CommandEnvelope; label: string };
 
 export function useDecisionInteraction({
-  view, gameId, enabled, onNotice,
+  view, gameId, enabled, onNotice, actionObserver,
 }: {
   view: ProjectedView | null;
   gameId: string;
   enabled: boolean;
   onNotice: (message: string) => void;
+  actionObserver?: RefObject<((result: ObservedTableAction) => void) | null>;
 }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [parked, setParked] = useState<{ draft: Draft; boundary: string } | null>(null);
@@ -108,11 +110,14 @@ export function useDecisionInteraction({
     setParked(null);
   }
 
-  async function send(envelope: CommandEnvelope, label: string) {
+  async function send(
+    envelope: CommandEnvelope, label: string, observed?: Omit<ObservedTableAction, "accepted" | "revision">,
+  ) {
     const started = performance.now();
     updateSubmission({ kind: "submitting" });
     try {
       const { receipt } = await api.command(gameId, envelope);
+      if (observed) actionObserver?.current?.({ ...observed, accepted: receipt.ok, revision: receipt.state_revision });
       setLastMove({
         interactionId: envelope.command_id,
         revision: receipt.state_revision,
@@ -134,6 +139,7 @@ export function useDecisionInteraction({
       updateSubmission(receipt.state_changed && (current.current?.viewRevision ?? -1) < receipt.state_revision
         ? { kind: "awaiting", revision: receipt.state_revision } : null);
     } catch {
+      if (observed) actionObserver?.current?.({ ...observed, accepted: false, revision: envelope.expected_view_revision });
       updateSubmission({ kind: "uncertain", envelope, label });
       onNotice("Delivery is uncertain. Retry the same move to recover its result.");
     }
@@ -157,7 +163,9 @@ export function useDecisionInteraction({
       capability: view.decision.cap,
       expected_view_revision: view.viewRevision,
       choices,
-    }, actionTitle(action));
+    }, actionTitle(action), actionObserver?.current ? {
+      before: view, action: currentAction, choices: structuredClone(choices),
+    } : undefined);
     return true;
   }
 

@@ -38,9 +38,9 @@ def registered_component_capabilities(descriptor,registered):
         return (POSITIVE_GENERIC_KICKER_CAPABILITY,) if spec.has_positive_generic_x else dependencies
 
     if descriptor.get("handler_id") == "rule.cast.prohibition.fixed-public.v1":
-        from ..semantic_runtime.static_cast_rules import opponent_sorcery_timing_descriptor_dependencies
+        from ..semantic_runtime.static_cast_rules import static_cast_descriptor_variant_dependencies
 
-        if timing := opponent_sorcery_timing_descriptor_dependencies(descriptor):
+        if timing := static_cast_descriptor_variant_dependencies(descriptor):
             return timing
     from ..semantic_runtime.fixed_characteristic_settings import (
         NONOWNER_CREATURE_MODIFIER_HANDLER, NonownerCreatureModifierHandler,
@@ -121,6 +121,9 @@ def _fragment_descriptor_requirements(value):
             own.add(DECLARATION_COMPONENT_CAPABILITY_ID)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
+            from ..battlefield_mana_value_query import even_mana_value_blocker_dependencies
+
+            own.update(even_mana_value_blocker_dependencies(fragment))
             if value.get('kind') == 'declaration_requirement' and fragment.condition is not None:
                 own.add('continuous.characteristics.fixed_public_state')
         if value.get('kind') in {'static_component','copiable_program_source','copiable_static_instance','trigger_multiplier'}:
@@ -134,6 +137,9 @@ def _fragment_descriptor_requirements(value):
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
         fragment_data = value.get("value")
+        if (value.get("kind") == "ward" and isinstance(fragment_data, Mapping)
+                and fragment_data.get("life_payment") is not None):
+            own.add(ability_fragment_from_dict(value).capability_id)
         if (value.get("kind") == "block_capacity" and isinstance(fragment_data, Mapping)
                 and fragment_data.get("schema_version") == 2):
             from ..block_capacity_model import EQUIPMENT_BLOCK_CAPACITY_CAPABILITY

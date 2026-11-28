@@ -1,0 +1,61 @@
+{
+  "cards": [
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}",
+      "name": "Raise the Palisade",
+      "oracle_id": "f55a3781-fe33-4301-9bb5-6a54b9c13c4f",
+      "oracle_text": "Choose a creature type. Return all creatures that aren't of the chosen type to their owners' hands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "To choose a creature type, you must choose an existing creature type, such as Halfling or Scout. You can't choose multiple creature types, such as \"Halfling Scout.\" Card types such as artifacts can't be chosen, nor can subtypes that aren't creature types, such as Forest, Equipment, or Food.",
+      "oracle_id": "f55a3781-fe33-4301-9bb5-6a54b9c13c4f",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

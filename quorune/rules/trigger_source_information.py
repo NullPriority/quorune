@@ -116,10 +116,12 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
     result.update(enchanted_departure_observer_context(source, program, event, occurrence_context))
     result.update(opposing_death_observer_context(source, program))
     from ..phasing_model import phase_out_effect
+    from ..extra_combat_model import uses_other_creature_extra_combat
     from .source_counter_distribution import uses_source_counter_distribution
 
     if (tuple(program.effects) == (phase_out_effect(),)
-            or any(uses_source_counter_distribution(effect) for effect in program.effects)):
+            or any(uses_source_counter_distribution(effect) or uses_other_creature_extra_combat(effect)
+                   for effect in program.effects)):
         result["source_logical_object_id"] = source.logical_object_id
     from .gravestorm import GRAVESTORM_FIELD, gravestorm_program_dependencies, capture_gravestorm_cast_source
     if any(GRAVESTORM_FIELD in effect for effect in program.effects):
@@ -141,6 +143,13 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
         ripple_program_dependencies(program)
         result[RIPPLE_CAST_CONTEXT]=capture_ripple_cast_snapshot(host,source,stack_context,
             characteristics=source_characteristics).to_dict()
+    from .revealed_library_cast import (
+        MANA_VALUE_CAST_CONTEXT, MANA_VALUE_CAST_FIELD, capture_hand_cast_reveal_snapshot,
+        mana_value_cast_program_dependencies,
+    )
+    if any(MANA_VALUE_CAST_FIELD in effect for effect in program.effects):
+        mana_value_cast_program_dependencies(program)
+        result[MANA_VALUE_CAST_CONTEXT] = capture_hand_cast_reveal_snapshot(occurrence_context, source.controller).to_dict()
     source_lki = capture_creature_power_damage_source_lki(
         host,
         source,

@@ -162,6 +162,20 @@ def fixed_homogeneous_target_set_node_capabilities(
             return ()
     operation = effect.get("op")
     maximum = effect.get("maximum_targets")
+    from .affected_library_search_batch import (
+        EXILE_LAND_SEARCH_FIELD, EXILE_LAND_SEARCH_MECHANIC, exile_land_payload_dependencies, exile_land_target_schema,
+    )
+
+    if EXILE_LAND_SEARCH_FIELD in effect:
+        if (EXILE_LAND_SEARCH_MECHANIC not in mechanics or target_schema != exile_land_target_schema()
+                or type(target_schema.get("count")) is not int):
+            return ()
+        try:
+            result = exile_land_payload_dependencies(effect)
+        except ValueError:
+            return ()
+        return (FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY, _OPERATION_CAPABILITIES["exile_permanent_targets"],
+                *direct_target_predicate_capabilities(target_schema), "target.revalidate_resolution", *result)
     if operation == 'exile_permanent_targets' and 'followup' in effect:
         from .targeted_exile_token_results import targeted_exile_token_node_capabilities
         return targeted_exile_token_node_capabilities(effect, target_schema, mechanics)
@@ -169,6 +183,9 @@ def fixed_homogeneous_target_set_node_capabilities(
         from .targeted_graveyard_outcomes import targeted_graveyard_outcome_node_capabilities
 
         return targeted_graveyard_outcome_node_capabilities(effects=effects, target_schema=target_schema)
+    from .reanimation_followup import uses_returned_creature_counters
+    if uses_returned_creature_counters(effect):
+        return returned_creature_counter_capabilities(effect, target_schema, mechanics)
     if operation=='reanimate_targets':
         from ..compiler.reanimation_templates import (FIXED_TARGET_REANIMATION_SET_CAPABILITY,
             FIXED_TARGET_REANIMATION_SET_MECHANIC)
@@ -250,6 +267,31 @@ def fixed_homogeneous_target_set_node_capabilities(
     )
 
 
+def returned_creature_counter_capabilities(effect, target_schema, mechanics):
+    from ..replacement.immutable import FrozenMap
+    from .reanimation_followup import RETURNED_CREATURE_COUNTER_CAPABILITY, RETURNED_CREATURE_COUNTER_VERSION
+
+    if not isinstance(target_schema, Mapping):
+        return ()
+    numeric = target_schema.get("numeric_characteristic")
+    if not isinstance(numeric, Mapping) or type(numeric.get("value")) is not int or numeric["value"] < 0:
+        return ()
+    expected = {
+        "zones": ["graveyard"], "categories": ["card"], "owner_relation": "you",
+        "types_any": ["creature"], "up_to": 2,
+        "numeric_characteristic": {"characteristic": "power", "comparison": "at_most", "value": numeric["value"]},
+    }
+    if (FrozenMap(target_schema) != FrozenMap(expected) or type(target_schema["up_to"]) is not int
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != RETURNED_CREATURE_COUNTER_VERSION
+            or effect.get("battlefield_controller") != "actor" or effect.get("battlefield_tapped") is not False):
+        return ()
+    primitive = {**effect, "schema_version": 1}
+    owned = fixed_homogeneous_target_set_node_capabilities(effects=(primitive,),
+        target_schema=target_schema, mechanic_ids=mechanics)
+    return (*owned, RETURNED_CREATURE_COUNTER_CAPABILITY, "counter.producer.fixed_permanent_target_set_effect",
+            "counter.placement.quantity_replacement") if owned else ()
+
+
 def is_closed_fixed_homogeneous_target_set_program(program: Any) -> bool:
     """Recognize one capability-closed bounded homogeneous target set."""
 
@@ -277,6 +319,10 @@ def announced_target_set_node_capabilities(
     if ANNOUNCED_TARGET_SET_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .announced_x_damage_sets import SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD, scaled_announced_target_damage_node_capabilities
+
+    if SCALED_ANNOUNCED_TARGET_DAMAGE_FIELD in effect:
+        return scaled_announced_target_damage_node_capabilities(effects, target_schema, mechanics)
     from ..phasing_model import PHASE_OUT_OPERATION, PHASE_OUT_TARGET_SET_SUBJECT
     if effect.get("op") == PHASE_OUT_OPERATION and effect.get("subject") == PHASE_OUT_TARGET_SET_SUBJECT:
         from .occurrence_object_results import phase_out_node_capabilities
@@ -308,10 +354,27 @@ def announced_target_set_node_capabilities(
 
 def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
     """Require the new authority even if a producer omits its annotation."""
+    from .reanimation_followup import uses_returned_creature_counters
+
+    if any(uses_returned_creature_counters(effect) for effect in program.effects):
+        from ..compiler.reanimation_templates import FIXED_TARGET_REANIMATION_MECHANIC, FIXED_TARGET_REANIMATION_SET_MECHANIC
+
+        mechanics = (*program.coverage, FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
+                     FIXED_TARGET_REANIMATION_MECHANIC, FIXED_TARGET_REANIMATION_SET_MECHANIC, "cr-115-targets")
+        required = fixed_homogeneous_target_set_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=mechanics,
+        )
+        if not required:
+            raise ValueError("Returned creature counters require their original target-set reanimation")
+        return required
     from .targeted_control_set import targeted_control_set_runtime_dependencies
     from .counter_target_set_shapes import split_two_counter_program_dependencies
     from .controlled_destruction_source_counters import controlled_destruction_source_counter_program_dependencies
 
+    from .announced_x_damage_sets import scaled_announced_target_damage_program_dependencies
+
+    if scaled_damage := scaled_announced_target_damage_program_dependencies(program):
+        return scaled_damage
     if required := controlled_destruction_source_counter_program_dependencies(program):
         return required
     if split := split_two_counter_program_dependencies(program):

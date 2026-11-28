@@ -114,7 +114,9 @@ sealed occurrences in the canonical damage result and add them to its completed
 trigger batch. Trigger discovery, current source presence, APNAP ordering,
 targets, optional choices and replay retain their existing owners. The
 dispatcher uses that same printed-and-granted event-program lookup to skip
-per-counter iteration when there is no subscriber.
+per-counter iteration when there is no subscriber. Subscriber discovery and
+affected-set selection each use one characteristic read frame. Each frame
+ends before the corresponding trigger dispatch or placement commit.
 
 Ordinary canonical lore placements publish each crossed Saga chapter once,
 after all placements in the instruction commit. Counter movements use that
@@ -135,6 +137,14 @@ decline and delegates acceptance to the same replacement-aware transaction.
 A replaced discard destination retains its typed discard cause. Compound and
 linked follow-up bodies, unsupported targets, and independent sibling abilities
 remain outside this optional-result contract.
+
+A complete current-turn journal can report that the placing player put a
+positive number of counters on a battlefield creature. The authoritative
+commit records the placing player and the recipient's type and incarnation
+at the placement. It includes entry counters and supported damage results.
+An end-step condition can use that history independently of the recipient's
+current zone, controller, or remaining counters. Historical journals retain
+their original placement modes.
 
 `counter_placement.py` also owns represented
 effect-generated, cost-generated, and typed rule-result counters placed on
@@ -774,6 +784,16 @@ changes do not increase the number removed from the source. Declining remains
 legal, and pending choices retain the original identities across save/load.
 Variable and unsupported keyword values, unrepresented sibling abilities,
 Oracle-equivalent prose, and unrepresented counter prohibitions remain residual.
+
+A departure counter copy reads each kind and quantity from the controlled creature's
+battlefield snapshot. It places that batch on the original observing permanent
+through ordinary replacements.
+
+The optional beginning-of-combat transfer requires counters on the original
+source at the beginning and at resolution. Its creature target is chosen when
+the trigger is placed. It prepares all current counter kinds in one batch. A
+kind whose placement fails stays on the source, and successful kinds remove
+their original quantities.
 
 Fixed ordinary-mana Impending binds the selected alternate price to the
 resolving spell and copies of that spell. The paid entrant uses the existing

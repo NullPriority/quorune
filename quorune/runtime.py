@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import ExitStack
 from dataclasses import dataclass, field
 import logging
 import time
 import traceback
 from typing import Any, Callable, Literal, Mapping, Protocol
 
+from .characteristic_read_frames import characteristic_read_frame
 from .service import CommandEnvelope, CommandReceipt, GameService
 from .turn_priority_model import PriorityWindowHolds
 
@@ -89,6 +91,7 @@ class GameActor:
         self._last_authoritative_persistence_seconds: float | None = None
         self._last_derived_review_seconds: float | None = None
         self._last_command_by_principal: dict[str, dict[str, str | float | int | bool]] = {}
+        self._observation_epoch = object()
 
     @property
     def queue_depth(self) -> int:
@@ -330,7 +333,7 @@ class GameActor:
         ):
             await self._persist()
             persistence_ms = (time.perf_counter() - executed) * 1000
-        if not result.replayed and result.code != "invalid_envelope":
+        if not result.replayed and result.code not in {"invalid_envelope", "idempotency_conflict"}:
             self.service.remember(
                 message.envelope,
                 principal,
@@ -349,11 +352,58 @@ class GameActor:
             self._publish_command_change(self.game_id)
         return result
 
+    async def _pause_match(self, reason: str | None) -> dict[str, Any]:
+        session = self.service.session
+        if session.state.game_over or session.record_status not in {"created", "in_progress", "paused"}:
+            raise GameLifecycleConflict(
+                "A finished, aborted, or corrupt game cannot be stopped"
+            )
+        if session.record_status == "paused":
+            if (session.pause_reason or {}).get("kind") != "administrative_stop":
+                raise GameLifecycleConflict(
+                    "A fidelity or rules pause cannot be replaced by an administrative stop"
+                )
+            return {**self._lifecycle_summary(), "changed": False}
+        session.pause(
+            {
+                "kind": "administrative_stop",
+                "label": str(reason or "Match stopped")[:500],
+            }
+        )
+        if self.persistence is not None:
+            await self._persist()
+        return {**self._lifecycle_summary(), "changed": True}
+
+    def _observe_message(self, message: _ActorMessage) -> dict[str, Any]:
+        packet = self.service.observe(
+            str(message.principal),
+            full=message.full,
+            cursor_key=message.cursor_key,
+            observation_epoch=self._observation_epoch,
+        )
+        if message.include_lifecycle:
+            return {"packet": packet, "lifecycle": self._lifecycle_summary()}
+        return packet
+
     async def _run(self) -> None:
+        with ExitStack() as observation_reads:
+            await self._serve_mailbox(observation_reads)
+
+    async def _serve_mailbox(self, observation_reads: ExitStack) -> None:
+        reading = False
         while True:
-            message = await self._mailbox.get()
+            if reading and not self._mailbox.empty():
+                message = self._mailbox.get_nowait()
+            else:
+                if reading:
+                    observation_reads.close()
+                    reading = False
+                message = await self._mailbox.get()
             self._processing_kind = message.kind
             try:
+                if reading and message.kind != "observe":
+                    observation_reads.close()
+                    reading = False
                 if message.kind == "stop":
                     if not message.future.done():
                         message.future.set_result(None)
@@ -362,14 +412,14 @@ class GameActor:
                     raise GameActorUnavailable(
                         f"Game actor {self.game_id} requires recovery"
                     )
+                if message.kind in {"command", "poll", "pause", "resume"}:
+                    self._observation_epoch = object()
                 if message.kind == "observe":
-                    result = self.service.observe(
-                        str(message.principal),
-                        full=message.full,
-                        cursor_key=message.cursor_key,
-                    )
-                    if message.include_lifecycle:
-                        result = {"packet": result, "lifecycle": self._lifecycle_summary()}
+                    engine = getattr(self.service.session, "engine", None)
+                    if not reading and engine is not None:
+                        observation_reads.enter_context(characteristic_read_frame(engine))
+                        reading = True
+                    result = self._observe_message(message)
                 elif message.kind == "public_events":
                     result = self.service.event_page(
                         "spectator",
@@ -388,43 +438,7 @@ class GameActor:
                 elif message.kind == "inspect":
                     result = self._lifecycle_summary()
                 elif message.kind == "pause":
-                    session = self.service.session
-                    if (
-                        session.state.game_over
-                        or session.record_status
-                        not in {"created", "in_progress", "paused"}
-                    ):
-                        raise GameLifecycleConflict(
-                            "A finished, aborted, or corrupt game cannot be "
-                            "stopped"
-                        )
-                    if session.record_status == "paused":
-                        if (session.pause_reason or {}).get("kind") != (
-                            "administrative_stop"
-                        ):
-                            raise GameLifecycleConflict(
-                                "A fidelity or rules pause cannot be replaced "
-                                "by an administrative stop"
-                            )
-                        result = {
-                            **self._lifecycle_summary(),
-                            "changed": False,
-                        }
-                    else:
-                        session.pause(
-                            {
-                                "kind": "administrative_stop",
-                                "label": str(message.reason or "Match stopped")[
-                                    :500
-                                ],
-                            }
-                        )
-                        if self.persistence is not None:
-                            await self._persist()
-                        result = {
-                            **self._lifecycle_summary(),
-                            "changed": True,
-                        }
+                    result = await self._pause_match(message.reason)
                 elif message.kind == "resume":
                     session = self.service.session
                     if session.state.game_over or session.record_status in {
@@ -460,6 +474,9 @@ class GameActor:
                 if not message.future.done():
                     message.future.set_result(result)
             except BaseException as exc:
+                if reading:
+                    observation_reads.close()
+                    reading = False
                 response_exception = exc
                 durable_failure = (
                     message.kind == "command"

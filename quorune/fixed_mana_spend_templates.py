@@ -6,6 +6,7 @@ from .mana_spend_rules import ManaSpendRule, ManaSpendRuleKind
 
 
 _TAILS = {
+    "spend this mana only to cast spells from exile": ManaSpendRuleKind.CAST_FROM_EXILE,
     "spend this mana only to cast creature spells or activate abilities of creatures": ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY,
     "spend this mana only to cast a creature spell of the chosen type": ManaSpendRuleKind.CHOSEN_CREATURE,
     "spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type": ManaSpendRuleKind.CHOSEN_CREATURE_OR_ABILITY,

@@ -23,6 +23,27 @@ def flip_fixed_coin(*, seed, instruction_key: str, seat: str) -> bool:
     ).getrandbits(1))
 
 
+def publish_resolution_die_roll(
+    host, *, controller: str, stack_ref: str, instruction_pointer: int, sides: int, roll_ordinal: int = 1,
+) -> int:
+    """Publish a die face for one resolving instruction and its resumption step."""
+    if (
+        type(stack_ref) is not str or not stack_ref or type(controller) is not str or not controller
+        or type(instruction_pointer) is not int or instruction_pointer < 0
+        or type(roll_ordinal) is not int or roll_ordinal < 1
+    ):
+        raise ValueError("A resolution die roll requires its stack, controller and positive roll ordinal")
+    key = f"{stack_ref}|{instruction_pointer}"
+    if roll_ordinal != 1:
+        key += f"|roll:{roll_ordinal}"
+    face = roll_fixed_die(sides, seed=host.state.config.seed, instruction_key=key, seat=controller)
+    host._log(
+        controller, "die.roll", f"{controller} rolled {face} on a d{sides}.",
+        {"player": controller, "sides": sides, "result": face, "stack": stack_ref},
+        importance=2,
+    )
+    return face
+
 def choose_random_integer(minimum: int, maximum: int, *, seed, instruction_key: str, seat: str) -> int:
     if type(minimum) is not int or type(maximum) is not int or minimum >= maximum:
         raise ValueError("A random integer interval needs two ordered integer bounds")

@@ -8,12 +8,20 @@ from . import regex_working_set as re
 from .direct_target import direct_permanent_target_spec
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from .fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
-from ..goad_instruction import GOAD_MECHANIC, GOAD_CAPABILITY
+from ..goad_instruction import GOAD_MECHANIC, GOAD_CAPABILITY, goad_block_prohibition_effect
 
 _PLAYER_SCHEMA={'zones':['player'],'categories':['player'],'player_relation':'any','count':1}
 
 
 def fixed_goad_effect_template(text):
+    if re.fullmatch(
+        r"Goad all creatures your opponents control\. Until your next turn, those creatures can['’]t block\.",
+        text.strip(), re.I,
+    ):
+        return (
+            "fixed-goad-set-with-block-prohibition-v3", (goad_block_prohibition_effect(),), None,
+            (GOAD_MECHANIC, "cr-611-continuous-effects", "cr-509-declare-blockers-step"),
+        )
     match=re.fullmatch(r'Goad (?P<subject>.+?)\.?',text.strip(),re.I)
     if match is None:return None
     subject=match['subject'].rstrip('.');target=direct_permanent_target_spec(subject)

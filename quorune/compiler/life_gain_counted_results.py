@@ -70,3 +70,15 @@ def capped_life_gain_draw_payment(text, *, binding):
 
     return ("life-gain-capped-mana-draw-v1", (capped_life_gain_draw_effect(),),
             None, (FIXED_EFFECT_PAYMENT_MECHANIC,)), False
+
+
+def life_gain_life_draw_payment(text, *, binding):
+    if not _is_controller_life_gain(binding) or not re.fullmatch(
+        r"You may pay that much life\. If you do, draw that many cards\.", text.strip(), re.I,
+    ):
+        return None
+    from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
+    from ..rules.life_gain_counted_results import life_gain_life_draw_effect
+
+    return ("life-gain-life-payment-and-draw-v1", (life_gain_life_draw_effect(),),
+            None, (FIXED_EFFECT_PAYMENT_MECHANIC,)), False

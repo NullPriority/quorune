@@ -13,6 +13,7 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
     creature_controller_damage_set_effect, creature_self_damage_set_effect,
+    target_power_damage_cohort_effect, target_power_damage_cohort_schema,
 )
 from ..rules.source_references import SourceReferenceSpec
 
@@ -625,6 +626,17 @@ def fixed_creature_power_damage_effect_template(
     if reciprocal is not None:
         return reciprocal
     normalized = " ".join(_REMINDER.sub("", text).split())
+    if normalized.casefold().replace("’", "'") == (
+        "target creature you control deals damage equal to its power to target creature you don't control. "
+        "if the creature you control has trample, excess damage is dealt to that creature's controller instead."
+    ):
+        from ..creature_power_damage_model import trample_bite_effect
+        from ..rules.creature_power_damage_capability_shapes import trample_bite_target_schema
+
+        return FixedCreaturePowerDamageTemplate(
+            "target-creature-trample-excess-damage-v1", (trample_bite_effect(),), trample_bite_target_schema(),
+            (CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"),
+        )
     stat_prep = _STAT_PREP_FIGHT.fullmatch(normalized)
     if stat_prep is not None:
         return _stat_prepared_fight(stat_prep)
@@ -654,6 +666,14 @@ def fixed_creature_power_damage_effect_template(
             card_name=card_name,
             allow_source_pronoun=allow_source_pronoun,
             source_attachment_relation=source_attachment_relation,
+        )
+    if normalized.casefold() == (
+        "target creature you control deals damage equal to its power to each other creature and each opponent."
+    ):
+        return FixedCreaturePowerDamageTemplate(
+            "target-power-creatures-and-opponents-v1", (target_power_damage_cohort_effect(),),
+            target_power_damage_cohort_schema(),
+            (CREATURE_POWER_DAMAGE_MECHANIC, "cr-115-targets", "cr-120-damage"),
         )
     if _TARGETED_SELF_BITE.fullmatch(normalized):
         return _targeted_self_bite()

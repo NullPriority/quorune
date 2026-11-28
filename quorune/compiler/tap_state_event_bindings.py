@@ -135,16 +135,35 @@ def monarch_became_binding_spec(material_line, *, card_name=None):
     )
 
 
+def tapped_entry_untap_binding(material_line, *, card_name=None):
+    from ..rules.entry_permanent_results import TAPPED_ENTRY_VARIANT, tapped_entry_untap_condition
+
+    match = re.fullmatch(r"Whenever (?:a permanent you control enters tapped|"
+                         r"a permanent enters tapped and under your control), (?P<body>untap it\.)",
+                         material_line, re.I)
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event="permanent.enter", variant=TAPPED_ENTRY_VARIANT, body=match["body"],
+        template_id="fixed-tapped-entry-untap-v1", mechanic="trigger-event-normalized-zone-change",
+        condition=tapped_entry_untap_condition(),
+    )
+
+
 def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     """Keep established public grammar precedence before the tap extension."""
     from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
+    from .qualified_zone_event_bindings import attached_player_creature_entry_binding_spec
     from .fixed_public_action_event_bindings import _point_combat_spec, fixed_public_action_event_binding_spec
-    from .fixed_public_multi_event_bindings import fixed_public_multi_event_binding_spec
+    from .fixed_public_multi_event_bindings import (
+        fixed_public_multi_event_binding_spec, opponent_attack_draw_cast_binding_spec,
+    )
     from .room_bindings import eerie_binding_spec
     from .target_announcement_bindings import target_announcement_binding_spec
+    from .phase_occurrence_templates import phase_occurrence_binding_spec
     from .event_card_return_templates import (
         self_death_return_binding, source_departure_hand_return_binding, source_departure_library_binding,
-        source_death_land_exile_binding,
+        source_death_land_exile_binding, entry_creature_pump_binding,
     )
     from .counter_placement_event_bindings import counter_placement_event_binding_spec
     from .scheduled_player_triggers import scheduled_player_binding_spec
@@ -158,12 +177,16 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     from .unblocked_attacker_bindings import unblocked_attacker_binding_spec
     from .attacking_token_results import attacking_entry_copy_binding
 
+    if mixed := opponent_attack_draw_cast_binding_spec(material_line):
+        return mixed
     if entry := attacking_entry_copy_binding(material_line, card_name=card_name):
         return entry
     if points := _point_combat_spec(material_line):
         return points
-    for parser in (monarch_became_binding_spec, source_death_land_exile_binding, source_departure_hand_return_binding, source_departure_library_binding, unblocked_attacker_binding_spec,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
-                   tap_state_event_binding_spec, counter_placement_event_binding_spec, eerie_binding_spec, fixed_public_multi_event_binding_spec, target_announcement_binding_spec, self_death_return_binding, scheduled_player_binding_spec, source_damage_death_binding,token_creation_event_binding_spec,crime_event_binding_spec,chosen_color_event_binding_spec,chosen_type_event_binding_spec,explore_event_binding_spec,mutate_event_binding_spec):
+    if tapped_entry := tapped_entry_untap_binding(material_line, card_name=card_name):
+        return tapped_entry
+    for parser in (monarch_became_binding_spec, source_death_land_exile_binding, source_departure_hand_return_binding, source_departure_library_binding, unblocked_attacker_binding_spec, attached_player_creature_entry_binding_spec,entry_creature_pump_binding,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
+                   tap_state_event_binding_spec, counter_placement_event_binding_spec, eerie_binding_spec, fixed_public_multi_event_binding_spec, phase_occurrence_binding_spec, target_announcement_binding_spec, self_death_return_binding, scheduled_player_binding_spec, source_damage_death_binding,token_creation_event_binding_spec,crime_event_binding_spec,chosen_color_event_binding_spec,chosen_type_event_binding_spec,explore_event_binding_spec,mutate_event_binding_spec):
         value = parser(material_line, card_name=card_name)
         if value is not None:
             return value

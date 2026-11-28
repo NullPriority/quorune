@@ -18,13 +18,15 @@ from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .rules.casting_additional_cost_groups import (
+    FixedLifePaymentAdditionalCost,
     fixed_life_payment_additional_cost,
 )
 from .rules.casting_additional_costs import (
     AdditionalCostError,
+    FixedZoneChangeAdditionalCost,
     fixed_zone_change_additional_cost,
 )
-from .util import mana_cost_to_vector
+from .util import mana_cost_to_vector, stable_json
 
 
 FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY = (
@@ -35,6 +37,11 @@ FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID = (
 )
 FIXED_PUBLIC_ALTERNATIVE_COST_EVENT = "cast.cost"
 ANNOUNCED_X_PITCH_PRICE_VERSION = 2
+LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION = 3
+LIFE_AND_BLUE_HAND_EXILE_PRICE_CAPABILITIES = (
+    "casting.additional_cost.zone_change.fixed_exile",
+    "casting.additional_cost.fixed_life_payment",
+)
 ANNOUNCED_X_PITCH_POLICY = "announced_x_pitch"
 FIXED_PUBLIC_ALTERNATIVE_COST_MECHANIC = "fixed-public-alternative-cost"
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
@@ -77,6 +84,7 @@ class FixedPublicAlternativeConditionKind(str, Enum):
     EXACTLY_ONE_ATTACKING_CREATURE = "exactly_one_attacking_creature"
     AT_LEAST_THREE_ATTACKING_CREATURES = "at_least_three_attacking_creatures"
     AT_LEAST_FOUR_ATTACKING_CREATURES = "at_least_four_attacking_creatures"
+    MINIMUM_BATTLEFIELD_CREATURES = "minimum_battlefield_creatures"
     DAMAGED_BY_TWO_CREATURES = "damaged_by_two_creatures"
     PROWL = "prowl"
     YOUR_TURN = "your_turn"
@@ -93,6 +101,10 @@ _LIVE_ATTACKING_MINIMUM_COUNTS = {
     FixedPublicAlternativeConditionKind.AT_LEAST_FOUR_ATTACKING_CREATURES: 4,
 }
 CREATURE_DAMAGE_PRICE_VERSION = 6
+BATTLEFIELD_CREATURE_PRICE_VERSION = 7
+_BATTLEFIELD_CREATURE_COUNT = LiveBattlefieldQuantitySpec(
+    "any", ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+)
 _CREATURE_DAMAGE_COSTS = {FixedPublicAlternativeConditionKind.DAMAGED_BY_TWO_CREATURES: "{R}"}
 _CLOSED_PLAIN_PRICE_COSTS = {
     LIVE_ATTACKING_PRICE_VERSION: LIVE_ATTACKING_COSTS,
@@ -139,8 +151,18 @@ class FixedPublicAlternativeCondition:
     basic_land_type: str | None = None
     schema_version: int = 1
     opponent_basic_land_type: str | None = None
+    minimum_creature_count: int | None = None
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version == BATTLEFIELD_CREATURE_PRICE_VERSION:
+            if (self.kind is not FixedPublicAlternativeConditionKind.MINIMUM_BATTLEFIELD_CREATURES
+                    or type(self.minimum_creature_count) is not int or not 1 <= self.minimum_creature_count <= 99
+                    or self.basic_land_type is not None or self.opponent_basic_land_type is not None):
+                raise FixedPublicAlternativeCostError("The battlefield price requires its exact creature threshold")
+            return
+        if (self.minimum_creature_count is not None
+                or self.kind is FixedPublicAlternativeConditionKind.MINIMUM_BATTLEFIELD_CREATURES):
+            raise FixedPublicAlternativeCostError("A creature threshold requires its explicit condition version")
         if type(self.schema_version) is int and self.schema_version in _OPPONENT_HISTORY_PRICE_VERSIONS:
             if (not isinstance(self.kind, FixedPublicAlternativeConditionKind)
                     or self.kind not in OPPONENT_HISTORY_COSTS
@@ -210,6 +232,8 @@ class FixedPublicAlternativeCondition:
     def capability_dependencies(self) -> tuple[str, ...]:
         if self.schema_version == LIVE_ATTACKING_PRICE_VERSION:
             return _ATTACKING_CREATURE_COUNT.capability_dependencies
+        if self.schema_version == BATTLEFIELD_CREATURE_PRICE_VERSION:
+            return _BATTLEFIELD_CREATURE_COUNT.capability_dependencies
         return self.history_dependencies
 
     def to_dict(self) -> dict[str, Any]:
@@ -220,6 +244,8 @@ class FixedPublicAlternativeCondition:
         }
         if self.schema_version == 2:
             value['opponent_basic_land_type'] = self.opponent_basic_land_type
+        if self.schema_version == BATTLEFIELD_CREATURE_PRICE_VERSION:
+            value["minimum_creature_count"] = self.minimum_creature_count
         return value
 
     @classmethod
@@ -231,6 +257,7 @@ class FixedPublicAlternativeCondition:
             "kind",
             "basic_land_type",
             *({'opponent_basic_land_type'} if value.get('schema_version') == 2 else ()),
+            *({"minimum_creature_count"} if value.get("schema_version") == BATTLEFIELD_CREATURE_PRICE_VERSION else ()),
         }:
             raise FixedPublicAlternativeCostError(
                 "Alternative-cost condition fields are closed"
@@ -241,9 +268,23 @@ class FixedPublicAlternativeCondition:
                 kind=FixedPublicAlternativeConditionKind(value["kind"]),
                 basic_land_type=value["basic_land_type"],
                 opponent_basic_land_type=value.get('opponent_basic_land_type'),
+                minimum_creature_count=value.get("minimum_creature_count"),
             )
         except (TypeError, ValueError) as exc:
             raise FixedPublicAlternativeCostError(str(exc)) from exc
+
+
+def life_and_blue_hand_exile_payments() -> tuple[FrozenMap, ...]:
+    life = FixedLifePaymentAdditionalCost(amount=1)
+    exile = FixedZoneChangeAdditionalCost(
+        operation=EXILE_ONE_FROM_HAND_COST,
+        count=1,
+        choice_field="exile_cards",
+        predicate=ObjectQuerySpec(
+            zones=("hand",), owner="$actor", known_to_actor=True, colors_all=("U",),
+        ),
+    )
+    return (FrozenMap(life.to_descriptor()), FrozenMap(exile.to_descriptor()))
 
 
 @dataclass(frozen=True, slots=True)
@@ -259,7 +300,9 @@ class FixedPublicAlternativeCostSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in (1, ANNOUNCED_X_PITCH_PRICE_VERSION):
+        if type(self.schema_version) is not int or self.schema_version not in (
+            1, ANNOUNCED_X_PITCH_PRICE_VERSION, LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION,
+        ):
             raise FixedPublicAlternativeCostError(
                 "Unsupported fixed alternative-cost version"
             )
@@ -310,7 +353,17 @@ class FixedPublicAlternativeCostSpec:
             raise FixedPublicAlternativeCostError(
                 "Fixed alternative-cost mana requires source text"
             )
-        if len(self.additional_costs) > 1:
+        if self.schema_version == LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION:
+            if (
+                self.kind is not FixedPublicAlternativeCostKind.PLAIN
+                or self.condition != FixedPublicAlternativeCondition(FixedPublicAlternativeConditionKind.ALWAYS)
+                or self.cost_text is not None
+                or self.additional_costs != life_and_blue_hand_exile_payments()
+            ):
+                raise FixedPublicAlternativeCostError(
+                    "This alternative requires both one life and one blue card exiled from the caster's hand"
+                )
+        elif len(self.additional_costs) > 1:
             raise FixedPublicAlternativeCostError(
                 "Fixed alternative costs support at most one nonmana payment"
             )
@@ -368,6 +421,7 @@ class FixedPublicAlternativeCostSpec:
             FixedPublicAlternativeConditionKind.CONTROLS_BASIC_LAND_TYPE,
             FixedPublicAlternativeConditionKind.NOT_YOUR_TURN,
             FixedPublicAlternativeConditionKind.YOUR_TURN,
+            FixedPublicAlternativeConditionKind.MINIMUM_BATTLEFIELD_CREATURES,
             *OPPONENT_HISTORY_COSTS,
             *LIVE_ATTACKING_COSTS,
             *_CREATURE_DAMAGE_COSTS,
@@ -379,6 +433,10 @@ class FixedPublicAlternativeCostSpec:
                 self.kind is not FixedPublicAlternativeCostKind.PLAIN or self.cost_text != '{0}'
                 or any(requirements.values()) or self.additional_costs):
             raise FixedPublicAlternativeCostError('Conditional zero-mana alternative requires exactly the zero replacement price')
+        if self.condition.schema_version == BATTLEFIELD_CREATURE_PRICE_VERSION and (
+                self.kind is not FixedPublicAlternativeCostKind.PLAIN
+                or self.cost_text is None or self.additional_costs):
+            raise FixedPublicAlternativeCostError("A battlefield creature price requires ordinary mana only")
         closed_prices = _CLOSED_PLAIN_PRICE_COSTS.get(self.condition.schema_version)
         if closed_prices is not None and (
             self.kind is not FixedPublicAlternativeCostKind.PLAIN
@@ -477,6 +535,39 @@ class FixedPublicAlternativeCostSpec:
         }
 
 
+def is_life_and_blue_hand_exile_price_option(
+    option: Mapping[str, Any], costs: Sequence[Mapping[str, Any]],
+) -> bool:
+    body = option.get("fixed_public_alternative_cost")
+    if (
+        not isinstance(body, Mapping) or body.get("schema_version") != LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION
+        or len(costs) != 2 or any(not isinstance(cost, Mapping) for cost in costs)
+    ):
+        return False
+    try:
+        spec = FixedPublicAlternativeCostSpec.from_dict(thaw_value(FrozenMap(body)))
+        actual = [thaw_value(FrozenMap(cost)) for cost in costs]
+        if stable_json(actual) != stable_json(spec.to_dict()["additional_costs"]):
+            return False
+    except (TypeError, ValueError):
+        return False
+    return option.get("kind") == "alternate" and option.get("id") == spec.option_id
+
+
+def life_and_blue_hand_exile_price_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if value.get("handler_id") != FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID:
+        return ()
+    body = value.get("alternative_cost")
+    if not isinstance(body, Mapping) or body.get("schema_version") != LIFE_AND_BLUE_HAND_EXILE_PRICE_VERSION:
+        return ()
+    from .semantic_runtime.public_alternative_costs import FixedPublicAlternativeCostHandler
+
+    if type(value.get("schema_version")) is not int:
+        raise FixedPublicAlternativeCostError("The fixed alternative handler requires an exact schema version")
+    FixedPublicAlternativeCostHandler().validate(thaw_value(FrozenMap(value)))
+    return LIFE_AND_BLUE_HAND_EXILE_PRICE_CAPABILITIES
+
+
 def fixed_public_alternative_cost_handler_descriptor(
     spec: FixedPublicAlternativeCostSpec,
 ) -> dict[str, Any]:
@@ -505,6 +596,16 @@ def live_attacking_price_payload_dependencies(value):
     price = value.get("alternative_cost")
     condition = price.get("condition") if isinstance(price, Mapping) else None
     if not isinstance(condition, Mapping) or condition.get("schema_version") != LIVE_ATTACKING_PRICE_VERSION:
+        return ()
+    return FixedPublicAlternativeCostSpec.from_dict(price).condition.capability_dependencies
+
+
+def battlefield_creature_price_payload_dependencies(value):
+    if value.get("handler_id") != FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID:
+        return ()
+    price = value.get("alternative_cost")
+    condition = price.get("condition") if isinstance(price, Mapping) else None
+    if not isinstance(condition, Mapping) or condition.get("schema_version") != BATTLEFIELD_CREATURE_PRICE_VERSION:
         return ()
     return FixedPublicAlternativeCostSpec.from_dict(price).condition.capability_dependencies
 
@@ -621,6 +722,11 @@ def fixed_public_alternative_condition_met(
         return _opponent_history_price_met(host, seat, condition)
     if condition.schema_version == CREATURE_DAMAGE_PRICE_VERSION:
         return _creature_damage_price_met(host, seat)
+    if condition.schema_version == BATTLEFIELD_CREATURE_PRICE_VERSION:
+        from .live_battlefield_quantities import current_live_battlefield_count
+
+        assert condition.minimum_creature_count is not None
+        return current_live_battlefield_count(host, seat, _BATTLEFIELD_CREATURE_COUNT) >= condition.minimum_creature_count
     if condition.schema_version == LIVE_ATTACKING_PRICE_VERSION:
         from .live_battlefield_quantities import current_live_battlefield_count
 

@@ -67,6 +67,10 @@ _OTHER_CONTROLLED_CREATURE_ENTRY = FrozenMap({"all": [
     {"field": "controller", "op": "eq", "value": "$source.controller"},
     {"field": "card", "op": "ne", "value": "$source.ref"},
 ]})
+_CONTROLLER_DISCARD = FrozenMap({"field": "previous_controller", "op": "eq", "value": "$source.controller"})
+_DISTINCT_MODE_OCCURRENCES = FrozenMap({
+    "creature.enter": _OTHER_CONTROLLED_CREATURE_ENTRY, "card.discarded": _CONTROLLER_DISCARD,
+})
 _DISTINCT_TURN_MODES = ("mode_1", "mode_2", "mode_3")
 _SELF_COMBAT_PLAYER_CONDITION = FrozenMap({"all": [
     {"field": "target_kind", "op": "eq", "value": "player"},
@@ -106,9 +110,8 @@ def valid_distinct_turn_trigger_modes(schema):
 
 def distinct_turn_trigger_context_matches(*, event, active_zone, event_condition):
     return (
-        (event, active_zone) == ("creature.enter", "battlefield")
-        and isinstance(event_condition, Mapping)
-        and FrozenMap(event_condition) == _OTHER_CONTROLLED_CREATURE_ENTRY
+        active_zone == "battlefield" and type(event) is str and isinstance(event_condition, Mapping)
+        and FrozenMap(event_condition) == _DISTINCT_MODE_OCCURRENCES.get(event)
     )
 
 

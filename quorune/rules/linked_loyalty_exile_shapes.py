@@ -2,6 +2,8 @@
 
 from collections.abc import Mapping
 
+from ..library_search_model import FixedCountedLibrarySearchTemplate, counted_search_bound_dependencies
+from ..query_effect_amount_model import CastXAmountSpec
 from ..linked_ability_exile_model import LINKED_ABILITY_EXILE_CAPABILITY
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY
 from .linked_loyalty_exile_model import (
@@ -77,6 +79,28 @@ def _linked_loyalty_cost_is_closed(cost_schema, phase):
     )
 
 
+def loyalty_artifact_search_activation_capabilities(*, effects, target_schema, active_zone, cost_schema):
+    if (len(effects) != 1 or target_schema is not None or active_zone != "battlefield"
+            or not _linked_loyalty_cost_is_closed(cost_schema, "choose")):
+        return ()
+    fixed_search = FixedCountedLibrarySearchTemplate(
+        count=1, optional_count=False,
+        selector=FrozenMap({"types": ["artifact"]}),
+        destination="battlefield", reveal=False,
+    ).effect()
+    expected = {**fixed_search, "selector": {
+        **fixed_search["selector"], "mana_value": {"maximum": CastXAmountSpec().to_dict()},
+    }}
+    effect, = effects
+    if not isinstance(effect, Mapping) or FrozenMap(effect) != FrozenMap(expected):
+        return ()
+    try:
+        required = counted_search_bound_dependencies(effect)
+    except (TypeError, ValueError, KeyError):
+        return ()
+    return (LOYALTY_X_CAPABILITY, *required)
+
+
 def linked_loyalty_activation_capabilities(*, effects, target_schema, active_zone, cost_schema):
     if len(effects) != 1 or active_zone != "battlefield":
         return ()
@@ -116,9 +140,13 @@ def linked_loyalty_exile_runtime_dependencies(program):
         and not contains_nested_key(program.handlers, LOYALTY_X_FIELD)
     ):
         return ()
-    required = linked_loyalty_activation_capabilities(
-        effects=program.effects, target_schema=program.target_schema,
-        active_zone=program.active_zone, cost_schema=program.cost_schema,
+    scope = {
+        "effects": program.effects, "target_schema": program.target_schema,
+        "active_zone": program.active_zone, "cost_schema": program.cost_schema,
+    }
+    required = (
+        linked_loyalty_activation_capabilities(**scope)
+        or loyalty_artifact_search_activation_capabilities(**scope)
     )
     if not required or not has_plain_loyalty_catalog(program):
         raise ValueError("Linked loyalty requires one ordinary battlefield activation and its original price")

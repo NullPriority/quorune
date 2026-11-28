@@ -10,6 +10,72 @@ from quorune.characteristic_read_frames import characteristic_read_frame, memoiz
 
 
 class CharacteristicReadFrameTests(unittest.TestCase):
+    def test_zone_replacement_subject_reads_current_data_only_without_a_supplied_snapshot(self):
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.semantic_runtime.zone_replacement_inputs import zone_change_subject_characteristics
+
+        live = {"type_line": "Artifact", "colors": []}
+        supplied = {"type_line": "Creature", "colors": ["B"]}
+        card = SimpleNamespace(object_id="entrant", zone="hand", owner="A")
+        host = SimpleNamespace(_effective_card_data=lambda card: live, _type_parts=type_parts)
+        with patch.object(host, "_effective_card_data", wraps=host._effective_card_data) as read:
+            snapshot, _, card_types, _, _ = zone_change_subject_characteristics(
+                host, card, "graveyard", {card.object_id: supplied}, {},
+            )
+            self.assertEqual({"creature"}, card_types)
+            self.assertEqual(supplied, snapshot)
+            self.assertIsNot(supplied, snapshot)
+            empty, *_ = zone_change_subject_characteristics(
+                host, card, "graveyard", {card.object_id: {}}, {},
+            )
+            self.assertEqual({}, empty)
+            read.assert_not_called()
+
+            current, _, card_types, _, _ = zone_change_subject_characteristics(host, card, "graveyard", {}, {})
+            self.assertEqual({"artifact"}, card_types)
+            self.assertEqual(live, current)
+            read.assert_called_once_with(card)
+
+    def test_each_mana_step_shares_validation_reads_before_its_own_mutation(self):
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.mana_activation import complete_mana_plan_activations
+
+        host = SimpleNamespace()
+        card = SimpleNamespace(zone="battlefield", ref="source", object_id="source", tapped=False)
+        host._resolve_object = lambda *args, **kwargs: card
+        host._type_parts = type_parts
+        source_types = ["Snow Land"]
+        reads = []
+        committed_snow_flags = []
+
+        def compute():
+            reads.append(source_types[0])
+            return {"type_line": source_types[0]}
+
+        def read_card(_card):
+            return memoized_characteristic_read(host, ("fixture-mana-source", card.object_id), compute)
+
+        def modes(*args):
+            self.assertEqual(source_types[0], read_card(card)["type_line"])
+            return ()
+
+        def commit(_host, _seat, _card, _mode, _bundle, _restriction, snow_source, **_kwargs):
+            committed_snow_flags.append(snow_source)
+            source_types[0] = "Land"
+
+        host._effective_card_data = read_card
+        mode = SimpleNamespace(price=None)
+        with (
+            patch("quorune.mana_activation._mana_plan_modes", side_effect=modes),
+            patch("quorune.mana_activation._selected_plan_mode", return_value=(mode, None)),
+            patch("quorune.mana_activation._commit_plan_mode", side_effect=commit),
+        ):
+            step = {"source": card.ref, "bundle": {"C": 1}}
+            complete_mana_plan_activations(host, "A", [step, step])
+
+        self.assertEqual(["Snow Land", "Land"], reads)
+        self.assertEqual([True, False], committed_snow_flags)
+
     def test_priority_catalog_reuses_only_its_current_pure_read_and_ends_before_mutation(self):
         import quorune.rules.action_catalog as catalog
         host=SimpleNamespace(state=SimpleNamespace());value={'power':1};calls=[]

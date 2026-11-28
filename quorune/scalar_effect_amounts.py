@@ -183,6 +183,27 @@ def _reference_identity(host, item, spec):
     return card.object_id, context.get("card_object_identity"), "battlefield"
 
 
+def _shared_counter_result_amount(effects: Sequence[Any]):
+    from .fixed_token_production import FIXED_DISTRIBUTED_TOKEN_OPERATION
+
+    if len(effects) != 3 or tuple(effect.get("op") for effect in effects) != (
+        "place_counters", FIXED_DISTRIBUTED_TOKEN_OPERATION, "damage_fixed_set",
+    ):
+        return None
+    placement, production, damage = effects
+    token = production.get("token")
+    if not isinstance(token, Mapping):
+        return None
+    amount = token.get("quantity")
+    if (not isinstance(amount, Mapping) or amount != damage.get("amount")
+            or placement.get("card") != "$source.zone_object"
+            or damage.get("source") != "$source"):
+        return None
+    spec = ScalarEffectAmountSpec.from_dict(amount)
+    return amount if (spec.reads_source_counters and spec.binding_id is not None
+                      and spec.counter_name == placement.get("counter")) else None
+
+
 def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError, phase_out=False):
     """Use the original object immediately before a supported loss of availability."""
     from .counter_placement_sets import uses_source_power_combat_counter_set
@@ -190,6 +211,8 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
     from .rules.opponent_event_mana_payment import uses_opponent_source_power_payment
     from .rules.counter_scaled_annihilator import uses_counter_scaled_annihilator
     from .rules.source_counter_kind_draw import uses_source_counter_kind_draw
+    from .rules.source_counter_mill_choice import OFFER_FIELD as SOURCE_COUNTER_MILL_OFFER
+    from .rules.source_power_firebending import uses_source_power_firebending
 
     try:
         departing = {card.object_id: card for card in cards if card.zone in {"battlefield", "graveyard"}}
@@ -203,9 +226,11 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             specs = scalar_amount_specs(program.effects)
             phased_source_lki = (any(spec.reads_source_mutation_count for spec in specs)
                 or library_bottom_uses_source_power(program.effects)
+                or _shared_counter_result_amount(program.effects) is not None
+                or any(SOURCE_COUNTER_MILL_OFFER in effect for effect in program.effects)
                 or any(uses_source_counter_kind_draw(effect) for effect in program.effects)
                 or any(uses_source_power_combat_counter_set(effect) or uses_opponent_source_power_payment(effect)
-                       or uses_counter_scaled_annihilator(effect)
+                       or uses_counter_scaled_annihilator(effect) or uses_source_power_firebending(effect)
                        for effect in program.effects))
             selected = [spec for spec in specs if spec.origin in {
                 ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
@@ -404,6 +429,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
         amount = public_history_query_value(host.state, item.controller, spec.history_count)
     else:
         count_kinds = spec.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION
+        if spec.reads_source_counters and spec.binding_id is not None:
+            program = host.semantics.get(item.semantic_key) if item.semantic_key else None
+            if program is not None and _shared_counter_result_amount(program.effects) == value:
+                use_phased_source_lki = True
         reference = _reference(host, item, spec, use_phased_source_lki=use_phased_source_lki or count_kinds)
         if spec.reads_source_counters:
             counters=reference.get('counters')

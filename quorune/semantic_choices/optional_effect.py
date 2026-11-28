@@ -16,11 +16,19 @@ from ..rules.optional_draw_discard import (
     is_source_shared_type_draw_discard, validate_source_shared_type_draw_discard,
 )
 from ..rules.optional_targeted_control import is_optional_targeted_control, validate_optional_targeted_control
+from ..rules.landfall_life_loss_counters import (
+    uses_optional_loss_source_counters, validate_optional_loss_source_counters,
+)
 from ..rules.source_upkeep_handoff import uses_source_upkeep_handoff
 from .source_upkeep_handoff import complete_source_upkeep_handoff, prepare_source_upkeep_handoff
 from ..replacement.immutable import FrozenMap, freeze_value
+from ..rules.discarded_card_exile import (
+    discarded_card_play_available, discarded_card_play_choice, uses_discarded_card_play,
+)
 from ..linked_exile_return_model import validate_linked_instruction
-from ..library_search_model import FixedCountedLibrarySearchTemplate, is_counted_library_search
+from ..library_search_model import (
+    FixedCountedLibrarySearchTemplate, SubtypeGraveyardSearchSpec, is_counted_library_search, is_subtype_graveyard_search,
+)
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -172,7 +180,7 @@ def _represented_effect(
         return
     if operation == "search" and is_counted_library_search(effect):
         try:
-            FixedCountedLibrarySearchTemplate.from_effect(effect)
+            (SubtypeGraveyardSearchSpec if is_subtype_graveyard_search(effect) else FixedCountedLibrarySearchTemplate).from_effect(effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise SemanticChoiceError("Optional counted search is malformed") from exc
         return
@@ -235,6 +243,12 @@ def _validated_effects(
     from ..rules.entry_creature_type_mana import is_optional_entry_shared_type_mana, validate_bound_entry_shared_type_mana
     from ..rules.optional_draw_discard import is_entry_exempt_draw_discard, validate_entry_exempt_draw_discard
 
+    if uses_optional_loss_source_counters(effect):
+        try:
+            effects = validate_optional_loss_source_counters(effect, actor=actor, active_seats=query.active_seats)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return actor, effects
     shared_source = is_source_shared_type_draw_discard(effect)
     targeted_control = is_optional_targeted_control(effect)
     shared_entrant_mana = is_optional_entry_shared_type_mana(effect)
@@ -259,6 +273,11 @@ def _validated_effects(
             "Optional effect must be issued to its active controller"
         )
     values = effect.get("effects")
+    if uses_discarded_card_play(effect):
+        try:
+            return player, (FrozenMap(discarded_card_play_choice(effect, actor=player)),)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if entry_exempt:
         try:
             return player, tuple(FrozenMap(value) for value in validate_entry_exempt_draw_discard(effect, actor=player))
@@ -375,8 +394,9 @@ class OptionalEffectHandler:
 
         if uses_source_upkeep_handoff(effect):
             return prepare_source_upkeep_handoff(effect, context)
-        if is_optional_targeted_control(effect) and context.actor != context.stack_controller:
-            raise SemanticChoiceError("The resolving controller owns the optional control choice")
+        if ((is_optional_targeted_control(effect) or uses_optional_loss_source_counters(effect))
+                and context.actor != context.stack_controller):
+            raise SemanticChoiceError("The resolving controller owns this optional choice")
         if is_optional_entry_shared_type_mana(effect) and context.actor != context.stack_controller:
             raise SemanticChoiceError("The resolving controller owns the optional mana choice")
         player, effects = _validated_effects(
@@ -384,6 +404,20 @@ class OptionalEffectHandler:
             actor=context.actor,
             query=context.query,
         )
+        if uses_discarded_card_play(effect):
+            if player != context.stack_controller:
+                raise SemanticChoiceError("The resolving controller owns the discard-exile choice")
+            if not discarded_card_play_available(effects[0], actor=player, query=context.query):
+                return SemanticChoicePreparation(
+                    request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue("The original discarded card is unavailable in its graveyard"),
+                )
+        if (uses_optional_loss_source_counters(effect)
+                and not context.query.life_gain_permissions.allows_loss(effects[0]["player"])):
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The targeted player cannot lose life"),
+            )
         shared_source = is_source_shared_type_draw_discard(effect)
         if ((shared_source or is_entry_exempt_draw_discard(effect))
                 and not context.query.draw_permission(player).allows_complete_draw(effects[0]["count"])):
@@ -452,8 +486,11 @@ class OptionalEffectHandler:
             raise SemanticChoiceError(
                 "Optional effect continuation chooser is malformed"
             )
-        if is_optional_targeted_control(continuation.effect) and actor != continuation.semantic_frame.controller:
-            raise SemanticChoiceError("The original resolving controller owns the optional control choice")
+        life_counter = uses_optional_loss_source_counters(continuation.effect)
+        if (is_optional_targeted_control(continuation.effect) or life_counter) and actor != continuation.semantic_frame.controller:
+            raise SemanticChoiceError("The original resolving controller owns this optional choice")
+        if uses_discarded_card_play(continuation.effect) and actor != continuation.semantic_frame.controller:
+            raise SemanticChoiceError("The original resolving controller owns the discard-exile choice")
         shared_entrant_mana = is_optional_entry_shared_type_mana(continuation.effect)
         if shared_entrant_mana and actor != continuation.semantic_frame.controller:
             raise SemanticChoiceError("The original resolving controller owns the optional mana choice")
@@ -482,6 +519,12 @@ class OptionalEffectHandler:
         if (choice == "apply" and is_entry_exempt_draw_discard(continuation.effect)
                 and not query.draw_permission(actor).allows_complete_draw(1)):
             raise SemanticChoiceError("The player can no longer legally choose that draw")
+        if life_counter and choice == "apply":
+            loss, counters = effects
+            if not query.life_gain_permissions.allows_loss(loss["player"]):
+                raise SemanticChoiceError("The targeted player can no longer lose life")
+            if counters["card"] is None:
+                effects = (loss,)
         if shared_entrant_mana and effects[0]["amount"] == 0:
             effects = ()
         return SemanticChoiceCompletion(

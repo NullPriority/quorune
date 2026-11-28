@@ -83,7 +83,9 @@ _SOURCE_POWER_CONTROLLER_BLOCK = re.compile(
 )
 _CONTROLLER_STAT_UNBLOCKABLE = re.compile(
     r"creatures you control with (?P<stat>power|toughness) "
-    r"(?P<count>\d+) or less can't be blocked\."
+    r"(?P<count>\d+) or less can't be blocked"
+    r"(?: by creatures with (?P<blocker_stat>power|toughness) "
+    r"(?P<blocker_count>\d+) or (?P<blocker_direction>greater|less))?\."
 )
 _OPPONENT_COUNTERED_PROHIBITION = re.compile(
     r"creatures your opponents control with counters on them can't "
@@ -702,6 +704,10 @@ def parse_declaration_restriction_line(
     """
 
     line = normalized_oracle_line(text, card_name=card_name)
+    if line == "your opponents can't block with creatures with even mana values.":
+        from .battlefield_mana_value_query import even_mana_value_blocker_restriction
+
+        return DeclarationRestrictionParse(True, even_mana_value_blocker_restriction())
     ability_word = _ABILITY_WORD_PREFIX.fullmatch(line)
     if ability_word:
         line = ability_word.group("body")
@@ -955,12 +961,21 @@ def parse_declaration_restriction_line(
 
     match = _CONTROLLER_STAT_UNBLOCKABLE.fullmatch(line)
     if match:
+        blocker = DeclarationObjectPredicate()
+        template_id = "controller-stat-unblockable-v1"
+        if match["blocker_stat"] is not None:
+            blocker = DeclarationObjectPredicate(stat=StatComparison(
+                match["blocker_stat"], "ge" if match["blocker_direction"] == "greater" else "le",
+                "fixed", int(match["blocker_count"]),
+            ))
+            template_id = "controller-stat-vs-blocker-stat-v1"
         return DeclarationRestrictionParse(
             True,
             DeclarationRestrictionTemplate(
-                template_id="controller-stat-unblockable-v1",
+                template_id=template_id,
                 declarations=("block",),
                 scope="global",
+                subject=blocker,
                 opposing=DeclarationObjectPredicate(
                     stat=StatComparison(
                         match.group("stat"),

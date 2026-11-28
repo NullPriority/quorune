@@ -53,6 +53,10 @@ def upkeep_creature_return_node_capabilities(effects, target_schema, mechanic_id
 
 
 def upkeep_creature_return_runtime_dependencies(program):
+    from .reanimation_entry_subtype import entry_subtype_reanimation_program_dependencies
+
+    if required := entry_subtype_reanimation_program_dependencies(program):
+        return required
     from .scheduled_life_return import UPKEEP_CONDITION
 
     if (UPKEEP_CREATURE_RETURN_MECHANIC not in program.coverage

@@ -3,11 +3,13 @@ from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 import json
+import os
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.card_programs.binding import bind_card_program_runtime, bind_semantic_program_runtime
@@ -329,3 +331,170 @@ class TargetAllCounterRuntimeTests(unittest.TestCase):
             self.assertEqual(2 if pay else 0, session.state.cards[source.object_id].marked_damage)
             self.assertEqual('graveyard', session.state.cards[response.object_id].zone)
             self.private_replay(session, private)
+
+
+class HexingSquelcherNativeTests(InheritedNativeFixture, unittest.TestCase):
+    source_name = "Hexing Squelcher"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        work = Path(cls.temporary.name)
+        files = ROOT / "tests/fixtures"
+        support = {
+            "target-all-counter-variants-cards.json": {cls.source_name},
+            "event-spell-copy-cards.json": {"Grizzly Bears"},
+            "activation-restriction-material-cards.json": {"Unsummon"},
+            "ability-source-counter-cards.json": {"Counterspell"},
+            "bound-effect-program-cards.json": {"Generic Bound Commander", "Generic Bound Plains"},
+        }
+        fixtures = []
+        for name, names in support.items():
+            payload = json.loads((files / name).read_bytes())
+            payload["cards"] = [row for row in payload["cards"] if row["name"] in names]
+            assert names == {row["name"] for row in payload["cards"]}, name
+            ids = {row["oracle_id"] for row in payload["cards"]}
+            payload["rulings"] = [row for row in payload.get("rulings", ()) if row["oracle_id"] in ids]
+            source = work / name
+            source.write_text(json.dumps(payload), encoding="utf-8")
+            fixtures.append(source)
+        path = work / "hexing.sqlite3"
+        build_fixture_database(fixtures, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        commander = "Generic Bound Commander"
+        cls.deck = DeckDefinition("Quoted static life Ward", [
+            DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], [commander])
+
+    def act(self, game, seat, command, *, accepted=True):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:" + seat, command)
+        self.assertEqual(accepted, result.ok, result.summary)
+        if not accepted:
+            self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def record(self, game, comment):
+        from hashlib import sha256
+        from quorune.record import replay_record
+
+        folder = os.environ.get("QUORUNE_HEXING_RECORD_PARENT")
+        if folder is None:
+            self.replay(game, load=True)
+            return
+        path = Path(folder) / comment
+        game.save(path)
+        result = replay_record(path, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        state_hash = authoritative_state_hash(game.state)
+        self.assertEqual(state_hash, result["final_state_hash"])
+        path.with_suffix(".receipt.json").write_text(json.dumps({
+            "manifest_sha256": sha256((path / "manifest.json").read_bytes()).hexdigest(),
+            "final_state_sha256": state_hash, "commands": len(game.commands),
+        }, indent=2) + "\n", encoding="utf-8")
+
+    def life_wards(self, game, card):
+        from quorune.ability_fragments import canonical_ability_fragments
+        from quorune.trigger_participation import WardSpec
+
+        data = game.engine._effective_card_data(game.state.cards[card.object_id])
+        fragments = canonical_ability_fragments(data.get("ability_fragments", ()))
+        return [ward.life_payment for ward in fragments if isinstance(ward, WardSpec)]
+
+    def pay_ward(self, game, *, pay):
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        self.assertEqual(["pilot:B"], list(game.pending_principals()))
+        for actor in ("A", "C", "D"):
+            self.assertIsNone(game.packet("pilot:" + actor, full=True)["decision"])
+        self.act(game, "A", {"action_id": "choose", "pay": pay}, accepted=False)
+        self.act(game, "B", {"action_id": "choose", "pay": pay})
+
+    def test_hexing_grants_independent_wards_to_other_current_controlled_creatures(self):
+        for pay_second in (True, False):
+            with self.subTest(pay_second=pay_second):
+                game = self.session(7022101 + int(pay_second))
+                sources = [self.add(game.engine, self.source_name, ref=f"hexing-grant-{i}") for i in range(2)]
+                own = self.add(game.engine, "Grizzly Bears", ref="hexing-own")
+                other = self.add(game.engine, "Grizzly Bears", seat="B", ref="hexing-other")
+                bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                for card in sources:
+                    self.assert_closed(game, card)
+                self.prepare(game)
+                game.state.players["B"].mana_pool["U"] = 1
+                self.checkpoint(game)
+                for card in (*sources, own):
+                    self.assertEqual([2, 2], self.life_wards(game, card))
+                self.assertEqual([], self.life_wards(game, other))
+                self.cast_for(game, "B", bounce, [own.ref])
+                if game.state.pending_decision.kind == "trigger.order":
+                    rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["triggers"]
+                    self.assertEqual(2, len(rows))
+                    self.act(game, "A", {"action_id": "order", "triggers": [row["id"] for row in rows]})
+                self.record(game, f"hexing-two-wards-pending-{int(pay_second)}-game-record")
+                self.pay_ward(game, pay=True)
+                self.pay_ward(game, pay=pay_second)
+                self.settle(game)
+                self.assertEqual(36 if pay_second else 38, game.state.players["B"].life)
+                self.assertEqual("hand" if pay_second else "battlefield", game.state.cards[own.object_id].zone)
+                self.record(game, f"hexing-two-wards-settled-{int(pay_second)}-game-record")
+
+    def test_hexing_printed_ward_remains_and_grant_ends_when_source_leaves(self):
+        game = self.session(7022103)
+        source = self.add(game.engine, self.source_name)
+        own = self.add(game.engine, "Grizzly Bears")
+        spells = [self.add(game.engine, "Unsummon", seat="B", zone="hand", ref=f"hexing-bounce-{i}") for i in range(3)]
+        self.assert_closed(game, source)
+        self.prepare(game)
+        game.state.players["B"].mana_pool["U"] = 3
+        self.checkpoint(game)
+        self.assertEqual([2], self.life_wards(game, source))
+        self.assertEqual([2], self.life_wards(game, own))
+        self.cast_for(game, "B", spells[0], [own.ref])
+        self.pay_ward(game, pay=False)
+        self.settle(game)
+        self.assertEqual("battlefield", game.state.cards[own.object_id].zone)
+        self.cast_for(game, "B", spells[1], [source.ref])
+        self.pay_ward(game, pay=True)
+        self.settle(game)
+        self.assertEqual("hand", game.state.cards[source.object_id].zone)
+        self.assertEqual([], self.life_wards(game, own))
+        self.cast_for(game, "B", spells[2], [own.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[own.object_id].zone)
+        self.assertEqual(38, game.state.players["B"].life)
+        self.record(game, "hexing-intrinsic-ward-and-departure-game-record")
+
+    def test_hexing_keeps_its_own_and_its_controllers_spells_uncounterable(self):
+        game = self.session(7022104)
+        source = self.add(game.engine, self.source_name, zone="hand")
+        followup = self.add(game.engine, "Grizzly Bears", zone="hand")
+        counters = [self.add(game.engine, "Counterspell", seat="B", zone="hand", ref=f"hexing-counter-{i}") for i in range(2)]
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 1, "R": 1, "G": 2})
+        game.state.players["B"].mana_pool["U"] = 4
+        self.checkpoint(game)
+        for card, counter in zip((source, followup), counters):
+            self.cast_for(game, "A", card, reserve={"G": 2} if card is source else None)
+            target = next(item for item in game.state.stack if item.card_object_id == card.object_id)
+            self.cast_for(game, "B", counter, [target.ref])
+            self.settle(game)
+            self.assertEqual("battlefield", game.state.cards[card.object_id].zone)
+            self.assertEqual("graveyard", game.state.cards[counter.object_id].zone)
+        self.record(game, "hexing-intrinsic-and-controlled-uncounterability-game-record")
+
+    def test_hexing_layer_six_requires_the_granted_life_ward_capability(self):
+        from test_controller_creature_keyword_absence import register_card
+
+        card = self.db.lookup(self.source_name, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, self.source_name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = {program.ability_id: program for program in semantics.programs_for_oracle(card.oracle_id)}
+        self.assertEqual({f"static:front:n{index}" for index in range(1, 5)}, set(programs))
+        grant = programs["static:front:n4"]
+        owner = "trigger.keyword.ward.fixed_nonmana"
+        dependencies = tuple(cap for cap in grant.capability_dependencies if cap != owner)
+        original = replace(grant, capability_dependencies=dependencies,
+                           capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(original, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{owner}", binding["blockers"])

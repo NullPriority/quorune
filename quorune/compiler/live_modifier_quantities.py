@@ -49,8 +49,13 @@ def quantified_public_modifier_handler(text, *, source_name: str | None = None):
     from .query_characteristic_templates import query_characteristic_quantity,query_characteristic_value
     from .continuous_templates import fixed_query_keyword_grant_handler
     from .creature_subtypes import canonical_creature_subtype_surface
-    from ..semantic_runtime.quantified_anthems import (QuantifiedAnthemHandler,
-        QUANTIFIED_ANTHEM_HANDLER,QUANTIFIED_ANTHEM_CAPABILITY)
+    from ..semantic_runtime.quantified_anthems import (
+        QuantifiedAnthemHandler, QUANTIFIED_ANTHEM_HANDLER, QUANTIFIED_ANTHEM_CAPABILITY,
+        RECIPIENT_ATTACK_ANTHEM_CAPABILITY, recipient_attack_anthem_descriptor,
+    )
+    if " ".join(text.split()).casefold() == "each creature you control gets +1/+0 for each time it has attacked this turn.":
+        return ("continuous-recipient-attack-anthem-v1", (recipient_attack_anthem_descriptor(),),
+                (*QuantifiedAnthemHandler().capability_dependencies, RECIPIENT_ATTACK_ANTHEM_CAPABILITY))
     fixed=re.fullmatch(r'(?P<subject>.+?) gets? (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) for each '
         r'(?P<quantity>.+?)(?: and ha(?:ve|s) (?P<abilities>.+?))?\.',text.strip(),re.I)
     variable=re.fullmatch(r'(?P<subject>.+?) gets? (?P<power>[+-](?:X|0))/(?P<toughness>[+-](?:X|0)), '

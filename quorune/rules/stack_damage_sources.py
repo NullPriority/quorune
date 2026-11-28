@@ -66,6 +66,18 @@ def bind_source_relative_damage(host, effect, item, *, resolve):
 
 def needs_stack_damage_source(value):
     if isinstance(value, Mapping):
+        from .linked_landfall_play import EXPLORE_SETTLE_FIELD
+
+        if EXPLORE_SETTLE_FIELD in value and value.get("source") == "$source":
+            return True
+        from .departing_x_reflexive import OPERATION
+
+        if value.get("op") == OPERATION:
+            return True
+        from ..impulse_access_model import POWER_COUNTED_IMPULSE_VERSION
+
+        if value.get("op") == "fixed_impulse_access" and value.get("schema_version") == POWER_COUNTED_IMPULSE_VERSION:
+            return True
         if value.get("op") == GRAVEYARD_EXILE_BRANCH_OPERATION:
             return GraveyardExileBranchSpec.from_dict(value.get("result")).classifies_land
         if value.get("op") == "choose_option":
@@ -126,6 +138,18 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
     try:
         departing = {(card.object_id, card.logical_object_id):card for card in cards}
         updates = {}; snapshots = {}
+        delayed_updates = []
+        for index, trigger in enumerate(host.state.delayed_triggers):
+            template = trigger.stack_template
+            context = template.get("context", {})
+            prior = context.get(SOURCE_DAMAGE_CONTEXT)
+            source = departing.get((trigger.source_object_id, trigger.source_logical_object_id))
+            if trigger.active and prior is not None and source is not None:
+                known = DamageSourceSnapshot.from_dict(dict(prior))
+                if (known.object_id, known.logical_object_id) != (source.object_id, source.logical_object_id):
+                    raise DamageError("Delayed damage source refers to another incarnation")
+                next_context = {**context, SOURCE_DAMAGE_CONTEXT: _public_source_snapshot(host, source).to_dict()}
+                delayed_updates.append((index, replace(trigger, stack_template={**template, "context": next_context})))
         frames = [item.to_dict() for item in host.state.stack]
         for batch in host.state.pending_trigger_batches:
             frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
@@ -168,9 +192,11 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
                 item.context[SOURCE_DAMAGE_CONTEXT] = deepcopy(updates[item.ref])
             if item.ref in dealer_updates:
                 item.context[EVENT_DAMAGE_SOURCE_CONTEXT] = deepcopy(dealer_updates[item.ref])
-        from ..trigger_processing import replace_pending_trigger_batch
+        from ..trigger_processing import replace_pending_trigger_batch, replace_waiting_delayed_trigger
         for index, batch in pending:
             replace_pending_trigger_batch(host, index, batch)
+        for index, trigger in delayed_updates:
+            replace_waiting_delayed_trigger(host, index, trigger)
     except (KeyError, TypeError, ValueError) as exc:
         raise error_type(str(exc)) from exc
 

@@ -263,6 +263,9 @@ class ActivatedAbilityCatalogHandler:
                 raise ValueError('Reconfigure requires complete-card admission')
             if compiled.saddle_threshold is not None and not required:
                 raise ValueError("Saddle requires complete-card admission")
+            from ..granted_activation_model import has_source_equipment_unattach
+            if has_source_equipment_unattach(compiled) and not required:
+                raise ValueError("Unattaching the source Equipment requires complete-card admission")
             return compiled
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -296,10 +299,11 @@ def activated_ability_catalog_descriptor(
 ) -> dict[str, Any]:
     from ..rules.forage import has_forage_cost
     from ..paid_activation_card_types import has_bounded_sacrifice
+    from ..granted_activation_model import has_source_equipment_unattach
 
     requires_complete_card_program = (requires_complete_card_program or has_forage_cost(ability) or ability.chooses_activation_x
         or has_bounded_sacrifice(ability) or ability.ability_local_mana_reduction is not None
-        or ability.reconfigure or ability.saddle_threshold is not None)
+        or ability.reconfigure or ability.saddle_threshold is not None or has_source_equipment_unattach(ability))
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
         "schema_version": 1,

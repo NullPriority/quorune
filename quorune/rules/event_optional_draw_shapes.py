@@ -193,6 +193,10 @@ def _damage_dealer_draw_program_dependencies(program):
 
 
 def validate_event_optional_draw_payload(effect, *, materialized=False):
+    from .target_entry_draw import target_entry_draw_payload_dependencies, uses_target_entry_draw
+
+    if uses_target_entry_draw(effect):
+        return target_entry_draw_payload_dependencies(effect, materialized=materialized)
     if isinstance(effect, Mapping) and effect.get(EVENT_OPTIONAL_DRAW_FIELD) == TABLE_DRAW_ATTACK_RESTRICTION_VERSION:
         return _table_draw_attack_restriction_payload_dependencies(effect, materialized=materialized)
     if isinstance(effect, Mapping) and effect.get(EVENT_OPTIONAL_DRAW_FIELD) == DEFENDING_CONTROLLER_DRAW_VERSION:
@@ -222,6 +226,12 @@ def validate_event_optional_draw_payload(effect, *, materialized=False):
 
 
 def event_optional_draw_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .target_entry_draw import target_entry_draw_node_capabilities, uses_target_entry_draw
+
+    if any(uses_target_entry_draw(effect) for effect in effects):
+        return target_entry_draw_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if len(effects) == 1 and isinstance(effects[0], Mapping) and effects[0].get(EVENT_OPTIONAL_DRAW_FIELD) == 2:
         from .event_creature_controller_results import death_controller_draw_node_capabilities
         return death_controller_draw_node_capabilities(effects=effects, target_schema=target_schema)
@@ -246,6 +256,10 @@ def event_optional_draw_runtime_dependencies(program):
     if any(effect.get("op") == ATTACK_RESTRICTION_OPERATION
            for effect in nested_effects((program.effects, program.handlers))):
         raise ValueError("Next-turn attack restrictions must come from the committed optional draw choices")
+    from .target_entry_draw import target_entry_draw_program_dependencies
+
+    if entry := target_entry_draw_program_dependencies(program):
+        return entry
     if death := death_controller_draw_program_dependencies(program):return death
     if dealer := _damage_dealer_draw_program_dependencies(program):
         return dealer
@@ -272,8 +286,11 @@ def event_optional_draw_runtime_dependencies(program):
 
 def is_closed_event_optional_draw_program(program):
     from .event_creature_controller_results import death_controller_draw_program_dependencies
+    from .target_entry_draw import target_entry_draw_program_dependencies
+
     try:
-        required = (death_controller_draw_program_dependencies(program)
+        required = (target_entry_draw_program_dependencies(program)
+                    or death_controller_draw_program_dependencies(program)
                     or _damage_dealer_draw_program_dependencies(program)
                     or _cast_opponent_draw_program_dependencies(program)
                     or _defending_controller_draw_program_dependencies(program)

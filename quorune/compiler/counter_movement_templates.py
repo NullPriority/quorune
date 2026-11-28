@@ -3,9 +3,14 @@
 from ..fixed_counter_movement_model import (
     CHOSEN_CONTROLLED_PERMANENT_QUANTITIES, CHOSEN_OPPONENT_CREATURE_TO_CONTROLLED,
     CHOSEN_PERMANENT_TARGETS, CONTROLLED_TARGET_TO_SOURCE, OPTIONAL_TARGET_TO_SOURCE,
-    OPTIONAL_CHOSEN_CONTROLLED_CREATURES, TWO_DISTINCT_TARGETS, FixedCounterMovementSpec,
+    OPTIONAL_ALL_SOURCE_TO_CREATURE, OPTIONAL_CHOSEN_CONTROLLED_CREATURES, TWO_DISTINCT_TARGETS, FixedCounterMovementSpec,
 )
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.departure_counter_copy import (
+    DEPARTURE_COUNTER_COPY_MECHANIC, departure_counter_copy_condition, departure_counter_copy_effect,
+)
+from ..rules.source_references import SourceReferenceSpec
+from . import regex_working_set as re
 from ..rules.cumulative_object_upkeep import CONTROLLER_UPKEEP
 from ..rules.departure_counter_transfer import (
     DEPARTURE_COUNTER_EVENT, DEPARTURE_COUNTER_MECHANICS, DEPARTURE_COUNTER_TRANSFER_CAPABILITY,
@@ -14,7 +19,7 @@ from ..rules.departure_counter_transfer import (
 )
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from ..rules.fixed_counter_movement import (
-    CONTROLLER_BEGINNING_COMBAT, FIXED_COUNTER_MOVEMENT_MECHANICS,
+    CONTROLLER_BEGINNING_COMBAT, FIXED_COUNTER_MOVEMENT_MECHANICS, SOURCE_COUNTERS_BEGINNING_COMBAT,
     chosen_counter_movement_price_is_closed, fixed_counter_movement_target_schema,
 )
 
@@ -22,6 +27,53 @@ from ..rules.fixed_counter_movement import (
 _DEPARTURE_BODY = "put those counters on target permanent you control."
 _DEPARTURE_PREFIX = "whenever a permanent you control leaves the battlefield, if it had counters on it, "
 _DEPARTURE_TEMPLATE = "fixed-controlled-departure-counter-transfer-v1"
+_DEPARTURE_COUNTER_LINE = re.compile(
+    r"Whenever a creature you control leaves the battlefield, if it had counters on it, "
+    r"(?P<body>put those counters on (?P<source>.+)\.)", re.I,
+)
+_ALL_SOURCE_MOVEMENT_LINE = re.compile(
+    r"At the beginning of combat on your turn, if (?P<condition>.+) has counters on it, "
+    r"(?P<body>you may move all counters from (?P<source>.+) onto target creature\.)", re.I,
+)
+_DEPARTURE_LKI = "controlled_creature_departure_lki_counter_copy"
+_ALL_COMBAT = "controller_combat_optional_all_source_counter_movement"
+
+
+def source_counter_trigger_binding(text, *, card_name, binding_type, event_type):
+    if not card_name:
+        return None
+    reference = SourceReferenceSpec(card_name)
+    if (match := _DEPARTURE_COUNTER_LINE.fullmatch(text)) and reference.matches(match["source"]):
+        return binding_type(
+            event=event_type("permanent.leave"), variant=_DEPARTURE_LKI, body=match["body"],
+            public_condition=departure_counter_copy_condition(),
+            public_mechanic="trigger-event-normalized-zone-change",
+            public_template_id="fixed-counter-controlled-departure-counter-copy-v1",
+        )
+    match = _ALL_SOURCE_MOVEMENT_LINE.fullmatch(text)
+    if match is not None and reference.matches(match["source"]) and reference.matches(match["condition"]):
+        return binding_type(
+            event=event_type("step.begin"), variant=_ALL_COMBAT, body=match["body"],
+            public_condition=thaw_value(SOURCE_COUNTERS_BEGINNING_COMBAT),
+            public_mechanic="cr-603-handling-triggered-abilities",
+            public_template_id="fixed-counter-optional-combat-all-movement-v1",
+        )
+    return None
+
+
+def source_counter_trigger_result(binding, body):
+    if binding.body != body:
+        return None
+    if binding.variant == _DEPARTURE_LKI:
+        return ("controlled-departure-lki-counter-copy-v1", (departure_counter_copy_effect(),),
+                None, (DEPARTURE_COUNTER_COPY_MECHANIC,))
+    if binding.variant == _ALL_COMBAT:
+        spec = FixedCounterMovementSpec(OPTIONAL_ALL_SOURCE_TO_CREATURE, schema_version=6)
+        return ("optional-combat-all-source-counter-movement-v1", (spec.effect(),),
+                fixed_counter_movement_target_schema(spec), FIXED_COUNTER_MOVEMENT_MECHANICS)
+    return None
+
+
 _OPTIONAL_BODY = "you may move a +1/+1 counter from target creature onto this creature."
 _SOURCE_DISTRIBUTION_BODY = "you may move any number of +1/+1 counters from this creature onto other creatures."
 _SOURCE_TRANSFER_BODY = "you may move any number of +1/+1 counters from this creature onto another target creature."
@@ -69,6 +121,8 @@ def fixed_counter_movement_trigger_result(binding, body):
             return None
         return (_DEPARTURE_TEMPLATE, (departure_counter_effect(),), departure_counter_target_schema(),
                 DEPARTURE_COUNTER_MECHANICS)
+    if result := source_counter_trigger_result(binding, body):
+        return result
     if (binding.event.value, binding.active_zone) != ("step.begin", "battlefield") or body != binding.body:
         return None
     normalized = " ".join(body.split()).casefold()

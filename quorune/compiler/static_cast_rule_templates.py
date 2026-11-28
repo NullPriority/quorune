@@ -355,6 +355,18 @@ def _cast_prohibition_or_limit_rule(
     normalized: str,
 ) -> StaticCastRuleTemplate | None:
 
+    if re.fullmatch(r"Your opponents can['’]t cast spells with even mana values\.?", normalized, re.I):
+        from ..semantic_runtime.static_cast_rules import OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES
+
+        return (
+            "opponents-cannot-cast-even-mana-value-spells-v1",
+            _descriptor(
+                handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID, kind=StaticCastRuleKind.CAST_PROHIBITION,
+                scope=StaticCastPlayerScope.SOURCE_OPPONENTS, queries=(_query(),),
+                condition=StaticCastCondition.EVEN_MANA_VALUE,
+            ),
+            OPPONENT_EVEN_MANA_VALUE_DEPENDENCIES,
+        )
     mana_prohibition = _noncreature_mana_prohibition(normalized)
     if mana_prohibition is not None:
         return mana_prohibition

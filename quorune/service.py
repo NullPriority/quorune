@@ -262,9 +262,10 @@ class GameService:
         *,
         full: bool = False,
         cursor_key: str | None = None,
+        observation_epoch: object | None = None,
     ) -> dict[str, Any]:
         return self.session.packet(
-            principal, full=full, cursor_key=cursor_key
+            principal, full=full, cursor_key=cursor_key, observation_epoch=observation_epoch,
         )
 
     def drop_projection_cursor(self, cursor_key: str) -> None:

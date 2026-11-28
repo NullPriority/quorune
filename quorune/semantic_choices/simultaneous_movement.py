@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
-from ..semantic_runtime.zone_move_intent import FrontFaceGraveyardCreatureReturnIntent
+from ..semantic_runtime.zone_move_intent import FrontFaceGraveyardCreatureReturnIntent, ReturnedCreatureCounterIntent
 from ..rules.committed_quantity_followups import CommittedQuantityFollowup, token_followup_from_committed_controllers
 from ..semantic_runtime.targeted_exile_token_intent import (
     CommittedTargetExileIntent, OpponentExileDrawIntent, TargetedExileTokensIntent,
@@ -59,6 +59,10 @@ def commit_simultaneous_movement(
     host: Any, intent: MoveObjectsSimultaneouslyIntent, *, graveyard_orders=None, require_graveyard_order=False,
     prepared_composition=None,
 ) -> tuple[str, ...] | CommittedQuantityFollowup | int:
+    from ..semantic_runtime.linked_landfall_settlement_intent import LinkedLandfallSettlementIntent
+    if isinstance(intent,LinkedLandfallSettlementIntent):
+        from .linked_landfall_settlement import commit_linked_settlement
+        return commit_linked_settlement(host,intent)
     from ..semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
 
     if isinstance(intent, TargetedGraveyardExileOutcomeIntent):
@@ -133,6 +137,14 @@ def commit_simultaneous_movement(
         if any(len(group["refs"]) > group["maximum"] for group in intent.selection.card_type_limits(selected_rows)):
             raise GameRuleError("Selected hand cards no longer fit distinct creature and land slots")
         entry['aura_target_refs'] = dict(intent.aura_target_refs)
+    from ..semantic_runtime.revealed_remainder_intent import RevealedBattlefieldMoveIntent, RevealedRemainderMoveIntent
+    if isinstance(intent, RevealedBattlefieldMoveIntent):
+        from ..zone_transitions import ZoneTransitionOwner
+        move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+        from .revealed_entry_choices import revealed_battlefield_entry_options
+        entry.update(revealed_battlefield_entry_options(host, cards, intent))
+    if isinstance(intent, RevealedRemainderMoveIntent):
+        graveyard_orders, require_graveyard_order = intent.graveyard_orders, True
     if graveyard_orders is not None or require_graveyard_order:
         from ..errors import GameRuleError
         from ..zone_transitions import ZoneTransitionOwner
@@ -148,6 +160,10 @@ def commit_simultaneous_movement(
         )
     if intent.discard_effect_origin is not None:
         entry["discard_effect_origin"] = intent.discard_effect_origin
+    return_origins = (
+        {card.object_id: card.logical_object_id for card in cards}
+        if isinstance(intent, ReturnedCreatureCounterIntent) else {}
+    )
     exile_controllers = {}
     if isinstance(intent, CommittedTargetExileIntent):
         exile_controllers = {card.object_id: (card.logical_object_id, card.controller) for card in cards}
@@ -173,11 +189,21 @@ def commit_simultaneous_movement(
             from ..errors import GameRuleError
             raise GameRuleError("APNAP physical departures require their own complete arrival plan")
         moved = _commit_physical_movement(host, intent, changes, prepared_composition)
+    if isinstance(intent, ReturnedCreatureCounterIntent):
+        from ..rules.reanimation_followup import returned_creature_counter_followup
+
+        return returned_creature_counter_followup(host, moved, return_origins, source_ref=intent.source_ref)
     if isinstance(intent, CommittedTargetExileIntent):
         committed = dict.fromkeys(card.object_id for card in moved
             if card.zone == "exile" and card.object_id in exile_controllers
             and card.logical_object_id != exile_controllers[card.object_id][0])
         creators = tuple(exile_controllers[object_id][1] for object_id in committed)
+        from ..semantic_runtime.targeted_exile_token_intent import ExileControllerLandSearchIntent
+
+        if isinstance(intent, ExileControllerLandSearchIntent):
+            from ..rules.affected_library_search_batch import committed_exile_land_search
+
+            return committed_exile_land_search(host, intent.actor, creators)
         if isinstance(intent, TargetedExileTokensIntent):
             return token_followup_from_committed_controllers(intent.followup.token, creators)
         from ..rules.opponent_exile_draw_results import opponent_exile_draw_followup
@@ -188,7 +214,7 @@ def commit_simultaneous_movement(
             return token_followup_after_sacrifices(host, intent.payload["token"], counted_origins)
         return resolve_any_number_sacrifice_followup(
             host, intent.payload["followup"], committed_sacrifice_count(host, counted_origins),
-            target=intent.payload.get("target"),
+            target=intent.payload.get("target"), committed_members=tuple(identity for _, identity in counted_origins),
         )
     if sacrifice_life_amount is not None:
         return committed_sacrifice_life_amount(host, intent, cards[0].object_id, sacrifice_life_amount)

@@ -20,6 +20,7 @@ from ...semantic_runtime.activation_restrictions import (
     current_activation_prohibitions,
 )
 from .conditions import activation_condition_status
+from .equip_permissions import equip_instant_timing
 from .commander_identity_life import current_commander_identity_life
 
 
@@ -62,6 +63,8 @@ def activation_availability(
     seat: str,
     card: Any,
     ability: ActivatedAbility,
+    *,
+    priced_ability: ActivatedAbility | None = None,
 ) -> tuple[str, str | None]:
     """Return the read-only payable status for one typed ability."""
 
@@ -93,11 +96,13 @@ def activation_availability(
 
     if land_play_mana_output(ability) is not None and land_played_this_turn(host.state, seat) is None:
         return "unavailable", "complete_land_play_history_required"
-    if ability.sorcery_speed and not _main_phase_timing(host, seat):
+    if (ability.sorcery_speed and not _main_phase_timing(host, seat)
+            and not equip_instant_timing(host, seat, card, ability)):
         return "unavailable", "sorcery_timing"
     loyalty_status = _loyalty_availability(host, seat, card, ability)
     if loyalty_status is not None:
         return loyalty_status
+    ability = priced_ability or ability
     source_status = _source_cost_availability(host, seat, card, ability)
     if source_status is not None:
         return source_status

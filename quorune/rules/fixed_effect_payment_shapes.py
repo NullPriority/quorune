@@ -26,6 +26,12 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
     from .fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities,fixed_counter_controller_effect_sequence_node_capabilities
     mechanics=set(mechanic_ids)-{FIXED_EFFECT_PAYMENT_MECHANIC}
     if len(effects)==1:
+        from ..fixed_top_exile import CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_OPERATION
+
+        if (effects[0].get("op"), effects[0].get("scope")) == (FIXED_TOP_EXILE_OPERATION, CHOSEN_IMPULSE_SCOPE):
+            from .discover_capability_shapes import discover_node_capabilities
+
+            return discover_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         from .affected_player_discard_capability_shapes import fixed_context_player_discard_node_capabilities
         from .event_player_result_shapes import fixed_event_player_result_node_capabilities
         from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
@@ -153,6 +159,7 @@ def fixed_payment_event_player_runtime_dependencies(program):
     )
     from .life_gain_counted_results import (
         capped_life_gain_draw_program_dependencies, life_gain_counter_payment_program_dependencies,
+        life_gain_life_draw_program_dependencies,
     )
     from .opponent_event_mana_payment import opponent_event_mana_payment_program_dependencies, uses_opponent_event_mana_payment
     players={'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
@@ -168,6 +175,7 @@ def fixed_payment_event_player_runtime_dependencies(program):
     required=set(life_gain_counter_payment_program_dependencies(program))
     required.update(mandatory_sacrifice_reanimation_runtime_dependencies(program))
     required.update(capped_life_gain_draw_program_dependencies(program))
+    required.update(life_gain_life_draw_program_dependencies(program))
     equipped = equipped_death_life_draw_program_dependencies(program)
     required.update(equipped)
     required.update(spell_caster_sacrifice_payment_program_dependencies(program))

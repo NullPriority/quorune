@@ -30,12 +30,40 @@ from .controller_top_exile_activation import controller_top_exile_activation, co
 from .loyalty_spell_results import fixed_loyalty_spell_result, fixed_loyalty_spell_result_gate
 
 
+def fixed_loyalty_discard_round_result(ability, text, *, public_timing):
+    from ..rules.repeated_apnap_payment import (
+        FIXED_DISCARD_MECHANIC, fixed_discard_round_effect, is_plain_loyalty_removal,
+    )
+    from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+
+    normalized = " ".join(text.casefold().replace("’", "'").split())
+    match = re.fullmatch(
+        r"each opponent may discard a card\. if they don't, they lose (?P<loss>[1-9][0-9]*) life\. "
+        rf"repeat this process (?P<repeats>{FIXED_COUNT_PATTERN}) more times?\.",
+        normalized,
+    )
+    if (match is None or ability.zones != ("battlefield",) or ability.mana_ability
+            or not is_plain_loyalty_removal(activated_ability_cost(ability, public_timing=public_timing))):
+        return None
+    try:
+        effect = fixed_discard_round_effect(int(match["loss"]), 1 + fixed_number(match["repeats"]))
+    except ValueError:
+        return None
+    return ("loyalty-fixed-discard-apnap-payment-v1", (effect,), None, (FIXED_DISCARD_MECHANIC,))
+
+
 def compile_activation_result(ability, *, source_name, text, compile_fixed, public_timing=None):
     """Choose an owned activation quantity before the ordinary fixed result."""
+    if repeated := fixed_loyalty_discard_round_result(ability, text, public_timing=public_timing):
+        return repeated
+    from .controlled_creature_main_combat import controlled_untap_combat_activation
+    from .meld_pair_templates import meld_pair_activation_template
     from .source_mutation_damage import source_mutation_damage_activation
 
-    if mutation_damage := source_mutation_damage_activation(ability, text, public_timing=public_timing):
-        return mutation_damage
+    if special := (source_mutation_damage_activation(ability, text, public_timing=public_timing)
+                   or controlled_untap_combat_activation(ability, text, public_timing=public_timing)
+                   or meld_pair_activation_template(ability, text, source_name=source_name, public_timing=public_timing)):
+        return special
 
     if loyalty := fixed_loyalty_spell_result(ability, source_name=source_name, text=text, public_timing=public_timing):
         return loyalty
@@ -182,9 +210,24 @@ def commander_return_activation_result(ability, text, *, public_timing):
 
 def activation_result_dependency_gate(**scope):
     """Resolve explicit activation result gates that inspect the original price."""
+    from ..rules.repeated_apnap_payment import (
+        FIXED_DISCARD_CAPABILITY, FIXED_DISCARD_MECHANIC, payment_round_node_capabilities,
+    )
+
+    if FIXED_DISCARD_MECHANIC in scope["mechanics"]:
+        required = payment_round_node_capabilities(
+            scope["effects"], scope["target_schema"], scope["cost_schema"], scope["mechanics"],
+        )
+        if not required or scope["active_zone"] != "battlefield":
+            return DependencyGate(blockers=(f"capability:{FIXED_DISCARD_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+        )
+    from .controlled_creature_main_combat import controlled_untap_combat_activation_gate
     from .delayed_object_templates import target_death_return_activation_gate
     from .finite_damage_redirection_nodes import finite_damage_redirection_gate
     from .impulse_access_templates import shuffled_top_free_play_activation_gate
+    from .meld_pair_templates import meld_pair_activation_gate
     from .opponent_library_exile_templates import draw_then_opponent_exile_activation_gate
     from .proliferate_templates import controlled_arrival_proliferate_activation_gate
 
@@ -216,7 +259,7 @@ def activation_result_dependency_gate(**scope):
         return explicit_capabilities_gate(
             required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
         )
-    return (fixed_loyalty_spell_result_gate(**scope) or paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
+    return (controlled_untap_combat_activation_gate(**scope) or meld_pair_activation_gate(**scope) or fixed_loyalty_spell_result_gate(**scope) or paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
             or loot_transform_and_graveyard_cast_gate(**scope)
             or controller_top_exile_activation_gate(**scope)
             or draw_then_opponent_exile_activation_gate(**scope)
@@ -346,13 +389,18 @@ def linked_loyalty_activation_gate(
 ):
     from ..rules.linked_loyalty_exile_model import LOYALTY_X_CAPABILITY
     from ..rules.linked_loyalty_exile_shapes import (
-        linked_loyalty_activation_capabilities, uses_linked_loyalty_activation,
+        linked_loyalty_activation_capabilities, loyalty_artifact_search_activation_capabilities,
+        uses_linked_loyalty_activation,
     )
 
     if not uses_linked_loyalty_activation(effects, cost_schema):
         return None
-    required = linked_loyalty_activation_capabilities(
-        effects=effects, target_schema=target_schema, active_zone=active_zone, cost_schema=cost_schema,
+    scope = {
+        "effects": effects, "target_schema": target_schema, "active_zone": active_zone, "cost_schema": cost_schema,
+    }
+    required = (
+        linked_loyalty_activation_capabilities(**scope)
+        or loyalty_artifact_search_activation_capabilities(**scope)
     )
     if not required:
         return DependencyGate(blockers=(f"capability:{LOYALTY_X_CAPABILITY}",))

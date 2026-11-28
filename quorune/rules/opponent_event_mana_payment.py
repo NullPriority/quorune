@@ -12,6 +12,10 @@ from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, ScalarAmountO
 from ..spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_CAPABILITY, QualifiedSpellOrdinalSpec
 from ..replacement.immutable import FrozenMap
 from ..util import mana_cost_to_vector
+from .opponent_cast_copy_payment import (
+    is_optional_cast_copy_result, opponent_instant_or_sorcery_condition, validate_cast_copy_payment_occurrence,
+    validate_optional_cast_copy_result,
+)
 
 
 OPPONENT_EVENT_MANA_PAYMENT_FIELD = "opponent_event_mana_payment_version"
@@ -34,13 +38,19 @@ def uses_opponent_event_mana_payment(effect):
 def opponent_event_payment_conditions_match(event, condition, child):
     if not isinstance(condition, Mapping):
         return False
+    if is_optional_cast_copy_result(child):
+        return event == "spell.cast" and FrozenMap(condition) == FrozenMap(opponent_instant_or_sorcery_condition())
     if child.get("op") == "offer_draw":
         return event == "spell.cast" and FrozenMap(condition) in _CAST_CONDITIONS
     return event == "card.drawn" and FrozenMap(condition) == _DRAW_CONDITION
 
 
 def _payer_reference(child):
-    return "$context.controller" if child.get("op") in {"draw", "offer_draw"} else "$context.player"
+    return "$context.controller" if _payer_event(child) == "spell.cast" else "$context.player"
+
+
+def _payer_event(child):
+    return "spell.cast" if child.get("op") in {"draw", "offer_draw"} or is_optional_cast_copy_result(child) else "card.drawn"
 
 
 def opponent_event_mana_payment_effect(amount, child):
@@ -116,7 +126,9 @@ def materialize_opponent_source_power_payment(host, effect, item):
     }
 
 
-def _unpaid_capabilities(child, beneficiary):
+def _unpaid_capabilities(child, beneficiary, *, resolved=False):
+    if is_optional_cast_copy_result(child):
+        return validate_optional_cast_copy_result(child, beneficiary=beneficiary, resolved=resolved)
     if FrozenMap(child) == FrozenMap({
         "op": "offer_draw", "player": beneficiary, "drawer": beneficiary, "count": 1, "private": True,
     }) and type(child["count"]) is int and child["private"] is True:
@@ -176,7 +188,7 @@ def _payment_parts(effect, *, actor=None, beneficiary="$controller", continuatio
             raise ValueError("Declining a source-power price requires the mandatory controller draw")
         caps = ("zone.draw.library_to_hand",)
     else:
-        caps = _unpaid_capabilities(child, beneficiary)
+        caps = _unpaid_capabilities(child, beneficiary, resolved=actor is not None)
     return spec, (FrozenMap(child),), caps
 
 
@@ -221,7 +233,9 @@ def bind_event_player_payment_choice(item, effect, *, resuming_actor=None):
     _, children = resolved_opponent_event_mana_payment(
         effect, payer, item.controller, continuation=resuming_actor is not None,
     )
-    expected = "spell.cast" if children[0]["op"] in {"draw", "offer_draw"} else "card.drawn"
+    expected = _payer_event(children[0])
     if (item.kind != "triggered_ability" or event != expected
             or resuming_actor is not None and resuming_actor != payer):
         raise ValueError("Only the original opposing caster or drawer may decide whether to pay")
+    if is_optional_cast_copy_result(children[0]):
+        validate_cast_copy_payment_occurrence(item, children[0], payer)

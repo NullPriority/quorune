@@ -349,6 +349,8 @@ class ProtectionSpec:
     exempt_aura_incarnation: str | None = None
 
     def __post_init__(self) -> None:
+        from .type_subtype_vocabulary import CARD_TYPES
+
         if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise AbilityFragmentError(
                 "Unsupported protection fragment schema version"
@@ -402,7 +404,7 @@ class ProtectionSpec:
         else:
             normalized = normalized.casefold()
             allowed = (
-                _CARD_TYPES
+                CARD_TYPES
                 if self.quality_kind is ProtectionQualityKind.CARD_TYPE
                 else frozenset(_SUBTYPE_QUALITIES.values())
             )

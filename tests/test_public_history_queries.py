@@ -26,9 +26,66 @@ from test_controller_creature_keyword_absence import register_card
 
 
 ENTRY_HISTORY_FOOD = "Gyome, Master Chef"
+OPPONENT_THRESHOLD_ORACLE = (
+    "At the beginning of each end step, draw a card for each opponent who drew two or more cards "
+    "this turn, then create a Treasure token for each opponent who had two or more lands "
+    "enter the battlefield under their control this turn."
+)
 
 
 class PublicHistoryQueryCompilerTests(unittest.TestCase):
+    def test_share_thresholds_require_two_ordered_closed_results(self):
+        from quorune.public_history_query_model import (
+            OPPONENT_EVENT_THRESHOLD_CAPABILITY, opponent_event_threshold_query,
+        )
+
+        registry = load_default_capability_registry()
+        oracle = OPPONENT_THRESHOLD_ORACLE
+        ir = compile_oracle_card(query_record(oracle), capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        trigger, = ir.faces[0].nodes
+        self.assertIn(OPPONENT_EVENT_THRESHOLD_CAPABILITY, trigger.capability_dependencies)
+        self.assertEqual(("draw", "create_token"), tuple(effect["op"] for effect in trigger.effects))
+        draw, create = trigger.effects
+        for result, field, lands in ((draw, "count", False), (create, "quantity", True)):
+            expected = opponent_event_threshold_query(land_entries=lands)
+            self.assertEqual(expected, PublicHistoryQuerySpec.from_dict(result[field]["history_count"]))
+            for change in ({"relation": "any_player"}, {"reduction": "count"}, {"schema_version": 1}):
+                with self.assertRaises(ValueError):
+                    PublicHistoryQuerySpec.from_dict({**expected.to_dict(), **change})
+        for mutation in (
+            oracle.replace("two or more cards", "three or more cards"),
+            oracle.replace("each end step", "your end step"),
+            oracle.replace("then create", "or create"),
+        ):
+            with self.subTest(mutation=mutation):
+                mutated = compile_oracle_card(query_record(mutation), capability_registry=registry)
+                self.assertNotEqual("exact", mutated.status)
+
+    def test_share_reduction_counts_players_and_excludes_departed_seats(self):
+        import quorune.public_history_query_model as owner
+
+        query = owner.opponent_event_threshold_query(land_entries=True)
+        events = [TurnHistoryEvent("permanent_entered", actor=seat, types=("land",),
+                                   object_incarnation=f"{seat}{i}@1")
+                  for seat, count in (("A", 2), ("B", 3), ("C", 1), ("D", 2))
+                  for i in range(count)]
+        state = SimpleNamespace(
+            turn_sequence=4, turn_history=TurnHistory(turn_sequence=4, events=events),
+            players={seat: SimpleNamespace(in_game=seat != "D") for seat in "ABCD"},
+        )
+
+        def witness():
+            self.assertEqual(1, owner.public_history_query_value(state, "A", query))
+
+        witness()
+        with patch.object(owner, "_OPPONENT_THRESHOLD_REDUCTION", "count"), self.assertRaises(AssertionError):
+            witness()
+        state.players["D"].in_game = True
+        self.assertEqual(2, owner.public_history_query_value(state, "A", query))
+        state.players["B"].in_game = state.players["D"].in_game = False
+        self.assertEqual(0, owner.public_history_query_value(state, "A", query))
+
     def test_new_history_schema_round_trips_without_changing_legacy_payloads(self):
         spec=PublicHistoryQuerySpec('creature_died','controller')
         condition=FixedPublicStateConditionSpec(FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,amount=1,schema_version=8,history_query=spec)
@@ -232,6 +289,80 @@ class PublicHistoryQueryNativeTests(unittest.TestCase):
         return tuple(card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"
                      and card.controller == "A" and "food" in game.engine._type_parts(
                          str(game.engine._effective_card_data(card)["type_line"]))[1])
+
+    def test_share_counts_committed_draws_and_land_entries_on_third_party_turn(self):
+        from quorune.public_history_query_model import opponent_event_threshold_query
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        game = self.session(1647001)
+        engine = game.engine
+        source = self.add(engine, "Smuggler's Share")
+        self.add(engine, "Narset, Parter of Veils", seat="B")
+        main_draw = self.add(engine, "Quick Study", seat="C", zone="hand")
+        late_draw = self.add(engine, "Reach Through Mists", seat="B", zone="hand")
+        borrowed = self.add(engine, "Azorius Guildgate", seat="D", zone="hand")
+        current = self.add(engine, "Generic Bound Plains", seat="C", zone="hand", ref="share-c-land")
+        for seat in "AB":
+            self.add(engine, "Island", seat=seat, ref="share-untapped-" + seat)
+        self.add(engine, "Island", seat="C", ref="share-untapped-C")
+        self.add(engine, "Generic Bound Plains", seat="C", ref="share-untapped-1")
+        self.add(engine, "Generic Bound Plains", seat="C", ref="share-untapped-2")
+        self.assert_closed(game, source)
+        self.prepare(game, actor="C", active="C", mana={"C": 2, "U": 1})
+        engine.draw("B", reason="Prepared earlier opponent draw")
+        ZoneTransitionOwner(engine).move_cards_simultaneously(
+            [(borrowed.object_id, "battlefield"), (current.object_id, "battlefield")],
+            reason="Prepared simultaneous land entries", destination_controllers={borrowed.object_id: "C"},
+        )
+        self.assertTrue(game.state.cards[borrowed.object_id].tapped)
+        self.assertEqual("C", game.state.cards[borrowed.object_id].controller)
+        self.checkpoint(game)
+
+        self.cast_with_mana(game, "C", main_draw, payment={"C": 2, "U": 1})
+        self.assertIsNone(self.resolve(game))
+        draw_query = opponent_event_threshold_query(land_entries=False)
+        land_query = opponent_event_threshold_query(land_entries=True)
+        self.assertEqual(0, public_history_query_value(game.state, "A", draw_query))
+        self.assertEqual(1, public_history_query_value(game.state, "A", land_query))
+
+        self.end_step(game)
+        self.assertEqual("C", game.state.active_player)
+        trigger, = game.state.stack
+        self.assertEqual(source.object_id, trigger.source_object_id)
+        self.cast_for(game, "B", late_draw)
+        game = self.replay(game, load=True)
+        hand = len(game.state.players["A"].zones["hand"])
+        start = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(1, public_history_query_value(game.state, "A", draw_query))
+        self.assertEqual(hand + 1, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual(
+            ["card.draw", "token.create"],
+            [e.code for e in game.state.events[start:] if e.actor == "A" and e.code in {"card.draw", "token.create"}],
+        )
+        treasures = [c for c in game.state.cards.values()
+                     if c.is_token and c.zone == "battlefield" and c.controller == "A"
+                     and "treasure" in game.engine._type_parts(game.engine._effective_card_data(c)["type_line"])[1]]
+        self.assertEqual(1, len(treasures))
+        self.replay(game)
+
+    def test_share_with_no_qualifying_current_opponents_has_no_results(self):
+        from quorune.public_history_query_model import opponent_event_threshold_query
+
+        game = self.session(1647002)
+        source = self.add(game.engine, "Smuggler's Share")
+        self.prepare(game)
+        game.engine.draw("A", 2, reason="Prepared controller-only draws")
+        self.checkpoint(game)
+        self.end_step(game)
+        self.assertEqual(source.object_id, game.state.stack[-1].source_object_id)
+        hand = len(game.state.players["A"].zones["hand"])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(hand, len(game.state.players["A"].zones["hand"]))
+        self.assertFalse(any(c.is_token for c in game.state.cards.values()))
+        query = opponent_event_threshold_query(land_entries=False)
+        self.assertEqual(0, public_history_query_value(game.state, "A", query))
+        self.replay(game)
 
     def test_food_counts_earlier_and_resolving_creature_entries_and_retains_paid_protection(self):
         game = self.session(60820091)

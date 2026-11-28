@@ -48,6 +48,7 @@ from ..self_cast_reductions import (
 from ..rules.capabilities import load_default_capability_registry
 from ..multikicker_model import FixedManaMultikickerSpec
 from ..emerge_model import FixedManaEmergeSpec
+from ..offering_model import OfferingSpec
 from ..disturb_model import FixedManaDisturbSpec
 from ..replicate_model import FixedManaReplicateSpec
 from ..conspire_model import FixedConspireSpec
@@ -638,6 +639,7 @@ class CastCostComponentRegistry(
         | SelfSpellCostReductionSpec
         | FixedManaMultikickerSpec
         | FixedManaEmergeSpec
+        | OfferingSpec
         | FixedManaDisturbSpec
         | FixedManaReplicateSpec
         | FixedConspireSpec
@@ -656,6 +658,7 @@ class CastCostComponentRegistry(
 def default_cast_cost_component_registry() -> CastCostComponentRegistry:
     from .chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler, LinkedCardTypeSpellCostModifierHandler
     from .global_alternative_costs import GlobalAlternativeCostHandler
+    from .offering import OfferingCostHandler
     from .splice_costs import SpliceCostHandler
     from .impending import FixedManaImpendingHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
@@ -682,6 +685,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             PaidEntryCopyCostHandler(),
             FixedManaMultikickerHandler(),
             FixedManaEmergeHandler(),
+            OfferingCostHandler(),
             FixedManaDisturbHandler(),
             MoreThanMeetsTheEyeHandler(),
             FixedManaReplicateHandler(),

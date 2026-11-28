@@ -1,4 +1,4 @@
-import type { CommandEnvelope, CommandReceipt } from "./generated/protocol";
+import type { CommandEnvelope, CommandReceipt, JsonValue } from "./generated/protocol";
 
 const TAB_STORAGE_KEY = "commander-browser-tab";
 
@@ -21,10 +21,12 @@ export function beginGuestSession(): void {
 }
 
 function csrfToken(): string {
-  const row = document.cookie
-    .split(";")
-    .map((value) => value.trim())
-    .find((value) => value.startsWith("commander_csrf="));
+  const cookies = document.cookie.split(";").map((value) => value.trim());
+  const port = window.location.port;
+  const scopedCookie = port
+    ? cookies.find((value) => value.startsWith("commander_csrf_" + port + "="))
+    : undefined;
+  const row = scopedCookie ?? cookies.find((value) => value.startsWith("commander_csrf="));
   return row ? decodeURIComponent(row.split("=", 2)[1]) : "";
 }
 
@@ -83,6 +85,21 @@ export interface SavedDeck {
   name: string;
   commanders: string[];
 }
+
+export type DeckPrinting = {
+  scryfall_id?: string; set_code?: string; collector_number?: string;
+  language?: string; finish?: string; provider_id?: string; faces?: string[];
+};
+
+export type DeckBoard = "commander" | "mainboard" | "sideboard" | "companion" | "maybeboard";
+export type EditableDeckEntry = {
+  name: string; quantity: number; board: DeckBoard; tags: string[]; printing?: DeckPrinting;
+};
+
+export type DeckPrintingPage = {
+  name: string; cid: string; has_more: boolean;
+  printings: { printing: DeckPrinting; set_name: string; finishes: string[] }[];
+};
 
 export interface RecentGame {
   game_id: string;
@@ -219,6 +236,7 @@ export interface PublicGameEvent {
   actor: string | null;
   summary: string;
   importance: number;
+  cards?: JsonValue[];
 }
 
 export interface PublicEventPage {
@@ -275,11 +293,12 @@ export const api = {
   me: () => request<{ guest: Guest }>("/api/v1/me"),
   savedDecks: () => request<{ decks: SavedDeck[] }>("/api/v1/me/decks"),
   savedDeck: (deckId: string) => request<{
-    deck: { name: string; commanders: string[]; entries: {
-      name: string; quantity: number; board: string;
-      printing?: { set_code?: string; collector_number?: string; finish?: string };
-    }[] };
+    deck: { name: string; commanders: string[]; entries: EditableDeckEntry[] };
+    card_refs: Record<string, string>;
   }>(`/api/v1/me/decks/${deckId}`),
+  deckPrintings: (name: string, page = 1) => request<DeckPrintingPage>(
+    `/api/v1/me/deck-editor/printings?${new URLSearchParams({ name, page: String(page) })}`,
+  ),
   recentGames: () => request<{ games: RecentGame[] }>("/api/v1/me/games"),
   guest: (display_name: string) =>
     request<{ guest: Guest }>("/api/v1/guests", {
@@ -328,6 +347,7 @@ export const api = {
     source_url?: string,
     legality_confirmation?: string,
     saved_deck_id?: string,
+    edited?: { entries: EditableDeckEntry[]; edited_deck_id?: string },
   ) =>
     request<DeckSubmission>(
       `/api/v1/rooms/${roomId}/deck`,
@@ -340,6 +360,7 @@ export const api = {
           source_url: source_url || null,
           legality_confirmation: legality_confirmation || null,
           saved_deck_id: saved_deck_id || null,
+          ...(edited ?? {}),
         }),
       },
     ),

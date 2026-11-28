@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Shared cost affordability and actual payment through canonical mana owners."""
 
+from copy import deepcopy
 from dataclasses import dataclass, replace
 from typing import Any, Mapping
 from .errors import GameRuleError
@@ -137,9 +138,9 @@ def sacrificing_mana_source_ids(host, seat, refs, *, spend_context, exclude_sour
     }
 
 
-def _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_source_id):
+def _payment_mana_sources(discovered, exclude_sources, preserve_source_id):
     sources = []
-    for source in host.available_mana_sources(seat, spend_context=spend_context):
+    for source in discovered:
         if source.object_id in (exclude_sources or ()):
             continue
         if source.object_id == preserve_source_id:
@@ -243,7 +244,9 @@ def pay_for_cost(
                 raise GameRuleError("Automatic payment accepts explicit artifact selections and plans the remaining mana")
             _activate_payment_sources(host, seat, activations, response, spend_context, preserve_source_id,
                                       **payment_window)
-        sources = _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_source_id)
+        sources = _payment_mana_sources(
+            host.available_mana_sources(seat, spend_context=spend_context), exclude_sources, preserve_source_id,
+        )
         plan = auto_plan_payment(
             requirements,sources,
             allow_conditional=bool(response.get('allow_conditional_mana',False)) and not host.state.config.strict_mana,
@@ -310,9 +313,46 @@ def cost_is_affordable(
     spend_context: str | None=None, snow_required: int=0,
     preserve_source_id: str | None = None, public_hand_mana_bound: bool = False,
 ) -> bool:
+    return _cost_is_affordable(
+        host, seat, requirements, exclude_sources=exclude_sources, spend_context=spend_context,
+        snow_required=snow_required, preserve_source_id=preserve_source_id,
+        public_hand_mana_bound=public_hand_mana_bound,
+        discover=lambda: host.available_mana_sources(seat, spend_context=spend_context),
+    )
+
+
+def cost_affordability_quote(host, seat, *, spend_context):
+    """Discover legal sources once within a fixed, read-only payment view."""
+
+    cached = None
+
+    def discover():
+        nonlocal cached
+        if cached is None:
+            cached = tuple(host.available_mana_sources(seat, spend_context=spend_context))
+        # Each probe still owns its mode bundles and other nested data.
+        return deepcopy(cached)
+
+    def can_pay(
+        requirements, *, exclude_sources=None, snow_required=0,
+        preserve_source_id=None, public_hand_mana_bound=False,
+    ):
+        return _cost_is_affordable(
+            host, seat, requirements, discover=discover, spend_context=spend_context,
+            exclude_sources=exclude_sources, snow_required=snow_required,
+            preserve_source_id=preserve_source_id, public_hand_mana_bound=public_hand_mana_bound,
+        )
+
+    return can_pay
+
+
+def _cost_is_affordable(
+    host, seat, requirements, *, discover, spend_context, exclude_sources=None,
+    snow_required=0, preserve_source_id=None, public_hand_mana_bound=False,
+):
     spending_policy = current_mana_spending_policy(host, seat, spend_context)
     try:
-        sources = _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_source_id)
+        sources = _payment_mana_sources(discover(), exclude_sources, preserve_source_id)
         # Feasibility can use the greatest selectable amount. The payment
         # planner still requires the pilot's explicit refs before any reveal.
         sources = _affordability_mana_sources(host, seat, sources, public_hand_mana_bound=public_hand_mana_bound)

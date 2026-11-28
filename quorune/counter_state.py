@@ -261,6 +261,10 @@ class _CounterAdapter:
             card.counters[transition.counter_name] = transition.after
         else:
             card.counters.pop(transition.counter_name, None)
+            if transition.before:
+                from .continuous_effect_state import expire_counter_bound_attack_restrictions
+
+                expire_counter_bound_attack_restrictions(host.state, card, transition.counter_name)
 
 
 _COUNTER_ADAPTER = _CounterAdapter()

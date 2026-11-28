@@ -5,6 +5,22 @@ from .event_player_results import _event_player
 
 def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
     del card_name, effect_template
+
+    from ..rules.postcombat_life_loss_mana import TEMPLATE as POSTCOMBAT_MANA_TEMPLATE, VARIANT as POSTCOMBAT_MANA_VARIANT
+    from ..rules.postcombat_life_loss_mana import effect as postcombat_mana
+
+    if binding.variant == POSTCOMBAT_MANA_VARIANT and body == binding.body:
+        from .fixed_resolution_mana import FIXED_RESOLUTION_MANA_MECHANIC
+
+        color = re.search(r"\{([WUBRGC])\}", body, re.I)
+        if color is not None:
+            return (POSTCOMBAT_MANA_TEMPLATE, (postcombat_mana(color[1].upper()),), None,
+                    (FIXED_RESOLUTION_MANA_MECHANIC,)), False
+    from ..rules.exile_origin_creature_counters import BODY, TEMPLATE, exile_origin_counter_condition, exile_origin_counter_effect
+
+    if (body.casefold() == BODY and binding.event.value == "spell.cast"
+            and binding.active_zone == "battlefield" and binding.event_condition == exile_origin_counter_condition()):
+        return (TEMPLATE, (exile_origin_counter_effect(),), None, ("cr-122-counters",)), True
     from ..rules.source_power_opponent_damage import (
         SOURCE_POWER_OPPONENT_DAMAGE_BODY, SOURCE_POWER_OPPONENT_DAMAGE_MECHANIC,
         SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, SOURCE_POWER_OPPONENT_DAMAGE_VARIANT, source_power_opponent_damage_effect,

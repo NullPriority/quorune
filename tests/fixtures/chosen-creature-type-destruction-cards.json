@@ -1,6 +1,47 @@
 {
   "cards": [
     {
+      "oracle_id": "25fc3bc2-d852-4f52-9adb-c7e35c06f3af",
+      "name": "Patriarch's Bidding",
+      "oracle_text": "Each player chooses a creature type. Each player returns all creature cards of a type chosen this way from their graveyard to the battlefield.",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "layout": "normal"
+    },
+    {
       "cmc": 3.0,
       "color_identity": [
         "W"
@@ -114,6 +155,30 @@
       "oracle_id": "ccaa44f2-96be-44e2-884f-c31baa3908d5",
       "published_at": "2017-08-25",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "25fc3bc2-d852-4f52-9adb-c7e35c06f3af",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "You must choose a creature type, such as Elf or Shaman. You can't choose other card types such as artifact or supertypes such as legendary."
+    },
+    {
+      "oracle_id": "25fc3bc2-d852-4f52-9adb-c7e35c06f3af",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "The player whose turn it is chooses a creature type first, followed by each other player in turn order. Then, all creature cards that have one or more of the chosen types are returned to the battlefield at the same time."
+    },
+    {
+      "oracle_id": "25fc3bc2-d852-4f52-9adb-c7e35c06f3af",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Any player may choose a creature type that's already been chosen. Doing so won't affect which creature cards are returned to the battlefield."
+    },
+    {
+      "oracle_id": "25fc3bc2-d852-4f52-9adb-c7e35c06f3af",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "Each player may choose any creature type, even if they don't have any creature cards of that type in their graveyard."
     }
   ],
   "schema_version": 1,

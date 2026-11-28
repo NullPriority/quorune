@@ -46,6 +46,16 @@ from ..phasing_model import (
 
 
 def _validate_linked_exile_return_instruction(effect: Mapping[str, Any], *, actor: str) -> None:
+    from ..rules.linked_creature_settlement import FIELD, resolved_instruction
+
+    if FIELD in effect:
+        resolved_instruction(effect)
+        return
+    from ..rules.linked_death_upkeep import FIELD as DEATH_UPKEEP_FIELD, resolved_instruction as death_upkeep_instruction
+
+    if DEATH_UPKEEP_FIELD in effect:
+        death_upkeep_instruction(effect)
+        return
     if LINKED_LOYALTY_EXILE_FIELD not in effect:
         validate_linked_instruction(effect)
         return
@@ -222,7 +232,7 @@ class DomainEffectHandler:
                     validate_face_up_instruction(effect,allow_runtime_source=True)
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
-        if operation == 'goad' and effect.get('schema_version') == 2:
+        if operation == 'goad' and 'schema_version' in effect:
             from ..goad_instruction import validate_fixed_goad
             try:validate_fixed_goad(effect)
             except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
@@ -273,6 +283,10 @@ def effect_descriptor_capability_dependencies(effect, registered):
 
     if versioned_rad_player_counter_effect(effect):
         return (*registered["capability_dependencies"], RAD_CAPABILITY)
+    if registered["operation"] == "exile_public_graveyard_card_result":
+        from ..rules.graveyard_card_results import graveyard_card_counter_life_payload_dependencies
+
+        return graveyard_card_counter_life_payload_dependencies(effect)
     if registered["operation"] == CONTROLLER_PRIVATE_TOP_EXILE_OPERATION:
         ControllerPrivateTopExile.from_instruction(effect)
     if registered["operation"] == EACH_OPPONENT_TOP_EXILE_OPERATION:

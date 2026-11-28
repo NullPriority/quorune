@@ -63,6 +63,7 @@ from .dependency_gate import (
     dependency_gate,
     explicit_capabilities_gate,
 )
+from .whole_hand_discard_templates import ordered_opponents_whole_hand_discard_template
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
@@ -367,6 +368,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "earthbend_land",
     "move_fixed_counter",
     "choose_target_player_graveyard_exile",
     "schedule_controller_next_draw_replacement",
@@ -563,6 +565,15 @@ def _targeted_activation_result_gate(
             return DependencyGate(blockers=(f"capability:{TEMPORARY_ESCAPE_CAPABILITY}",))
         return explicit_capabilities_gate(required, capability_registry=capability_registry,
                                           capability_profile=capability_profile)
+    from ..rules.linked_creature_settlement import CAPABILITY as LINKED_CREATURE_CAPABILITY, FIELD, activation_capabilities
+
+    if any(FIELD in effect for effect in effects):
+        required = activation_capabilities(effects=effects, target_schema=target_schema,
+                                           active_zone=active_zone, cost_schema=cost_schema)
+        if not required:
+            return DependencyGate(blockers=(f"capability:{LINKED_CREATURE_CAPABILITY}",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
     if any(uses_linked_fading_exile(effect) for effect in effects):
         required = linked_fading_activation_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
@@ -600,6 +611,15 @@ def _activated_effect_dependency_gate(
     from ..colored_hand_reveal_model import COLORED_REVEAL_MECHANIC, COLORED_REVEAL_OPERATION
     from ..paid_sacrifice_conditions import is_activation_paid_creature_reference
     from ..delayed_object_model import is_forced_block_status_effect
+    from ..rules.qualified_library_cast import OPERATION, qualified_library_cast_node_capabilities
+
+    if any(effect.get("op") == OPERATION for effect in effects):
+        required = qualified_library_cast_node_capabilities(effects, target_schema)
+        if active_zone != "battlefield" or not required:
+            return DependencyGate(blockers=("qualified library cast requires one closed battlefield activation",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
+
     targeted = _targeted_activation_result_gate(
         effects=effects, target_schema=target_schema, mechanics=mechanics, active_zone=active_zone,
         cost_schema=cost_schema, capability_registry=capability_registry, capability_profile=capability_profile,
@@ -902,7 +922,10 @@ def _compiled_activated_effect(
     from .library_bottom_result_templates import library_bottom_creature_result_template
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
     from .finite_damage_redirection_nodes import finite_damage_redirection_template
-    from .library_search_templates import dragon_graveyard_copy_search_template, target_player_basic_land_search_template
+    from .library_search_templates import (
+        dragon_graveyard_copy_search_template, qualified_instant_library_cast_template,
+        target_player_basic_land_search_template,
+    )
     from .equipped_planeswalker_nodes import loyalty_attachment_template
 
     from .temporary_self_copy_templates import temporary_self_copy_template
@@ -914,6 +937,8 @@ def _compiled_activated_effect(
         return attachment
     if player_search := target_player_basic_land_search_template(text):
         return player_search
+    if qualified_cast := qualified_instant_library_cast_template(text):
+        return qualified_cast
     if proliferate := fixed_proliferate_sequence_template(text):
         return proliferate
     if redirection := finite_damage_redirection_template(text):
@@ -973,7 +998,7 @@ def _compiled_activated_effect(
     return (
         compiled.compiled()
         if compiled is not None
-        else effect_template(
+        else ordered_opponents_whole_hand_discard_template(text) or effect_template(
             re.sub(r'^It deals (?=damage equal to )', 'This permanent deals ', text, flags=re.I),
             card_name=card_name,
         )

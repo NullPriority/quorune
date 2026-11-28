@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 
+from .ordered_incarnation_exclusion import OrderedIncarnationExclusion
 from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
@@ -18,7 +19,7 @@ from .destruction import (
     prepare_destructions,
 )
 from .rules.committed_quantity_followups import CommittedQuantityFollowup
-from .rules.destruction_result_model import DestructionFollowup
+from .rules.destruction_result_model import DestructionFollowup, owned_creature_return_from_committed_batch
 from .rules.target_player_destruction_death_tokens import tokens_after_target_player_creature_deaths
 from .object_query import ObjectQueryResult
 from .rules.qualified_destruction import RelativePowerDestructionSetSpec, select_relative_power_destruction_rows
@@ -201,6 +202,7 @@ def resolve_destruction_set(
     regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
     followup: DestructionFollowup | None = None,
+    ordered_exclusion: OrderedIncarnationExclusion | None = None,
 ) -> DestructionResult | CommittedQuantityFollowup:
     """Resolve one fixed affected set through the canonical destruction owner."""
 
@@ -212,6 +214,7 @@ def resolve_destruction_set(
         )
     rows = None
     counted = frozenset()
+    artifact_facts = None
     if followup is not None:
         if not isinstance(followup, DestructionFollowup) or getattr(
             host.state, "effect_destruction_replacement_version", None
@@ -221,14 +224,23 @@ def resolve_destruction_set(
             followup.validate_destruction_set(spec)
         except ValueError as exc:
             raise DestructionSetError(str(exc)) from exc
-        if not (followup.uses_destroyed_controllers or followup.uses_mana_allocation
-                or followup.uses_target_player_death_tokens or followup.uses_sized_token):
+        if followup.uses_artifact_life:
+            rows = host.affected_permanent_object_rows(actor)
+        elif not (followup.uses_destroyed_controllers or followup.uses_mana_allocation
+                or followup.uses_target_player_death_tokens or followup.uses_sized_token or followup.uses_owned_return):
             rows = host.affected_permanent_object_rows(actor)
             count_snapshot = snapshot_destruction_set(host, actor=actor, spec=followup.scope, object_rows=rows)
             counted = frozenset(permanent.object_id for permanent in count_snapshot.permanents)
+    if ordered_exclusion is not None:
+        rows = tuple(row for row in host.affected_permanent_object_rows(actor)
+                     if (row.object_id, row.logical_object_id) not in ordered_exclusion.protected)
     snapshot = snapshot_destruction_set(
         host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
     )
+    if followup is not None and followup.uses_artifact_life:
+        from .rules.artifact_destruction_life import capture_original_artifact_values
+
+        artifact_facts = capture_original_artifact_values(snapshot, rows)
     try:
         plan = prepare_destructions(
             host,
@@ -248,8 +260,11 @@ def resolve_destruction_set(
             ),
             replacement_selections=replacement_selections,
         )
-        record_deaths = followup is not None and followup.uses_target_player_death_tokens
-        result = commit_destruction_plan(host, plan, record_graveyard_outcomes=record_deaths)
+        record_deaths = followup is not None and (followup.uses_target_player_death_tokens or followup.uses_owned_return)
+        result = commit_destruction_plan(
+            host, plan, record_graveyard_outcomes=record_deaths,
+            ordered_arrivals=ordered_exclusion,
+        )
     except DestructionError as exc:
         raise DestructionSetError(str(exc)) from exc
     host._log(
@@ -270,7 +285,13 @@ def resolve_destruction_set(
             sorted({value.controller for value in snapshot.permanents})
         ),
     )
+    if artifact_facts is not None:
+        from .rules.artifact_destruction_life import committed_affected_artifact_life
+
+        return committed_affected_artifact_life(host, artifact_facts, actor=actor, source_ref=source_ref)
     if followup is not None:
+        if followup.uses_owned_return:
+            return owned_creature_return_from_committed_batch(host, result, actor=actor)
         return _followup_after_destruction(followup, result, snapshot, counted, actor=actor, source_ref=source_ref)
     return result
 

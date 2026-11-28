@@ -100,3 +100,6 @@ class GraveyardArrivalOrders:
             raise ValueError("Only the current graveyard owner can submit this order")
         group.ordered_ids(refs)
         return GraveyardArrivalOrders(self.groups, (*self.choices, tuple(refs)))
+
+
+GRAVEYARD_ARRIVAL_ORDER_CAPABILITY = "zone.graveyard.ordered_simultaneous_arrival"

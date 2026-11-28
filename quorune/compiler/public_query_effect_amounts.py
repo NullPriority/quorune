@@ -35,6 +35,7 @@ from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC,TARGET_HAND_
 from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC, MULTIKICKER_AMOUNT_CAPABILITY
 from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_CAPABILITY
 from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC,CAST_MANA_VALUE_CAPABILITY
+from ..mana_value_filter import CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY, CAST_SPELL_MANA_VALUE_FILTER_MECHANIC
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
@@ -46,6 +47,7 @@ AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUE
                                MULTIKICKER_AMOUNT_MECHANIC:(MULTIKICKER_AMOUNT_CAPABILITY,'casting.multikicker.fixed_mana'),
                                MANA_COLOR_AMOUNT_MECHANIC:(MANA_COLOR_AMOUNT_CAPABILITY,)}
 AMOUNT_MECHANIC_CAPABILITIES[CAST_MANA_VALUE_MECHANIC]=(CAST_MANA_VALUE_CAPABILITY,)
+AMOUNT_MECHANIC_CAPABILITIES[CAST_SPELL_MANA_VALUE_FILTER_MECHANIC] = (CAST_SPELL_MANA_VALUE_FILTER_CAPABILITY,)
 from ..activation_paid_characteristic_model import ACTIVATION_PAID_STAT_CAPABILITY, ACTIVATION_PAID_STAT_MECHANIC
 AMOUNT_MECHANIC_CAPABILITIES[ACTIVATION_PAID_STAT_MECHANIC]=(ACTIVATION_PAID_STAT_CAPABILITY,)
 
@@ -102,6 +104,11 @@ _TOKEN_PATTERN = re.compile(
 _TOKEN_FOR_EACH = re.compile(
     r"^Create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
     r"(?P<definition>.+? tokens?(?: with .+?)?) for each (?P<quantity>.+?)\.?$",
+    re.IGNORECASE,
+)
+_TOKEN_FOR_EACH_PREFIX = re.compile(
+    r"^For each (?P<quantity>.+?), create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
+    r"(?P<definition>.+? tokens?(?: with .+?)?)\.?$",
     re.IGNORECASE,
 )
 _TOKEN_COMPLETE_VALUE = re.compile(
@@ -243,7 +250,8 @@ def _parsed_candidate(
         match = pattern.fullmatch(text)
         if match is not None:
             return "draw", match.group("quantity"), 1, "Draw two cards.", index == 1
-    token = _TOKEN_PATTERN.fullmatch(text) or _TOKEN_FOR_EACH.fullmatch(text) or _TOKEN_COMPLETE_VALUE.fullmatch(text)
+    token = (_TOKEN_PATTERN.fullmatch(text) or _TOKEN_FOR_EACH.fullmatch(text)
+             or _TOKEN_FOR_EACH_PREFIX.fullmatch(text) or _TOKEN_COMPLETE_VALUE.fullmatch(text))
     if token is not None:
         definition = re.sub(
             r" token$",
@@ -741,6 +749,24 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.counter_placement_capability_shapes import fixed_counter_placement_set_node_capabilities
 
     scalar_specs = scalar_amount_specs(program.effects)
+    from ..public_history_query_model import opponent_event_threshold_query
+    opponent_threshold_sequence = any(
+        spec.history_count is not None
+        and spec.history_count.is_opponent_threshold_query
+        for spec in scalar_specs
+    )
+    if opponent_threshold_sequence:
+        from ..replacement.immutable import thaw_value
+
+        if (program.event != "step.begin" or program.active_zone != "battlefield"
+                or thaw_value(program.event_condition) != {"all": [{"field": "step", "op": "eq", "value": "end_step"}]}
+                or program.target_schema is not None or program.cost_schema is not None
+                or tuple(effect.get("op") for effect in program.effects) != ("draw", "create_token")
+                or tuple(spec.history_count for spec in scalar_specs) != (
+                    opponent_event_threshold_query(land_entries=False),
+                    opponent_event_threshold_query(land_entries=True),
+                )):
+            return False
     target_mana_value_sequence = (
         len(scalar_specs) == 1
         and scalar_specs[0].origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}
@@ -770,7 +796,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
               if ACTIVATION_PAID_STAT_MECHANIC in program.coverage else ()),
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
-              if target_mana_value_sequence or is_source_counter_then_maximum_power_draw(program, scalar_specs) or
+              if opponent_threshold_sequence or target_mana_value_sequence or is_source_counter_then_maximum_power_draw(program, scalar_specs) or
               {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC,
                ACTIVATION_PAID_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)

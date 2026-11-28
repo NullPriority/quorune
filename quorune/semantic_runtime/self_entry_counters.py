@@ -11,6 +11,8 @@ from ..entry_counter_model import (
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
     INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
+    CAST_REVIVAL_ENTRY_CAPABILITY,
+    DynamicEntryCounterCalculation,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
     PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
     ENTRY_CREATURE_VALUE_CAPABILITY,
@@ -277,6 +279,8 @@ def typed_dynamic_entry_counter_runtime_dependencies(program):
             required.update((INSTANT_SORCERY_LOYALTY_ENTRY_CAPABILITY, "condition.history.fixed_public_query"))
         if source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
             required.add(CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY)
+        if source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER:
+            required.add(CAST_REVIVAL_ENTRY_CAPABILITY)
         if source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES:
             required.add(PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY)
         if source in ENTRY_CREATURE_VALUE_SOURCES:
@@ -392,6 +396,14 @@ class DynamicSelfEntryCounterHandler:
             not complete or descriptor["counter_name"] != "+1/+1" or descriptor["rule_id"] != "614.1c"
         ):
             raise SemanticNodeError("Exile mana value requires the exact complete +1/+1 entry instruction")
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER and (
+            not complete or descriptor["counter_name"] != "revival" or descriptor["rule_id"] != "614.1c"
+            or amount_spec != DynamicEntryCounterAmountSpec(
+                DynamicEntryCounterValueSource.CAST_BY_ENTRY_CONTROLLER,
+                DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST, coefficient=8, minimum=1,
+            )
+        ):
+            raise SemanticNodeError("Cast entry requires the complete eight-revival-counter contract")
         maximum_counter = PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES.get(amount_spec.value_source)
         if maximum_counter is not None and (
             not complete or descriptor["counter_name"] != maximum_counter or descriptor["rule_id"] != "614.1c"

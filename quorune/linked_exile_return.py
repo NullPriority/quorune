@@ -20,6 +20,7 @@ from .linked_exile_return_model import (
     CONTROLLER_LIBRARY_TOP_HAND_BINDING, CONTROLLER_LIBRARY_TOP_HAND_VERSION,
     EXILED_TARGET_SEARCH_BINDING, ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION,
     LINKED_TYPE_ENTRY_COUNTERS_VERSION, LINKED_TYPE_ENTRY_COUNTER_VERSIONS,
+    LINKED_RETURN_SUBTYPE_COUNTER_PHASE, LINKED_RETURN_SUBTYPE_COUNTER_VERSION,
     LinkedPublicSetScope, SameNameConditionalExileScope, SelectedConditionalExileScope, validate_linked_instruction,
 )
 from .object_predicate import ObjectQuerySpec
@@ -30,8 +31,11 @@ from .zone_transitions import ZoneTransitionOwner
 class LinkedExileReturnHost(Protocol):
     state: Any
     active_seats: Sequence[str]
+    semantics: Any
 
     def card_record(self, card: Any) -> Any: ...
+
+    def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
@@ -89,6 +93,21 @@ def transformed_return_face(record: Any) -> str | None:
     return name if type(name) is str and name else None
 
 
+def return_tapped_transformed_graveyard_card(host, card, intent, selections):
+    """Return the physical owner's admitted back face using the normal entry transaction."""
+    if not card.is_card_object or card.is_token or card.owner != intent.new_controller:
+        return ""
+    face = transformed_return_face(host.card_db.by_oracle_id(card.oracle_id))
+    if face is None:
+        return ""
+    moved = host.move_card(
+        card.object_id, "battlefield", controller=card.owner, putting_player=intent.actor,
+        enter_face=face, tapped=True, reason=intent.reason, semantic_events=intent.semantic_events,
+        replacement_selections=selections, transition_kind=intent.transition_kind,
+    )
+    return moved.ref if moved.zone == "battlefield" else ""
+
+
 def return_linked_exiled_objects(
     host: LinkedExileReturnHost,
     effect: Mapping[str, Any],
@@ -115,6 +134,8 @@ def return_linked_exiled_objects(
     if set(effect) - allowed or not required.issubset(effect):
         raise GameRuleError("Linked return has an invalid shape")
     spec = _spec(effect)
+    if spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION:
+        raise GameRuleError("A post-return counter requires its original linked spell")
     cards = _eligible_exiled(host, effect["objects"])
     if library_top:
         item = _source_item(host, effect)
@@ -305,16 +326,46 @@ def committed_conditional_exile_count(item, binding_id):
     return entry["committed_exile_count"]
 
 
+_UNRESOLVED_LINKED_EXILE_DISPATCH = object()
+
+
+def _resolve_special_linked_exile(host, effect, *, actor, reason):
+    from .rules.graveyard_exchange_model import GRAVEYARD_EXCHANGE_FIELD
+
+    if GRAVEYARD_EXCHANGE_FIELD in effect:
+        from .effect_runtime.graveyard_exchange import resolve_graveyard_exchange_phase
+
+        return resolve_graveyard_exchange_phase(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    from .rules.linked_creature_settlement import FIELD, apply_linked_creature_settlement
+
+    if FIELD in effect:
+        return apply_linked_creature_settlement(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    from .rules.linked_death_upkeep import FIELD as DEATH_UPKEEP_FIELD, apply_linked_death_upkeep
+
+    if DEATH_UPKEEP_FIELD in effect:
+        return apply_linked_death_upkeep(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    from .meld_model import uses_meld_pair
+
+    if uses_meld_pair(effect):
+        from .meld_resolution import resolve_meld_instruction
+
+        return resolve_meld_instruction(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    if LINKED_LOYALTY_EXILE_FIELD in effect:
+        from .effect_runtime.linked_loyalty_exile import apply_linked_loyalty_exile
+
+        return apply_linked_loyalty_exile(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    return _UNRESOLVED_LINKED_EXILE_DISPATCH
+
+
 def resolve_linked_exile_return(
     host: LinkedExileReturnHost,
     effect: Mapping[str, Any],
     *, actor: str, operation: str, reason: str,
 ) -> list[str]:
     del operation
-    if LINKED_LOYALTY_EXILE_FIELD in effect:
-        from .effect_runtime.linked_loyalty_exile import apply_linked_loyalty_exile
-
-        return apply_linked_loyalty_exile(host, _source_item(host, effect), effect, actor=actor, reason=reason)
+    resolved = _resolve_special_linked_exile(host, effect, actor=actor, reason=reason)
+    if resolved is not _UNRESOLVED_LINKED_EXILE_DISPATCH:
+        return resolved
     spec = _spec(effect)
     if spec.timing == LINKED_ABILITY_TIMING:
         from .linked_ability_exile_state import resolve_linked_ability_instruction
@@ -333,12 +384,18 @@ def resolve_linked_exile_return(
     combined_entry = binding_id == EXILED_TARGET_SEARCH_BINDING
     if combined_entry and phase == "return":
         permitted.add("_aura_target_refs")
-    if phase not in {"exile", "return"} or set(effect) - (required | permitted) or not required.issubset(effect):
+    subtype_counter = spec.schema_version == LINKED_RETURN_SUBTYPE_COUNTER_VERSION
+    phases = {"exile", "return", LINKED_RETURN_SUBTYPE_COUNTER_PHASE} if subtype_counter else {"exile", "return"}
+    if phase not in phases or set(effect) - (required | permitted) or not required.issubset(effect):
         raise GameRuleError("Linked exile/return instruction is malformed")
     if type(binding_id) is not str or not binding_id.startswith("blink:"):
         raise GameRuleError("Linked exile/return binding is malformed")
     item = _source_item(host, effect)
     library_top = spec.schema_version == CONTROLLER_LIBRARY_TOP_HAND_VERSION
+    if subtype_counter:
+        from .rules.linked_return_subtype_counter import require_linked_subtype_counter_source
+
+        require_linked_subtype_counter_source(host, item, effect, actor)
     if library_top and (
         binding_id != CONTROLLER_LIBRARY_TOP_HAND_BINDING or item.kind != "activated_ability"
         or actor != item.controller
@@ -392,6 +449,10 @@ def resolve_linked_exile_return(
             journal[binding_id]["committed_exile_count"] = sum(card.zone == "exile" for card in moved)
         return [] if library_top else [card.ref for card in moved]
     binding = journal.get(binding_id)
+    if subtype_counter and phase == LINKED_RETURN_SUBTYPE_COUNTER_PHASE:
+        from .rules.linked_return_subtype_counter import commit_linked_subtype_counter
+
+        return commit_linked_subtype_counter(host, item, effect, binding, actor=actor, reason=reason)
     expected_fields = {"spec", "objects", "completed"}
     if selected_scope is not None:
         expected_fields.add("committed_exile_count")
@@ -409,7 +470,8 @@ def resolve_linked_exile_return(
         result = return_linked_exiled_objects(
             host,
             {"op": LINKED_RETURN_OPERATION, "objects": objects,
-             "spec": spec.to_dict(), "_runtime_source": effect["_runtime_source"],
+             "spec": (LinkedExileReturnSpec() if subtype_counter else spec).to_dict(),
+             "_runtime_source": effect["_runtime_source"],
              "_replacement_selections": effect.get("_replacement_selections", ())},
             actor=actor, operation=LINKED_RETURN_OPERATION, reason=reason,
         )
@@ -432,5 +494,9 @@ def resolve_linked_exile_return(
                 referred_object_ids=tuple(identity["object_id"] for identity in objects),
                 once=True,
             )
+    if subtype_counter:
+        from .rules.linked_return_subtype_counter import record_linked_subtype_counter_arrival
+
+        record_linked_subtype_counter_arrival(host, binding, result)
     binding["completed"] = True
     return result

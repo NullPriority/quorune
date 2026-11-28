@@ -20,6 +20,7 @@ from .counter_placement import (
     CounterPlacementResult,
     place_counters,
 )
+from .characteristic_read_frames import characteristic_read_method
 from .creature_subtypes import canonical_creature_subtype
 from .object_query import ObjectQueryResult
 from .object_predicate import ObjectQuerySpec
@@ -409,6 +410,7 @@ class CounterPlacementSetHost(
     pass
 
 
+@characteristic_read_method
 def snapshot_counter_placement_set(
     query: CounterPlacementSetQuery,
     *,

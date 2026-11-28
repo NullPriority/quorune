@@ -139,12 +139,12 @@ export function ZoneBrowser({ opened, player, dialogRef, view, selection, select
       </header>
       {count === 0 && <p className="zone-empty">Empty</p>}
       {cards.length > 0 && <div className="zone-browser-layout">
-        <CardPages items={cards} className={`zone-card-pages ${title.toLowerCase()}-pages`}
+        <CardPages items={cards} className={`zone-card-pages ${zone === "gy" ? "graveyard" : zone === "ex" ? "exile" : "library"}-pages`}
           label={title} trackClassName="zone-card-grid" layout="grid" render={(card, index) => {
             const ref = String(asRecord(card).id ?? "");
             const actions = !selection && seat === view.principal.split(":").at(-1) ? actionsForCard(ref) : [];
-            return <CardTile key={ref || index} value={card} view={view} actions={actions} showFaceStatus
-              onInspect={() => setPreviewRef(ref)}
+            return <CardTile key={ref || index} value={card} view={view} actions={actions} showFaceStatus showPrintedCost={false}
+              previewOnHover={false} onInspect={() => setPreviewRef(ref)}
               onIntent={onIntent}
               selected={selectedCardRef === ref || selection?.selected.includes(ref)}
               choice={!actionDisabled && selection?.refs.includes(ref) ? {

@@ -70,6 +70,23 @@ membership. A creature that stays under the controller's control and gains
 hexproof still qualifies. A departed incarnation leaves the target set used
 by the counter predicate, and a returned card receives a fresh identity.
 
+A qualified copy can target an instant spell, sorcery spell, activated ability,
+or triggered ability under any controller. One shared public predicate
+distinguishes spell types from ability kinds both when offering and revalidating
+the target. The copied stack item retains its existing source and paid choices.
+For fixed Spree, this mode can accompany a distinct single-target change mode.
+Each announced target is revalidated separately, and the copy instruction runs
+before that change in printed order.
+
+A spell that copies and returns one targeted instant or sorcery uses the
+same revalidated stack object for both instructions. The existing copy
+choice may retain the original targets or announce legal replacements.
+After placing the copy on the stack, the resolution moves the original
+spell to its owner's hand through ordinary zone movement. The move uses
+the original spell's owner when someone else controls it, and applies to
+uncounterable spells. The resolving player controls the copy. Cast history
+records actual casts only.
+
 Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
 the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
 only the closed mana-cost value and version, not an Oracle line for runtime
@@ -209,6 +226,14 @@ the current attachment of the original Aura incarnation, or its last-known
 attachment after departure. It retains the referenced permanent through type
 changes and rejects a returned recipient's new incarnation. No target schema
 or resolution-time creature target predicate is synthesized for this form.
+
+A mandatory change to a single-target spell can carry a separate life-loss
+instruction for the resolving controller. The change uses the original
+spell's target authority. The life loss reads the original spell's current
+stack mana value, including announced X, after the target change or after
+the game finds no legal alternative. The pending choice keeps the following
+instruction in the existing resolution continuation. An illegal original
+spell target prevents both instructions from resolving.
 
 Closed stack-counter predicates keep disjunction branches independent. A
 triggered ability or colorless spell does not include an activated ability
@@ -538,6 +563,13 @@ the controller of the spell or ability. Damage, blocking and attachment use
 the controller of the relevant object, or its owner when it has no controller.
 These checks share the typed protection verdict and attachment legality is
 rechecked after control changes.
+
+A same-face entry choice can link one card type to a static grant of Protection
+for the source's current controller and creatures that player controls. The
+entering controller chooses a card type before entry. The retained choice
+follows the current source incarnation and copy form. The ordinary layer-6
+query applies to the current creature set, and player targeting, attachment,
+and damage consume the same typed Protection quality.
 
 The fixed-card-type compiler production admits protection from enchantments,
 optionally alongside a signed power/toughness modifier. Its separate capability

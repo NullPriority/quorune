@@ -866,7 +866,7 @@ def _prepare_token_entry_counters(
     )
     if any(
         entry.destination != "battlefield"
-        or entry.entry_life_payment
+        or (entry.entry_life_payment and entry.entry_chosen_basic_land_type is None)
         or entry.keyword_grants
         or entry.read_ahead_chapter is not None
         for entry in prepared.values()
@@ -928,7 +928,8 @@ def _commit_token_specs(
             from .entry_results import commit_prepared_entry_identity_results
             commit_prepared_entry_identity_results(entry,host.state.cards[object_id],error_type=TokenCreationError,host=host)
             commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color,
-                                      creature_type=entry.entry_chosen_creature_type, card_name=entry.entry_chosen_card_name)
+                                      creature_type=entry.entry_chosen_creature_type, card_name=entry.entry_chosen_card_name,
+                                      basic_land_type=entry.entry_chosen_basic_land_type)
         if plan.aura_target_ref is not None:
             token = host.state.cards[object_id]
             data = host._effective_card_data(token)
@@ -1048,7 +1049,14 @@ def _commit_prepared_token_entries(
     )
 
     from .counter_removal import commit_entry_counter_transfer
+    from .life_state import LifeStateError, pay_life_cost
 
+    for entry in prepared_entries.values():
+        if entry.entry_life_payment:
+            try:
+                pay_life_cost(host, entry.destination_controller, entry.entry_life_payment)
+            except LifeStateError as exc:
+                raise TokenCreationError(str(exc)) from exc
     devour = prepare_token_devour_sacrifices(host, prepared_entries, reason=reason)
     commit_entry_counter_transfer(host, prepared_entries.values())
     sacrifices = commit_token_devour_sacrifices(devour, timestamp=creation_timestamp, reason=reason)
@@ -1066,14 +1074,17 @@ def _commit_prepared_token_entries(
 
 def grant_haste_to_created_tokens(
     host, source, targets, *, triggered_grant: GrantedTriggeredAbilitySpec | None = None,
-    zone_object: bool = False,
+    zone_object: bool = False, keywords: tuple[str, ...] = ("Haste",),
 ):
     from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, Layer
     from .continuous_effect_state import create_resolution_continuous_effect
 
+    if (keywords not in (("Haste",), ("Haste", "Lifelink"))
+            or keywords != ("Haste",) and (zone_object or triggered_grant is not None)):
+        raise ValueError("A multiple-keyword token grant requires its current-turn duration")
     if not targets:
         return
-    operations = (ContinuousOperation("add_ability", "Haste"),)
+    operations = tuple(ContinuousOperation("add_ability", keyword) for keyword in keywords)
     duration = (ContinuousEffectDuration.ZONE_OBJECT if zone_object or triggered_grant is not None
                 else ContinuousEffectDuration.UNTIL_END_OF_TURN)
     if triggered_grant is not None:

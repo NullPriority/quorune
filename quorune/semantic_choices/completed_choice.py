@@ -19,13 +19,16 @@ from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, Semanti
 
 def _intent_types():
     from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
+    from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
     from ..targeted_graveyard_cast_model import GraveyardCastIntent
     from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
     from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
     return {cls.__name__:cls for cls in (
         GraveyardCastIntent, GraveyardLibraryCostBatchIntent, GraveyardExileLifeResultIntent,
+        MultiownerFrontFaceGraveyardReturnIntent,
         ExileGraveyardCopiesIntent,
         ResolveRippleCastIntent,RippleBottomIntent,typed.ResolvingSharedTypeLibraryPlayIntent,
+        typed.ResolveQualifiedLibraryCastIntent,
         LifeGainCostBatchIntent, typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
@@ -156,9 +159,14 @@ def decode_remaining_completion(value):
         if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
             expected_fields.remove("paid_creature")
         if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent):
+            from ..semantic_runtime.zone_move_intent import MultiownerFrontFaceGraveyardReturnIntent
             from ..public_zone_moves import PublicBattlefieldController
 
             expected_fields -= {"library_order", "entry_life_payment_refs"} - values.keys()
+            if cls is MultiownerFrontFaceGraveyardReturnIntent:
+                if values.get("battlefield_controller") != PublicBattlefieldController.OWNER.value:
+                    raise SemanticChoiceError("Saved multiowner return requires the physical owner")
+                values = {**values, "battlefield_controller": PublicBattlefieldController.OWNER}
             if "entry_life_payment_refs" in values:
                 if values.get("battlefield_controller") != PublicBattlefieldController.ACTOR.value:
                     raise SemanticChoiceError("Saved entry payment must be for entries under the actor")
@@ -176,7 +184,7 @@ def decode_remaining_completion(value):
         if cls is typed.ResolveRippleCastIntent:
             if not isinstance(values['response'],Mapping):raise SemanticChoiceError('Ripple cast response is malformed')
             values['response']=FrozenMap(values['response'])
-        if cls is typed.ResolvingSharedTypeLibraryPlayIntent:
+        if cls in (typed.ResolvingSharedTypeLibraryPlayIntent, typed.ResolveQualifiedLibraryCastIntent):
             if not isinstance(values["effect"], Mapping) or not isinstance(values["response"], Mapping):
                 raise SemanticChoiceError("Revealed library play proof is malformed")
             values["effect"] = FrozenMap(values["effect"])

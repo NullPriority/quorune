@@ -383,3 +383,181 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
 
 if __name__ == '__main__':
     unittest.main()
+
+
+SOURCE_COUNTER_ATTACKING_TEXT = (
+    "Whenever you attack with one or more non-Gnome creatures, put a +1/+1 counter on Anim Pakal, "
+    "then create X 1/1 colorless Gnome artifact creature tokens that are tapped and attacking, "
+    "where X is the number of +1/+1 counters on Anim Pakal."
+)
+
+
+class SourceCounterAttackingTokenNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "source-counter-attacking-tokens.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "attacking-token-result-cards.json",
+            "qualified-attack-batch-cards.json", "library-search-rules-cards.json",
+            "attached-occurrence-cards.json", "counter-prohibition-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Source counter attacking tokens", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 25),
+        ], ["Generic Bound Commander"])
+
+    def source(self, game, counters=0):
+        card = self.add(game.engine, "Anim Pakal, Thousandth Moon", ref="pakal-original")
+        card.acquired_control_turn_count = -1
+        if counters:
+            card.counters["+1/+1"] = counters
+        self.assert_closed(game, card)
+        return card
+
+    def attacker(self, game, ref):
+        card = self.add(game.engine, "Generic Bound Body", ref=ref)
+        card.acquired_control_turn_count = -1
+        return card
+
+    @staticmethod
+    def gnomes(game):
+        return [card for card in game.state.cards.values()
+                if card.zone == "battlefield" and card.is_token and card.printed_name == "Gnome Token"]
+
+    def assignments(self, game, destinations):
+        packet = game.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("semantic.choice", packet["kind"])
+        context = packet["ctx"]
+        refs = context["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertEqual(len(destinations), len(refs))
+        self.assertLessEqual(set(destinations), set(context["destinations"]))
+        definition = {"action_id": "choose", "attacking": dict(zip(refs, destinations, strict=True))}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", definition).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        illegal = {"action_id": "choose", "attacking": {**definition["attacking"], refs[-1]: "A"}}
+        self.assertFalse(game.act("pilot:A", illegal).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", definition)
+        self.assertTrue(result.ok, result.summary)
+
+    def test_anim_pakal_uses_the_replaced_count_and_separate_defenders(self):
+        import json
+
+        game = self.session(5084015)
+        source = self.source(game, counters=1)
+        first, second = (self.attacker(game, ref) for ref in ("pakal-attacker-1", "pakal-attacker-2"))
+        doubler = self.add(game.engine, "Generic Bound Counter Doubler", ref="pakal-counter-doubler")
+        walker = self.add(game.engine, "Chandra Nalaar", seat="C", ref="pakal-planeswalker")
+        walker.counters["loyalty"] = 6
+        battle = self.add(game.engine, "Invasion of Zendikar // Awakened Skyclave", seat="B", ref="pakal-battle")
+        battle.battle_protector = "D"
+        battle.counters["defense"] = 3
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="pakal-private")
+        self.assert_closed(game, doubler)
+        self.prepare(game)
+        self.checkpoint(game)
+        self.attack(game, [(first, "D"), (second, "C")])
+        self.assertEqual(1, sum(item.kind == "triggered_ability" and item.source_object_id == source.object_id
+                                for item in game.state.stack))
+        outcome = self.resolve(game)
+        self.assertIsNotNone(outcome)
+        self.assertEqual("semantic.choice", outcome.kind)
+        self.assertEqual(3, game.state.cards[source.object_id].counters["+1/+1"])
+        self.assertFalse(self.gnomes(game))
+        game = self.replay(game, load=True)
+        self.assignments(game, ("B", walker.ref, battle.ref))
+        self.assertEqual(3, len(self.gnomes(game)))
+        self.assertTrue(all(card.tapped for card in self.gnomes(game)))
+        self.assertEqual({"B", walker.ref, battle.ref},
+                         {game.state.combat.attackers[card.object_id] for card in self.gnomes(game)})
+        self.assertNotIn(source.object_id, game.state.combat.attackers)
+        self.assertFalse(any(item.source_object_id == source.object_id for item in game.state.stack))
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_anim_pakal_reads_last_known_counters_after_the_same_card_returns(self):
+        game = self.session(5084017)
+        source = self.source(game, counters=2)
+        attacker = self.attacker(game, "pakal-lki-attacker")
+        blink = self.add(game.engine, "Cloudshift", zone="hand", ref="pakal-blink")
+        self.assert_closed(game, blink)
+        original = source.logical_object_id
+        self.prepare(game, mana={"W": 1})
+        self.add(game.engine, "Generic Bound Plains", ref="pakal-blink-mana")
+        self.checkpoint(game)
+        self.attack(game, [(attacker, "D")])
+        self.cast(game, "A", blink, [source.ref])
+        outcome = self.resolve(game)
+        self.assertIsNotNone(outcome)
+        self.assertEqual("semantic.choice", outcome.kind)
+        returned = game.state.cards[source.object_id]
+        self.assertNotEqual(original, returned.logical_object_id)
+        self.assertNotIn("+1/+1", returned.counters)
+        game = self.replay(game, load=True)
+        self.assignments(game, ("B", "C"))
+        self.assertEqual(2, len(self.gnomes(game)))
+        self.assertNotIn("+1/+1", game.state.cards[source.object_id].counters)
+        self.replay(game, load=True)
+
+    def test_anim_pakal_gnome_only_and_prevented_counter_create_no_tokens(self):
+        for i, prevented in enumerate((False, True)):
+            with self.subTest(prevented=prevented):
+                game = self.session(5084019 + i)
+                source = self.source(game)
+                if prevented:
+                    prohibition = self.add(game.engine, "Solemnity", seat="B", ref="pakal-counter-prohibition")
+                    self.assert_closed(game, prohibition)
+                    attacker = source
+                else:
+                    token_ref, = game.engine.create_token("A", name="Gnome", characteristics={
+                        "type_line": "Artifact Creature — Gnome", "power": "1", "toughness": "1", "colors": [],
+                    })
+                    attacker = game.engine._resolve_object("A", token_ref, zones={"battlefield"})
+                    attacker.acquired_control_turn_count = -1
+                self.prepare(game)
+                self.checkpoint(game)
+                self.attack(game, [(attacker, "D")])
+                self.assertEqual(int(prevented), sum(item.source_object_id == source.object_id for item in game.state.stack))
+                self.assertIsNone(self.resolve(game))
+                self.assertNotIn("+1/+1", game.state.cards[source.object_id].counters)
+                self.assertFalse(self.gnomes(game))
+                self.replay(game, load=True)
+
+    def test_anim_pakal_rejects_changed_order_or_quantity_authority(self):
+        from test_granted_skulk import record
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.source_counter_attacking_tokens import (
+            CAPABILITY, source_counter_attacking_tokens_node_capabilities,
+        )
+
+        card = replace(record(SOURCE_COUNTER_ATTACKING_TEXT, "Legendary Creature — Human Soldier"),
+                       name="Anim Pakal, Thousandth Moon")
+        ir = compile_oracle_card(card, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        self.assertEqual((0, len(SOURCE_COUNTER_ATTACKING_TEXT)), (node.span.start, node.span.end))
+        counter, tokens = node.effects
+        for effects in (
+            (tokens, counter), ({**counter, "card": "$target.0"}, tokens),
+            (counter, {**tokens, "quantity": 1}), (counter, {**tokens, "tapped": False}),
+        ):
+            self.assertEqual((), source_counter_attacking_tokens_node_capabilities(effects, None))
+        self.assertNotEqual("exact", compile_oracle_card(
+            replace(card, oracle_text=SOURCE_COUNTER_ATTACKING_TEXT.replace("counters on Anim Pakal.", "counters on another creature.")),
+            capability_registry=self.registry,
+        ).status)
+        game = self.session(5084022)
+        source = self.source(game)
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        deps = tuple(value for value in program.capability_dependencies if value != CAPABILITY)
+        mutant = replace(program, capability_dependencies=deps,
+                         capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(mutant, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{CAPABILITY}", result["blockers"])

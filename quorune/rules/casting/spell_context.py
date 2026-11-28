@@ -27,6 +27,7 @@ from .replicate_costs import replicate_cast_context
 from .conspire_costs import conspire_cast_context
 from .casualty_costs import casualty_cast_context
 from .bargain_costs import declared_bargain_context
+from .gift_card_costs import gift_card_context
 from .characteristic_methods import characteristic_stack_context
 from .model import CastProposalError
 from .spell_text import CAST_TEXT_FRAMES
@@ -122,6 +123,7 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **conspire_cast_context(selected_option),
         **casualty_cast_context(selected_option),
         **declared_bargain_context(selected_option),
+        **gift_card_context(selected_option),
         **({CAST_TEXT_FRAMES: copy.deepcopy(selected_option[CAST_TEXT_FRAMES])}
             if CAST_TEXT_FRAMES in selected_option else {}),
         "target_groups": thaw_json(proposal.target_groups),

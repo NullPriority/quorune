@@ -24,6 +24,10 @@ def destruction_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent, DestroyPermanentTargetsIntent):
         return "destroy_permanent_targets", {**common, "object_refs": list(intent.object_refs)}
     if isinstance(intent, DestroyPermanentSetIntent):
+        if intent.ordered_exclusion is not None:
+            common["ordered_exclusion"] = intent.ordered_exclusion.to_dict()
+            if intent.followup is not None and intent.followup.uses_owned_return:
+                common["followup"] = intent.followup.to_dict()
         return "destroy_permanent_set", {**common, "spec": intent.spec.to_dict(), "source_ref": intent.source_ref}
     raise SemanticChoiceError("Destruction continuation intent is not typed")
 
@@ -35,8 +39,9 @@ def validate_destruction_intent_identity(kind: str, value: Mapping[str, Any]) ->
               "destroy_permanent_set": common | {"spec", "source_ref"}}
     if kind not in fields or not isinstance(value, Mapping):
         raise SemanticChoiceError("Destruction continuation fields are malformed")
-    followup = kind in {"destroy_permanent", "destroy_permanent_targets"} and "followup" in value
-    expected = fields[kind] | ({"followup"} if followup else set())
+    followup = "followup" in value
+    ordered = kind == "destroy_permanent_set" and "ordered_exclusion" in value
+    expected = fields[kind] | ({"followup"} if followup else set()) | ({"ordered_exclusion"} if ordered else set())
     if set(value) != expected:
         raise SemanticChoiceError("Destruction continuation fields are malformed")
     if any(type(value[field]) is not str or not value[field] for field in ("actor", "reason")):
@@ -62,7 +67,18 @@ def validate_destruction_intent_identity(kind: str, value: Mapping[str, Any]) ->
                     else AffectedPermanentSetSpec.from_dict(raw))
             if isinstance(spec, RelativePowerDestructionSetSpec) and spec.target_ref.startswith("$"):
                 raise ValueError("Relative-power destruction continuation requires its resolved target")
-            intent = DestroyPermanentSetIntent(**{**value, "spec": spec})
+            from ..ordered_incarnation_exclusion import OrderedIncarnationExclusion
+
+            data = {**value, "spec": spec}
+            if ordered:
+                data["ordered_exclusion"] = OrderedIncarnationExclusion.from_dict(data["ordered_exclusion"])
+            if followup:
+                from ..rules.destruction_result_model import DestructionFollowup
+
+                data["followup"] = DestructionFollowup.from_dict(data["followup"])
+                if not ordered or not data["followup"].uses_owned_return:
+                    raise ValueError("Only the ordered owned-return result extends this continuation")
+            intent = DestroyPermanentSetIntent(**data)
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
     return destruction_intent_identity(intent)[1]

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Protocol, Sequence
 
+from .characteristic_read_frames import characteristic_read_method
 from .entry_state_conditions import FixedEntryMetric
 from .landwalk import BASIC_LAND_TYPES
 
@@ -22,6 +23,7 @@ class EntryConditionMetricHost(Protocol):
     ) -> tuple[set[str], set[str], set[str]]: ...
 
 
+@characteristic_read_method
 def controller_basic_land_types(
     host: EntryConditionMetricHost,
     destination_controller: str | None,

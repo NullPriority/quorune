@@ -670,6 +670,7 @@ def typed_token_ability_nodes(
     compile_inner: CompileInner,
     trigger_node: TriggerNode,
     grant_effect_templates: GrantEffectTemplates,
+    compile_spell_shell: Callable[[str], tuple[OracleNode, ...] | None] | None = None,
 ) -> tuple[OracleNode, ...] | None:
     """Compile one closed token shell plus independently exact abilities."""
 
@@ -697,7 +698,7 @@ def typed_token_ability_nodes(
     # Reuse the fixed creature parser for color, subtype and keyword spelling.
     # The temporary pair is replaced only after both intrinsic stats are proven.
     shell, missing_stats = _CREATURE_TOKEN_WITHOUT_STATS.subn(r"\g<1>0/0 ", shell, count=1)
-    outer_nodes = _outer_nodes(
+    outer_nodes = compile_spell_shell(shell) if compile_spell_shell is not None else _outer_nodes(
         node_id=node_id,
         line=line,
         shell=shell,

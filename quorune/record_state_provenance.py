@@ -31,7 +31,9 @@ from .damage_modifier_state import (
 )
 from .permanent_event_state_model import BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, read_battlefield_entry_player_version
 from .turn_priority_model import (
+    POST_RESOLUTION_PRIORITY_VERSION_FIELD,
     PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
+    read_post_resolution_priority_version,
     read_priority_concession_stabilization_version,
 )
 from .damage_source import (
@@ -97,8 +99,9 @@ _QUALIFIED_HISTORY_VERSION_FIELDS = (
     "committed_occurrence_history_version", "damage_life_history_version", "permanent_death_history_version",
     "death_name_history_version", "first_life_gain_history_version", "public_movement_history_version",
     "venture_history_version", "plus_one_counter_placement_history_version", "land_play_history_version",
-    "permanent_counter_receipt_history_version", "draw_identity_history_version",
-    "permanent_entry_token_history_version",
+    "permanent_counter_receipt_history_version", "draw_identity_history_version", "exert_occurrence_history_version",
+    "permanent_entry_token_history_version", "equip_activation_history_version",
+    "controlled_creature_counter_history_version", "creature_counter_placement_history_version",
 )
 
 
@@ -119,6 +122,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
     prevention_result = getattr(state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None)
     land_entry_player = getattr(state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None)
     concession = getattr(state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None)
+    post_resolution = getattr(state, POST_RESOLUTION_PRIORITY_VERSION_FIELD, None)
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
@@ -160,6 +164,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({DAMAGE_PREVENTION_RESULT_VERSION_FIELD: prevention_result} if prevention_result is not None else {}),
         **({BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD: land_entry_player} if land_entry_player is not None else {}),
         **({PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: concession} if concession is not None else {}),
+        **({POST_RESOLUTION_PRIORITY_VERSION_FIELD: post_resolution} if post_resolution is not None else {}),
         **continuous_dependency_order_fields(getattr(state, "continuous_dependency_order_version", None)),
         **fetch_entry_placement_fields(getattr(state, "fetch_entry_placement_version", None)),
         **land_entry_payment_validation_fields(getattr(state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None)),
@@ -236,6 +241,10 @@ def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> No
         state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None
     ):
         raise ValueError("Priority concession stabilization provenance does not match the initial checkpoint")
+    if read_post_resolution_priority_version(format_value) != getattr(
+        state, POST_RESOLUTION_PRIORITY_VERSION_FIELD, None
+    ):
+        raise ValueError("Post-resolution priority provenance does not match the initial checkpoint")
     if read_battlefield_entry_player_version(format_value) != getattr(state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None):
         raise ValueError("Battlefield entry player provenance does not match the initial checkpoint")
     if read_continuous_dependency_order_version(format_value) != getattr(state, "continuous_dependency_order_version", None):

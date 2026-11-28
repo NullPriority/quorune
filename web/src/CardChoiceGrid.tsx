@@ -60,30 +60,33 @@ export function CardChoiceGrid({
   const [previewed, setPreviewed] = useState("");
   const preview = cards.get(previewed || selected[0] || String(options[0]?.value ?? ""));
   const countLabel = min === max ? `${selected.length} / ${max} selected` : `${selected.length} selected · choose ${min}–${max}`;
-  const source = field.name === "search_cards" ? "library" : field.name === "cards" ? "hand" : "battlefield";
+  const search = field.name === "search_cards" || field.name === "search_card";
+  const source = search ? "library" : field.name === "cards" ? "hand" : "battlefield";
+  const counts = new Map<string, number>();
   const labels = options.map((option) => {
     const ref = String(option.value);
     const card = cards.get(ref);
-    return card ? cardName(card) : option.label && option.label !== ref
+    const label = card ? cardName(card) : option.label && option.label !== ref
       ? String(option.label) : labelFor(ref);
+    const copy = (counts.get(label) ?? 0) + 1;
+    counts.set(label, copy);
+    return { label, copy };
   });
 
   return (
     <fieldset className="choice-field card-choice">
-      <legend>{field.name === "search_cards" ? "Available cards" : String(field.label)}</legend>
+      <legend>{search ? "Available cards" : String(field.label)}</legend>
       <p className="card-choice-count" aria-live="polite">{countLabel}</p>
       <div className="card-choice-layout">
-        {options.length > 0 ? <CardPages items={options} label={field.name === "search_cards" ? "Search results" : "Card choices"}
+        {options.length > 0 ? <CardPages items={options} label={search ? "Search results" : "Card choices"}
           className={`card-choice-pages from-${source}`} trackClassName="card-choice-options" layout="grid"
           render={(option, index) => {
             const ref = String(option.value);
             const card = cards.get(ref);
             const active = selected.includes(ref);
-            const name = labels[index];
-            const copies = labels.filter((label) => label === name).length;
-            const copy = copies > 1
-              ? `Copy ${labels.slice(0, index + 1).filter((label) => label === name).length} of ${copies}`
-              : "";
+            const { label: name, copy: number } = labels[index];
+            const copies = counts.get(name) ?? 1;
+            const copy = copies > 1 ? `Copy ${number} of ${copies}` : "";
             const printing = card ? printingLabel(card) : "";
             const cardState = asRecord(card);
             const designation = cardState.cmd ? "Commander" : cardState.tok ? "Token" : "";
@@ -97,12 +100,12 @@ export function CardChoiceGrid({
                 onFocus={() => setPreviewed(ref)}
                 onClick={() => {
                   setPreviewed(ref);
-                  if (singleChoice) onValue(ref);
+                  if (singleChoice) onValue(active && min === 0 ? "" : ref);
                   else onValue(active ? selected.filter((entry) => entry !== ref) : max === 1 ? [ref] : [...selected, ref]);
                 }}>
                 {designation && <small>{designation}</small>}
                 {card
-                  ? <CardTile value={card} view={view} table />
+                  ? <CardTile value={card} view={view} table showPrintedCost={!search} />
                   : <strong>{name}</strong>}
                 {copy && <small>{copy}</small>}
                 {printing && <small>{printing}</small>}

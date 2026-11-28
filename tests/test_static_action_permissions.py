@@ -94,6 +94,40 @@ def _permanent(
     )
 
 
+class StaticActionPermissionDiscoveryTests(unittest.TestCase):
+    def test_current_permission_reads_share_inputs_without_skipping_source_validation(self):
+        from types import SimpleNamespace
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        from quorune.entry_copy import copiable_oracle_id
+        from quorune.semantics import SemanticRegistry
+
+        semantics = SemanticRegistry(include_builtin_packs=False)
+        one, two = (SimpleNamespace(zone="battlefield", phased_out=False, oracle_id="same-card", annotations={})
+                    for _ in range(2))
+        reads = []
+        host = SimpleNamespace(active_seats=("A",), semantics=semantics,
+                               _semantic_event_sources=lambda **_: (one, two))
+
+        def card_record(source):
+            oracle_id = copiable_oracle_id(source)
+
+            def read():
+                reads.append(oracle_id)
+                return {"oracle_id": oracle_id}
+
+            return memoized_characteristic_read(host, ("record", oracle_id), read)
+
+        host.card_record = card_record
+        with mock.patch("quorune.semantic_runtime.action_permissions.default_action_permission_registry"):
+            self.assertEqual((), controller_action_permissions(host, "A"))
+            self.assertEqual(["same-card"], reads)
+            self.assertEqual((), controller_action_permissions(host, "A"))
+            self.assertEqual(["same-card", "same-card"], reads)
+            two.annotations["copy_overrides"] = {"_copiable_oracle_id": 0}
+            with self.assertRaisesRegex(ValueError, "Copiable program provenance"):
+                controller_action_permissions(host, "A")
+
+
 class StaticActionPermissionCompilerTests(unittest.TestCase):
     def setUp(self):
         self.capabilities = load_default_capability_registry()

@@ -43,3 +43,15 @@ def split_own_combat_modal(
         return effect_template(text, **kwargs)
 
     return rows[1:], restriction, compiled_mode
+
+
+def conditional_own_combat_untap_template(text):
+    normalized = " ".join(text.split()).casefold().replace("’", "'")
+    if normalized != ("untap all creatures you control. if it's your combat phase, "
+                      "there is an additional combat phase after this phase."):
+        return None
+    return (
+        "untap-controlled-creatures-conditional-extra-combat-v3",
+        (extra_combat_effect(ExtraCombatUntap.CONTROLLED_CREATURES_IF_OWN_COMBAT),),
+        None, (EXTRA_COMBAT_MECHANIC,),
+    )

@@ -375,6 +375,7 @@ from .game_hand_size import NoMaximumForGameHandler
 from .scheduled_next_draw import ScheduledNextDrawResultHandler
 from .protected_attack_payments import ProtectedAttackPaymentHandler
 from .next_turn_attack_restriction import NextTurnAttackRestrictionHandler
+from .counter_bound_attack import CounterBoundAttackRestrictionHandler
 from .library_search_rules import ProhibitLibrarySearchHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
@@ -417,6 +418,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .emblem_creation import CreateCompiledEmblemHandler
     from .revealed_library_top import EnterRevealedLibraryTopHandler, RevealEachLibraryTopHandler
     from .target_controller_library_reveal import PlaceMatchingRevealedPermanentHandler
+    from ..permanent_transform import FlipSourceHandler
     from .scheduled_turn_skip import ScheduledTurnSkipHandler
     from .additional_beginning import ScheduledAdditionalBeginningHandler
     from .suspect_handler import SuspectHandler
@@ -433,6 +435,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             EnterRevealedLibraryTopHandler(),
             PlaceMatchingRevealedPermanentHandler(),
             ScheduledTurnSkipHandler(),
+            FlipSourceHandler(),
             ScheduledAdditionalBeginningHandler(),
             SuspectHandler(),
             CombatRemovalHandler(),
@@ -446,6 +449,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             TemporaryCastRestrictionHandler(), TemporaryDrawRedirectHandler(), ProtectedAttackPaymentHandler(),
             TargetCombatDamageMultiplierHandler(),
             NextTurnAttackRestrictionHandler(),
+            CounterBoundAttackRestrictionHandler(),
             ScheduledNextDrawResultHandler(),
             NoMaximumForGameHandler(),
             ProhibitLibrarySearchHandler(),

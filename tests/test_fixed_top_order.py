@@ -19,6 +19,39 @@ def ordering_query(refs=('first','second')):
 
 
 class FixedTopOrderModelTests(unittest.TestCase):
+    def test_life_paid_top_cycle_binds_only_the_complete_private_spell(self):
+        from quorune.compiler.fixed_top_order_templates import fixed_top_order_template
+        from quorune.library_order_model import paid_private_top_cycle_effect, validate_paid_private_top_cycle
+        from quorune.rules.library_order_shapes import paid_private_top_cycle_runtime_dependencies
+
+        text = ("Look at the top five cards of your library. As many times as you choose, you may pay 1 life, "
+                "put those cards on the bottom of your library in any order, then look at the top five cards of your library. "
+                "Then shuffle and put the last cards you looked at this way on top in any order.")
+        record = replace(query_record(text), type_line="Instant", mana_cost="{U}{B}")
+        ir = compile_oracle_card(record, capability_registry=load_default_capability_registry(),
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((paid_private_top_cycle_effect(),), node.effects)
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        for wrong in (
+            text.replace("pay 1 life", "pay 2 life"),
+            text.replace("on the bottom", "into your graveyard"),
+            text.replace("As many times as you choose", "Once"),
+            text.replace("Then shuffle and ", "Then "),
+        ):
+            self.assertIsNone(fixed_top_order_template(wrong))
+        for replacement in ({"count": 4}, {"paid_private_top_cycle": True}, {"player": "B"}):
+            with self.assertRaises(ValueError):
+                validate_paid_private_top_cycle({**node.effects[0], **replacement})
+
+        program = dict(effects=node.effects, handlers=(), event="resolve", active_zone="stack",
+                       cost_schema=None, event_condition=None, target_schema=None)
+        self.assertTrue(paid_private_top_cycle_runtime_dependencies(SimpleNamespace(**program)))
+        for invalid in ({"event": "activate"}, {"target_schema": {"count": 1}}):
+            with self.assertRaises(ValueError):
+                paid_private_top_cycle_runtime_dependencies(SimpleNamespace(**{**program, **invalid}))
+
     def test_shuffle_lowering_has_one_owner_and_rejects_other_seat(self):
         from quorune.semantic_runtime.context import ReadOnlyHandlerContext, SemanticNodeError
         from quorune.semantic_runtime.intents import ShuffleLibraryIntent

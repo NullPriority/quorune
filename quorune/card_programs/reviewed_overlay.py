@@ -576,7 +576,8 @@ def shadowed_reviewed_program_keys(
         shadowed_reviewed_hand_exile_evoke_keys, shadowed_reviewed_pitch_counter_keys, shadowed_reviewed_zero_price_keys,
     )
     from .current_view_equivalence import (
-        shadowed_reviewed_fixed_search_keys, shadowed_reviewed_reanimation_life_loss_keys, shadowed_reviewed_upkeep_type_count_keys,
+        shadowed_reviewed_fixed_search_keys, shadowed_reviewed_greatest_artifact_upkeep_keys,
+        shadowed_reviewed_reanimation_life_loss_keys, shadowed_reviewed_upkeep_type_count_keys,
     )
     from .kicker_view_equivalence import shadowed_reviewed_kicker_target_keys
     from .modal_catalog_equivalence import (
@@ -631,7 +632,8 @@ def shadowed_reviewed_program_keys(
     linked_aura = shadowed_reviewed_linked_graveyard_aura_keys(
         generated, reviewed, capability_registry=capability_registry, capability_profile=capability_profile,
     )
-    return linked_aura | grouped_departure | hand_exile_evoke | void_replacement | owner_shuffle | self_type | card_name | color_modal | meld_modal | stack_mana | distinct_names | saga_chapters | shadowed_reviewed_reanimation_life_loss_keys(record, generated, reviewed) | _shadowed_reviewed_turn_color_protection_keys(record,generated,reviewed) | shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
+    artifact_upkeep = shadowed_reviewed_greatest_artifact_upkeep_keys(record, generated, reviewed)
+    return artifact_upkeep | linked_aura | grouped_departure | hand_exile_evoke | void_replacement | owner_shuffle | self_type | card_name | color_modal | meld_modal | stack_mana | distinct_names | saga_chapters | shadowed_reviewed_reanimation_life_loss_keys(record, generated, reviewed) | _shadowed_reviewed_turn_color_protection_keys(record,generated,reviewed) | shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
         capability_profile=capability_profile) | shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(

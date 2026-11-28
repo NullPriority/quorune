@@ -37,7 +37,7 @@ from .query_characteristic_templates import query_characteristic_quantity
 from .collection_quantity_templates import recipient_attachment_quantity
 from .attached_ability_templates import (
     _ATTACHED_SUPPORTED_ABILITIES, _attached_abilities,
-    _attached_granted_abilities, _attached_ability_capabilities, _toxic_ability_fragments,
+    _attached_granted_abilities, _attached_ability_capabilities, _toxic_ability_fragments, _fixed_query_granted_abilities,
 )
 from ..rules.source_references import SourceReferenceSpec
 from ..continuous_conditions import (
@@ -297,21 +297,16 @@ def fixed_query_keyword_grant_handler(
     if commander is not None:
         parsed = ('source_owner' if commander['relation'].casefold() == 'own' else 'source_controller',
                   ObjectQuerySpec(zones=('battlefield',), commander=True), bool(commander['other']))
-    counter_ward = (
-        subject.casefold() == "permanents you control with counters on them"
-        and match["abilities"].casefold() == "ward {1}"
-    )
-    if counter_ward:
-        from ..object_predicate import PermanentStatePredicateSpec
-
-        parsed = ("source_controller", ObjectQuerySpec(zones=("battlefield",),
-            state_predicate=PermanentStatePredicateSpec(minimum_total_counter_count=1)), False)
+    from .ability_qualified_query_grants import ability_qualified_query_subject
+    qualified = ability_qualified_query_subject(subject, match["abilities"])
+    if qualified is not None:
+        parsed, qualified_dependencies, qualified_template = qualified
     if parsed is None:
         return None
     relation, predicate, exclude_source = parsed
     abilities_text = match.group("abilities")
 
-    granted = _attached_granted_abilities(abilities_text)
+    granted, ward_capability = _fixed_query_granted_abilities(abilities_text, relation, predicate, exclude_source)
     if granted is None or any(
         ability.startswith("Toxic ")
         for ability in granted[0]
@@ -324,7 +319,8 @@ def fixed_query_keyword_grant_handler(
         return None
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
-        *_attached_ability_capabilities(abilities),
+        *_attached_ability_capabilities(abilities), *ward_capability,
+        *(qualified_dependencies if qualified is not None else ()),
         *(('state_query.commander.designation',) if predicate.commander is True and predicate.types_all else ()),
         *(('continuous.ability.disjoint_negative_keyword_grant',) if negative else ()),
     }
@@ -332,10 +328,6 @@ def fixed_query_keyword_grant_handler(
         COMMANDER_KEYWORD_GRANT_HANDLER, commander_permanent_query_dependencies,
     )
     capabilities.update(commander_permanent_query_dependencies(predicate.to_dict()))
-    if counter_ward:
-        from ..object_predicate import object_query_capabilities
-
-        capabilities.update(object_query_capabilities(predicate))
     if placement is not None:
         if fragments:
             return None
@@ -344,7 +336,7 @@ def fixed_query_keyword_grant_handler(
         capabilities.update(placement_handler.capability_dependencies)
     return (
         "continuous-counter-placement-keyword-grant-v1" if placement is not None else
-        "continuous-controlled-countered-permanent-ward-v1" if counter_ward else
+        qualified_template if qualified is not None else
         "continuous-fixed-query-keyword-grant-v2",
         {
             "handler_id": (placement_handler.handler_id if placement is not None else

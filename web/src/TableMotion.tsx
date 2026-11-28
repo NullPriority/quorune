@@ -6,7 +6,8 @@ import { publicEventSummary, summarizeTableActivity } from "./tablePresentation"
 export function projectedPublicEvents(view: ProjectedView): PublicGameEvent[] {
   return view.events.flatMap((row) => row.pub === true && typeof row.id === "number" && typeof row.c === "string"
     ? [{ id: row.id, code: row.c, actor: typeof row.a === "string" ? row.a : null,
-        summary: typeof row.s === "string" ? row.s : "", importance: 1 }]
+        summary: typeof row.s === "string" ? row.s : "", importance: 1,
+        cards: Array.isArray(row.cards) ? row.cards : undefined }]
     : []);
 }
 

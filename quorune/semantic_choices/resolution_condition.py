@@ -8,6 +8,9 @@ from typing import Any, Mapping
 from ..cast_origin_replacement import CAST_REPLACEMENT_VERSIONS, MAIN_PHASE_CAST_PREPARATION_VERSION
 from ..ability_resolution_ordinal import is_ability_resolution_ordinal, validate_ability_resolution_ordinal
 from ..other_spell_history_model import is_other_spell_draw, validate_other_spell_draw
+from ..rules.announced_x_draw_replacement import (
+    bound_announced_x_draw_replacement_branch, uses_announced_x_draw_replacement,
+)
 from ..rules.entrant_power_branch import (
     ENTRANT_POWER_BRANCH_FIELD, resolved_entrant_power_branch, uses_entrant_power_branch,
 )
@@ -74,7 +77,21 @@ class PublicResolutionConditionHandler:
     replay_fixture: str = "fixed-resolution-public-condition"
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
+    def requires_object_rows(self, effect: Mapping[str, Any]) -> bool:
+        from ..rules.named_cast_win import uses_named_cast_win
+
+        return not uses_named_cast_win(effect)
+
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        if uses_announced_x_draw_replacement(effect):
+            try:
+                children = bound_announced_x_draw_replacement_branch(effect, context.actor, context.stack_controller)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("Choose the branch using announced X.", prepend_effects=children),
+            )
         from ..rules.named_cast_win import uses_named_cast_win
         if uses_named_cast_win(effect):
             return _prepare_named_cast_win(effect, context)
@@ -96,6 +113,10 @@ class PublicResolutionConditionHandler:
         from ..rules.combat_point_counters import uses_point_game_loss
         if uses_point_game_loss(effect):
             return _prepare_point_game_loss(effect, context)
+        from ..rules.attack_trigger_copy import uses_quest_copy
+
+        if uses_quest_copy(effect):
+            return _prepare_quest_copy(effect, context)
         if is_other_spell_draw(effect):
             return _prepare_other_spell_draw(effect, context)
         if is_ability_resolution_ordinal(effect):
@@ -186,12 +207,12 @@ def _prepare_ability_resolution_ordinal(effect, context):
         raise SemanticChoiceError(str(exc)) from exc
     if effect["player"] != context.actor or context.actor != context.stack_controller:
         raise SemanticChoiceError("An ability-resolution result requires its resolving controller")
+    branch = children if effect["resolution_ordinal"] == effect["condition"]["ordinal"] else effect.get("otherwise_effects", ())
     return SemanticChoicePreparation(
         request=None, continuation_effect=FrozenMap(effect),
         auto_continue=AutoContinue(
             reason="Check the committed resolution ordinal.",
-            prepend_effects=tuple(FrozenMap(child) for child in children)
-            if effect["resolution_ordinal"] == effect["condition"]["ordinal"] else (),
+            prepend_effects=tuple(FrozenMap(child) for child in branch),
         ),
     )
 
@@ -219,6 +240,19 @@ def _prepare_point_game_loss(effect, context):
     return SemanticChoicePreparation(
         request=None, continuation_effect=FrozenMap(effect),
         auto_continue=AutoContinue("Check the original permanent's point counters.", prepend_effects=results),
+    )
+
+
+def _prepare_quest_copy(effect, context):
+    from ..rules.attack_trigger_copy import quest_copy_results
+
+    try:
+        results = quest_copy_results(effect, actor=context.actor, stack_controller=context.stack_controller)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue("Check the original enchantment's quest counters.", prepend_effects=results),
     )
 
 

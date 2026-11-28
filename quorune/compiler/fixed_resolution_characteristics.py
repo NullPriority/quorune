@@ -77,6 +77,9 @@ def _chosen_creature_type_result_template(text: str):
     elif normalized == "choose a creature type. creatures that aren't of the chosen type get -3/-3 until end of turn.":
         result = ChosenCreatureTypeResult.NONMATCHING_CREATURE_STATS
         mechanics = ("cr-611-continuous-effects",)
+    elif normalized == "choose a creature type. return all creatures that aren't of the chosen type to their owners' hands.":
+        result = ChosenCreatureTypeResult.NONMATCHING_CREATURE_RETURN
+        mechanics = ("fixed-public-zone-move",)
     else:
         return None
     return f"chosen-creature-type-{result.value}-v1", (result.choice_effect(),), None, mechanics
@@ -440,8 +443,8 @@ def fixed_resolution_characteristics_effect_template(
             if keywords is None:return None
             description=description[:keyword_tail.start()]
         is_creature=bool(re.search(r"(?:^| )creatures?$",description,re.I))
-        artifact=bool(re.search(r"(?:^| )artifact creature$",description,re.I))
-        description=re.sub(r"(?:^| )artifact creature$",'',description,flags=re.I)
+        artifact = bool(re.search(r"(?:^| )artifact creatures?$", description, re.I))
+        description = re.sub(r"(?:^| )artifact creatures?$", "", description, flags=re.I)
         description=re.sub(r"(?:^| )creatures?$",'',description,flags=re.I)
         parsed=_animation_description(description)
         if parsed is None:return None

@@ -11,6 +11,15 @@ from ..rules.tap_additional_cost import PAYMENT_COMPOSITION_MECHANIC
 
 def compile_additional_cost_payment_face(*,record,face_id,face_name,oracle_text,material_rows,
         effect_template,trusted_mechanics,capability_registry,capability_profile,residuals):
+    from .gift_card_spells import compile_gift_card_face
+
+    gift = compile_gift_card_face(
+        record=record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
+        material_rows=material_rows, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    )
+    if gift is not None:
+        return gift
     from .keyword_nodes import ordinary_convoke_keyword_node
     from .casting_payment_keyword_nodes import ordinary_improvise_keyword_node,ordinary_delve_keyword_node
     lowerers={'convoke':ordinary_convoke_keyword_node,'improvise':ordinary_improvise_keyword_node,'delve':ordinary_delve_keyword_node}

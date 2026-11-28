@@ -88,9 +88,6 @@ def is_closed_loyalty_damage_program(program):
 
 
 def bind_loyalty_x_target_damage(host, effect, item):
-    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, AllocatedDamageRecipient
-    from .damage_snapshots import recipient_snapshot
-
     amount = item.x_value
     if (effect != loyalty_x_damage_instruction() or type(effect[LOYALTY_X_DAMAGE_FIELD]) is not int
             or item.kind not in {"activated_ability", "activated_ability_copy"}
@@ -98,6 +95,21 @@ def bind_loyalty_x_target_damage(host, effect, item):
             or item.context.get("targets_revalidated") is not True
             or not 0 <= len(item.targets) <= 3):
         raise ValueError("Loyalty damage needs its exact announced X and revalidated targets")
+    return _uniform_announced_damage_set(host, item, amount)
+
+
+def bind_uniform_announced_target_damage(host, item):
+    amount = item.x_value
+    if (type(amount) is not int or amount < 0 or item.context.get("currently_resolving") is not True
+            or item.context.get("targets_revalidated") is not True or not 0 <= len(item.targets) <= 3):
+        raise ValueError("Announced damage requires its original X and revalidated targets")
+    return _uniform_announced_damage_set(host, item, amount)
+
+
+def _uniform_announced_damage_set(host, item, amount):
+    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, AllocatedDamageRecipient
+    from .damage_snapshots import recipient_snapshot
+
     refs = tuple(ref for ref in item.targets if ref is not None)
     if len(set(refs)) != len(refs):
         raise ValueError("A loyalty damage target must be chosen only once")

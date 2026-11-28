@@ -25,7 +25,7 @@ _SPELL_CAST_TRIGGER = re.compile(
 )
 _CHARACTERISTIC_SPELL_CAST_TRIGGER = re.compile(
     r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
-    r"(?P<article>a|an) (?P<quality>artifact, instant, or sorcery|[A-Za-z][A-Za-z' -]*?) spell, "
+    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z,' -]*?) spell, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -81,6 +81,7 @@ class FixedSpellCastOrigin(str, Enum):
 
     EXILE = "exile"
     GRAVEYARD = "graveyard"
+    HAND = "hand"
     NOT_HAND = "not_hand"
 
 
@@ -589,11 +590,14 @@ def _spell_cast_characteristic_term(
 def _spell_cast_characteristic_query(
     quality: str,
 ) -> FixedSpellCastCharacteristicQuery | None:
-    normalized = quality.casefold()
-    if normalized == "artifact, instant, or sorcery":
-        parts = ("artifact", "instant", "sorcery")
+    normalized = " ".join(quality.casefold().split())
+    if "," in normalized:
+        triple = re.fullmatch(r"([^,]+), ([^,]+), or ([^,]+)", normalized)
+        if triple is None:
+            return None
+        parts = triple.groups()
     else:
-        parts = tuple(" ".join(value.split()) for value in normalized.split(" or "))
+        parts = tuple(normalized.split(" or "))
         if not 1 <= len(parts) <= 2:
             return None
     terms = tuple(_spell_cast_characteristic_term(value) for value in parts)
@@ -984,7 +988,7 @@ def _origin_spell_cast_binding(
     material_line: str,
 ) -> FixedSpellCastBindingSpec | None:
     origin = re.fullmatch(
-        r"Whenever you cast a spell from (?P<origin>exile|your graveyard|"
+        r"Whenever you cast a spell from (?P<origin>exile|your graveyard|your hand|"
         r"anywhere other than your hand), (?P<body>.+)",
         material_line,
         re.IGNORECASE,
@@ -996,6 +1000,7 @@ def _origin_spell_cast_binding(
             origin={
                 "exile": FixedSpellCastOrigin.EXILE,
                 "your graveyard": FixedSpellCastOrigin.GRAVEYARD,
+                "your hand": FixedSpellCastOrigin.HAND,
                 "anywhere other than your hand": FixedSpellCastOrigin.NOT_HAND,
             }[origin.group("origin").casefold()],
         )

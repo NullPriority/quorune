@@ -360,7 +360,8 @@ class FixedPhaseOutInstructionTests(unittest.TestCase):
         source = phase_out_effect()
         target = phase_out_effect(targeted=True)
         schema = direct_permanent_target_spec("target creature").to_target_schema()
-        closed = {"effects": (source,), "active_zone": "battlefield", "target_schema": None, "coverage": ()}
+        closed = {"effects": (source,), "active_zone": "battlefield", "target_schema": None,
+                  "coverage": (), "handlers": ()}
         required = phase_out_runtime_dependencies(SimpleNamespace(**closed))
         self.assertEqual({PHASE_OUT_CAPABILITY, PHASING_CAPABILITY}, set(required))
         self.assertIn("target.revalidate_resolution", phase_out_runtime_dependencies(

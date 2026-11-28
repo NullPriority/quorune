@@ -2,6 +2,50 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { activationStopSignature, findSafeAutoPass, priorityActivityHold, selectedPriorityStop } from "../src/tableAutomation.ts";
+import { loopFrame, opponentResponded, repeatableOffer } from "../src/loopShortcuts.ts";
+import type { ProjectedView } from "../src/protocol.ts";
+
+test("loop playback recognizes its own new stack occurrences and observes public opponent responses", () => {
+  const ability = { id: "S31", kind: "activated_ability", ctl: "A", label: "Equip", targets: ["A7"] };
+  const view = {
+    principal: "pilot:A", decision: { kind: "priority", actor: "A" },
+    state: { stack: [ability], turn: { seq: 3 }, players: {} },
+    events: [
+      { id: 3, c: "stack.cast", a: "C", pub: true },
+      { id: 4, c: "priority.pass", a: "B", pub: true },
+      { id: 5, c: "stack.cast", a: "A", pub: true },
+      { id: 6, c: "stack.cast", a: "B", pub: false },
+      { id: 7, c: "stack.activate", a: "B", pub: true },
+    ],
+  } as unknown as ProjectedView;
+  const frame = loopFrame(view);
+  const withAbility = (changes: object) => ({ ...view, state: { ...view.state, stack: [{ ...ability, ...changes }] } });
+  assert.equal(loopFrame(withAbility({ id: "S32" })), frame);
+  assert.notEqual(loopFrame(withAbility({ id: "S32", targets: ["A8"] })), frame);
+  assert.notEqual(loopFrame(withAbility({ ctl: "B" })), frame);
+  assert.equal(opponentResponded(view, 6), true);
+  assert.equal(opponentResponded({ ...view, events: view.events.slice(0, 4) }, 3), false);
+});
+
+test("loop observation tolerates only renewed capabilities and the pilot's accumulating mana", () => {
+  const action = { id: "activate:A12:ab1", action: "activate", expiry_revision: 20, proposal_fingerprint: "old" };
+  const view = {
+    principal: "pilot:A", decision: { kind: "priority", actor: "A" },
+    state: { turn: { seq: 6, phase: "precombat_main", step: "main", active: "A" },
+      players: { A: { life: 40, mana: { G: 1 }, bf: [{ id: "A12", tap: 0 }] },
+        B: { life: 40, mana: { U: 1 }, bf: [] } }, stack: [] },
+  } as unknown as ProjectedView;
+  const initial = loopFrame(view);
+  assert.ok(initial);
+  const players = { A: { life: 40, mana: { G: 4 }, bf: [{ id: "A12", tap: 0 }] },
+    B: { life: 40, mana: { U: 1 }, bf: [] } };
+  assert.equal(loopFrame({ ...view, state: { ...view.state, players } }), initial);
+  players.B.mana.U = 0;
+  assert.notEqual(loopFrame({ ...view, state: { ...view.state, players } }), initial);
+  assert.equal(loopFrame({ ...view, decision: { ...view.decision!, kind: "semantic.search" } }), null);
+  assert.equal(repeatableOffer({ ...action, expiry_revision: 21, proposal_fingerprint: "renewed" }), repeatableOffer(action));
+  assert.notEqual(repeatableOffer({ ...action, id: "activate:A14:ab1" }), repeatableOffer(action));
+});
 
 test("automatic passing accepts only pass, concede, and bare mana actions", () => {
   const pass = { action: "pass", id: "pass:1" };
@@ -95,6 +139,9 @@ test("priority stops hold only the selected timing window, including the distinc
   assert.equal(selectedPriorityStop("combat", "combat_damage", true, 2, ["first_strike_damage"]), undefined);
   assert.equal(selectedPriorityStop("combat", "combat_damage", true, 2, ["combat_damage"]), "After combat damage");
   assert.equal(selectedPriorityStop("combat", "end_combat", false, 0, ["combat"]), "End of combat");
+  assert.equal(selectedPriorityStop("ending", "end_step", false, 0, ["before_my_turn"], true), "End step before your turn");
+  assert.equal(selectedPriorityStop("ending", "end_step", false, 0, ["before_my_turn"], false), undefined);
+  assert.equal(selectedPriorityStop("ending", "cleanup", false, 0, ["before_my_turn"], true), undefined);
 });
 
 test("optional-activation auto-pass leaves spell, land, and manual mana responses available", () => {

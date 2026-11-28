@@ -2,12 +2,53 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from ..replacement.immutable import FrozenMap
 from ..turn_skip_model import (
-    TURN_SKIP_CAPABILITY, TURN_SKIP_MECHANIC, TURN_SKIP_OPERATION, decode_turn_skip_instruction,
+    SKIP_TAP_PLAYER, TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, TARGET_PLAYER_UNTAP_SKIP_TAP_MECHANIC,
+    TURN_SKIP_CAPABILITY, TURN_SKIP_MECHANIC, TURN_SKIP_OPERATION, TargetPlayerUntapSkipTapSpec,
+    decode_turn_skip_instruction,
 )
 
 
+def _uses_target_player_skip_and_tap(effects, mechanics):
+    return TARGET_PLAYER_UNTAP_SKIP_TAP_MECHANIC in mechanics or any(
+        isinstance(effect, Mapping) and effect.get("op") == TURN_SKIP_OPERATION
+        and effect.get("player") == SKIP_TAP_PLAYER for effect in effects
+    )
+
+
+def _target_player_skip_and_tap_capabilities(effects, target_schema, mechanics):
+    from ..compiler.fixed_homogeneous_target_sets import FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC
+    from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities
+
+    if (len(effects) != 2 or not all(isinstance(effect, Mapping) for effect in effects)
+            or not isinstance(target_schema, Mapping)):
+        return ()
+    try:
+        spec = TargetPlayerUntapSkipTapSpec(effects[1].get("maximum_targets"))
+    except ValueError:
+        return ()
+    expected = spec.effects()
+    if (tuple(FrozenMap(effect) for effect in effects) != tuple(FrozenMap(effect) for effect in expected)
+            or FrozenMap(target_schema) != FrozenMap(spec.target_schema())
+            or type(target_schema["groups"][0]["count"]) is not int
+            or type(target_schema["groups"][1]["up_to"]) is not int
+            or type(effects[0]["spec"]["count"]) is not int):
+        return ()
+    fields = dict(spec.target_schema()["groups"][1])
+    fields.pop("id")
+    tap = {**effects[1], "cards": "$targets"}
+    tap_capabilities = fixed_homogeneous_target_set_node_capabilities(
+        effects=(tap,), target_schema=fields,
+        mechanic_ids=(*mechanics, FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC, "tap-and-untap", "cr-115-targets"),
+    )
+    return (TARGET_PLAYER_UNTAP_SKIP_TAP_CAPABILITY, TURN_SKIP_CAPABILITY,
+            "target.revalidate_resolution", *tap_capabilities) if tap_capabilities else ()
+
+
 def scheduled_turn_skip_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if _uses_target_player_skip_and_tap(effects, mechanic_ids):
+        return _target_player_skip_and_tap_capabilities(effects, target_schema, mechanic_ids)
     if TURN_SKIP_MECHANIC not in mechanic_ids or len(effects) != 1:
         return ()
     effect = effects[0]
@@ -47,7 +88,14 @@ def is_closed_scheduled_turn_skip_program(program):
 
 
 def scheduled_turn_skip_event_dependencies(program):
-    """Validate occurrence recipients even when the instruction is nested."""
+    """Validate occurrence recipients and the dependent target groups."""
+    if _uses_target_player_skip_and_tap(program.effects, program.coverage):
+        dependencies = _target_player_skip_and_tap_capabilities(
+            program.effects, program.target_schema, program.coverage,
+        )
+        if not dependencies:
+            raise ValueError("Target player skip and tap require the original related target groups")
+        return dependencies
 
     def uses_damage_player(value):
         if isinstance(value, Mapping):
